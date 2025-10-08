@@ -19,6 +19,7 @@ export default defineConfig({
         home: resolve(__dirname, './src/pages/home/index.html'),
         meetings: resolve(__dirname, './src/pages/meetings/index.html'),
         'create-meeting': resolve(__dirname, './src/pages/create-meeting/index.html'),
+        'learning/api': resolve(__dirname, './src/pages/learning/api/index.html'),
       },
     },
   },
