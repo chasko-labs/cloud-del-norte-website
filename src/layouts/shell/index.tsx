@@ -14,9 +14,11 @@ export interface ShellProps {
   children?: AppLayoutProps['content'];
   navigation?: AppLayoutProps['navigation'];
   notifications?: AppLayoutProps['notifications'];
+  theme?: 'light' | 'dark';
+  onThemeChange?: (theme: 'light' | 'dark') => void;
 }
 
-export default function Shell({ children, contentType, breadcrumbs, tools, navigation, notifications }: ShellProps) {
+export default function Shell({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange }: ShellProps) {
   return (
     <>
       <div id="top-nav">
@@ -26,6 +28,18 @@ export default function Shell({ children, contentType, breadcrumbs, tools, navig
             title: 'Rio Grande Corridor Cloud Community',
             href: '/home/index.html',
           }}
+          utilities={[
+            {
+              type: 'menu-dropdown',
+              text: theme === 'dark' ? '🌙' : '☀️',
+              title: 'Theme',
+              items: [
+                { id: 'light', text: '☀️ Light mode' },
+                { id: 'dark', text: '🌙 Dark mode' }
+              ],
+              onItemClick: ({ detail }) => onThemeChange?.(detail.id as 'light' | 'dark')
+            }
+          ]}
           i18nStrings={{
             overflowMenuTriggerText: 'More',
             overflowMenuTitleText: 'All',

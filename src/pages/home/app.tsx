@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React from 'react';
+import React, { useState } from 'react';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Grid from '@cloudscape-design/components/grid';
 import Header from '@cloudscape-design/components/header';
@@ -13,10 +13,21 @@ import Meetings from './components/meetings';
 import QualityReport from './components/quality-report';
 import { HelpPanelHome } from '../create-meeting/components/help-panel-home';
 import { variationData, breakdownItems, productionMetrics, quote, notes } from './data';
+import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
 
 export default function App() {
+  const [theme, setTheme] = useState<Theme>(() => initializeTheme());
+
+  const handleThemeChange = (newTheme: Theme) => {
+    setTheme(newTheme);
+    applyTheme(newTheme);
+    setStoredTheme(newTheme);
+  };
+
   return (
     <Shell
+      theme={theme}
+      onThemeChange={handleThemeChange}
       breadcrumbs={<Breadcrumbs active={{ text: 'Dashboard', href: '/home/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}
