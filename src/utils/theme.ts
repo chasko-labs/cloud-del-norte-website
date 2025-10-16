@@ -7,10 +7,6 @@ const THEME_KEY = 'awsaerospace-theme';
 export const getStoredTheme = (): Theme => {
   const stored = localStorage.getItem(THEME_KEY);
   if (stored === 'dark' || stored === 'light') return stored;
-  
-  if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return 'dark';
-  }
   return 'light';
 };
 

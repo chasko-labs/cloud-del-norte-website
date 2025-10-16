@@ -31,6 +31,15 @@ export default function Shell({ children, contentType, breadcrumbs, tools, navig
           utilities={[
             {
               type: 'menu-dropdown',
+              text: 'Navigate',
+              items: [
+                { id: 'home', text: 'Home', href: window.location.hostname === 'localhost' ? 'http://localhost:8080/home/' : '/home/' },
+                { id: 'meetings', text: 'Meetings', href: window.location.hostname === 'localhost' ? 'http://localhost:8080/meetings/' : '/meetings/' },
+                { id: 'api', text: 'API Learning', href: window.location.hostname === 'localhost' ? 'http://localhost:5173/' : '/learning/api/' }
+              ]
+            },
+            {
+              type: 'menu-dropdown',
               text: theme === 'dark' ? '🌙' : '☀️',
               title: 'Theme',
               items: [
