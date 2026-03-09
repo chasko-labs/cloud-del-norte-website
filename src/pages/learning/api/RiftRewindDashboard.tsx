@@ -35,6 +35,7 @@ const RiftRewindDashboard: React.FC = () => {
   const [championApiResponse, setChampionApiResponse] = useState<string>('');
   const [endpointDetails, setEndpointDetails] = useState<string>('');
   const [hasTriedLiveData, setHasTriedLiveData] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [championsApiDetails, setChampionsApiDetails] = useState<any>(null);
   const [contests, setContests] = useState<Contest[]>([]);
   const [activeDemo, setActiveDemo] = useState<'contests' | 'players' | null>(null);
@@ -114,11 +115,15 @@ const RiftRewindDashboard: React.FC = () => {
           setChampionsApiDetails(champions_api_details);
           
           // Build detailed endpoint summary
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const successful_endpoints = api_attempts.filter((ep: any) => ep.status === 'Success');
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const failed_endpoints = api_attempts.filter((ep: any) => ep.status === 'Failed' || ep.status === 'Deprecated');
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const no_data_endpoints = api_attempts.filter((ep: any) => ep.status === 'No Data');
           
           // Create detailed status messages
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const success_details = successful_endpoints.map((ep: any) => 
             `${ep.endpoint}: ${ep.result} (${ep.data_count} items)`
           ).join(' | ');
@@ -127,6 +132,7 @@ const RiftRewindDashboard: React.FC = () => {
           
           if (failed_endpoints.length > 0 || no_data_endpoints.length > 0) {
             const all_issues = [...failed_endpoints, ...no_data_endpoints];
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             setEndpointDetails(`⚠️ ${all_issues.length} endpoint(s) with issues: ${all_issues.map((ep: any) => `${ep.endpoint} (${ep.status})`).join(', ')}`);
           } else {
             setEndpointDetails(`✅ All ${api_attempts.length} endpoints successful`);
@@ -211,6 +217,7 @@ const RiftRewindDashboard: React.FC = () => {
   ];
 
   const getTournamentWinners = (year: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const winnersData: Record<string, any[]> = {
       '2024': [
         { player: 'Faker', team: 'T1', championPlayed: 'Azir', tournamentWins: 16, tournamentLosses: 2, winRate: 88.9, performanceScore: 95, event: `Worlds ${year} Champion` },
@@ -279,7 +286,7 @@ const RiftRewindDashboard: React.FC = () => {
               <Box variant="p">
                 Standard <strong>HTTP GET</strong> method with consistent <strong>JSON</strong> responses across all resources:<br/>
                 <code>GET /contests?year=2024</code><br/>
-                Always returns: <code>[{'{\"id\": \"worlds2024\", \"name\": \"Worlds Championship 2024\", \"status\": \"completed\", \"winner\": \"T1\"}'}, ...]</code>
+                Always returns: <code>[{'{id: "worlds2024", name: "Worlds Championship 2024", status: "completed", winner: "T1"}'}, ...]</code>
               </Box>
             </Container>
             
@@ -357,7 +364,7 @@ const RiftRewindDashboard: React.FC = () => {
               <Box variant="p">
                 <strong>Response we expect:</strong><br/>
                 <code>HTTP 200 OK</code> with <strong>JSON</strong> array of contest objects:<br/>
-                <code>[{'{\"id\": \"worlds2024\", \"name\": \"Worlds Championship 2024\", \"status\": \"completed\", \"winner\": \"T1\"}'}, ...]</code>
+                <code>[{'{id: "worlds2024", name: "Worlds Championship 2024", status: "completed", winner: "T1"}'}, ...]</code>
               </Box>
               
               <Button 
@@ -479,6 +486,7 @@ const RiftRewindDashboard: React.FC = () => {
             {
               id: 'player',
               header: 'Player',
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => (
                 <Box>
                   <Box variant="strong">{item.player}</Box>
@@ -489,11 +497,13 @@ const RiftRewindDashboard: React.FC = () => {
             {
               id: 'champion',
               header: 'Signature Champion',
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => item.championPlayed
             },
             {
               id: 'tournamentRecord',
               header: 'Tournament Record',
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => (
                 <Box>
                   <Box variant="strong" color="text-status-info">
@@ -506,6 +516,7 @@ const RiftRewindDashboard: React.FC = () => {
             {
               id: 'performance',
               header: 'Performance Score',
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => (
                 <Box variant="strong">{item.performanceScore}/100</Box>
               )
@@ -513,6 +524,7 @@ const RiftRewindDashboard: React.FC = () => {
             {
               id: 'achievement',
               header: 'Achievement',
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => (
                 <Box>
                   🏆 <Box variant="strong" display="inline">{item.event}</Box>

@@ -41,7 +41,7 @@ export const productionMetrics = [
   { key: 'Est.', value: '2021' },
 ];
 
-export const quote = `Holding our first meetup on International Women\'s Day 03/08/21 & Started at Arrowhead Research Park to further the community learning, business awareness, student engagement, career opportunities, and general entrepreneurial-garage-hobbyist spirit. We aim to learn from, serve, educate, and entertain the diverse people of the Juarez MX/El Paso + Las Cruces, all of New Mexico, and surrounding rural areas.`;
+export const quote = `Holding our first meetup on International Women's Day 03/08/21 & Started at Arrowhead Research Park to further the community learning, business awareness, student engagement, career opportunities, and general entrepreneurial-garage-hobbyist spirit. We aim to learn from, serve, educate, and entertain the diverse people of the Juarez MX/El Paso + Las Cruces, all of New Mexico, and surrounding rural areas.`;
 export const notes = [
   { name: 'cherry', strong: 1, mild: 5, unnoticed: 14 },
   { name: 'raspberry', strong: 2, mild: 9, unnoticed: 9 },
