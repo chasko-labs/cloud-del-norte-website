@@ -12,24 +12,24 @@
     "lint": "eslint . --ignore-path .gitignore --ext ts,tsx,js"
   },
   "dependencies": {
-    "@cloudscape-design/collection-hooks": "^1.0.0",
-    "@cloudscape-design/component-toolkit": "^1.0.0-beta.123",
-    "@cloudscape-design/components": "^3.0.0",
-    "@cloudscape-design/components-themeable": "^3.0.733",
-    "@cloudscape-design/design-tokens": "^3.0.43",
-    "@cloudscape-design/global-styles": "^1.0.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "@cloudscape-design/collection-hooks": "^1.0.85",
+    "@cloudscape-design/component-toolkit": "^1.0.0-beta.140",
+    "@cloudscape-design/components": "^3.0.1225",
+    "@cloudscape-design/components-themeable": "^3.0.1231",
+    "@cloudscape-design/design-tokens": "^3.0.73",
+    "@cloudscape-design/global-styles": "^1.0.51",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4"
   },
   "devDependencies": {
-    "@types/node": "^20.11.30",
-    "@types/react": "^18.0.17",
-    "@types/react-dom": "^18.0.6",
-    "@typescript-eslint/eslint-plugin": "^7.3.1",
-    "@typescript-eslint/parser": "^7.3.1",
-    "@vitejs/plugin-react": "^4.2.1",
-    "eslint": "^8.57.0",
-    "typescript": "^5.4.3",
-    "vite": "^7.1.9"
+    "@types/node": "^20.19.37",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
+    "@vitejs/plugin-react": "^5.1.4",
+    "eslint": "^8.57.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
   }
 }
