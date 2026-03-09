@@ -24,8 +24,8 @@ export default function Shell({ children, contentType, breadcrumbs, tools, navig
       <div id="top-nav">
         <TopNavigation
           identity={{
-            /*             logo: { src: '/logo.svg', alt: 'Rio Grande Corridor Cloud Community Logo' }, */
-            title: 'Rio Grande Corridor Cloud Community',
+            /*             logo: { src: '/logo.svg', alt: 'Cloud Del Norte Logo' }, */
+            title: 'Cloud Del Norte',
             href: '/home/index.html',
           }}
           utilities={[

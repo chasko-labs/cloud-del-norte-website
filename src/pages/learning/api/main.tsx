@@ -11,7 +11,7 @@ const App: React.FC = () => {
       <TopNavigation
         identity={{
           href: '/home/index.html',
-          title: 'Rio Grande Corridor Cloud Community'
+          title: 'Cloud Del Norte'
         }}
         utilities={[
           {
