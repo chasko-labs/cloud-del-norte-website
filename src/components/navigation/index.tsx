@@ -5,6 +5,7 @@ import SideNavigation, { SideNavigationProps } from '@cloudscape-design/componen
 
 const items: SideNavigationProps['items'] = [
   { type: 'link', text: 'Meetings', href: '/meetings/index.html' },
+  { type: 'link', text: 'Maintenance Calendar', href: '/maintenance-calendar/' },
   {
     type: 'section',
     text: 'Learning',
