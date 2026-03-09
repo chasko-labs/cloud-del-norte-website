@@ -25,17 +25,18 @@ export interface VariationsProps {
 
 export default function meetings({ data, items }: VariationsProps) {
   return (
-    <SpaceBetween size={'l'}>
-      <Container header={<Header variant="h2">Past Topics</Header>}>
-        <PieChart data={data} hideFilter={true} i18nStrings={{
-          chartAriaRoleDescription: 'Pie chart',
-          detailPopoverDismissAriaLabel: 'Dismiss',
-          legendAriaLabel: 'Legend',
-          filterSelectedAriaLabel: 'filterSelectedAriaLabel',
-          segmentAriaRoleDescription: 'segment',
-        }} />
-      </Container>
-      {/*       <Table
+    <div className="cdn-card">
+      <SpaceBetween size={'l'}>
+        <Container header={<Header variant="h2">Past Topics</Header>}>
+          <PieChart data={data} hideFilter={true} i18nStrings={{
+            chartAriaRoleDescription: 'Pie chart',
+            detailPopoverDismissAriaLabel: 'Dismiss',
+            legendAriaLabel: 'Legend',
+            filterSelectedAriaLabel: 'filterSelectedAriaLabel',
+            segmentAriaRoleDescription: 'segment',
+          }} />
+        </Container>
+        {/*       <Table
         sortingColumn={columnDefinitions[0]}
         enableKeyboardNavigation={true}
         header={<Header variant="h2">Details</Header>}
@@ -46,5 +47,6 @@ export default function meetings({ data, items }: VariationsProps) {
         }}
       />
  */}    </SpaceBetween>
+    </div>
   );
 }

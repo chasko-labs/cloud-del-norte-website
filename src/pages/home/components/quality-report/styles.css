@@ -1,3 +1,5 @@
+/* Muted secondary text; inherits from Cloudscape's text-body-secondary token. */
 .quote {
-  color: grey;
+  color: inherit;
+  opacity: 0.75;
 }

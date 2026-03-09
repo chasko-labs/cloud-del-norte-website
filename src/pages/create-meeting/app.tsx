@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React from 'react';
+import React, { useState } from 'react';
 
 import Button from '@cloudscape-design/components/button';
 import Form from '@cloudscape-design/components/form';
@@ -14,13 +14,23 @@ import Shape from './components/shape';
 import ShellLayout from '../../layouts/shell';
 import { BasicValidationContext, useBasicValidation } from './validation/basic-validation';
 import { ContentLayout } from '@cloudscape-design/components';
+import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
 
 export default function App() {
   const { isFormSubmitted, setIsFormSubmitted, addErrorField, focusFirstErrorField } = useBasicValidation();
+  const [theme, setTheme] = useState<Theme>(() => initializeTheme());
+
+  const handleThemeChange = (newTheme: Theme) => {
+    setTheme(newTheme);
+    applyTheme(newTheme);
+    setStoredTheme(newTheme);
+  };
 
   return (
     <ShellLayout
       contentType="form"
+      theme={theme}
+      onThemeChange={handleThemeChange}
       breadcrumbs={<Breadcrumbs active={{ text: 'Create meeting', href: '/create-meeting/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanel header={<h2>Help panel</h2>} />}

@@ -12,17 +12,19 @@ export interface ProductionOverviewProps {
 
 export default function ProductionOverview({ metrics }: ProductionOverviewProps) {
   return (
-    <Container header={<Header variant="h2">Production overview</Header>}>
-      <ColumnLayout columns={metrics.length} variant="text-grid">
-        {metrics.map(({ key, value }) => (
-          <Box key={key}>
-            <Box color="text-label" margin={{ bottom: 'xxxs' }}>
-              {key}
+    <div className="cdn-card">
+      <Container header={<Header variant="h2">Production overview</Header>}>
+        <ColumnLayout columns={metrics.length} variant="text-grid">
+          {metrics.map(({ key, value }) => (
+            <Box key={key}>
+              <Box color="text-label" margin={{ bottom: 'xxxs' }}>
+                {key}
+              </Box>
+              <Box fontSize="display-l">{value}</Box>
             </Box>
-            <Box fontSize="display-l">{value}</Box>
-          </Box>
-        ))}
-      </ColumnLayout>
-    </Container>
+          ))}
+        </ColumnLayout>
+      </Container>
+    </div>
   );
 }

@@ -1,4 +1,15 @@
-/* custom-theme.css */
-.cloudscape-top-navigation {
-    --cloudscape-color-background-top-navigation-context: #9467bd;
-}
+/* custom-theme.css — Cloud Del Norte Cloudscape token overrides
+ *
+ * STATUS: Not currently imported anywhere. Wire up by importing this file
+ * in the relevant page's main.tsx and applying the wrapper class to the
+ * TopNavigation container element.
+ *
+ * NOTE: The correct Cloudscape token for top-nav context background is
+ * --color-background-top-navigation-context (no "cloudscape-" prefix).
+ * Cloudscape design tokens are documented at:
+ * https://cloudscape.design/foundation/visual-foundation/design-tokens/
+ *
+ * Example usage once connected:
+ *   .cdn-top-navigation { --color-background-top-navigation-context: var(--cdn-purple); }
+ *   .awsui-dark-mode .cdn-top-navigation { --color-background-top-navigation-context: var(--cdn-purple-deep); }
+ */

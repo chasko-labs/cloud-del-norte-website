@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { AppLayout, TopNavigation, BreadcrumbGroup } from '@cloudscape-design/components';
 import '@cloudscape-design/global-styles/index.css';
+import '../../../styles/tokens.css';
 import Navigation from '../../../components/navigation';
 import RiftRewindDashboard from './RiftRewindDashboard';
 

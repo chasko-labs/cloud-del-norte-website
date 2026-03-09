@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import AppLayout, { AppLayoutProps } from '@cloudscape-design/components/app-layout';
 import TopNavigation from '@cloudscape-design/components/top-navigation';
 
@@ -19,9 +19,17 @@ export interface ShellProps {
 }
 
 export default function Shell({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange }: ShellProps) {
+  const [animating, setAnimating] = useState(false);
+
+  const handleToggleTheme = useCallback(() => {
+    onThemeChange?.(theme === 'dark' ? 'light' : 'dark');
+    setAnimating(true);
+    setTimeout(() => setAnimating(false), 400);
+  }, [theme, onThemeChange]);
+
   return (
     <>
-      <div id="top-nav">
+      <div id="top-nav" data-cdn-animating={animating || undefined}>
         <TopNavigation
           identity={{
             /*             logo: { src: '/logo.svg', alt: 'Cloud Del Norte Logo' }, */
@@ -30,23 +38,10 @@ export default function Shell({ children, contentType, breadcrumbs, tools, navig
           }}
           utilities={[
             {
-              type: 'menu-dropdown',
-              text: 'Navigate',
-              items: [
-                { id: 'home', text: 'Home', href: window.location.hostname === 'localhost' ? 'http://localhost:8080/home/' : '/home/' },
-                { id: 'meetings', text: 'Meetings', href: window.location.hostname === 'localhost' ? 'http://localhost:8080/meetings/' : '/meetings/' },
-                { id: 'api', text: 'API Learning', href: window.location.hostname === 'localhost' ? 'http://localhost:5173/' : '/learning/api/' }
-              ]
-            },
-            {
-              type: 'menu-dropdown',
-              text: theme === 'dark' ? '🌙' : '☀️',
-              title: 'Theme',
-              items: [
-                { id: 'light', text: '☀️ Light mode' },
-                { id: 'dark', text: '🌙 Dark mode' }
-              ],
-              onItemClick: ({ detail }) => onThemeChange?.(detail.id as 'light' | 'dark')
+              type: 'button',
+              text: theme === 'dark' ? '☀️' : '🌙',
+              title: theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
+              onClick: handleToggleTheme,
             }
           ]}
           i18nStrings={{

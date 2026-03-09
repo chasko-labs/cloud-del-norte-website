@@ -24,21 +24,23 @@ export default function QualityReport({ quote, notes }: QualityReportProps) {
   const [showTastingNotes, setShowTastingNotes] = useState(false);
 
   return (
-    <Container header={<Header variant="h2">#AWS User Group Cloud Del Norte</Header>}>
-      <Box color="text-body-secondary">{quote}</Box>
-      {/* <Button variant="normal" onClick={() => setShowTastingNotes(true)}>
+    <div className="cdn-card">
+      <Container header={<Header variant="h2">#AWS User Group Cloud Del Norte</Header>}>
+        <Box color="text-body-secondary">{quote}</Box>
+        {/* <Button variant="normal" onClick={() => setShowTastingNotes(true)}>
         About Services Discussed
       </Button> */}
-      {showTastingNotes ? (
-        <Modal visible={true} onDismiss={() => setShowTastingNotes(false)} header="Group notes">
-          <Table
-            sortingColumn={columnDefinitions[0]}
-            enableKeyboardNavigation={true}
-            items={notes}
-            columnDefinitions={columnDefinitions}
-          />
-        </Modal>
-      ) : null}
-    </Container>
+        {showTastingNotes ? (
+          <Modal visible={true} onDismiss={() => setShowTastingNotes(false)} header="Group notes">
+            <Table
+              sortingColumn={columnDefinitions[0]}
+              enableKeyboardNavigation={true}
+              items={notes}
+              columnDefinitions={columnDefinitions}
+            />
+          </Modal>
+        ) : null}
+      </Container>
+    </div>
   );
 }
