@@ -100,7 +100,7 @@ async function fetchDotnet() {
 async function fetchOpenWebUI() {
   const releases = await fetchGitHubReleases('open-webui', 'open-webui', 10);
   const stable = releases.filter(r => !r.prerelease && !r.draft);
-  return { id: 'openwebui', mostRecentAny: stable[0] ? ghToEntry(stable[0]) : null };
+  return { id: 'open-webui', mostRecentAny: stable[0] ? ghToEntry(stable[0]) : null };
 }
 
 async function fetchGIMP() {
@@ -152,7 +152,7 @@ async function fetchAWSWhatsNew() {
   return [
     lambdaEntry && { id: 'aws-lambda', mostRecentAny: lambdaEntry },
     s3Entry && { id: 'aws-s3', mostRecentAny: s3Entry },
-    bedrockEntry && { id: 'aws-bedrock', mostRecentAny: bedrockEntry },
+    bedrockEntry && { id: 'amazon-bedrock', mostRecentAny: bedrockEntry },
     iotEntry && { id: 'aws-iot', mostRecentAny: iotEntry },
     aiEntry && { id: 'aws-ai', mostRecentAny: aiEntry },
   ].filter(Boolean);
