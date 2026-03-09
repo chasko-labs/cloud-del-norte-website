@@ -12,7 +12,7 @@ export const HelpPanelHome = () => {
                     </h3>
                     <ul>
                         <li>
-                            <a target="_blank" href="https://meetup.com/AWSSelfTaught">AWSelfTaught:RGC3 Meetups <Icon name="external" /></a>
+                            <a target="_blank" href="https://meetup.com/AWSSelfTaught">Cloud Del Norte Meetups <Icon name="external" /></a>
                         </li>
                         <li>
                             <a target="_blank" href="https://meetup.com/BostonBlender">Blender & Graphic Design:NE3D <Icon name="external" /></a>
@@ -24,7 +24,7 @@ export const HelpPanelHome = () => {
         >
             <div>
                 <p>
-                    <b>RGC3</b> are self-organized and self-taught learners
+                    <b>AWS UG Cloud Del Norte</b> are self-organized and self-taught learners
                     on a quest to network, experiment, and upskill together. We hold in-person, virtual, and hybrid meetups focusing on regional topics to rural New Mexico, West Texas, Northern Chihuaha, the Borderplex and beyond.
                 </p>
 

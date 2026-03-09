@@ -1,4 +1,4 @@
-# rgc3-cloudscapedesign-aws-usergroup-website
+# cloudscapedesign-aws-usergroup-website
 
 ### todos for next time
 1. add "split panel header" aka footer to App Layout
@@ -66,7 +66,7 @@ You should see version numbers for both Node.js and npm.
    Navigate to the directory where you want to create your project and run:
 
 ```sh
-   cd rgc3-cloudscapedesign-aws-usergroup-website
+   cd cloudscapedesign-aws-usergroup-website
    npm create vite@latest . --template react
 ```
 

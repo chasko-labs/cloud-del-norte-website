@@ -24,8 +24,7 @@ export default function QualityReport({ quote, notes }: QualityReportProps) {
   const [showTastingNotes, setShowTastingNotes] = useState(false);
 
   return (
-    <Container header={<Header variant="h2">#AWSelfTaught User Group</Header>}>
-      <Box variant="p">Rio Grande Cloud Corridor (RGC3):</Box>
+    <Container header={<Header variant="h2">#AWS User Group Cloud Del Norte</Header>}>
       <Box color="text-body-secondary">{quote}</Box>
       {/* <Button variant="normal" onClick={() => setShowTastingNotes(true)}>
         About Services Discussed
