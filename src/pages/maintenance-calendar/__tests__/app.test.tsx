@@ -118,7 +118,7 @@ describe('maintenance-calendar page', () => {
 
   it('no React warnings or errors on render', () => {
     render(<MaintenanceCalendar />);
-    const errorCalls = consoleErrorSpy.mock.calls.filter(args =>
+    const errorCalls = consoleErrorSpy.mock.calls.filter((args: unknown[]) =>
       typeof args[0] === 'string' && (args[0].includes('Warning:') || args[0].includes('Error:'))
     );
     expect(errorCalls).toHaveLength(0);

@@ -7,7 +7,7 @@
   "homepage": "https://github.com/aws-samples/cloudscape-design-system-workshop",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "node scripts/fetch-releases.mjs && tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "vitest run",

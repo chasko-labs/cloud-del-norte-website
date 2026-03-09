@@ -16,11 +16,11 @@ import Navigation from '../../components/navigation';
 import Breadcrumbs from '../../components/breadcrumbs';
 import ShellLayout from '../../layouts/shell';
 
-import seedData from '../../data/releases.seed.json';
+import generatedData from '../../data/releases.generated.json';
 import type { TechCalendar, ReleaseEntry, ProjectedEntry, Confidence } from './types';
 import { generateICS, generateICSForTech, downloadICS } from './utils/ical';
 
-const allTechs = seedData as TechCalendar[];
+const allTechs = generatedData as TechCalendar[];
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
