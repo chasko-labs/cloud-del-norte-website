@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "prefetch": "node scripts/fetch-releases.mjs"
   },
   "dependencies": {
     "@cloudscape-design/collection-hooks": "^1.0.85",
