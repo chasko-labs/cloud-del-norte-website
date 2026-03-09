@@ -1,0 +1,94 @@
+[
+  {
+    "id": "anthropic-claude",
+    "name": "Anthropic Claude",
+    "category": "AI Model",
+    "dataSource": "manual",
+    "lastManualUpdate": "2026-03-09",
+    "sourceUrl": "https://www.anthropic.com/news",
+    "mostRecentLTS": null,
+    "mostRecentAny": {
+      "version": "Claude 3.7 Sonnet",
+      "date": "2025-02-24",
+      "releaseNotesUrl": "https://www.anthropic.com/news/claude-3-7-sonnet",
+      "isLTS": false
+    },
+    "projectedNextVersion": {
+      "projectedDate": "2025-06-01",
+      "confidence": "low",
+      "basedOn": "Estimated based on ~3 month release cadence for major Claude versions"
+    },
+    "projectedNextLTS": null,
+    "priorLTS": null,
+    "secondPriorLTS": null
+  },
+  {
+    "id": "google-models",
+    "name": "Google Gemini Models",
+    "category": "AI Model",
+    "dataSource": "manual",
+    "lastManualUpdate": "2026-03-09",
+    "sourceUrl": "https://deepmind.google/technologies/gemini/",
+    "mostRecentLTS": null,
+    "mostRecentAny": {
+      "version": "Gemini 2.0 Flash",
+      "date": "2025-02-05",
+      "releaseNotesUrl": "https://blog.google/products/gemini/gemini-2-flash-thinking-experimental/",
+      "isLTS": false
+    },
+    "projectedNextVersion": {
+      "projectedDate": "2025-05-01",
+      "confidence": "low",
+      "basedOn": "Estimated based on Google I/O 2025 expected announcements and ~3-4 month cadence"
+    },
+    "projectedNextLTS": null,
+    "priorLTS": null,
+    "secondPriorLTS": null
+  },
+  {
+    "id": "css-w3c",
+    "name": "CSS (W3C Specifications)",
+    "category": "Standard",
+    "dataSource": "manual",
+    "lastManualUpdate": "2026-03-09",
+    "sourceUrl": "https://www.w3.org/Style/CSS/current-work",
+    "mostRecentLTS": null,
+    "mostRecentAny": {
+      "version": "CSS Grid Layout Level 2 (W3C REC)",
+      "date": "2024-08-06",
+      "releaseNotesUrl": "https://www.w3.org/TR/css-grid-2/",
+      "isLTS": false
+    },
+    "projectedNextVersion": {
+      "projectedDate": "2025-09-01",
+      "confidence": "low",
+      "basedOn": "W3C CSS specifications advance on an ongoing basis; next major CSS REC expected late 2025"
+    },
+    "projectedNextLTS": null,
+    "priorLTS": null,
+    "secondPriorLTS": null
+  },
+  {
+    "id": "iso-standards",
+    "name": "ISO/IEC AI Standards",
+    "category": "Standard",
+    "dataSource": "manual",
+    "lastManualUpdate": "2026-03-09",
+    "sourceUrl": "https://www.iso.org/committee/6794475.html",
+    "mostRecentLTS": null,
+    "mostRecentAny": {
+      "version": "ISO/IEC 42001:2023 (AI Management Systems)",
+      "date": "2023-12-18",
+      "releaseNotesUrl": "https://www.iso.org/standard/81230.html",
+      "isLTS": false
+    },
+    "projectedNextVersion": {
+      "projectedDate": "2025-06-01",
+      "confidence": "low",
+      "basedOn": "ISO/IEC JTC 1/SC 42 AI standards committee has multiple standards in ballot/publication pipeline for 2025"
+    },
+    "projectedNextLTS": null,
+    "priorLTS": null,
+    "secondPriorLTS": null
+  }
+]
