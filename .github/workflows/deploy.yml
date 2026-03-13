@@ -1,10 +1,15 @@
-name: Deploy awsaerospace-core to S3
+name: Deploy to S3
 
 on:
   push:
     branches: [main]
     paths:
-      - 'awsaerospace-core/**'
+      - 'src/**'
+      - 'public/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'vite.config.ts'
+      - 'tsconfig.json'
   workflow_dispatch:
 
 env:
@@ -22,9 +27,8 @@ jobs:
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: '20'
+        node-version: '22'
         cache: 'npm'
-        cache-dependency-path: awsaerospace-core/package-lock.json
     
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
@@ -38,16 +42,13 @@ jobs:
       id: aws-config
     
     - name: Install dependencies
-      working-directory: awsaerospace-core
       run: npm install
     
     - name: Build
-      working-directory: awsaerospace-core
       run: npm run build
     
     - name: Deploy to S3
       if: steps.aws-config.outcome == 'success'
-      working-directory: awsaerospace-core
       run: |
         aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps
     

@@ -1,0 +1,62 @@
+{
+  "theme": "heraldstack",
+  "version": "0.5.4",
+  "assignments": [
+    {
+      "persistent_name": "Stratia",
+      "universe": "heraldstack",
+      "role": "Strategy & Architecture Advisor",
+      "created_at": "2026-03-13T22:12:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Lyren",
+      "universe": "heraldstack",
+      "role": "Cloudscape UI & Design Specialist",
+      "created_at": "2026-03-13T22:12:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Vael",
+      "universe": "heraldstack",
+      "role": "MPA Build & Deploy Engineer",
+      "created_at": "2026-03-13T22:12:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Theren",
+      "universe": "heraldstack",
+      "role": "Content & Data Specialist",
+      "created_at": "2026-03-13T22:12:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Kess",
+      "universe": "heraldstack",
+      "role": "Testing Lead",
+      "created_at": "2026-03-13T22:12:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Scribe",
+      "universe": "exempt",
+      "role": "Session Logger",
+      "created_at": "2026-03-13T22:12:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Ralph",
+      "universe": "exempt",
+      "role": "Work Monitor",
+      "created_at": "2026-03-13T22:12:00Z",
+      "legacy_named": false,
+      "status": "active"
+    }
+  ]
+}
