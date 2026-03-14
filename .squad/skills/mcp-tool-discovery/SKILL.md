@@ -17,10 +17,10 @@ Cloudscape Design System ships new components and API changes regularly. React 1
 
 | Agent | Primary MCPs | Primary Use Cases |
 |-------|-------------|-------------------|
-| **Lyren** (Cloudscape UI) | `context7`, `fetch` | Cloudscape component APIs, design token reference, accessibility patterns |
+| **Lyren** (Cloudscape UI) | `context7`, `fetch`, `chrome-devtools` | Cloudscape component APIs, design token reference, accessibility patterns, visual debugging |
 | **Vael** (Build/Deploy) | `context7`, `fetch` | Vite configuration docs, Rollup input options, TypeScript compiler options |
 | **Theren** (Content/Data) | `fetch`, `github` | Meetup.com event data, AWS docs, cloudscape.design examples, repo file contents |
-| **Kess** (Testing) | `context7`, `fetch` | Vitest configuration, @testing-library/react APIs, jsdom limitations |
+| **Kess** (Testing) | `context7`, `fetch`, `chrome-devtools` | Vitest configuration, @testing-library/react APIs, jsdom limitations, visual/a11y audits |
 | **Stratia** (Architecture) | `github`, `context7` | Issue tracking, PR management, architecture pattern references |
 | **Harald** (Coordinator) | `github` | Issue triage, PR management, cross-agent coordination |
 | **Scribe** (Logger) | `github` | Committing .squad/ state, issue references |
@@ -91,3 +91,4 @@ If an MCP tool call fails or the tool is not present in the agent's environment,
 | `github` | `gh` CLI (e.g., `gh issue list`, `gh pr view <N>`) |
 | `context7` | `fetch` against the library's official docs URL |
 | `fetch` | `curl -s <url> \| cat` |
+| `chrome-devtools` | Manual browser inspection, or `npx lighthouse <url> --output=json` |
