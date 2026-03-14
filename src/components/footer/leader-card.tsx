@@ -29,12 +29,18 @@ export default function LeaderCard({ leader }: LeaderCardProps) {
 
   return (
     <div
-      className={`cdn-card cdn-footer-card${isPlaceholder ? ' cdn-footer-placeholder' : ''}`}
+      className={`cdn-card cdn-footer-card${isPlaceholder ? ' cdn-footer-placeholder' : ''}${leader.retired ? ' cdn-footer-retired' : ''}`}
       data-leader-id={leader.id}
     >
       <p className="cdn-footer-card-name">{leader.name}</p>
 
-      <Badge color={isPlaceholder ? 'blue' : 'green'}>{leader.role}</Badge>
+      <Badge color={leader.retired ? 'grey' : isPlaceholder ? 'blue' : 'green'}>{leader.role}</Badge>
+
+      {leader.organization && (
+        <span className="cdn-footer-card-org">
+          {leader.organization}
+        </span>
+      )}
 
       {leader.bio && (
         <Box variant="p" color="text-body-secondary">

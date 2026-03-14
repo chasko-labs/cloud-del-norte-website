@@ -78,11 +78,19 @@ describe('Footer component', () => {
     expect(screen.getByText('Esto Podrías Ser Tú')).toBeTruthy();
   });
 
-  it('renders bottom bar with community description', () => {
+  it('renders community description with "Go Build" text', () => {
     render(<Footer />);
     const footer = screen.getByRole('contentinfo');
     expect(footer.textContent).toContain('AWS User Group Cloud Del Norte is part of');
     expect(footer.textContent).toContain('Go Build');
+  });
+
+  it('renders "Global AWS User Group Community" as a link', () => {
+    render(<Footer />);
+    const link = screen.getByText('Global AWS User Group Community');
+    expect(link).toBeTruthy();
+    expect(link.tagName).toBe('A');
+    expect(link.getAttribute('href')).toContain('meetup.com/pro/global-aws-user-group-community');
   });
 
   it('no React warnings or errors on render', () => {

@@ -1,5 +1,4 @@
 import React from 'react';
-import Box from '@cloudscape-design/components/box';
 import Link from '@cloudscape-design/components/link';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import LeaderCard from './leader-card';
@@ -21,21 +20,20 @@ export default function Footer() {
         </div>
 
         <div className="cdn-footer-bottom">
-          <Box variant="small" color="text-body-secondary">
-            AWS User Group Cloud Del Norte is part of AWS User Groups'{' '}
+          <p className="cdn-footer-community">
+            AWS User Group Cloud Del Norte is part of AWS User Groups&apos;{' '}
             <Link
               href="https://www.meetup.com/pro/global-aws-user-group-community/"
               external
               variant="primary"
-              fontSize="body-s"
             >
               Global AWS User Group Community
             </Link>
             . We are run by volunteers local to New Mexico, West Texas &amp; Chihuahua, Mexico. We
             believe projects, careers &amp; issues can be accelerated using AWS, &amp; wish to pass
             our knowledge, connections &amp; experiences on to you &amp; see what you{' '}
-            <strong>Go Build</strong>.
-          </Box>
+            <strong className="cdn-footer-emphasis">Go Build</strong>.
+          </p>
         </div>
       </SpaceBetween>
     </footer>

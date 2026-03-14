@@ -1,42 +1,119 @@
 /* ==========================================================================
    Cloud Del Norte — Footer Styles
-   Matches the warm-cream (light) / deep-navy (dark) brand system from
-   tokens.css and shell/styles.css.
+   Fully integrated with the design token system from tokens.css and
+   the shell/styles.css top-navigation patterns.
+
+   Cards use .cdn-card from tokens.css for glassmorphism, ::before accent,
+   hover lift+glow, and entrance animation. Footer-specific styles here
+   ONLY add layout, typography, and variant overrides.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Footer container
+   Footer container — gradient background + gradient accent top-border
    -------------------------------------------------------------------------- */
 .cdn-footer {
   position: relative;
   padding: var(--cdn-space-xl) var(--cdn-space-lg) var(--cdn-space-lg);
-  border-top: 2px solid rgba(139, 90, 43, 0.18);
-  background: linear-gradient(180deg, #f2ede3 0%, #ede8db 100%);
+  /* Warm cream gradient with subtle amber warmth */
+  background: linear-gradient(
+    180deg,
+    #f2ede3 0%,
+    #f5f0e4 40%,
+    #ede8db 100%
+  );
+  /* No plain border-top — gradient accent ::after handles it */
+  border-top: none;
 }
 
+/* Gradient accent line at top of footer — mirrors .cdn-card::before pattern */
+.cdn-footer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--cdn-purple) 20%,
+    var(--cdn-violet) 50%,
+    var(--cdn-aws-orange) 80%,
+    transparent 100%
+  );
+  opacity: 0.7;
+  transition: var(--cdn-transition-fast);
+}
+
+/* Dark mode: cosmic navy→indigo→purple gradient (matches top nav) */
 .awsui-dark-mode .cdn-footer {
-  border-top-color: rgba(144, 96, 240, 0.22);
-  background: linear-gradient(135deg, #00002a 0%, #200050 50%, #30006a 100%);
+  background: linear-gradient(
+    135deg,
+    #00002a 0%,
+    #200050 50%,
+    #30006a 100%
+  );
+}
+
+.awsui-dark-mode .cdn-footer::after {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--cdn-violet) 20%,
+    #00d4ff 50%,
+    var(--cdn-violet) 80%,
+    transparent 100%
+  );
+  opacity: 0.8;
 }
 
 /* --------------------------------------------------------------------------
-   Section heading
+   "Our Leaders" heading — centered with gradient underline accent
    -------------------------------------------------------------------------- */
 .cdn-footer-heading {
   text-align: center;
-  margin-bottom: var(--cdn-space-lg);
+  margin-bottom: var(--cdn-space-xl);
+  padding-bottom: var(--cdn-space-sm);
   font-size: var(--cdn-text-xl);
-  font-weight: var(--cdn-weight-semibold);
-  letter-spacing: 0.02em;
+  font-weight: var(--cdn-weight-bold);
+  letter-spacing: 0.03em;
   color: #2c1a0e;
+  position: relative;
+}
+
+/* Centered gradient underline — amber→violet→orange (light mode accent palette) */
+.cdn-footer-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--cdn-amber),
+    var(--cdn-violet),
+    var(--cdn-aws-orange)
+  );
 }
 
 .awsui-dark-mode .cdn-footer-heading {
   color: var(--cdn-lavender);
 }
 
+.awsui-dark-mode .cdn-footer-heading::after {
+  background: linear-gradient(
+    90deg,
+    var(--cdn-violet),
+    #00d4ff,
+    var(--cdn-violet)
+  );
+}
+
 /* --------------------------------------------------------------------------
-   Responsive grid — 5 leader cards
+   Responsive grid — 6 leader cards (3 × 2 at desktop)
    -------------------------------------------------------------------------- */
 .cdn-footer-grid {
   display: grid;
@@ -46,26 +123,22 @@
   margin: 0 auto;
 }
 
-@media (min-width: 480px) {
+@media (min-width: 768px) {
   .cdn-footer-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1200px) {
   .cdn-footer-grid {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (min-width: 1200px) {
-  .cdn-footer-grid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-}
-
 /* --------------------------------------------------------------------------
-   Leader card — extends .cdn-card glassmorphism from tokens.css
+   Leader card — layout-only additions over .cdn-card glassmorphism
+   Base .cdn-card (tokens.css) provides: border-radius, glass background,
+   backdrop-filter, ::before accent line, hover lift+glow, entrance animation.
    -------------------------------------------------------------------------- */
 .cdn-footer-card {
   min-height: 180px;
@@ -77,10 +150,12 @@
   gap: var(--cdn-space-sm);
 }
 
+/* Leader name */
 .cdn-footer-card-name {
   font-size: var(--cdn-text-lg);
-  font-weight: var(--cdn-weight-semibold);
+  font-weight: var(--cdn-weight-bold);
   line-height: var(--cdn-leading-tight);
+  letter-spacing: 0.01em;
   color: #2c1a0e;
   margin: 0;
 }
@@ -89,6 +164,21 @@
   color: var(--cdn-white);
 }
 
+/* Organization affiliation — secondary label below name */
+.cdn-footer-card-org {
+  display: block;
+  font-size: var(--cdn-text-sm);
+  font-weight: var(--cdn-weight-normal);
+  line-height: var(--cdn-leading-tight);
+  color: #5a3a1e;
+  margin-top: calc(-1 * var(--cdn-space-xs));
+}
+
+.awsui-dark-mode .cdn-footer-card-org {
+  color: var(--cdn-lavender);
+}
+
+/* Bio text */
 .cdn-footer-card-bio {
   font-size: var(--cdn-text-sm);
   line-height: var(--cdn-leading-normal);
@@ -101,7 +191,7 @@
 }
 
 /* --------------------------------------------------------------------------
-   Social links row
+   Social links row — pill-shaped accessible touch targets
    -------------------------------------------------------------------------- */
 .cdn-footer-social {
   display: flex;
@@ -112,55 +202,77 @@
   padding-top: var(--cdn-space-sm);
 }
 
-.cdn-footer-social a {
+/* Pill container wrapping Cloudscape Link */
+.cdn-footer-social [role="listitem"] {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 28px;
-  min-height: 28px;
-  padding: var(--cdn-space-xs);
-  border-radius: var(--cdn-radius-sm);
-  font-size: var(--cdn-text-sm);
-  font-weight: var(--cdn-weight-medium);
-  text-decoration: none;
-  transition: background-color 0.2s ease, transform 0.2s ease;
+  min-width: 44px;
+  min-height: 44px;
+  padding: var(--cdn-space-xs) var(--cdn-space-md);
+  border-radius: 22px;
+  border: 1.5px solid rgba(139, 90, 43, 0.22);
+  background: rgba(250, 247, 240, 0.5);
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+              box-shadow 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
 }
 
-.cdn-footer-social a:hover {
-  transform: scale(1.08);
+/* Light mode hover — mirrors side-nav inset accent pattern */
+.cdn-footer-social [role="listitem"]:hover {
+  border-color: var(--cdn-amber);
+  background-color: rgba(139, 90, 43, 0.08);
+  box-shadow: inset 0 -2px 0 var(--cdn-amber),
+              0 2px 8px rgba(139, 90, 43, 0.12);
+  transform: translateY(-1px);
+}
+
+/* Dark mode pill */
+.awsui-dark-mode .cdn-footer-social [role="listitem"] {
+  border-color: rgba(144, 96, 240, 0.22);
+  background: rgba(28, 34, 48, 0.5);
+}
+
+.awsui-dark-mode .cdn-footer-social [role="listitem"]:hover {
+  border-color: var(--cdn-violet);
+  background-color: rgba(144, 96, 240, 0.08);
+  box-shadow: inset 0 -2px 0 var(--cdn-violet),
+              0 0 12px rgba(144, 96, 240, 0.15);
 }
 
 /* --------------------------------------------------------------------------
-   Placeholder card — "open slot" styling
+   Placeholder card — "open slot" dashed border style
    -------------------------------------------------------------------------- */
 .cdn-footer-placeholder {
   border-style: dashed !important;
   border-width: 2px;
-  border-color: rgba(139, 90, 43, 0.25);
-  opacity: 0.85;
+  border-color: rgba(139, 90, 43, 0.30);
+  opacity: 0.82;
   background: linear-gradient(
     135deg,
-    rgba(250, 247, 240, 0.7) 0%,
-    rgba(245, 240, 228, 0.6) 100%
+    rgba(250, 247, 240, 0.65) 0%,
+    rgba(245, 240, 228, 0.55) 100%
   );
 }
 
+/* AWS-orange accent line to differentiate from active leaders */
 .cdn-footer-placeholder::before {
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--cdn-aws-orange) 50%,
+    var(--cdn-aws-orange) 30%,
+    #ffb84d 60%,
     transparent 100%
   ) !important;
-  opacity: 0.4 !important;
+  opacity: 0.45 !important;
 }
 
 .awsui-dark-mode .cdn-footer-placeholder {
-  border-color: rgba(144, 96, 240, 0.25);
+  border-color: rgba(144, 96, 240, 0.28);
   background: linear-gradient(
     135deg,
-    rgba(28, 34, 48, 0.6) 0%,
-    rgba(30, 26, 48, 0.5) 100%
+    rgba(28, 34, 48, 0.55) 0%,
+    rgba(30, 26, 48, 0.45) 100%
   );
 }
 
@@ -168,7 +280,8 @@
   background: linear-gradient(
     90deg,
     transparent 0%,
-    var(--cdn-aws-orange) 50%,
+    var(--cdn-aws-orange) 30%,
+    #ffb84d 60%,
     transparent 100%
   ) !important;
 }
@@ -182,45 +295,149 @@
 }
 
 /* --------------------------------------------------------------------------
-   Bottom bar — copyright, links
+   Retired / emeritus card — dignified but subtly distinguished
+   -------------------------------------------------------------------------- */
+.cdn-footer-retired {
+  filter: saturate(0.72) brightness(0.97);
+  opacity: 0.88;
+  box-shadow: var(--cdn-shadow-sm);
+}
+
+/* Amber→gold accent line — warm and honoring */
+.cdn-footer-retired::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--cdn-amber) 25%,
+    #c9a23f 50%,
+    var(--cdn-amber) 75%,
+    transparent 100%
+  ) !important;
+  opacity: 0.5 !important;
+}
+
+.cdn-footer-retired:hover {
+  filter: saturate(0.85) brightness(1.0);
+  box-shadow: var(--cdn-shadow-md);
+}
+
+.awsui-dark-mode .cdn-footer-retired {
+  box-shadow: var(--cdn-shadow-sm);
+}
+
+.awsui-dark-mode .cdn-footer-retired::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    #c9a23f 25%,
+    var(--cdn-aws-orange) 50%,
+    #c9a23f 75%,
+    transparent 100%
+  ) !important;
+  opacity: 0.45 !important;
+}
+
+/* --------------------------------------------------------------------------
+   Footer bottom section — community description
    -------------------------------------------------------------------------- */
 .cdn-footer-bottom {
   margin-top: var(--cdn-space-xl);
-  padding-top: var(--cdn-space-md);
-  border-top: 1px solid rgba(139, 90, 43, 0.12);
-  text-align: center;
-  font-size: var(--cdn-text-sm);
-  color: #4a2818;
-  line-height: var(--cdn-leading-relaxed);
+  padding-top: var(--cdn-space-lg);
+  /* Gradient divider line — reuses accent palette */
+  border-top: none;
+  position: relative;
 }
 
-.awsui-dark-mode .cdn-footer-bottom {
-  border-top-color: rgba(144, 96, 240, 0.15);
+/* Gradient top-border for the divider */
+.cdn-footer-bottom::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(100%, 600px);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(139, 90, 43, 0.25) 20%,
+    rgba(139, 90, 43, 0.35) 50%,
+    rgba(139, 90, 43, 0.25) 80%,
+    transparent 100%
+  );
+}
+
+.awsui-dark-mode .cdn-footer-bottom::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(144, 96, 240, 0.2) 20%,
+    rgba(144, 96, 240, 0.3) 50%,
+    rgba(144, 96, 240, 0.2) 80%,
+    transparent 100%
+  );
+}
+
+/* Community text — prominent, readable, centered */
+.cdn-footer-community {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: var(--cdn-text-lg);
+  line-height: var(--cdn-leading-relaxed);
+  letter-spacing: var(--cdn-letter-spacing-body);
+  color: #2c1a0e;
+  padding: var(--cdn-space-sm) 0;
+}
+
+.awsui-dark-mode .cdn-footer-community {
   color: var(--cdn-lavender);
 }
 
-.cdn-footer-bottom-links {
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: var(--cdn-space-md);
-  margin-bottom: var(--cdn-space-sm);
+/* "Go Build" call-to-action — gradient text effect */
+.cdn-footer-emphasis {
+  font-weight: var(--cdn-weight-bold);
+  letter-spacing: 0.04em;
+  background: linear-gradient(
+    90deg,
+    var(--cdn-amber) 0%,
+    var(--cdn-aws-orange) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.awsui-dark-mode .cdn-footer-emphasis {
+  background: linear-gradient(
+    90deg,
+    var(--cdn-violet) 0%,
+    #00d4ff 50%,
+    var(--cdn-violet) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* --------------------------------------------------------------------------
-   Reduced motion
+   Reduced motion — disable all animations and transitions
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .cdn-footer-social a {
+  .cdn-footer-social [role="listitem"] {
     transition: none;
   }
-  .cdn-footer-placeholder::before {
+  .cdn-footer-placeholder::before,
+  .cdn-footer-retired::before {
     animation: none;
+  }
+  .cdn-footer::after {
+    transition: none;
   }
 }
 
 /* --------------------------------------------------------------------------
-   Print styles — hide decorative elements
+   Print styles — simplified for paper
    -------------------------------------------------------------------------- */
 @media print {
   .cdn-footer {
@@ -228,6 +445,7 @@
     border-top: 1px solid #ccc;
     box-shadow: none;
   }
+  .cdn-footer::after,
   .cdn-footer .cdn-card::before,
   .cdn-footer-social {
     display: none;
@@ -235,5 +453,22 @@
   .cdn-footer-placeholder {
     border-style: solid;
     opacity: 0.5;
+  }
+  .cdn-footer-retired {
+    filter: none;
+    opacity: 0.7;
+  }
+  .cdn-footer-emphasis {
+    background: none;
+    -webkit-text-fill-color: inherit;
+    color: inherit;
+    font-weight: var(--cdn-weight-bold);
+  }
+  .cdn-footer-community {
+    max-width: 100%;
+    font-size: var(--cdn-text-base);
+  }
+  .cdn-footer-bottom::before {
+    display: none;
   }
 }

@@ -22,7 +22,8 @@ vi.mock('@cloudscape-design/components/link', () => ({
     }, children),
 }));
 vi.mock('@cloudscape-design/components/badge', () => ({
-  default: ({ children }: AnyProps) => React.createElement('span', { 'data-testid': 'badge' }, children),
+  default: ({ children, color }: AnyProps) =>
+    React.createElement('span', { 'data-testid': 'badge', 'data-color': color }, children),
 }));
 
 import LeaderCard from '../leader-card';
@@ -78,6 +79,40 @@ const leaderAllSocialsPopulated = {
   },
   placeholder: false,
   retired: false,
+};
+
+const leaderWithOrganization = {
+  id: 'org-leader',
+  name: 'Org Leader',
+  role: 'Founder',
+  bio: '',
+  organization: 'Test Research Park',
+  social: {
+    github: null,
+    linkedin: null,
+    twitter: null,
+    website: null,
+    meetup: null,
+  },
+  placeholder: false,
+  retired: false,
+};
+
+const retiredLeader = {
+  id: 'retired-leader',
+  name: 'Retired Leader',
+  role: 'Founder, Retired Organizer',
+  bio: '',
+  organization: 'Test University',
+  social: {
+    github: null,
+    linkedin: null,
+    twitter: null,
+    website: null,
+    meetup: null,
+  },
+  placeholder: false,
+  retired: true,
 };
 
 const placeholderLeader = {
@@ -205,6 +240,39 @@ describe('LeaderCard component', () => {
     const { container } = render(<LeaderCard leader={leaderMinimalSocials} />);
     expect(container.textContent).not.toContain('undefined');
     expect(container.textContent).not.toContain('null');
+  });
+
+  it('displays organization when provided', () => {
+    render(<LeaderCard leader={leaderWithOrganization} />);
+    expect(screen.getByText('Test Research Park')).toBeTruthy();
+  });
+
+  it('does not display organization when null', () => {
+    const { container } = render(<LeaderCard leader={leaderWithAllSocials} />);
+    // Organization is null — should not render any organization text
+    const boxes = container.querySelectorAll('[data-testid="box"]');
+    const orgBox = Array.from(boxes).find((el) =>
+      el.textContent?.includes('Research Park') || el.textContent?.includes('University')
+    );
+    expect(orgBox).toBeUndefined();
+  });
+
+  it('retired leader card has cdn-footer-retired class', () => {
+    const { container } = render(<LeaderCard leader={retiredLeader} />);
+    const card = container.firstElementChild;
+    expect(card?.classList.contains('cdn-footer-retired')).toBe(true);
+  });
+
+  it('retired leader Badge uses "grey" color', () => {
+    render(<LeaderCard leader={retiredLeader} />);
+    const badge = screen.getByTestId('badge');
+    expect(badge.getAttribute('data-color')).toBe('grey');
+  });
+
+  it('non-retired leader Badge uses "green" color', () => {
+    render(<LeaderCard leader={leaderWithAllSocials} />);
+    const badge = screen.getByTestId('badge');
+    expect(badge.getAttribute('data-color')).toBe('green');
   });
 
   it('no React warnings or errors on render', () => {
