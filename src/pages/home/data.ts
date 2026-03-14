@@ -47,3 +47,5 @@ export const notes = [
   { name: 'home.notes.rose', strong: 2, mild: 3, unnoticed: 15 },
   { name: 'home.notes.strawberry', strong: 3, mild: 5, unnoticed: 12 },
 ];
+
+export const quote = 'home.quote.text';

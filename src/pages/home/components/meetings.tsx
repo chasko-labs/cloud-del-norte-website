@@ -6,7 +6,7 @@ import Header from '@cloudscape-design/components/header';
 import PieChart, { PieChartProps } from '@cloudscape-design/components/pie-chart';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import Table, { TableProps } from '@cloudscape-design/components/table';
-import { SpaceBetween } from '@cloudscape-design/components';
+import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 const columnDefinitions = (t: (key: string) => string): TableProps['columnDefinitions'] => [
@@ -49,7 +49,8 @@ export default function meetings({ data, items }: VariationsProps) {
         ariaLabels={{
           tableLabel: 'Details table',
         }}
-      /> */}
+      />
+      */}
       </SpaceBetween>
     </div>
   );

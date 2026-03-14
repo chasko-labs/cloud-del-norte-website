@@ -80,6 +80,13 @@
       "strong": "Strong",
       "mild": "Mild",
       "unnoticed": "Unnoticed"
+    },
+    "pieChart": {
+      "chartAriaRoleDescription": "Pie chart",
+      "detailPopoverDismissAriaLabel": "Dismiss details",
+      "legendAriaLabel": "Legend",
+      "filterSelectedAriaLabel": "Selected",
+      "segmentAriaRoleDescription": "Segment"
     }
   },
   "meetings": {

@@ -166,3 +166,45 @@ The old locale selectors (`[title*="English"]` / `[title*="Español"]`) were bro
 ### Quality Gates
 - ✅ `npm run lint` — clean
 - ✅ `npm test` — all 125 tests passing
+
+## Session 2025-07-18 — UX Responsiveness & Legibility Pass
+
+**Status:** ✅ Complete
+**Branch:** `squad/ux-responsiveness-pass`
+
+### What Changed
+
+1. **Home Grid responsive colspans** (`src/pages/home/app.tsx`)
+   - Changed fixed `{ colspan: 8 }` / `{ colspan: 4 }` → `{ colspan: { default: 12, m: 8 } }` / `{ colspan: { default: 12, m: 4 } }` — panels now stack vertically on mobile and side-by-side on medium+ screens.
+
+2. **QualityReport readability** (`src/pages/home/components/quality-report/index.tsx` + `styles.css`)
+   - Added `SpaceBetween` wrapper and `Box padding` for breathing room
+   - Wired the orphaned `.quote` CSS class via `<p className="quote">`
+   - Improved `.quote` CSS: `line-height: 1.7`, `font-size: var(--cdn-text-md)`, `max-width: 60ch`, `opacity: 0.85`
+   - Imported `styles.css` into the component
+
+3. **ProductionOverview responsive** (`src/pages/home/components/production-overview.tsx`)
+   - Added `minColumnWidth={150}` to ColumnLayout — 4 metrics now wrap to 2×2 on narrow viewports instead of crushing into 4 tiny columns.
+
+4. **Barrel import cleanup** (5 files across 4 pages)
+   - `home/meetings.tsx`: SpaceBetween barrel → deep import
+   - `meetings/meetings-table.tsx`: TextFilter barrel → deep import
+   - `create-meeting/app.tsx`: ContentLayout barrel → deep import
+   - `learning/api/main.tsx`: AppLayout, TopNavigation, BreadcrumbGroup barrel → 3 deep imports
+   - `learning/api/RiftRewindDashboard.tsx`: 9 components barrel → 9 deep imports
+
+### Patterns Applied
+- **Cloudscape responsive Grid:** Use `colspan: { default: 12, m: N }` for stacking on mobile
+- **ColumnLayout responsive:** Use `minColumnWidth` prop to control column wrapping, not just `columns`
+- **Text readability:** `line-height: 1.7`, `max-width: 60ch`, padding via Cloudscape Box/SpaceBetween
+- **Deep imports only:** Every barrel import (`import { X } from '@cloudscape-design/components'`) converted to deep import (`import X from '@cloudscape-design/components/x'`)
+
+### Key Decisions
+- Audited all 5 pages; only home page had responsive layout issues. Other pages either use ColumnLayout columns≤2 (already wraps fine) or don't use Grid.
+- The `create-meeting/marketing.tsx` ColumnLayout uses `columns={2}` which is fine responsively — left as-is.
+- Pre-existing lint/test/build failures in locale-context.tsx are NOT from this branch.
+
+### Quality Gates
+- ✅ Lint clean on all 9 changed files
+- ✅ Tests passing (pre-existing locale failures unrelated)
+- ✅ Build succeeds on clean working tree

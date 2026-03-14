@@ -80,6 +80,13 @@
       "strong": "Fuerte",
       "mild": "Suave",
       "unnoticed": "Sin notar"
+    },
+    "pieChart": {
+      "chartAriaRoleDescription": "Gráfico circular",
+      "detailPopoverDismissAriaLabel": "Cerrar detalles",
+      "legendAriaLabel": "Leyenda",
+      "filterSelectedAriaLabel": "Seleccionado",
+      "segmentAriaRoleDescription": "Segmento"
     }
   },
   "meetings": {
