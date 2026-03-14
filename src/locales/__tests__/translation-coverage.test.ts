@@ -84,6 +84,18 @@ describe('translation coverage', () => {
       'helpPanel.bryanChasko',                        // Proper name
       'helpPanel.jacobWright',                        // Proper name
       'helpPanel.userGroupTitle',                     // "AWS User Group" - proper noun
+      // learning.api: code snippets and tech labels preserved per localization guidelines
+      'learning.api.attackPowerCode',                 // "stats.attackdamage ÷ 10" - code formula
+      'learning.api.defenseRatingCode',               // "stats.hp ÷ 100" - code formula
+      'learning.api.speedRatingCode',                 // "stats.movespeed ÷ 20" - code formula
+      'learning.api.responseHttpOk',                  // "HTTP 200 OK" - universal HTTP standard
+      'learning.api.apiLabel',                        // "API:" - tech acronym label
+      'learning.api.buildLabel',                      // "Build:" - tech term used in Spanish dev
+      'learning.api.frontendLabel',                   // "Frontend:" - tech term used in Spanish dev
+      'learning.api.frontendValue',                   // "React 18 + TypeScript" - proper nouns
+      'learning.api.hostingLabel',                    // "Hosting:" - tech term used in Spanish dev
+      'learning.api.hostingValue',                    // "S3 + CloudFront CDN" - proper nouns
+      'learning.api.endpointLabel',                   // "Endpoint:" - tech term used in Spanish dev
     ]);
 
     // Helper to get value by dot-notation key
