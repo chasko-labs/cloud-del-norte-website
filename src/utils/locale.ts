@@ -40,3 +40,24 @@ export function initializeLocale(): Locale {
   applyLocale(defaultLocale);
   return defaultLocale;
 }
+
+// Navigation drawer state persistence
+const CDN_NAV_KEY = 'cdn-navigation-open';
+
+export function getStoredNavState(): boolean | null {
+  try {
+    const stored = localStorage.getItem(CDN_NAV_KEY);
+    if (stored === null) return null;
+    return stored === 'true';
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredNavState(open: boolean): void {
+  try {
+    localStorage.setItem(CDN_NAV_KEY, String(open));
+  } catch {
+    // localStorage not available
+  }
+}

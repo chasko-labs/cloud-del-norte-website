@@ -7,8 +7,16 @@ import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../
 import { useTranslation } from '../../../hooks/useTranslation';
 import RiftRewindDashboard from './RiftRewindDashboard';
 
-export default function App() {
+function BreadcrumbsContent() {
   const { t } = useTranslation();
+  return (
+    <Breadcrumbs 
+      active={{ text: t('navigation.apiGuide'), href: '/learning/api/' }}
+    />
+  );
+}
+
+export default function App() {
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
   const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
@@ -31,11 +39,7 @@ export default function App() {
       locale={locale}
       onLocaleChange={handleLocaleChange}
       pageTitle="learning.api.title"
-      breadcrumbs={
-        <Breadcrumbs 
-          active={{ text: t('navigation.apiGuide'), href: '/learning/api/' }}
-        />
-      }
+      breadcrumbs={<BreadcrumbsContent />}
       navigation={<Navigation />}
     >
       <RiftRewindDashboard />

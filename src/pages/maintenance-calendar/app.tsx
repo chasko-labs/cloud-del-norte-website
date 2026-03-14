@@ -9,8 +9,12 @@ import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../
 import { useTranslation } from '../../hooks/useTranslation';
 import MaintenanceCalendar from './MaintenanceCalendar';
 
-export default function App() {
+function BreadcrumbsContent() {
   const { t } = useTranslation();
+  return <Breadcrumbs active={{ text: t('maintenanceCalendar.breadcrumb'), href: '/maintenance-calendar/' }} />;
+}
+
+export default function App() {
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
   const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
@@ -33,7 +37,7 @@ export default function App() {
       locale={locale}
       onLocaleChange={handleLocaleChange}
       pageTitle="pages.maintenanceCalendar.title"
-      breadcrumbs={<Breadcrumbs active={{ text: t('maintenanceCalendar.breadcrumb'), href: '/maintenance-calendar/' }} />}
+      breadcrumbs={<BreadcrumbsContent />}
       navigation={<Navigation />}
     >
       <MaintenanceCalendar />

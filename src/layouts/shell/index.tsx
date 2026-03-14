@@ -4,7 +4,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import AppLayout, { AppLayoutProps } from '@cloudscape-design/components/app-layout';
 import TopNavigation from '@cloudscape-design/components/top-navigation';
 import Footer from '../../components/footer';
-import { type Locale } from '../../utils/locale';
+import { type Locale, getStoredNavState, setStoredNavState } from '../../utils/locale';
 import { LocaleProvider } from '../../contexts/locale-context';
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -22,32 +22,41 @@ export interface ShellProps {
   locale?: Locale;
   onLocaleChange?: (locale: Locale) => void;
   pageTitle?: string;
-  /** Control navigation drawer open state (defaults to open on desktop, closed on mobile) */
-  navigationOpen?: boolean;
-  /** Callback when navigation drawer state changes */
-  onNavigationChange?: (open: boolean) => void;
 }
 
-function ShellContent({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange, pageTitle, navigationOpen: controlledNavOpen, onNavigationChange }: ShellProps) {
+function ShellContent({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange, pageTitle }: ShellProps) {
   const { t } = useTranslation();
   const [animating, setAnimating] = useState(false);
   const [animatingLocale, setAnimatingLocale] = useState(false);
   
-  // Default navigation to open on desktop (>= 768px), closed on mobile
-  const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
-  const [navOpen, setNavOpen] = useState(controlledNavOpen ?? isDesktop);
+  // Initialize nav state from localStorage OR viewport (Cloudscape breakpoint: 688px)
+  const [navOpen, setNavOpen] = useState(() => {
+    const stored = getStoredNavState();
+    if (stored !== null) return stored;
+    return typeof window !== 'undefined' && window.innerWidth >= 688;
+  });
   
-  // Sync with controlled prop if provided
-  useEffect(() => {
-    if (controlledNavOpen !== undefined) {
-      setNavOpen(controlledNavOpen);
-    }
-  }, [controlledNavOpen]);
-
   const handleNavigationChange = useCallback((event: { detail: { open: boolean } }) => {
-    setNavOpen(event.detail.open);
-    onNavigationChange?.(event.detail.open);
-  }, [onNavigationChange]);
+    const newState = event.detail.open;
+    setNavOpen(newState);
+    setStoredNavState(newState);
+  }, []);
+  
+  // Add resize listener to handle viewport changes
+  useEffect(() => {
+    function handleResize() {
+      const isDesktop = window.innerWidth >= 688;
+      const stored = getStoredNavState();
+      
+      // Only auto-adjust if user hasn't set a preference
+      if (stored === null) {
+        setNavOpen(isDesktop);
+      }
+    }
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     document.documentElement.lang = locale === 'mx' ? 'es' : 'en';

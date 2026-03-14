@@ -91,7 +91,7 @@
    so CSS selector fallback is used, scoped to light mode via :root:not(.awsui-dark-mode). */
 :root:not(.awsui-dark-mode) [class*="side-navigation"],
 :root:not(.awsui-dark-mode) [class*="navigation__drawer"] {
-  background: #ede8db !important;
+  background: #ede8db;
 }
 
 /* Font smoothing scoped to app shell — improves warm-bg readability.

@@ -13,8 +13,12 @@ import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../u
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 import { useTranslation } from '../../hooks/useTranslation';
 
-export default function App() {
+function BreadcrumbsContent() {
   const { t } = useTranslation();
+  return <Breadcrumbs active={{ text: t('meetings.breadcrumb'), href: '/meetings/index.html' }} />;
+}
+
+export default function App() {
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
   const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
@@ -38,7 +42,7 @@ export default function App() {
       locale={locale}
       onLocaleChange={handleLocaleChange}
       pageTitle="pages.meetings.title"
-      breadcrumbs={<Breadcrumbs active={{ text: t('meetings.breadcrumb'), href: '/meetings/index.html' }} />}
+      breadcrumbs={<BreadcrumbsContent />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}
     >

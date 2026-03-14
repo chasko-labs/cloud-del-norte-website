@@ -17,8 +17,36 @@ import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../u
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 import { useTranslation } from '../../hooks/useTranslation';
 
-export default function App() {
+function AppContent({ theme, onThemeChange, locale, onLocaleChange }: { theme: Theme; onThemeChange: (t: Theme) => void; locale: Locale; onLocaleChange: (l: Locale) => void }) {
   const { t } = useTranslation();
+
+  return (
+    <ContentLayout
+      header={
+        <Header variant="h1" info={<Link variant="info">{t('dashboardPage.infoLink')}</Link>}>
+          {t('dashboardPage.header')}
+        </Header>
+      }
+    >
+      <Grid gridDefinition={[
+        { colspan: 12 },
+        { colspan: { default: 12, m: 8 } },
+        { colspan: { default: 12, m: 4 } },
+      ]}>
+        <ProductionOverview metrics={productionMetrics} />
+        <Meetings data={variationData} items={breakdownItems} />
+        <QualityReport notes={notes} />
+      </Grid>
+    </ContentLayout>
+  );
+}
+
+function BreadcrumbsContent() {
+  const { t } = useTranslation();
+  return <Breadcrumbs active={{ text: t('dashboardPage.breadcrumb'), href: '/home/index.html' }} />;
+}
+
+export default function App() {
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
   const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
@@ -40,27 +68,11 @@ export default function App() {
       onThemeChange={handleThemeChange}
       locale={locale}
       onLocaleChange={handleLocaleChange}
-      breadcrumbs={<Breadcrumbs active={{ text: t('dashboardPage.breadcrumb'), href: '/home/index.html' }} />}
+      breadcrumbs={<BreadcrumbsContent />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}
     >
-      <ContentLayout
-        header={
-          <Header variant="h1" info={<Link variant="info">{t('dashboardPage.infoLink')}</Link>}>
-            {t('dashboardPage.header')}
-          </Header>
-        }
-      >
-        <Grid gridDefinition={[
-          { colspan: 12 },
-          { colspan: { default: 12, m: 8 } },
-          { colspan: { default: 12, m: 4 } },
-        ]}>
-          <ProductionOverview metrics={productionMetrics} />
-          <Meetings data={variationData} items={breakdownItems} />
-          <QualityReport notes={notes} />
-        </Grid>
-      </ContentLayout>
+      <AppContent theme={theme} onThemeChange={handleThemeChange} locale={locale} onLocaleChange={handleLocaleChange} />
     </Shell>
   );
 }
