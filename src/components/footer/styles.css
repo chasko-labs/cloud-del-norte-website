@@ -1,0 +1,239 @@
+/* ==========================================================================
+   Cloud Del Norte — Footer Styles
+   Matches the warm-cream (light) / deep-navy (dark) brand system from
+   tokens.css and shell/styles.css.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Footer container
+   -------------------------------------------------------------------------- */
+.cdn-footer {
+  position: relative;
+  padding: var(--cdn-space-xl) var(--cdn-space-lg) var(--cdn-space-lg);
+  border-top: 2px solid rgba(139, 90, 43, 0.18);
+  background: linear-gradient(180deg, #f2ede3 0%, #ede8db 100%);
+}
+
+.awsui-dark-mode .cdn-footer {
+  border-top-color: rgba(144, 96, 240, 0.22);
+  background: linear-gradient(135deg, #00002a 0%, #200050 50%, #30006a 100%);
+}
+
+/* --------------------------------------------------------------------------
+   Section heading
+   -------------------------------------------------------------------------- */
+.cdn-footer-heading {
+  text-align: center;
+  margin-bottom: var(--cdn-space-lg);
+  font-size: var(--cdn-text-xl);
+  font-weight: var(--cdn-weight-semibold);
+  letter-spacing: 0.02em;
+  color: #2c1a0e;
+}
+
+.awsui-dark-mode .cdn-footer-heading {
+  color: var(--cdn-lavender);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive grid — 5 leader cards
+   -------------------------------------------------------------------------- */
+.cdn-footer-grid {
+  display: grid;
+  gap: var(--cdn-space-lg);
+  grid-template-columns: 1fr;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+@media (min-width: 480px) {
+  .cdn-footer-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .cdn-footer-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .cdn-footer-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Leader card — extends .cdn-card glassmorphism from tokens.css
+   -------------------------------------------------------------------------- */
+.cdn-footer-card {
+  min-height: 180px;
+  padding: var(--cdn-space-lg) var(--cdn-space-md) var(--cdn-space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--cdn-space-sm);
+}
+
+.cdn-footer-card-name {
+  font-size: var(--cdn-text-lg);
+  font-weight: var(--cdn-weight-semibold);
+  line-height: var(--cdn-leading-tight);
+  color: #2c1a0e;
+  margin: 0;
+}
+
+.awsui-dark-mode .cdn-footer-card-name {
+  color: var(--cdn-white);
+}
+
+.cdn-footer-card-bio {
+  font-size: var(--cdn-text-sm);
+  line-height: var(--cdn-leading-normal);
+  color: #4a2818;
+  flex: 1;
+}
+
+.awsui-dark-mode .cdn-footer-card-bio {
+  color: var(--cdn-lavender);
+}
+
+/* --------------------------------------------------------------------------
+   Social links row
+   -------------------------------------------------------------------------- */
+.cdn-footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--cdn-space-sm);
+  margin-top: auto;
+  padding-top: var(--cdn-space-sm);
+}
+
+.cdn-footer-social a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 28px;
+  min-height: 28px;
+  padding: var(--cdn-space-xs);
+  border-radius: var(--cdn-radius-sm);
+  font-size: var(--cdn-text-sm);
+  font-weight: var(--cdn-weight-medium);
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.cdn-footer-social a:hover {
+  transform: scale(1.08);
+}
+
+/* --------------------------------------------------------------------------
+   Placeholder card — "open slot" styling
+   -------------------------------------------------------------------------- */
+.cdn-footer-placeholder {
+  border-style: dashed !important;
+  border-width: 2px;
+  border-color: rgba(139, 90, 43, 0.25);
+  opacity: 0.85;
+  background: linear-gradient(
+    135deg,
+    rgba(250, 247, 240, 0.7) 0%,
+    rgba(245, 240, 228, 0.6) 100%
+  );
+}
+
+.cdn-footer-placeholder::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--cdn-aws-orange) 50%,
+    transparent 100%
+  ) !important;
+  opacity: 0.4 !important;
+}
+
+.awsui-dark-mode .cdn-footer-placeholder {
+  border-color: rgba(144, 96, 240, 0.25);
+  background: linear-gradient(
+    135deg,
+    rgba(28, 34, 48, 0.6) 0%,
+    rgba(30, 26, 48, 0.5) 100%
+  );
+}
+
+.awsui-dark-mode .cdn-footer-placeholder::before {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--cdn-aws-orange) 50%,
+    transparent 100%
+  ) !important;
+}
+
+.cdn-footer-placeholder .cdn-footer-card-name {
+  color: var(--cdn-amber);
+}
+
+.awsui-dark-mode .cdn-footer-placeholder .cdn-footer-card-name {
+  color: var(--cdn-aws-orange);
+}
+
+/* --------------------------------------------------------------------------
+   Bottom bar — copyright, links
+   -------------------------------------------------------------------------- */
+.cdn-footer-bottom {
+  margin-top: var(--cdn-space-xl);
+  padding-top: var(--cdn-space-md);
+  border-top: 1px solid rgba(139, 90, 43, 0.12);
+  text-align: center;
+  font-size: var(--cdn-text-sm);
+  color: #4a2818;
+  line-height: var(--cdn-leading-relaxed);
+}
+
+.awsui-dark-mode .cdn-footer-bottom {
+  border-top-color: rgba(144, 96, 240, 0.15);
+  color: var(--cdn-lavender);
+}
+
+.cdn-footer-bottom-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--cdn-space-md);
+  margin-bottom: var(--cdn-space-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion
+   -------------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .cdn-footer-social a {
+    transition: none;
+  }
+  .cdn-footer-placeholder::before {
+    animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Print styles — hide decorative elements
+   -------------------------------------------------------------------------- */
+@media print {
+  .cdn-footer {
+    background: #fff;
+    border-top: 1px solid #ccc;
+    box-shadow: none;
+  }
+  .cdn-footer .cdn-card::before,
+  .cdn-footer-social {
+    display: none;
+  }
+  .cdn-footer-placeholder {
+    border-style: solid;
+    opacity: 0.5;
+  }
+}
