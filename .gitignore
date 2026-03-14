@@ -10,6 +10,4 @@ src/data/releases.generated.json
 # Build artifacts
 *.tsbuildinfo
 coverage/
-.eslintcachecoverage/
-*.tsbuildinfo
 .eslintcache
