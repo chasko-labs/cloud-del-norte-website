@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 // These tests define the contract for src/utils/locale.ts
 // They will pass once the locale utility is implemented (PR #4)
