@@ -10,25 +10,24 @@ import Table, { TableProps } from '@cloudscape-design/components/table';
 import { useTranslation } from '../../../../hooks/useTranslation';
 
 const columnDefinitions = (t: (key: string) => string): TableProps['columnDefinitions'] => [
-  { header: t('home.tableHeaders.name'), cell: ({ name }) => name },
+  { header: t('home.tableHeaders.name'), cell: ({ name }) => t(name) },
   { header: t('home.tableHeaders.strong'), cell: ({ strong }) => strong },
   { header: t('home.tableHeaders.mild'), cell: ({ mild }) => mild },
   { header: t('home.tableHeaders.unnoticed'), cell: ({ unnoticed }) => unnoticed },
 ];
 
 export interface QualityReportProps {
-  quote: string;
   notes: TableProps['items'];
 }
 
-export default function QualityReport({ quote, notes }: QualityReportProps) {
+export default function QualityReport({ notes }: QualityReportProps) {
   const { t } = useTranslation();
   const [showTastingNotes, setShowTastingNotes] = useState(false);
 
   return (
     <div className="cdn-card">
       <Container header={<Header variant="h2">{t('home.userGroupHeader')}</Header>}>
-        <Box color="text-body-secondary">{quote}</Box>
+        <Box color="text-body-secondary">{t('home.communityDescription')}</Box>
         {/* <Button variant="normal" onClick={() => setShowTastingNotes(true)}>
         About Services Discussed
       </Button> */}

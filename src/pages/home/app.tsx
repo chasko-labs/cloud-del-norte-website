@@ -12,7 +12,7 @@ import ProductionOverview from './components/production-overview';
 import Meetings from './components/meetings';
 import QualityReport from './components/quality-report';
 import { HelpPanelHome } from '../create-meeting/components/help-panel-home';
-import { variationData, breakdownItems, productionMetrics, quote, notes } from './data';
+import { variationData, breakdownItems, productionMetrics, notes } from './data';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -40,7 +40,6 @@ export default function App() {
       onThemeChange={handleThemeChange}
       locale={locale}
       onLocaleChange={handleLocaleChange}
-      pageTitle="pages.home.title"
       breadcrumbs={<Breadcrumbs active={{ text: t('home.breadcrumb'), href: '/home/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}
@@ -55,7 +54,7 @@ export default function App() {
         <Grid gridDefinition={[{ colspan: 12 }, { colspan: 8 }, { colspan: 4 }]} disableGutters={false}>
           <ProductionOverview metrics={productionMetrics} />
           <Meetings data={variationData} items={breakdownItems} />
-          <QualityReport quote={quote} notes={notes} />
+          <QualityReport notes={notes} />
         </Grid>
       </ContentLayout>
     </Shell>

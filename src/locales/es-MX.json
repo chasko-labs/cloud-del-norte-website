@@ -45,14 +45,33 @@
     "goBuild": "Go Build"
   },
   "home": {
-    "breadcrumb": "Dashboard",
-    "header": "Dashboard",
+    "breadcrumb": "Tablero",
+    "header": "Tablero",
     "infoLink": "Info",
     "productionOverviewHeader": "Resumen de producción",
     "pastTopicsHeader": "Temas Pasados",
     "detailsHeader": "Detalles",
     "userGroupHeader": "#AWS User Group Nube of the North",
     "groupNotesModal": "Notas del grupo",
+    "communityDescription": "Nuestro primer meetup fue el Día Internacional de la Mujer 03/08/21 en Arrowhead Research Park, pa' impulsar el aprendizaje de la comunidad, la conciencia de negocios, el engagement estudiantil, las oportunidades de carrera, y el espíritu emprendedor y hobbyista. Queremos aprender de, servir, educar y entretener a la raza diversa de Juárez MX/El Paso + Las Cruces, todo Nuevo México, y las áreas rurales de alrededor.",
+    "metrics": {
+      "communityMembers": "Miembros de la Comunidad",
+      "fiveStarReviews": "Reseñas de 5 Estrellas",
+      "meetupsHeld": "Meetups Realizados",
+      "est": "Est."
+    },
+    "topics": {
+      "games3d": "Juegos y 3D",
+      "artificialIntelligence": "Inteligencia Artificial",
+      "serverlessLens": "Serverless Lens",
+      "spaceSatellite": "Espacio y Satélite"
+    },
+    "notes": {
+      "cherry": "cereza",
+      "raspberry": "frambuesa",
+      "rose": "rosa",
+      "strawberry": "fresa"
+    },
     "tableHeaders": {
       "name": "Nombre",
       "status": "Estado",
@@ -61,13 +80,6 @@
       "strong": "Fuerte",
       "mild": "Suave",
       "unnoticed": "Sin notar"
-    },
-    "pieChart": {
-      "chartAriaRoleDescription": "Gráfica de pastel",
-      "detailPopoverDismissAriaLabel": "Cerrar",
-      "legendAriaLabel": "Leyenda",
-      "filterSelectedAriaLabel": "Segmento seleccionado",
-      "segmentAriaRoleDescription": "segmento"
     }
   },
   "meetings": {
@@ -82,10 +94,6 @@
       "happened": "¿Pasó?",
       "onDemand": "On-Demand",
       "eventPage": "Página del Evento"
-    },
-    "filterCounter": {
-      "match": "resultado",
-      "matches": "resultados"
     },
     "empty": {
       "noMatches": "Sin resultados",
@@ -212,14 +220,5 @@
     "save": "Guardar",
     "close": "Cerrar",
     "info": "Info"
-  },
-  "pages": {
-    "home": { "title": "AWS UG Nube of the North" },
-    "meetings": { "title": "Nube of the North - Juntas" },
-    "createMeeting": { "title": "Nube of the North - Crear Junta" },
-    "maintenanceCalendar": { "title": "Nube of the North - Calendario de Mantenimiento" },
-    "learning": {
-      "api": { "title": "Nube of the North - Aprendizaje de API" }
-    }
   }
 }

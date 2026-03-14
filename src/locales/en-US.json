@@ -53,6 +53,25 @@
     "detailsHeader": "Details",
     "userGroupHeader": "#AWS User Group Cloud Del Norte",
     "groupNotesModal": "Group notes",
+    "communityDescription": "Holding our first meetup on International Women's Day 03/08/21 & Started at Arrowhead Research Park to further the community learning, business awareness, student engagement, career opportunities, and general entrepreneurial-garage-hobbyist spirit. We aim to learn from, serve, educate, and entertain the diverse people of the Juarez MX/El Paso + Las Cruces, all of New Mexico, and surrounding rural areas.",
+    "metrics": {
+      "communityMembers": "Community Members",
+      "fiveStarReviews": "5 Star Reviews",
+      "meetupsHeld": "Meetups Held",
+      "est": "Est."
+    },
+    "topics": {
+      "games3d": "Games & 3D",
+      "artificialIntelligence": "Artificial Intelligence",
+      "serverlessLens": "Serverless Lens",
+      "spaceSatellite": "Space & Satellite"
+    },
+    "notes": {
+      "cherry": "cherry",
+      "raspberry": "raspberry",
+      "rose": "rose",
+      "strawberry": "strawberry"
+    },
     "tableHeaders": {
       "name": "Name",
       "status": "Status",
@@ -61,13 +80,6 @@
       "strong": "Strong",
       "mild": "Mild",
       "unnoticed": "Unnoticed"
-    },
-    "pieChart": {
-      "chartAriaRoleDescription": "Pie chart",
-      "detailPopoverDismissAriaLabel": "Dismiss",
-      "legendAriaLabel": "Legend",
-      "filterSelectedAriaLabel": "Selected segment",
-      "segmentAriaRoleDescription": "segment"
     }
   },
   "meetings": {
@@ -82,10 +94,6 @@
       "happened": "Happened?",
       "onDemand": "On-Demand",
       "eventPage": "Event Page"
-    },
-    "filterCounter": {
-      "match": "match",
-      "matches": "matches"
     },
     "empty": {
       "noMatches": "No matches",
@@ -212,14 +220,5 @@
     "save": "Save",
     "close": "Close",
     "info": "Info"
-  },
-  "pages": {
-    "home": { "title": "AWS UG Cloud Del Norte" },
-    "meetings": { "title": "Cloud Del Norte - Meetings" },
-    "createMeeting": { "title": "Cloud Del Norte - Create Meeting" },
-    "maintenanceCalendar": { "title": "AWS UG Cloud Del Norte - Maintenance Calendar" },
-    "learning": {
-      "api": { "title": "Cloud Del Norte - API Learning" }
-    }
   }
 }
