@@ -5,6 +5,14 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
+   Global font smoothing
+   -------------------------------------------------------------------------- */
+:root {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* --------------------------------------------------------------------------
    Raw brand palette
    -------------------------------------------------------------------------- */
 :root {
@@ -95,6 +103,11 @@
   --cdn-font-smoothing:     antialiased;
   --cdn-letter-spacing-body: 0.01em;
 
+  /* ---------- Gradient tokens — light mode ---------- */
+  --cdn-gradient-nav-start: #2c1206;
+  --cdn-gradient-nav-mid:   #4a2010;
+  --cdn-gradient-nav-end:   #3d1a08;
+
   /* ---------- Table header visual weight — light mode ---------- */
   --color-background-table-header-hdjxos: #ede8db; /* warm amber — matches container header */
 }
@@ -118,6 +131,11 @@
 
   /* Table header — elevated surface in dark mode to distinguish from data rows */
   --color-background-table-header-hdjxos: #0a0a1f;
+
+  /* ---------- Gradient tokens — dark mode ---------- */
+  --cdn-gradient-nav-start: #00002a;
+  --cdn-gradient-nav-mid:   #200050;
+  --cdn-gradient-nav-end:   #30006a;
 }
 
 /* ==========================================================================

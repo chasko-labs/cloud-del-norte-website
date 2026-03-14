@@ -49,9 +49,9 @@
 .awsui-dark-mode .cdn-footer {
   background: linear-gradient(
     135deg,
-    #00002a 0%,
-    #200050 50%,
-    #30006a 100%
+    var(--cdn-gradient-nav-start) 0%,
+    var(--cdn-gradient-nav-mid) 50%,
+    var(--cdn-gradient-nav-end) 100%
   );
 }
 
