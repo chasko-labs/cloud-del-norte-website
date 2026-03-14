@@ -26,7 +26,7 @@ const App: React.FC = () => {
   useEffect(() => {
     document.title = t('pages.learning.api.title');
     document.documentElement.lang = locale === 'mx' ? 'es' : 'en';
-  }, []);
+  }, [locale]);
 
   return (
     <LocaleProvider locale={locale}>
