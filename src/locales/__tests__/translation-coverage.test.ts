@@ -84,6 +84,10 @@ describe('translation coverage', () => {
       'helpPanel.bryanChasko',                        // Proper name
       'helpPanel.jacobWright',                        // Proper name
       'helpPanel.userGroupTitle',                     // "AWS User Group" - proper noun
+      'navigation.roadmap',                           // "Roadmap" - universally understood term
+      'roadmap.title',                                // "Roadmap" - universally understood term
+      'roadmap.breadcrumb',                           // "Roadmap" - universally understood term
+      'roadmap.idea',                                 // "Idea" - same in Spanish
     ]);
 
     // Helper to get value by dot-notation key

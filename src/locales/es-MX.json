@@ -17,6 +17,7 @@
   },
   "navigation": {
     "home": "Inicio del Grupo",
+    "roadmap": "Roadmap",
     "meetings": "Juntas",
     "resources": "Recursos",
     "techDebtCountdowns": "Conteos de Deuda Técnica",
@@ -324,6 +325,15 @@
       "speedRatingMapping": "💨 Clasificación de Velocidad",
       "speedRatingMappingValue": "stats.movespeed ÷ 20  // código"
     }
+  },
+  "roadmap": {
+    "title": "Roadmap",
+    "breadcrumb": "Roadmap",
+    "idea": "Idea",
+    "todo": "Por Hacer",
+    "inProgress": "En Progreso",
+    "inReview": "En Revisión",
+    "done": "Hecho"
   },
   "maintenanceCalendar": {
     "breadcrumb": "Calendario de Mantenimiento",

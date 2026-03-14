@@ -8,6 +8,7 @@ export default function Navigation() {
   const { t } = useTranslation();
 
   const items: SideNavigationProps['items'] = [
+    { type: 'link', text: t('navigation.roadmap'), href: '/roadmap/index.html' },
     { type: 'link', text: t('navigation.meetings'), href: '/meetings/index.html' },
     { type: 'divider' },
     {
