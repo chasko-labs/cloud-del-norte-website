@@ -2,6 +2,7 @@ import React from 'react';
 import Box from '@cloudscape-design/components/box';
 import Badge from '@cloudscape-design/components/badge';
 import Link from '@cloudscape-design/components/link';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export interface Leader {
   id: string;
@@ -60,16 +61,19 @@ export default function LeaderCard({ leader }: LeaderCardProps) {
 }
 
 function PlaceholderCTA({ meetupUrl }: { meetupUrl: string | null }) {
+  const { t } = useTranslation();
   const url = meetupUrl ?? 'https://www.meetup.com/awsugclouddelnorte/';
   return (
     <span role="listitem">
       <Link href={url} external variant="primary" fontSize="body-s">
-        Join us on Meetup →
+        {t('footer.joinUs')}
       </Link>
     </span>
   );
 }
 
+// Social platform labels (GitHub, LinkedIn, X, Web, Meetup) are proper nouns / brand names
+// and are intentionally kept in English regardless of locale.
 function SocialLinks({ social, name }: { social: Leader['social']; name: string }) {
   const links: { label: string; href: string }[] = [];
 
