@@ -11,7 +11,7 @@ import Pagination from '@cloudscape-design/components/pagination';
 import Table, { TableProps } from '@cloudscape-design/components/table';
 
 import { meeting } from '../data';
-import { TextFilter } from '@cloudscape-design/components';
+import TextFilter from '@cloudscape-design/components/text-filter';
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import SpaceBetween from '@cloudscape-design/components/space-between';

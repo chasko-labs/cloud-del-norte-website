@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { AppLayout, TopNavigation, BreadcrumbGroup } from '@cloudscape-design/components';
+import AppLayout from '@cloudscape-design/components/app-layout';
+import TopNavigation from '@cloudscape-design/components/top-navigation';
+import BreadcrumbGroup from '@cloudscape-design/components/breadcrumb-group';
 import '@cloudscape-design/global-styles/index.css';
 import '../../../styles/tokens.css';
 import Navigation from '../../../components/navigation';

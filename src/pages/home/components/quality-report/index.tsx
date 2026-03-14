@@ -6,8 +6,10 @@ import Button from '@cloudscape-design/components/button';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import Modal from '@cloudscape-design/components/modal';
+import SpaceBetween from '@cloudscape-design/components/space-between';
 import Table, { TableProps } from '@cloudscape-design/components/table';
 import { useTranslation } from '../../../../hooks/useTranslation';
+import './styles.css';
 
 const columnDefinitions = (t: (key: string) => string): TableProps['columnDefinitions'] => [
   { header: t('home.tableHeaders.name'), cell: ({ name }) => name },
@@ -28,7 +30,11 @@ export default function QualityReport({ quote, notes }: QualityReportProps) {
   return (
     <div className="cdn-card">
       <Container header={<Header variant="h2">{t('home.userGroupHeader')}</Header>}>
-        <Box color="text-body-secondary">{quote}</Box>
+        <SpaceBetween size="m">
+          <Box color="text-body-secondary" padding={{ top: 'xs', bottom: 'xs' }}>
+            <p className="quote">{quote}</p>
+          </Box>
+        </SpaceBetween>
         {/* <Button variant="normal" onClick={() => setShowTastingNotes(true)}>
         About Services Discussed
       </Button> */}

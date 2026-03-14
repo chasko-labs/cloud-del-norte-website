@@ -51,7 +51,11 @@ export default function App() {
           </Header>
         }
       >
-        <Grid gridDefinition={[{ colspan: 12 }, { colspan: 8 }, { colspan: 4 }]} disableGutters={false}>
+        <Grid gridDefinition={[
+          { colspan: 12 },
+          { colspan: { default: 12, m: 8 } },
+          { colspan: { default: 12, m: 4 } },
+        ]}>
           <ProductionOverview metrics={productionMetrics} />
           <Meetings data={variationData} items={breakdownItems} />
           <QualityReport quote={quote} notes={notes} />
