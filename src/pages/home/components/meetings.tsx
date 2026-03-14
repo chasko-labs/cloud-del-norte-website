@@ -6,17 +6,17 @@ import Header from '@cloudscape-design/components/header';
 import PieChart, { PieChartProps } from '@cloudscape-design/components/pie-chart';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import Table, { TableProps } from '@cloudscape-design/components/table';
-import { SpaceBetween } from '@cloudscape-design/components';
+import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 const columnDefinitions = (t: (key: string) => string): TableProps['columnDefinitions'] => [
-  { header: t('home.tableHeaders.name'), cell: ({ name }) => t(name) },
+  { header: t('productionTable.headers.name'), cell: ({ name }) => t(name) },
   {
-    header: t('home.tableHeaders.status'),
+    header: t('productionTable.headers.status'),
     cell: ({ status }) => <StatusIndicator type={status.type}>{status.message}</StatusIndicator>,
   },
-  { header: t('home.tableHeaders.mixing'), cell: ({ mixing }) => mixing },
-  { header: t('home.tableHeaders.molding'), cell: ({ molding }) => molding },
+  { header: t('productionTable.headers.mixing'), cell: ({ mixing }) => mixing },
+  { header: t('productionTable.headers.molding'), cell: ({ molding }) => molding },
 ];
 
 export interface VariationsProps {
@@ -31,13 +31,13 @@ export default function meetings({ data, items }: VariationsProps) {
   return (
     <div className="cdn-card">
       <SpaceBetween size={'l'}>
-        <Container header={<Header variant="h2">{t('home.pastTopicsHeader')}</Header>}>
+        <Container header={<Header variant="h2">{t('dashboardPage.pastTopics.header')}</Header>}>
           <PieChart data={translatedData} hideFilter={true} i18nStrings={{
-            chartAriaRoleDescription: t('home.pieChart.chartAriaRoleDescription'),
-            detailPopoverDismissAriaLabel: t('home.pieChart.detailPopoverDismissAriaLabel'),
-            legendAriaLabel: t('home.pieChart.legendAriaLabel'),
-            filterSelectedAriaLabel: t('home.pieChart.filterSelectedAriaLabel'),
-            segmentAriaRoleDescription: t('home.pieChart.segmentAriaRoleDescription'),
+            chartAriaRoleDescription: t('pieChart.chartAriaRoleDescription'),
+            detailPopoverDismissAriaLabel: t('pieChart.detailPopoverDismissAriaLabel'),
+            legendAriaLabel: t('pieChart.legendAriaLabel'),
+            filterSelectedAriaLabel: t('pieChart.filterSelectedAriaLabel'),
+            segmentAriaRoleDescription: t('pieChart.segmentAriaRoleDescription'),
           }} />
         </Container>
         {/*       <Table
@@ -49,7 +49,8 @@ export default function meetings({ data, items }: VariationsProps) {
         ariaLabels={{
           tableLabel: 'Details table',
         }}
-      /> */}
+      />
+      */}
       </SpaceBetween>
     </div>
   );

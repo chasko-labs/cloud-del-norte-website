@@ -166,3 +166,158 @@ The old locale selectors (`[title*="English"]` / `[title*="Español"]`) were bro
 ### Quality Gates
 - ✅ `npm run lint` — clean
 - ✅ `npm test` — all 125 tests passing
+
+## Session 2025-07-18 — UX Responsiveness & Legibility Pass
+
+**Status:** ✅ Complete
+**Branch:** `squad/ux-responsiveness-pass`
+
+### What Changed
+
+1. **Home Grid responsive colspans** (`src/pages/home/app.tsx`)
+   - Changed fixed `{ colspan: 8 }` / `{ colspan: 4 }` → `{ colspan: { default: 12, m: 8 } }` / `{ colspan: { default: 12, m: 4 } }` — panels now stack vertically on mobile and side-by-side on medium+ screens.
+
+2. **QualityReport readability** (`src/pages/home/components/quality-report/index.tsx` + `styles.css`)
+   - Added `SpaceBetween` wrapper and `Box padding` for breathing room
+   - Wired the orphaned `.quote` CSS class via `<p className="quote">`
+   - Improved `.quote` CSS: `line-height: 1.7`, `font-size: var(--cdn-text-md)`, `max-width: 60ch`, `opacity: 0.85`
+   - Imported `styles.css` into the component
+
+3. **ProductionOverview responsive** (`src/pages/home/components/production-overview.tsx`)
+   - Added `minColumnWidth={150}` to ColumnLayout — 4 metrics now wrap to 2×2 on narrow viewports instead of crushing into 4 tiny columns.
+
+4. **Barrel import cleanup** (5 files across 4 pages)
+   - `home/meetings.tsx`: SpaceBetween barrel → deep import
+   - `meetings/meetings-table.tsx`: TextFilter barrel → deep import
+   - `create-meeting/app.tsx`: ContentLayout barrel → deep import
+   - `learning/api/main.tsx`: AppLayout, TopNavigation, BreadcrumbGroup barrel → 3 deep imports
+   - `learning/api/RiftRewindDashboard.tsx`: 9 components barrel → 9 deep imports
+
+### Patterns Applied
+- **Cloudscape responsive Grid:** Use `colspan: { default: 12, m: N }` for stacking on mobile
+- **ColumnLayout responsive:** Use `minColumnWidth` prop to control column wrapping, not just `columns`
+- **Text readability:** `line-height: 1.7`, `max-width: 60ch`, padding via Cloudscape Box/SpaceBetween
+- **Deep imports only:** Every barrel import (`import { X } from '@cloudscape-design/components'`) converted to deep import (`import X from '@cloudscape-design/components/x'`)
+
+### Key Decisions
+- Audited all 5 pages; only home page had responsive layout issues. Other pages either use ColumnLayout columns≤2 (already wraps fine) or don't use Grid.
+- The `create-meeting/marketing.tsx` ColumnLayout uses `columns={2}` which is fine responsively — left as-is.
+- Pre-existing lint/test/build failures in locale-context.tsx are NOT from this branch.
+
+### Quality Gates
+- ✅ Lint clean on all 9 changed files
+- ✅ Tests passing (pre-existing locale failures unrelated)
+- ✅ Build succeeds on clean working tree
+
+## Session 2025-07-26 — Navigation Drawer UX Audit
+
+**Status:** ✅ Complete
+
+### Problem
+
+On desktop (1440px+) and tablet (768px-1024px) widths, the SideNavigation appeared at 0px height. The navigation drawer existed in the DOM but was completely invisible — only visible elements were "User Group Home" and other nav items requiring non-existent scrolling.
+
+### Root Cause Analysis
+
+**Missing AppLayout Props:** The `AppLayout` component was not receiving `navigationOpen` or `onNavigationChange` props. Without explicit state management:
+1. Cloudscape defaults navigation to **closed** on all viewports
+2. The navigation container CSS Grid allocates `height: 0px`
+3. Grid template rows: `0px 0px 16px 28px...` — first two rows (navigation area) were 0px
+
+**Key Evidence from Chrome DevTools inspection:**
+- `awsui_navigation-container`: `height: 0px`, `position: sticky`, `top: 60px`
+- `awsui_navigation`: `height: 0px`, `overflow: hidden auto`
+- Navigation content (items, links) had proper heights (162px, 20-22px each) but were clipped by 0-height parent
+
+### Fix Applied
+
+Updated `src/layouts/shell/index.tsx`:
+
+1. **Added props to ShellProps interface:**
+   - `navigationOpen?: boolean` — controlled state
+   - `onNavigationChange?: (open: boolean) => void` — callback
+
+2. **Added responsive default state:**
+   ```tsx
+   const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+   const [navOpen, setNavOpen] = useState(controlledNavOpen ?? isDesktop);
+   ```
+
+3. **Wired AppLayout:**
+   ```tsx
+   <AppLayout
+     navigationOpen={navOpen}
+     onNavigationChange={handleNavigationChange}
+     // ... other props
+   />
+   ```
+
+### Learnings
+
+- **Cloudscape AppLayout navigation state:** Never rely on default — always explicitly manage `navigationOpen` and `onNavigationChange`
+- **Responsive breakpoint:** Use `>= 768px` for desktop (open by default), `< 768px` for mobile (closed by default)
+- **No custom CSS height overrides needed:** Cloudscape's internal grid handles all navigation height/spacing when `navigationOpen=true`
+- **Debugging technique:** Use `getComputedStyle()` in DevTools to trace height: 0px up the parent chain to find the collapsing container
+
+### Cloudscape Design Tokens
+
+Navigation spacing uses Cloudscape's internal grid system (controlled by AppLayout). The component handles its own responsive breakpoints. No custom spacing tokens (`--cdn-space-*`) needed for navigation container height.
+
+### Quality Gates
+
+- ✅ `npm run build` — succeeds
+- ✅ Navigation visible on desktop at 1440px
+- ✅ Toggle button works to open/close drawer
+- ✅ No custom CSS height overrides added
+
+## Session 2026-03-14 — Navigation State + CSS Fixes (Agent-32)
+
+**Status:** ✅ Complete
+
+### Navigation State Fix
+
+- **Root cause:** AppLayout missing `navigationOpen` and `onNavigationChange` props; defaulted to closed
+- **Symptom:** SideNavigation appeared at 0px height on desktop; items required scrolling
+- **Fix:** Added responsive state management to Shell component
+- **Pattern:** Open on desktop (≥768px), closed on mobile; never rely on Cloudscape defaults
+
+### Implementation
+
+```tsx
+const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+const [navOpen, setNavOpen] = useState(isDesktop);
+
+<AppLayout
+  navigationOpen={navOpen}
+  onNavigationChange={(event) => setNavOpen(event.detail.open)}
+/>
+```
+
+### CSS Fixes: Toggle Button Chrome & Locale-Aware Selectors
+
+**Chrome removal:** Added `background: transparent !important; border: none !important; box-shadow: none !important` to eliminate square artifact behind emoji buttons.
+
+**Locale-aware selectors:** Updated TopNavigation toggle CSS to match dynamic locale-dependent titles:
+- Theme toggle: `"light mode"` / `"dark mode"` / `"modo claro"` / `"modo oscuro"`
+- Locale toggle: `"Switch to Spanish"` / `"Cambiar a Inglés"`
+
+**Why:** Old selectors hardcoded English (`[title*="English"]`). After localization wiring, titles became dynamic via `t()` function.
+
+### Quality Metrics
+
+- Lint ✅, Tests ✅, Build ✅
+- Desktop/tablet/mobile responsive ✅
+- Theme/locale combinations ✅
+- No console errors ✅
+
+### Decisions Created
+
+- **DEC-005:** Navigation drawer state management standard (merged)
+- **DEC-006:** Toggle button CSS fixes (merged)
+- **DEC-009:** Responsive layout patterns for Cloudscape Grid/ColumnLayout (merged)
+
+### Key Learnings
+
+- **Cloudscape defaults are closed:** Never assume navigation is open — always explicitly manage state.
+- **CSS selectors must be locale-aware:** Hardcoded English substrings fail when content is localized.
+- **Responsive patterns matter:** Desktop/mobile have different navigation expectations. Let the component decide based on viewport.

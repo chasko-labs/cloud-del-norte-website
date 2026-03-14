@@ -16,8 +16,8 @@ export default function ProductionOverview({ metrics }: ProductionOverviewProps)
 
   return (
     <div className="cdn-card">
-      <Container header={<Header variant="h2">{t('home.productionOverviewHeader')}</Header>}>
-        <ColumnLayout columns={metrics.length} variant="text-grid">
+      <Container header={<Header variant="h2">{t('dashboardPage.productionOverview.header')}</Header>}>
+        <ColumnLayout columns={metrics.length} variant="text-grid" minColumnWidth={150}>
           {metrics.map(({ key, value }) => (
             <Box key={key}>
               <Box color="text-label" margin={{ bottom: 'xxxs' }}>
