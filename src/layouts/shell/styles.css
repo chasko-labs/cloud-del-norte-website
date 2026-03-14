@@ -86,6 +86,21 @@
    with !important fight Cloudscape's scoped CSS and can match unintended elements
    (e.g., [class*="navigation"] also matches top-navigation internals). Removed. */
 
+/* FIX — Remove AppLayout viewport-fill sizing.
+   Cloudscape sets inline min-block-size: calc(100vh - headerHeight) on AppLayout
+   and inline block-size: calc(100vh - headerHeight) on nav/content/tools containers.
+   Since Footer renders OUTSIDE AppLayout, this viewport-fill behavior creates a
+   giant whitespace gap between the last content and the footer.
+   Override with !important because Cloudscape applies these as inline styles. */
+main[class*="awsui_layout"] {
+  min-block-size: auto !important;
+}
+main[class*="awsui_layout"] > [class*="navigation-container"],
+main[class*="awsui_layout"] > [class*="tools-container"],
+main[class*="awsui_layout"] > [class*="content-container"] {
+  block-size: auto !important;
+}
+
 /* Light mode side nav — warm cream to match page.
    No --color-background-layout-side token exists in @cloudscape-design/design-tokens,
    so CSS selector fallback is used, scoped to light mode via :root:not(.awsui-dark-mode).
