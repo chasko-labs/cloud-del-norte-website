@@ -1,0 +1,37 @@
+{
+  "shell": {
+    "siteTitle": "Cloud Del Norte",
+    "switchToMx": "Cambiar a Español",
+    "switchToUs": "Cambiar a Inglés",
+    "more": "Más",
+    "all": "Todo"
+  },
+  "navigation": {
+    "home": "Inicio del Grupo",
+    "meetings": "Juntas",
+    "resources": "Recursos",
+    "techDebtCountdowns": "Conteos de Deuda Técnica",
+    "learning": "Aprendizaje",
+    "apiGuide": "Guía de API",
+    "restOverview": "Resumen de REST",
+    "uniformInterface": "1️⃣ Interfaz Uniforme",
+    "clientServer": "2️⃣ Cliente-Servidor",
+    "stateless": "3️⃣ Sin Estado",
+    "cacheable": "4️⃣ Cacheable",
+    "layeredSystem": "5️⃣ Sistema por Capas",
+    "codeOnDemand": "6️⃣ Código bajo Demanda",
+    "cheatSheet": "📋 Cheat Sheet de API",
+    "howItWorks": "⚙️ Cómo Funciona",
+    "projectResources": "🔗 Recursos del Proyecto"
+  },
+  "breadcrumbs": {
+    "home": "Cloud Del Norte"
+  },
+  "footer": {
+    "ourLeaders": "Nuestros Líderes",
+    "joinUs": "Únete en Meetup →",
+    "communityDescription": "AWS User Group Cloud Del Norte es parte de",
+    "globalCommunity": "Comunidad Global de AWS User Groups",
+    "goBuild": "Go Build"
+  }
+}

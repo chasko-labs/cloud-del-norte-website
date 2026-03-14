@@ -10,9 +10,11 @@ import VariationsTable from './components/meetings-table';
 
 import { variationsData } from './data';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
+import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 
 export default function App() {
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
+  const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme);
@@ -20,11 +22,19 @@ export default function App() {
     setStoredTheme(newTheme);
   };
 
+  const handleLocaleChange = (newLocale: Locale) => {
+    setLocale(newLocale);
+    applyLocale(newLocale);
+    setStoredLocale(newLocale);
+  };
+
   return (
     <ShellLayout
       contentType="table"
       theme={theme}
       onThemeChange={handleThemeChange}
+      locale={locale}
+      onLocaleChange={handleLocaleChange}
       breadcrumbs={<Breadcrumbs active={{ text: 'Meetings', href: '/meetings/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}

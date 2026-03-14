@@ -127,3 +127,18 @@
   }
 }
 
+/* LOCALE TOGGLE — flag flip on click, gentle pulse on hover */
+
+[class*="utility-button"]:has([title*="English"]):hover,
+[class*="utility-button"]:has([title*="Español"]):hover {
+  transform: scale(1.15);
+  filter: brightness(1.2);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  #top-nav[data-cdn-animating-locale] [class*="utility-button"]:has([title*="English"]),
+  #top-nav[data-cdn-animating-locale] [class*="utility-button"]:has([title*="Español"]) {
+    animation: cdn-toggle-flip 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
