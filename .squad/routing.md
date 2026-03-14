@@ -11,6 +11,7 @@
 | Cloudscape components, AppLayout, Shell, theming, design tokens, accessibility, `src/layouts/`, `src/components/`, `src/styles/` | Lyren | Cloudscape UI & Design Specialist |
 | Vite config, page anatomy, `index.html`/`main.tsx` scaffolding, build pipeline, S3 deploy, CloudFront, `vite.config.ts` | Vael | MPA Build & Deploy Engineer |
 | Page content, JSON data files, navigation items, fetch scripts, `src/data/`, `scripts/`, `src/components/navigation/` | Theren | Content & Data Specialist |
+| Translation keys, `src/locales/`, es-MX translations, locale coverage audits, `LOCALIZATION.md`, dialect accuracy, i18n string extraction | Calli | Localization & Translation Specialist |
 | Vitest, @testing-library/react, test patterns, Cloudscape mocking, coverage, `vitest.config.ts`, `*.test.{ts,tsx}` | Kess | Testing Lead |
 | Decision log, session history, orchestration log, knowledge synthesis | Scribe | Session logger (silent) |
 | Backlog, triage, label, assignment | Ralph | Work monitor |

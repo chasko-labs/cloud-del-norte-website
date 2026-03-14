@@ -5,15 +5,18 @@ import Box from '@cloudscape-design/components/box';
 import ColumnLayout from '@cloudscape-design/components/column-layout';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 export interface ProductionOverviewProps {
   metrics: { key: string; value: string }[];
 }
 
 export default function ProductionOverview({ metrics }: ProductionOverviewProps) {
+  const { t } = useTranslation();
+
   return (
     <div className="cdn-card">
-      <Container header={<Header variant="h2">Production overview</Header>}>
+      <Container header={<Header variant="h2">{t('home.productionOverviewHeader')}</Header>}>
         <ColumnLayout columns={metrics.length} variant="text-grid">
           {metrics.map(({ key, value }) => (
             <Box key={key}>

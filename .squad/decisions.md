@@ -92,3 +92,25 @@
 
 **Test result:** 99/99 passing
 
+---
+
+### DEC-007: Localization Integration — Full String Extraction & Translation Wiring
+
+**Date:** 2026-03-14
+**Author:** Harald (Coordinator), Calli (Localization)
+**Status:** ✅ Implemented
+
+**Decision:** Extract all hardcoded strings from pages and shared components into translation JSON files (en-US.json / es-MX.json) and wire `useTranslation()` hook throughout the app.
+
+**Key choices:**
+- 161 translation keys across 11 namespaces
+- Chihuahua norteño dialect for es-MX (informal "tú", regional slang)
+- English tech terms preserved (authentic code-switching)
+- Learning/API page: headers only, body content deferred
+- ShellContent extraction pattern for LocaleProvider context access
+- Custom lightweight i18n — no external dependency (react-intl, i18next) needed
+- Human review required before translations considered final
+
+**Rationale:** The existing i18n infrastructure (LocaleProvider, useTranslation hook, locale toggle) was well-built but unused. Completing the wiring makes the bilingual toggle functional and delivers value to the Spanish-speaking community members. MCP-powered translation with human review avoids AI slop.
+
+

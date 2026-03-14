@@ -15,6 +15,7 @@ import Table from '@cloudscape-design/components/table';
 import Navigation from '../../components/navigation';
 import Breadcrumbs from '../../components/breadcrumbs';
 import ShellLayout from '../../layouts/shell';
+import { useTranslation } from '../../hooks/useTranslation';
 
 import generatedData from '../../data/releases.generated.json';
 import type { TechCalendar, ReleaseEntry, ProjectedEntry, Confidence } from './types';
@@ -45,7 +46,7 @@ function dataSourceBadge(source: TechCalendar['dataSource']): React.ReactNode {
   return <Badge color={colorMap[source]}>{source}</Badge>;
 }
 
-function releaseCell(entry: ReleaseEntry | null): React.ReactNode {
+function releaseCell(entry: ReleaseEntry | null, t: (key: string) => string): React.ReactNode {
   if (!entry) return '—';
   return (
     <SpaceBetween size="xxs" direction="vertical">
@@ -53,14 +54,14 @@ function releaseCell(entry: ReleaseEntry | null): React.ReactNode {
       <Box variant="small" color="text-body-secondary">{entry.date}</Box>
       {entry.releaseNotesUrl && (
         <Link href={entry.releaseNotesUrl} external fontSize="body-s">
-          Release notes
+          {t('maintenanceCalendar.releaseNotes')}
         </Link>
       )}
     </SpaceBetween>
   );
 }
 
-function projectedCell(entry: ProjectedEntry | null): React.ReactNode {
+function projectedCell(entry: ProjectedEntry | null, t: (key: string) => string): React.ReactNode {
   if (!entry) return '—';
   return (
     <SpaceBetween size="xxs" direction="vertical">
@@ -69,7 +70,7 @@ function projectedCell(entry: ProjectedEntry | null): React.ReactNode {
       <Box variant="small" color="text-body-secondary">{entry.basedOn}</Box>
       {entry.sourceUrl && (
         <Link href={entry.sourceUrl} external fontSize="body-s">
-          Source
+          {t('maintenanceCalendar.source')}
         </Link>
       )}
     </SpaceBetween>
@@ -88,25 +89,25 @@ interface CalendarRow {
   projectedNextLTS: React.ReactNode;
 }
 
-function techToRow(tech: TechCalendar): CalendarRow {
+function techToRow(tech: TechCalendar, t: (key: string) => string): CalendarRow {
   return {
     id: tech.id,
-    mostRecentLTS: releaseCell(tech.mostRecentLTS),
-    priorLTS: releaseCell(tech.priorLTS),
-    secondPriorLTS: releaseCell(tech.secondPriorLTS),
-    mostRecentAny: releaseCell(tech.mostRecentAny),
-    projectedNextVersion: projectedCell(tech.projectedNextVersion),
-    projectedNextLTS: projectedCell(tech.projectedNextLTS),
+    mostRecentLTS: releaseCell(tech.mostRecentLTS, t),
+    priorLTS: releaseCell(tech.priorLTS, t),
+    secondPriorLTS: releaseCell(tech.secondPriorLTS, t),
+    mostRecentAny: releaseCell(tech.mostRecentAny, t),
+    projectedNextVersion: projectedCell(tech.projectedNextVersion, t),
+    projectedNextLTS: projectedCell(tech.projectedNextLTS, t),
   };
 }
 
-const TABLE_COLUMNS = [
-  { id: 'mostRecentLTS', header: 'Most Recent LTS', cell: (r: CalendarRow) => r.mostRecentLTS },
-  { id: 'priorLTS', header: 'Prior LTS', cell: (r: CalendarRow) => r.priorLTS },
-  { id: 'secondPriorLTS', header: '2nd Prior LTS', cell: (r: CalendarRow) => r.secondPriorLTS },
-  { id: 'mostRecentAny', header: 'Most Recent Release', cell: (r: CalendarRow) => r.mostRecentAny },
-  { id: 'projectedNextVersion', header: 'Projected Next Release', cell: (r: CalendarRow) => r.projectedNextVersion },
-  { id: 'projectedNextLTS', header: 'Projected Next LTS', cell: (r: CalendarRow) => r.projectedNextLTS },
+const TABLE_COLUMNS = (t: (key: string) => string) => [
+  { id: 'mostRecentLTS', header: t('maintenanceCalendar.tableHeaders.mostRecentLTS'), cell: (r: CalendarRow) => r.mostRecentLTS },
+  { id: 'priorLTS', header: t('maintenanceCalendar.tableHeaders.priorLTS'), cell: (r: CalendarRow) => r.priorLTS },
+  { id: 'secondPriorLTS', header: t('maintenanceCalendar.tableHeaders.secondPriorLTS'), cell: (r: CalendarRow) => r.secondPriorLTS },
+  { id: 'mostRecentAny', header: t('maintenanceCalendar.tableHeaders.mostRecentRelease'), cell: (r: CalendarRow) => r.mostRecentAny },
+  { id: 'projectedNextVersion', header: t('maintenanceCalendar.tableHeaders.projectedNextRelease'), cell: (r: CalendarRow) => r.projectedNextVersion },
+  { id: 'projectedNextLTS', header: t('maintenanceCalendar.tableHeaders.projectedNextLTS'), cell: (r: CalendarRow) => r.projectedNextLTS },
 ];
 
 // ── unique categories in seed-data order ────────────────────────────────────
@@ -134,7 +135,7 @@ function uniqueCategories(techs: TechCalendar[]): string[] {
 
 // ── per-tech section ─────────────────────────────────────────────────────────
 
-function TechSection({ tech }: { tech: TechCalendar }) {
+function TechSection({ tech, t }: { tech: TechCalendar; t: (key: string) => string }) {
   const handleExport = () => {
     const content = generateICSForTech(tech);
     downloadICS(`${tech.id}.ics`, content);
@@ -143,8 +144,8 @@ function TechSection({ tech }: { tech: TechCalendar }) {
   return (
     <section id={tech.id} style={{ marginBottom: '2rem' }}>
       <Table
-        columnDefinitions={TABLE_COLUMNS}
-        items={[techToRow(tech)]}
+        columnDefinitions={TABLE_COLUMNS(t)}
+        items={[techToRow(tech, t)]}
         variant="container"
         header={
           <Header
@@ -153,7 +154,7 @@ function TechSection({ tech }: { tech: TechCalendar }) {
               <SpaceBetween size="xs" direction="horizontal">
                 {dataSourceBadge(tech.dataSource)}
                 <Button onClick={handleExport} iconName="download">
-                  Export (.ics)
+                  {t('maintenanceCalendar.export')}
                 </Button>
               </SpaceBetween>
             }
@@ -163,7 +164,7 @@ function TechSection({ tech }: { tech: TechCalendar }) {
             </Link>
           </Header>
         }
-        empty={<Box>No data available</Box>}
+        empty={<Box>{t('maintenanceCalendar.noDataAvailable')}</Box>}
       />
     </section>
   );
@@ -172,9 +173,10 @@ function TechSection({ tech }: { tech: TechCalendar }) {
 // ── main component ────────────────────────────────────────────────────────────
 
 export default function MaintenanceCalendar() {
+  const { t } = useTranslation();
   const categories = uniqueCategories(allTechs);
   const categoryOptions = [
-    { value: 'all', label: 'All categories' },
+    { value: 'all', label: t('maintenanceCalendar.allCategories') },
     ...categories.map(c => ({ value: c, label: c })),
   ];
 
@@ -196,14 +198,14 @@ export default function MaintenanceCalendar() {
   return (
     <ShellLayout
       contentType="default"
-      breadcrumbs={<Breadcrumbs active={{ text: 'Maintenance Calendar', href: '/maintenance-calendar/' }} />}
+      breadcrumbs={<Breadcrumbs active={{ text: t('maintenanceCalendar.breadcrumb'), href: '/maintenance-calendar/' }} />}
       navigation={<Navigation />}
     >
       <ContentLayout
         header={
           <Header
             variant="h1"
-            description="Release cadence tracker for 23 technologies — LTS history, recent releases, and projected dates."
+            description={t('maintenanceCalendar.description')}
             actions={
               <SpaceBetween size="xs" direction="horizontal">
                 <Select
@@ -212,21 +214,21 @@ export default function MaintenanceCalendar() {
                     setSelectedCategory(detail.selectedOption as { value: string; label: string })
                   }
                   options={categoryOptions}
-                  ariaLabel="Filter by category"
+                  ariaLabel={t('maintenanceCalendar.filterByCategory')}
                 />
                 <Button onClick={handleExportAll} iconName="download" variant="primary">
-                  Export All (.ics)
+                  {t('maintenanceCalendar.exportAll')}
                 </Button>
               </SpaceBetween>
             }
           >
-            Maintenance Calendar
+            {t('maintenanceCalendar.header')}
           </Header>
         }
       >
         <SpaceBetween size="l">
           {visibleTechs.map(tech => (
-            <TechSection key={tech.id} tech={tech} />
+            <TechSection key={tech.id} tech={tech} t={t} />
           ))}
         </SpaceBetween>
       </ContentLayout>

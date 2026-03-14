@@ -3,8 +3,17 @@
     "siteTitle": "Cloud Del Norte",
     "switchToMx": "Switch to Spanish",
     "switchToUs": "Switch to English",
+    "switchToLightMode": "Switch to light mode",
+    "switchToDarkMode": "Switch to dark mode",
     "more": "More",
-    "all": "All"
+    "all": "All",
+    "navigationDrawer": "Navigation drawer",
+    "closeNavigationDrawer": "Close navigation drawer",
+    "openNavigationDrawer": "Open navigation drawer",
+    "notifications": "Notifications",
+    "helpPanel": "Help panel",
+    "closeHelpPanel": "Close help panel",
+    "openHelpPanel": "Open help panel"
   },
   "navigation": {
     "home": "User Group Home",
@@ -32,6 +41,165 @@
     "joinUs": "Join us on Meetup →",
     "communityDescription": "AWS User Group Cloud Del Norte is part of AWS User Groups'",
     "globalCommunity": "Global AWS User Group Community",
+    "communityFullDescription": "We are run by volunteers local to New Mexico, West Texas & Chihuahua, Mexico. We believe projects, careers & issues can be accelerated using AWS, & wish to pass our knowledge, connections & experiences on to you & see what you",
     "goBuild": "Go Build"
+  },
+  "home": {
+    "breadcrumb": "Dashboard",
+    "header": "Dashboard",
+    "infoLink": "Info",
+    "productionOverviewHeader": "Production overview",
+    "pastTopicsHeader": "Past Topics",
+    "detailsHeader": "Details",
+    "userGroupHeader": "#AWS User Group Cloud Del Norte",
+    "groupNotesModal": "Group notes",
+    "tableHeaders": {
+      "name": "Name",
+      "status": "Status",
+      "mixing": "Mixing (kg/h)",
+      "molding": "Molding (kg/h)",
+      "strong": "Strong",
+      "mild": "Mild",
+      "unnoticed": "Unnoticed"
+    }
+  },
+  "meetings": {
+    "breadcrumb": "Meetings",
+    "header": "meetings",
+    "createButton": "Create meeting",
+    "editButton": "Edit",
+    "findPlaceholder": "Find meetings",
+    "tableHeaders": {
+      "meetupTitle": "Meetup Title",
+      "presenters": "Presenters",
+      "happened": "Happened?",
+      "onDemand": "On-Demand",
+      "eventPage": "Event Page"
+    },
+    "empty": {
+      "noMatches": "No matches",
+      "noMatchesSubtitle": "We can't find a match.",
+      "clearFilter": "Clear filter",
+      "noMeetings": "No meetings",
+      "noMeetingsSubtitle": "No meetings to display."
+    },
+    "preferences": {
+      "title": "Preferences",
+      "pageSize": "Select page size",
+      "resources10": "10 resources",
+      "resources20": "20 resources",
+      "resources50": "50 resources",
+      "resources100": "100 resources",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "aria": {
+      "selectionGroup": "Items selection",
+      "tableLabel": "meetings table"
+    }
+  },
+  "createMeeting": {
+    "breadcrumb": "Create meeting",
+    "header": "Create meeting",
+    "description": "Create a new meeting by specifying details, event link, and speakers.",
+    "cancel": "Cancel",
+    "submit": "Create meeting",
+    "helpPanelHeader": "Help panel",
+    "meetingType": {
+      "header": "Meeting Type",
+      "shapeLabel": "Shape",
+      "virtual": "Virtual",
+      "virtualDescription": "Virtual Only Meetups",
+      "inPerson": "In-Person",
+      "inPersonDescription": "In person hosted events, including hybrid"
+    },
+    "meetingDetails": {
+      "header": "MeetingDetails",
+      "pricesLabel": "Prices",
+      "pricesDescription": "Define the prices for wholesale and retail.",
+      "meetupLinkLabel": "Meetup Link",
+      "speakerNamesLabel": "Speaker Names",
+      "additionalNotesLabel": "Additional notes",
+      "optional": " - optional",
+      "linkRequired": "Link is required.",
+      "presenterRequired": "Presenter is required.",
+      "errorIconAriaLabel": "Error"
+    },
+    "details": {
+      "header": "details",
+      "listLabel": "List of details",
+      "selectPlaceholder": "Select all details",
+      "listRequired": "List of details is required.",
+      "publishedLabel": "Published",
+      "no": "No",
+      "yes": "Yes",
+      "deselectAriaLabel": "Deselect",
+      "noLabel": "no label"
+    }
+  },
+  "helpPanel": {
+    "rsvpHeader": "RSVP for Live Events",
+    "cloudDelNorteMeetups": "Cloud Del Norte Meetups",
+    "blenderMeetups": "Blender & Graphic Design:NE3D",
+    "userGroupTitle": "☁️ #AWSelfTaught UG",
+    "communityDescription": "AWS UG Cloud Del Norte are self-organized and self-taught learners on a quest to network, experiment, and upskill together. We hold in-person, virtual, and hybrid meetups focusing on regional topics to rural New Mexico, West Texas, Northern Chihuaha, the Borderplex and beyond.",
+    "organizersWantedHeader": "Organizers Wanted",
+    "spanishSpeakers": "Spanish-Speakers Sought.",
+    "studentsStepUp": "Students to Step Up.",
+    "womenWelcome": "Women Welcome.",
+    "globalCommunityHeader": "AWS Global Community",
+    "findLocalGroup": "Find your local AWS User Group on Meetup.",
+    "communityLeadersHeader": "Community Leaders",
+    "jacobWright": "Jacob Wright",
+    "reachOutLinkedIn": "reach out on LinkedIn",
+    "bryanChasko": "Bryan Chasko",
+    "awsHeroBio": "AWS Hero Bio",
+    "bryansHomepage": "Bryan's HomePage"
+  },
+  "learning": {
+    "api": {
+      "howRiotAPIRESTful": "🌐 How Riot Games API is RESTful",
+      "uniformInterfaceDemonstration": "🎯 Uniform Interface Demonstration",
+      "contestsEndpoint": "1️⃣ Contests Endpoint",
+      "apiAccessDataStructure": "📊 API Access & Data Structure",
+      "availableWithBasicKey": "✅ Available with Basic API Key",
+      "requiresSpecialAccess": "❌ Requires Special Access",
+      "tournamentDataStructure": "🏆 Tournament Data Structure",
+      "technicalImplementation": "🛠️ Technical Implementation",
+      "dataSources": "📊 Data Sources",
+      "architectureStack": "🏧 Architecture Stack",
+      "championDataMapping": "🎯 Champion Data Mapping"
+    }
+  },
+  "maintenanceCalendar": {
+    "breadcrumb": "Maintenance Calendar",
+    "header": "Maintenance Calendar",
+    "description": "Release cadence tracker for 23 technologies — LTS history, recent releases, and projected dates.",
+    "filterByCategory": "Filter by category",
+    "exportAll": "Export All (.ics)",
+    "export": "Export (.ics)",
+    "allCategories": "All categories",
+    "noDataAvailable": "No data available",
+    "tableHeaders": {
+      "mostRecentLTS": "Most Recent LTS",
+      "priorLTS": "Prior LTS",
+      "secondPriorLTS": "2nd Prior LTS",
+      "mostRecentRelease": "Most Recent Release",
+      "projectedNextRelease": "Projected Next Release",
+      "projectedNextLTS": "Projected Next LTS"
+    },
+    "releaseNotes": "Release notes",
+    "source": "Source"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "submit": "Submit",
+    "edit": "Edit",
+    "create": "Create",
+    "delete": "Delete",
+    "save": "Save",
+    "close": "Close",
+    "info": "Info"
   }
 }

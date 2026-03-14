@@ -2,13 +2,14 @@
 // SPDX-License-Identifier: MIT-0
 import React from 'react';
 import BreadcrumbGroup, { BreadcrumbGroupProps } from '@cloudscape-design/components/breadcrumb-group';
-
-const items: BreadcrumbGroupProps.Item[] = [{ text: 'Cloud Del Norte', href: '/home/index.html' }];
+import { useTranslation } from '../../hooks/useTranslation';
 
 export interface BreadcrumbsProps {
   active: BreadcrumbGroupProps.Item;
 }
 
 export default function Breadcrumbs({ active }: BreadcrumbsProps) {
+  const { t } = useTranslation();
+  const items: BreadcrumbGroupProps.Item[] = [{ text: t('breadcrumbs.home'), href: '/home/index.html' }];
   return <BreadcrumbGroup items={[...items, active]} />;
 }

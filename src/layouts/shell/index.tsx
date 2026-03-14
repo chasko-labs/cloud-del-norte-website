@@ -6,6 +6,7 @@ import TopNavigation from '@cloudscape-design/components/top-navigation';
 import Footer from '../../components/footer';
 import { type Locale } from '../../utils/locale';
 import { LocaleProvider } from '../../contexts/locale-context';
+import { useTranslation } from '../../hooks/useTranslation';
 
 import './styles.css';
 
@@ -22,7 +23,8 @@ export interface ShellProps {
   onLocaleChange?: (locale: Locale) => void;
 }
 
-export default function Shell({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange }: ShellProps) {
+function ShellContent({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange }: ShellProps) {
+  const { t } = useTranslation();
   const [animating, setAnimating] = useState(false);
   const [animatingLocale, setAnimatingLocale] = useState(false);
 
@@ -39,31 +41,31 @@ export default function Shell({ children, contentType, breadcrumbs, tools, navig
   }, [locale, onLocaleChange]);
 
   return (
-    <LocaleProvider locale={locale ?? 'us'}>
+    <>
       <div id="top-nav" data-cdn-animating={animating || undefined} data-cdn-animating-locale={animatingLocale || undefined}>
         <TopNavigation
           identity={{
             /*             logo: { src: '/logo.svg', alt: 'Cloud Del Norte Logo' }, */
-            title: 'Cloud Del Norte',
+            title: t('shell.siteTitle'),
             href: '/home/index.html',
           }}
           utilities={[
             {
               type: 'button',
               text: locale === 'mx' ? '🇺🇸' : '🇲🇽',
-              title: locale === 'mx' ? 'Switch to English' : 'Cambiar a Español',
+              title: locale === 'mx' ? t('shell.switchToUs') : t('shell.switchToMx'),
               onClick: handleToggleLocale,
             },
             {
               type: 'button',
               text: theme === 'dark' ? '☀️' : '🌙',
-              title: theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode',
+              title: theme === 'dark' ? t('shell.switchToLightMode') : t('shell.switchToDarkMode'),
               onClick: handleToggleTheme,
             }
           ]}
           i18nStrings={{
-            overflowMenuTriggerText: 'More',
-            overflowMenuTitleText: 'All',
+            overflowMenuTriggerText: t('shell.more'),
+            overflowMenuTitleText: t('shell.all'),
           }}
         />
       </div>
@@ -78,16 +80,24 @@ export default function Shell({ children, contentType, breadcrumbs, tools, navig
         headerSelector="#top-nav"
         footerSelector="#site-footer"
         ariaLabels={{
-          navigation: 'Navigation drawer',
-          navigationClose: 'Close navigation drawer',
-          navigationToggle: 'Open navigation drawer',
-          notifications: 'Notifications',
-          tools: 'Help panel',
-          toolsClose: 'Close help panel',
-          toolsToggle: 'Open help panel',
+          navigation: t('shell.navigationDrawer'),
+          navigationClose: t('shell.closeNavigationDrawer'),
+          navigationToggle: t('shell.openNavigationDrawer'),
+          notifications: t('shell.notifications'),
+          tools: t('shell.helpPanel'),
+          toolsClose: t('shell.closeHelpPanel'),
+          toolsToggle: t('shell.openHelpPanel'),
         }}
       />
       <Footer />
+    </>
+  );
+}
+
+export default function Shell(props: ShellProps) {
+  return (
+    <LocaleProvider locale={props.locale ?? 'us'}>
+      <ShellContent {...props} />
     </LocaleProvider>
   );
 }

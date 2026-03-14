@@ -15,39 +15,40 @@ import { TextFilter } from '@cloudscape-design/components';
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
 import SpaceBetween from '@cloudscape-design/components/space-between';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 const getFilterCounterText = (count = 0) => `${count} ${count === 1 ? 'match' : 'matches'}`;
 const getHeaderCounterText = (items: readonly meeting[] = [], selectedItems: readonly meeting[] = []) => {
   return selectedItems && selectedItems.length > 0 ? `(${selectedItems.length}/${items.length})` : `(${items.length})`;
 };
 
-const columnDefinitions: TableProps<meeting>['columnDefinitions'] = [
+const columnDefinitions = (t: (key: string) => string): TableProps<meeting>['columnDefinitions'] => [
   {
-    header: 'Meetup Title',
+    header: t('meetings.tableHeaders.meetupTitle'),
     cell: ({ name }) => name,
     sortingField: 'name',
     minWidth: 175,
   },
   {
-    header: 'Presenters',
+    header: t('meetings.tableHeaders.presenters'),
     cell: ({ presenters }) => presenters,
     sortingField: 'presenters',
     minWidth: 160,
   },
   {
-    header: 'Happened?',
+    header: t('meetings.tableHeaders.happened'),
     cell: ({ happened }) => happened,
     sortingField: 'happened',
     minWidth: 90,
   },
   {
-    header: 'On-Demand',
+    header: t('meetings.tableHeaders.onDemand'),
     cell: ({ ondemand }) => ondemand,
     sortingField: 'ondemand',
     minWidth: 140,
   },
   {
-    header: 'Event Page',
+    header: t('meetings.tableHeaders.eventPage'),
     cell: ({ eventlink }) => eventlink,
     sortingField: 'eventlink',
     minWidth: 160,
@@ -73,6 +74,7 @@ export interface VariationTableProps {
 }
 
 export default function VariationTable({ meetings }: VariationTableProps) {
+  const { t } = useTranslation();
   const [preferences, setPreferences] = useState<CollectionPreferencesProps['preferences']>({ pageSize: 20 });
   const { items, filterProps, actions, filteredItemsCount, paginationProps, collectionProps } = useCollection<meeting>(
     meetings,
@@ -80,17 +82,17 @@ export default function VariationTable({ meetings }: VariationTableProps) {
       filtering: {
         noMatch: (
           <EmptyState
-            title="No matches"
+            title={t('meetings.empty.noMatches')}
             subtitle="We can’t find a match."
-            action={<Button onClick={() => actions.setFiltering('')}>Clear filter</Button>}
+            action={<Button onClick={() => actions.setFiltering('')}>{ }{t('meetings.empty.clearFilter')}</Button>}
           />
         ),
         empty: (
-          <EmptyState title="No meetings" subtitle="No meetings to display." action={<Button>Create meeting</Button>} />
+          <EmptyState title={t('meetings.empty.noMeetings')} subtitle={t('meetings.empty.noMeetingsSubtitle')} action={<Button>{t('meetings.createButton')}</Button>} />
         ),
       },
       pagination: { pageSize: preferences?.pageSize },
-      sorting: { defaultState: { sortingColumn: columnDefinitions[0] } },
+      sorting: { defaultState: { sortingColumn: columnDefinitions(t)[0] } },
       selection: {},
     }
   );
@@ -100,18 +102,18 @@ export default function VariationTable({ meetings }: VariationTableProps) {
       {...collectionProps}
       enableKeyboardNavigation={false}
       items={items}
-      columnDefinitions={columnDefinitions}
+      columnDefinitions={columnDefinitions(t)}
       stickyHeader={true}
       resizableColumns={true}
       variant="full-page"
       //selectionType="single"
       ariaLabels={{
-        selectionGroupLabel: 'Items selection',
+        selectionGroupLabel: t('meetings.aria.selectionGroup'),
         itemSelectionLabel: ({ selectedItems }, item) => {
           const isItemSelected = selectedItems.filter(i => i.name === item.name).length;
           return `${item.name} is ${isItemSelected ? '' : 'not '}selected`;
         },
-        tableLabel: 'meetings table',
+        tableLabel: t('meetings.aria.tableLabel'),
       }}
       header={
         <Header
@@ -119,21 +121,21 @@ export default function VariationTable({ meetings }: VariationTableProps) {
           counter={getHeaderCounterText(meetings, collectionProps.selectedItems)}
           actions={
             <SpaceBetween size="xs" direction="horizontal">
-              <Button disabled={collectionProps.selectedItems?.length === 0}>Edit</Button>
+              <Button disabled={collectionProps.selectedItems?.length === 0}>{t('meetings.editButton')}</Button>
               <Button disabled={collectionProps.selectedItems?.length === 0} href="/create-meeting/index.html" variant="primary">
-                Create meeting
+                {t('meetings.createButton')}
               </Button>
             </SpaceBetween>
           }
         >
-          meetings
+          {t('meetings.header')}
         </Header>
       }
       pagination={<Pagination {...paginationProps} />}
       filter={
         <TextFilter
           {...filterProps}
-          filteringPlaceholder="Find meetings"
+          filteringPlaceholder={t('meetings.findPlaceholder')}
           countText={getFilterCounterText(filteredItemsCount)}
         />
       }
@@ -141,18 +143,18 @@ export default function VariationTable({ meetings }: VariationTableProps) {
         <CollectionPreferences
           preferences={preferences}
           pageSizePreference={{
-            title: 'Select page size',
+            title: t('meetings.preferences.pageSize'),
             options: [
-              { value: 10, label: '10 resources' },
-              { value: 20, label: '20 resources' },
-              { value: 50, label: '50 resources' },
-              { value: 100, label: '100 resources' },
+              { value: 10, label: t('meetings.preferences.resources10') },
+              { value: 20, label: t('meetings.preferences.resources20') },
+              { value: 50, label: t('meetings.preferences.resources50') },
+              { value: 100, label: t('meetings.preferences.resources100') },
             ],
           }}
           onConfirm={({ detail }) => setPreferences(detail)}
-          title="Preferences"
-          confirmLabel="Confirm"
-          cancelLabel="Cancel"
+          title={t('meetings.preferences.title')}
+          confirmLabel={t('meetings.preferences.confirm')}
+          cancelLabel={t('meetings.preferences.cancel')}
         />
       }
     />

@@ -15,8 +15,10 @@ import { HelpPanelHome } from '../create-meeting/components/help-panel-home';
 import { variationData, breakdownItems, productionMetrics, quote, notes } from './data';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export default function App() {
+  const { t } = useTranslation();
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
   const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
@@ -38,14 +40,14 @@ export default function App() {
       onThemeChange={handleThemeChange}
       locale={locale}
       onLocaleChange={handleLocaleChange}
-      breadcrumbs={<Breadcrumbs active={{ text: 'Dashboard', href: '/home/index.html' }} />}
+      breadcrumbs={<Breadcrumbs active={{ text: t('home.breadcrumb'), href: '/home/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}
     >
       <ContentLayout
         header={
-          <Header variant="h1" info={<Link variant="info">Info</Link>}>
-            Dashboard
+          <Header variant="h1" info={<Link variant="info">{t('home.infoLink')}</Link>}>
+            {t('home.header')}
           </Header>
         }
       >

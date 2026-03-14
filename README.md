@@ -83,12 +83,29 @@ See [AGENTS.md](AGENTS.md) for the full architectural conventions and constraint
 
 ## Localization
 
-The site supports two locales via a flag toggle (next to the theme toggle):
+The site supports two locales, toggled via 🇺🇸↔🇲🇽 in the top navigation:
 
-- **🇺🇸 US** — New Mexican English with Spanglish & local slang
-- **🇲🇽 MX** — Chihuahua dialect Spanish (norteño)
+| Locale | Flag | Description |
+| ------ | ---- | ----------- |
+| `us` | 🇺🇸 | New Mexican English — El Paso Spanglish + local slang |
+| `mx` | 🇲🇽 | Chihuahua norteño Spanish — Ciudad Juárez dialect |
 
-See [LOCALIZATION.md](LOCALIZATION.md) for dialect guides, translation guidelines, and open linguistic resources for the El Paso / Juárez / Las Cruces border region.
+Translation files live in `src/locales/`:
+- `en-US.json` — English (source of truth)
+- `es-MX.json` — Spanish (human-reviewed translations)
+
+Components use the `useTranslation()` hook:
+
+```tsx
+import { useTranslation } from '../../hooks/useTranslation';
+
+export default function MyComponent() {
+  const { t } = useTranslation();
+  return <Header>{t('namespace.headerTitle')}</Header>;
+}
+```
+
+See [LOCALIZATION.md](LOCALIZATION.md) for dialect guides, key naming conventions, and translation workflow.
 
 ---
 

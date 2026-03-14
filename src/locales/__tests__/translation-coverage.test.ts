@@ -57,4 +57,64 @@ describe('translation coverage', () => {
     expect(Object.keys(enUS).length).toBeGreaterThanOrEqual(3);
     expect(Object.keys(esMX).length).toBeGreaterThanOrEqual(3);
   });
+
+  it('es-MX translations differ from en-US (no untranslated values)', () => {
+    // Allowlist for keys that should be identical (proper nouns, technical terms, common tech terms)
+    const allowIdentical = new Set([
+      'shell.siteTitle',                              // "Cloud Del Norte" - proper noun
+      'breadcrumbs.home',                             // "Cloud Del Norte" - proper noun
+      'home.infoLink',                                // "Info" - universal abbreviation
+      'common.info',                                  // "Info" - universal abbreviation
+      'footer.goBuild',                               // "Go Build" - AWS tagline
+      'navigation.apiGuide',                          // "API" - common in Spanish
+      'navigation.cacheable',                         // "Cacheable" - technical term used in Spanish
+      'apiGuide.api',                                 // "API" - acronym
+      'meetingDetail.rsvp',                           // "RSVP" - universal abbreviation
+      'createMeeting.url',                            // "URL" - universal abbreviation
+      'createMeeting.api',                            // "API" - acronym
+      'createMeeting.details.no',                     // "No" - same in Spanish
+      'createMeeting.meetingDetails.errorIconAriaLabel', // "Error" - common tech term
+      'createMeeting.meetingType.virtual',            // "Virtual" - same in Spanish
+      'maintenanceCalendar.lts',                      // "LTS" - technical acronym
+      'maintenanceCalendar.releaseNotes',             // "Release Notes" - technical term
+      'meetings.tableHeaders.onDemand',               // "On-Demand" - technical term
+      'home.breadcrumb',                              // "Dashboard" - Anglicism commonly used in Spanish tech
+      'home.header',                                  // "Dashboard" - Anglicism commonly used in Spanish tech
+      'home.userGroupHeader',                         // Contains "#AWS User Group" - proper noun
+      'helpPanel.bryanChasko',                        // Proper name
+      'helpPanel.jacobWright',                        // Proper name
+      'helpPanel.userGroupTitle',                     // "AWS User Group" - proper noun
+    ]);
+
+    // Helper to get value by dot-notation key
+    const getValue = (obj: Record<string, unknown>, key: string): string => {
+      const value = key.split('.').reduce((o: unknown, k: string) => {
+        if (o && typeof o === 'object') return (o as Record<string, unknown>)[k];
+        return undefined;
+      }, obj);
+      return value as string;
+    };
+
+    const untranslated: string[] = [];
+    for (const key of enKeys) {
+      if (allowIdentical.has(key)) continue;
+      
+      const enValue = getValue(enUS as Record<string, unknown>, key);
+      const mxValue = getValue(esMX as Record<string, unknown>, key);
+      
+      // Skip if either value is not a string (nested objects)
+      if (typeof enValue !== 'string' || typeof mxValue !== 'string') continue;
+      
+      // Flag if values are identical (case-insensitive comparison)
+      if (enValue.toLowerCase().trim() === mxValue.toLowerCase().trim()) {
+        untranslated.push(key);
+      }
+    }
+
+    if (untranslated.length > 0) {
+      // Helpful error message showing which keys need translation
+      const message = `Found ${untranslated.length} key(s) with identical en-US and es-MX values (likely untranslated):\n${untranslated.slice(0, 10).join('\n')}${untranslated.length > 10 ? `\n... and ${untranslated.length - 10} more` : ''}`;
+      expect(untranslated, message).toEqual([]);
+    }
+  });
 });

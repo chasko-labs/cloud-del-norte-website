@@ -10,8 +10,10 @@ import Textarea from '@cloudscape-design/components/textarea';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useState } from 'react';
 import { BasicValidationContext } from '../validation/basic-validation';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 export default function MeetingDetails() {
+  const { t } = useTranslation();
   const [wholeSalePrice, setWholeSalePrice] = useState('');
   const [presenterName, setRetailPrice] = useState('');
   const [additionalNotes, setAdditionalNotes] = useState('');
@@ -20,20 +22,20 @@ export default function MeetingDetails() {
   return (
     <BasicValidationContext.Consumer>
       {({ isFormSubmitted, addErrorField }) => {
-        const wholeSalePriceErrorText = isEmptyString(wholeSalePrice) && 'Link is required.';
-        const presenterNameErrorText = isEmptyString(presenterName) && 'Presenter is required.';
+        const wholeSalePriceErrorText = isEmptyString(wholeSalePrice) && t('createMeeting.meetingDetails.linkRequired');
+        const presenterNameErrorText = isEmptyString(presenterName) && t('createMeeting.meetingDetails.presenterRequired');
 
         return (
-          <Container header={<Header variant="h2">MeetingDetails</Header>}>
-            <FormField label="Prices" description="Define the prices for wholesale and retail.">
+          <Container header={<Header variant="h2">{t('createMeeting.meetingDetails.header')}</Header>}>
+            <FormField label={t('createMeeting.meetingDetails.pricesLabel')} description={t('createMeeting.meetingDetails.pricesDescription')}>
               <SpaceBetween direction="vertical" size="l">
                 <ColumnLayout columns={2}>
                   <FormField
-                    label="Meetup Link"
+                    label={t('createMeeting.meetingDetails.meetupLinkLabel')}
                     stretch={true}
                     errorText={isFormSubmitted && wholeSalePriceErrorText}
                     i18nStrings={{
-                      errorIconAriaLabel: 'Error',
+                      errorIconAriaLabel: t('createMeeting.meetingDetails.errorIconAriaLabel'),
                     }}
                   >
                     <Input
@@ -46,11 +48,11 @@ export default function MeetingDetails() {
                     />
                   </FormField>
                   <FormField
-                    label="Speaker Names"
+                    label={t('createMeeting.meetingDetails.speakerNamesLabel')}
                     stretch={true}
                     errorText={isFormSubmitted && presenterNameErrorText}
                     i18nStrings={{
-                      errorIconAriaLabel: 'Error',
+                      errorIconAriaLabel: t('createMeeting.meetingDetails.errorIconAriaLabel'),
                     }}
                   >
                     <Input
@@ -66,7 +68,7 @@ export default function MeetingDetails() {
                 <FormField
                   label={
                     <>
-                      Additional notes<i> - optional</i>
+                      {t('createMeeting.meetingDetails.additionalNotesLabel')}<i>{t('createMeeting.meetingDetails.optional')}</i>
                     </>
                   }
                   stretch={true}

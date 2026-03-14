@@ -11,47 +11,49 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 
 import { services, meeting_type } from '../../meetings/data';
 import { BasicValidationContext } from '../validation/basic-validation';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 const options = [...services, ...meeting_type].map(i => ({ value: i, label: i }));
 
 export default function details() {
+  const { t } = useTranslation();
   const [published, setPublished] = useState('yes');
   const [selecteddetails, setSelecteddetails] = useState<MultiselectProps['selectedOptions']>([]);
 
   return (
     <BasicValidationContext.Consumer>
       {({ isFormSubmitted, addErrorField }) => {
-        const detailsErrorText = selecteddetails.length === 0 && 'List of details is required.';
+        const detailsErrorText = selecteddetails.length === 0 && t('createMeeting.details.listRequired');
 
         return (
-          <Container header={<Header variant="h2">details</Header>}>
+          <Container header={<Header variant="h2">{t('createMeeting.details.header')}</Header>}>
             <SpaceBetween direction="vertical" size="l">
               <FormField
-                label="List of details"
+                label={t('createMeeting.details.listLabel')}
                 errorText={isFormSubmitted && detailsErrorText}
                 i18nStrings={{
-                  errorIconAriaLabel: 'Error',
+                  errorIconAriaLabel: t('createMeeting.meetingDetails.errorIconAriaLabel'),
                 }}
               >
                 <Multiselect
-                  placeholder="Select all details"
+                  placeholder={t('createMeeting.details.selectPlaceholder')}
                   selectedOptions={selecteddetails}
                   onChange={({ detail }) => setSelecteddetails(detail.selectedOptions)}
                   options={options}
                   deselectAriaLabel={option => {
                     const label = option?.value || option?.label;
-                    return label ? `Deselect ${label}` : 'no label';
+                    return label ? `${t('createMeeting.details.deselectAriaLabel')} ${label}` : t('createMeeting.details.noLabel');
                   }}
                   ref={ref => addErrorField('selecteddetails', { isValid: !detailsErrorText, ref })}
                 />
               </FormField>
-              <FormField label="Published">
+              <FormField label={t('createMeeting.details.publishedLabel')}>
                 <RadioGroup
                   value={published}
                   onChange={({ detail }) => setPublished(detail.value)}
                   items={[
-                    { value: 'no', label: 'No' },
-                    { value: 'yes', label: 'Yes' },
+                    { value: 'no', label: t('createMeeting.details.no') },
+                    { value: 'yes', label: t('createMeeting.details.yes') },
                   ]}
                 />
               </FormField>

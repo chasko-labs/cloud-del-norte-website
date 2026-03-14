@@ -17,6 +17,7 @@
 | Vael | MPA Build & Deploy Engineer | `.squad/agents/vael/charter.md` | ✅ Active |
 | Theren | Content & Data Specialist | `.squad/agents/theren/charter.md` | ✅ Active |
 | Kess | Testing Lead | `.squad/agents/kess/charter.md` | ✅ Active |
+| Calli | Localization & Translation Specialist | `.squad/agents/calli/charter.md` | ✅ Active |
 | Scribe | Session Logger | `.squad/agents/scribe/charter.md` | 📋 Silent |
 | Ralph | Work Monitor | — | 🔄 Monitor |
 

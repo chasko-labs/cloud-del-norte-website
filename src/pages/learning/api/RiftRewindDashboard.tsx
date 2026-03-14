@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Table, Header, Container, Button, Box, SpaceBetween, ColumnLayout, Alert, Select } from '@cloudscape-design/components';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface MatchSummary {
   matchId: string;
@@ -25,6 +26,7 @@ interface Contest {
 }
 
 const RiftRewindDashboard: React.FC = () => {
+  const { t } = useTranslation();
   const [matches, setMatches] = useState<MatchSummary[]>([]);
   const [loading, setLoading] = useState(false);
   const [dataSource, setDataSource] = useState<'live' | 'mock'>('mock');
@@ -274,7 +276,7 @@ const RiftRewindDashboard: React.FC = () => {
 
   return (
     <SpaceBetween direction="vertical" size="l">
-      <Container header={<Header variant="h3">🌐 How Riot Games API is RESTful</Header>}>
+      <Container header={<Header variant="h3">{t('learning.api.howRiotAPIRESTful')}</Header>}>
         <SpaceBetween direction="vertical" size="m">
           <Box variant="p">
             <strong>REST</strong> (REpresentational State Transfer) and <strong>API</strong> (Application Programming Interface - a way for programs to talk to each other) work together. The Riot Games API demonstrates all 6 REST constraints:
@@ -330,14 +332,14 @@ const RiftRewindDashboard: React.FC = () => {
         </SpaceBetween>
       </Container>
       
-      <Container header={<Header variant="h3">🎯 Uniform Interface Demonstration</Header>}>
+      <Container header={<Header variant="h3">{t('learning.api.uniformInterfaceDemonstration')}</Header>}>
         <SpaceBetween direction="vertical" size="s">
           <Box variant="p">
             The same <strong>HTTP GET</strong> method and <strong>JSON</strong> format work across different resources:
           </Box>
           
           <Container variant="stacked">
-            <Header variant="h3">1️⃣ Contests Endpoint</Header>
+            <Header variant="h3">{t('learning.api.contestsEndpoint')}</Header>
             <SpaceBetween direction="vertical" size="s">
               <Box variant="p">Recent tournaments and competitions</Box>
               
@@ -674,11 +676,11 @@ const RiftRewindDashboard: React.FC = () => {
         />
       </Container>
       
-      <Container header={<Header variant="h3">📊 API Access & Data Structure</Header>}>
+      <Container header={<Header variant="h3">{t('learning.api.apiAccessDataStructure')}</Header>}>
         <SpaceBetween direction="vertical" size="m">
           <ColumnLayout columns={2} variant="text-grid">
             <Container variant="stacked">
-              <Header variant="h3">✅ Available with Basic API Key</Header>
+              <Header variant="h3">{t('learning.api.availableWithBasicKey')}</Header>
               <Box variant="p">
                 • Data Dragon API: Champion stats, abilities<br/>
                 • Challenger League: Top ranked players<br/>
@@ -688,7 +690,7 @@ const RiftRewindDashboard: React.FC = () => {
             </Container>
             
             <Container variant="stacked">
-              <Header variant="h3">❌ Requires Special Access</Header>
+              <Header variant="h3">{t('learning.api.requiresSpecialAccess')}</Header>
               <Box variant="p">
                 • Tournament API: Official esports matches<br/>
                 • Featured Games: Live high-level matches<br/>
@@ -699,7 +701,7 @@ const RiftRewindDashboard: React.FC = () => {
           </ColumnLayout>
           
           <Container variant="stacked">
-            <Header variant="h3">🏆 Tournament Data Structure</Header>
+            <Header variant="h3">{t('learning.api.tournamentDataStructure')}</Header>
             <Box variant="code">
               <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{codeExample}</pre>
             </Box>
@@ -707,11 +709,11 @@ const RiftRewindDashboard: React.FC = () => {
         </SpaceBetween>
       </Container>
       
-      <Container header={<Header variant="h3">🛠️ Technical Implementation</Header>}>
+      <Container header={<Header variant="h3">{t('learning.api.technicalImplementation')}</Header>}>
         <SpaceBetween direction="vertical" size="l">
           <ColumnLayout columns={2} variant="text-grid">
             <Container variant="stacked">
-              <Header variant="h3">📊 Data Sources</Header>
+              <Header variant="h3">{t('learning.api.dataSources')}</Header>
               <Box variant="p">
                 <strong>✅ From Riot API:</strong><br/>
                 • Champion names & lore titles<br/>
@@ -725,7 +727,7 @@ const RiftRewindDashboard: React.FC = () => {
             </Container>
             
             <Container variant="stacked">
-              <Header variant="h3">🏧 Architecture Stack</Header>
+              <Header variant="h3">{t('learning.api.architectureStack')}</Header>
               <Box variant="p">
                 <strong>Frontend:</strong> React 18 + TypeScript<br/>
                 <strong>Build:</strong> Vite 5 → Static HTML/CSS/JS<br/>
@@ -737,7 +739,7 @@ const RiftRewindDashboard: React.FC = () => {
           </ColumnLayout>
           
           <Container variant="stacked">
-            <Header variant="h3">🎯 Champion Data Mapping</Header>
+            <Header variant="h3">{t('learning.api.championDataMapping')}</Header>
             <ColumnLayout columns={3} variant="text-grid">
               <Box variant="p">
                 <strong>⚔️ Attack Power</strong><br/>

@@ -79,6 +79,31 @@ vi.mock('../../../components/breadcrumbs', () => ({
   default: () => React.createElement('nav', { 'aria-label': 'breadcrumbs' }),
 }));
 
+vi.mock('../../../hooks/useTranslation', () => ({
+  useTranslation: () => ({
+    locale: 'us',
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        'maintenanceCalendar.header': 'Maintenance Calendar',
+        'maintenanceCalendar.exportAll': 'Export All',
+        'maintenanceCalendar.exportCalendar': 'Export Calendar',
+        'maintenanceCalendar.filterByCategory': 'Filter by category',
+        'maintenanceCalendar.allCategories': 'All categories',
+        'maintenanceCalendar.columns.technology': 'Technology',
+        'maintenanceCalendar.columns.category': 'Category',
+        'maintenanceCalendar.columns.currentLTS': 'Current LTS',
+        'maintenanceCalendar.columns.priorLTS': 'Prior LTS',
+        'maintenanceCalendar.columns.secondPriorLTS': '2nd Prior LTS',
+        'maintenanceCalendar.columns.mostRecentAny': 'Most Recent (Any)',
+        'maintenanceCalendar.noData': 'No release data available',
+        'maintenanceCalendar.officialPage': 'Official page',
+        'maintenanceCalendar.description': 'Track LTS and release schedules across cloud-native technologies.',
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 describe('maintenance-calendar page', () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
 

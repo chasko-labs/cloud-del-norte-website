@@ -15,16 +15,213 @@ The site supports two locales via a flag emoji toggle, mirroring the existing li
 
 | Concept | Detail |
 | ------- | ------ |
-| Toggle | Flag emoji (🇺🇸 / 🇲🇽) next to the moon/sun theme toggle |
-| File structure | `src/locales/en-US.json` and `src/locales/es-MX.json` |
+| Toggle | Flag emoji (🇺🇸 / 🇲🇽) next to the moon/sun theme toggle in TopNavigation |
+| File structure | `src/locales/en-US.json` and `src/locales/es-MX.json` (161 keys each) |
 | Library | Custom lightweight i18n — zero library dependencies |
 | Hook | `useTranslation()` provides `t('key.path')` for dot-notation string lookup |
+| Context | `LocaleProvider` wraps page content via Shell component |
+| State management | Each page's `app.tsx` maintains locale state (mirrors theme pattern) |
 | Persistence | `src/utils/locale.ts` stores the active locale in `localStorage` (key: `cdn-locale`) |
 | Accessibility | `applyLocale()` sets `document.documentElement.lang` (`en-US` or `es-MX`) |
 
+#### Implementation Flow
+
+1. User clicks 🇺🇸↔🇲🇽 toggle in TopNavigation
+2. `app.tsx` calls `handleLocaleChange(newLocale)`
+3. Updates React state → triggers re-render
+4. Writes to localStorage (`cdn-locale`)
+5. `applyLocale()` updates `document.documentElement.lang`
+6. All `t('key')` calls resolve to new locale strings
+
 ---
 
-## 2. Regional Dialects — The Border Region
+## 2. Translation Key Structure
+
+The project uses a **namespace-based hierarchy** with 161 keys across 7 namespaces:
+
+### Namespaces
+
+| Namespace | Keys | Purpose |
+| --------- | ---- | ------- |
+| `shell.*` | Shell layout (title, description, theme labels) |
+| `navigation.*` | Navigation items (Home, Meetings, Learning, Maintenance Calendar) |
+| `breadcrumbs.*` | Breadcrumb labels (Home, Create Meeting, API, etc.) |
+| `footer.*` | Footer content (leader cards, description) |
+| `home.*` | Home page content |
+| `meetings.*` | Meetings page (table headers, empty state) |
+| `createMeeting.*` | Create Meeting form (field labels, buttons) |
+| `helpPanel.*` | Help panel content |
+| `learning.api.*` | API Learning page content |
+| `maintenanceCalendar.*` | Maintenance Calendar page (table, empty state) |
+| `common.*` | Shared strings (buttons, states) |
+
+### Key Naming Convention
+
+- **camelCase** for multi-word keys: `noMeetings`, `createMeeting`, `emptyState`
+- **Dot-notation hierarchy** for namespacing: `meetings.table.headers.date`
+- **Descriptive names** over abbreviations: `meetingDescription` not `meetingDesc`
+
+### Example Key Structure
+
+```json
+{
+  "meetings": {
+    "title": "Upcoming Meetings",
+    "table": {
+      "headers": {
+        "date": "Date",
+        "title": "Title",
+        "location": "Location"
+      }
+    },
+    "emptyState": {
+      "title": "No meetings scheduled",
+      "description": "Check back soon for upcoming events"
+    }
+  }
+}
+```
+
+---
+
+## 3. Adding New Translations
+
+### Workflow for Contributors
+
+1. **Add key to BOTH locale files** — `src/locales/en-US.json` AND `src/locales/es-MX.json`
+   - Keys must match exactly across files (test enforces parity)
+   - Use namespace hierarchy: `"namespace.keyName": "value"`
+
+2. **Use `t()` in component JSX:**
+   ```tsx
+   import { useTranslation } from '../../hooks/useTranslation';
+
+   export default function MyComponent() {
+     const { t } = useTranslation();
+     return <h1>{t('myNamespace.title')}</h1>;
+   }
+   ```
+
+3. **Run tests to verify key parity:**
+   ```bash
+   npm test  # fails if keys don't match between en-US.json and es-MX.json
+   ```
+
+### Example: Adding a New Feature
+
+Let's add a "Contact Us" page:
+
+**Step 1:** Add keys to both locale files
+
+```json
+// src/locales/en-US.json
+{
+  "contact": {
+    "title": "Get in touch, orale",
+    "description": "Drop us a message ahorita",
+    "form": {
+      "name": "Your name",
+      "email": "Email",
+      "message": "Message",
+      "submit": "Send it"
+    }
+  }
+}
+
+// src/locales/es-MX.json
+{
+  "contact": {
+    "title": "Contáctanos, fierro",
+    "description": "Mándanos mensaje ahorita",
+    "form": {
+      "name": "Tu nombre",
+      "email": "Correo",
+      "message": "Mensaje",
+      "submit": "Enviar"
+    }
+  }
+}
+```
+
+**Step 2:** Use in component
+
+```tsx
+export default function ContactPage() {
+  const { t } = useTranslation();
+  return (
+    <div>
+      <h1>{t('contact.title')}</h1>
+      <p>{t('contact.description')}</p>
+      <form>
+        <input placeholder={t('contact.form.name')} />
+        <input placeholder={t('contact.form.email')} />
+        <textarea placeholder={t('contact.form.message')} />
+        <button>{t('contact.form.submit')}</button>
+      </form>
+    </div>
+  );
+}
+```
+
+**Step 3:** Test
+
+```bash
+npm test  # verifies key parity + renders without errors
+```
+
+---
+
+## 4. MCP Translation Workflow
+
+For agents and contributors using MCPs to generate or refine translations:
+
+### Process
+
+1. **Research dialect** — use `fetch` MCP for open resources:
+   - Wiktionary (Chicano English, Mexican Spanish entries)
+   - UTEP Bilingualism Institute corpora
+   - UNAM dialect studies
+
+2. **Check component conventions** — use `context7` MCP:
+   - Cloudscape Design System label patterns
+   - Common button/form/table text conventions
+
+3. **Generate translations** — produce both en-US and es-MX strings
+
+4. **Write review document** — save to `.squad/decisions/inbox/calli-<slug>.md`:
+   ```markdown
+   # Translation Review: <Feature Name>
+   
+   ## Keys Added
+   - `namespace.key1`
+   - `namespace.key2`
+   
+   ## en-US Translations
+   - Key: "English text with Spanglish"
+   
+   ## es-MX Translations
+   - Key: "Spanish text con slang norteño"
+   
+   ## Dialect Notes
+   - Used "fierro" (Juárez slang) for affirmation
+   - Code-switched "deploy" (tech term stays English)
+   ```
+
+5. **Human review required** — do NOT auto-merge translations into locale JSON files
+   - Maintainer reviews dialect accuracy, tone, code-switching
+   - Maintainer applies approved keys to both locale files
+   - Run `npm test` to verify parity
+
+### Key Rules for MCP Workflows
+
+- **Never directly edit** `en-US.json` or `es-MX.json` via MCP
+- **Always produce review docs** in `.squad/decisions/inbox/`
+- **Flag ambiguous terms** for human review
+- **Cite dialect sources** when using regional slang
+
+---
+
+## 5. Regional Dialects — The Border Region
 
 This is one of the most linguistically unique regions in North America. The El Paso / Ciudad Juárez / Las Cruces metro area sits at the intersection of three US states, one Mexican state, and multiple living dialects. The localization voice for this project draws directly from this reality.
 
@@ -55,7 +252,7 @@ This is one of the most linguistically unique regions in North America. The El P
 
 ---
 
-## 3. Open Resources for Dialect Research
+## 6. Open Resources for Dialect Research
 
 ### Spanglish / Chicano English
 
@@ -82,7 +279,7 @@ This is one of the most linguistically unique regions in North America. The El P
 
 ---
 
-## 4. Translation Guidelines for Contributors
+## 7. Translation Guidelines for Contributors
 
 This is **cultural flavor localization**, not mechanical translation. The goal is to sound like a real person from the border region, not a corporate website run through Google Translate.
 
@@ -132,7 +329,7 @@ Chihuahua norteño dialect — informal "tú" form, direct tone, regional slang.
 
 ---
 
-## 5. MCP Servers for Localization Workflows
+## 8. MCP Servers for Localization Workflows
 
 These MCP servers can assist with translation, dialect consistency, and bilingual content workflows:
 

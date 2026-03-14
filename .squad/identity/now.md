@@ -1,17 +1,17 @@
 # Current Focus
 
-**As of:** 2026-03-13
-**Focus:** Squad infrastructure setup — team, routing, charters, MCP, agent config
-**Phase:** Initial setup
+**As of:** 2026-03-14
+**Focus:** Localization integration complete — bilingual site (en-US / es-MX)
+**Phase:** Post-localization stabilization
 
 ## What's Active
-- Squad team infrastructure created (team.md, routing.md, ceremonies.md)
-- Agent charters written (Stratia, Lyren, Vael, Theren, Kess, Scribe)
-- MCP servers configured (github, context7, fetch)
-- Copilot instructions created (.github/copilot-instructions.md)
-- Stratia custom agent created (.github/agents/stratia.agent.md)
+- Localization integration completed (161 keys, all pages wired)
+- Translation review pending (Bryan reviewing `.squad/decisions/inbox/calli-translation-review.md`)
+- 125 tests passing, lint clean, build succeeds
+- UI improvements in progress (parallel effort)
 
 ## Next Up
-- First real work session with Squad-routed tasks
-- Content updates for upcoming meetings
-- Test coverage expansion
+- Bryan's human review of es-MX translations
+- Learning/API body content translation (deferred — headers only done)
+- Visual validation of Spanish layout (text length may cause overflow)
+- Deploy to S3+CloudFront

@@ -11,8 +11,10 @@ import VariationsTable from './components/meetings-table';
 import { variationsData } from './data';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export default function App() {
+  const { t } = useTranslation();
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
   const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
@@ -35,7 +37,7 @@ export default function App() {
       onThemeChange={handleThemeChange}
       locale={locale}
       onLocaleChange={handleLocaleChange}
-      breadcrumbs={<Breadcrumbs active={{ text: 'Meetings', href: '/meetings/index.html' }} />}
+      breadcrumbs={<Breadcrumbs active={{ text: t('meetings.breadcrumb'), href: '/meetings/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}
     >

@@ -3,8 +3,17 @@
     "siteTitle": "Cloud Del Norte",
     "switchToMx": "Cambiar a Español",
     "switchToUs": "Cambiar a Inglés",
+    "switchToLightMode": "Cambiar a modo claro",
+    "switchToDarkMode": "Cambiar a modo oscuro",
     "more": "Más",
-    "all": "Todo"
+    "all": "Todo",
+    "navigationDrawer": "Menú de navegación",
+    "closeNavigationDrawer": "Cerrar menú",
+    "openNavigationDrawer": "Abrir menú",
+    "notifications": "Notificaciones",
+    "helpPanel": "Panel de ayuda",
+    "closeHelpPanel": "Cerrar ayuda",
+    "openHelpPanel": "Abrir ayuda"
   },
   "navigation": {
     "home": "Inicio del Grupo",
@@ -32,6 +41,165 @@
     "joinUs": "Únete en Meetup →",
     "communityDescription": "AWS User Group Cloud Del Norte es parte de",
     "globalCommunity": "Comunidad Global de AWS User Groups",
+    "communityFullDescription": "Somos voluntarios locales de Nuevo México, West Texas y Chihuahua, México. Creemos que los proyectos, las carreras y los problemas se pueden acelerar usando AWS, y queremos compartir nuestro conocimiento, conexiones y experiencias contigo para que veas lo que tú puedes",
     "goBuild": "Go Build"
+  },
+  "home": {
+    "breadcrumb": "Dashboard",
+    "header": "Dashboard",
+    "infoLink": "Info",
+    "productionOverviewHeader": "Resumen de producción",
+    "pastTopicsHeader": "Temas Pasados",
+    "detailsHeader": "Detalles",
+    "userGroupHeader": "#AWS User Group Cloud Del Norte",
+    "groupNotesModal": "Notas del grupo",
+    "tableHeaders": {
+      "name": "Nombre",
+      "status": "Estado",
+      "mixing": "Mezcla (kg/h)",
+      "molding": "Moldeo (kg/h)",
+      "strong": "Fuerte",
+      "mild": "Suave",
+      "unnoticed": "Sin notar"
+    }
+  },
+  "meetings": {
+    "breadcrumb": "Juntas",
+    "header": "juntas",
+    "createButton": "Crear junta",
+    "editButton": "Editar",
+    "findPlaceholder": "Buscar juntas",
+    "tableHeaders": {
+      "meetupTitle": "Título del Meetup",
+      "presenters": "Presentadores",
+      "happened": "¿Pasó?",
+      "onDemand": "On-Demand",
+      "eventPage": "Página del Evento"
+    },
+    "empty": {
+      "noMatches": "Sin resultados",
+      "noMatchesSubtitle": "No encontramos nada, compa.",
+      "clearFilter": "Limpiar filtro",
+      "noMeetings": "Sin juntas",
+      "noMeetingsSubtitle": "Nada en el calendario ahorita."
+    },
+    "preferences": {
+      "title": "Preferencias",
+      "pageSize": "Seleccionar tamaño de página",
+      "resources10": "10 recursos",
+      "resources20": "20 recursos",
+      "resources50": "50 recursos",
+      "resources100": "100 recursos",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
+    },
+    "aria": {
+      "selectionGroup": "Selección de elementos",
+      "tableLabel": "tabla de juntas"
+    }
+  },
+  "createMeeting": {
+    "breadcrumb": "Crear junta",
+    "header": "Crear junta",
+    "description": "Crea una nueva junta especificando detalles, link del evento, y speakers.",
+    "cancel": "Cancelar",
+    "submit": "Crear junta",
+    "helpPanelHeader": "Panel de ayuda",
+    "meetingType": {
+      "header": "Tipo de Junta",
+      "shapeLabel": "Formato",
+      "virtual": "Virtual",
+      "virtualDescription": "Meetups solo virtuales",
+      "inPerson": "Presencial",
+      "inPersonDescription": "Eventos presenciales, incluyendo híbridos"
+    },
+    "meetingDetails": {
+      "header": "Detalles de la Junta",
+      "pricesLabel": "Precios",
+      "pricesDescription": "Define los precios para mayoreo y menudeo.",
+      "meetupLinkLabel": "Link del Meetup",
+      "speakerNamesLabel": "Nombres de los Speakers",
+      "additionalNotesLabel": "Notas adicionales",
+      "optional": " - opcional",
+      "linkRequired": "El link es necesario, morro.",
+      "presenterRequired": "El presentador es necesario.",
+      "errorIconAriaLabel": "Error"
+    },
+    "details": {
+      "header": "detalles",
+      "listLabel": "Lista de detalles",
+      "selectPlaceholder": "Seleccionar todos los detalles",
+      "listRequired": "La lista de detalles es necesaria.",
+      "publishedLabel": "Publicado",
+      "no": "No",
+      "yes": "Sí",
+      "deselectAriaLabel": "Deseleccionar",
+      "noLabel": "sin etiqueta"
+    }
+  },
+  "helpPanel": {
+    "rsvpHeader": "RSVP para Eventos en Vivo",
+    "cloudDelNorteMeetups": "Meetups de Cloud Del Norte",
+    "blenderMeetups": "Blender & Diseño Gráfico:NE3D",
+    "userGroupTitle": "☁️ #AWSelfTaught UG",
+    "communityDescription": "AWS UG Cloud Del Norte somos autodidactas organizados en busca de hacer networking, experimentar, y aprender juntos. Hacemos meetups presenciales, virtuales e híbridos enfocados en temas regionales para Nuevo México rural, West Texas, el norte de Chihuahua, el Borderplex y más allá.",
+    "organizersWantedHeader": "Se Buscan Organizadores",
+    "spanishSpeakers": "Se Buscan Hispanohablantes.",
+    "studentsStepUp": "Estudiantes, Échenle Ganas.",
+    "womenWelcome": "Mujeres Bienvenidas.",
+    "globalCommunityHeader": "Comunidad Global de AWS",
+    "findLocalGroup": "Encuentra tu AWS User Group local en Meetup.",
+    "communityLeadersHeader": "Líderes de la Comunidad",
+    "jacobWright": "Jacob Wright",
+    "reachOutLinkedIn": "contáctalo en LinkedIn",
+    "bryanChasko": "Bryan Chasko",
+    "awsHeroBio": "Bio de AWS Hero",
+    "bryansHomepage": "Página de Bryan"
+  },
+  "learning": {
+    "api": {
+      "howRiotAPIRESTful": "🌐 Cómo el API de Riot Games es RESTful",
+      "uniformInterfaceDemonstration": "🎯 Demostración de Interfaz Uniforme",
+      "contestsEndpoint": "1️⃣ Endpoint de Contests",
+      "apiAccessDataStructure": "📊 Acceso a API y Estructura de Datos",
+      "availableWithBasicKey": "✅ Disponible con API Key Básica",
+      "requiresSpecialAccess": "❌ Requiere Acceso Especial",
+      "tournamentDataStructure": "🏆 Estructura de Datos de Torneos",
+      "technicalImplementation": "🛠️ Implementación Técnica",
+      "dataSources": "📊 Fuentes de Datos",
+      "architectureStack": "🏧 Stack de Arquitectura",
+      "championDataMapping": "🎯 Mapeo de Datos de Campeones"
+    }
+  },
+  "maintenanceCalendar": {
+    "breadcrumb": "Calendario de Mantenimiento",
+    "header": "Calendario de Mantenimiento",
+    "description": "Tracker de cadencias de releases para 23 tecnologías — historial LTS, releases recientes, y fechas proyectadas.",
+    "filterByCategory": "Filtrar por categoría",
+    "exportAll": "Exportar Todo (.ics)",
+    "export": "Exportar (.ics)",
+    "allCategories": "Todas las categorías",
+    "noDataAvailable": "Sin datos disponibles",
+    "tableHeaders": {
+      "mostRecentLTS": "LTS Más Reciente",
+      "priorLTS": "LTS Anterior",
+      "secondPriorLTS": "2do LTS Anterior",
+      "mostRecentRelease": "Release Más Reciente",
+      "projectedNextRelease": "Próximo Release Proyectado",
+      "projectedNextLTS": "Próximo LTS Proyectado"
+    },
+    "releaseNotes": "Release notes",
+    "source": "Fuente"
+  },
+  "common": {
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "submit": "Enviar",
+    "edit": "Editar",
+    "create": "Crear",
+    "delete": "Eliminar",
+    "save": "Guardar",
+    "close": "Cerrar",
+    "info": "Info"
   }
 }

@@ -32,6 +32,16 @@ vi.mock('../leader-card', () => ({
 }));
 
 import Footer from '../index';
+import { LocaleProvider } from '../../../contexts/locale-context';
+
+// Helper to wrap Footer in LocaleProvider
+const renderFooter = () => {
+  return render(
+    <LocaleProvider locale="us">
+      <Footer />
+    </LocaleProvider>
+  );
+};
 
 describe('Footer component', () => {
   let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
@@ -45,21 +55,21 @@ describe('Footer component', () => {
   });
 
   it('renders without crashing', () => {
-    expect(() => render(<Footer />)).not.toThrow();
+    expect(() => renderFooter()).not.toThrow();
   });
 
   it('has role="contentinfo" on the footer element', () => {
-    render(<Footer />);
+    renderFooter();
     expect(screen.getByRole('contentinfo')).toBeTruthy();
   });
 
   it('has id="site-footer"', () => {
-    const { container } = render(<Footer />);
+    const { container } = renderFooter();
     expect(container.querySelector('#site-footer')).toBeTruthy();
   });
 
   it('renders all 6 leader cards', () => {
-    render(<Footer />);
+    renderFooter();
     expect(screen.getByTestId('leader-card-bryan-chasko')).toBeTruthy();
     expect(screen.getByTestId('leader-card-jacob-wright')).toBeTruthy();
     expect(screen.getByTestId('leader-card-andres-moreno')).toBeTruthy();
@@ -69,7 +79,7 @@ describe('Footer component', () => {
   });
 
   it('renders leader names correctly via mocked LeaderCard', () => {
-    render(<Footer />);
+    renderFooter();
     expect(screen.getByText('Bryan Chasko')).toBeTruthy();
     expect(screen.getByText('Jacob Wright')).toBeTruthy();
     expect(screen.getByText('Andres Moreno')).toBeTruthy();
@@ -79,14 +89,14 @@ describe('Footer component', () => {
   });
 
   it('renders community description with "Go Build" text', () => {
-    render(<Footer />);
+    renderFooter();
     const footer = screen.getByRole('contentinfo');
     expect(footer.textContent).toContain('AWS User Group Cloud Del Norte is part of');
     expect(footer.textContent).toContain('Go Build');
   });
 
   it('renders "Global AWS User Group Community" as a link', () => {
-    render(<Footer />);
+    renderFooter();
     const link = screen.getByText('Global AWS User Group Community');
     expect(link).toBeTruthy();
     expect(link.tagName).toBe('A');
@@ -94,7 +104,7 @@ describe('Footer component', () => {
   });
 
   it('no React warnings or errors on render', () => {
-    render(<Footer />);
+    renderFooter();
     const errorCalls = consoleErrorSpy.mock.calls.filter((args: unknown[]) =>
       typeof args[0] === 'string' && (args[0].includes('Warning:') || args[0].includes('Error:'))
     );

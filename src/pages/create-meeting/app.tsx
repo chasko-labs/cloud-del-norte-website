@@ -16,8 +16,10 @@ import { BasicValidationContext, useBasicValidation } from './validation/basic-v
 import { ContentLayout } from '@cloudscape-design/components';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
+import { useTranslation } from '../../hooks/useTranslation';
 
 export default function App() {
+  const { t } = useTranslation();
   const { isFormSubmitted, setIsFormSubmitted, addErrorField, focusFirstErrorField } = useBasicValidation();
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
   const [locale, setLocale] = useState<Locale>(() => initializeLocale());
@@ -41,17 +43,17 @@ export default function App() {
       onThemeChange={handleThemeChange}
       locale={locale}
       onLocaleChange={handleLocaleChange}
-      breadcrumbs={<Breadcrumbs active={{ text: 'Create meeting', href: '/create-meeting/index.html' }} />}
+      breadcrumbs={<Breadcrumbs active={{ text: t('createMeeting.breadcrumb'), href: '/create-meeting/index.html' }} />}
       navigation={<Navigation />}
-      tools={<HelpPanel header={<h2>Help panel</h2>} />}
+      tools={<HelpPanel header={<h2>{t('createMeeting.helpPanelHeader')}</h2>} />}
     >
       <ContentLayout
         header={
           <Header
             variant="h1"
-            description="Create a new meeting by specifying details, event link, and speakers."
+            description={t('createMeeting.description')}
           >
-            Create meeting
+            {t('createMeeting.header')}
           </Header>
         }
       >
@@ -68,10 +70,10 @@ export default function App() {
                 actions={
                   <SpaceBetween direction="horizontal" size="xs">
                     <Button href="/meetings/index.html" variant="link">
-                      Cancel
+                      {t('common.cancel')}
                     </Button>
                     <Button formAction="submit" variant="primary">
-                      Create meeting
+                      {t('createMeeting.submit')}
                     </Button>
                   </SpaceBetween>
                 }
