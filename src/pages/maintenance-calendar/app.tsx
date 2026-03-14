@@ -1,13 +1,13 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 import React, { useState } from 'react';
-import MaintenanceCalendar from './MaintenanceCalendar';
+import Shell from '../../layouts/shell';
 import Navigation from '../../components/navigation';
 import Breadcrumbs from '../../components/breadcrumbs';
-import Shell from '../../layouts/shell';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 import { useTranslation } from '../../hooks/useTranslation';
+import MaintenanceCalendar from './MaintenanceCalendar';
 
 export default function App() {
   const { t } = useTranslation();
@@ -32,7 +32,8 @@ export default function App() {
       onThemeChange={handleThemeChange}
       locale={locale}
       onLocaleChange={handleLocaleChange}
-      breadcrumbs={<Breadcrumbs active={{ text: 'Maintenance Calendar', href: '/maintenance-calendar/index.html' }} />}
+      pageTitle="pages.maintenanceCalendar.title"
+      breadcrumbs={<Breadcrumbs active={{ text: t('maintenanceCalendar.breadcrumb'), href: '/maintenance-calendar/' }} />}
       navigation={<Navigation />}
     >
       <MaintenanceCalendar />

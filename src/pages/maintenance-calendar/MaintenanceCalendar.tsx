@@ -12,9 +12,6 @@ import Select from '@cloudscape-design/components/select';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import Table from '@cloudscape-design/components/table';
 
-import Navigation from '../../components/navigation';
-import Breadcrumbs from '../../components/breadcrumbs';
-import ShellLayout from '../../layouts/shell';
 import { useTranslation } from '../../hooks/useTranslation';
 
 import generatedData from '../../data/releases.generated.json';
@@ -196,43 +193,36 @@ export default function MaintenanceCalendar() {
   };
 
   return (
-    <ShellLayout
-      contentType="default"
-      pageTitle="pages.maintenanceCalendar.title"
-      breadcrumbs={<Breadcrumbs active={{ text: t('maintenanceCalendar.breadcrumb'), href: '/maintenance-calendar/' }} />}
-      navigation={<Navigation />}
+    <ContentLayout
+      header={
+        <Header
+          variant="h1"
+          description={t('maintenanceCalendar.description')}
+          actions={
+            <SpaceBetween size="xs" direction="horizontal">
+              <Select
+                selectedOption={selectedCategory}
+                onChange={({ detail }) =>
+                  setSelectedCategory(detail.selectedOption as { value: string; label: string })
+                }
+                options={categoryOptions}
+                ariaLabel={t('maintenanceCalendar.filterByCategory')}
+              />
+              <Button onClick={handleExportAll} iconName="download" variant="primary">
+                {t('maintenanceCalendar.exportAll')}
+              </Button>
+            </SpaceBetween>
+          }
+        >
+          {t('maintenanceCalendar.header')}
+        </Header>
+      }
     >
-      <ContentLayout
-        header={
-          <Header
-            variant="h1"
-            description={t('maintenanceCalendar.description')}
-            actions={
-              <SpaceBetween size="xs" direction="horizontal">
-                <Select
-                  selectedOption={selectedCategory}
-                  onChange={({ detail }) =>
-                    setSelectedCategory(detail.selectedOption as { value: string; label: string })
-                  }
-                  options={categoryOptions}
-                  ariaLabel={t('maintenanceCalendar.filterByCategory')}
-                />
-                <Button onClick={handleExportAll} iconName="download" variant="primary">
-                  {t('maintenanceCalendar.exportAll')}
-                </Button>
-              </SpaceBetween>
-            }
-          >
-            {t('maintenanceCalendar.header')}
-          </Header>
-        }
-      >
-        <SpaceBetween size="l">
-          {visibleTechs.map(tech => (
-            <TechSection key={tech.id} tech={tech} t={t} />
-          ))}
-        </SpaceBetween>
-      </ContentLayout>
-    </ShellLayout>
+      <SpaceBetween size="l">
+        {visibleTechs.map(tech => (
+          <TechSection key={tech.id} tech={tech} t={t} />
+        ))}
+      </SpaceBetween>
+    </ContentLayout>
   );
 }
