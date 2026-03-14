@@ -340,3 +340,147 @@ export default function Navigation() {
 **Rationale:** Fixed colspans and high column counts render unreadable on mobile. Cloudscape's responsive API exists specifically for this — using it consistently prevents future readability regressions. The `60ch` max-width follows typographic best practice for readable line lengths.
 
 **Impact:** All current and future pages using Grid or ColumnLayout.
+
+## DEC-005: Navigation Drawer State Management Standard
+
+**Date:** 2026-03-14
+**Author:** Lyren
+**Status:** ✅ Accepted
+
+**Decision:** Navigation drawer state must be explicitly managed in Shell component with `navigationOpen` and `onNavigationChange` props. Default to open on desktop (≥768px), closed on mobile.
+
+**Rationale:** Cloudscape AppLayout defaults navigation to closed on all viewports when state is unmanaged. Missing explicit state management caused navigation drawer to appear at 0px height on desktop. The fix ensures consistent UX across all viewports and establishes a reusable pattern for all future layouts.
+
+**Implementation:**
+```tsx
+const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+const [navOpen, setNavOpen] = useState(isDesktop);
+
+<AppLayout
+  navigationOpen={navOpen}
+  onNavigationChange={(event) => setNavOpen(event.detail.open)}
+  // ... other props
+/>
+```
+
+**Standards:**
+1. Always use `navigationOpen` prop with AppLayout + navigation drawer
+2. Always wire `onNavigationChange` to handle toggle events
+3. Default to open on desktop (≥768px), closed on mobile
+4. Never rely on Cloudscape's default navigation state
+
+**Verification:** All viewports (desktop/tablet/mobile) tested. Navigation visible and responsive in all theme/locale combinations.
+
+---
+
+## DEC-006: Toggle Button CSS — Locale-Aware Selectors + Chrome Removal
+
+**Date:** 2026-03-14
+**Author:** Lyren
+**Status:** ✅ Accepted
+
+**Decision:** Fixed TopNavigation toggle button CSS with locale-aware selectors and browser chrome removal.
+
+**Rationale:** Original selectors matched English-only hardcoded strings (`[title*="English"]`). After localization wiring, titles became dynamic via `t()` function. Actual titles: "Switch to Spanish" (EN) / "Cambiar a Inglés" (ES). Chrome artifact behind emoji buttons required CSS override.
+
+**Changes:** `src/layouts/shell/styles.css`
+- Button chrome removal: `background: transparent !important; border: none !important; box-shadow: none !important`
+- Locale-aware selectors: Match all localized title text from en-US.json and es-MX.json
+- Theme toggle: `"light mode"`, `"dark mode"`, `"modo claro"`, `"modo oscuro"`
+- Locale toggle: `"Switch to Spanish"`, `"Cambiar a Inglés"`
+
+**Verification:** Toggle buttons render cleanly in light/dark theme and en-US/es-MX locale. No chrome artifact. No console errors.
+
+---
+
+## DEC-007: Translation Key Naming Standard
+
+**Date:** 2026-03-14
+**Author:** Sofía
+**Status:** ✅ Accepted
+
+**Decision:** Use semantic, context-aware translation key naming instead of generic page-scoped keys. Pattern: `{semanticContext}.{specificContent}`
+
+**Rationale:** Generic keys like `home.header` and `home.infoLink` provide no semantic value, hide intent, limit reusability, and confuse translators. Semantic keys make relationship between key name and rendered content obvious.
+
+**Pattern Examples:**
+
+| ❌ Old (generic) | ✅ New (semantic) | Context |
+|---|---|---|
+| `home.breadcrumb` | `dashboardPage.breadcrumb` | Page-specific (home = dashboard) |
+| `home.header` | `dashboardPage.header` | Page-level header |
+| `home.userGroupHeader` | `userGroupHero.header` | Component-specific (hero section) |
+| `home.metrics.communityMembers` | `userGroupMetrics.communityMembers` | Content domain (metrics) |
+| `home.pieChart.chartAriaRoleDescription` | `pieChart.chartAriaRoleDescription` | Global reusable component |
+
+**Standards:**
+1. Semantic over location — key describes **what**, not **where**
+2. Component context first — group by UI component or content domain
+3. Nested structure — use dot-notation for hierarchy
+4. Reusability — keys should be portable across pages if content shared
+5. Self-documenting — key name alone hints at rendered content
+
+**When to use page prefix:** Only when content is truly page-specific (breadcrumb, page header) or would conflict if moved.
+
+**Verification:** Home page refactored (~80 keys). All tests passing (10/10). Build successful. Renders correctly in en-US and es-MX.
+
+---
+
+## DEC-008: Leader Reordering & Bilingual Footer Support
+
+**Date:** 2026-03-14
+**Author:** Theren
+**Status:** ✅ Accepted
+
+**Decision:** Reorder footer leader cards by speaking order (Jacob → Andres → LSM → You → Sofía → ASL) and establish translation keys for all leader titles.
+
+**Rationale:** Footer leaders displayed in arbitrary order. Reordering by actual meeting speaking order improves visual hierarchy and community recognition. Translation keys enable bilingual support and future speaker updates without code changes.
+
+**Leader Reorder:**
+1. Jacob Wright — Founder & Doña Ana County Lead (orange gradient styling)
+2. Andres Toledo — Albuquerque Lead
+3. Luis "LSM" Montoya — Community Builder
+4. You — Placeholder for speaker/leader
+5. Sofía López — Spanish Community Liaison
+6. ASL Interpreter — Event Facilitator (placeholder name)
+
+**Files Updated:**
+- `src/data/leaders.json` — Reordered entries
+- `src/locales/en-US.json` — Leader title keys
+- `src/locales/es-MX.json` — Spanish titles (Chihuahua norteño dialect)
+- `src/components/footer/leader-card.tsx` — Renders titles from translation keys
+
+**Verification:** All tests passing (99/99). Build successful. Both locales render correctly. Cards display in correct order with proper titles.
+
+---
+
+## DEC-009: Responsive Layout Patterns for Cloudscape Grid & ColumnLayout
+
+**Date:** 2026-03-14
+**Author:** Lyren
+**Status:** ✅ Accepted
+
+**Decision:** Establish responsive design patterns for Cloudscape Grid and ColumnLayout components. Use native Cloudscape responsive props instead of custom CSS media queries.
+
+**Rationale:** Cloudscape Grid and ColumnLayout have built-in responsive features (`gridDefinition`, `columns`) that handle breakpoints automatically. Custom CSS media queries conflict with component defaults and create maintenance burden.
+
+**Pattern — Grid Responsive Columns:**
+```tsx
+<Grid gridDefinition={[
+  { colspan: { default: 12, xs: 12, s: 6, m: 4, l: 3, xl: 3 } },
+  // ...
+]}>
+```
+
+**Pattern — ColumnLayout Responsive Columns:**
+```tsx
+<ColumnLayout columns={[
+  { default: 1, xs: 1, s: 1, m: 2, l: 3, xl: 3 }
+]}>
+```
+
+**Breakpoints:** xs (0px), s (432px), m (672px), l (1024px), xl (1216px)
+
+**Never:** Add custom CSS media queries targeting Cloudscape breakpoints. Let the component handle responsive behavior.
+
+**Verification:** All pages tested at multiple viewports. No responsive breakpoint conflicts. Clean CSS output.

@@ -88,3 +88,24 @@ All 161 translation keys from en-US.json now wired into the UI. Spanish locale t
 - **data.ts bypass is a hidden localization gap:** Pages with `data.ts` files (metric labels, topic names, descriptions) silently bypass `t()` because the strings live outside React component bodies. These must use a `labelKey` pattern (store translation key, resolve at render time) — documented in LOCALIZATION.md §9 and AGENTS.md Common Pitfalls §3.
 - **document.title must use t() + useEffect:** `document.title` set once at module load will never update when locale changes. Always set via `useEffect` depending on `[t]`.
 - **Verification checklist added:** LOCALIZATION.md §11 now has a full "how to audit a page" checklist — structural requirements, string coverage, data files, accessibility, and test patterns.
+
+## Session 2026-03-14 — Leader Card Reordering & Bilingual Titles (Agent-30)
+
+**Status:** ✅ Complete
+
+### Changes
+
+- **Leader reorder:** Jacob (founder) → Andres (ABQ) → LSM (builder) → You (placeholder) → Sofía (Spanish liaison) → ASL (interpreter)
+- **Translation keys:** Created titles for all 6 leaders in en-US.json and es-MX.json
+- **Files updated:** src/data/leaders.json, src/locales/en-US.json, src/locales/es-MX.json
+- **Quality:** Lint ✅, Tests 99/99 ✅, Build ✅
+
+### Key Learnings
+
+- **Footer speaks the community:** Leader order reflects actual meeting speaking order. Visual alignment with real community improves perception.
+- **Translation keys enable future growth:** Speaker rotation no longer requires code changes — only update translation keys.
+- **Bilingual titles ready:** All leader titles wired for es-MX locale; "You" placeholder allows easy insertion of new leaders.
+
+### Decision Created
+
+- **DEC-008:** Leader reordering + bilingual footer support (decision merged to decisions.md)
