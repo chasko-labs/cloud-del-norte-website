@@ -21,6 +21,7 @@
     "meetings": "Juntas",
     "resources": "Recursos",
     "techDebtCountdowns": "Conteos de Deuda Técnica",
+    "designSystem": "Sistema de Diseño",
     "learning": "Aprendizaje",
     "apiGuide": "Guía de API",
     "restOverview": "Resumen de REST",
@@ -354,6 +355,117 @@
     },
     "releaseNotes": "Release notes",
     "source": "Fuente"
+  },
+  "themePage": {
+    "pageTitle": "Sistema de Diseño — Nube of the North",
+    "breadcrumb": "Sistema de Diseño",
+    "header": "Sistema de Diseño de Nube of the North",
+    "sections": {
+      "brandColors": "Paleta de Colores de Marca",
+      "brandColorsDescription": "Colores extraídos del banner del Meetup — cielo de nebulosa oscura con logo de estrella-en-montaña.",
+      "textEmphasis": "Jerarquía de Énfasis de Texto",
+      "textEmphasisDescription": "Jerarquía de tres niveles pa' contenido legible (modo claro y oscuro).",
+      "elevation": "Elevación en Modo Oscuro",
+      "elevationDescription": "Aclaración progresiva crea percepción de profundidad en fondos oscuros.",
+      "shadows": "Tokens de Sombra",
+      "shadowsDescription": "Profundidad ambiental pa' tarjetas, modales y elementos flotantes.",
+      "typography": "Escala Tipográfica",
+      "typographyDescription": "Tokens de tamaño de fuente pa' texto del cuerpo, encabezados y etiquetas.",
+      "cardExample": "Tarjeta Glassmorphism",
+      "cardExampleDescription": "La clase .cdn-card — fondo degradado + blur + línea de acento animada."
+    },
+    "colors": {
+      "navy": {
+        "name": "Armada",
+        "description": "Fondo oscuro base"
+      },
+      "amber": {
+        "name": "Ámbar",
+        "description": "Acentos sepia cálidos"
+      },
+      "purple": {
+        "name": "Púrpura",
+        "description": "Color interactivo primario"
+      },
+      "violet": {
+        "name": "Violeta",
+        "description": "Acento y efectos de brillo"
+      },
+      "lavender": {
+        "name": "Lavanda",
+        "description": "Bordes en modo claro"
+      },
+      "awsOrange": {
+        "name": "Naranja AWS",
+        "description": "Énfasis de llamada a la acción"
+      },
+      "gold": {
+        "name": "Oro",
+        "description": "Acentos emeritus"
+      }
+    },
+    "emphasis": {
+      "high": {
+        "name": "Énfasis Alto",
+        "description": "Encabezados, texto primario"
+      },
+      "medium": {
+        "name": "Énfasis Medio",
+        "description": "Etiquetas secundarias, descripciones"
+      },
+      "low": {
+        "name": "Énfasis Bajo",
+        "description": "Deshabilitado, pistas, marcadores"
+      }
+    },
+    "elevation": {
+      "level": "Nivel",
+      "level0": "Fondo base",
+      "level1": "Tarjetas, paneles",
+      "level2": "Modales, dropdowns",
+      "level3": "Tooltips, ventanas emergentes"
+    },
+    "shadows": {
+      "small": {
+        "name": "Pequeña",
+        "usage": "Elevación sutil"
+      },
+      "medium": {
+        "name": "Mediana",
+        "usage": "Profundidad de tarjeta"
+      },
+      "glow": {
+        "name": "Brillo",
+        "usage": "Énfasis, estados hover"
+      }
+    },
+    "typography": {
+      "small": {
+        "name": "Pequeña",
+        "usage": "Subtítulos, metadatos, insignias"
+      },
+      "base": {
+        "name": "Base (14px)",
+        "usage": "Cuerpo de texto (predeterminado Cloudscape)"
+      },
+      "large": {
+        "name": "Grande",
+        "usage": "Cuerpo enfatizado, etiquetas de tarjeta"
+      },
+      "extraLarge": {
+        "name": "Extra Grande",
+        "usage": "Encabezados de sección"
+      },
+      "twoExtraLarge": {
+        "name": "Doble Extra Grande",
+        "usage": "Encabezados de página"
+      }
+    },
+    "cardExample": {
+      "title": "Tarjeta Glassmorphism de Muestra",
+      "description": "Fondo degradado con blur, línea de acento degradado animada arriba, sombras cálidas en modo claro, brillo cósmico en modo oscuro.",
+      "technicalNote": "Aplica la clase .cdn-card a cualquier div — definida en src/styles/tokens.css"
+    }
   },
   "common": {
     "cancel": "Cancelar",

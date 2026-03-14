@@ -22,6 +22,7 @@ export default defineConfig({
         'create-meeting': resolve(__dirname, './src/pages/create-meeting/index.html'),
         'learning/api': resolve(__dirname, './src/pages/learning/api/index.html'),
         'maintenance-calendar': resolve(__dirname, './src/pages/maintenance-calendar/index.html'),
+        theme: resolve(__dirname, './src/pages/theme/index.html'),
       },
     },
   },

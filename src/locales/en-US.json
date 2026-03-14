@@ -21,6 +21,7 @@
     "meetings": "Meetings",
     "resources": "Resources",
     "techDebtCountdowns": "Tech Debt Countdowns",
+    "designSystem": "Design System",
     "learning": "Learning",
     "apiGuide": "API Guide",
     "restOverview": "REST Overview",
@@ -354,6 +355,117 @@
     },
     "releaseNotes": "Release notes",
     "source": "Source"
+  },
+  "themePage": {
+    "pageTitle": "Design System — Cloud Del Norte",
+    "breadcrumb": "Design System",
+    "header": "Cloud Del Norte Design System",
+    "sections": {
+      "brandColors": "Brand Color Palette",
+      "brandColorsDescription": "Colors extracted from the Cloud Del Norte Meetup banner — dark nebula sky with star-on-mountain logo.",
+      "textEmphasis": "Text Emphasis Hierarchy",
+      "textEmphasisDescription": "Three-level hierarchy for readable content (light & dark mode).",
+      "elevation": "Dark Mode Elevation",
+      "elevationDescription": "Progressive lightening creates depth perception on dark backgrounds.",
+      "shadows": "Shadow Tokens",
+      "shadowsDescription": "Ambient depth for cards, modals, and floating elements.",
+      "typography": "Typography Scale",
+      "typographyDescription": "Font size tokens for body text, headings, and labels.",
+      "cardExample": "Glassmorphism Card",
+      "cardExampleDescription": "The .cdn-card class — gradient background + blur + animated accent line."
+    },
+    "colors": {
+      "navy": {
+        "name": "Navy",
+        "description": "Base dark background"
+      },
+      "amber": {
+        "name": "Amber",
+        "description": "Warm sepia accents"
+      },
+      "purple": {
+        "name": "Purple",
+        "description": "Primary interactive color"
+      },
+      "violet": {
+        "name": "Violet",
+        "description": "Accent & glow effects"
+      },
+      "lavender": {
+        "name": "Lavender",
+        "description": "Light mode borders"
+      },
+      "awsOrange": {
+        "name": "AWS Orange",
+        "description": "Call-to-action emphasis"
+      },
+      "gold": {
+        "name": "Gold",
+        "description": "Emeritus accents"
+      }
+    },
+    "emphasis": {
+      "high": {
+        "name": "High Emphasis",
+        "description": "Headings, primary text"
+      },
+      "medium": {
+        "name": "Medium Emphasis",
+        "description": "Secondary labels, descriptions"
+      },
+      "low": {
+        "name": "Low Emphasis",
+        "description": "Disabled, hints, placeholders"
+      }
+    },
+    "elevation": {
+      "level": "Level",
+      "level0": "Base background",
+      "level1": "Cards, panels",
+      "level2": "Modals, dropdowns",
+      "level3": "Tooltips, popovers"
+    },
+    "shadows": {
+      "small": {
+        "name": "Small",
+        "usage": "Subtle elevation"
+      },
+      "medium": {
+        "name": "Medium",
+        "usage": "Card depth"
+      },
+      "glow": {
+        "name": "Glow",
+        "usage": "Emphasis, hover states"
+      }
+    },
+    "typography": {
+      "small": {
+        "name": "Small",
+        "usage": "Captions, metadata, badges"
+      },
+      "base": {
+        "name": "Base",
+        "usage": "Body copy (Cloudscape default)"
+      },
+      "large": {
+        "name": "Large",
+        "usage": "Emphasized body, card labels"
+      },
+      "extraLarge": {
+        "name": "Extra Large",
+        "usage": "Section headings"
+      },
+      "twoExtraLarge": {
+        "name": "2XL",
+        "usage": "Page headings"
+      }
+    },
+    "cardExample": {
+      "title": "Sample Glassmorphism Card",
+      "description": "Gradient background with blur, animated gradient accent line on top, warm shadows in light mode, cosmic glow in dark mode.",
+      "technicalNote": "Apply .cdn-card class to any div — defined in src/styles/tokens.css"
+    }
   },
   "common": {
     "cancel": "Cancel",
