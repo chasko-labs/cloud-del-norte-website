@@ -1,5 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Header, Container, Button, Box, SpaceBetween, ColumnLayout, Alert, Select } from '@cloudscape-design/components';
+import Table from '@cloudscape-design/components/table';
+import Header from '@cloudscape-design/components/header';
+import Container from '@cloudscape-design/components/container';
+import Button from '@cloudscape-design/components/button';
+import Box from '@cloudscape-design/components/box';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import ColumnLayout from '@cloudscape-design/components/column-layout';
+import Alert from '@cloudscape-design/components/alert';
+import Select from '@cloudscape-design/components/select';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 interface MatchSummary {
@@ -181,38 +189,38 @@ const RiftRewindDashboard: React.FC = () => {
   const columnDefinitions = [
     {
       id: 'champion',
-      header: 'Champion Name',
+      header: t('learning.api.championName'),
       cell: (item: MatchSummary) => item.champion,
     },
     {
       id: 'matchId',
-      header: 'Champion Title',
+      header: t('learning.api.championTitle'),
       cell: (item: MatchSummary) => item.matchId,
     },
     {
       id: 'kills',
-      header: 'Attack Power',
+      header: t('learning.api.attackPower'),
       cell: (item: MatchSummary) => item.kills,
     },
     {
       id: 'deaths',
-      header: 'Defense Rating',
+      header: t('learning.api.defenseRating'),
       cell: (item: MatchSummary) => item.deaths,
     },
     {
       id: 'assists',
-      header: 'Speed Rating',
+      header: t('learning.api.speedRating'),
       cell: (item: MatchSummary) => item.assists,
     },
     {
       id: 'result',
-      header: 'Tier Status',
+      header: t('learning.api.tierStatus'),
       cell: (item: MatchSummary) => (
         <Box>
           <span style={{ fontSize: '18px', marginRight: '6px' }}>
             {item.win ? '⭐' : '🔸'}
           </span>
-          {item.win ? 'S-Tier' : 'A-Tier'}
+          {item.win ? t('learning.api.sTier') : t('learning.api.aTier')}
         </Box>
       ),
     },
@@ -279,53 +287,53 @@ const RiftRewindDashboard: React.FC = () => {
       <Container header={<Header variant="h3">{t('learning.api.howRiotAPIRESTful')}</Header>}>
         <SpaceBetween direction="vertical" size="m">
           <Box variant="p">
-            <strong>REST</strong> (REpresentational State Transfer) and <strong>API</strong> (Application Programming Interface - a way for programs to talk to each other) work together. The Riot Games API demonstrates all 6 REST constraints:
+            {t('learning.api.restDescription')}
           </Box>
           
           <ColumnLayout columns={2} variant="text-grid">
             <Container variant="stacked">
-              <Header variant="h3">1️⃣ Uniform Interface</Header>
+              <Header variant="h3">{t('learning.api.uniformInterfaceTitle')}</Header>
               <Box variant="p">
-                Standard <strong>HTTP GET</strong> method with consistent <strong>JSON</strong> responses across all resources:<br/>
-                <code>GET /contests?year=2024</code><br/>
-                Always returns: <code>[{'{id: "worlds2024", name: "Worlds Championship 2024", status: "completed", winner: "T1"}'}, ...]</code>
+                {t('learning.api.uniformInterfaceDesc')}<br/>
+                <code>{t('learning.api.uniformInterfaceExample')}</code><br/>
+                {t('learning.api.uniformInterfaceReturns')} <code>[{'{id: "worlds2024", name: "Worlds Championship 2024", status: "completed", winner: "T1"}'}, ...]</code>
               </Box>
             </Container>
             
             <Container variant="stacked">
-              <Header variant="h3">2️⃣ Client-Server</Header>
+              <Header variant="h3">{t('learning.api.clientServerTitle')}</Header>
               <Box variant="p">
-                Our <strong>React</strong> (web framework) app is the <strong>client</strong>, Riot's computers are the <strong>server</strong>. We call their API, they respond with data. Each side can update independently.
+                {t('learning.api.clientServerDesc')}
               </Box>
             </Container>
             
             <Container variant="stacked">
-              <Header variant="h3">3️⃣ Stateless</Header>
+              <Header variant="h3">{t('learning.api.statelessTitle')}</Header>
               <Box variant="p">
-                Every <strong>API call</strong> (request) to Riot includes the <strong>X-Riot-Token header</strong> (our authentication key). No login sessions - each request is complete.
+                {t('learning.api.statelessDesc')}
               </Box>
             </Container>
             
             <Container variant="stacked">
-              <Header variant="h3">4️⃣ Cacheable</Header>
+              <Header variant="h3">{t('learning.api.cacheableTitle')}</Header>
               <Box variant="p">
-                Riot's Data Dragon <strong>CDN</strong> (fast global servers) uses version numbers like <code>13.24.1</code>. Our browser can save champion data and reuse it.
+                {t('learning.api.cacheableDesc')}
               </Box>
             </Container>
             
             <Container variant="stacked">
-              <Header variant="h3">5️⃣ Layered System</Header>
+              <Header variant="h3">{t('learning.api.layeredSystemTitle')}</Header>
               <Box variant="p">
-                Riot hides their internal structure. We call <code>api.riotgames.com</code> but don't know if it goes through load balancers, databases, or game servers.
+                {t('learning.api.layeredSystemDesc')}
               </Box>
             </Container>
             
             <Container variant="stacked">
-              <Header variant="h3">6️⃣ Code on Demand</Header>
+              <Header variant="h3">{t('learning.api.codeOnDemandTitle')}</Header>
               <Box variant="p">
-                Our <strong>React hook</strong> fetches data dynamically:<br/>
-                <code>const [data, setData] = useState(); fetch(riotApiUrl).then(setData)</code><br/>
-                Champion images load from Riot's CDN only when needed.
+                {t('learning.api.codeOnDemandDesc')}<br/>
+                <code>{t('learning.api.codeOnDemandExample')}</code><br/>
+                {t('learning.api.codeOnDemandImages')}
               </Box>
             </Container>
           </ColumnLayout>
@@ -335,17 +343,17 @@ const RiftRewindDashboard: React.FC = () => {
       <Container header={<Header variant="h3">{t('learning.api.uniformInterfaceDemonstration')}</Header>}>
         <SpaceBetween direction="vertical" size="s">
           <Box variant="p">
-            The same <strong>HTTP GET</strong> method and <strong>JSON</strong> format work across different resources:
+            {t('learning.api.uniformInterfaceDesc2')}
           </Box>
           
           <Container variant="stacked">
             <Header variant="h3">{t('learning.api.contestsEndpoint')}</Header>
             <SpaceBetween direction="vertical" size="s">
-              <Box variant="p">Recent tournaments and competitions</Box>
+              <Box variant="p">{t('learning.api.contestsDescription')}</Box>
               
               <ColumnLayout columns={2} variant="text-grid">
                 <Box variant="p">
-                  <strong>Select Year:</strong><br/>
+                  <strong>{t('learning.api.selectYear')}</strong><br/>
                   <Select
                     selectedOption={selectedYear}
                     onChange={({ detail }) => setSelectedYear(detail.selectedOption as { label: string; value: string })}
@@ -358,14 +366,14 @@ const RiftRewindDashboard: React.FC = () => {
                   />
                 </Box>
                 <Box variant="p">
-                  <strong>Request URL:</strong><br/>
+                  <strong>{t('learning.api.requestUrl')}</strong><br/>
                   <code>GET /contests?year={selectedYear.value}</code>
                 </Box>
               </ColumnLayout>
               
               <Box variant="p">
-                <strong>Response we expect:</strong><br/>
-                <code>HTTP 200 OK</code> with <strong>JSON</strong> array of contest objects:<br/>
+                <strong>{t('learning.api.responseExpected')}</strong><br/>
+                <code>HTTP 200 OK</code> {t('learning.api.responseExpectedDesc')}<br/>
                 <code>[{'{id: "worlds2024", name: "Worlds Championship 2024", status: "completed", winner: "T1"}'}, ...]</code>
               </Box>
               
@@ -374,7 +382,7 @@ const RiftRewindDashboard: React.FC = () => {
                 loading={loading && activeDemo === 'contests'}
                 variant="primary"
               >
-                Send GET Request
+                {t('learning.api.sendGetRequest')}
               </Button>
             </SpaceBetween>
           </Container>
@@ -384,32 +392,32 @@ const RiftRewindDashboard: React.FC = () => {
               header={
                 <Header 
                   variant="h3" 
-                  description="🟢 Live contest data from Lambda endpoint - Recent tournament results"
+                  description={t('learning.api.contestsResponseDesc')}
                 >
-                  🏆 Contests Response
+                  {t('learning.api.contestsResponse')}
                 </Header>
               }
             >
               <SpaceBetween direction="vertical" size="s">
                 <Box variant="p">
-                  <strong>Response received:</strong><br/>
-                  <code>HTTP 200 OK</code> with <strong>JSON</strong> array containing {contests.length} contest objects
+                  <strong>{t('learning.api.responseReceived')}</strong><br/>
+                  <code>HTTP 200 OK</code> {t('learning.api.responseReceivedDesc')} {contests.length} {t('learning.api.contestObjects')}
                 </Box>
                 
                 <Box variant="p">
-                  <strong>Data structure:</strong><br/>
-                  Each contest object contains: <code>id</code>, <code>name</code>, <code>status</code>, <code>winner</code><br/>
-                  <strong>Endpoint:</strong> <code>[lambda-id].lambda-url.us-east-2.on.aws/?endpoint=contests</code>
+                  <strong>{t('learning.api.dataStructure')}</strong><br/>
+                  {t('learning.api.dataStructureDesc')} <code>id</code>, <code>name</code>, <code>status</code>, <code>winner</code><br/>
+                  <strong>{t('learning.api.endpoint')}</strong> <code>[lambda-id].lambda-url.us-east-2.on.aws/?endpoint=contests</code>
                 </Box>
                 
                 <Table
                   columnDefinitions={[
-                    {id: 'name', header: 'Tournament', cell: (item: Contest) => item.name},
-                    {id: 'status', header: 'Status', cell: (item: Contest) => item.status},
-                    {id: 'winner', header: 'Winner', cell: (item: Contest) => item.winner}
+                    {id: 'name', header: t('learning.api.tournament'), cell: (item: Contest) => item.name},
+                    {id: 'status', header: t('learning.api.status'), cell: (item: Contest) => item.status},
+                    {id: 'winner', header: t('learning.api.winner'), cell: (item: Contest) => item.winner}
                   ]}
                   items={contests}
-                  empty="No contests available"
+                  empty={t('learning.api.noContests')}
                 />
               </SpaceBetween>
             </Container>
@@ -421,9 +429,9 @@ const RiftRewindDashboard: React.FC = () => {
         header={
           <Header 
             variant="h3" 
-            description="Performance scores based on tournament KDA, objective control, and team impact metrics"
+            description={t('learning.api.worldsChampionsDescLong')}
           >
-            🏆 Worlds {selectedYear.value} Champions
+            {t('learning.api.worldsChampions')} {selectedYear.value} {t('learning.api.worldsChampionsDesc')}
           </Header>
         }
       >
@@ -431,48 +439,48 @@ const RiftRewindDashboard: React.FC = () => {
           {championsApiDetails && hasTriedLiveData && (
             <Alert 
               type={championsApiDetails.actual_status === 'Success' ? 'success' : 'error'}
-              header="🎮 Champions API Request Details"
+              header={t('learning.api.championApiRequestDetails')}
               dismissible
               onDismiss={() => setChampionsApiDetails(null)}
             >
               <SpaceBetween direction="vertical" size="s">
                 <ColumnLayout columns={2} variant="text-grid">
                   <Box>
-                    <Box variant="strong">Expected URL:</Box>
+                    <Box variant="strong">{t('learning.api.expectedUrl')}</Box>
                     <Box variant="code">{championsApiDetails.expected_url}</Box>
                   </Box>
                   <Box>
-                    <Box variant="strong">Expected Response:</Box>
+                    <Box variant="strong">{t('learning.api.expectedResponse')}</Box>
                     <Box>{championsApiDetails.expected_response}</Box>
                   </Box>
                 </ColumnLayout>
                 
                 <ColumnLayout columns={2} variant="text-grid">
                   <Box>
-                    <Box variant="strong">Actual Status:</Box>
+                    <Box variant="strong">{t('learning.api.actualStatus')}</Box>
                     <Box color={championsApiDetails.actual_status === 'Success' ? 'text-status-success' : 'text-status-error'}>
                       {championsApiDetails.actual_status === 'Success' ? '✅' : '❌'} {championsApiDetails.actual_status}
                     </Box>
                   </Box>
                   <Box>
-                    <Box variant="strong">Actual Response:</Box>
+                    <Box variant="strong">{t('learning.api.actualResponse')}</Box>
                     <Box>{championsApiDetails.actual_response}</Box>
                   </Box>
                 </ColumnLayout>
                 
                 <ColumnLayout columns={2} variant="text-grid">
                   <Box>
-                    <Box variant="strong">Data Source:</Box>
+                    <Box variant="strong">{t('learning.api.dataSource')}</Box>
                     <Box>{championsApiDetails.data_source}</Box>
                   </Box>
                   <Box>
-                    <Box variant="strong">Authentication:</Box>
+                    <Box variant="strong">{t('learning.api.authentication')}</Box>
                     <Box>{championsApiDetails.authentication}</Box>
                   </Box>
                 </ColumnLayout>
                 
                 <Box>
-                  <Box variant="strong">Response Format:</Box>
+                  <Box variant="strong">{t('learning.api.responseFormat')}</Box>
                   <Box>{championsApiDetails.response_format}</Box>
                 </Box>
               </SpaceBetween>
@@ -480,14 +488,14 @@ const RiftRewindDashboard: React.FC = () => {
           )}
           
           <Box variant="p">
-            <strong>Performance Score:</strong> Calculated from tournament KDA, objective control, and team fight impact (0-100 scale). <strong>Tournament Record:</strong> Actual wins/losses from Worlds {selectedYear.value} matches. <strong>Signature Champion:</strong> Most impactful champion played during the tournament run.
+            <strong>{t('learning.api.performanceScore')}</strong> {t('learning.api.performanceScoreDesc')} <strong>{t('learning.api.tournamentRecord')}</strong> {t('learning.api.tournamentRecordDesc')} {selectedYear.value} {t('learning.api.matches')} <strong>{t('learning.api.signatureChampion')}</strong> {t('learning.api.signatureChampionDesc')}
           </Box>
           
           <Table
           columnDefinitions={[
             {
               id: 'player',
-              header: 'Player',
+              header: t('learning.api.player'),
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => (
                 <Box>
@@ -498,13 +506,13 @@ const RiftRewindDashboard: React.FC = () => {
             },
             {
               id: 'champion',
-              header: 'Signature Champion',
+              header: t('learning.api.signatureChampionHeader'),
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => item.championPlayed
             },
             {
               id: 'tournamentRecord',
-              header: 'Tournament Record',
+              header: t('learning.api.tournamentRecordHeader'),
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => (
                 <Box>
@@ -517,7 +525,7 @@ const RiftRewindDashboard: React.FC = () => {
             },
             {
               id: 'performance',
-              header: 'Performance Score',
+              header: t('learning.api.performanceScoreHeader'),
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => (
                 <Box variant="strong">{item.performanceScore}/100</Box>
@@ -525,7 +533,7 @@ const RiftRewindDashboard: React.FC = () => {
             },
             {
               id: 'achievement',
-              header: 'Achievement',
+              header: t('learning.api.achievement'),
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               cell: (item: any) => (
                 <Box>
@@ -539,18 +547,18 @@ const RiftRewindDashboard: React.FC = () => {
           header={
             <Header
               counter="(5)"
-              description={`Worlds ${selectedYear.value} championship team performance data`}
+              description={`${t('learning.api.worldsChampions')} ${selectedYear.value} ${t('learning.api.worldsChampionshipDesc')}`}
             >
-              Worlds Greatest Winning Players
+              {t('learning.api.worldsGreatestWinningPlayers')}
             </Header>
           }
           empty={
             <Box textAlign="center">
               <Box variant="strong" textAlign="center">
-                No tournament data available
+                {t('learning.api.noTournamentData')}
               </Box>
               <Box variant="p" padding={{ bottom: 's' }}>
-                Select a year to view championship data
+                {t('learning.api.selectYearToView')}
               </Box>
             </Box>
           }
@@ -561,24 +569,24 @@ const RiftRewindDashboard: React.FC = () => {
       {(errorMessage || apiResponse) && hasTriedLiveData && !activeDemo && (
         <Alert 
           type={dataSource === 'live' ? 'success' : 'error'}
-          header={dataSource === 'live' ? '✅ API Integration Status' : '⚠️ API Integration Status'}
+          header={dataSource === 'live' ? `✅ ${t('learning.api.apiIntegrationStatus')}` : `⚠️ ${t('learning.api.apiIntegrationStatus')}`}
           dismissible
           onDismiss={() => { setErrorMessage(''); setApiResponse(''); }}
         >
           <SpaceBetween direction="vertical" size="xs">
             {apiResponse && (
               <Box>
-                <Box variant="strong">Response Status:</Box>
+                <Box variant="strong">{t('learning.api.responseStatus')}</Box>
                 <Box margin={{ left: 's' }}>{apiResponse}</Box>
               </Box>
             )}
             {errorMessage && (
               <Box>
-                <Box variant="strong">Error Details:</Box>
+                <Box variant="strong">{t('learning.api.errorDetails')}</Box>
                 <Box margin={{ left: 's' }}>{errorMessage}</Box>
                 {!demoError && (
                   <Box margin={{ top: 'xs', left: 's' }}>
-                    📧 <strong>Support:</strong>{' '}
+                    📧 <strong>{t('learning.api.support')}</strong>{' '}
                     <a href="https://github.com/BryanChasko" target="_blank" rel="noopener noreferrer">GitHub @bryanChasko</a> |{' '}
                     <a href="https://linkedin.com/in/bryanchasko" target="_blank" rel="noopener noreferrer">LinkedIn</a>
                   </Box>
@@ -586,7 +594,7 @@ const RiftRewindDashboard: React.FC = () => {
               </Box>
             )}
             <Box>
-              <Box variant="strong">Lambda Function:</Box>
+              <Box variant="strong">{t('learning.api.lambdaFunction')}</Box>
               <Box margin={{ left: 's' }}>[lambda-id].lambda-url.us-east-2.on.aws</Box>
             </Box>
           </SpaceBetween>
@@ -597,46 +605,46 @@ const RiftRewindDashboard: React.FC = () => {
         header={
           <Header 
             variant="h2" 
-            description={dataSource === 'live' ? '🟢 Live champion data from Riot Games Data Dragon API - Real stats updated from League of Legends servers' : '🟡 Demo data (Click "Fetch from Riot API" to load live data and trigger AWS Lambda)'}
+            description={dataSource === 'live' ? t('learning.api.liveChampionDataDesc') : t('learning.api.demoChampionDataDesc')}
           >
-            {dataSource === 'live' ? 'Live Champion Performance Data' : 'Demo Champion Performance Data'}
+            {dataSource === 'live' ? t('learning.api.liveChampionData') : t('learning.api.demoChampionData')}
           </Header>
         }
       >
         {(errorMessage || championApiResponse || endpointDetails) && (
           <Alert 
             type={dataSource === 'live' ? 'success' : 'warning'}
-            header="🎮 Champion Data API Status"
+            header={t('learning.api.championDataApiStatus')}
             dismissible
             onDismiss={() => { setErrorMessage(''); setChampionApiResponse(''); setEndpointDetails(''); }}
           >
             <SpaceBetween direction="vertical" size="s">
               {championApiResponse && (
                 <Box>
-                  <Box variant="strong">Data Sources:</Box>
+                  <Box variant="strong">{t('learning.api.dataSources2')}</Box>
                   <Box margin={{ left: 's' }}>{championApiResponse}</Box>
                 </Box>
               )}
               {endpointDetails && (
                 <Box>
-                  <Box variant="strong">API Endpoints:</Box>
+                  <Box variant="strong">{t('learning.api.apiEndpoints')}</Box>
                   <Box margin={{ left: 's' }}>{endpointDetails}</Box>
                 </Box>
               )}
               {errorMessage && (
                 <Box>
-                  <Box variant="strong">Issues:</Box>
+                  <Box variant="strong">{t('learning.api.issues')}</Box>
                   <Box margin={{ left: 's' }}>{errorMessage}</Box>
                 </Box>
               )}
               <ColumnLayout columns={2} variant="text-grid">
                 <Box>
-                  <Box variant="strong">Lambda Endpoint:</Box>
+                  <Box variant="strong">{t('learning.api.lambdaEndpoint')}</Box>
                   <Box>[lambda-id].lambda-url.us-east-2.on.aws</Box>
                 </Box>
                 <Box>
-                  <Box variant="strong">Data Format:</Box>
-                  <Box>JSON REST API</Box>
+                  <Box variant="strong">{t('learning.api.dataFormat')}</Box>
+                  <Box>{t('learning.api.jsonRestApi')}</Box>
                 </Box>
               </ColumnLayout>
             </SpaceBetween>
@@ -654,25 +662,25 @@ const RiftRewindDashboard: React.FC = () => {
                 <SpaceBetween direction="horizontal" size="xs">
                   {hasTriedLiveData ? (
                     <Button onClick={fetchMatchHistory} loading={loading}>
-                      Refresh Live Data
+                      {t('learning.api.refreshLiveData')}
                     </Button>
                   ) : (
                     <Button onClick={fetchMatchHistory} loading={loading} variant="primary">
-                      🚀 Fetch from Riot API
+                      {t('learning.api.fetchFromRiotApi')}
                     </Button>
                   )}
                   {hasTriedLiveData && (
                     <Button onClick={() => { loadDummyData(); setHasTriedLiveData(false); }} variant="normal">
-                      Reset to Demo Data
+                      {t('learning.api.resetToDemoData')}
                     </Button>
                   )}
                 </SpaceBetween>
               }
             >
-              {dataSource === 'live' ? 'Live Champions Data' : 'Demo Champions Data'}
+              {dataSource === 'live' ? t('learning.api.liveChampionsData') : t('learning.api.demoChampionsData')}
             </Header>
           }
-          empty="No champion data available"
+          empty={t('learning.api.noChampionData')}
         />
       </Container>
       
@@ -715,11 +723,11 @@ const RiftRewindDashboard: React.FC = () => {
             <Container variant="stacked">
               <Header variant="h3">{t('learning.api.dataSources')}</Header>
               <Box variant="p">
-                <strong>✅ From Riot API:</strong><br/>
+                <strong>✅ {t('learning.api.dataSourcesFromRiot').replace('✅ ', '')}</strong><br/>
                 • Champion names & lore titles<br/>
                 • Attack damage, health, speed stats<br/>
                 • Official game balance data<br/><br/>
-                <strong>🛠️ Our Processing:</strong><br/>
+                <strong>🛠️ {t('learning.api.ourProcessing').replace('🛠️ ', '')}</strong><br/>
                 • Tier rankings (S/A-Tier algorithm)<br/>
                 • Display scaling (÷10, ÷100, ÷20)<br/>
                 • Performance calculations
@@ -729,11 +737,11 @@ const RiftRewindDashboard: React.FC = () => {
             <Container variant="stacked">
               <Header variant="h3">{t('learning.api.architectureStack')}</Header>
               <Box variant="p">
-                <strong>Frontend:</strong> React 18 + TypeScript<br/>
-                <strong>Build:</strong> Vite 5 → Static HTML/CSS/JS<br/>
-                <strong>Hosting:</strong> S3 + CloudFront CDN<br/>
-                <strong>API:</strong> AWS Lambda Function URL<br/>
-                <strong>Data:</strong> Riot Games API integration
+                <strong>{t('learning.api.frontend')}</strong> {t('learning.api.frontendValue')}<br/>
+                <strong>{t('learning.api.build')}</strong> {t('learning.api.buildValue')}<br/>
+                <strong>{t('learning.api.hosting')}</strong> {t('learning.api.hostingValue')}<br/>
+                <strong>{t('learning.api.api')}</strong> {t('learning.api.apiValue')}<br/>
+                <strong>{t('learning.api.data')}</strong> {t('learning.api.dataValue')}
               </Box>
             </Container>
           </ColumnLayout>
@@ -742,16 +750,16 @@ const RiftRewindDashboard: React.FC = () => {
             <Header variant="h3">{t('learning.api.championDataMapping')}</Header>
             <ColumnLayout columns={3} variant="text-grid">
               <Box variant="p">
-                <strong>⚔️ Attack Power</strong><br/>
-                <code>stats.attackdamage ÷ 10</code>
+                <strong>{t('learning.api.attackPowerMapping')}</strong><br/>
+                <code>{t('learning.api.attackPowerMappingValue')}</code>
               </Box>
               <Box variant="p">
-                <strong>🛡️ Defense Rating</strong><br/>
-                <code>stats.hp ÷ 100</code>
+                <strong>{t('learning.api.defenseRatingMapping')}</strong><br/>
+                <code>{t('learning.api.defenseRatingMappingValue')}</code>
               </Box>
               <Box variant="p">
-                <strong>💨 Speed Rating</strong><br/>
-                <code>stats.movespeed ÷ 20</code>
+                <strong>{t('learning.api.speedRatingMapping')}</strong><br/>
+                <code>{t('learning.api.speedRatingMappingValue')}</code>
               </Box>
             </ColumnLayout>
           </Container>
