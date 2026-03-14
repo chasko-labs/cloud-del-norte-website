@@ -62,6 +62,7 @@ src/pages/<name>/
 | Create Meeting | `src/pages/create-meeting/` |
 | Learning / API | `src/pages/learning/api/` |
 | Maintenance Calendar | `src/pages/maintenance-calendar/` |
+| Theme Preview | `src/pages/theme/` |
 
 ### Adding a new page
 
@@ -93,16 +94,42 @@ See [LOCALIZATION.md](LOCALIZATION.md) for dialect guides, translation guideline
 
 ## Deploy
 
+### CI/CD (GitHub Actions)
+
+`.github/workflows/deploy.yml` triggers on pushes to `main` that touch `src/`,
+`public/`, `package.json`, `package-lock.json`, `vite.config.ts`, or `tsconfig.json`.
+
+It runs: `npm install` → `npm run build` → `aws s3 sync` → CloudFront invalidation.
+
+**Required repo secrets** (Settings → Secrets and variables → Actions):
+
+| Secret | Purpose |
+| ------ | ------- |
+| `AWS_ACCESS_KEY_ID` | IAM access key |
+| `AWS_SECRET_ACCESS_KEY` | IAM secret key |
+| `AWS_ROLE_ARN` | IAM role ARN for OIDC (optional if using keys) |
+
+> ⚠️ If secrets are not configured, the workflow builds successfully but
+> **silently skips** the S3 deploy and CloudFront invalidation.
+
+### Manual deploy
+
 ```bash
-npm run build
-aws s3 sync lib/ s3://awsaerospace.org --delete --profile bc-website
+aws sso login --profile aerospaceug-admin
+npm run lint && npm test && npm run build
+aws s3 sync lib/ s3://awsaerospace.org --delete --profile aerospaceug-admin
 aws cloudfront create-invalidation \
   --distribution-id ECC3LP1BL2CZS \
   --paths "/*" \
-  --profile bc-website
+  --profile aerospaceug-admin
 ```
 
-Deploy is fully manual — no CI/CD pipeline.
+| Resource | Value |
+| -------- | ----- |
+| AWS CLI profile | `aerospaceug-admin` (SSO) |
+| S3 bucket | `awsaerospace.org` |
+| CloudFront distribution | `ECC3LP1BL2CZS` |
+| CloudFront domain | `d2ly3jmh1f74xt.cloudfront.net` |
 
 ---
 

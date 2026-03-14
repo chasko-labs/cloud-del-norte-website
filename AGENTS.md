@@ -27,7 +27,7 @@
 | Linter | ESLint 10 (flat config — `eslint.config.js`) |
 | Test framework | Vitest + @testing-library/react |
 | Build output | `./lib/` |
-| Hosting | S3 + CloudFront (AWS account `bc-website`) |
+| Hosting | S3 + CloudFront |
 
 ---
 
@@ -52,7 +52,9 @@ Every page wraps its content in this shell. Do not create parallel layout mechan
 
 ### Key Components in Use
 - `AppLayout` — page shell with nav + content area
+- `TopNavigation` — top bar with identity, theme toggle (☀️/🌙), locale toggle (🇺🇸/🇲🇽)
 - `SideNavigation` — left nav (shared via `src/components/navigation/index.tsx`)
+- `Footer` — leader cards + community description (`src/components/footer/`)
 - `Table` — data tables
 - `Header` — section headers
 - `SpaceBetween` — spacing utility
@@ -69,6 +71,34 @@ Every page wraps its content in this shell. Do not create parallel layout mechan
 
 ### Docs
 https://cloudscape.design/components/
+
+---
+
+## Localization (US/MX Locale Toggle)
+
+The site supports two locales via a flag toggle (🇺🇸↔🇲🇽) in TopNavigation:
+
+- **`us`** — New Mexican English with Spanglish & local slang
+- **`mx`** — Chihuahua dialect Spanish (norteño)
+
+### Key files
+
+| File | Purpose |
+| ---- | ------- |
+| `src/utils/locale.ts` | `type Locale`, localStorage (`cdn-locale`), `applyLocale`, `initializeLocale` |
+| `src/contexts/locale-context.tsx` | `LocaleProvider`, `t()` translation function, dot-notation key lookup |
+| `src/hooks/useTranslation.ts` | `useTranslation()` hook returning `{ locale, t }` |
+| `src/locales/en-US.json` | English translation keys |
+| `src/locales/es-MX.json` | Spanish translation keys |
+
+### How it works
+- Mirrors the theme toggle pattern: localStorage persistence, Shell props, page-level state
+- Each page creates its own `LocaleProvider` (MPA — no shared runtime)
+- Translation JSONs imported statically (tree-shaken per page via Vite)
+- `t('shell.title')` does dot-notation lookup with `en-US` fallback
+
+See [LOCALIZATION.md](LOCALIZATION.md) for dialect guides, translation guidelines,
+and linguistic resources for the El Paso / Juárez / Las Cruces border region.
 
 ---
 
@@ -116,6 +146,7 @@ input: {
 | Create Meeting | `src/pages/create-meeting/` |
 | Learning / API | `src/pages/learning/api/` |
 | Maintenance Calendar | `src/pages/maintenance-calendar/` |
+| Theme Preview | `src/pages/theme/` |
 
 ---
 
@@ -141,37 +172,52 @@ Do not create per-page navigation components — always update the shared one.
 
 ## Deploy Flow
 
-### Build
+### CI/CD (GitHub Actions)
+
+`.github/workflows/deploy.yml` triggers on pushes to `main` that touch `src/`,
+`public/`, `package.json`, `package-lock.json`, `vite.config.ts`, or `tsconfig.json`.
+
+Pipeline: `npm install` → `npm run build` → `aws s3 sync` → CloudFront invalidation.
+
+**Required repo secrets** (Settings → Secrets and variables → Actions):
+
+| Secret | Purpose |
+| ------ | ------- |
+| `AWS_ACCESS_KEY_ID` | IAM access key |
+| `AWS_SECRET_ACCESS_KEY` | IAM secret key |
+| `AWS_ROLE_ARN` | IAM role ARN for OIDC (optional if using keys) |
+
+> ⚠️ If secrets are not configured, the workflow builds successfully but
+> **silently skips** the S3 deploy and CloudFront invalidation
+> (`continue-on-error: true` on the credential step masks the failure).
+
+### Manual deploy
+
 ```bash
-npm run build   # tsc + vite build → ./lib/
+aws sso login --profile aerospaceug-admin
+npm run lint && npm test && npm run build
+aws s3 sync lib/ s3://awsaerospace.org --delete --profile aerospaceug-admin
+aws cloudfront create-invalidation \
+  --distribution-id ECC3LP1BL2CZS \
+  --paths "/*" \
+  --profile aerospaceug-admin
+```
+
+### Build
+
+```bash
+npm run build   # fetch-releases → tsc → vite build → ./lib/
 ```
 
 > **Script order matters:** fetch script → `tsc` → `vite build`. Any changes to
 > the `build` script in `package.json` must preserve this order once the fetch
 > script is wired in.
 
-### Deploy to S3
-```bash
-aws s3 sync lib/ s3://awsaerospace.org --delete --profile bc-website
-```
-
-### Invalidate CloudFront
-```bash
-aws cloudfront create-invalidation \
-  --distribution-id ECC3LP1BL2CZS \
-  --paths "/*" \
-  --profile bc-website
-```
-
 ### AWS context
-- **Profile:** `bc-website`
-- **Account:** `211125425201` (bryanchasko_domains)
-- **Role:** AdministratorAccess
+- **CLI profile:** `aerospaceug-admin` (SSO — requires `aws sso login`)
 - **CloudFront ID:** `ECC3LP1BL2CZS`
 - **CloudFront domain:** `d2ly3jmh1f74xt.cloudfront.net`
 - **S3 bucket:** `awsaerospace.org`
-
-**No CI/CD pipeline** — deploy is fully manual.
 
 ---
 
@@ -246,4 +292,3 @@ This project uses [Squad](https://github.com/bradygaster/squad) for AI agent orc
 - **ESLint flat config (v10).** `eslint.config.js` only — no `.eslintrc`.
 - **No backend.** Static site only. No Lambda, no API Gateway, no SSR. Data is
   fetched at build time and bundled as JSON.
-- **Manual deploy.** No CI/CD pipeline yet.
