@@ -13,7 +13,7 @@ import Navigation from '../../components/navigation';
 import Shape from './components/shape';
 import ShellLayout from '../../layouts/shell';
 import { BasicValidationContext, useBasicValidation } from './validation/basic-validation';
-import { ContentLayout } from '@cloudscape-design/components';
+import ContentLayout from '@cloudscape-design/components/content-layout';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 import { useTranslation } from '../../hooks/useTranslation';
