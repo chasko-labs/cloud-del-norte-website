@@ -51,6 +51,22 @@
       "status": "active"
     },
     {
+      "persistent_name": "Sophia",
+      "universe": "heraldstack",
+      "role": "English Localization Specialist",
+      "created_at": "2026-03-14T04:30:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Sofía",
+      "universe": "heraldstack",
+      "role": "Spanish Localization Specialist",
+      "created_at": "2026-03-14T04:30:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
       "persistent_name": "Scribe",
       "universe": "exempt",
       "role": "Session Logger",

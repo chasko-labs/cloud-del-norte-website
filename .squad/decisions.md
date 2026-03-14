@@ -290,3 +290,35 @@ export default function Navigation() {
 
 **Test Result:** All merged commits pass `npm run lint && npm test && npm run build`
 
+
+## DEC-013: Home Page Responsive Rendering Tests
+
+**Author:** Kess (Testing Lead)
+**Date:** 2025-07-17
+**Status:** Implemented
+
+**Context:** Lyren performed a UX responsiveness pass on the home page (Grid responsive colspans, QualityReport spacing, ProductionOverview responsive ColumnLayout, barrel import fix). Tests were needed to validate the page renders correctly before and after these changes.
+
+**Decision:** Created `src/pages/home/__tests__/app.test.tsx` with 8 tests that render the full component tree (real child components, mocked Cloudscape primitives). This approach validates actual content rendering rather than just checking component presence via mocked children.
+
+**Key Design Choice:** Dual SpaceBetween mock — both barrel import (`@cloudscape-design/components`) and deep import (`@cloudscape-design/components/space-between`) are mocked so tests pass with the current barrel import in meetings.tsx AND will continue passing after Lyren's deep-import fix lands.
+
+**Tests Added:** 8 tests covering error-free render, Shell wrapper, 3 panel headers, community description, 4 metric labels, 4 metric values. All 8 pass on main branch; designed to also pass after Lyren's responsive changes.
+
+---
+
+## DEC-014: Responsive Layout Patterns for Cloudscape Grid & ColumnLayout
+
+**Author:** Lyren (Cloudscape UI & Design Specialist)
+**Date:** 2025-07-18
+**Status:** Proposed
+
+**Decision:** Establish standard responsive patterns for Cloudscape layout components:
+
+1. **Grid colspans** must use responsive breakpoint objects (`{ default: 12, m: N }`) instead of fixed integers. Panels should stack (colspan 12) on small screens.
+2. **ColumnLayout** with 3+ columns should set `minColumnWidth` (recommended: 150px for metrics, 200px for content) to enable automatic wrapping on narrow viewports.
+3. **Text blocks** in containers should use `line-height: 1.7`, `max-width: 60ch`, and Cloudscape `Box padding`/`SpaceBetween` for breathing room — never render long text as a raw inline string.
+
+**Rationale:** Fixed colspans and high column counts render unreadable on mobile. Cloudscape's responsive API exists specifically for this — using it consistently prevents future readability regressions. The `60ch` max-width follows typographic best practice for readable line lengths.
+
+**Impact:** All current and future pages using Grid or ColumnLayout.
