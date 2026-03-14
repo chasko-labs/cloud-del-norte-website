@@ -83,6 +83,10 @@
       "onDemand": "On-Demand",
       "eventPage": "Event Page"
     },
+    "filterCounter": {
+      "match": "match",
+      "matches": "matches"
+    },
     "empty": {
       "noMatches": "No matches",
       "noMatchesSubtitle": "We can't find a match.",
