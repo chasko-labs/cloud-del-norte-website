@@ -18,6 +18,8 @@
 | Theren | Content & Data Specialist | `.squad/agents/theren/charter.md` | ✅ Active |
 | Kess | Testing Lead | `.squad/agents/kess/charter.md` | ✅ Active |
 | Calli | Localization & Translation Specialist | `.squad/agents/calli/charter.md` | ✅ Active |
+| Sophia | English Localization Specialist | `.squad/agents/sophia/charter.md` | ✅ Active |
+| Sofía | Spanish Localization Specialist | `.squad/agents/sofia/charter.md` | ✅ Active |
 | Scribe | Session Logger | `.squad/agents/scribe/charter.md` | 📋 Silent |
 | Ralph | Work Monitor | — | 🔄 Monitor |
 
