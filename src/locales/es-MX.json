@@ -61,6 +61,13 @@
       "strong": "Fuerte",
       "mild": "Suave",
       "unnoticed": "Sin notar"
+    },
+    "pieChart": {
+      "chartAriaRoleDescription": "Gráfica de pastel",
+      "detailPopoverDismissAriaLabel": "Cerrar",
+      "legendAriaLabel": "Leyenda",
+      "filterSelectedAriaLabel": "Segmento seleccionado",
+      "segmentAriaRoleDescription": "segmento"
     }
   },
   "meetings": {
