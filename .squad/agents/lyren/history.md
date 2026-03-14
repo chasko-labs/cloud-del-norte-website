@@ -376,3 +376,39 @@ const [navOpen, setNavOpen] = useState(isDesktop);
 - **Cloudscape defaults are closed:** Never assume navigation is open — always explicitly manage state.
 - **CSS selectors must be locale-aware:** Hardcoded English substrings fail when content is localized.
 - **Responsive patterns matter:** Desktop/mobile have different navigation expectations. Let the component decide based on viewport.
+
+## Learnings — AppLayout Whitespace Fix (2025-07-19)
+
+### Root Cause
+
+Cloudscape AppLayout applies inline `min-block-size: calc(100vh - headerHeight)` on the `<main>` layout element and `block-size: calc(100vh - headerHeight)` on nav/content/tools containers. This is viewport-fill behavior designed for apps where AppLayout is the only page element. Since our Footer renders OUTSIDE AppLayout (`footerSelector` was removed to fix a sidebar-collapse bug), this viewport-fill created a giant whitespace gap between content and footer (up to 721px on short-content pages like create-meeting).
+
+### Fix Applied
+
+CSS overrides in `src/layouts/shell/styles.css`:
+- `min-block-size: auto !important` on `main[class*="awsui_layout"]`
+- `block-size: auto !important` on navigation-container, tools-container, content-container
+
+### Key Findings
+
+- The `footerSelector` prop in AppLayout can NOT be used because Cloudscape subtracts footer height from the sidebar height calculation, causing sidebar to collapse when footer is large (~1118px).
+- Cloudscape applies these sizing values as **inline styles** via JS (`use-skeleton-slots-attributes.js`), so CSS `!important` is required to override.
+- The override is safe: sticky nav positioning still works correctly because `position: sticky` doesn't depend on the parent's min-height.
+- `min-block-size` (not `min-height`) is what Cloudscape uses — it's the logical property equivalent.
+
+### Architecture Decision
+
+Footer rendering OUTSIDE AppLayout + CSS min-block-size override is the correct pattern for this project. Do NOT re-add `footerSelector` — it breaks sidebar height.
+
+## Learnings — Toggle Button Box-Shadow Fix (2025-07-19)
+
+### Root Cause: `[class*="top-navigation"]` selector leak
+The TASK 6 TopNavigation container styles used `#top-nav [class*="top-navigation"]` to apply `box-shadow`, `border-bottom`, and `background`. This *also* matched inner `<a>` elements whose Cloudscape-generated class contains `variant-top-navigation`, leaking the container's shadow onto individual emoji toggle links as ugly square boxes.
+
+### Fix Pattern
+1. **Blanket strip rule**: `#top-nav [class*="top-navigation"] a[class*="top-navigation"]` overrides leaked styles with `box-shadow: none; border-bottom: none; background: transparent`.
+2. **Targeted glow restore**: More specific selectors on `[class*="utility-wrapper"] a[class*="top-navigation"]` re-apply a soft circular glow (`border-radius: 50%`) scoped per mode — warm amber (light) / violet (dark).
+3. Specificity layering: blanket < glow (glow selectors add `:root:not(...)` or `.awsui-dark-mode` class).
+
+### Key Takeaway
+When using `[class*="..."]` attribute selectors on Cloudscape containers, always verify the substring doesn't also match child elements. Cloudscape generates variant classes like `awsui_variant-top-navigation_*` on inner elements. Prefer targeting by tag+class or structure (`header[class*="top-navigation"]`) to avoid cascade leaks.
