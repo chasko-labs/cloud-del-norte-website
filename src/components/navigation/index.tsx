@@ -16,7 +16,8 @@ export default function Navigation() {
       text: t('navigation.resources'),
       defaultExpanded: false,
       items: [
-        { type: 'link', text: t('navigation.techDebtCountdowns'), href: '/maintenance-calendar/' }
+        { type: 'link', text: t('navigation.techDebtCountdowns'), href: '/maintenance-calendar/' },
+        { type: 'link', text: t('navigation.designSystem'), href: '/theme/index.html' }
       ]
     },
     { type: 'divider' },
