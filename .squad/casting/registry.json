@@ -1,0 +1,20 @@
+{
+  "assignments": [
+    {
+      "persistent_name": "Sophia",
+      "universe": "exempt",
+      "role": "English Localization Specialist",
+      "created_at": "2025-07-23T00:00:00Z",
+      "legacy_named": true,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Sofía",
+      "universe": "exempt",
+      "role": "Spanish Localization Specialist",
+      "created_at": "2025-07-23T00:00:00Z",
+      "legacy_named": true,
+      "status": "active"
+    }
+  ]
+}
