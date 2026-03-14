@@ -1,8 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-
-interface MediaQueryListEvent {
-  matches: boolean;
-}
+import type { MediaQueryListEvent } from 'vitest';
 
 describe('theme utility', () => {
   beforeEach(() => {
