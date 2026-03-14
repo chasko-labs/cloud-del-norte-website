@@ -40,14 +40,14 @@ export default function App() {
       onThemeChange={handleThemeChange}
       locale={locale}
       onLocaleChange={handleLocaleChange}
-      breadcrumbs={<Breadcrumbs active={{ text: t('home.breadcrumb'), href: '/home/index.html' }} />}
+      breadcrumbs={<Breadcrumbs active={{ text: t('dashboardPage.breadcrumb'), href: '/home/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}
     >
       <ContentLayout
         header={
-          <Header variant="h1" info={<Link variant="info">{t('home.infoLink')}</Link>}>
-            {t('home.header')}
+          <Header variant="h1" info={<Link variant="info">{t('dashboardPage.infoLink')}</Link>}>
+            {t('dashboardPage.header')}
           </Header>
         }
       >

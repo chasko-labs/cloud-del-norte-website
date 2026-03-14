@@ -73,9 +73,9 @@ describe('Home page locale rendering', () => {
     mockTranslation.locale = 'mx';
     mockTranslation.t = (key: string) => {
       const spanishMap: Record<string, string> = {
-        'home.breadcrumb': 'Tablero',
-        'home.header': 'Tablero',
-        'home.infoLink': 'Info',
+        'dashboardPage.breadcrumb': 'Tablero',
+        'dashboardPage.header': 'Tablero',
+        'dashboardPage.infoLink': 'Info',
       };
       return spanishMap[key] ?? key;
     };
@@ -90,9 +90,9 @@ describe('Home page locale rendering', () => {
     mockTranslation.locale = 'us';
     mockTranslation.t = (key: string) => {
       const englishMap: Record<string, string> = {
-        'home.breadcrumb': 'Dashboard',
-        'home.header': 'Dashboard',
-        'home.infoLink': 'Info',
+        'dashboardPage.breadcrumb': 'Dashboard',
+        'dashboardPage.header': 'Dashboard',
+        'dashboardPage.infoLink': 'Info',
       };
       return englishMap[key] ?? key;
     };

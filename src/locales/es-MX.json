@@ -37,57 +37,69 @@
     "home": "Nube of the North"
   },
   "footer": {
-    "ourLeaders": "Nuestros Líderes",
+    "ourLeaders": "Organizadores del AWS User Group",
     "joinUs": "Únete en Meetup →",
     "communityDescription": "AWS User Group Nube of the North es parte de",
     "globalCommunity": "Comunidad Global de AWS User Groups",
     "communityFullDescription": "Somos voluntarios locales de Nuevo México, West Texas y Chihuahua, México. Creemos que los proyectos, las carreras y los problemas se pueden acelerar usando AWS, y queremos compartir nuestro conocimiento, conexiones y experiencias contigo para que veas lo que tú puedes",
     "goBuild": "Go Build"
   },
-  "home": {
+  "dashboardPage": {
     "breadcrumb": "Tablero",
     "header": "Tablero",
-    "infoLink": "Info",
-    "productionOverviewHeader": "Resumen de producción",
-    "pastTopicsHeader": "Temas Pasados",
-    "detailsHeader": "Detalles",
-    "userGroupHeader": "#AWS User Group Nube of the North",
-    "groupNotesModal": "Notas del grupo",
-    "communityDescription": "Nuestro primer meetup fue el Día Internacional de la Mujer 03/08/21 en Arrowhead Research Park, pa' impulsar el aprendizaje de la comunidad, la conciencia de negocios, el engagement estudiantil, las oportunidades de carrera, y el espíritu emprendedor y hobbyista. Queremos aprender de, servir, educar y entretener a la raza diversa de Juárez MX/El Paso + Las Cruces, todo Nuevo México, y las áreas rurales de alrededor.",
-    "metrics": {
-      "communityMembers": "Miembros de la Comunidad",
-      "fiveStarReviews": "Reseñas de 5 Estrellas",
-      "meetupsHeld": "Meetups Realizados",
-      "est": "Est."
+    "infoLink": "Información",
+    "productionOverview": {
+      "header": "Resumen de producción"
     },
-    "topics": {
-      "games3d": "Juegos y 3D",
-      "artificialIntelligence": "Inteligencia Artificial",
-      "serverlessLens": "Serverless Lens",
-      "spaceSatellite": "Espacio y Satélite"
+    "pastTopics": {
+      "header": "Temas Pasados"
     },
-    "notes": {
-      "cherry": "cereza",
-      "raspberry": "frambuesa",
-      "rose": "rosa",
-      "strawberry": "fresa"
-    },
-    "tableHeaders": {
+    "groupNotesModal": "Notas del grupo"
+  },
+  "userGroupHero": {
+    "header": "#AWS User Group Nube of the North",
+    "description": "Nuestro primer meetup fue el Día Internacional de la Mujer 03/08/21 en Arrowhead Research Park, pa' impulsar el aprendizaje de la comunidad, la conciencia de negocios, el engagement estudiantil, las oportunidades de carrera, y el espíritu emprendedor y hobbyista. Queremos aprender de, servir, educar y entretener a la raza diversa de Juárez MX/El Paso + Las Cruces, todo Nuevo México, y las áreas rurales de alrededor."
+  },
+  "userGroupMetrics": {
+    "communityMembers": "Miembros de la Comunidad",
+    "fiveStarReviews": "Reseñas de 5 Estrellas",
+    "meetupsHeld": "Meetups Realizados",
+    "est": "Fundado"
+  },
+  "pastTopics": {
+    "games3d": "Juegos y 3D",
+    "artificialIntelligence": "Inteligencia Artificial",
+    "serverlessLens": "Lente Serverless",
+    "spaceSatellite": "Espacio y Satélite"
+  },
+  "flavorNotes": {
+    "cherry": "cereza",
+    "raspberry": "frambuesa",
+    "rose": "rosa",
+    "strawberry": "fresa"
+  },
+  "productionTable": {
+    "headers": {
       "name": "Nombre",
       "status": "Estado",
       "mixing": "Mezcla (kg/h)",
-      "molding": "Moldeo (kg/h)",
+      "molding": "Moldeo (kg/h)"
+    }
+  },
+  "qualityTable": {
+    "headers": {
+      "name": "Nombre",
       "strong": "Fuerte",
       "mild": "Suave",
       "unnoticed": "Sin notar"
-    },
-    "pieChart": {
-      "chartAriaRoleDescription": "Gráfico circular",
-      "detailPopoverDismissAriaLabel": "Cerrar detalles",
-      "legendAriaLabel": "Leyenda",
-      "filterSelectedAriaLabel": "Seleccionado",
-      "segmentAriaRoleDescription": "Segmento"
     }
+  },
+  "pieChart": {
+    "chartAriaRoleDescription": "Gráfico circular",
+    "detailPopoverDismissAriaLabel": "Cerrar detalles",
+    "legendAriaLabel": "Leyenda",
+    "filterSelectedAriaLabel": "Seleccionado",
+    "segmentAriaRoleDescription": "Segmento"
   },
   "meetings": {
     "breadcrumb": "Juntas",

@@ -1,24 +1,42 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 export type Locale = 'us' | 'mx';
 
-const LOCALE_KEY = 'cdn-locale';
+const CDN_LOCALE_KEY = 'cdn-locale';
 
-export const getStoredLocale = (): Locale => {
-  const stored = localStorage.getItem(LOCALE_KEY);
-  if (stored === 'us' || stored === 'mx') return stored;
-  return 'us';
-};
+export function getStoredLocale(): Locale | null {
+  try {
+    const stored = localStorage.getItem(CDN_LOCALE_KEY);
+    if (stored === 'us' || stored === 'mx') {
+      return stored;
+    }
+  } catch {
+    // localStorage not available
+  }
+  return null;
+}
 
-export const setStoredLocale = (locale: Locale): void => {
-  localStorage.setItem(LOCALE_KEY, locale);
-};
+export function setStoredLocale(locale: Locale): void {
+  try {
+    localStorage.setItem(CDN_LOCALE_KEY, locale);
+  } catch {
+    // localStorage not available
+  }
+}
 
-export const applyLocale = (locale: Locale): void => {
-  document.documentElement.lang = locale === 'mx' ? 'es-MX' : 'en-US';
-  document.documentElement.setAttribute('data-locale', locale);
-};
+export function applyLocale(locale: Locale): void {
+  document.documentElement.lang = locale === 'us' ? 'en-US' : 'es-MX';
+}
 
-export const initializeLocale = (): Locale => {
-  const locale = getStoredLocale();
-  applyLocale(locale);
-  return locale;
-};
+export function initializeLocale(): Locale {
+  const stored = getStoredLocale();
+  if (stored) {
+    applyLocale(stored);
+    return stored;
+  }
+
+  const defaultLocale: Locale = 'us';
+  applyLocale(defaultLocale);
+  return defaultLocale;
+}

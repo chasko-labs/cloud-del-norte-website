@@ -1,21 +1,5 @@
 [
   {
-    "id": "bryan-chasko",
-    "name": "Bryan Chasko",
-    "role": "Founder & Organizer",
-    "bio": "",
-    "organization": null,
-    "social": {
-      "github": "BryanChasko",
-      "linkedin": "bryanchasko",
-      "twitter": "BryanChasko",
-      "website": null,
-      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
-    },
-    "placeholder": false,
-    "retired": false
-  },
-  {
     "id": "jacob-wright",
     "name": "Jacob Wright",
     "role": "Founder & Doña Ana County Lead",
@@ -45,38 +29,6 @@
       "meetup": null
     },
     "placeholder": false,
-    "retired": false
-  },
-  {
-    "id": "wayne-savage",
-    "name": "Wayne Savage",
-    "role": "Founder, Retired Organizer",
-    "bio": "",
-    "organization": "NMSU Arrowhead Research Park",
-    "social": {
-      "github": null,
-      "linkedin": null,
-      "twitter": null,
-      "website": null,
-      "meetup": null
-    },
-    "placeholder": false,
-    "retired": true
-  },
-  {
-    "id": "asl-lead",
-    "name": "ASL Lead Wanted",
-    "role": "American Sign Language Lead",
-    "bio": "Help us make meetups accessible to the deaf and hard-of-hearing community. Coordinate ASL interpreters, advocate for inclusive event planning, and connect us with accessibility resources.",
-    "organization": null,
-    "social": {
-      "github": null,
-      "linkedin": null,
-      "twitter": null,
-      "website": null,
-      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
-    },
-    "placeholder": true,
     "retired": false
   },
   {
@@ -126,5 +78,53 @@
     },
     "placeholder": true,
     "retired": false
+  },
+  {
+    "id": "asl-lead",
+    "name": "ASL Lead Wanted",
+    "role": "American Sign Language Lead",
+    "bio": "Help us make meetups accessible to the deaf and hard-of-hearing community. Coordinate ASL interpreters, advocate for inclusive event planning, and connect us with accessibility resources.",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  },
+  {
+    "id": "bryan-chasko",
+    "name": "Bryan Chasko",
+    "role": "Founder & Organizer",
+    "bio": "",
+    "organization": null,
+    "social": {
+      "github": "BryanChasko",
+      "linkedin": "bryanchasko",
+      "twitter": "BryanChasko",
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": false,
+    "retired": false
+  },
+  {
+    "id": "wayne-savage",
+    "name": "Wayne Savage",
+    "role": "Founder, Retired Organizer",
+    "bio": "",
+    "organization": "NMSU Arrowhead Research Park",
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": null
+    },
+    "placeholder": false,
+    "retired": true
   }
 ]

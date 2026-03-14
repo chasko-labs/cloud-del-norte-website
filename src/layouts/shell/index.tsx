@@ -22,12 +22,32 @@ export interface ShellProps {
   locale?: Locale;
   onLocaleChange?: (locale: Locale) => void;
   pageTitle?: string;
+  /** Control navigation drawer open state (defaults to open on desktop, closed on mobile) */
+  navigationOpen?: boolean;
+  /** Callback when navigation drawer state changes */
+  onNavigationChange?: (open: boolean) => void;
 }
 
-function ShellContent({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange, pageTitle }: ShellProps) {
+function ShellContent({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange, pageTitle, navigationOpen: controlledNavOpen, onNavigationChange }: ShellProps) {
   const { t } = useTranslation();
   const [animating, setAnimating] = useState(false);
   const [animatingLocale, setAnimatingLocale] = useState(false);
+  
+  // Default navigation to open on desktop (>= 768px), closed on mobile
+  const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+  const [navOpen, setNavOpen] = useState(controlledNavOpen ?? isDesktop);
+  
+  // Sync with controlled prop if provided
+  useEffect(() => {
+    if (controlledNavOpen !== undefined) {
+      setNavOpen(controlledNavOpen);
+    }
+  }, [controlledNavOpen]);
+
+  const handleNavigationChange = useCallback((event: { detail: { open: boolean } }) => {
+    setNavOpen(event.detail.open);
+    onNavigationChange?.(event.detail.open);
+  }, [onNavigationChange]);
 
   useEffect(() => {
     document.documentElement.lang = locale === 'mx' ? 'es' : 'en';
@@ -80,6 +100,8 @@ function ShellContent({ children, contentType, breadcrumbs, tools, navigation, n
       <AppLayout
         contentType={contentType}
         navigation={navigation}
+        navigationOpen={navOpen}
+        onNavigationChange={handleNavigationChange}
         breadcrumbs={breadcrumbs}
         notifications={notifications}
         stickyNotifications={true}
