@@ -43,6 +43,7 @@ export default function App() {
       onThemeChange={handleThemeChange}
       locale={locale}
       onLocaleChange={handleLocaleChange}
+      pageTitle="pages.createMeeting.title"
       breadcrumbs={<Breadcrumbs active={{ text: t('createMeeting.breadcrumb'), href: '/create-meeting/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanel header={<h2>{t('createMeeting.helpPanelHeader')}</h2>} />}

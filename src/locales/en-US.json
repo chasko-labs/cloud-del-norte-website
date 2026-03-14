@@ -201,5 +201,14 @@
     "save": "Save",
     "close": "Close",
     "info": "Info"
+  },
+  "pages": {
+    "home": { "title": "AWS UG Cloud Del Norte" },
+    "meetings": { "title": "Cloud Del Norte - Meetings" },
+    "createMeeting": { "title": "Cloud Del Norte - Create Meeting" },
+    "maintenanceCalendar": { "title": "AWS UG Cloud Del Norte - Maintenance Calendar" },
+    "learning": {
+      "api": { "title": "Cloud Del Norte - API Learning" }
+    }
   }
 }

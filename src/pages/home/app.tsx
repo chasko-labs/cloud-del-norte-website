@@ -40,6 +40,7 @@ export default function App() {
       onThemeChange={handleThemeChange}
       locale={locale}
       onLocaleChange={handleLocaleChange}
+      pageTitle="pages.home.title"
       breadcrumbs={<Breadcrumbs active={{ text: t('home.breadcrumb'), href: '/home/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}

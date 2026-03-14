@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import { AppLayout, TopNavigation, BreadcrumbGroup } from '@cloudscape-design/components';
 import '@cloudscape-design/global-styles/index.css';
@@ -22,6 +22,11 @@ const App: React.FC = () => {
     }
     return value || key;
   };
+
+  useEffect(() => {
+    document.title = t('pages.learning.api.title');
+    document.documentElement.lang = locale === 'mx' ? 'es' : 'en';
+  }, []);
 
   return (
     <LocaleProvider locale={locale}>
