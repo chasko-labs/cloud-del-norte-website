@@ -6,3 +6,10 @@ dist/
 .env
 .env.local
 src/data/releases.generated.json
+
+# Build artifacts
+*.tsbuildinfo
+coverage/
+.eslintcachecoverage/
+*.tsbuildinfo
+.eslintcache
