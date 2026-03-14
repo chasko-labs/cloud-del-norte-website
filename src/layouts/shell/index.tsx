@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import AppLayout, { AppLayoutProps } from '@cloudscape-design/components/app-layout';
 import TopNavigation from '@cloudscape-design/components/top-navigation';
-
+import Footer from '../../components/footer';
 
 import './styles.css';
 
@@ -59,6 +59,7 @@ export default function Shell({ children, contentType, breadcrumbs, tools, navig
         tools={tools}
         content={children}
         headerSelector="#top-nav"
+        footerSelector="#site-footer"
         ariaLabels={{
           navigation: 'Navigation drawer',
           navigationClose: 'Close navigation drawer',
@@ -69,6 +70,7 @@ export default function Shell({ children, contentType, breadcrumbs, tools, navig
           toolsToggle: 'Open help panel',
         }}
       />
+      <Footer />
     </>
   );
 }

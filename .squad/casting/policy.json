@@ -1,0 +1,10 @@
+{
+  "version": "0.5.4",
+  "universe": "heraldstack",
+  "capacity": 25,
+  "team_size": 5,
+  "allow_overflow": true,
+  "overflow_strategy": ["diegetic_expansion", "thematic_promotion", "structural_mirroring"],
+  "exempt": ["Scribe", "Ralph"],
+  "created_at": "2026-03-13T22:12:00Z"
+}

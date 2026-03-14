@@ -17,13 +17,15 @@
   --cdn-lavender:      #d7c7ee;
   --cdn-white:         #f0f0f0;
   --cdn-aws-orange:    #FF9900;
+  --cdn-gold:          #c9a23f;
 
   /* ---------- Semantic color tokens — light mode defaults ---------- */
   --cdn-color-bg:              #f8f5ff;              /* reserved for future use — page bg in custom layouts */
   --cdn-color-surface:         #ffffff;              /* reserved for future use — card/panel surfaces */
   --cdn-color-border:          rgba(90, 31, 138, 0.15);
-  --cdn-color-text:            #1a0030;              /* reserved for future use — scope to .cdn-card descendants */
-  --cdn-color-text-secondary:  #4a2070;              /* reserved for future use — scope to .cdn-card descendants */
+  --cdn-color-text:            #2c1a0e;              /* deep warm brown — footer, headings */
+  --cdn-color-text-secondary:  #5a3a1e;              /* warm brown — org labels */
+  --cdn-color-text-muted:      #4a2818;              /* medium brown — bio text */
   --cdn-color-primary:         var(--cdn-purple);    /* reserved for future use — interactive element color */
   --cdn-color-accent:          var(--cdn-violet);    /* reserved for future use — highlight color */
   --cdn-color-glow:            rgba(90, 31, 138, 0.2); /* reserved for future use — ambient glow tint */
@@ -66,8 +68,8 @@
 
   /* ---------- Warm shadow system — light mode ---------- */
   --cdn-shadow-container-light: 0 1px 4px rgba(139, 90, 43, 0.10), 0 4px 12px rgba(139, 90, 43, 0.06);
-  --cdn-shadow-card-light:      0 2px 8px rgba(139, 90, 43, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06);
-  --cdn-shadow-card-hover-light: 0 8px 24px rgba(139, 90, 43, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08);
+  --cdn-shadow-card-light:      0 2px 8px rgba(139, 90, 43, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 1px rgba(139, 90, 43, 0.08);
+  --cdn-shadow-card-hover-light: 0 8px 24px rgba(139, 90, 43, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08), 0 0 2px rgba(139, 90, 43, 0.12);
   --cdn-shadow-input-light:     inset 0 1px 3px rgba(139, 90, 43, 0.08);
   --cdn-shadow-nav-light:       2px 0 8px rgba(139, 90, 43, 0.08);
 
@@ -267,6 +269,8 @@
   .cdn-card:nth-child(2) { animation-delay: 0.07s; }
   .cdn-card:nth-child(3) { animation-delay: 0.14s; }
   .cdn-card:nth-child(4) { animation-delay: 0.21s; }
+  .cdn-card:nth-child(5) { animation-delay: 0.28s; }
+  .cdn-card:nth-child(6) { animation-delay: 0.35s; }
 }
 
 /* ==========================================================================

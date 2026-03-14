@@ -12,7 +12,7 @@
   region — meeting announcements, resources, and learning content.
 - **Meetup:** https://www.meetup.com/cloud-del-norte/
 - **Live URL:** https://d2ly3jmh1f74xt.cloudfront.net (CloudFront — no custom domain yet)
-- **Repo root:** `/Users/bryanchasko/Code/AWSUGcloudDelNorte`
+- **Repo root:** `/Users/bryanchasko/Code/rgc3-CloudscapeDesignSystem-website`
 
 ---
 
@@ -25,6 +25,7 @@
 | Language | TypeScript 5.9 |
 | Component library | Cloudscape Design System 3.x |
 | Linter | ESLint 10 (flat config — `eslint.config.js`) |
+| Test framework | Vitest + @testing-library/react |
 | Build output | `./lib/` |
 | Hosting | S3 + CloudFront (AWS account `bc-website`) |
 
@@ -94,7 +95,8 @@ input: {
   home: resolve(__dirname, 'src/pages/home/index.html'),
   meetings: resolve(__dirname, 'src/pages/meetings/index.html'),
   'create-meeting': resolve(__dirname, 'src/pages/create-meeting/index.html'),
-  'learning-api': resolve(__dirname, 'src/pages/learning/api/index.html'),
+  'learning/api': resolve(__dirname, 'src/pages/learning/api/index.html'),
+  'maintenance-calendar': resolve(__dirname, 'src/pages/maintenance-calendar/index.html'),
   '<name>': resolve(__dirname, 'src/pages/<name>/index.html'),  // ← add here
 },
 ```
@@ -113,6 +115,7 @@ input: {
 | Meetings | `src/pages/meetings/` |
 | Create Meeting | `src/pages/create-meeting/` |
 | Learning / API | `src/pages/learning/api/` |
+| Maintenance Calendar | `src/pages/maintenance-calendar/` |
 
 ---
 
@@ -174,15 +177,15 @@ aws cloudfront create-invalidation \
 
 ## Testing
 
-- **Framework:** Vitest (not yet installed — install with
-  `npm install --save-dev vitest @vitest/ui` before writing tests)
+- **Framework:** Vitest + @testing-library/react
 - **Convention:** Test files colocated with source — `*.test.ts` / `*.test.tsx`
 - **Commands:**
 
 ```bash
 npm test              # vitest run
+npm run test:watch    # vitest (watch mode)
+npm run test:ui       # vitest --ui
 npm run coverage      # vitest run --coverage
-npx vitest --ui       # interactive UI mode
 ```
 
 - **Quality gate before deploy:** `npm run lint && npm test && npm run build`
@@ -209,6 +212,27 @@ JSON imports are supported via `resolveJsonModule: true` in `tsconfig.json`.
 
 **GitHub API rate limits:** unauthenticated = 60 req/hr. Set `GITHUB_TOKEN` env
 var to raise the limit. The script skips fetch if cached data is < 24h old.
+
+---
+
+## Agent Team (Squad v0.5.4 — HeraldStack)
+
+This project uses [Squad](https://github.com/bradygaster/squad) for AI agent orchestration.
+
+| Name | Role | Domain |
+|------|------|--------|
+| Harald | Coordinator (Lead) | Orchestration, routing, scope, session continuity |
+| Stratia | Strategy & Architecture Advisor | Architecture decisions, MCP integration, Squad config |
+| Lyren | Cloudscape UI & Design Specialist | Components, theming, AppLayout, design tokens, accessibility |
+| Vael | MPA Build & Deploy Engineer | Vite config, page anatomy, build pipeline, S3+CloudFront deploy |
+| Theren | Content & Data Specialist | Page content, JSON data files, navigation, fetch scripts |
+| Kess | Testing Lead | Vitest, testing-library, coverage, test patterns, Cloudscape mocking |
+| Scribe | Session Logger (silent) | Decisions, orchestration logs, session continuity |
+| Ralph | Work Monitor | Backlog, triage, label, assignment |
+
+**Agent definitions:** `.github/agents/squad.agent.md`
+**Team config:** `.squad/team.md`, `.squad/routing.md`, `.squad/agents/{name}/charter.md`
+**Persona Source:** [HeraldStack](https://github.com/BryanChasko/HeraldStack)
 
 ---
 
