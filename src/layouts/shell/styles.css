@@ -132,6 +132,36 @@ main[class*="awsui_layout"] > [class*="content-container"] {
   box-shadow: none !important;
 }
 
+/* ── Fix: strip leaked container styles from inner <a> elements ──
+   The [class*="top-navigation"] selector on container rules (TASK 6) also
+   matches <a> elements whose class contains "variant-top-navigation",
+   leaking box-shadow and border-bottom onto individual links as ugly
+   square boxes. Override here so only the container keeps those styles. */
+
+#top-nav [class*="top-navigation"] a[class*="top-navigation"] {
+  box-shadow: none !important;
+  border-bottom: none !important;
+  background: transparent !important;
+}
+
+/* ── Subtle ambient glow on toggle buttons ──
+   Adds a soft circular glow behind emoji toggles (theme + locale).
+   Uses border-radius: 50% so the glow follows the icon shape.
+   Specificity beats the blanket strip rule above via the extra
+   :root/:not() or .awsui-dark-mode class selector. */
+
+/* Light mode: warm amber glow */
+:root:not(.awsui-dark-mode) #top-nav [class*="utility-wrapper"] a[class*="top-navigation"] {
+  border-radius: 50% !important;
+  box-shadow: 0 0 8px 3px rgba(139, 90, 43, 0.18) !important;
+}
+
+/* Dark mode: soft violet luminous glow */
+.awsui-dark-mode #top-nav [class*="utility-wrapper"] a[class*="top-navigation"] {
+  border-radius: 50% !important;
+  box-shadow: 0 0 10px 3px rgba(144, 96, 240, 0.22) !important;
+}
+
 /* THEME TOGGLE — spin/flip on click, gentle pulse on hover */
 
 @keyframes cdn-toggle-flip {
