@@ -27,6 +27,16 @@ vi.mock('@cloudscape-design/components/badge', () => ({
 }));
 
 import LeaderCard from '../leader-card';
+import type { Leader } from '../leader-card';
+import { LocaleProvider } from '../../../contexts/locale-context';
+
+// Helper to wrap LeaderCard in LocaleProvider (required for useTranslation)
+const renderLeaderCard = (leader: Leader) =>
+  render(
+    <LocaleProvider locale="us">
+      <LeaderCard leader={leader} />
+    </LocaleProvider>
+  );
 
 // --- Test data ---
 
@@ -144,12 +154,12 @@ describe('LeaderCard component', () => {
   });
 
   it('renders leader name', () => {
-    render(<LeaderCard leader={leaderWithAllSocials} />);
+    renderLeaderCard(leaderWithAllSocials);
     expect(screen.getByText('Bryan Chasko')).toBeTruthy();
   });
 
   it('renders leader role as a Badge', () => {
-    render(<LeaderCard leader={leaderWithAllSocials} />);
+    renderLeaderCard(leaderWithAllSocials);
     expect(screen.getByText('Founder & Organizer')).toBeTruthy();
     // Role should appear inside a Badge (mocked as <span data-testid="badge">)
     const badges = screen.getAllByTestId('badge');
@@ -158,21 +168,21 @@ describe('LeaderCard component', () => {
   });
 
   it('renders GitHub social link when provided', () => {
-    render(<LeaderCard leader={leaderWithAllSocials} />);
+    renderLeaderCard(leaderWithAllSocials);
     const links = screen.getAllByRole('link');
     const githubLink = links.find((el) => el.getAttribute('href')?.includes('github.com'));
     expect(githubLink).toBeTruthy();
   });
 
   it('renders LinkedIn social link when provided', () => {
-    render(<LeaderCard leader={leaderMinimalSocials} />);
+    renderLeaderCard(leaderMinimalSocials);
     const links = screen.getAllByRole('link');
     const linkedinLink = links.find((el) => el.getAttribute('href')?.includes('linkedin.com'));
     expect(linkedinLink).toBeTruthy();
   });
 
   it('renders Twitter/X social link when provided', () => {
-    render(<LeaderCard leader={leaderAllSocialsPopulated} />);
+    renderLeaderCard(leaderAllSocialsPopulated);
     const links = screen.getAllByRole('link');
     const twitterLink = links.find((el) => {
       const href = el.getAttribute('href') || '';
@@ -182,21 +192,21 @@ describe('LeaderCard component', () => {
   });
 
   it('renders website social link when provided', () => {
-    render(<LeaderCard leader={leaderAllSocialsPopulated} />);
+    renderLeaderCard(leaderAllSocialsPopulated);
     const links = screen.getAllByRole('link');
     const websiteLink = links.find((el) => el.getAttribute('href')?.includes('andmore.dev'));
     expect(websiteLink).toBeTruthy();
   });
 
   it('renders meetup social link when provided', () => {
-    render(<LeaderCard leader={leaderWithAllSocials} />);
+    renderLeaderCard(leaderWithAllSocials);
     const links = screen.getAllByRole('link');
     const meetupLink = links.find((el) => el.getAttribute('href')?.includes('meetup.com'));
     expect(meetupLink).toBeTruthy();
   });
 
   it('skips social links that are null', () => {
-    render(<LeaderCard leader={leaderMinimalSocials} />);
+    renderLeaderCard(leaderMinimalSocials);
     const links = screen.getAllByRole('link');
     // Jacob only has LinkedIn — no GitHub, Twitter, website, or meetup links
     const githubLink = links.find((el) => el.getAttribute('href')?.includes('github.com'));
@@ -211,7 +221,7 @@ describe('LeaderCard component', () => {
   });
 
   it('renders placeholder variant differently', () => {
-    const { container } = render(<LeaderCard leader={placeholderLeader} />);
+    const { container } = renderLeaderCard(placeholderLeader);
     // Placeholder cards should have distinguishable markup (e.g., a CSS class or data attribute)
     const card = container.firstElementChild;
     expect(card).toBeTruthy();
@@ -224,7 +234,7 @@ describe('LeaderCard component', () => {
   });
 
   it('has accessible link text for social links', () => {
-    render(<LeaderCard leader={leaderWithAllSocials} />);
+    renderLeaderCard(leaderWithAllSocials);
     const links = screen.getAllByRole('link');
     // Every social link should have text content or aria-label for accessibility
     links.forEach((link) => {
@@ -237,18 +247,18 @@ describe('LeaderCard component', () => {
 
   it('handles empty bio gracefully', () => {
     // All test leaders have empty bios — rendering should not crash or show "undefined"
-    const { container } = render(<LeaderCard leader={leaderMinimalSocials} />);
+    const { container } = renderLeaderCard(leaderMinimalSocials);
     expect(container.textContent).not.toContain('undefined');
     expect(container.textContent).not.toContain('null');
   });
 
   it('displays organization when provided', () => {
-    render(<LeaderCard leader={leaderWithOrganization} />);
+    renderLeaderCard(leaderWithOrganization);
     expect(screen.getByText('Test Research Park')).toBeTruthy();
   });
 
   it('does not display organization when null', () => {
-    const { container } = render(<LeaderCard leader={leaderWithAllSocials} />);
+    const { container } = renderLeaderCard(leaderWithAllSocials);
     // Organization is null — should not render any organization text
     const boxes = container.querySelectorAll('[data-testid="box"]');
     const orgBox = Array.from(boxes).find((el) =>
@@ -258,28 +268,36 @@ describe('LeaderCard component', () => {
   });
 
   it('retired leader card has cdn-footer-retired class', () => {
-    const { container } = render(<LeaderCard leader={retiredLeader} />);
+    const { container } = renderLeaderCard(retiredLeader);
     const card = container.firstElementChild;
     expect(card?.classList.contains('cdn-footer-retired')).toBe(true);
   });
 
   it('retired leader Badge uses "grey" color', () => {
-    render(<LeaderCard leader={retiredLeader} />);
+    renderLeaderCard(retiredLeader);
     const badge = screen.getByTestId('badge');
     expect(badge.getAttribute('data-color')).toBe('grey');
   });
 
   it('non-retired leader Badge uses "green" color', () => {
-    render(<LeaderCard leader={leaderWithAllSocials} />);
+    renderLeaderCard(leaderWithAllSocials);
     const badge = screen.getByTestId('badge');
     expect(badge.getAttribute('data-color')).toBe('green');
   });
 
   it('no React warnings or errors on render', () => {
-    render(<LeaderCard leader={leaderWithAllSocials} />);
+    renderLeaderCard(leaderWithAllSocials);
     const errorCalls = consoleErrorSpy.mock.calls.filter((args: unknown[]) =>
       typeof args[0] === 'string' && (args[0].includes('Warning:') || args[0].includes('Error:'))
     );
     expect(errorCalls).toHaveLength(0);
+  });
+
+  it('placeholder CTA renders translated joinUs text in en-US locale', () => {
+    renderLeaderCard(placeholderLeader);
+    const links = screen.getAllByRole('link');
+    const meetupLink = links.find((el) => el.getAttribute('href')?.includes('meetup.com'));
+    expect(meetupLink).toBeTruthy();
+    expect(meetupLink?.textContent).toBe('Join us on Meetup →');
   });
 });
