@@ -58,11 +58,12 @@ describe('Footer component', () => {
     expect(container.querySelector('#site-footer')).toBeTruthy();
   });
 
-  it('renders all 5 leader cards', () => {
+  it('renders all 6 leader cards', () => {
     render(<Footer />);
     expect(screen.getByTestId('leader-card-bryan-chasko')).toBeTruthy();
     expect(screen.getByTestId('leader-card-jacob-wright')).toBeTruthy();
     expect(screen.getByTestId('leader-card-andres-moreno')).toBeTruthy();
+    expect(screen.getByTestId('leader-card-wayne-savage')).toBeTruthy();
     expect(screen.getByTestId('leader-card-open-slot-en')).toBeTruthy();
     expect(screen.getByTestId('leader-card-open-slot-es')).toBeTruthy();
   });
@@ -72,15 +73,16 @@ describe('Footer component', () => {
     expect(screen.getByText('Bryan Chasko')).toBeTruthy();
     expect(screen.getByText('Jacob Wright')).toBeTruthy();
     expect(screen.getByText('Andres Moreno')).toBeTruthy();
+    expect(screen.getByText('Wayne Savage')).toBeTruthy();
     expect(screen.getByText('This Could Be You')).toBeTruthy();
     expect(screen.getByText('Esto Podrías Ser Tú')).toBeTruthy();
   });
 
-  it('renders bottom bar with copyright', () => {
+  it('renders bottom bar with community description', () => {
     render(<Footer />);
-    const currentYear = new Date().getFullYear().toString();
     const footer = screen.getByRole('contentinfo');
-    expect(footer.textContent).toContain(currentYear);
+    expect(footer.textContent).toContain('AWS User Group Cloud Del Norte is part of');
+    expect(footer.textContent).toContain('Go Build');
   });
 
   it('no React warnings or errors on render', () => {

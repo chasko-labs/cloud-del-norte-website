@@ -34,6 +34,7 @@ const leaderWithAllSocials = {
   name: 'Bryan Chasko',
   role: 'Founder & Organizer',
   bio: 'Building community in the cloud.',
+  organization: null,
   social: {
     github: 'BryanChasko',
     linkedin: 'bryanchasko',
@@ -42,13 +43,15 @@ const leaderWithAllSocials = {
     meetup: 'https://www.meetup.com/awsugclouddelnorte/',
   },
   placeholder: false,
+  retired: false,
 };
 
 const leaderMinimalSocials = {
   id: 'jacob-wright',
   name: 'Jacob Wright',
-  role: 'Co-organizer',
+  role: 'Founder & Doña Ana County Lead',
   bio: '',
+  organization: null,
   social: {
     github: null,
     linkedin: 'jrwright121',
@@ -57,6 +60,7 @@ const leaderMinimalSocials = {
     meetup: null,
   },
   placeholder: false,
+  retired: false,
 };
 
 const leaderAllSocialsPopulated = {
@@ -64,6 +68,7 @@ const leaderAllSocialsPopulated = {
   name: 'Andres Moreno',
   role: 'Co-organizer',
   bio: '',
+  organization: null,
   social: {
     github: 'andmoredev',
     linkedin: null,
@@ -72,6 +77,7 @@ const leaderAllSocialsPopulated = {
     meetup: null,
   },
   placeholder: false,
+  retired: false,
 };
 
 const placeholderLeader = {
@@ -79,6 +85,7 @@ const placeholderLeader = {
   name: 'This Could Be You',
   role: 'Future Leader',
   bio: '',
+  organization: null,
   social: {
     github: null,
     linkedin: null,
@@ -87,6 +94,7 @@ const placeholderLeader = {
     meetup: 'https://www.meetup.com/awsugclouddelnorte/',
   },
   placeholder: true,
+  retired: false,
 };
 
 describe('LeaderCard component', () => {

@@ -8,6 +8,7 @@ export interface Leader {
   name: string;
   role: string;
   bio: string;
+  organization: string | null;
   social: {
     github: string | null;
     linkedin: string | null;
@@ -16,6 +17,7 @@ export interface Leader {
     meetup: string | null;
   };
   placeholder: boolean;
+  retired: boolean;
 }
 
 interface LeaderCardProps {

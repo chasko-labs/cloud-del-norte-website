@@ -8,8 +8,6 @@ import leaders from '../../data/leaders.json';
 import './styles.css';
 
 export default function Footer() {
-  const year = new Date().getFullYear();
-
   return (
     <footer id="site-footer" className="cdn-footer" role="contentinfo">
       <SpaceBetween size="l">
@@ -23,21 +21,20 @@ export default function Footer() {
         </div>
 
         <div className="cdn-footer-bottom">
-          <div className="cdn-footer-bottom-links">
-            <Link href="/home/index.html" variant="primary" fontSize="body-s">
-              Home
-            </Link>
+          <Box variant="small" color="text-body-secondary">
+            AWS User Group Cloud Del Norte is part of AWS User Groups'{' '}
             <Link
-              href="https://www.meetup.com/cloud-del-norte/"
+              href="https://www.meetup.com/pro/global-aws-user-group-community/"
               external
               variant="primary"
               fontSize="body-s"
             >
-              Meetup
+              Global AWS User Group Community
             </Link>
-          </div>
-          <Box variant="small" color="text-body-secondary">
-            © {year} AWS User Group Cloud Del Norte. All rights reserved.
+            . We are run by volunteers local to New Mexico, West Texas &amp; Chihuahua, Mexico. We
+            believe projects, careers &amp; issues can be accelerated using AWS, &amp; wish to pass
+            our knowledge, connections &amp; experiences on to you &amp; see what you{' '}
+            <strong>Go Build</strong>.
           </Box>
         </div>
       </SpaceBetween>
