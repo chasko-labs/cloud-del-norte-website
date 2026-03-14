@@ -109,3 +109,47 @@ All 161 translation keys from en-US.json now wired into the UI. Spanish locale t
 ### Decision Created
 
 - **DEC-008:** Leader reordering + bilingual footer support (decision merged to decisions.md)
+
+## Session 2026-03-14 — Roadmap Page Creation (GH #68)
+
+**Status:** ✅ Complete
+
+### Changes
+
+Created complete Roadmap page at `src/pages/roadmap/` with Jira-style Scrum board layout:
+
+**Files created:**
+- `src/pages/roadmap/index.html` — HTML entry point
+- `src/pages/roadmap/main.tsx` — React root mounting (standard boilerplate)
+- `src/pages/roadmap/app.tsx` — Page component with theme + locale state + Shell wrapper
+- `src/pages/roadmap/data.ts` — Board column data (19 SCRUM cards across 5 columns)
+- `src/pages/roadmap/styles.css` — Scrum board CSS (5-column grid, gradient headers, card styling)
+
+**Integration:**
+- Registered in `vite.config.ts` input map
+- Added to navigation (above Meetings) in `src/components/navigation/index.tsx`
+- Translation keys added to `src/locales/en-US.json` and `es-MX.json`
+- Updated `src/locales/__tests__/translation-coverage.test.ts` allowlist for "Roadmap" (universally understood term)
+
+**Board layout:**
+- 5 columns: Idea | Todo | In Progress | In Review | Done
+- 19 SCRUM cards distributed: 4 + 4 + 5 + 4 + 2
+- Responsive grid (stacks vertically on mobile)
+- Color-coded gradient headers per column (sepia-amber, blue-cyan, amber-orange, violet-cyan, green)
+- Cards with glassmorphism styling + hover effects (translateY + colored left accent line)
+
+**Quality gate:** Lint ✅ Tests (146/146) ✅ Build ✅
+
+**PR:** #71 opened with `roadmap` label
+
+### Key Learnings
+
+- **Standard MPA page anatomy enforced:** Every page must have index.html, main.tsx (mounting boilerplate), app.tsx (theme+locale+Shell+LocaleProvider). This pattern is consistent across all existing pages.
+- **AppContent extraction pattern:** Since Shell provides `LocaleProvider`, the page component must extract an `AppContent` child component to call `useTranslation()` — the parent cannot call hooks before rendering the provider.
+- **Translation allowlist for universal terms:** "Roadmap" is the same in English and Spanish (universally understood). Added to `allowIdentical` set in translation-coverage test to avoid false positives. Full Spanish localization pass deferred to GH #69.
+- **data.ts for board structure:** Stored column definitions + card data in separate file for clean separation. Each column has a `translationKey` field resolved at render time with `t()`.
+- **Column-specific CSS via data attributes:** Used `data-column="..."` attributes for column-specific gradient styling. Cleaner than multiple class names.
+
+### Decision Created
+
+- **DEC-009:** Roadmap page with Scrum board layout (decision written to `.squad/decisions/inbox/theren-roadmap-page.md`)
