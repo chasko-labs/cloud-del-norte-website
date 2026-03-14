@@ -42,4 +42,42 @@ Initial setup — Squad team infrastructure created for Cloudscape Design System
 - **Key insight:** Existing tests that check for hardcoded English strings need `useTranslation` mock added when components get wired with `t()`
 - **Translation parity test pattern:** Created allowlist approach for proper nouns and tech terms that intentionally pass through untranslated (AWS, Meetup, API, REST, LTS, etc.)
 - **Test count:** 120 → 125 tests, all passing
+
+## Session 2026-03-14 — Phase 4: Backlog Creation (Localization Audit)
+
+**Status:** ✅ Complete
+
+### Task
+Coordinated with Ralph to create GitHub issues for every page/component needing Shell/theme/locale integration based on localization audit findings.
+
+### Audit Results
+Conducted codebase audit of all 6 pages (home, meetings, create-meeting, learning/api, maintenance-calendar, theme):
+
+**✅ COMPLETE:**
+- Home: Shell + Theme + Locale fully integrated
+- Meetings: Shell + Theme (locale missing)
+- Create Meeting: Shell + Theme (locale missing, barrel import issue)
+
+**🔴 NEEDS WORK:**
+- Learning/API: Old pattern with barrel imports, no Shell/theme/locale
+- Maintenance Calendar: No Shell/theme/locale integration
+- Theme page: Not following MPA structure (only custom-theme.css)
+
+### Issues Created
+Created 5 GitHub issues, all assigned to @copilot with `squad:copilot` label:
+
+1. **#51** — Learning/API Page: Complete Shell/theme/locale refactor + deep imports
+2. **#52** — Maintenance Calendar: Complete Shell/theme/locale integration
+3. **#53** — Theme Page: Implement proper MPA structure or deprecate (+ `question` label)
+4. **#54** — Create Meeting Page: Add locale integration + fix barrel import
+5. **#55** — Meetings Page: Add locale integration
+
+### TopNav Artifact
+Verified TopNav artifact issue (button chrome behind flags/sun) was already fixed by Lyren in DEC-008 (Toggle Button CSS fix) — no additional issue needed.
+
+### Summary
+- **Issues created:** 5
+- **Pages affected:** learning/api, maintenance-calendar, theme, create-meeting, meetings
+- **Ready for Copilot:** 4 issues (5 total, 1 flagged as `question` for decision)
+- **Documentation:** Summary written to `.squad/decisions/inbox/kess-backlog-creation.md`
 - **Quality gates:** Lint clean, build succeeds, full test suite passes

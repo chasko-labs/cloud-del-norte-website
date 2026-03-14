@@ -94,7 +94,7 @@
 
 ---
 
-### DEC-007: Localization Integration — Full String Extraction & Translation Wiring
+## DEC-007: Localization Integration — Full String Extraction & Translation Wiring
 
 **Date:** 2026-03-14
 **Author:** Harald (Coordinator), Calli (Localization)
@@ -113,4 +113,180 @@
 
 **Rationale:** The existing i18n infrastructure (LocaleProvider, useTranslation hook, locale toggle) was well-built but unused. Completing the wiring makes the bilingual toggle functional and delivers value to the Spanish-speaking community members. MCP-powered translation with human review avoids AI slop.
 
+**Affected files:**
+- `src/locales/en-US.json` (expanded to 166 keys)
+- `src/locales/es-MX.json` (full parity with en-US)
+- All page app.tsx files — locale state + handlers
+- Shared components — useTranslation() integration
+
+---
+
+## DEC-008: Shared Component Localization Pattern
+
+**Date:** 2026-03-14
+**Author:** Lyren
+**Status:** ✅ Implemented
+
+**Decision:** Established the pattern for wiring `useTranslation()` into shared components that are rendered within `LocaleProvider`. Key architectural insight: when a component renders a context provider AND needs to consume that context, extract the consuming logic into a child component.
+
+**Pattern:**
+```tsx
+// Shell → renders LocaleProvider, cannot use useTranslation() at same level
+function ShellContent(props: ShellProps) {
+  const { t } = useTranslation();  // ✅ Inside LocaleProvider
+}
+
+export default function Shell(props: ShellProps) {
+  return (
+    <LocaleProvider locale={props.locale ?? 'us'}>
+      <ShellContent {...props} />
+    </LocaleProvider>
+  );
+}
+
+// Navigation, Breadcrumbs, Footer → rendered inside Shell, can use useTranslation() directly
+export default function Navigation() {
+  const { t } = useTranslation();  // ✅ Safe — Shell wraps everything
+}
+```
+
+**Rationale:** Separation of concerns — Shell manages LocaleProvider lifecycle; ShellContent handles rendering logic. Test clarity: explicit LocaleProvider wrapping in tests makes context dependency obvious.
+
+**Affected files:**
+- `src/layouts/shell/index.tsx` — ShellContent extraction
+- `src/components/navigation/index.tsx` — useTranslation() integration
+- `src/components/breadcrumbs/index.tsx` — useTranslation() integration
+- `src/components/footer/index.tsx` — useTranslation() integration
+- All component test files — LocaleProvider wrapper
+
+**Test result:** 120/120 passing
+
+---
+
+## DEC-009: Phase 4 Backlog Creation — Theme/Locale Audit Issues
+
+**Date:** 2026-03-14
+**Author:** Kess (Testing Lead)
+**Status:** ✅ Complete
+
+**Decision:** Coordinated with Ralph to translate Lyren's localization audit findings into actionable GitHub issues for Copilot to implement. Conducted fresh codebase audit and created 5 GitHub issues.
+
+**Issues Created:**
+- #51 — Learning/API Page: Complete Shell/theme/locale refactor + deep imports (HIGH)
+- #52 — Maintenance Calendar: Complete Shell/theme/locale integration (HIGH)
+- #53 — Theme Page: Implement proper MPA structure or deprecate (MEDIUM, flagged question)
+- #54 — Create Meeting Page: Add locale integration + fix barrel import (MEDIUM)
+- #55 — Meetings Page: Add locale integration (MEDIUM)
+
+**Acceptance Criteria (all issues):**
+- ✅ `npm run lint` passes
+- ✅ `npm test` passes (all tests green)
+- ✅ `npm run build` succeeds
+- ✅ Page renders in light/dark + en/es modes
+- ✅ No console errors
+- ✅ Theme toggle works (☀️ ↔ 🌙)
+- ✅ Locale toggle works (🇺🇸 ↔ 🇲🇽)
+
+**TopNav Artifact Finding:** DEC-008 (Toggle Button CSS fix) already implemented — no additional issue needed.
+
+---
+
+## DEC-010: Theme + Locale Coverage Audit — Phase 3
+
+**Date:** 2026-03-14
+**Author:** Lyren (Cloudscape UI & Design Specialist)
+**Status:** ✅ Complete
+
+**Decision:** Comprehensive audit of all 6 pages for theme (light/dark) + locale (en-US/es-MX) support, TopNav artifact resolution, and Cloudscape compliance.
+
+**Audit Results:**
+
+| Page | Theme | Locale | Shell | Status |
+| --- | --- | --- | --- | --- |
+| home | ✅ | ✅ | ✅ | ✅ READY |
+| meetings | ✅ | ✅ | ✅ | ✅ READY |
+| create-meeting | ✅ | ✅ | ✅ | ✅ READY |
+| learning/api | ✅ | ✅ | ✅ | 🟡 NEEDS FIX (barrel import) |
+| maintenance-calendar | ❌ | ❌ | ❌ | 🔴 CRITICAL |
+| theme/ | N/A | N/A | N/A | ⚠️ NO APP.TSX |
+
+**Key Findings:**
+
+1. **Maintenance Calendar:** app.tsx is a 7-line stub — requires full Shell integration with theme/locale state + handlers
+2. **Learning/API:** 9 components in single barrel import (RiftRewindDashboard.tsx:2) — negates tree-shaking, must be split into deep imports
+3. **Home/Meetings:** Minor barrel imports (1 each) — low priority
+4. **TopNav Artifact:** RESOLVED — emoji toggle buttons render cleanly via CSS override in shell/styles.css (lines 109-116)
+
+**Translation Coverage:** 340 lines across en-US.json/es-MX.json — 1:1 parity, all `t()` calls resolve to valid keys
+
+**Cloudscape Compliance:** All pages correctly import global styles + custom tokens, deep imports (mostly), no violations detected
+
+**Critical Blockers:** Maintenance Calendar missing Shell integration (high impact, easy fix)
+
+---
+
+## DEC-011: Localization Pipeline Strategy
+
+**Date:** 2026-03-14
+**Author:** Stratia (Strategy & Architecture Advisor)
+**Status:** Proposed
+
+**Decision:** Adopt a 3-phase localization pipeline that scales from the current manual process to MCP-augmented dialect lookup and ultimately to automated LLM-based dialect review.
+
+**Phase A (Current):** Manual + Human Review — no changes, works well at ~161 keys
+
+**Phase B (Future, trigger: ~300+ keys):** MCP Dialect Lookup + Embedding Index
+- Build `localization-mcp-dialect-lookup` — queries public corpora (Corpus del Español, COCA, OPUS) for dialect verification
+- Build `localization-mcp-glossary` — curated border-region glossary (~200 terms) with lookup, suggestion, validation
+- Optional: Qdrant vector index for tone/register consistency
+
+**Phase C (Long-Term):** Automated LLM Dialect Review
+- PR-triggered review via LLM checks against Phase B tools + LOCALIZATION.md guidelines
+- Outputs PR comments with approve/warn/reject verdicts
+- CI/CD checks for key parity, formality register, glossary compliance
+
+**Rationale:** Phase A works now; no over-engineering needed at ~161 keys. Phase B adds consistency at scale (~300+ keys). Phase C adds automated guardrails before human review. Public corpora are free and open-access.
+
+**Resource Links:**
+- Corpus del Español, COCA, OPUS, UTEP Bilingualism Institute, INEGI, Wiktionary, UD Treebanks
+
+**Next Steps:**
+1. LOCALIZATION.md updated with §§9–10 (pipeline phases)
+2. `.squad/skills/mcp-dialect-lookup/SKILL.md` sketched
+3. Phase B kickoff when key count hits ~300
+4. Glossary curation from UTEP + Wiktionary
+5. Phase C planning after Phase B.1 + B.2 stable
+
+---
+
+## DEC-012: Merge & Deploy Batch — 2026-03-13
+
+**Date:** 2026-03-14
+**Author:** Vael (MPA Build & Deploy Engineer)
+**Status:** Executed
+
+**Decision:** Merged 4 PRs to main in sequence: #28 (docs), #27 (squad infra + footer), #29 (locale toggle), #26 (locale tests). Skipped PRs #24, #25, #21.
+
+**Key Decisions:**
+
+1. **README conflict resolution:** PR #27 trimmed README significantly. Preserved the Localization section from PR #28 during conflict resolution.
+2. **Test fix (locale.test.ts):** Added missing `vi` import to fix `tsc` build failure introduced by PR #26. (Bug: globals: true in vitest config makes `vi` available at runtime but TypeScript needs explicit import.)
+3. **Deploy blocked:** AWS SSO token expired. Profile is `aerospaceug-admin` (not `bc-website` as documented). Deploy requires manual `aws sso login --profile aerospaceug-admin` then re-run sync/invalidation.
+4. **Gitignore update:** Added `coverage/`, `*.tsbuildinfo`, `.eslintcache` — standard patterns.
+
+**PRs Merged:**
+- #28 — Documentation updates
+- #27 — Squad infrastructure + footer restyle
+- #29 — Locale toggle implementation
+- #26 — Locale tests + LocaleProvider wiring
+
+**PRs Skipped (per instructions):**
+- #24, #25, #21 — deferred to later sprint
+
+**Action Required for Deploy:**
+1. Run `aws sso login --profile aerospaceug-admin`
+2. Run `aws s3 sync lib/ s3://awsaerospace.org --delete --profile aerospaceug-admin`
+3. Run `aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/*" --profile aerospaceug-admin`
+
+**Test Result:** All merged commits pass `npm run lint && npm test && npm run build`
 
