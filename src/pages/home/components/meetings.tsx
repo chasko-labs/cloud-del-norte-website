@@ -6,11 +6,11 @@ import Header from '@cloudscape-design/components/header';
 import PieChart, { PieChartProps } from '@cloudscape-design/components/pie-chart';
 import StatusIndicator from '@cloudscape-design/components/status-indicator';
 import Table, { TableProps } from '@cloudscape-design/components/table';
-import SpaceBetween from '@cloudscape-design/components/space-between';
+import { SpaceBetween } from '@cloudscape-design/components';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 const columnDefinitions = (t: (key: string) => string): TableProps['columnDefinitions'] => [
-  { header: t('home.tableHeaders.name'), cell: ({ name }) => name },
+  { header: t('home.tableHeaders.name'), cell: ({ name }) => t(name) },
   {
     header: t('home.tableHeaders.status'),
     cell: ({ status }) => <StatusIndicator type={status.type}>{status.message}</StatusIndicator>,
@@ -26,12 +26,13 @@ export interface VariationsProps {
 
 export default function meetings({ data, items }: VariationsProps) {
   const { t } = useTranslation();
+  const translatedData = data.map((item) => ({ ...item, title: t(item.title) }));
   
   return (
     <div className="cdn-card">
       <SpaceBetween size={'l'}>
         <Container header={<Header variant="h2">{t('home.pastTopicsHeader')}</Header>}>
-          <PieChart data={data} hideFilter={true} i18nStrings={{
+          <PieChart data={translatedData} hideFilter={true} i18nStrings={{
             chartAriaRoleDescription: t('home.pieChart.chartAriaRoleDescription'),
             detailPopoverDismissAriaLabel: t('home.pieChart.detailPopoverDismissAriaLabel'),
             legendAriaLabel: t('home.pieChart.legendAriaLabel'),
@@ -48,8 +49,8 @@ export default function meetings({ data, items }: VariationsProps) {
         ariaLabels={{
           tableLabel: 'Details table',
         }}
-      />
- */}    </SpaceBetween>
+      /> */}
+      </SpaceBetween>
     </div>
   );
 }
