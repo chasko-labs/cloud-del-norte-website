@@ -4,9 +4,11 @@ import Navigation from '../../../components/navigation';
 import Breadcrumbs from '../../../components/breadcrumbs';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../../utils/theme';
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../../utils/locale';
+import { useTranslation } from '../../../hooks/useTranslation';
 import RiftRewindDashboard from './RiftRewindDashboard';
 
 export default function App() {
+  const { t } = useTranslation();
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
   const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
@@ -31,7 +33,7 @@ export default function App() {
       pageTitle="learning.api.title"
       breadcrumbs={
         <Breadcrumbs 
-          active={{ text: 'navigation.apiGuide', href: '/learning/api/' }}
+          active={{ text: t('navigation.apiGuide'), href: '/learning/api/' }}
         />
       }
       navigation={<Navigation />}
