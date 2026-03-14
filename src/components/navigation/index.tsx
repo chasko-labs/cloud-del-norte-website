@@ -53,10 +53,14 @@ export default function Navigation() {
         header={{ href: '/home/index.html', text: t('navigation.home') }}
         items={items}
         onFollow={(event) => {
-          // Prevent default to avoid React state issues, then navigate manually
-          if (!event.detail.external) {
+          // Let section expand/collapse toggles pass through to Cloudscape
+          if (event.detail.type === 'section-header') return;
+
+          // For actual links: prevent default SPA behavior, navigate via full page load
+          const href = event.detail.href;
+          if (!event.detail.external && href && href !== '#') {
             event.preventDefault();
-            window.location.href = event.detail.href;
+            window.location.href = href;
           }
         }}
       />

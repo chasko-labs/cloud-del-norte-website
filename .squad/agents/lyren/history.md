@@ -412,3 +412,24 @@ The TASK 6 TopNavigation container styles used `#top-nav [class*="top-navigation
 
 ### Key Takeaway
 When using `[class*="..."]` attribute selectors on Cloudscape containers, always verify the substring doesn't also match child elements. Cloudscape generates variant classes like `awsui_variant-top-navigation_*` on inner elements. Prefer targeting by tag+class or structure (`header[class*="top-navigation"]`) to avoid cascade leaks.
+
+## Session 2025-07-26 — SideNavigation onFollow Section-Header Fix
+
+**Status:** ✅ Complete
+
+### Problem
+Expandable section headers (Learning, Resources) in SideNavigation flashed open then immediately closed. The `onFollow` handler intercepted ALL events — including section expand/collapse toggles — calling `preventDefault()` and `window.location.href`, which broke the expand/collapse behavior.
+
+### Root Cause
+Cloudscape's `onFollow` fires for section headers with `detail.type === 'section-header'`. The original handler didn't discriminate by type, so it called `preventDefault()` and attempted navigation for section toggle clicks.
+
+### Fix
+Two-part guard in the `onFollow` handler:
+1. **Early return** for `type === 'section-header'` — lets Cloudscape handle expand/collapse natively
+2. **Href validation** — only navigate when href exists and isn't `'#'`
+
+### Key Type Discovery
+`SideNavigationProps.FollowDetail` includes `type?: 'link' | 'link-group' | 'expandable-link-group' | 'section-header'`. This type field is the reliable way to distinguish navigation clicks from expand/collapse toggles.
+
+### Files Changed
+- `src/components/navigation/index.tsx` — onFollow handler updated with type guard + href validation

@@ -15,7 +15,7 @@ Cloudscape's `SideNavigation` component is designed for SPAs (Single-Page Apps) 
 
 ## Solution Pattern
 
-Always provide an explicit `onFollow` handler that prevents default behavior and manually triggers page navigation:
+Always provide an explicit `onFollow` handler that prevents default behavior and manually triggers page navigation. **Critical:** guard against section-header events, which are expand/collapse toggles — not navigation targets.
 
 ```tsx
 import SideNavigation from '@cloudscape-design/components/side-navigation';
@@ -28,12 +28,23 @@ export default function Navigation() {
       items={[
         { type: 'link', text: 'Page 1', href: '/page1/index.html' },
         { type: 'link', text: 'Page 2', href: '/page2/index.html' },
+        {
+          type: 'section',
+          text: 'Category',
+          items: [
+            { type: 'link', text: 'Sub Page', href: '/sub/index.html' },
+          ]
+        }
       ]}
       onFollow={(event) => {
-        // Prevent default to avoid React state issues, then navigate manually
-        if (!event.detail.external) {
+        // Let section expand/collapse toggles pass through to Cloudscape
+        if (event.detail.type === 'section-header') return;
+
+        // For actual links: prevent default SPA behavior, navigate via full page load
+        const href = event.detail.href;
+        if (!event.detail.external && href && href !== '#') {
           event.preventDefault();
-          window.location.href = event.detail.href;
+          window.location.href = href;
         }
       }}
     />
@@ -43,9 +54,11 @@ export default function Navigation() {
 
 ## Why It Works
 
-1. **`event.preventDefault()`** — Stops Cloudscape's default link handling, which expects SPA client-side routing
-2. **`window.location.href = event.detail.href`** — Triggers a clean full-page reload, respecting MPA architecture
-3. **`!event.detail.external` check** — Allows external links (if any) to use default browser behavior
+1. **`type === 'section-header'` guard** — Section headers fire `onFollow` but are expand/collapse toggles, not links. Returning early lets Cloudscape handle them natively.
+2. **`event.preventDefault()`** — Stops Cloudscape's default link handling, which expects SPA client-side routing
+3. **`window.location.href = event.detail.href`** — Triggers a clean full-page reload, respecting MPA architecture
+4. **`!event.detail.external` check** — Allows external links (if any) to use default browser behavior
+5. **`href && href !== '#'` check** — Extra safety against undefined/hash-only hrefs that aren't real navigation targets
 
 ## When to Use
 
@@ -65,6 +78,18 @@ export default function Navigation() {
 ```tsx
 <SideNavigation items={items} />
 // Result: Navigation drawer disappears on click
+```
+
+### ❌ Intercepting section-header expand/collapse events
+```tsx
+onFollow={(event) => {
+  if (!event.detail.external) {
+    event.preventDefault(); // Breaks section expand/collapse!
+    window.location.href = event.detail.href;
+  }
+}}
+// Fix: Add `if (event.detail.type === 'section-header') return;` guard
+// FollowDetail.type can be: 'link' | 'link-group' | 'expandable-link-group' | 'section-header'
 ```
 
 ### ❌ Using preventDefault without manual navigation
