@@ -14,9 +14,11 @@ import QualityReport from './components/quality-report';
 import { HelpPanelHome } from '../create-meeting/components/help-panel-home';
 import { variationData, breakdownItems, productionMetrics, quote, notes } from './data';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
+import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 
 export default function App() {
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
+  const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme);
@@ -24,10 +26,18 @@ export default function App() {
     setStoredTheme(newTheme);
   };
 
+  const handleLocaleChange = (newLocale: Locale) => {
+    setLocale(newLocale);
+    applyLocale(newLocale);
+    setStoredLocale(newLocale);
+  };
+
   return (
     <Shell
       theme={theme}
       onThemeChange={handleThemeChange}
+      locale={locale}
+      onLocaleChange={handleLocaleChange}
       breadcrumbs={<Breadcrumbs active={{ text: 'Dashboard', href: '/home/index.html' }} />}
       navigation={<Navigation />}
       tools={<HelpPanelHome />}
