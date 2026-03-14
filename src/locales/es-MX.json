@@ -208,5 +208,14 @@
     "save": "Guardar",
     "close": "Cerrar",
     "info": "Info"
+  },
+  "pages": {
+    "home": { "title": "AWS UG Nube of the North" },
+    "meetings": { "title": "Nube of the North - Juntas" },
+    "createMeeting": { "title": "Nube of the North - Crear Junta" },
+    "maintenanceCalendar": { "title": "Nube of the North - Calendario de Mantenimiento" },
+    "learning": {
+      "api": { "title": "Nube of the North - Aprendizaje de API" }
+    }
   }
 }

@@ -198,6 +198,7 @@ export default function MaintenanceCalendar() {
   return (
     <ShellLayout
       contentType="default"
+      pageTitle="pages.maintenanceCalendar.title"
       breadcrumbs={<Breadcrumbs active={{ text: t('maintenanceCalendar.breadcrumb'), href: '/maintenance-calendar/' }} />}
       navigation={<Navigation />}
     >
