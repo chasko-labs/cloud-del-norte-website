@@ -1,0 +1,130 @@
+[
+  {
+    "id": "bryan-chasko",
+    "name": "Bryan Chasko",
+    "role": "Organizer & Cloud Architect",
+    "bio": "AWS community builder and organizer of Cloud Del Norte. Passionate about cloud-native architecture and cross-border tech community.",
+    "organization": "Cloud Del Norte",
+    "social": {
+      "github": "https://github.com/BryanChasko",
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": false,
+    "retired": false
+  },
+  {
+    "id": "open-slot-co-organizer",
+    "name": "Co-Organizer Wanted",
+    "role": "Co-Organizer",
+    "bio": "",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  },
+  {
+    "id": "open-slot-content",
+    "name": "Content Leader Wanted",
+    "role": "Content & Education Lead",
+    "bio": "",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  },
+  {
+    "id": "open-slot-community",
+    "name": "Community Leader Wanted",
+    "role": "Community & Outreach Lead",
+    "bio": "",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  },
+  {
+    "id": "open-slot-en",
+    "name": "English Leader Wanted",
+    "role": "English Language Lead",
+    "bio": "",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  },
+  {
+    "id": "open-slot-es",
+    "name": "Líder de Español Buscado",
+    "role": "Spanish Language Lead",
+    "bio": "",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  },
+  {
+    "id": "open-slot-asl",
+    "name": "ASL Leader Wanted",
+    "role": "American Sign Language Lead",
+    "bio": "",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  },
+  {
+    "id": "open-slot-lsm",
+    "name": "Líder de LSM Buscado",
+    "role": "Lengua de Señas Mexicana Lead",
+    "bio": "",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  }
+]
