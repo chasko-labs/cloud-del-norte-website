@@ -1,6 +1,54 @@
 {
   "assignments": [
     {
+      "persistent_name": "Harald",
+      "universe": "heraldstack",
+      "role": "Lead Agent",
+      "created_at": "2025-01-01T00:00:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Stratia",
+      "universe": "heraldstack",
+      "role": "Architecture & Strategy Specialist",
+      "created_at": "2025-01-01T00:00:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Lyren",
+      "universe": "heraldstack",
+      "role": "Cloudscape UI Specialist",
+      "created_at": "2025-01-01T00:00:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Vael",
+      "universe": "heraldstack",
+      "role": "UI & Component Specialist",
+      "created_at": "2025-01-01T00:00:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Theren",
+      "universe": "heraldstack",
+      "role": "Build & Infrastructure Specialist",
+      "created_at": "2025-01-01T00:00:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Kess",
+      "universe": "heraldstack",
+      "role": "Testing & Quality Specialist",
+      "created_at": "2025-01-01T00:00:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
       "persistent_name": "Sophia",
       "universe": "exempt",
       "role": "English Localization Specialist",
@@ -13,6 +61,30 @@
       "universe": "exempt",
       "role": "Spanish Localization Specialist",
       "created_at": "2025-07-23T00:00:00Z",
+      "legacy_named": true,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Scribe",
+      "universe": "heraldstack",
+      "role": "Documentation Specialist",
+      "created_at": "2025-01-01T00:00:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "Ralph",
+      "universe": "heraldstack",
+      "role": "Code Review Specialist",
+      "created_at": "2025-01-01T00:00:00Z",
+      "legacy_named": false,
+      "status": "active"
+    },
+    {
+      "persistent_name": "@copilot",
+      "universe": "exempt",
+      "role": "GitHub Copilot",
+      "created_at": "2025-01-01T00:00:00Z",
       "legacy_named": true,
       "status": "active"
     }
