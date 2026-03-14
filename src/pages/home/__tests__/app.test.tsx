@@ -103,6 +103,12 @@ vi.mock('../../../hooks/useTranslation', () => ({
         'home.tableHeaders.strong': 'Strong',
         'home.tableHeaders.mild': 'Mild',
         'home.tableHeaders.unnoticed': 'Unnoticed',
+        'home.metrics.communityMembers': 'Community Members',
+        'home.metrics.fiveStarReviews': '5 Star Reviews',
+        'home.metrics.meetupsHeld': 'Meetups Held',
+        'home.metrics.est': 'Est.',
+        'home.quote.text': "Holding our first meetup on International Women's Day 2021, we continue to build a community of cloud enthusiasts in the Southwest.",
+        'home.communityDescription': "Holding our first meetup on International Women's Day 2021, we continue to build a community of cloud enthusiasts in the Southwest.",
       };
       return translations[key] ?? key;
     },

@@ -21,7 +21,7 @@ export default function ProductionOverview({ metrics }: ProductionOverviewProps)
           {metrics.map(({ key, value }) => (
             <Box key={key}>
               <Box color="text-label" margin={{ bottom: 'xxxs' }}>
-                {key}
+                {t(key)}
               </Box>
               <Box fontSize="display-l">{value}</Box>
             </Box>

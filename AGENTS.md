@@ -292,3 +292,69 @@ This project uses [Squad](https://github.com/bradygaster/squad) for AI agent orc
 - **ESLint flat config (v10).** `eslint.config.js` only — no `.eslintrc`.
 - **No backend.** Static site only. No Lambda, no API Gateway, no SSR. Data is
   fetched at build time and bundled as JSON.
+- **Deep imports only (no barrel imports).** Always import Cloudscape components
+  from their individual paths:
+  ```tsx
+  // ✅ Correct
+  import Button from '@cloudscape-design/components/button';
+  // ❌ Wrong — breaks tree-shaking, increases bundle size
+  import { Button } from '@cloudscape-design/components';
+  ```
+- **Page compliance checklist.** Every page must implement all of:
+  1. Shell wrapper (`<Shell>` from `src/layouts/shell`)
+  2. Theme state (`useState<Theme>` + `initializeTheme()`)
+  3. Locale state (`useState<Locale>` + `initializeLocale()` + `<LocaleProvider>`)
+  4. Deep Cloudscape imports
+  5. `t()` translation for all user-visible strings (never hardcoded English)
+  6. `document.title` set via `t()` so it updates on locale change
+  7. Locale-aware `data.ts` — static data labels use translation keys, not raw strings
+
+---
+
+## Common Pitfalls
+
+> For new developers and agents — mistakes caught during the localization audit.
+
+### 1. Barrel imports break tree-shaking
+```tsx
+// ❌ Never do this
+import { Button, Table } from '@cloudscape-design/components';
+// ✅ Always do this
+import Button from '@cloudscape-design/components/button';
+import Table from '@cloudscape-design/components/table';
+```
+
+### 2. Shell cannot call `useTranslation()` at the top level
+Shell renders `<LocaleProvider>` as a wrapper, so it **cannot** call `useTranslation()` inside its own body — that hook requires being inside a `LocaleProvider`. Solution: extract a `ShellContent` child component:
+```tsx
+function ShellContent(props: ShellProps) {
+  const { t } = useTranslation();  // ✅ Safe — inside LocaleProvider
+  // ...
+}
+export default function Shell(props: ShellProps) {
+  return (
+    <LocaleProvider locale={props.locale ?? 'us'}>
+      <ShellContent {...props} />
+    </LocaleProvider>
+  );
+}
+```
+This pattern applies to **any** component that both provides AND consumes a context.
+
+### 3. Static data in `data.ts` files bypasses `t()`
+Metric labels, descriptions, and topic names in `data.ts` files must **not** be hardcoded English strings — they bypass `t()` and stay English regardless of locale. Store translation keys instead and resolve with `t()` at render time.
+
+### 4. Navigation `items` array must be inside the component
+The `items` array in `src/components/navigation/index.tsx` must live inside the component function body so it can access the `t()` hook. Module-level constants cannot call hooks.
+
+### 5. CSS selectors tied to title text break after localization
+TopNavigation utility-button CSS selectors that match on `[title*="..."]` must cover ALL locale variants. When the `title` attribute is set via `t()`, its value changes per locale — a selector that only matches English will silently fail in Spanish mode.
+
+### 6. Tests for components using `useTranslation()` must wrap in `LocaleProvider`
+```tsx
+// ✅ Correct test pattern
+import { LocaleProvider } from '../../../contexts/locale-context';
+function renderWithLocale(ui: React.ReactElement) {
+  return render(<LocaleProvider locale="us">{ui}</LocaleProvider>);
+}
+```

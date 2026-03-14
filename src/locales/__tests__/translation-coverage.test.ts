@@ -64,6 +64,8 @@ describe('translation coverage', () => {
       'shell.siteTitle',                              // "Cloud Del Norte" - proper noun
       'breadcrumbs.home',                             // "Cloud Del Norte" - proper noun
       'home.infoLink',                                // "Info" - universal abbreviation
+      'home.metrics.est',                             // "Est." - abbreviation used in both locales
+      'home.topics.serverlessLens',                   // "Serverless Lens" - AWS technical term
       'common.info',                                  // "Info" - universal abbreviation
       'footer.goBuild',                               // "Go Build" - AWS tagline
       'navigation.apiGuide',                          // "API" - common in Spanish
@@ -78,8 +80,6 @@ describe('translation coverage', () => {
       'maintenanceCalendar.lts',                      // "LTS" - technical acronym
       'maintenanceCalendar.releaseNotes',             // "Release Notes" - technical term
       'meetings.tableHeaders.onDemand',               // "On-Demand" - technical term
-      'home.breadcrumb',                              // "Dashboard" - Anglicism commonly used in Spanish tech
-      'home.header',                                  // "Dashboard" - Anglicism commonly used in Spanish tech
       'home.userGroupHeader',                         // Contains "#AWS User Group" - proper noun
       'helpPanel.bryanChasko',                        // Proper name
       'helpPanel.jacobWright',                        // Proper name

@@ -12,18 +12,17 @@ import { useTranslation } from '../../../../hooks/useTranslation';
 import './styles.css';
 
 const columnDefinitions = (t: (key: string) => string): TableProps['columnDefinitions'] => [
-  { header: t('home.tableHeaders.name'), cell: ({ name }) => name },
+  { header: t('home.tableHeaders.name'), cell: ({ name }) => t(name) },
   { header: t('home.tableHeaders.strong'), cell: ({ strong }) => strong },
   { header: t('home.tableHeaders.mild'), cell: ({ mild }) => mild },
   { header: t('home.tableHeaders.unnoticed'), cell: ({ unnoticed }) => unnoticed },
 ];
 
 export interface QualityReportProps {
-  quote: string;
   notes: TableProps['items'];
 }
 
-export default function QualityReport({ quote, notes }: QualityReportProps) {
+export default function QualityReport({ notes }: QualityReportProps) {
   const { t } = useTranslation();
   const [showTastingNotes, setShowTastingNotes] = useState(false);
 
@@ -32,7 +31,7 @@ export default function QualityReport({ quote, notes }: QualityReportProps) {
       <Container header={<Header variant="h2">{t('home.userGroupHeader')}</Header>}>
         <SpaceBetween size="m">
           <Box color="text-body-secondary" padding={{ top: 'xs', bottom: 'xs' }}>
-            <p className="quote">{quote}</p>
+            <p className="quote">{t('home.communityDescription')}</p>
           </Box>
         </SpaceBetween>
         {/* <Button variant="normal" onClick={() => setShowTastingNotes(true)}>

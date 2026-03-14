@@ -16,8 +16,6 @@ import Navigation from '../../components/navigation';
 import Breadcrumbs from '../../components/breadcrumbs';
 import ShellLayout from '../../layouts/shell';
 import { useTranslation } from '../../hooks/useTranslation';
-import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
-import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 
 import generatedData from '../../data/releases.generated.json';
 import type { TechCalendar, ReleaseEntry, ProjectedEntry, Confidence } from './types';
@@ -176,21 +174,6 @@ function TechSection({ tech, t }: { tech: TechCalendar; t: (key: string) => stri
 
 export default function MaintenanceCalendar() {
   const { t } = useTranslation();
-  const [theme, setTheme] = useState<Theme>(() => initializeTheme());
-  const [locale, setLocale] = useState<Locale>(() => initializeLocale());
-
-  const handleThemeChange = (newTheme: Theme) => {
-    setTheme(newTheme);
-    applyTheme(newTheme);
-    setStoredTheme(newTheme);
-  };
-
-  const handleLocaleChange = (newLocale: Locale) => {
-    setLocale(newLocale);
-    applyLocale(newLocale);
-    setStoredLocale(newLocale);
-  };
-
   const categories = uniqueCategories(allTechs);
   const categoryOptions = [
     { value: 'all', label: t('maintenanceCalendar.allCategories') },
@@ -215,10 +198,7 @@ export default function MaintenanceCalendar() {
   return (
     <ShellLayout
       contentType="default"
-      theme={theme}
-      onThemeChange={handleThemeChange}
-      locale={locale}
-      onLocaleChange={handleLocaleChange}
+      pageTitle="pages.maintenanceCalendar.title"
       breadcrumbs={<Breadcrumbs active={{ text: t('maintenanceCalendar.breadcrumb'), href: '/maintenance-calendar/' }} />}
       navigation={<Navigation />}
     >

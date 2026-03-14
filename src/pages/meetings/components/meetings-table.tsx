@@ -17,7 +17,7 @@ import Button from '@cloudscape-design/components/button';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useTranslation } from '../../../hooks/useTranslation';
 
-const getFilterCounterText = (count = 0) => `${count} ${count === 1 ? 'match' : 'matches'}`;
+const getFilterCounterText = (count = 0, t: (key: string) => string) => `${count} ${count === 1 ? t('meetings.filterCounter.match') : t('meetings.filterCounter.matches')}`;
 const getHeaderCounterText = (items: readonly meeting[] = [], selectedItems: readonly meeting[] = []) => {
   return selectedItems && selectedItems.length > 0 ? `(${selectedItems.length}/${items.length})` : `(${items.length})`;
 };
@@ -83,7 +83,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
         noMatch: (
           <EmptyState
             title={t('meetings.empty.noMatches')}
-            subtitle="We can’t find a match."
+            subtitle={t('meetings.empty.noMatchesSubtitle')}
             action={<Button onClick={() => actions.setFiltering('')}>{ }{t('meetings.empty.clearFilter')}</Button>}
           />
         ),
@@ -136,7 +136,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
         <TextFilter
           {...filterProps}
           filteringPlaceholder={t('meetings.findPlaceholder')}
-          countText={getFilterCounterText(filteredItemsCount)}
+          countText={getFilterCounterText(filteredItemsCount, t)}
         />
       }
       preferences={

@@ -64,6 +64,38 @@
     "retired": true
   },
   {
+    "id": "asl-lead",
+    "name": "ASL Lead Wanted",
+    "role": "American Sign Language Lead",
+    "bio": "Help us make meetups accessible to the deaf and hard-of-hearing community. Coordinate ASL interpreters, advocate for inclusive event planning, and connect us with accessibility resources.",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  },
+  {
+    "id": "lsm-lead",
+    "name": "Se Busca Líder LSM",
+    "role": "Líder de Lengua de Signos Mexicana",
+    "bio": "Ayúdanos a hacer los meetups accesibles para la comunidad sorda y con problemas de audición. Coordina intérpretes de LSM, aboga por planificación de eventos inclusivos, y conéctanos con recursos de accesibilidad.",
+    "organization": null,
+    "social": {
+      "github": null,
+      "linkedin": null,
+      "twitter": null,
+      "website": null,
+      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
+    },
+    "placeholder": true,
+    "retired": false
+  },
+  {
     "id": "open-slot-en",
     "name": "This Could Be You",
     "role": "Future Leader",

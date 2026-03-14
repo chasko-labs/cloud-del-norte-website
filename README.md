@@ -70,6 +70,77 @@ src/pages/<name>/
 2. Register the entry in `vite.config.ts` → `build.rollupOptions.input`
 3. Add a nav item in `src/components/navigation/index.tsx`
 
+### Page Compliance Checklist
+
+Every page must implement **all** of the following:
+
+- [ ] **Shell wrapper** — `app.tsx` wraps content in `<Shell>` from `src/layouts/shell`
+- [ ] **Theme state** — `useState<Theme>` initialized via `initializeTheme()`, passed to Shell
+- [ ] **Locale state** — `useState<Locale>` initialized via `initializeLocale()`, passed to Shell inside `<LocaleProvider>`
+- [ ] **Deep imports** — all Cloudscape components imported via deep paths (e.g. `@cloudscape-design/components/button`)
+- [ ] **`t()` translation** — all user-visible strings use `t('namespace.key')` from `useTranslation()`, never hardcoded English
+- [ ] **`document.title`** — set via `t()` so it updates on locale change
+- [ ] **`data.ts` locale-aware** — if the page has a `data.ts` file, metric labels / descriptions use translation keys (not raw strings)
+
+### Page boilerplate — `app.tsx`
+
+```tsx
+import { useState } from 'react';
+import { LocaleProvider } from '../../contexts/locale-context';
+import Shell from '../../layouts/shell';
+import Navigation from '../../components/navigation';
+import Breadcrumbs from '../../components/breadcrumbs';
+import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
+import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
+
+export default function App() {
+  const [theme, setTheme] = useState<Theme>(() => initializeTheme());
+  const [locale, setLocale] = useState<Locale>(() => initializeLocale());
+
+  const handleThemeChange = (newTheme: Theme) => {
+    setTheme(newTheme);
+    applyTheme(newTheme);
+    setStoredTheme(newTheme);
+  };
+  const handleLocaleChange = (newLocale: Locale) => {
+    setLocale(newLocale);
+    applyLocale(newLocale);
+    setStoredLocale(newLocale);
+  };
+
+  return (
+    <LocaleProvider locale={locale}>
+      <Shell
+        theme={theme}
+        onThemeChange={handleThemeChange}
+        locale={locale}
+        onLocaleChange={handleLocaleChange}
+        breadcrumbs={<Breadcrumbs active={{ text: 'Page Title', href: '/<name>/index.html' }} />}
+        navigation={<Navigation />}
+      >
+        {/* page content */}
+      </Shell>
+    </LocaleProvider>
+  );
+}
+```
+
+### `data.ts` → `t()` pattern for locale-aware static data
+
+If a page has static data (e.g. metric labels, descriptions, topic names), those strings must be kept as translation keys and resolved at render time — **not** hardcoded as English strings:
+
+```ts
+// ❌ Wrong — hardcodes English, bypasses locale
+export const metrics = [{ label: 'Active Members', value: 42 }];
+
+// ✅ Correct — return keys, resolve with t() at render time
+export const METRIC_KEYS = [{ labelKey: 'home.metrics.activeMembers', value: 42 }];
+
+// In the component:
+const { t } = useTranslation();
+metrics.map(m => ({ ...m, label: t(m.labelKey) }))
+```
+
 ### Key conventions
 
 - **Deep imports only** — `import Button from '@cloudscape-design/components/button'` (never barrel imports)

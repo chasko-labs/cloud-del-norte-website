@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import AppLayout, { AppLayoutProps } from '@cloudscape-design/components/app-layout';
 import TopNavigation from '@cloudscape-design/components/top-navigation';
 import Footer from '../../components/footer';
@@ -21,12 +21,20 @@ export interface ShellProps {
   onThemeChange?: (theme: 'light' | 'dark') => void;
   locale?: Locale;
   onLocaleChange?: (locale: Locale) => void;
+  pageTitle?: string;
 }
 
-function ShellContent({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange }: ShellProps) {
+function ShellContent({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange, pageTitle }: ShellProps) {
   const { t } = useTranslation();
   const [animating, setAnimating] = useState(false);
   const [animatingLocale, setAnimatingLocale] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.lang = locale === 'mx' ? 'es' : 'en';
+    if (pageTitle) {
+      document.title = t(pageTitle);
+    }
+  }, [locale, pageTitle, t]);
 
   const handleToggleTheme = useCallback(() => {
     onThemeChange?.(theme === 'dark' ? 'light' : 'dark');

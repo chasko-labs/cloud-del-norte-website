@@ -329,7 +329,113 @@ Chihuahua norteño dialect — informal "tú" form, direct tone, regional slang.
 
 ---
 
-## 8. MCP Servers for Localization Workflows
+## 9. Translating Static Data Files (`data.ts` Pattern)
+
+Some pages keep static data (metrics, quotes, topic lists) in a `data.ts` file co-located with the page. A common mistake is hardcoding English strings directly into these objects — they bypass `t()` and stay English regardless of the active locale.
+
+### ❌ Wrong — hardcoded English, locale-unaware
+
+```ts
+// src/pages/home/data.ts
+export const productionMetrics = [
+  { label: 'Active Members', value: 42 },
+  { label: 'Events This Year', value: 12 },
+];
+```
+
+### ✅ Correct — store translation keys, resolve at render time
+
+```ts
+// src/pages/home/data.ts
+export const METRIC_CONFIG = [
+  { labelKey: 'home.metrics.activeMembers', value: 42 },
+  { labelKey: 'home.metrics.eventsThisYear', value: 12 },
+];
+```
+
+```tsx
+// In the component
+const { t } = useTranslation();
+const metrics = METRIC_CONFIG.map(m => ({ ...m, label: t(m.labelKey) }));
+```
+
+**Rule:** Any user-visible string in a `data.ts` file must be a translation key (`string` ending in a namespaced dot-path), never a raw English label.
+
+---
+
+## 10. HTML Lang Attribute & `document.title` Pattern
+
+Two accessibility/SEO concerns that must be wired to the locale:
+
+### `document.documentElement.lang`
+
+`applyLocale()` in `src/utils/locale.ts` already sets `document.documentElement.lang` to `'en-US'` or `'es-MX'` whenever the locale changes. This is called in each page's `handleLocaleChange` handler — no additional work needed per page as long as `applyLocale()` is called.
+
+### `document.title`
+
+Each page must set `document.title` reactively so it updates when the locale changes. The pattern:
+
+```tsx
+// In the page component or app.tsx, using useEffect + t()
+import { useTranslation } from '../../hooks/useTranslation';
+import { useEffect } from 'react';
+
+function PageContent() {
+  const { t } = useTranslation();
+  useEffect(() => {
+    document.title = t('myPage.title') + ' | Cloud Del Norte';
+  }, [t]);
+  // ...
+}
+```
+
+**Rule:** Never hardcode `document.title` to an English string. Always use `t()` inside a `useEffect` that depends on `[t]` so it re-runs on locale change.
+
+---
+
+## 11. Checklist — Verifying a Page Is Fully Localized
+
+Use this checklist when auditing an existing page or reviewing a new one:
+
+### Structural requirements
+
+- [ ] `app.tsx` has `useState<Locale>` initialized with `initializeLocale()`
+- [ ] `app.tsx` wraps Shell with `<LocaleProvider locale={locale}>`
+- [ ] `app.tsx` passes `locale` and `onLocaleChange` to `<Shell>`
+- [ ] `handleLocaleChange` calls `applyLocale(newLocale)` and `setStoredLocale(newLocale)`
+
+### String coverage
+
+- [ ] All visible strings use `t('namespace.key')` — search for hardcoded English words in the TSX
+- [ ] Table column headers use `t()`
+- [ ] Empty-state titles and descriptions use `t()`
+- [ ] Button labels use `t()`
+- [ ] Breadcrumb labels use `t()` (via the shared Breadcrumbs component)
+- [ ] Page `document.title` uses `t()` inside `useEffect`
+
+### Data files
+
+- [ ] If the page has a `data.ts` file, verify no raw English label strings — use `labelKey` pattern
+- [ ] Static content (quotes, descriptions, topic names) resolved through `t()` at render time
+
+### Accessibility
+
+- [ ] `document.documentElement.lang` updates on locale change (automatic via `applyLocale()`)
+- [ ] Any ARIA labels or `aria-label` strings use `t()`
+
+### Tests
+
+- [ ] Component tests that render locale-dependent UI wrap in `<LocaleProvider locale="us">`
+- [ ] Translation key parity test passes (`npm test` includes parity check)
+- [ ] Switching to `'mx'` locale renders different text (no hardcoded strings survive)
+
+### Verification commands
+
+```bash
+npm run lint    # no lint errors
+npm test        # parity test + render tests pass
+npm run build   # build succeeds with locale files included
+```
 
 These MCP servers can assist with translation, dialect consistency, and bilingual content workflows:
 

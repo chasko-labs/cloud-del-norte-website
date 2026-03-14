@@ -10,7 +10,7 @@ import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 const columnDefinitions = (t: (key: string) => string): TableProps['columnDefinitions'] => [
-  { header: t('home.tableHeaders.name'), cell: ({ name }) => name },
+  { header: t('home.tableHeaders.name'), cell: ({ name }) => t(name) },
   {
     header: t('home.tableHeaders.status'),
     cell: ({ status }) => <StatusIndicator type={status.type}>{status.message}</StatusIndicator>,
@@ -26,17 +26,18 @@ export interface VariationsProps {
 
 export default function meetings({ data, items }: VariationsProps) {
   const { t } = useTranslation();
+  const translatedData = data.map((item) => ({ ...item, title: t(item.title) }));
   
   return (
     <div className="cdn-card">
       <SpaceBetween size={'l'}>
         <Container header={<Header variant="h2">{t('home.pastTopicsHeader')}</Header>}>
-          <PieChart data={data} hideFilter={true} i18nStrings={{
-            chartAriaRoleDescription: 'Pie chart',
-            detailPopoverDismissAriaLabel: 'Dismiss',
-            legendAriaLabel: 'Legend',
-            filterSelectedAriaLabel: 'filterSelectedAriaLabel',
-            segmentAriaRoleDescription: 'segment',
+          <PieChart data={translatedData} hideFilter={true} i18nStrings={{
+            chartAriaRoleDescription: t('home.pieChart.chartAriaRoleDescription'),
+            detailPopoverDismissAriaLabel: t('home.pieChart.detailPopoverDismissAriaLabel'),
+            legendAriaLabel: t('home.pieChart.legendAriaLabel'),
+            filterSelectedAriaLabel: t('home.pieChart.filterSelectedAriaLabel'),
+            segmentAriaRoleDescription: t('home.pieChart.segmentAriaRoleDescription'),
           }} />
         </Container>
         {/*       <Table
@@ -49,7 +50,8 @@ export default function meetings({ data, items }: VariationsProps) {
           tableLabel: 'Details table',
         }}
       />
- */}    </SpaceBetween>
+      */}
+      </SpaceBetween>
     </div>
   );
 }
