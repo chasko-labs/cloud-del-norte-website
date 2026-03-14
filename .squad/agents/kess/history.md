@@ -81,3 +81,21 @@ Verified TopNav artifact issue (button chrome behind flags/sun) was already fixe
 - **Ready for Copilot:** 4 issues (5 total, 1 flagged as `question` for decision)
 - **Documentation:** Summary written to `.squad/decisions/inbox/kess-backlog-creation.md`
 - **Quality gates:** Lint clean, build succeeds, full test suite passes
+
+### Home Page Responsive Rendering Tests (2025-07)
+Added `src/pages/home/__tests__/app.test.tsx` — 8 tests covering the home page rendering for Lyren's UX responsiveness pass.
+
+**Tests written:**
+- Renders without console errors (React warnings check)
+- Shell layout wrapper present
+- All 3 panels render: ProductionOverview, Meetings, QualityReport (verified via translated header text)
+- Community description text appears ("Holding our first meetup on International Women's Day")
+- All 4 production metric labels (Community Members, 5 Star Reviews, Meetups Held, Est.)
+- All 4 production metric values (239, 15, 33, 2021)
+
+**Key patterns:**
+- Rendered real child components (not mocked) to verify actual content flows through
+- Mocked ALL Cloudscape components used transitively (ContentLayout, Grid, Header, Link, Box, Container, ColumnLayout, Button, Modal, Table, PieChart, StatusIndicator, SpaceBetween)
+- Dual SpaceBetween mock: barrel import (`@cloudscape-design/components`) AND deep import (`@cloudscape-design/components/space-between`) so tests work before and after Lyren's barrel import fix
+- useTranslation mocked with English translation map covering all keys used by home page components
+- Pre-existing failures (10 tests in locale.test.ts and translation-coverage.test.ts) are unrelated to this work
