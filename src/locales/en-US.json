@@ -17,6 +17,7 @@
   },
   "navigation": {
     "home": "User Group Home",
+    "roadmap": "Roadmap",
     "meetings": "Meetings",
     "resources": "Resources",
     "techDebtCountdowns": "Tech Debt Countdowns",
@@ -324,6 +325,15 @@
       "speedRatingMapping": "💨 Speed Rating",
       "speedRatingMappingValue": "stats.movespeed ÷ 20"
     }
+  },
+  "roadmap": {
+    "title": "Roadmap",
+    "breadcrumb": "Roadmap",
+    "idea": "Idea",
+    "todo": "Todo",
+    "inProgress": "In Progress",
+    "inReview": "In Review",
+    "done": "Done"
   },
   "maintenanceCalendar": {
     "breadcrumb": "Maintenance Calendar",

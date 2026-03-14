@@ -1,0 +1,110 @@
+/* Roadmap Scrum Board Layout */
+
+.cdn-roadmap-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--cdn-spacing-xl);
+  padding: var(--cdn-spacing-lg) 0;
+}
+
+@media (max-width: 768px) {
+  .cdn-roadmap-board {
+    grid-template-columns: 1fr;
+  }
+}
+
+.cdn-roadmap-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-spacing-md);
+  min-height: 200px;
+}
+
+.cdn-roadmap-column-header {
+  position: relative;
+  padding: var(--cdn-spacing-sm) var(--cdn-spacing-md);
+  border-radius: var(--cdn-border-radius-md);
+  background: var(--cdn-gradient-sepia-amber);
+  color: var(--cdn-color-text-primary);
+  font-weight: 600;
+  font-size: var(--cdn-text-md);
+  text-align: center;
+}
+
+/* Column-specific gradient headers */
+.cdn-roadmap-column[data-column="idea"] .cdn-roadmap-column-header {
+  background: var(--cdn-gradient-sepia-amber);
+}
+
+.cdn-roadmap-column[data-column="todo"] .cdn-roadmap-column-header {
+  background: var(--cdn-gradient-blue-cyan);
+}
+
+.cdn-roadmap-column[data-column="inProgress"] .cdn-roadmap-column-header {
+  background: var(--cdn-gradient-amber-orange);
+}
+
+.cdn-roadmap-column[data-column="inReview"] .cdn-roadmap-column-header {
+  background: var(--cdn-gradient-violet-cyan);
+}
+
+.cdn-roadmap-column[data-column="done"] .cdn-roadmap-column-header {
+  background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+}
+
+.cdn-roadmap-card {
+  padding: var(--cdn-spacing-md);
+  border-radius: var(--cdn-border-radius-md);
+  background: var(--cdn-color-bg-card);
+  border: 1px solid var(--cdn-color-border-subtle);
+  box-shadow: var(--cdn-shadow-sm);
+  transition: all 0.2s ease;
+  font-weight: 500;
+  font-size: var(--cdn-text-md);
+  color: var(--cdn-color-text-primary);
+  cursor: pointer;
+  position: relative;
+}
+
+.cdn-roadmap-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  border-radius: var(--cdn-border-radius-md) 0 0 var(--cdn-border-radius-md);
+  background: var(--cdn-gradient-sepia-amber);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cdn-roadmap-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--cdn-shadow-md);
+}
+
+.cdn-roadmap-card:hover::before {
+  opacity: 1;
+}
+
+/* Column-specific card accents */
+.cdn-roadmap-column[data-column="idea"] .cdn-roadmap-card::before {
+  background: var(--cdn-gradient-sepia-amber);
+}
+
+.cdn-roadmap-column[data-column="todo"] .cdn-roadmap-card::before {
+  background: var(--cdn-gradient-blue-cyan);
+}
+
+.cdn-roadmap-column[data-column="inProgress"] .cdn-roadmap-card::before {
+  background: var(--cdn-gradient-amber-orange);
+}
+
+.cdn-roadmap-column[data-column="inReview"] .cdn-roadmap-card::before {
+  background: var(--cdn-gradient-violet-cyan);
+}
+
+.cdn-roadmap-column[data-column="done"] .cdn-roadmap-card::before {
+  background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);
+}
