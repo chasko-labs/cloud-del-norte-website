@@ -88,7 +88,9 @@
 
 /* Light mode side nav — warm cream to match page.
    No --color-background-layout-side token exists in @cloudscape-design/design-tokens,
-   so CSS selector fallback is used, scoped to light mode via :root:not(.awsui-dark-mode). */
+   so CSS selector fallback is used, scoped to light mode via :root:not(.awsui-dark-mode).
+   Applied to both the navigation elements AND the container for full-height background. */
+:root:not(.awsui-dark-mode) [class*="navigation-container"],
 :root:not(.awsui-dark-mode) [class*="side-navigation"],
 :root:not(.awsui-dark-mode) [class*="navigation__drawer"] {
   background: #ede8db;

@@ -13,9 +13,9 @@ describe('locale utility', () => {
   });
 
   describe('getStoredLocale', () => {
-    it('returns "us" when localStorage is empty', async () => {
+    it('returns null when localStorage is empty', async () => {
       const { getStoredLocale } = await import('../locale');
-      expect(getStoredLocale()).toBe('us');
+      expect(getStoredLocale()).toBeNull();
     });
 
     it('returns "us" when stored value is "us"', async () => {
@@ -30,16 +30,16 @@ describe('locale utility', () => {
       expect(getStoredLocale()).toBe('mx');
     });
 
-    it('returns "us" for invalid stored value', async () => {
+    it('returns null for invalid stored value', async () => {
       localStorage.setItem('cdn-locale', 'fr');
       const { getStoredLocale } = await import('../locale');
-      expect(getStoredLocale()).toBe('us');
+      expect(getStoredLocale()).toBeNull();
     });
 
-    it('returns "us" for empty string stored value', async () => {
+    it('returns null for empty string stored value', async () => {
       localStorage.setItem('cdn-locale', '');
       const { getStoredLocale } = await import('../locale');
-      expect(getStoredLocale()).toBe('us');
+      expect(getStoredLocale()).toBeNull();
     });
   });
 

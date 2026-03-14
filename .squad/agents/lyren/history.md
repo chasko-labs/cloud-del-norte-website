@@ -270,6 +270,61 @@ Navigation spacing uses Cloudscape's internal grid system (controlled by AppLayo
 - ✅ Toggle button works to open/close drawer
 - ✅ No custom CSS height overrides added
 
+## Session 2026-03-14 — SideNavigation onFollow Handler Fix
+
+**Status:** ✅ Complete
+
+### Problem
+
+Bryan reported: "our sidepanel menu is currently broken, I clicked it and it disappeared completely." The side navigation panel was disappearing when users clicked on nav links.
+
+### Root Cause
+
+The `Navigation` component (`src/components/navigation/index.tsx`) was missing the **`onFollow` handler** on the `SideNavigation` component. Without this handler, Cloudscape's default link behavior can interfere with the MPA page navigation pattern, causing the navigation drawer to close unexpectedly or become unresponsive.
+
+### Fix Applied
+
+Added explicit `onFollow` handler to SideNavigation:
+
+```tsx
+<SideNavigation
+  activeHref={location.pathname}
+  header={{ href: '/home/index.html', text: t('navigation.home') }}
+  items={items}
+  onFollow={(event) => {
+    // Prevent default to avoid React state issues, then navigate manually
+    if (!event.detail.external) {
+      event.preventDefault();
+      window.location.href = event.detail.href;
+    }
+  }}
+/>
+```
+
+### Why This Works
+
+In an MPA (Multi-Page App), each page navigation is a full page reload. Cloudscape's SideNavigation component fires an `onFollow` event when links are clicked. Without an explicit handler:
+- The component's internal state can get confused
+- Default link behavior may be blocked
+- Navigation drawer state becomes corrupted
+
+By preventing the default event and manually triggering `window.location.href`, we ensure clean page navigation that respects the MPA architecture.
+
+### Pattern for MPA Navigation
+
+**CRITICAL:** In MPA apps using Cloudscape SideNavigation, ALWAYS provide an `onFollow` handler that:
+1. Calls `event.preventDefault()` for internal links
+2. Manually navigates via `window.location.href = event.detail.href`
+3. Allows external links to use default behavior
+
+This pattern prevents React state issues and ensures reliable navigation.
+
+### Quality Gates
+
+- ✅ `npm run lint` — clean
+- ✅ `npm test` — all 146 tests passing
+- ✅ Dev server running — navigation works correctly
+
 ## Session 2026-03-14 — Navigation State + CSS Fixes (Agent-32)
 
 **Status:** ✅ Complete

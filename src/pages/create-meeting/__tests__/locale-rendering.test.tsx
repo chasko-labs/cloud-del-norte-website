@@ -3,6 +3,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { LocaleProvider } from '../../../contexts/locale-context';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
@@ -36,7 +37,12 @@ vi.mock('@cloudscape-design/components/help-panel', () => ({
 // Mock Shell and navigation — render breadcrumbs so we can assert breadcrumb text
 vi.mock('../../../layouts/shell', () => ({
   default: ({ children, breadcrumbs }: AnyProps) =>
-    React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children),
+    React.createElement(
+      LocaleProvider,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { locale: 'us' } as any,
+      React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children)
+    ),
 }));
 vi.mock('../../../components/navigation', () => ({
   default: () => React.createElement('nav', { 'data-testid': 'navigation' }),

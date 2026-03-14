@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { LocaleProvider } from '../../../contexts/locale-context';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
@@ -60,7 +61,12 @@ vi.mock('@cloudscape-design/collection-hooks', () => ({
 // Mock Shell — render breadcrumbs and children so breadcrumb text is testable
 vi.mock('../../../layouts/shell', () => ({
   default: ({ children, breadcrumbs }: AnyProps) =>
-    React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children),
+    React.createElement(
+      LocaleProvider,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { locale: 'us' } as any,
+      React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children)
+    ),
 }));
 
 // Mock Breadcrumbs — render active.text so locale-dependent text is visible

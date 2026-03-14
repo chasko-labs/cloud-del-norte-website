@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { LocaleProvider } from '../../../../contexts/locale-context';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
@@ -9,7 +10,12 @@ type AnyProps = Record<string, any>;
 // Must render breadcrumbs prop to test locale-dependent breadcrumb text.
 vi.mock('../../../../layouts/shell', () => ({
   default: ({ children, breadcrumbs }: AnyProps) =>
-    React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children),
+    React.createElement(
+      LocaleProvider,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { locale: 'us' } as any,
+      React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children)
+    ),
 }));
 
 vi.mock('../../../../components/navigation', () => ({

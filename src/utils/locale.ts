@@ -27,6 +27,7 @@ export function setStoredLocale(locale: Locale): void {
 
 export function applyLocale(locale: Locale): void {
   document.documentElement.lang = locale === 'us' ? 'en-US' : 'es-MX';
+  document.documentElement.setAttribute('data-locale', locale);
 }
 
 export function initializeLocale(): Locale {

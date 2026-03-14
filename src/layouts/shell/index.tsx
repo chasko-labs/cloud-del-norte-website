@@ -117,7 +117,6 @@ function ShellContent({ children, contentType, breadcrumbs, tools, navigation, n
         tools={tools}
         content={children}
         headerSelector="#top-nav"
-        footerSelector="#site-footer"
         ariaLabels={{
           navigation: t('shell.navigationDrawer'),
           navigationClose: t('shell.closeNavigationDrawer'),

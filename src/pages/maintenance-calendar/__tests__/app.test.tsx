@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { LocaleProvider } from '../../../contexts/locale-context';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
@@ -67,8 +68,13 @@ vi.mock('../utils/ical', () => ({
 
 // Mock ShellLayout — AppLayout uses ResizeObserver/timers that hang in jsdom
 vi.mock('../../../layouts/shell', () => ({
-  default: ({ children }: { children: React.ReactNode }) =>
-    React.createElement('div', { 'data-testid': 'shell' }, children),
+  default: ({ children, breadcrumbs }: { children: React.ReactNode; breadcrumbs?: React.ReactNode }) =>
+    React.createElement(
+      LocaleProvider,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      { locale: 'us' } as any,
+      React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children)
+    ),
 }));
 
 vi.mock('../../../components/navigation', () => ({
