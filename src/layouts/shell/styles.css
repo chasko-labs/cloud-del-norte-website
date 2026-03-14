@@ -103,6 +103,18 @@
   letter-spacing: 0.005em;
 }
 
+/* ── Emoji toggle buttons: remove Cloudscape button chrome ──
+   TopNavigation utility buttons have default background/padding/border
+   that creates a visible square artifact behind emoji characters.
+   Override to show just the emoji with no box. */
+
+#top-nav [class*="utility-button"] button,
+#top-nav [class*="utility-button"] [class*="button-trigger"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
 /* THEME TOGGLE — spin/flip on click, gentle pulse on hover */
 
 @keyframes cdn-toggle-flip {
@@ -111,9 +123,14 @@
   100% { transform: scale(1) rotate(360deg); }
 }
 
-/* Hover: subtle scale + brightness pulse */
+/* Hover: subtle scale + brightness pulse
+   Selectors match both EN and ES title text:
+   EN: "Switch to light mode" / "Switch to dark mode"
+   ES: "Cambiar a modo claro" / "Cambiar a modo oscuro" */
 [class*="utility-button"]:has([title*="light mode"]):hover,
-[class*="utility-button"]:has([title*="dark mode"]):hover {
+[class*="utility-button"]:has([title*="dark mode"]):hover,
+[class*="utility-button"]:has([title*="modo claro"]):hover,
+[class*="utility-button"]:has([title*="modo oscuro"]):hover {
   transform: scale(1.15);
   filter: brightness(1.2);
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
@@ -122,23 +139,26 @@
 /* Flip animation fires when data-cdn-animating attribute is present on #top-nav */
 @media (prefers-reduced-motion: no-preference) {
   #top-nav[data-cdn-animating] [class*="utility-button"]:has([title*="light mode"]),
-  #top-nav[data-cdn-animating] [class*="utility-button"]:has([title*="dark mode"]) {
+  #top-nav[data-cdn-animating] [class*="utility-button"]:has([title*="dark mode"]),
+  #top-nav[data-cdn-animating] [class*="utility-button"]:has([title*="modo claro"]),
+  #top-nav[data-cdn-animating] [class*="utility-button"]:has([title*="modo oscuro"]) {
     animation: cdn-toggle-flip 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-/* LOCALE TOGGLE — flag flip on click, gentle pulse on hover */
+/* LOCALE TOGGLE — flag flip on click, gentle pulse on hover
+   EN: "Switch to Spanish" / ES: "Cambiar a Inglés" */
 
-[class*="utility-button"]:has([title*="English"]):hover,
-[class*="utility-button"]:has([title*="Español"]):hover {
+[class*="utility-button"]:has([title*="Spanish"]):hover,
+[class*="utility-button"]:has([title*="Inglés"]):hover {
   transform: scale(1.15);
   filter: brightness(1.2);
   transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  #top-nav[data-cdn-animating-locale] [class*="utility-button"]:has([title*="English"]),
-  #top-nav[data-cdn-animating-locale] [class*="utility-button"]:has([title*="Español"]) {
+  #top-nav[data-cdn-animating-locale] [class*="utility-button"]:has([title*="Spanish"]),
+  #top-nav[data-cdn-animating-locale] [class*="utility-button"]:has([title*="Inglés"]) {
     animation: cdn-toggle-flip 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }

@@ -142,3 +142,27 @@ This wiring completes the localization system integration. All shared components
 - **38+ hardcoded strings replaced** with translation keys across shared components
 - **Test pattern:** Components using `useTranslation()` must be wrapped in `LocaleProvider` in tests or the hook must be mocked
 - **Quality gates:** All 120 tests passing, lint clean
+
+## Session 2026-07-18 — Toggle Button Visual Artifacts + Broken CSS Selectors
+
+**Status:** ✅ Complete
+
+### What Changed
+
+Fixed two issues in `src/layouts/shell/styles.css`:
+
+1. **Visual artifact (square behind emoji):** Added CSS overrides to strip Cloudscape's default button chrome (background, border, box-shadow) from TopNavigation utility buttons. Targets both `button` and `[class*="button-trigger"]` inside `[class*="utility-button"]` within `#top-nav`. Uses `!important` to override Cloudscape's scoped styles.
+
+2. **CSS selectors broken in Spanish locale:** The hover/animation selectors used `[title*="English"]`, `[title*="Español"]`, `[title*="light mode"]`, `[title*="dark mode"]` — but after localization was wired, titles change based on locale. Fixed by mapping all actual title values:
+   - Theme toggle EN: "Switch to light mode" / "Switch to dark mode" → `[title*="light mode"]` / `[title*="dark mode"]`
+   - Theme toggle ES: "Cambiar a modo claro" / "Cambiar a modo oscuro" → `[title*="modo claro"]` / `[title*="modo oscuro"]`
+   - Locale toggle EN: "Switch to Spanish" → `[title*="Spanish"]`
+   - Locale toggle ES: "Cambiar a Inglés" → `[title*="Inglés"]`
+
+### Key Insight
+
+The old locale selectors (`[title*="English"]` / `[title*="Español"]`) were broken in BOTH locales — in English mode the title is "Switch to Spanish" (no "English" or "Español" substring), and in Spanish mode it's "Cambiar a Inglés" (no "English" or "Español" substring). The fix correctly derives selectors from the actual translation JSON values.
+
+### Quality Gates
+- ✅ `npm run lint` — clean
+- ✅ `npm test` — all 125 tests passing
