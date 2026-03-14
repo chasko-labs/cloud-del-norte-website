@@ -31,15 +31,12 @@ Initial setup — Squad team infrastructure created for Cloudscape Design System
 - **Result:** 99/99 tests passing; all mocked component renders match real Cloudscape API signatures
 - **Coordination:** Parallel work with Theren (data) and Lyren (CSS); test artifacts aligned with component and data contract changes
 
-## Session 2026-03-14 — Localization Integration (Phase 5)
+## Session 2026-03-14 — Documentation Update (Audit Learnings)
 
 **Status:** ✅ Complete
 
 ### Learnings
 
-- **Added 5 new locale rendering tests:** Spanish rendering tests for Home and Maintenance Calendar pages, plus translation parity enhancement
-- **Test pattern for locale rendering:** Mock `useTranslation` to return `locale: 'mx'` and Spanish `t()` function that returns es-MX values, then verify Spanish strings render in DOM
-- **Key insight:** Existing tests that check for hardcoded English strings need `useTranslation` mock added when components get wired with `t()`
-- **Translation parity test pattern:** Created allowlist approach for proper nouns and tech terms that intentionally pass through untranslated (AWS, Meetup, API, REST, LTS, etc.)
-- **Test count:** 120 → 125 tests, all passing
-- **Quality gates:** Lint clean, build succeeds, full test suite passes
+- **LocaleProvider test wrapper is now the standard pattern:** All future tests for components using `useTranslation()` must wrap in `<LocaleProvider locale="us">`. This is documented in AGENTS.md Common Pitfalls §6 and the testing conventions file.
+- **Translation parity allowlist:** The parity test uses an allowlist for intentional pass-throughs (AWS, API, REST, Meetup, etc.) — future contributors adding tech terms should add them to the allowlist, not force-translate them.
+- **Test count baseline:** 125 tests after localization integration (up from 99 pre-localization).

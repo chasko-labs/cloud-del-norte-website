@@ -113,4 +113,22 @@
 
 **Rationale:** The existing i18n infrastructure (LocaleProvider, useTranslation hook, locale toggle) was well-built but unused. Completing the wiring makes the bilingual toggle functional and delivers value to the Spanish-speaking community members. MCP-powered translation with human review avoids AI slop.
 
+---
+
+## DEC-008: Documentation Update — Audit Learnings Captured
+
+**Date:** 2026-03-14
+**Author:** Scribe (Logger), Copilot
+**Status:** ✅ Accepted
+
+**Decision:** Update README.md, AGENTS.md, LOCALIZATION.md, and `.squad/skills/localization/SKILL.md` to capture learnings from the localization and UI audit backlog (#30–#37).
+
+**Key additions:**
+- **README.md** — Page Compliance Checklist; complete `app.tsx` boilerplate with locale + theme state; `data.ts → t()` pattern documentation
+- **AGENTS.md** — Barrel import prohibition made explicit with code example; page compliance checklist added to Architectural Constraints; new "Common Pitfalls" section documenting 6 audit learnings (barrel imports, ShellContent pattern, static data.ts bypass, navigation items inside component, CSS selector locale breakage, test LocaleProvider wrapping)
+- **LOCALIZATION.md** — Three new sections: (9) `data.ts` pattern for locale-aware static data, (10) HTML lang attribute & `document.title` pattern, (11) full verification checklist for confirming a page is fully localized
+- **`.squad/skills/localization/SKILL.md`** — Confidence raised from `medium` → `high`; five audit patterns documented inline
+
+**Rationale:** The localization audit produced significant learnings (ShellContent pattern, CSS selector breakage, data.ts bypass, etc.) that were only captured in agent history files. Surfacing them in the primary project docs ensures future developers and agents encounter them before making the same mistakes. The page compliance checklist creates a clear, auditable standard for any new page.
+
 

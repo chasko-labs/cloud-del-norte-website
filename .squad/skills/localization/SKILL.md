@@ -1,6 +1,6 @@
 # Skill: Localization & Translation Workflow
 
-**Confidence:** medium
+**Confidence:** high
 **Domain:** localization, content
 **Applies to:** Calli (primary), Theren, Lyren, Kess
 **Last updated:** 2026-03-14
@@ -20,6 +20,54 @@ Extract → Translate → Review → Wire → Test
 3. **Review** — Bryan reviews translations for dialect accuracy and community tone. Edits as needed.
 4. **Wire** — Replace hardcoded strings with `t('namespace.key')` calls. Ensure `LocaleProvider` wraps each page.
 5. **Test** — Key parity tests, per-page locale rendering, visual validation, accessibility audit.
+
+## Patterns Learned from Audit
+
+### ShellContent extraction pattern (critical)
+Shell cannot call `useTranslation()` at its top level because it renders `<LocaleProvider>` as a wrapper. Extract the consuming logic into a child component:
+```tsx
+function ShellContent(props: ShellProps) {
+  const { t } = useTranslation();  // ✅ Safe — inside LocaleProvider
+}
+export default function Shell(props: ShellProps) {
+  return (
+    <LocaleProvider locale={props.locale ?? 'us'}>
+      <ShellContent {...props} />
+    </LocaleProvider>
+  );
+}
+```
+Applies to **any** component that both provides AND consumes a context.
+
+### Navigation items must be inside the component
+The `items` array in navigation must live inside the component function body to access the `t()` hook. Module-level constants cannot call hooks.
+
+### Static data.ts files bypass t()
+Metric labels, descriptions, and topic names in `data.ts` files must NOT be hardcoded English strings. Store translation keys and resolve with `t()` at render time:
+```ts
+// ❌ Wrong
+export const metrics = [{ label: 'Active Members', value: 42 }];
+// ✅ Correct
+export const METRIC_CONFIG = [{ labelKey: 'home.metrics.activeMembers', value: 42 }];
+```
+
+### CSS selectors tied to title text break after localization
+TopNavigation utility-button CSS selectors that match on `[title*="..."]` must cover ALL locale variants, because `title` is dynamic via `t()`. Add selectors for both en-US and es-MX translated title substrings.
+
+### document.title must use t() + useEffect
+```tsx
+useEffect(() => {
+  document.title = t('myPage.title') + ' | Cloud Del Norte';
+}, [t]);
+```
+
+### Test pattern for components using useTranslation()
+```tsx
+import { LocaleProvider } from '../../../contexts/locale-context';
+function renderWithLocale(ui: React.ReactElement) {
+  return render(<LocaleProvider locale="us">{ui}</LocaleProvider>);
+}
+```
 
 ## Key Naming Convention
 

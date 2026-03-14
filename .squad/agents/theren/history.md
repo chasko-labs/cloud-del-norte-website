@@ -79,16 +79,12 @@ Wired `useTranslation()` hook into all page components across the website. Repla
 
 All 161 translation keys from en-US.json now wired into the UI. Spanish locale toggle functional.
 
-## Session 2026-03-14 — Localization Integration (Phase 4)
+## Session 2026-03-14 — Documentation Update (Audit Learnings)
 
 **Status:** ✅ Complete
 
 ### Learnings
 
-- **Wired `useTranslation()` into all 5 page components:** Home, Meetings, Create Meeting, Learning/API (headers only), Maintenance Calendar
-- **Pattern established:** Import `useTranslation` hook at component top, destructure `{ t }`, replace all hardcoded strings with `t('namespace.key')`
-- **Learning/API scope limited:** Only section headers and nav anchors translated — body content paragraphs deferred per instructions
-- **Create Meeting had most strings:** ~28 translation keys including form labels, validation messages, meeting type labels
-- **Column definitions pattern:** For components with column definitions outside render (meetings-table.tsx), convert to function accepting `t` parameter for dynamic headers
-- **Total strings replaced:** ~50+ across all page files
-- **Key files modified:** 5 app.tsx files, 10 component files (15 total)
+- **data.ts bypass is a hidden localization gap:** Pages with `data.ts` files (metric labels, topic names, descriptions) silently bypass `t()` because the strings live outside React component bodies. These must use a `labelKey` pattern (store translation key, resolve at render time) — documented in LOCALIZATION.md §9 and AGENTS.md Common Pitfalls §3.
+- **document.title must use t() + useEffect:** `document.title` set once at module load will never update when locale changes. Always set via `useEffect` depending on `[t]`.
+- **Verification checklist added:** LOCALIZATION.md §11 now has a full "how to audit a page" checklist — structural requirements, string coverage, data files, accessibility, and test patterns.
