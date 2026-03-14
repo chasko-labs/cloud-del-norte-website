@@ -421,7 +421,19 @@ export default EventForm;
 
    This will generate the output files in the `dist` directory.
 
-### Deploy to AWS S3
+#
+## Localization
+
+The site supports two locales via a flag toggle (next to the theme toggle):
+
+- **🇺🇸 US** — New Mexican English with Spanglish & local slang
+- **🇲🇽 MX** — Chihuahua dialect Spanish (norteño)
+
+See [LOCALIZATION.md](LOCALIZATION.md) for dialect guides, translation guidelines, and open linguistic resources for the El Paso / Juárez / Las Cruces border region.
+
+---
+
+## Deploy to AWS S3
 
 1. **Deploy to S3**
 
