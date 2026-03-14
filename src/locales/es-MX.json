@@ -1,6 +1,6 @@
 {
   "shell": {
-    "siteTitle": "Cloud Del Norte",
+    "siteTitle": "Nube of the North",
     "switchToMx": "Cambiar a Español",
     "switchToUs": "Cambiar a Inglés",
     "switchToLightMode": "Cambiar a modo claro",
@@ -34,12 +34,12 @@
     "projectResources": "🔗 Recursos del Proyecto"
   },
   "breadcrumbs": {
-    "home": "Cloud Del Norte"
+    "home": "Nube of the North"
   },
   "footer": {
     "ourLeaders": "Nuestros Líderes",
     "joinUs": "Únete en Meetup →",
-    "communityDescription": "AWS User Group Cloud Del Norte es parte de",
+    "communityDescription": "AWS User Group Nube of the North es parte de",
     "globalCommunity": "Comunidad Global de AWS User Groups",
     "communityFullDescription": "Somos voluntarios locales de Nuevo México, West Texas y Chihuahua, México. Creemos que los proyectos, las carreras y los problemas se pueden acelerar usando AWS, y queremos compartir nuestro conocimiento, conexiones y experiencias contigo para que veas lo que tú puedes",
     "goBuild": "Go Build"
@@ -51,7 +51,7 @@
     "productionOverviewHeader": "Resumen de producción",
     "pastTopicsHeader": "Temas Pasados",
     "detailsHeader": "Detalles",
-    "userGroupHeader": "#AWS User Group Cloud Del Norte",
+    "userGroupHeader": "#AWS User Group Nube of the North",
     "groupNotesModal": "Notas del grupo",
     "tableHeaders": {
       "name": "Nombre",
@@ -139,10 +139,10 @@
   },
   "helpPanel": {
     "rsvpHeader": "RSVP para Eventos en Vivo",
-    "cloudDelNorteMeetups": "Meetups de Cloud Del Norte",
+    "cloudDelNorteMeetups": "Meetups de Nube of the North",
     "blenderMeetups": "Blender & Diseño Gráfico:NE3D",
     "userGroupTitle": "☁️ #AWSelfTaught UG",
-    "communityDescription": "AWS UG Cloud Del Norte somos autodidactas organizados en busca de hacer networking, experimentar, y aprender juntos. Hacemos meetups presenciales, virtuales e híbridos enfocados en temas regionales para Nuevo México rural, West Texas, el norte de Chihuahua, el Borderplex y más allá.",
+    "communityDescription": "AWS UG Nube of the North somos autodidactas organizados en busca de hacer networking, experimentar, y aprender juntos. Hacemos meetups presenciales, virtuales e híbridos enfocados en temas regionales para Nuevo México rural, West Texas, el norte de Chihuahua, el Borderplex y más allá.",
     "organizersWantedHeader": "Se Buscan Organizadores",
     "spanishSpeakers": "Se Buscan Hispanohablantes.",
     "studentsStepUp": "Estudiantes, Échenle Ganas.",
