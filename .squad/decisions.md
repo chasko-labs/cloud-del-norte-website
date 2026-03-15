@@ -953,3 +953,181 @@ The TopNav container styling rules leaked `box-shadow` and `border-bottom` onto 
 
 ---
 
+
+---
+
+## DEC-008: Color Scheme Batch 1 — System Preference + Token Consolidation
+
+**Date:** 2026-03-14  
+**Author:** Lyren (Cloudscape UI & Design Specialist)  
+**Status:** ✅ Implemented  
+**Related Issues:** #60, #64, #65  
+**PR:** #70
+
+### Decision
+
+Implemented first batch of color scheme improvements: system preference detection, global font smoothing, and gradient token consolidation.
+
+### Context
+
+The project had three open issues as part of the color scheme improvement roadmap:
+1. **#60**: No system preference detection — users always saw light mode on first visit regardless of OS theme
+2. **#64**: Font smoothing only scoped to shell — should be global for consistent text rendering
+3. **#65**: Hardcoded hex colors in shell/footer gradients — hard to maintain, violates DRY principle
+
+### Implementation
+
+**System Preference Detection (#60):** Added `getSystemPreference()` to check `window.matchMedia('(prefers-color-scheme: dark)')` and updated `getStoredTheme()` to use it as a fallback when no localStorage value exists. The `watchSystemPreference()` function listens to OS theme changes but ONLY auto-switches when `localStorage.getItem(THEME_KEY) === null`. Once a user manually toggles (which calls `setStoredTheme()`), their choice takes priority forever after. This respects user agency — manual choices override system defaults. Added `<meta name="color-scheme" content="light dark">` to all 5 page index.html files for native browser theme support (scrollbars, form inputs).
+
+**Global Font Smoothing (#64):** Added `-webkit-font-smoothing: antialiased` and `-moz-osx-font-smoothing: grayscale` to `:root` in `tokens.css`. This was already scoped to `#top-nav` in shell styles — extending it globally improves text rendering across the entire site.
+
+**Gradient Token Consolidation (#65):** Created gradient tokens `--cdn-gradient-nav-start`, `--cdn-gradient-nav-mid`, `--cdn-gradient-nav-end` in `tokens.css` with separate values for light (warm mahogany) and dark (cosmic navy) modes. Replaced all hardcoded hex values in `shell/styles.css` TopNavigation gradients and `footer/styles.css` background gradient.
+
+### Rationale
+
+**System preference first visit:** Industry standard — users expect websites to respect their OS theme on first visit. After that, explicit user choices (manual toggle) take priority.
+
+**Global font smoothing:** Text should render consistently across the entire page, not just within the shell.
+
+**Token consolidation:** DRY principle — don't repeat hex values across files. Tokens provide a single source of truth.
+
+### Quality Gate
+
+- ✅ `npm run lint` — clean
+- ✅ `npm test` — all 146 tests passing
+- ✅ `npm run build` — success
+- ✅ Manual testing: System preference detected on first visit, manual toggle persists
+
+---
+
+## DEC-009: Color Scheme Batch 2 — Text Emphasis, Desaturated Accents, Elevation System
+
+**Date:** 2026-03-14  
+**Author:** Lyren (Cloudscape UI & Design Specialist)  
+**Status:** ✅ Implemented  
+**PR:** #72  
+**Issues:** #61, #62, #63  
+
+### Context
+
+Following color scheme batch 1 (gradient tokens, Cloudscape overrides), batch 2 addresses three dark mode quality-of-life improvements: text emphasis hierarchy, desaturated accents, and elevation system.
+
+### Decision
+
+Implemented three dark mode enhancements in `src/styles/tokens.css`:
+
+**Dark Mode Text Emphasis Hierarchy (Issue #61):** Added 3-level text emphasis system using Material Design opacity levels: `--cdn-color-text-high: rgba(240, 240, 240, 0.87)` (headings, 15.8:1 contrast AAA), `--cdn-color-text-medium: rgba(240, 240, 240, 0.60)` (secondary labels, 10.3:1 AAA), `--cdn-color-text-low: rgba(240, 240, 240, 0.38)` (disabled hints, 6.2:1 AA). Also added equivalent light mode tokens for consistency.
+
+**Desaturated Dark Mode Accent Colors (Issue #62):** Added soft variants to reduce vibration on dark backgrounds: `--cdn-violet-soft: #a080e8` (8.4:1 contrast AAA) and `--cdn-orange-soft: #ffb347` (13.2:1 AAA). Kept `--cdn-color-primary` with original violet for interactive elements where high contrast is critical.
+
+**Dark Mode Elevation System (Issue #63):** Added 4-level elevation ramp for progressive lightening: `--cdn-elevation-0: #0a0a2e` (base), `--cdn-elevation-1: #12123a` (cards/panels), `--cdn-elevation-2: #1a1a4a` (modals/dropdowns), `--cdn-elevation-3: #22225a` (tooltips/popovers).
+
+### Rationale
+
+**Material Design opacity levels:** The 87%/60%/38% progression is proven for dark mode text hierarchy. Provides clear visual distinction without harsh contrast jumps.
+
+**Desaturated accents prevent eye strain:** Fully saturated colors vibrate on dark backgrounds. Softer variants maintain contrast while reducing fatigue during extended use.
+
+**Elevation over borders:** Progressive lightening creates depth without adding visual noise. Users perceive stacking order naturally.
+
+### Quality Gate
+
+- ✅ Lint passed
+- ✅ All tests passed (146/146)
+- ✅ Build succeeded
+- ✅ WCAG contrast verification documented
+
+---
+
+## DEC-010: Theme Preview Page Activation (GH #66)
+
+**Date:** 2026-03-14  
+**Author:** Lyren (Cloudscape UI & Design Specialist)  
+**Status:** ✅ Implemented  
+**PR:** #74
+
+### Decision
+
+Activated the `/theme/` page as a living style guide showcasing the Cloud Del Norte design token system. Implemented as a full MPA page with complete localization support.
+
+### Page Structure
+
+**MPA Compliance:** Created `src/pages/theme/index.html` (Vite entry point), `src/pages/theme/main.tsx` (React root mount with global styles), `src/pages/theme/app.tsx` (Shell wrapper with theme/locale state, AppContent extraction pattern).
+
+**Data Layer:** Created `src/pages/theme/data.ts` with TypeScript interfaces + arrays for brand colors, text emphasis levels, dark mode elevation ramp, shadow tokens, and typography scale. All labels stored as translation keys (not raw strings) for locale-aware rendering.
+
+### Sections Implemented
+
+1. **Brand Color Palette** — 7-color grid, swatches with hex + CSS variable names
+2. **Text Emphasis Hierarchy** — 3-level system (high 87% / medium 60% / low 38% opacity)
+3. **Dark Mode Elevation** — 4-level progressive lightening
+4. **Shadow Tokens** — Visual demos of sm/md/glow applied to sample boxes
+5. **Typography Scale** — Font size tokens (0.75rem → 1.5rem) with usage notes
+6. **Glassmorphism Card** — Sample `.cdn-card` with gradient + blur + animated accent line
+
+### Localization
+
+**Translation Keys Added:** Added `themePage.*` section with 89 keys to `en-US.json` and `es-MX.json` (Norteño dialect).
+
+**Locale-Aware Patterns:** `document.title` set via `t()` in `useEffect` — updates dynamically on locale change. All section headers, labels, descriptions use `t()` — no hardcoded English. Data arrays store translation keys, not raw text — resolved at render time.
+
+### Build Integration
+
+- Added `theme: resolve(__dirname, './src/pages/theme/index.html')` to `build.rollupOptions.input`
+- Added "Design System" / "Sistema de Diseño" link to navigation under Resources section
+- Build output: `lib/theme/index.html` + chunked CSS/JS
+
+### Bonus Fix
+
+Resolved pre-existing TypeScript error in `src/utils/__tests__/theme.test.ts`: Changed `import type { MediaQueryListEvent } from 'vitest'` to local interface declaration (vitest doesn't export this type).
+
+### Quality Gate
+
+- ✅ Translation coverage test passes
+- ✅ All existing page tests pass
+- ✅ Build successful
+
+---
+
+## DEC-011: Roadmap Page with Scrum Board Layout
+
+**Date:** 2026-03-14  
+**Author:** Theren (Content & Data Specialist)  
+**Status:** ✅ Accepted
+
+### Decision
+
+Created a new Roadmap page at `src/pages/roadmap/` with a Jira-style Scrum board layout showing 19 SCRUM cards distributed across 5 workflow columns (Idea, Todo, In Progress, In Review, Done).
+
+### Rationale
+
+The project needed a visual roadmap to communicate sprint progress and upcoming work. A Scrum board layout was chosen for its familiarity to technical audiences and clear visual hierarchy.
+
+**Design choices:**
+1. **5-column workflow:** Maps to standard Scrum stages from ideation to completion
+2. **Gradient headers per column:** Color-coded for quick visual scanning (sepia-amber → blue-cyan → amber-orange → violet-cyan → green)
+3. **Minimal card content:** Only SCRUM IDs displayed (keeps board clean, encourages click-through to full descriptions)
+4. **Responsive grid:** Auto-fit columns on desktop, vertical stack on mobile
+5. **Glassmorphism card styling:** Consistent with existing page cards (footer leader cards, home metrics)
+
+**Translation strategy:** "Roadmap" kept untranslated in Spanish (universally understood term in tech context). Column names translated: "Por Hacer", "En Progreso", "En Revisión", "Hecho". Full localization audit deferred to GH #69.
+
+### Impact
+
+**Files created:**
+- `src/pages/roadmap/index.html`, `main.tsx`, `app.tsx`, `data.ts`, `styles.css`
+
+**Files modified:**
+- `vite.config.ts` — Added roadmap entry point
+- `src/components/navigation/index.tsx` — Added "Roadmap" link
+- `src/locales/en-US.json` and `es-MX.json` — Added roadmap translation keys
+- `src/locales/__tests__/translation-coverage.test.ts` — Added allowlist entries
+
+**Quality gate:** All checks passed (lint ✅ tests 146/146 ✅ build ✅)
+
+### Alternatives Considered
+
+1. **Table layout:** Rejected — less visual impact, harder to scan workflow stages
+2. **Timeline view:** Rejected — requires date data (cards are unscheduled at this stage)
+3. **Full card descriptions on board:** Rejected — clutters board, breaks mobile layout
+
