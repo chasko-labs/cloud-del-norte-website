@@ -334,7 +334,8 @@
     "todo": "Por Hacer",
     "inProgress": "En Progreso",
     "inReview": "En Revisión",
-    "done": "Hecho"
+    "done": "Hecho",
+    "emptyColumn": "Sin tareas"
   },
   "maintenanceCalendar": {
     "breadcrumb": "Calendario de Mantenimiento",

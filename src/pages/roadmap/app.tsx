@@ -31,16 +31,21 @@ function AppContent() {
         {boardColumns.map((column) => (
           <div key={column.key} className="cdn-roadmap-column" data-column={column.key}>
             <div className="cdn-roadmap-column-header">
-              {t(column.translationKey)}
+              <span className="cdn-roadmap-column-title">{t(column.translationKey)}</span>
+              <span className="cdn-roadmap-column-count">{column.cards.length}</span>
             </div>
-            {column.cards.map((card) => (
-              <div key={card.id} className="cdn-roadmap-card">
-                <span className="cdn-roadmap-card-id">{card.id}</span>
-                <span className="cdn-roadmap-card-title">
-                  {locale === 'mx' && card.titleEs ? card.titleEs : card.title}
-                </span>
-              </div>
-            ))}
+            {column.cards.length === 0 ? (
+              <div className="cdn-roadmap-empty-state">{t('roadmap.emptyColumn')}</div>
+            ) : (
+              column.cards.map((card) => (
+                <div key={card.id} className="cdn-roadmap-card">
+                  <span className="cdn-roadmap-card-id">{card.id}</span>
+                  <span className="cdn-roadmap-card-title">
+                    {locale === 'mx' && card.titleEs ? card.titleEs : card.title}
+                  </span>
+                </div>
+              ))
+            )}
           </div>
         ))}
       </div>

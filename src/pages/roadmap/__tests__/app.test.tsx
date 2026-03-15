@@ -69,6 +69,7 @@ vi.mock('../../../hooks/useTranslation', () => ({
         'roadmap.inProgress': 'In Progress',
         'roadmap.inReview': 'In Review',
         'roadmap.done': 'Done',
+        'roadmap.emptyColumn': 'No items',
       };
       return translations[key] ?? key;
     },
@@ -156,6 +157,22 @@ describe('Roadmap page', () => {
       render(<App />);
       expect(screen.queryByText('SCRUM-18')).toBeNull();
       expect(screen.queryByText('SCRUM-19')).toBeNull();
+    });
+
+    it('shows empty state for In Review and Done columns', () => {
+      render(<App />);
+      const emptyStates = screen.getAllByText('No items');
+      expect(emptyStates.length).toBe(2);
+    });
+
+    it('shows card count badges on column headers', () => {
+      render(<App />);
+      // Idea=7, To Do=6, In Progress=2, In Review=0, Done=0
+      expect(screen.getByText('7')).toBeTruthy();
+      expect(screen.getByText('6')).toBeTruthy();
+      expect(screen.getByText('2')).toBeTruthy();
+      const zeros = screen.getAllByText('0');
+      expect(zeros.length).toBe(2);
     });
   });
 
