@@ -121,50 +121,57 @@ describe('Roadmap page', () => {
 
     it('renders cards in Idea column', () => {
       render(<App />);
-      expect(screen.getByText('SCRUM-21')).toBeTruthy();
-      expect(screen.getByText('SCRUM-22')).toBeTruthy();
+      expect(screen.getByText('SCRUM-1')).toBeTruthy();
+      expect(screen.getByText('SCRUM-15')).toBeTruthy();
       expect(screen.getByText('SCRUM-23')).toBeTruthy();
-      expect(screen.getByText('SCRUM-24')).toBeTruthy();
+      expect(screen.getByText('SCRUM-5')).toBeTruthy();
+      expect(screen.getByText('SCRUM-16')).toBeTruthy();
+      expect(screen.getByText('SCRUM-9')).toBeTruthy();
+      expect(screen.getByText('SCRUM-10')).toBeTruthy();
     });
 
     it('renders cards in To Do column', () => {
       render(<App />);
       expect(screen.getByText('SCRUM-17')).toBeTruthy();
-      expect(screen.getByText('SCRUM-18')).toBeTruthy();
-      expect(screen.getByText('SCRUM-19')).toBeTruthy();
+      expect(screen.getByText('SCRUM-22')).toBeTruthy();
+      expect(screen.getByText('SCRUM-14')).toBeTruthy();
+      expect(screen.getByText('SCRUM-7')).toBeTruthy();
+      expect(screen.getByText('SCRUM-8')).toBeTruthy();
       expect(screen.getByText('SCRUM-20')).toBeTruthy();
     });
 
     it('renders cards in In Progress column', () => {
       render(<App />);
-      expect(screen.getByText('SCRUM-9')).toBeTruthy();
-      expect(screen.getByText('SCRUM-10')).toBeTruthy();
-      expect(screen.getByText('SCRUM-14')).toBeTruthy();
-      expect(screen.getByText('SCRUM-15')).toBeTruthy();
-      expect(screen.getByText('SCRUM-16')).toBeTruthy();
-    });
-
-    it('renders cards in In Review column', () => {
-      render(<App />);
-      expect(screen.getByText('SCRUM-5')).toBeTruthy();
-      expect(screen.getByText('SCRUM-6')).toBeTruthy();
-      expect(screen.getByText('SCRUM-7')).toBeTruthy();
-      expect(screen.getByText('SCRUM-8')).toBeTruthy();
-    });
-
-    it('renders cards in Done column', () => {
-      render(<App />);
-      expect(screen.getByText('SCRUM-1')).toBeTruthy();
       expect(screen.getByText('SCRUM-2')).toBeTruthy();
+      expect(screen.getAllByText('SCRUM-6').length).toBeGreaterThanOrEqual(1);
+    });
+
+    it('renders no cards in In Review column', () => {
+      render(<App />);
+      expect(screen.queryByText('SCRUM-21')).toBeNull();
+      expect(screen.queryByText('SCRUM-24')).toBeNull();
+    });
+
+    it('renders no cards in Done column', () => {
+      render(<App />);
+      expect(screen.queryByText('SCRUM-18')).toBeNull();
+      expect(screen.queryByText('SCRUM-19')).toBeNull();
     });
   });
 
   describe('SCRUM card IDs', () => {
-    it('renders at least 19 SCRUM card IDs', () => {
+    it('renders all 15 SCRUM card IDs', () => {
       render(<App />);
-      // Total cards: 4 (Idea) + 4 (To Do) + 5 (In Progress) + 4 (In Review) + 2 (Done) = 19
+      // Total: 7 (Idea) + 6 (To Do) + 2 (In Progress) = 15
       const scrumCards = screen.getAllByText(/^SCRUM-\d+$/);
-      expect(scrumCards.length).toBeGreaterThanOrEqual(19);
+      expect(scrumCards.length).toBe(15);
+    });
+
+    it('renders card titles alongside IDs', () => {
+      render(<App />);
+      expect(screen.getByText('Setup Facebook Group')).toBeTruthy();
+      expect(screen.getByText('Setup LinkedIn Group')).toBeTruthy();
+      expect(screen.getByText('Refine culture documentation')).toBeTruthy();
     });
   });
 });

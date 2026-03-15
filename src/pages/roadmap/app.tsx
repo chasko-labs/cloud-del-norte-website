@@ -13,7 +13,7 @@ import { boardColumns } from './data';
 import './styles.css';
 
 function AppContent() {
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
 
   useEffect(() => {
     document.title = `${t('roadmap.title')} — AWS UG Cloud Del Norte`;
@@ -35,7 +35,10 @@ function AppContent() {
             </div>
             {column.cards.map((card) => (
               <div key={card.id} className="cdn-roadmap-card">
-                {card.id}
+                <span className="cdn-roadmap-card-id">{card.id}</span>
+                <span className="cdn-roadmap-card-title">
+                  {locale === 'mx' && card.titleEs ? card.titleEs : card.title}
+                </span>
               </div>
             ))}
           </div>
