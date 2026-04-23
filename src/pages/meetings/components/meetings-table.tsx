@@ -17,7 +17,15 @@ import Button from '@cloudscape-design/components/button';
 import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useTranslation } from '../../../hooks/useTranslation';
+import { useAuth } from '../../../hooks/useAuth';
 import JitsiEmbed from './jitsi-embed';
+
+function generateInstantRoomName(): string {
+  const bytes = new Uint8Array(3);
+  crypto.getRandomValues(bytes);
+  const hex = Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+  return `instant-${hex}`;
+}
 
 const getFilterCounterText = (count = 0, t: (key: string) => string) => `${count} ${count === 1 ? t('meetings.filterCounter.match') : t('meetings.filterCounter.matches')}`;
 const getHeaderCounterText = (items: readonly meeting[] = [], selectedItems: readonly meeting[] = []) => {
@@ -94,6 +102,7 @@ export interface VariationTableProps {
 
 export default function VariationTable({ meetings }: VariationTableProps) {
   const { t } = useTranslation();
+  const auth = useAuth();
   const [preferences, setPreferences] = useState<CollectionPreferencesProps['preferences']>({ pageSize: 20 });
   const [activeRoom, setActiveRoom] = useState<meeting | null>(null);
   const { items, filterProps, actions, filteredItemsCount, paginationProps, collectionProps } = useCollection<meeting>(
@@ -142,6 +151,17 @@ export default function VariationTable({ meetings }: VariationTableProps) {
           counter={getHeaderCounterText(meetings, collectionProps.selectedItems)}
           actions={
             <SpaceBetween size="xs" direction="horizontal">
+              {auth.isModerator && (
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    const roomName = generateInstantRoomName();
+                    setActiveRoom({ name: 'instant meeting (ask participants to join)', presenters: '', happened: 'false', ondemand: 'no', eventlink: '', roomName });
+                  }}
+                >
+                  instant meet
+                </Button>
+              )}
               <Button disabled={collectionProps.selectedItems?.length === 0}>{t('meetings.editButton')}</Button>
               <Button disabled={collectionProps.selectedItems?.length === 0} href="/create-meeting/index.html" variant="primary">
                 {t('meetings.createButton')}
