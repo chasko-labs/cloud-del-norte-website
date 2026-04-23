@@ -26,7 +26,9 @@ interface TokenResponse {
 }
 
 function redirectUri(): string {
-  return `${window.location.origin}/auth/callback`;
+  // Trailing slash matters: S3 website hosting issues a 302 Location: /auth/callback/
+  // for the non-slash form, and the redirect drops the ?code query param.
+  return `${window.location.origin}/auth/callback/`;
 }
 
 function base64UrlEncode(bytes: Uint8Array): string {
