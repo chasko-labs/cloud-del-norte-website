@@ -144,7 +144,7 @@ describe('auth module', () => {
       expect(target.startsWith(`${HOSTED_UI}/logout?`)).toBe(true);
       const params = new URLSearchParams(target.split('?')[1]);
       expect(params.get('client_id')).toBe(CLIENT_ID);
-      expect(params.get('logout_uri')).toBe('https://example.test');
+      expect(params.get('logout_uri')).toBe('https://example.test/');
     });
   });
 });

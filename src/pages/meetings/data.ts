@@ -418,19 +418,25 @@ export const variationsData: meeting[] = [
   {
     name: 'Create an Alcohol Server Training Program with No Code',
     presenters: 'Bryan Chasko | AWS Hero',
-    happened: 'false',
+    happened: 'true',
     ondemand: 'no',
-    eventlink: 'https://www.meetup.com/awsaerospace/events/302840839',
-    // Pre-generated UUID keeps the room URL unguessable even if the event link is shared publicly.
-    roomName: 'alcohol-server-training-7f3e9c1a'
+    eventlink: 'https://www.meetup.com/awsaerospace/events/302840839'
   },
   {
     name: 'Aerospace CEOs: Looking Forward',
     presenters: 'Brian Barnett | Solstar, Andrew Nelson | RS&H',
+    happened: 'true',
+    ondemand: 'no',
+    eventlink: 'https://www.linkedin.com/posts/arrowhead-research-park_live-with-restream-powered-by-restream-https-activity-7072729359853260800-0TX3'
+  },
+  {
+    name: 'Wednesday Website Work',
+    presenters: 'Bryan Chasko, Jacob Wright',
     happened: 'false',
     ondemand: 'no',
-    eventlink: 'https://www.linkedin.com/posts/arrowhead-research-park_live-with-restream-powered-by-restream-https-activity-7072729359853260800-0TX3',
-    roomName: 'aerospace-ceos-looking-forward-4b2d8e56'
+    eventlink: '',
+    // Pre-generated stable room name keeps the jitsi URL unguessable.
+    roomName: 'wednesday-website-work-c8f21d9b'
   }
 
 ];
