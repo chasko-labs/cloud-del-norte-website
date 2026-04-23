@@ -6,6 +6,9 @@ export interface meeting {
   happened: string;
   ondemand: string;
   eventlink: string;
+  // Optional stable jitsi room name. UUID per upcoming event so the URL is
+  // not guessable by zoom-bombers. Past events can leave this empty.
+  roomName?: string;
 }
 
 /*     sold: 5513,
@@ -417,14 +420,17 @@ export const variationsData: meeting[] = [
     presenters: 'Bryan Chasko | AWS Hero',
     happened: 'false',
     ondemand: 'no',
-    eventlink: 'https://www.meetup.com/awsaerospace/events/302840839'
+    eventlink: 'https://www.meetup.com/awsaerospace/events/302840839',
+    // Pre-generated UUID keeps the room URL unguessable even if the event link is shared publicly.
+    roomName: 'alcohol-server-training-7f3e9c1a'
   },
   {
     name: 'Aerospace CEOs: Looking Forward',
     presenters: 'Brian Barnett | Solstar, Andrew Nelson | RS&H',
     happened: 'false',
     ondemand: 'no',
-    eventlink: 'https://www.linkedin.com/posts/arrowhead-research-park_live-with-restream-powered-by-restream-https-activity-7072729359853260800-0TX3'
+    eventlink: 'https://www.linkedin.com/posts/arrowhead-research-park_live-with-restream-powered-by-restream-https-activity-7072729359853260800-0TX3',
+    roomName: 'aerospace-ceos-looking-forward-4b2d8e56'
   }
 
 ];
