@@ -88,6 +88,8 @@ describe('translation coverage', () => {
       'roadmap.title',                                // "Roadmap" - universally understood term
       'roadmap.breadcrumb',                           // "Roadmap" - universally understood term
       'roadmap.idea',                                 // "Idea" - same in Spanish
+      'navigation.admin',                             // "Admin" - technical term used in both locales
+      'admin.breadcrumb',                             // "Admin" - technical term
     ]);
 
     // Helper to get value by dot-notation key

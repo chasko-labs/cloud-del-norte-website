@@ -19,6 +19,7 @@
     "home": "User Group Home",
     "roadmap": "Roadmap",
     "meetings": "Meetings",
+    "admin": "Admin",
     "resources": "Resources",
     "techDebtCountdowns": "Tech Debt Countdowns",
     "designSystem": "Design System",
@@ -326,6 +327,20 @@
       "speedRatingMapping": "💨 Speed Rating",
       "speedRatingMappingValue": "stats.movespeed ÷ 20"
     }
+  },
+  "admin": {
+    "breadcrumb": "Admin",
+    "pageTitle": "admin — pending users",
+    "tableHeader": "pending users",
+    "loadingText": "loading users",
+    "emptyTitle": "no pending users",
+    "emptySubtitle": "all confirmed users have been assigned to a group",
+    "columnEmail": "email",
+    "columnStatus": "status",
+    "columnCreated": "created",
+    "columnActions": "actions",
+    "approveButton": "approve",
+    "errorHeader": "failed to load users"
   },
   "roadmap": {
     "title": "Roadmap",
