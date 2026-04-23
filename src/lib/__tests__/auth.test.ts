@@ -93,7 +93,7 @@ describe('auth module', () => {
       expect(params.get('response_type')).toBe('code');
       expect(params.get('code_challenge_method')).toBe('S256');
       expect(params.get('code_challenge')).toMatch(/^[A-Za-z0-9_-]+$/);
-      expect(params.get('redirect_uri')).toBe('https://example.test/auth/callback');
+      expect(params.get('redirect_uri')).toBe('https://example.test/auth/callback/');
       expect(params.get('scope')).toBe('openid email profile');
     });
 
