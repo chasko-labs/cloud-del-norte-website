@@ -36,23 +36,17 @@ jobs:
         role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         role-session-name: GitHubActions-Core-Deploy
         aws-region: ${{ env.AWS_REGION }}
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      continue-on-error: true
-      id: aws-config
-    
+
     - name: Install dependencies
       run: npm install
-    
+
     - name: Build
       run: npm run build
-    
+
     - name: Deploy to S3
-      if: steps.aws-config.outcome == 'success'
       run: |
         aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps
-    
+
     - name: Invalidate CloudFront
-      if: steps.aws-config.outcome == 'success'
       run: |
         aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/*"
