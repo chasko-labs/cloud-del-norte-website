@@ -6,7 +6,10 @@ import TopNavigation from '@cloudscape-design/components/top-navigation';
 import Footer from '../../components/footer';
 import { type Locale, getStoredNavState, setStoredNavState } from '../../utils/locale';
 import { LocaleProvider } from '../../contexts/locale-context';
+import { AuthProvider } from '../../contexts/auth-context';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useAuth } from '../../hooks/useAuth';
+import { beginLogin } from '../../lib/auth';
 
 import './styles.css';
 
@@ -26,6 +29,7 @@ export interface ShellProps {
 
 function ShellContent({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange, pageTitle }: ShellProps) {
   const { t } = useTranslation();
+  const auth = useAuth();
   const [animating, setAnimating] = useState(false);
   const [animatingLocale, setAnimatingLocale] = useState(false);
   
@@ -98,7 +102,25 @@ function ShellContent({ children, contentType, breadcrumbs, tools, navigation, n
               text: theme === 'dark' ? '☀️' : '🌙',
               title: theme === 'dark' ? t('shell.switchToLightMode') : t('shell.switchToDarkMode'),
               onClick: handleToggleTheme,
-            }
+            },
+            auth.isAuthenticated
+              ? {
+                  type: 'menu-dropdown',
+                  text: auth.email ?? auth.name ?? 'account',
+                  description: auth.isModerator ? 'moderator' : undefined,
+                  iconName: 'user-profile',
+                  items: [{ id: 'signout', text: 'sign out' }],
+                  onItemClick: (e: { detail: { id: string } }) => {
+                    if (e.detail.id === 'signout') auth.signOut();
+                  },
+                }
+              : {
+                  type: 'button',
+                  text: 'sign in',
+                  onClick: () => {
+                    void beginLogin();
+                  },
+                },
           ]}
           i18nStrings={{
             overflowMenuTriggerText: t('shell.more'),
@@ -134,8 +156,10 @@ function ShellContent({ children, contentType, breadcrumbs, tools, navigation, n
 
 export default function Shell(props: ShellProps) {
   return (
-    <LocaleProvider locale={props.locale ?? 'us'}>
-      <ShellContent {...props} />
-    </LocaleProvider>
+    <AuthProvider>
+      <LocaleProvider locale={props.locale ?? 'us'}>
+        <ShellContent {...props} />
+      </LocaleProvider>
+    </AuthProvider>
   );
 }
