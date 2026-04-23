@@ -154,7 +154,10 @@ export function signOut(): void {
   sessionStorage.removeItem(KEY_LOGIN_STATE);
   const params = new URLSearchParams({
     client_id: CLIENT_ID,
-    logout_uri: window.location.origin,
+    // Trailing slash must match the logout URL registered on the Cognito app
+    // client (https://clouddelnorte.org/). Without it Cognito falls through
+    // to the redirect_uri flow and errors "redirect_uri is not present".
+    logout_uri: `${window.location.origin}/`,
   });
   window.location.assign(`${HOSTED_UI}/logout?${params.toString()}`);
 }
