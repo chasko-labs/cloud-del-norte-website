@@ -6,6 +6,13 @@ import { LocaleProvider } from '../../../contexts/locale-context';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
 
+class ResizeObserverMock {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+globalThis.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserver;
+
 // Mock Cloudscape components
 vi.mock('@cloudscape-design/components/table', () => ({
   default: ({ header, items, columnDefinitions }: AnyProps) =>
@@ -36,6 +43,13 @@ vi.mock('@cloudscape-design/components/space-between', () => ({
 }));
 vi.mock('@cloudscape-design/components/pagination', () => ({
   default: () => React.createElement('div', { 'data-testid': 'pagination' }),
+}));
+vi.mock('@cloudscape-design/components/modal', () => ({
+  default: ({ children, visible }: AnyProps) =>
+    visible ? React.createElement('div', { 'data-testid': 'modal' }, children) : null,
+}));
+vi.mock('../components/jitsi-embed', () => ({
+  default: () => React.createElement('div', { 'data-testid': 'jitsi-embed-stub' }),
 }));
 vi.mock('@cloudscape-design/components/text-filter', () => ({
   default: ({ filteringPlaceholder }: AnyProps) =>

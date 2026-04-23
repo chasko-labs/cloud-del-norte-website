@@ -14,15 +14,20 @@ import { meeting } from '../data';
 import TextFilter from '@cloudscape-design/components/text-filter';
 import Box from '@cloudscape-design/components/box';
 import Button from '@cloudscape-design/components/button';
+import Modal from '@cloudscape-design/components/modal';
 import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useTranslation } from '../../../hooks/useTranslation';
+import JitsiEmbed from './jitsi-embed';
 
 const getFilterCounterText = (count = 0, t: (key: string) => string) => `${count} ${count === 1 ? t('meetings.filterCounter.match') : t('meetings.filterCounter.matches')}`;
 const getHeaderCounterText = (items: readonly meeting[] = [], selectedItems: readonly meeting[] = []) => {
   return selectedItems && selectedItems.length > 0 ? `(${selectedItems.length}/${items.length})` : `(${items.length})`;
 };
 
-const columnDefinitions = (t: (key: string) => string): TableProps<meeting>['columnDefinitions'] => [
+const columnDefinitions = (
+  t: (key: string) => string,
+  onJoin: (m: meeting) => void,
+): TableProps<meeting>['columnDefinitions'] => [
   {
     header: t('meetings.tableHeaders.meetupTitle'),
     cell: ({ name }) => name,
@@ -52,7 +57,21 @@ const columnDefinitions = (t: (key: string) => string): TableProps<meeting>['col
     cell: ({ eventlink }) => eventlink,
     sortingField: 'eventlink',
     minWidth: 160,
-  }
+  },
+  {
+    // Join column — renders a button only for meetings with a roomName (upcoming events).
+    id: 'join',
+    header: 'Join',
+    cell: (m) =>
+      m.roomName ? (
+        <Button variant="primary" onClick={() => onJoin(m)}>
+          Join
+        </Button>
+      ) : (
+        ''
+      ),
+    minWidth: 90,
+  },
 ];
 
 const EmptyState = ({ title, subtitle, action }: { title: string; subtitle: string; action: ReactNode }) => {
@@ -76,6 +95,7 @@ export interface VariationTableProps {
 export default function VariationTable({ meetings }: VariationTableProps) {
   const { t } = useTranslation();
   const [preferences, setPreferences] = useState<CollectionPreferencesProps['preferences']>({ pageSize: 20 });
+  const [activeRoom, setActiveRoom] = useState<meeting | null>(null);
   const { items, filterProps, actions, filteredItemsCount, paginationProps, collectionProps } = useCollection<meeting>(
     meetings,
     {
@@ -92,17 +112,18 @@ export default function VariationTable({ meetings }: VariationTableProps) {
         ),
       },
       pagination: { pageSize: preferences?.pageSize },
-      sorting: { defaultState: { sortingColumn: columnDefinitions(t)[0] } },
+      sorting: { defaultState: { sortingColumn: columnDefinitions(t, setActiveRoom)[0] } },
       selection: {},
     }
   );
 
   return (
+    <>
     <Table<meeting>
       {...collectionProps}
       enableKeyboardNavigation={false}
       items={items}
-      columnDefinitions={columnDefinitions(t)}
+      columnDefinitions={columnDefinitions(t, setActiveRoom)}
       stickyHeader={true}
       resizableColumns={true}
       variant="full-page"
@@ -158,5 +179,17 @@ export default function VariationTable({ meetings }: VariationTableProps) {
         />
       }
     />
+    <Modal
+      visible={!!activeRoom}
+      onDismiss={() => setActiveRoom(null)}
+      size="max"
+      header={activeRoom?.name ?? ''}
+      closeAriaLabel="close meeting"
+    >
+      {activeRoom?.roomName && (
+        <JitsiEmbed roomName={activeRoom.roomName} onClose={() => setActiveRoom(null)} />
+      )}
+    </Modal>
+    </>
   );
 }
