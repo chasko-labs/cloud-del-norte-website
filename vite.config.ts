@@ -23,6 +23,7 @@ export default defineConfig({
         'learning/api': resolve(__dirname, './src/pages/learning/api/index.html'),
         'maintenance-calendar': resolve(__dirname, './src/pages/maintenance-calendar/index.html'),
         theme: resolve(__dirname, './src/pages/theme/index.html'),
+        'auth/callback': resolve(__dirname, './src/pages/auth/callback/index.html'),
       },
     },
   },
