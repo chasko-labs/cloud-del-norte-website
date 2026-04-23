@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import type { MediaQueryListEvent } from 'vitest';
+// MediaQueryListEvent is a DOM global — no import needed.
 
 describe('theme utility', () => {
   beforeEach(() => {
