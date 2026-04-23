@@ -1,0 +1,33 @@
+{
+  "Name": "cloud-del-norte-security-headers",
+  "Comment": "CSP + HSTS + related security headers for clouddelnorte.org. Managed via infra/apply-security-headers.sh",
+  "SecurityHeadersConfig": {
+    "StrictTransportSecurity": {
+      "Override": true,
+      "AccessControlMaxAgeSec": 31536000,
+      "IncludeSubdomains": true,
+      "Preload": true
+    },
+    "ContentTypeOptions": {
+      "Override": true
+    },
+    "ReferrerPolicy": {
+      "Override": true,
+      "ReferrerPolicy": "strict-origin-when-cross-origin"
+    },
+    "ContentSecurityPolicy": {
+      "Override": true,
+      "ContentSecurityPolicy": "default-src 'self'; script-src 'self' https://meet.clouddelnorte.org; connect-src 'self' https://cloud-del-norte.auth.us-west-2.amazoncognito.com https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://meet.clouddelnorte.org; frame-src https://meet.clouddelnorte.org https://cloud-del-norte.auth.us-west-2.amazoncognito.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.gravatar.com; font-src 'self' data:"
+    }
+  },
+  "CustomHeadersConfig": {
+    "Quantity": 1,
+    "Items": [
+      {
+        "Header": "Permissions-Policy",
+        "Value": "camera=(self \"https://meet.clouddelnorte.org\"), microphone=(self \"https://meet.clouddelnorte.org\"), display-capture=(self \"https://meet.clouddelnorte.org\")",
+        "Override": true
+      }
+    ]
+  }
+}
