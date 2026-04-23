@@ -19,6 +19,7 @@
     "home": "Inicio del Grupo",
     "roadmap": "Roadmap",
     "meetings": "Juntas",
+    "admin": "Admin",
     "resources": "Recursos",
     "techDebtCountdowns": "Conteos de Deuda Técnica",
     "designSystem": "Sistema de Diseño",
@@ -326,6 +327,20 @@
       "speedRatingMapping": "💨 Clasificación de Velocidad",
       "speedRatingMappingValue": "stats.movespeed ÷ 20  // código"
     }
+  },
+  "admin": {
+    "breadcrumb": "Admin",
+    "pageTitle": "admin — usuarios pendientes",
+    "tableHeader": "usuarios pendientes",
+    "loadingText": "cargando usuarios",
+    "emptyTitle": "sin usuarios pendientes",
+    "emptySubtitle": "todos los usuarios confirmados tienen un grupo asignado",
+    "columnEmail": "correo",
+    "columnStatus": "estado",
+    "columnCreated": "creado",
+    "columnActions": "acciones",
+    "approveButton": "aprobar",
+    "errorHeader": "error al cargar usuarios"
   },
   "roadmap": {
     "title": "Roadmap",

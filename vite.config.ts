@@ -24,6 +24,7 @@ export default defineConfig({
         'maintenance-calendar': resolve(__dirname, './src/pages/maintenance-calendar/index.html'),
         theme: resolve(__dirname, './src/pages/theme/index.html'),
         'auth/callback': resolve(__dirname, './src/pages/auth/callback/index.html'),
+        admin: resolve(__dirname, './src/pages/admin/index.html'),
       },
     },
   },

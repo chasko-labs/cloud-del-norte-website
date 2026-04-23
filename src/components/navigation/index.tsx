@@ -3,13 +3,16 @@
 import React from 'react';
 import SideNavigation, { SideNavigationProps } from '@cloudscape-design/components/side-navigation';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function Navigation() {
   const { t } = useTranslation();
+  const { isModerator } = useAuth();
 
   const items: SideNavigationProps['items'] = [
     { type: 'link', text: t('navigation.roadmap'), href: '/roadmap/index.html' },
     { type: 'link', text: t('navigation.meetings'), href: '/meetings/index.html' },
+    ...(isModerator ? [{ type: 'link' as const, text: t('navigation.admin'), href: '/admin/index.html' }] : []),
     { type: 'divider' },
     {
       type: 'section',
