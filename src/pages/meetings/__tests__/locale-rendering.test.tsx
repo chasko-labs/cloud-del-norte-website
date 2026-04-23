@@ -85,6 +85,11 @@ vi.mock('../../create-meeting/components/help-panel-home', () => ({
   HelpPanelHome: () => React.createElement('div', { 'data-testid': 'help-panel' }),
 }));
 
+// RequireAuth is exercised in its own unit tests; pass-through here so locale assertions can run.
+vi.mock('../../../components/require-auth', () => ({
+  RequireAuth: ({ children }: AnyProps) => React.createElement(React.Fragment, null, children),
+}));
+
 // Mock useTranslation with a mutable return value
 const mockTranslation = {
   locale: 'us' as 'us' | 'mx',
