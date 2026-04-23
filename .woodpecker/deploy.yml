@@ -55,3 +55,4 @@ steps:
       - aws sts get-caller-identity
       - aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps
       - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/*"
+# first run — trigger woodpecker webhook
