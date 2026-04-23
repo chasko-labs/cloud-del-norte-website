@@ -114,6 +114,18 @@ vi.mock('../../../hooks/useTranslation', () => ({
   useTranslation: () => mockTranslation,
 }));
 
+vi.mock('../../../hooks/useAuth', () => ({
+  useAuth: () => ({
+    isAuthenticated: true,
+    idToken: 'tok',
+    email: 'a@b.co',
+    name: 'alice',
+    groups: [],
+    isModerator: false,
+    signOut: () => {},
+  }),
+}));
+
 import App from '../app';
 
 describe('Meetings page locale rendering', () => {
