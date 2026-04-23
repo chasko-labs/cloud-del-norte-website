@@ -221,6 +221,105 @@ aws cloudfront create-invalidation \
 
 ---
 
+## Authentication
+
+the site uses a zero-dependency OIDC PKCE flow against **Cognito Hosted UI** — no third-party auth library
+
+### flow summary
+
+```mermaid
+sequenceDiagram
+    participant B as browser
+    participant H as hosted UI<br>cloud-del-norte.auth.us-west-2.amazoncognito.com
+    participant C as /auth/callback
+    participant T as token-exchange API<br>rwmypxz9z6.execute-api.us-west-2.amazonaws.com
+    participant J as jitsi iframe<br>meet.clouddelnorte.org
+
+    B->>H: beginLogin() — redirect with code_challenge
+    H-->>C: redirect with ?code=
+    C->>H: exchange code for tokens (PKCE)
+    C-->>B: tokens stored in sessionStorage, redirect to returnTo
+    B->>T: fetchJitsiToken(idToken)
+    T-->>B: signed jitsi JWT
+    B->>J: JitsiMeetExternalAPI(roomName, jwt)
+```
+
+tokens live in **sessionStorage** — tab-scoped, cleared on tab close. no localStorage, no cookies
+
+### page gates
+
+| page | gate |
+| ---- | ---- |
+| /meetings | `<RequireAuth>` — any authenticated user |
+| /create-meeting | `<RequireAuth requireGroup="moderator">` — moderator-only |
+| all other pages | public |
+
+unauthenticated visitors are redirected to Hosted UI; `returnTo` encodes the original pathname so they land back after sign-in. moderator group mismatch renders a Cloudscape Alert with a sign-out option instead of the page content
+
+### jitsi embed flow
+
+1. user lands on /meetings, authenticated
+2. `jitsi-embed.tsx` calls `fetchJitsiToken()` from `src/lib/jitsi-token.ts`
+3. `jitsi-token.ts` posts the Cognito `idToken` to the token-exchange API; on 401 it silently refreshes tokens and retries once; on 403 it throws `BannedUserError`
+4. the returned signed JWT is passed to `JitsiMeetExternalAPI` from `https://meet.clouddelnorte.org/external_api.js` (lazy-loaded)
+5. jitsi domain: `meet.clouddelnorte.org` — 4-container ECS stack, JWT-gated. see [`chasko-labs/jitsi-video-hosting`](https://github.com/chasko-labs/jitsi-video-hosting) for the runtime
+
+### how it works — file layout
+
+| file | role |
+| ---- | ---- |
+| `src/lib/auth.ts` | OIDC PKCE core: `beginLogin`, `handleCallback`, `getIdToken`, `getAccessToken`, `refreshTokens`, `signOut`, `decodeToken` |
+| `src/lib/jitsi-token.ts` | fetches jitsi JWT from token-exchange API; module-scoped cache; handles 401 retry + typed `BannedUserError` |
+| `src/contexts/auth-context.tsx` | `AuthProvider` — silent-refresh timer at 80% token lifetime; storage event listener for cross-tab sign-out |
+| `src/hooks/useAuth.ts` | `useAuth()` — consumes AuthContext |
+| `src/components/require-auth/index.tsx` | wraps pages; calls `beginLogin` for unauthed, renders Alert for group mismatches |
+| `src/pages/auth/callback/` | MPA entry (`index.html` + `main.tsx` + `app.tsx`); handles `?code=` param, redirects to `returnTo` or renders error Alert |
+| `src/pages/meetings/components/jitsi-embed.tsx` | iframe embed component |
+| `src/pages/meetings/components/meetings-table.tsx` | Join column + Cloudscape Modal that mounts the embed |
+
+the `Shell` layout (`src/layouts/shell/index.tsx`) is wrapped with `AuthProvider` at the top level. TopNavigation gains sign-in/sign-out UI: a menu-dropdown when authenticated (with "moderator" description for moderators), a button when not
+
+### cognito identifiers
+
+| resource | value |
+| -------- | ----- |
+| user pool | `us-west-2_cyPQF4F3r` |
+| SPA app client | `57eikmt418ea6vti2f6h0pl74r` |
+| hosted UI domain | `cloud-del-norte.auth.us-west-2.amazoncognito.com` |
+| token-exchange API | `https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com/token/jitsi` |
+
+Cognito user pool + Lambda token-exchange infra lives in [`chasko-labs/cloud-del-norte-meet`](https://github.com/chasko-labs/cloud-del-norte-meet) (CDK)
+
+### how to maintain
+
+**rotate jitsi JWT secret**
+the token-exchange Lambda reads the JWT signing secret from AWS Secrets Manager in account `170473530355` (jitsi account). to rotate: update the secret value in Secrets Manager, then redeploy or force a Lambda cold start. no code changes needed in this repo
+
+**adjust CSP / security headers**
+response headers policy is managed out-of-band via CloudFront. the policy definition lives in `infra/cloudfront-security-headers.json`. to apply changes:
+```bash
+AWS_PROFILE=aerospaceug-admin ./infra/apply-security-headers.sh
+```
+see `infra/README.md` for the current policy state. changes take effect after CloudFront propagation (~60s), no invalidation required
+
+**deploy workflow**
+`.github/workflows/deploy.yml` triggers on pushes to `main` that touch `src/`, `public/`, or config files. the workflow builds, syncs to S3, then issues a CloudFront invalidation against distribution `ECC3LP1BL2CZS`. OIDC-federated role (`AWS_ROLE_ARN` secret) is used if present; the deploy step sets `continue-on-error: true` so a missing role won't fail the build check
+
+### how to remove
+
+removing the auth layer is reversible — no DB migrations, no external state owned by this repo:
+
+1. in `src/pages/meetings/app.tsx` — unwrap `<RequireAuth>` from the page component
+2. in `src/pages/create-meeting/app.tsx` — same
+3. in `src/layouts/shell/index.tsx` — remove the `<AuthProvider>` wrapper
+4. delete `src/lib/auth.ts`, `src/lib/jitsi-token.ts`, `src/contexts/auth-context.tsx`, `src/hooks/useAuth.ts`, `src/components/require-auth/`, `src/pages/auth/`
+5. delete `src/pages/meetings/components/jitsi-embed.tsx`; revert `meetings-table.tsx` to drop the Join column
+6. remove the auth callback entry from `vite.config.ts` → `build.rollupOptions.input`
+
+the Cognito pool, Lambda, and jitsi runtime are unaffected — they live in separate repos and accounts
+
+---
+
 ## AI Agent Team
 
 This project uses [Squad](https://github.com/bradygaster/squad) v0.5.4 with [HeraldStack](https://github.com/BryanChasko/HeraldStack) personas for AI-assisted development. Run `copilot --agent squad` to engage the team. See [AGENTS.md](AGENTS.md) for agent roles and routing.
