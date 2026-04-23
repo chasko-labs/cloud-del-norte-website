@@ -62,6 +62,11 @@ vi.mock('../components/shape', () => ({
   default: () => React.createElement('div', { 'data-testid': 'shape' }),
 }));
 
+// RequireAuth is exercised in its own unit tests; pass-through here so locale assertions can run.
+vi.mock('../../../components/require-auth', () => ({
+  RequireAuth: ({ children }: AnyProps) => React.createElement(React.Fragment, null, children),
+}));
+
 // Mock validation — avoids useRef/useState complexity in isolated tests
 vi.mock('../validation/basic-validation', () => ({
   useBasicValidation: () => ({
