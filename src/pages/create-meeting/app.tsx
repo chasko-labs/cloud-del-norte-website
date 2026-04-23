@@ -12,6 +12,7 @@ import MeetingDetails from './components/marketing';
 import Navigation from '../../components/navigation';
 import Shape from './components/shape';
 import ShellLayout from '../../layouts/shell';
+import { RequireAuth } from '../../components/require-auth';
 import { BasicValidationContext, useBasicValidation } from './validation/basic-validation';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
@@ -106,7 +107,9 @@ export default function App() {
       navigation={<Navigation />}
       tools={<HelpPanelContent />}
     >
-      <FormContent />
+      <RequireAuth requireGroup="moderators">
+        <FormContent />
+      </RequireAuth>
     </ShellLayout>
   );
 }

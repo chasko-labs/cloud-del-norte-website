@@ -7,6 +7,7 @@ import Breadcrumbs from '../../components/breadcrumbs';
 import Navigation from '../../components/navigation';
 import ShellLayout from '../../layouts/shell';
 import VariationsTable from './components/meetings-table';
+import { RequireAuth } from '../../components/require-auth';
 
 import { variationsData } from './data';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
@@ -46,7 +47,9 @@ export default function App() {
       navigation={<Navigation />}
       tools={<HelpPanelHome />}
     >
-      <VariationsTable meetings={variationsData} />
+      <RequireAuth>
+        <VariationsTable meetings={variationsData} />
+      </RequireAuth>
     </ShellLayout>
   );
 }
