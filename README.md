@@ -7,6 +7,15 @@ Community website for the **AWS User Group Cloud Del Norte** (formerly awsaerosp
 
 ---
 
+## milestone — first verified call: 2026-04-23
+
+- first end-to-end video call confirmed: sign-in → JWT exchange → jitsi room join with live video/audio
+- first-user bootstrap complete — one moderator exists, room creation is live
+- full auth chain live: Cognito Hosted UI → `/auth/callback/` → token exchange → jitsi iframe embed
+- operational detail, asset inventory, spin-up/down playbooks: `BryanChasko/jitsi-video-hosting-ops` `OPERATIONS.md`
+
+---
+
 ## Stack
 
 | Layer | Technology |
