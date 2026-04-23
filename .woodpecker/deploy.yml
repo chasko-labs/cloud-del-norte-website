@@ -1,0 +1,57 @@
+---
+# woodpecker ci/cd — cloud-del-norte-website deploy
+# replaces .github/workflows-disabled/deploy.yml
+# repo: chasko-labs/cloud-del-norte-website
+#
+# auth chain (zero long-lived iam keys):
+#   heraldstack ci workload cert at /workload.{crt,key}
+#   aws_signing_helper at /usr/local/bin/aws_signing_helper
+#   → rolesanywhere ci-profile → heraldstack-ci-deploy role
+#   → s3 rw awsaerospace.org + cloudfront invalidate ECC3LP1BL2CZS
+# mounts come from woodpecker-agent env WOODPECKER_BACKEND_DOCKER_VOLUMES
+# (~/code/heraldstack/heraldstack-infra/docker-compose.yml)
+
+when:
+  - event: [push, manual]
+    branch: main
+    path:
+      include:
+        - src/**
+        - public/**
+        - package.json
+        - package-lock.json
+        - vite.config.ts
+        - tsconfig.json
+        - .woodpecker/**
+
+steps:
+  - name: install
+    image: node:22-slim
+    commands:
+      - npm ci --no-audit --no-fund
+
+  - name: build
+    image: node:22-slim
+    depends_on: [install]
+    commands:
+      - npm run build
+
+  - name: deploy
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [build]
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+    commands:
+      # wire an aws profile that resolves its creds via the mounted
+      # workload cert + rolesanywhere — no plaintext keys anywhere
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sts get-caller-identity
+      - aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps
+      - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/*"
