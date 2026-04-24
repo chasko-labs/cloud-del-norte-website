@@ -1,0 +1,89 @@
+---
+# woodpecker ci — cloud-del-norte-website quality gates
+# repo: chasko-labs/cloud-del-norte-website
+# runs on pull_request, push to main, and manual trigger
+# does NOT deploy — see deploy.yml for deploy pipeline
+
+when:
+  - event: [pull_request, push, manual]
+    branch: main
+    path:
+      include:
+        - src/**
+        - "**/*.ts"
+        - "**/*.tsx"
+        - "**/*.js"
+        - package.json
+        - .woodpecker/ci.yml
+
+steps:
+  # tier-0: draft-gate
+  - name: tier-0-draft-gate
+    image: alpine:3.21
+    commands:
+      - |
+        if [ "${CI_COMMIT_PULL_REQUEST_LABELS}" != "" ]; then
+          echo "$CI_COMMIT_PULL_REQUEST_LABELS" | grep -q "draft" && echo "draft pr — skipping" && exit 78 || true
+        fi
+        echo "not a draft — continuing"
+
+  # tier-0: skip-ci-gate
+  - name: tier-0-skip-ci-gate
+    image: alpine:3.21
+    depends_on: [tier-0-draft-gate]
+    commands:
+      - |
+        echo "$CI_COMMIT_MESSAGE" | grep -qi "\[skip ci\]" && echo "skip ci requested — skipping" && exit 78 || true
+        echo "no skip-ci flag — continuing"
+
+  # tier-0: metadata
+  - name: tier-0-metadata
+    image: alpine:3.21
+    depends_on: [tier-0-skip-ci-gate]
+    commands:
+      - echo "repo       $CI_REPO"
+      - echo "commit     $CI_COMMIT_SHA"
+      - echo "branch     $CI_COMMIT_BRANCH"
+      - echo "event      $CI_PIPELINE_EVENT"
+      - echo "pipeline   $CI_PIPELINE_NUMBER"
+
+  - name: install
+    image: node:22-slim
+    depends_on: [tier-0-metadata]
+    commands:
+      - npm ci
+
+  - name: lint
+    image: node:22-slim
+    depends_on: [install]
+    failure: fail
+    commands:
+      - npm run lint
+
+  - name: format-check
+    image: node:22-slim
+    depends_on: [install]
+    failure: fail
+    commands:
+      - npx prettier --check src/
+
+  - name: typecheck
+    image: node:22-slim
+    depends_on: [install]
+    failure: fail
+    commands:
+      - npx tsc --noEmit
+
+  - name: build
+    image: node:22-slim
+    depends_on: [typecheck]
+    failure: fail
+    commands:
+      - npm run build
+
+  - name: audit
+    image: node:22-slim
+    depends_on: [install]
+    failure: ignore
+    commands:
+      - npm audit --audit-level=high || true
