@@ -1,497 +1,497 @@
 {
-  "shell": {
-    "siteTitle": "Nube of the North",
-    "switchToMx": "Cambiar a Español",
-    "switchToUs": "Cambiar a Inglés",
-    "switchToLightMode": "Cambiar a modo claro",
-    "switchToDarkMode": "Cambiar a modo oscuro",
-    "more": "Más",
-    "all": "Todo",
-    "navigationDrawer": "Menú de navegación",
-    "closeNavigationDrawer": "Cerrar menú",
-    "openNavigationDrawer": "Abrir menú",
-    "notifications": "Notificaciones",
-    "helpPanel": "Panel de ayuda",
-    "closeHelpPanel": "Cerrar ayuda",
-    "openHelpPanel": "Abrir ayuda"
-  },
-  "navigation": {
-    "home": "Inicio del Grupo",
-    "roadmap": "Roadmap",
-    "meetings": "Juntas",
-    "admin": "Admin",
-    "resources": "Recursos",
-    "techDebtCountdowns": "Conteos de Deuda Técnica",
-    "designSystem": "Sistema de Diseño",
-    "learning": "Aprendizaje",
-    "apiGuide": "Guía de API",
-    "restOverview": "Resumen de REST",
-    "uniformInterface": "1️⃣ Interfaz Uniforme",
-    "clientServer": "2️⃣ Cliente-Servidor",
-    "stateless": "3️⃣ Sin Estado",
-    "cacheable": "4️⃣ Cacheable",
-    "layeredSystem": "5️⃣ Sistema por Capas",
-    "codeOnDemand": "6️⃣ Código bajo Demanda",
-    "cheatSheet": "📋 Cheat Sheet de API",
-    "howItWorks": "⚙️ Cómo Funciona",
-    "projectResources": "🔗 Recursos del Proyecto"
-  },
-  "breadcrumbs": {
-    "home": "Nube of the North"
-  },
-  "footer": {
-    "ourLeaders": "Organizadores del AWS User Group",
-    "joinUs": "Únete en Meetup →",
-    "communityDescription": "AWS User Group Nube of the North es parte de",
-    "globalCommunity": "Comunidad Global de AWS User Groups",
-    "communityFullDescription": "Somos voluntarios locales de Nuevo México, West Texas y Chihuahua, México. Creemos que los proyectos, las carreras y los problemas se pueden acelerar usando AWS, y queremos compartir nuestro conocimiento, conexiones y experiencias contigo para que veas lo que tú puedes",
-    "goBuild": "Go Build"
-  },
-  "dashboardPage": {
-    "breadcrumb": "Tablero",
-    "header": "Tablero",
-    "infoLink": "Información",
-    "productionOverview": {
-      "header": "Resumen de producción"
-    },
-    "pastTopics": {
-      "header": "Temas Pasados"
-    },
-    "groupNotesModal": "Notas del grupo"
-  },
-  "userGroupHero": {
-    "header": "#AWS User Group Nube of the North",
-    "description": "Nuestro primer meetup fue el Día Internacional de la Mujer 03/08/21 en Arrowhead Research Park, pa' impulsar el aprendizaje de la comunidad, la conciencia de negocios, el engagement estudiantil, las oportunidades de carrera, y el espíritu emprendedor y hobbyista. Queremos aprender de, servir, educar y entretener a la raza diversa de Juárez MX/El Paso + Las Cruces, todo Nuevo México, y las áreas rurales de alrededor."
-  },
-  "userGroupMetrics": {
-    "communityMembers": "Miembros de la Comunidad",
-    "fiveStarReviews": "Reseñas de 5 Estrellas",
-    "meetupsHeld": "Meetups Realizados",
-    "est": "Fundado"
-  },
-  "pastTopics": {
-    "games3d": "Juegos y 3D",
-    "artificialIntelligence": "Inteligencia Artificial",
-    "serverlessLens": "Lente Serverless",
-    "spaceSatellite": "Espacio y Satélite"
-  },
-  "flavorNotes": {
-    "cherry": "cereza",
-    "raspberry": "frambuesa",
-    "rose": "rosa",
-    "strawberry": "fresa"
-  },
-  "productionTable": {
-    "headers": {
-      "name": "Nombre",
-      "status": "Estado",
-      "mixing": "Mezcla (kg/h)",
-      "molding": "Moldeo (kg/h)"
-    }
-  },
-  "qualityTable": {
-    "headers": {
-      "name": "Nombre",
-      "strong": "Fuerte",
-      "mild": "Suave",
-      "unnoticed": "Sin notar"
-    }
-  },
-  "pieChart": {
-    "chartAriaRoleDescription": "Gráfico circular",
-    "detailPopoverDismissAriaLabel": "Cerrar detalles",
-    "legendAriaLabel": "Leyenda",
-    "filterSelectedAriaLabel": "Seleccionado",
-    "segmentAriaRoleDescription": "Segmento"
-  },
-  "meetings": {
-    "breadcrumb": "Juntas",
-    "header": "juntas",
-    "createButton": "Crear junta",
-    "editButton": "Editar",
-    "findPlaceholder": "Buscar juntas",
-    "tableHeaders": {
-      "meetupTitle": "Título del Meetup",
-      "presenters": "Presentadores",
-      "happened": "¿Pasó?",
-      "onDemand": "On-Demand",
-      "eventPage": "Página del Evento"
-    },
-    "empty": {
-      "noMatches": "Sin resultados",
-      "noMatchesSubtitle": "No encontramos nada, compa.",
-      "clearFilter": "Limpiar filtro",
-      "noMeetings": "Sin juntas",
-      "noMeetingsSubtitle": "Nada en el calendario ahorita."
-    },
-    "preferences": {
-      "title": "Preferencias",
-      "pageSize": "Seleccionar tamaño de página",
-      "resources10": "10 recursos",
-      "resources20": "20 recursos",
-      "resources50": "50 recursos",
-      "resources100": "100 recursos",
-      "confirm": "Confirmar",
-      "cancel": "Cancelar"
-    },
-    "aria": {
-      "selectionGroup": "Selección de elementos",
-      "tableLabel": "tabla de juntas"
-    }
-  },
-  "createMeeting": {
-    "breadcrumb": "Crear junta",
-    "header": "Crear junta",
-    "description": "Crea una nueva junta especificando detalles, link del evento, y speakers.",
-    "cancel": "Cancelar",
-    "submit": "Crear junta",
-    "helpPanelHeader": "Panel de ayuda",
-    "meetingType": {
-      "header": "Tipo de Junta",
-      "shapeLabel": "Formato",
-      "virtual": "Virtual",
-      "virtualDescription": "Meetups solo virtuales",
-      "inPerson": "Presencial",
-      "inPersonDescription": "Eventos presenciales, incluyendo híbridos"
-    },
-    "meetingDetails": {
-      "header": "Detalles de la Junta",
-      "pricesLabel": "Precios",
-      "pricesDescription": "Define los precios para mayoreo y menudeo.",
-      "meetupLinkLabel": "Link del Meetup",
-      "speakerNamesLabel": "Nombres de los Speakers",
-      "additionalNotesLabel": "Notas adicionales",
-      "optional": " - opcional",
-      "linkRequired": "El link es necesario, morro.",
-      "presenterRequired": "El presentador es necesario.",
-      "errorIconAriaLabel": "Error"
-    },
-    "details": {
-      "header": "detalles",
-      "listLabel": "Lista de detalles",
-      "selectPlaceholder": "Seleccionar todos los detalles",
-      "listRequired": "La lista de detalles es necesaria.",
-      "publishedLabel": "Publicado",
-      "no": "No",
-      "yes": "Sí",
-      "deselectAriaLabel": "Deseleccionar",
-      "noLabel": "sin etiqueta"
-    }
-  },
-  "helpPanel": {
-    "rsvpHeader": "RSVP para Eventos en Vivo",
-    "cloudDelNorteMeetups": "Meetups de Nube of the North",
-    "blenderMeetups": "Blender & Diseño Gráfico:NE3D",
-    "userGroupTitle": "☁️ #AWSelfTaught UG",
-    "communityDescription": "AWS UG Nube of the North somos autodidactas organizados en busca de hacer networking, experimentar, y aprender juntos. Hacemos meetups presenciales, virtuales e híbridos enfocados en temas regionales para Nuevo México rural, West Texas, el norte de Chihuahua, el Borderplex y más allá.",
-    "organizersWantedHeader": "Se Buscan Organizadores",
-    "spanishSpeakers": "Se Buscan Hispanohablantes.",
-    "studentsStepUp": "Estudiantes, Échenle Ganas.",
-    "womenWelcome": "Mujeres Bienvenidas.",
-    "globalCommunityHeader": "Comunidad Global de AWS",
-    "findLocalGroup": "Encuentra tu AWS User Group local en Meetup.",
-    "communityLeadersHeader": "Líderes de la Comunidad",
-    "jacobWright": "Jacob Wright",
-    "reachOutLinkedIn": "contáctalo en LinkedIn",
-    "bryanChasko": "Bryan Chasko",
-    "awsHeroBio": "Bio de AWS Hero",
-    "bryansHomepage": "Página de Bryan"
-  },
-  "learning": {
-    "api": {
-      "howRiotAPIRESTful": "🌐 Cómo el API de Riot Games es RESTful",
-      "uniformInterfaceDemonstration": "🎯 Demostración de Interfaz Uniforme",
-      "contestsEndpoint": "1️⃣ Endpoint de Contests",
-      "apiAccessDataStructure": "📊 Acceso a API y Estructura de Datos",
-      "availableWithBasicKey": "✅ Disponible con API Key Básica",
-      "requiresSpecialAccess": "❌ Requiere Acceso Especial",
-      "tournamentDataStructure": "🏆 Estructura de Datos de Torneos",
-      "technicalImplementation": "🛠️ Implementación Técnica",
-      "dataSources": "📊 Fuentes de Datos",
-      "architectureStack": "🏧 Stack de Arquitectura",
-      "championDataMapping": "🎯 Mapeo de Datos de Campeones",
-      "title": "Cloud Del Norte - Aprendiendo APIs",
-      "restDescription": "REST (Transferencia de Estado Representacional) y API (Interfaz de Programación de Aplicaciones - una forma para que los programas se comuniquen) trabajan juntos. La API de Riot Games demuestra las 6 restricciones REST:",
-      "uniformInterfaceTitle": "1️⃣ Interfaz Uniforme",
-      "uniformInterfaceDesc": "Método HTTP GET estándar con respuestas JSON consistentes en todos los recursos:",
-      "uniformInterfaceExample": "GET /contests?year=2024  // ejemplo",
-      "uniformInterfaceReturns": "Siempre regresa:",
-      "clientServerTitle": "2️⃣ Cliente-Servidor",
-      "clientServerDesc": "Nuestra app de React (framework web) es el cliente, las computadoras de Riot son el servidor. Llamamos su API, ellos responden con datos. Cada lado puede actualizar independientemente.",
-      "statelessTitle": "3️⃣ Sin Estado",
-      "statelessDesc": "Cada llamada API (petición) a Riot incluye el header X-Riot-Token (nuestra llave de autenticación). Sin sesiones de login - cada petición está completa.",
-      "cacheableTitle": "4️⃣ En Caché",
-      "cacheableDesc": "El CDN de Data Dragon de Riot (servidores globales rápidos) usa números de versión como 13.24.1. Nuestro navegador puede guardar datos de campeones y reutilizarlos.",
-      "layeredSystemTitle": "5️⃣ Sistema en Capas",
-      "layeredSystemDesc": "Riot esconde su estructura interna. Llamamos api.riotgames.com pero no sabemos si pasa por balanceadores de carga, bases de datos, o servidores de juego.",
-      "codeOnDemandTitle": "6️⃣ Código Bajo Demanda",
-      "codeOnDemandDesc": "Nuestro React hook obtiene datos dinámicamente:",
-      "codeOnDemandExample": "const [datos, setDatos] = useState(); fetch(urlRiotApi).then(setDatos)",
-      "codeOnDemandImages": "Imágenes de campeones cargan del CDN de Riot solo cuando se necesitan.",
-      "uniformInterfaceDesc2": "El mismo método HTTP GET y formato JSON funcionan en diferentes recursos:",
-      "contestsDescription": "Torneos y competencias recientes",
-      "selectYear": "Seleccionar Año:",
-      "requestUrl": "URL de Petición:",
-      "responseExpected": "Respuesta que esperamos:",
-      "responseExpectedDesc": "con arreglo JSON de objetos de concurso:",
-      "sendGetRequest": "Enviar Petición GET",
-      "contestsResponse": "🏆 Respuesta de Concursos",
-      "contestsResponseDesc": "🟢 Datos en vivo de concursos desde endpoint Lambda - Resultados recientes de torneos",
-      "responseReceived": "Respuesta recibida:",
-      "responseReceivedDesc": "con arreglo JSON conteniendo",
-      "contestObjects": "objetos de concurso",
-      "dataStructure": "Estructura de datos:",
-      "dataStructureDesc": "Cada objeto de concurso contiene:",
-      "endpoint": "Punto de acceso:",
-      "worldsChampions": "🏆 Campeones de Worlds",
-      "worldsChampionsDesc": "Campeones",
-      "worldsChampionsDescLong": "Puntajes de rendimiento basados en KDA de torneo, control de objetivos, y métricas de impacto en equipo",
-      "performanceScore": "Puntaje de Rendimiento:",
-      "performanceScoreDesc": "Calculado de KDA de torneo, control de objetivos, y impacto en peleas de equipo (escala 0-100).",
-      "tournamentRecord": "Récord de Torneo:",
-      "tournamentRecordDesc": "Victorias/derrotas reales de Worlds",
-      "matches": "partidas.",
-      "signatureChampion": "Campeón Firma:",
-      "signatureChampionDesc": "Campeón más impactante jugado durante la carrera del torneo.",
-      "championApiRequestDetails": "🎮 Detalles de Petición API de Campeones",
-      "expectedUrl": "URL Esperada:",
-      "expectedResponse": "Respuesta Esperada:",
-      "actualStatus": "Estado Real:",
-      "actualResponse": "Respuesta Real:",
-      "dataSource": "Fuente de Datos:",
-      "authentication": "Autenticación:",
-      "responseFormat": "Formato de Respuesta:",
-      "player": "Jugador",
-      "signatureChampionHeader": "Campeón Firma",
-      "tournamentRecordHeader": "Récord de Torneo",
-      "performanceScoreHeader": "Puntaje de Rendimiento",
-      "achievement": "Logro",
-      "worldsGreatestWinningPlayers": "Mejores Jugadores Ganadores de Worlds",
-      "worldsChampionshipDesc": "datos de rendimiento del equipo campeón",
-      "noTournamentData": "No hay datos de torneo disponibles",
-      "selectYearToView": "Selecciona un año para ver datos de campeonato",
-      "apiIntegrationStatus": "Estado de Integración API",
-      "responseStatus": "Estado de Respuesta:",
-      "errorDetails": "Detalles de Error:",
-      "support": "Soporte:",
-      "lambdaFunction": "Función Lambda:",
-      "liveChampionData": "Datos de Rendimiento de Campeones en Vivo",
-      "liveChampionDataDesc": "🟢 Datos de campeones en vivo de Riot Games Data Dragon API - Estadísticas reales actualizadas desde servidores de League of Legends",
-      "demoChampionData": "Datos de Rendimiento de Campeones Demo",
-      "demoChampionDataDesc": "🟡 Datos de demostración (Haz clic en \"Obtener de Riot API\" para cargar datos en vivo y activar AWS Lambda)",
-      "championDataApiStatus": "🎮 Estado de API de Datos de Campeones",
-      "dataSources2": "Fuentes de Datos:",
-      "apiEndpoints": "Endpoints de API:",
-      "issues": "Problemas:",
-      "lambdaEndpoint": "Endpoint Lambda:",
-      "dataFormat": "Formato de Datos:",
-      "jsonRestApi": "API REST JSON",
-      "liveChampionsData": "Datos de Campeones en Vivo",
-      "demoChampionsData": "Datos de Campeones Demo",
-      "fetchFromRiotApi": "🚀 Obtener de Riot API",
-      "refreshLiveData": "Actualizar Datos en Vivo",
-      "resetToDemoData": "Restablecer a Datos Demo",
-      "noChampionData": "No hay datos de campeones disponibles",
-      "tournament": "Torneo",
-      "status": "Estado",
-      "winner": "Ganador",
-      "noContests": "No hay concursos disponibles",
-      "championName": "Nombre del Campeón",
-      "championTitle": "Título del Campeón",
-      "attackPower": "Poder de Ataque",
-      "defenseRating": "Clasificación de Defensa",
-      "speedRating": "Clasificación de Velocidad",
-      "tierStatus": "Estado de Nivel",
-      "sTier": "Nivel-S",
-      "aTier": "Nivel-A",
-      "availableWithBasicKeyList": "• API de Data Dragon: Estadísticas de campeones, habilidades<br/>• Liga Challenger: Mejores jugadores clasificados<br/>• Maestría de Campeón: Experiencia de jugador<br/>• Historial de Partidas: Resultados de juegos recientes",
-      "requiresSpecialAccessList": "• API de Torneo: Partidas oficiales de esports<br/>• Juegos Destacados: Partidas en vivo de alto nivel<br/>• Datos de Esports: Resultados profesionales<br/>• Llaves de Producción: Límites de tasa más altos",
-      "dataSourcesFromRiot": "✅ De Riot API:",
-      "dataSourcesFromRiotList": "• Nombres de campeones y títulos de lore<br/>• Daño de ataque, salud, estadísticas de velocidad<br/>• Datos oficiales de balance de juego",
-      "ourProcessing": "🛠️ Nuestro Procesamiento:",
-      "ourProcessingList": "• Rankings de nivel (algoritmo Nivel-S/A)<br/>• Escalado de visualización (÷10, ÷100, ÷20)<br/>• Cálculos de rendimiento",
-      "frontend": "Interfaz:",
-      "frontendValue": "React 18 + TypeScript (Interfaz)",
-      "build": "Construcción:",
-      "buildValue": "Vite 5 → HTML/CSS/JS Estático",
-      "hosting": "Alojamiento:",
-      "hostingValue": "S3 + CloudFront CDN (AWS)",
-      "api": "Interfaz de API:",
-      "apiValue": "URL de Función Lambda de AWS",
-      "data": "Datos:",
-      "dataValue": "Integración de API de Riot Games",
-      "attackPowerMapping": "⚔️ Poder de Ataque",
-      "attackPowerMappingValue": "stats.attackdamage ÷ 10  // código",
-      "defenseRatingMapping": "🛡️ Clasificación de Defensa",
-      "defenseRatingMappingValue": "stats.hp ÷ 100  // código",
-      "speedRatingMapping": "💨 Clasificación de Velocidad",
-      "speedRatingMappingValue": "stats.movespeed ÷ 20  // código"
-    }
-  },
-  "admin": {
-    "breadcrumb": "Admin",
-    "pageTitle": "admin — usuarios pendientes",
-    "tableHeader": "usuarios pendientes",
-    "loadingText": "cargando usuarios",
-    "emptyTitle": "sin usuarios pendientes",
-    "emptySubtitle": "todos los usuarios confirmados tienen un grupo asignado",
-    "columnEmail": "correo",
-    "columnStatus": "estado",
-    "columnCreated": "creado",
-    "columnActions": "acciones",
-    "approveButton": "aprobar",
-    "errorHeader": "error al cargar usuarios"
-  },
-  "roadmap": {
-    "title": "Roadmap",
-    "breadcrumb": "Roadmap",
-    "idea": "Idea",
-    "todo": "Por Hacer",
-    "inProgress": "En Progreso",
-    "inReview": "En Revisión",
-    "done": "Hecho",
-    "emptyColumn": "Sin tareas"
-  },
-  "maintenanceCalendar": {
-    "breadcrumb": "Calendario de Mantenimiento",
-    "header": "Calendario de Mantenimiento",
-    "description": "Tracker de cadencias de releases para 23 tecnologías — historial LTS, releases recientes, y fechas proyectadas.",
-    "filterByCategory": "Filtrar por categoría",
-    "exportAll": "Exportar Todo (.ics)",
-    "export": "Exportar (.ics)",
-    "allCategories": "Todas las categorías",
-    "noDataAvailable": "Sin datos disponibles",
-    "tableHeaders": {
-      "mostRecentLTS": "LTS Más Reciente",
-      "priorLTS": "LTS Anterior",
-      "secondPriorLTS": "2do LTS Anterior",
-      "mostRecentRelease": "Release Más Reciente",
-      "projectedNextRelease": "Próximo Release Proyectado",
-      "projectedNextLTS": "Próximo LTS Proyectado"
-    },
-    "releaseNotes": "Release notes",
-    "source": "Fuente"
-  },
-  "themePage": {
-    "pageTitle": "Sistema de Diseño — Nube of the North",
-    "breadcrumb": "Sistema de Diseño",
-    "header": "Sistema de Diseño de Nube of the North",
-    "sections": {
-      "brandColors": "Paleta de Colores de Marca",
-      "brandColorsDescription": "Colores extraídos del banner del Meetup — cielo de nebulosa oscura con logo de estrella-en-montaña.",
-      "textEmphasis": "Jerarquía de Énfasis de Texto",
-      "textEmphasisDescription": "Jerarquía de tres niveles pa' contenido legible (modo claro y oscuro).",
-      "elevation": "Elevación en Modo Oscuro",
-      "elevationDescription": "Aclaración progresiva crea percepción de profundidad en fondos oscuros.",
-      "shadows": "Tokens de Sombra",
-      "shadowsDescription": "Profundidad ambiental pa' tarjetas, modales y elementos flotantes.",
-      "typography": "Escala Tipográfica",
-      "typographyDescription": "Tokens de tamaño de fuente pa' texto del cuerpo, encabezados y etiquetas.",
-      "cardExample": "Tarjeta Glassmorphism",
-      "cardExampleDescription": "La clase .cdn-card — fondo degradado + blur + línea de acento animada."
-    },
-    "colors": {
-      "navy": {
-        "name": "Armada",
-        "description": "Fondo oscuro base"
-      },
-      "amber": {
-        "name": "Ámbar",
-        "description": "Acentos sepia cálidos"
-      },
-      "purple": {
-        "name": "Púrpura",
-        "description": "Color interactivo primario"
-      },
-      "violet": {
-        "name": "Violeta",
-        "description": "Acento y efectos de brillo"
-      },
-      "lavender": {
-        "name": "Lavanda",
-        "description": "Bordes en modo claro"
-      },
-      "awsOrange": {
-        "name": "Naranja AWS",
-        "description": "Énfasis de llamada a la acción"
-      },
-      "gold": {
-        "name": "Oro",
-        "description": "Acentos emeritus"
-      }
-    },
-    "emphasis": {
-      "high": {
-        "name": "Énfasis Alto",
-        "description": "Encabezados, texto primario"
-      },
-      "medium": {
-        "name": "Énfasis Medio",
-        "description": "Etiquetas secundarias, descripciones"
-      },
-      "low": {
-        "name": "Énfasis Bajo",
-        "description": "Deshabilitado, pistas, marcadores"
-      }
-    },
-    "elevation": {
-      "level": "Nivel",
-      "level0": "Fondo base",
-      "level1": "Tarjetas, paneles",
-      "level2": "Modales, dropdowns",
-      "level3": "Tooltips, ventanas emergentes"
-    },
-    "shadows": {
-      "small": {
-        "name": "Pequeña",
-        "usage": "Elevación sutil"
-      },
-      "medium": {
-        "name": "Mediana",
-        "usage": "Profundidad de tarjeta"
-      },
-      "glow": {
-        "name": "Brillo",
-        "usage": "Énfasis, estados hover"
-      }
-    },
-    "typography": {
-      "small": {
-        "name": "Pequeña",
-        "usage": "Subtítulos, metadatos, insignias"
-      },
-      "base": {
-        "name": "Base (14px)",
-        "usage": "Cuerpo de texto (predeterminado Cloudscape)"
-      },
-      "large": {
-        "name": "Grande",
-        "usage": "Cuerpo enfatizado, etiquetas de tarjeta"
-      },
-      "extraLarge": {
-        "name": "Extra Grande",
-        "usage": "Encabezados de sección"
-      },
-      "twoExtraLarge": {
-        "name": "Doble Extra Grande",
-        "usage": "Encabezados de página"
-      }
-    },
-    "cardExample": {
-      "title": "Tarjeta Glassmorphism de Muestra",
-      "description": "Fondo degradado con blur, línea de acento degradado animada arriba, sombras cálidas en modo claro, brillo cósmico en modo oscuro.",
-      "technicalNote": "Aplica la clase .cdn-card a cualquier div — definida en src/styles/tokens.css"
-    }
-  },
-  "common": {
-    "cancel": "Cancelar",
-    "confirm": "Confirmar",
-    "submit": "Enviar",
-    "edit": "Editar",
-    "create": "Crear",
-    "delete": "Eliminar",
-    "save": "Guardar",
-    "close": "Cerrar",
-    "info": "Info"
-  }
+	"shell": {
+		"siteTitle": "Nube of the North",
+		"switchToMx": "Cambiar a Español",
+		"switchToUs": "Cambiar a Inglés",
+		"switchToLightMode": "Cambiar a modo claro",
+		"switchToDarkMode": "Cambiar a modo oscuro",
+		"more": "Más",
+		"all": "Todo",
+		"navigationDrawer": "Menú de navegación",
+		"closeNavigationDrawer": "Cerrar menú",
+		"openNavigationDrawer": "Abrir menú",
+		"notifications": "Notificaciones",
+		"helpPanel": "Panel de ayuda",
+		"closeHelpPanel": "Cerrar ayuda",
+		"openHelpPanel": "Abrir ayuda"
+	},
+	"navigation": {
+		"home": "Inicio del Grupo",
+		"roadmap": "Roadmap",
+		"meetings": "Juntas",
+		"admin": "Admin",
+		"resources": "Recursos",
+		"techDebtCountdowns": "Conteos de Deuda Técnica",
+		"designSystem": "Sistema de Diseño",
+		"learning": "Aprendizaje",
+		"apiGuide": "Guía de API",
+		"restOverview": "Resumen de REST",
+		"uniformInterface": "1️⃣ Interfaz Uniforme",
+		"clientServer": "2️⃣ Cliente-Servidor",
+		"stateless": "3️⃣ Sin Estado",
+		"cacheable": "4️⃣ Cacheable",
+		"layeredSystem": "5️⃣ Sistema por Capas",
+		"codeOnDemand": "6️⃣ Código bajo Demanda",
+		"cheatSheet": "📋 Cheat Sheet de API",
+		"howItWorks": "⚙️ Cómo Funciona",
+		"projectResources": "🔗 Recursos del Proyecto"
+	},
+	"breadcrumbs": {
+		"home": "Nube of the North"
+	},
+	"footer": {
+		"ourLeaders": "Organizadores del AWS User Group",
+		"joinUs": "Únete en Meetup →",
+		"communityDescription": "AWS User Group Nube of the North es parte de",
+		"globalCommunity": "Comunidad Global de AWS User Groups",
+		"communityFullDescription": "Somos voluntarios locales de Nuevo México, West Texas y Chihuahua, México. Creemos que los proyectos, las carreras y los problemas se pueden acelerar usando AWS, y queremos compartir nuestro conocimiento, conexiones y experiencias contigo para que veas lo que tú puedes",
+		"goBuild": "Go Build"
+	},
+	"dashboardPage": {
+		"breadcrumb": "Tablero",
+		"header": "Tablero",
+		"infoLink": "Información",
+		"productionOverview": {
+			"header": "Resumen de producción"
+		},
+		"pastTopics": {
+			"header": "Temas Pasados"
+		},
+		"groupNotesModal": "Notas del grupo"
+	},
+	"userGroupHero": {
+		"header": "#AWS User Group Nube of the North",
+		"description": "Nuestro primer meetup fue el Día Internacional de la Mujer 03/08/21 en Arrowhead Research Park, pa' impulsar el aprendizaje de la comunidad, la conciencia de negocios, el engagement estudiantil, las oportunidades de carrera, y el espíritu emprendedor y hobbyista. Queremos aprender de, servir, educar y entretener a la raza diversa de Juárez MX/El Paso + Las Cruces, todo Nuevo México, y las áreas rurales de alrededor."
+	},
+	"userGroupMetrics": {
+		"communityMembers": "Miembros de la Comunidad",
+		"fiveStarReviews": "Reseñas de 5 Estrellas",
+		"meetupsHeld": "Meetups Realizados",
+		"est": "Fundado"
+	},
+	"pastTopics": {
+		"games3d": "Juegos y 3D",
+		"artificialIntelligence": "Inteligencia Artificial",
+		"serverlessLens": "Lente Serverless",
+		"spaceSatellite": "Espacio y Satélite"
+	},
+	"flavorNotes": {
+		"cherry": "cereza",
+		"raspberry": "frambuesa",
+		"rose": "rosa",
+		"strawberry": "fresa"
+	},
+	"productionTable": {
+		"headers": {
+			"name": "Nombre",
+			"status": "Estado",
+			"mixing": "Mezcla (kg/h)",
+			"molding": "Moldeo (kg/h)"
+		}
+	},
+	"qualityTable": {
+		"headers": {
+			"name": "Nombre",
+			"strong": "Fuerte",
+			"mild": "Suave",
+			"unnoticed": "Sin notar"
+		}
+	},
+	"pieChart": {
+		"chartAriaRoleDescription": "Gráfico circular",
+		"detailPopoverDismissAriaLabel": "Cerrar detalles",
+		"legendAriaLabel": "Leyenda",
+		"filterSelectedAriaLabel": "Seleccionado",
+		"segmentAriaRoleDescription": "Segmento"
+	},
+	"meetings": {
+		"breadcrumb": "Juntas",
+		"header": "juntas",
+		"createButton": "Crear junta",
+		"editButton": "Editar",
+		"findPlaceholder": "Buscar juntas",
+		"tableHeaders": {
+			"meetupTitle": "Título del Meetup",
+			"presenters": "Presentadores",
+			"happened": "¿Pasó?",
+			"onDemand": "On-Demand",
+			"eventPage": "Página del Evento"
+		},
+		"empty": {
+			"noMatches": "Sin resultados",
+			"noMatchesSubtitle": "No encontramos nada, compa.",
+			"clearFilter": "Limpiar filtro",
+			"noMeetings": "Sin juntas",
+			"noMeetingsSubtitle": "Nada en el calendario ahorita."
+		},
+		"preferences": {
+			"title": "Preferencias",
+			"pageSize": "Seleccionar tamaño de página",
+			"resources10": "10 recursos",
+			"resources20": "20 recursos",
+			"resources50": "50 recursos",
+			"resources100": "100 recursos",
+			"confirm": "Confirmar",
+			"cancel": "Cancelar"
+		},
+		"aria": {
+			"selectionGroup": "Selección de elementos",
+			"tableLabel": "tabla de juntas"
+		}
+	},
+	"createMeeting": {
+		"breadcrumb": "Crear junta",
+		"header": "Crear junta",
+		"description": "Crea una nueva junta especificando detalles, link del evento, y speakers.",
+		"cancel": "Cancelar",
+		"submit": "Crear junta",
+		"helpPanelHeader": "Panel de ayuda",
+		"meetingType": {
+			"header": "Tipo de Junta",
+			"shapeLabel": "Formato",
+			"virtual": "Virtual",
+			"virtualDescription": "Meetups solo virtuales",
+			"inPerson": "Presencial",
+			"inPersonDescription": "Eventos presenciales, incluyendo híbridos"
+		},
+		"meetingDetails": {
+			"header": "Detalles de la Junta",
+			"pricesLabel": "Precios",
+			"pricesDescription": "Define los precios para mayoreo y menudeo.",
+			"meetupLinkLabel": "Link del Meetup",
+			"speakerNamesLabel": "Nombres de los Speakers",
+			"additionalNotesLabel": "Notas adicionales",
+			"optional": " - opcional",
+			"linkRequired": "El link es necesario, morro.",
+			"presenterRequired": "El presentador es necesario.",
+			"errorIconAriaLabel": "Error"
+		},
+		"details": {
+			"header": "detalles",
+			"listLabel": "Lista de detalles",
+			"selectPlaceholder": "Seleccionar todos los detalles",
+			"listRequired": "La lista de detalles es necesaria.",
+			"publishedLabel": "Publicado",
+			"no": "No",
+			"yes": "Sí",
+			"deselectAriaLabel": "Deseleccionar",
+			"noLabel": "sin etiqueta"
+		}
+	},
+	"helpPanel": {
+		"rsvpHeader": "RSVP para Eventos en Vivo",
+		"cloudDelNorteMeetups": "Meetups de Nube of the North",
+		"blenderMeetups": "Blender & Diseño Gráfico:NE3D",
+		"userGroupTitle": "☁️ #AWSelfTaught UG",
+		"communityDescription": "AWS UG Nube of the North somos autodidactas organizados en busca de hacer networking, experimentar, y aprender juntos. Hacemos meetups presenciales, virtuales e híbridos enfocados en temas regionales para Nuevo México rural, West Texas, el norte de Chihuahua, el Borderplex y más allá.",
+		"organizersWantedHeader": "Se Buscan Organizadores",
+		"spanishSpeakers": "Se Buscan Hispanohablantes.",
+		"studentsStepUp": "Estudiantes, Échenle Ganas.",
+		"womenWelcome": "Mujeres Bienvenidas.",
+		"globalCommunityHeader": "Comunidad Global de AWS",
+		"findLocalGroup": "Encuentra tu AWS User Group local en Meetup.",
+		"communityLeadersHeader": "Líderes de la Comunidad",
+		"jacobWright": "Jacob Wright",
+		"reachOutLinkedIn": "contáctalo en LinkedIn",
+		"bryanChasko": "Bryan Chasko",
+		"awsHeroBio": "Bio de AWS Hero",
+		"bryansHomepage": "Página de Bryan"
+	},
+	"learning": {
+		"api": {
+			"howRiotAPIRESTful": "🌐 Cómo el API de Riot Games es RESTful",
+			"uniformInterfaceDemonstration": "🎯 Demostración de Interfaz Uniforme",
+			"contestsEndpoint": "1️⃣ Endpoint de Contests",
+			"apiAccessDataStructure": "📊 Acceso a API y Estructura de Datos",
+			"availableWithBasicKey": "✅ Disponible con API Key Básica",
+			"requiresSpecialAccess": "❌ Requiere Acceso Especial",
+			"tournamentDataStructure": "🏆 Estructura de Datos de Torneos",
+			"technicalImplementation": "🛠️ Implementación Técnica",
+			"dataSources": "📊 Fuentes de Datos",
+			"architectureStack": "🏧 Stack de Arquitectura",
+			"championDataMapping": "🎯 Mapeo de Datos de Campeones",
+			"title": "Cloud Del Norte - Aprendiendo APIs",
+			"restDescription": "REST (Transferencia de Estado Representacional) y API (Interfaz de Programación de Aplicaciones - una forma para que los programas se comuniquen) trabajan juntos. La API de Riot Games demuestra las 6 restricciones REST:",
+			"uniformInterfaceTitle": "1️⃣ Interfaz Uniforme",
+			"uniformInterfaceDesc": "Método HTTP GET estándar con respuestas JSON consistentes en todos los recursos:",
+			"uniformInterfaceExample": "GET /contests?year=2024  // ejemplo",
+			"uniformInterfaceReturns": "Siempre regresa:",
+			"clientServerTitle": "2️⃣ Cliente-Servidor",
+			"clientServerDesc": "Nuestra app de React (framework web) es el cliente, las computadoras de Riot son el servidor. Llamamos su API, ellos responden con datos. Cada lado puede actualizar independientemente.",
+			"statelessTitle": "3️⃣ Sin Estado",
+			"statelessDesc": "Cada llamada API (petición) a Riot incluye el header X-Riot-Token (nuestra llave de autenticación). Sin sesiones de login - cada petición está completa.",
+			"cacheableTitle": "4️⃣ En Caché",
+			"cacheableDesc": "El CDN de Data Dragon de Riot (servidores globales rápidos) usa números de versión como 13.24.1. Nuestro navegador puede guardar datos de campeones y reutilizarlos.",
+			"layeredSystemTitle": "5️⃣ Sistema en Capas",
+			"layeredSystemDesc": "Riot esconde su estructura interna. Llamamos api.riotgames.com pero no sabemos si pasa por balanceadores de carga, bases de datos, o servidores de juego.",
+			"codeOnDemandTitle": "6️⃣ Código Bajo Demanda",
+			"codeOnDemandDesc": "Nuestro React hook obtiene datos dinámicamente:",
+			"codeOnDemandExample": "const [datos, setDatos] = useState(); fetch(urlRiotApi).then(setDatos)",
+			"codeOnDemandImages": "Imágenes de campeones cargan del CDN de Riot solo cuando se necesitan.",
+			"uniformInterfaceDesc2": "El mismo método HTTP GET y formato JSON funcionan en diferentes recursos:",
+			"contestsDescription": "Torneos y competencias recientes",
+			"selectYear": "Seleccionar Año:",
+			"requestUrl": "URL de Petición:",
+			"responseExpected": "Respuesta que esperamos:",
+			"responseExpectedDesc": "con arreglo JSON de objetos de concurso:",
+			"sendGetRequest": "Enviar Petición GET",
+			"contestsResponse": "🏆 Respuesta de Concursos",
+			"contestsResponseDesc": "🟢 Datos en vivo de concursos desde endpoint Lambda - Resultados recientes de torneos",
+			"responseReceived": "Respuesta recibida:",
+			"responseReceivedDesc": "con arreglo JSON conteniendo",
+			"contestObjects": "objetos de concurso",
+			"dataStructure": "Estructura de datos:",
+			"dataStructureDesc": "Cada objeto de concurso contiene:",
+			"endpoint": "Punto de acceso:",
+			"worldsChampions": "🏆 Campeones de Worlds",
+			"worldsChampionsDesc": "Campeones",
+			"worldsChampionsDescLong": "Puntajes de rendimiento basados en KDA de torneo, control de objetivos, y métricas de impacto en equipo",
+			"performanceScore": "Puntaje de Rendimiento:",
+			"performanceScoreDesc": "Calculado de KDA de torneo, control de objetivos, y impacto en peleas de equipo (escala 0-100).",
+			"tournamentRecord": "Récord de Torneo:",
+			"tournamentRecordDesc": "Victorias/derrotas reales de Worlds",
+			"matches": "partidas.",
+			"signatureChampion": "Campeón Firma:",
+			"signatureChampionDesc": "Campeón más impactante jugado durante la carrera del torneo.",
+			"championApiRequestDetails": "🎮 Detalles de Petición API de Campeones",
+			"expectedUrl": "URL Esperada:",
+			"expectedResponse": "Respuesta Esperada:",
+			"actualStatus": "Estado Real:",
+			"actualResponse": "Respuesta Real:",
+			"dataSource": "Fuente de Datos:",
+			"authentication": "Autenticación:",
+			"responseFormat": "Formato de Respuesta:",
+			"player": "Jugador",
+			"signatureChampionHeader": "Campeón Firma",
+			"tournamentRecordHeader": "Récord de Torneo",
+			"performanceScoreHeader": "Puntaje de Rendimiento",
+			"achievement": "Logro",
+			"worldsGreatestWinningPlayers": "Mejores Jugadores Ganadores de Worlds",
+			"worldsChampionshipDesc": "datos de rendimiento del equipo campeón",
+			"noTournamentData": "No hay datos de torneo disponibles",
+			"selectYearToView": "Selecciona un año para ver datos de campeonato",
+			"apiIntegrationStatus": "Estado de Integración API",
+			"responseStatus": "Estado de Respuesta:",
+			"errorDetails": "Detalles de Error:",
+			"support": "Soporte:",
+			"lambdaFunction": "Función Lambda:",
+			"liveChampionData": "Datos de Rendimiento de Campeones en Vivo",
+			"liveChampionDataDesc": "🟢 Datos de campeones en vivo de Riot Games Data Dragon API - Estadísticas reales actualizadas desde servidores de League of Legends",
+			"demoChampionData": "Datos de Rendimiento de Campeones Demo",
+			"demoChampionDataDesc": "🟡 Datos de demostración (Haz clic en \"Obtener de Riot API\" para cargar datos en vivo y activar AWS Lambda)",
+			"championDataApiStatus": "🎮 Estado de API de Datos de Campeones",
+			"dataSources2": "Fuentes de Datos:",
+			"apiEndpoints": "Endpoints de API:",
+			"issues": "Problemas:",
+			"lambdaEndpoint": "Endpoint Lambda:",
+			"dataFormat": "Formato de Datos:",
+			"jsonRestApi": "API REST JSON",
+			"liveChampionsData": "Datos de Campeones en Vivo",
+			"demoChampionsData": "Datos de Campeones Demo",
+			"fetchFromRiotApi": "🚀 Obtener de Riot API",
+			"refreshLiveData": "Actualizar Datos en Vivo",
+			"resetToDemoData": "Restablecer a Datos Demo",
+			"noChampionData": "No hay datos de campeones disponibles",
+			"tournament": "Torneo",
+			"status": "Estado",
+			"winner": "Ganador",
+			"noContests": "No hay concursos disponibles",
+			"championName": "Nombre del Campeón",
+			"championTitle": "Título del Campeón",
+			"attackPower": "Poder de Ataque",
+			"defenseRating": "Clasificación de Defensa",
+			"speedRating": "Clasificación de Velocidad",
+			"tierStatus": "Estado de Nivel",
+			"sTier": "Nivel-S",
+			"aTier": "Nivel-A",
+			"availableWithBasicKeyList": "• API de Data Dragon: Estadísticas de campeones, habilidades<br/>• Liga Challenger: Mejores jugadores clasificados<br/>• Maestría de Campeón: Experiencia de jugador<br/>• Historial de Partidas: Resultados de juegos recientes",
+			"requiresSpecialAccessList": "• API de Torneo: Partidas oficiales de esports<br/>• Juegos Destacados: Partidas en vivo de alto nivel<br/>• Datos de Esports: Resultados profesionales<br/>• Llaves de Producción: Límites de tasa más altos",
+			"dataSourcesFromRiot": "✅ De Riot API:",
+			"dataSourcesFromRiotList": "• Nombres de campeones y títulos de lore<br/>• Daño de ataque, salud, estadísticas de velocidad<br/>• Datos oficiales de balance de juego",
+			"ourProcessing": "🛠️ Nuestro Procesamiento:",
+			"ourProcessingList": "• Rankings de nivel (algoritmo Nivel-S/A)<br/>• Escalado de visualización (÷10, ÷100, ÷20)<br/>• Cálculos de rendimiento",
+			"frontend": "Interfaz:",
+			"frontendValue": "React 18 + TypeScript (Interfaz)",
+			"build": "Construcción:",
+			"buildValue": "Vite 5 → HTML/CSS/JS Estático",
+			"hosting": "Alojamiento:",
+			"hostingValue": "S3 + CloudFront CDN (AWS)",
+			"api": "Interfaz de API:",
+			"apiValue": "URL de Función Lambda de AWS",
+			"data": "Datos:",
+			"dataValue": "Integración de API de Riot Games",
+			"attackPowerMapping": "⚔️ Poder de Ataque",
+			"attackPowerMappingValue": "stats.attackdamage ÷ 10  // código",
+			"defenseRatingMapping": "🛡️ Clasificación de Defensa",
+			"defenseRatingMappingValue": "stats.hp ÷ 100  // código",
+			"speedRatingMapping": "💨 Clasificación de Velocidad",
+			"speedRatingMappingValue": "stats.movespeed ÷ 20  // código"
+		}
+	},
+	"admin": {
+		"breadcrumb": "Admin",
+		"pageTitle": "admin — usuarios pendientes",
+		"tableHeader": "usuarios pendientes",
+		"loadingText": "cargando usuarios",
+		"emptyTitle": "sin usuarios pendientes",
+		"emptySubtitle": "todos los usuarios confirmados tienen un grupo asignado",
+		"columnEmail": "correo",
+		"columnStatus": "estado",
+		"columnCreated": "creado",
+		"columnActions": "acciones",
+		"approveButton": "aprobar",
+		"errorHeader": "error al cargar usuarios"
+	},
+	"roadmap": {
+		"title": "Roadmap",
+		"breadcrumb": "Roadmap",
+		"idea": "Idea",
+		"todo": "Por Hacer",
+		"inProgress": "En Progreso",
+		"inReview": "En Revisión",
+		"done": "Hecho",
+		"emptyColumn": "Sin tareas"
+	},
+	"maintenanceCalendar": {
+		"breadcrumb": "Calendario de Mantenimiento",
+		"header": "Calendario de Mantenimiento",
+		"description": "Tracker de cadencias de releases para 23 tecnologías — historial LTS, releases recientes, y fechas proyectadas.",
+		"filterByCategory": "Filtrar por categoría",
+		"exportAll": "Exportar Todo (.ics)",
+		"export": "Exportar (.ics)",
+		"allCategories": "Todas las categorías",
+		"noDataAvailable": "Sin datos disponibles",
+		"tableHeaders": {
+			"mostRecentLTS": "LTS Más Reciente",
+			"priorLTS": "LTS Anterior",
+			"secondPriorLTS": "2do LTS Anterior",
+			"mostRecentRelease": "Release Más Reciente",
+			"projectedNextRelease": "Próximo Release Proyectado",
+			"projectedNextLTS": "Próximo LTS Proyectado"
+		},
+		"releaseNotes": "Release notes",
+		"source": "Fuente"
+	},
+	"themePage": {
+		"pageTitle": "Sistema de Diseño — Nube of the North",
+		"breadcrumb": "Sistema de Diseño",
+		"header": "Sistema de Diseño de Nube of the North",
+		"sections": {
+			"brandColors": "Paleta de Colores de Marca",
+			"brandColorsDescription": "Colores extraídos del banner del Meetup — cielo de nebulosa oscura con logo de estrella-en-montaña.",
+			"textEmphasis": "Jerarquía de Énfasis de Texto",
+			"textEmphasisDescription": "Jerarquía de tres niveles pa' contenido legible (modo claro y oscuro).",
+			"elevation": "Elevación en Modo Oscuro",
+			"elevationDescription": "Aclaración progresiva crea percepción de profundidad en fondos oscuros.",
+			"shadows": "Tokens de Sombra",
+			"shadowsDescription": "Profundidad ambiental pa' tarjetas, modales y elementos flotantes.",
+			"typography": "Escala Tipográfica",
+			"typographyDescription": "Tokens de tamaño de fuente pa' texto del cuerpo, encabezados y etiquetas.",
+			"cardExample": "Tarjeta Glassmorphism",
+			"cardExampleDescription": "La clase .cdn-card — fondo degradado + blur + línea de acento animada."
+		},
+		"colors": {
+			"navy": {
+				"name": "Armada",
+				"description": "Fondo oscuro base"
+			},
+			"amber": {
+				"name": "Ámbar",
+				"description": "Acentos sepia cálidos"
+			},
+			"purple": {
+				"name": "Púrpura",
+				"description": "Color interactivo primario"
+			},
+			"violet": {
+				"name": "Violeta",
+				"description": "Acento y efectos de brillo"
+			},
+			"lavender": {
+				"name": "Lavanda",
+				"description": "Bordes en modo claro"
+			},
+			"awsOrange": {
+				"name": "Naranja AWS",
+				"description": "Énfasis de llamada a la acción"
+			},
+			"gold": {
+				"name": "Oro",
+				"description": "Acentos emeritus"
+			}
+		},
+		"emphasis": {
+			"high": {
+				"name": "Énfasis Alto",
+				"description": "Encabezados, texto primario"
+			},
+			"medium": {
+				"name": "Énfasis Medio",
+				"description": "Etiquetas secundarias, descripciones"
+			},
+			"low": {
+				"name": "Énfasis Bajo",
+				"description": "Deshabilitado, pistas, marcadores"
+			}
+		},
+		"elevation": {
+			"level": "Nivel",
+			"level0": "Fondo base",
+			"level1": "Tarjetas, paneles",
+			"level2": "Modales, dropdowns",
+			"level3": "Tooltips, ventanas emergentes"
+		},
+		"shadows": {
+			"small": {
+				"name": "Pequeña",
+				"usage": "Elevación sutil"
+			},
+			"medium": {
+				"name": "Mediana",
+				"usage": "Profundidad de tarjeta"
+			},
+			"glow": {
+				"name": "Brillo",
+				"usage": "Énfasis, estados hover"
+			}
+		},
+		"typography": {
+			"small": {
+				"name": "Pequeña",
+				"usage": "Subtítulos, metadatos, insignias"
+			},
+			"base": {
+				"name": "Base (14px)",
+				"usage": "Cuerpo de texto (predeterminado Cloudscape)"
+			},
+			"large": {
+				"name": "Grande",
+				"usage": "Cuerpo enfatizado, etiquetas de tarjeta"
+			},
+			"extraLarge": {
+				"name": "Extra Grande",
+				"usage": "Encabezados de sección"
+			},
+			"twoExtraLarge": {
+				"name": "Doble Extra Grande",
+				"usage": "Encabezados de página"
+			}
+		},
+		"cardExample": {
+			"title": "Tarjeta Glassmorphism de Muestra",
+			"description": "Fondo degradado con blur, línea de acento degradado animada arriba, sombras cálidas en modo claro, brillo cósmico en modo oscuro.",
+			"technicalNote": "Aplica la clase .cdn-card a cualquier div — definida en src/styles/tokens.css"
+		}
+	},
+	"common": {
+		"cancel": "Cancelar",
+		"confirm": "Confirmar",
+		"submit": "Enviar",
+		"edit": "Editar",
+		"create": "Crear",
+		"delete": "Eliminar",
+		"save": "Guardar",
+		"close": "Cerrar",
+		"info": "Info"
+	}
 }

@@ -1,15 +1,15 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
+import React from "react";
+import ReactDOM from "react-dom/client";
 
-import '@cloudscape-design/global-styles/index.css';
-import '../../styles/tokens.css';
+import "@cloudscape-design/global-styles/index.css";
+import "../../styles/tokens.css";
 
-import App from './app';
+import App from "./app";
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
+const root = ReactDOM.createRoot(document.getElementById("root")!);
 
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+	<React.StrictMode>
+		<App />
+	</React.StrictMode>,
 );

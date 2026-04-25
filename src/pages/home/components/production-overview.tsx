@@ -1,33 +1,46 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React from 'react';
-import Box from '@cloudscape-design/components/box';
-import ColumnLayout from '@cloudscape-design/components/column-layout';
-import Container from '@cloudscape-design/components/container';
-import Header from '@cloudscape-design/components/header';
-import { useTranslation } from '../../../hooks/useTranslation';
+
+import Box from "@cloudscape-design/components/box";
+import ColumnLayout from "@cloudscape-design/components/column-layout";
+import Container from "@cloudscape-design/components/container";
+import Header from "@cloudscape-design/components/header";
+import React from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
 
 export interface ProductionOverviewProps {
-  metrics: { key: string; value: string }[];
+	metrics: { key: string; value: string }[];
 }
 
-export default function ProductionOverview({ metrics }: ProductionOverviewProps) {
-  const { t } = useTranslation();
+export default function ProductionOverview({
+	metrics,
+}: ProductionOverviewProps) {
+	const { t } = useTranslation();
 
-  return (
-    <div className="cdn-card">
-      <Container header={<Header variant="h2">{t('dashboardPage.productionOverview.header')}</Header>}>
-        <ColumnLayout columns={metrics.length} variant="text-grid" minColumnWidth={150}>
-          {metrics.map(({ key, value }) => (
-            <Box key={key}>
-              <Box color="text-label" margin={{ bottom: 'xxxs' }}>
-                {t(key)}
-              </Box>
-              <Box fontSize="display-l">{value}</Box>
-            </Box>
-          ))}
-        </ColumnLayout>
-      </Container>
-    </div>
-  );
+	return (
+		<div className="cdn-card">
+			<Container
+				header={
+					<Header variant="h2">
+						{t("dashboardPage.productionOverview.header")}
+					</Header>
+				}
+			>
+				<ColumnLayout
+					columns={metrics.length}
+					variant="text-grid"
+					minColumnWidth={150}
+				>
+					{metrics.map(({ key, value }) => (
+						<Box key={key}>
+							<Box color="text-label" margin={{ bottom: "xxxs" }}>
+								{t(key)}
+							</Box>
+							<Box fontSize="display-l">{value}</Box>
+						</Box>
+					))}
+				</ColumnLayout>
+			</Container>
+		</div>
+	);
 }

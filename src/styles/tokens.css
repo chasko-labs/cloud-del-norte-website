@@ -8,159 +8,202 @@
    Global font smoothing
    -------------------------------------------------------------------------- */
 :root {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 /* --------------------------------------------------------------------------
    Raw brand palette
    -------------------------------------------------------------------------- */
 :root {
-  --cdn-navy:          #00002a;
-  --cdn-amber:         #8b5a2b;
-  --cdn-navy-mid:      #000040;
-  --cdn-purple-deep:   #30006a;
-  --cdn-purple:        #5a1f8a;
-  --cdn-violet:        #9060f0;
-  --cdn-lavender:      #d7c7ee;
-  --cdn-white:         #f0f0f0;
-  --cdn-aws-orange:    #FF9900;
-  --cdn-gold:          #c9a23f;
+	--cdn-navy: #00002a;
+	--cdn-amber: #8b5a2b;
+	--cdn-navy-mid: #000040;
+	--cdn-purple-deep: #30006a;
+	--cdn-purple: #5a1f8a;
+	--cdn-violet: #9060f0;
+	--cdn-lavender: #d7c7ee;
+	--cdn-white: #f0f0f0;
+	--cdn-aws-orange: #ff9900;
+	--cdn-gold: #c9a23f;
 
-  /* ---------- Semantic color tokens — light mode defaults ---------- */
-  --cdn-color-bg:              #f8f5ff;              /* reserved for future use — page bg in custom layouts */
-  --cdn-color-surface:         #ffffff;              /* reserved for future use — card/panel surfaces */
-  --cdn-color-border:          rgba(90, 31, 138, 0.15);
-  --cdn-color-text:            #2c1a0e;              /* deep warm brown — footer, headings */
-  --cdn-color-text-secondary:  #5a3a1e;              /* warm brown — org labels */
-  --cdn-color-text-muted:      #4a2818;              /* medium brown — bio text */
-  --cdn-color-primary:         var(--cdn-purple);    /* reserved for future use — interactive element color */
-  --cdn-color-accent:          var(--cdn-violet);    /* reserved for future use — highlight color */
-  --cdn-color-glow:            rgba(90, 31, 138, 0.2); /* reserved for future use — ambient glow tint */
+	/* ---------- Semantic color tokens — light mode defaults ---------- */
+	--cdn-color-bg: #f8f5ff; /* reserved for future use — page bg in custom layouts */
+	--cdn-color-surface: #ffffff; /* reserved for future use — card/panel surfaces */
+	--cdn-color-border: rgba(90, 31, 138, 0.15);
+	--cdn-color-text: #2c1a0e; /* deep warm brown — footer, headings */
+	--cdn-color-text-secondary: #5a3a1e; /* warm brown — org labels */
+	--cdn-color-text-muted: #4a2818; /* medium brown — bio text */
+	--cdn-color-primary: var(
+		--cdn-purple
+	); /* reserved for future use — interactive element color */
+	--cdn-color-accent: var(
+		--cdn-violet
+	); /* reserved for future use — highlight color */
+	--cdn-color-glow: rgba(
+		90,
+		31,
+		138,
+		0.2
+	); /* reserved for future use — ambient glow tint */
 
-  /* ---------- Shadow tokens ---------- */
-  --cdn-shadow-sm:   0 2px 8px -2px rgba(90, 31, 138, 0.08), 0 1px 4px -1px rgba(0,0,0,0.06); /* reserved for future use */
-  --cdn-shadow-md:   0 4px 16px -4px rgba(90, 31, 138, 0.10), 0 2px 6px -2px rgba(0,0,0,0.06);
-  --cdn-shadow-glow: 0 12px 28px -6px rgba(90, 31, 138, 0.16), 0 4px 12px -3px rgba(0,0,0,0.08);
+	/* ---------- Shadow tokens ---------- */
+	--cdn-shadow-sm:
+		0 2px 8px -2px rgba(90, 31, 138, 0.08), 0 1px 4px -1px rgba(0, 0, 0, 0.06); /* reserved for future use */
+	--cdn-shadow-md:
+		0 4px 16px -4px rgba(90, 31, 138, 0.1), 0 2px 6px -2px rgba(0, 0, 0, 0.06);
+	--cdn-shadow-glow:
+		0 12px 28px -6px rgba(90, 31, 138, 0.16),
+		0 4px 12px -3px rgba(0, 0, 0, 0.08);
 
-  /* ---------- Spacing tokens — reserved for future use ---------- */
-  --cdn-space-xs: 4px;
-  --cdn-space-sm: 8px;
-  --cdn-space-md: 16px;
-  --cdn-space-lg: 24px;
-  --cdn-space-xl: 40px;
+	/* ---------- Spacing tokens — reserved for future use ---------- */
+	--cdn-space-xs: 4px;
+	--cdn-space-sm: 8px;
+	--cdn-space-md: 16px;
+	--cdn-space-lg: 24px;
+	--cdn-space-xl: 40px;
 
-  /* ---------- Radius tokens ---------- */
-  --cdn-radius-sm: 4px;  /* reserved for future use */
-  --cdn-radius-md: 8px;  /* reserved for future use */
-  --cdn-radius-lg: 12px; /* reserved for future use */
-  --cdn-radius-xl: 16px;
+	/* ---------- Radius tokens ---------- */
+	--cdn-radius-sm: 4px; /* reserved for future use */
+	--cdn-radius-md: 8px; /* reserved for future use */
+	--cdn-radius-lg: 12px; /* reserved for future use */
+	--cdn-radius-xl: 16px;
 
-  /* ---------- Transition tokens ---------- */
-  /* Use explicit properties — not `all` — to avoid animating unexpected inherited values on initial render */
-  /* --cdn-transition-fast: used for ::before pseudo-element (opacity + sweep animation) */
-  --cdn-transition-fast:   opacity 0.2s ease, background-position 0.3s ease;
-  /* --cdn-transition-smooth: used for .cdn-card main surface (lift, shadow, border, brightness) */
-  --cdn-transition-smooth: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	/* ---------- Transition tokens ---------- */
+	/* Use explicit properties — not `all` — to avoid animating unexpected inherited values on initial render */
+	/* --cdn-transition-fast: used for ::before pseudo-element (opacity + sweep animation) */
+	--cdn-transition-fast: opacity 0.2s ease, background-position 0.3s ease;
+	/* --cdn-transition-smooth: used for .cdn-card main surface (lift, shadow, border, brightness) */
+	--cdn-transition-smooth:
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-  /* ---------- Cloudscape light mode token overrides — sepia/cream palette ----------
+	/* ---------- Cloudscape light mode token overrides — sepia/cream palette ----------
      Token names confirmed from node_modules/@cloudscape-design/design-tokens/index.scss.
      Only overriding :root (light mode). Dark mode (.awsui-dark-mode) is untouched. */
-  --color-background-layout-main-5ilwcb:       #f2ede3;       /* warm cream page bg */
-  --color-background-container-content-6u8rvp: #faf7f0;       /* container surfaces float above page */
-  --color-background-container-header-gs3mbe:  #ede8db;       /* amber header rows have clear identity */
-  --color-background-input-default-ifz5bb:     #fdfcf8;       /* near-white warm — reads as interactive */
-  --color-text-body-default-vvtq8u:            #2c1a0e;       /* deep warm brown — excellent contrast on cream */
-  --color-text-heading-default-izpp46:         #1a0f05;       /* darker warm brown — headings anchor content */
-  --color-border-divider-default-nr68jt:       rgba(139, 90, 43, 0.18); /* warm amber divider */
+	--color-background-layout-main-5ilwcb: #f2ede3; /* warm cream page bg */
+	--color-background-container-content-6u8rvp: #faf7f0; /* container surfaces float above page */
+	--color-background-container-header-gs3mbe: #ede8db; /* amber header rows have clear identity */
+	--color-background-input-default-ifz5bb: #fdfcf8; /* near-white warm — reads as interactive */
+	--color-text-body-default-vvtq8u: #2c1a0e; /* deep warm brown — excellent contrast on cream */
+	--color-text-heading-default-izpp46: #1a0f05; /* darker warm brown — headings anchor content */
+	--color-border-divider-default-nr68jt: rgba(
+		139,
+		90,
+		43,
+		0.18
+	); /* warm amber divider */
 
-  /* ---------- Warm shadow system — light mode ---------- */
-  --cdn-shadow-container-light: 0 1px 4px rgba(139, 90, 43, 0.10), 0 4px 12px rgba(139, 90, 43, 0.06);
-  --cdn-shadow-card-light:      0 2px 8px rgba(139, 90, 43, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 1px rgba(139, 90, 43, 0.08);
-  --cdn-shadow-card-hover-light: 0 8px 24px rgba(139, 90, 43, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08), 0 0 2px rgba(139, 90, 43, 0.12);
-  --cdn-shadow-input-light:     inset 0 1px 3px rgba(139, 90, 43, 0.08);
-  --cdn-shadow-nav-light:       2px 0 8px rgba(139, 90, 43, 0.08);
+	/* ---------- Warm shadow system — light mode ---------- */
+	--cdn-shadow-container-light:
+		0 1px 4px rgba(139, 90, 43, 0.1), 0 4px 12px rgba(139, 90, 43, 0.06);
+	--cdn-shadow-card-light:
+		0 2px 8px rgba(139, 90, 43, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06),
+		0 0 1px rgba(139, 90, 43, 0.08);
+	--cdn-shadow-card-hover-light:
+		0 8px 24px rgba(139, 90, 43, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08),
+		0 0 2px rgba(139, 90, 43, 0.12);
+	--cdn-shadow-input-light: inset 0 1px 3px rgba(139, 90, 43, 0.08);
+	--cdn-shadow-nav-light: 2px 0 8px rgba(139, 90, 43, 0.08);
 
-  /* ---------- Typography scale ---------- */
-  --cdn-text-sm:   0.75rem;    /* 12px — captions, metadata, badges */
-  --cdn-text-base: 0.875rem;   /* 14px — body copy (Cloudscape default) */
-  --cdn-text-lg:   1rem;       /* 16px — emphasized body, card labels */
-  --cdn-text-xl:   1.25rem;    /* 20px — section headings */
-  --cdn-text-2xl:  1.5rem;     /* 24px — page headings */
+	/* ---------- Typography scale ---------- */
+	--cdn-text-sm: 0.75rem; /* 12px — captions, metadata, badges */
+	--cdn-text-base: 0.875rem; /* 14px — body copy (Cloudscape default) */
+	--cdn-text-lg: 1rem; /* 16px — emphasized body, card labels */
+	--cdn-text-xl: 1.25rem; /* 20px — section headings */
+	--cdn-text-2xl: 1.5rem; /* 24px — page headings */
 
-  /* ---------- Font weight tokens ---------- */
-  --cdn-weight-normal:   400;
-  --cdn-weight-medium:   500;
-  --cdn-weight-semibold: 600;
-  --cdn-weight-bold:     700;
+	/* ---------- Font weight tokens ---------- */
+	--cdn-weight-normal: 400;
+	--cdn-weight-medium: 500;
+	--cdn-weight-semibold: 600;
+	--cdn-weight-bold: 700;
 
-  /* ---------- Text emphasis hierarchy — light mode (issue #61) ---------- */
-  --cdn-color-text-high:   #1a0f05;   /* darkest brown — headings */
-  --cdn-color-text-medium: #5a3a1e;   /* warm brown — secondary */
-  --cdn-color-text-low:    #8a6a4e;   /* lighter brown — disabled/hints */
+	/* ---------- Text emphasis hierarchy — light mode (issue #61) ---------- */
+	--cdn-color-text-high: #1a0f05; /* darkest brown — headings */
+	--cdn-color-text-medium: #5a3a1e; /* warm brown — secondary */
+	--cdn-color-text-low: #8a6a4e; /* lighter brown — disabled/hints */
 
-  /* ---------- Line height tokens ---------- */
-  --cdn-leading-tight:   1.25;
-  --cdn-leading-normal:  1.5;
-  --cdn-leading-relaxed: 1.625;
+	/* ---------- Line height tokens ---------- */
+	--cdn-leading-tight: 1.25;
+	--cdn-leading-normal: 1.5;
+	--cdn-leading-relaxed: 1.625;
 
-  /* ---------- Typography ---------- */
-  --cdn-font-smoothing:     antialiased;
-  --cdn-letter-spacing-body: 0.01em;
+	/* ---------- Typography ---------- */
+	--cdn-font-smoothing: antialiased;
+	--cdn-letter-spacing-body: 0.01em;
 
-  /* ---------- Gradient tokens — light mode ---------- */
-  --cdn-gradient-nav-start: #2c1206;
-  --cdn-gradient-nav-mid:   #4a2010;
-  --cdn-gradient-nav-end:   #3d1a08;
+	/* ---------- Gradient tokens — light mode ---------- */
+	--cdn-gradient-nav-start: #2c1206;
+	--cdn-gradient-nav-mid: #4a2010;
+	--cdn-gradient-nav-end: #3d1a08;
 
-  /* ---------- Table header visual weight — light mode ---------- */
-  --color-background-table-header-hdjxos: #ede8db; /* warm amber — matches container header */
+	/* ---------- Table header visual weight — light mode ---------- */
+	--color-background-table-header-hdjxos: #ede8db; /* warm amber — matches container header */
 }
 
 /* --------------------------------------------------------------------------
    Dark mode overrides  (Cloudscape adds .awsui-dark-mode to <html>)
    -------------------------------------------------------------------------- */
 .awsui-dark-mode {
-  /* ---------- Elevation ramp — progressive lightening for depth perception (issue #63) ---------- */
-  --cdn-elevation-0: #0a0a2e;  /* base background */
-  --cdn-elevation-1: #12123a;  /* cards, panels */
-  --cdn-elevation-2: #1a1a4a;  /* modals, dropdowns */
-  --cdn-elevation-3: #22225a;  /* tooltips, popovers */
+	/* ---------- Elevation ramp — progressive lightening for depth perception (issue #63) ---------- */
+	--cdn-elevation-0: #0a0a2e; /* base background */
+	--cdn-elevation-1: #12123a; /* cards, panels */
+	--cdn-elevation-2: #1a1a4a; /* modals, dropdowns */
+	--cdn-elevation-3: #22225a; /* tooltips, popovers */
 
-  --cdn-color-bg:              var(--cdn-elevation-0);
-  --cdn-color-surface:         var(--cdn-elevation-1);
-  --cdn-color-border:          rgba(144, 96, 240, 0.18);
-  
-  /* ---------- Text emphasis hierarchy — Material Design opacity levels (issue #61) ---------- */
-  /* Contrast ratios on #00002a background: high=15.8:1, medium=10.3:1, low=6.2:1 (all WCAG AAA) */
-  --cdn-color-text-high:   rgba(240, 240, 240, 0.87);  /* headings, primary text */
-  --cdn-color-text-medium: rgba(240, 240, 240, 0.60);  /* secondary labels, descriptions */
-  --cdn-color-text-low:    rgba(240, 240, 240, 0.38);  /* disabled, hints, placeholders */
+	--cdn-color-bg: var(--cdn-elevation-0);
+	--cdn-color-surface: var(--cdn-elevation-1);
+	--cdn-color-border: rgba(144, 96, 240, 0.18);
 
-  --cdn-color-text:            var(--cdn-color-text-high);
-  --cdn-color-text-secondary:  #c7b8e8;  /* lighter lavender at medium emphasis */
-  --cdn-color-text-muted:      var(--cdn-color-text-low);
+	/* ---------- Text emphasis hierarchy — Material Design opacity levels (issue #61) ---------- */
+	/* Contrast ratios on #00002a background: high=15.8:1, medium=10.3:1, low=6.2:1 (all WCAG AAA) */
+	--cdn-color-text-high: rgba(240, 240, 240, 0.87); /* headings, primary text */
+	--cdn-color-text-medium: rgba(
+		240,
+		240,
+		240,
+		0.6
+	); /* secondary labels, descriptions */
+	--cdn-color-text-low: rgba(
+		240,
+		240,
+		240,
+		0.38
+	); /* disabled, hints, placeholders */
 
-  /* ---------- Desaturated accents — reduced vibration on dark backgrounds (issue #62) ---------- */
-  /* Contrast ratios on #00002a: violet-soft=8.4:1 (AAA), orange-soft=13.2:1 (AAA) */
-  --cdn-violet-soft:    #a080e8;  /* lighter, less saturated violet for dark mode */
-  --cdn-orange-soft:    #ffb347;  /* softer orange for dark mode emphasis */
+	--cdn-color-text: var(--cdn-color-text-high);
+	--cdn-color-text-secondary: #c7b8e8; /* lighter lavender at medium emphasis */
+	--cdn-color-text-muted: var(--cdn-color-text-low);
 
-  --cdn-color-primary:         var(--cdn-violet);      /* keep original for interactive elements */
-  --cdn-color-accent:          var(--cdn-violet-soft); /* use soft variant for accents */
-  --cdn-color-glow:            rgba(144, 96, 240, 0.25);
+	/* ---------- Desaturated accents — reduced vibration on dark backgrounds (issue #62) ---------- */
+	/* Contrast ratios on #00002a: violet-soft=8.4:1 (AAA), orange-soft=13.2:1 (AAA) */
+	--cdn-violet-soft: #a080e8; /* lighter, less saturated violet for dark mode */
+	--cdn-orange-soft: #ffb347; /* softer orange for dark mode emphasis */
 
-  --cdn-shadow-sm:   0 2px 8px -2px rgba(0,0,0,0.3), 0 1px 4px -1px rgba(0,0,0,0.2);
-  --cdn-shadow-md:   0 8px 24px -6px rgba(0,0,0,0.35), 0 4px 12px -3px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04);
-  --cdn-shadow-glow: 0 16px 32px -8px rgba(0,0,0,0.4), 0 0 30px -8px rgba(144, 96, 240, 0.2);
+	--cdn-color-primary: var(
+		--cdn-violet
+	); /* keep original for interactive elements */
+	--cdn-color-accent: var(--cdn-violet-soft); /* use soft variant for accents */
+	--cdn-color-glow: rgba(144, 96, 240, 0.25);
 
-  /* Table header — elevated surface in dark mode to distinguish from data rows */
-  --color-background-table-header-hdjxos: #0a0a1f;
+	--cdn-shadow-sm:
+		0 2px 8px -2px rgba(0, 0, 0, 0.3), 0 1px 4px -1px rgba(0, 0, 0, 0.2);
+	--cdn-shadow-md:
+		0 8px 24px -6px rgba(0, 0, 0, 0.35), 0 4px 12px -3px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.04);
+	--cdn-shadow-glow:
+		0 16px 32px -8px rgba(0, 0, 0, 0.4), 0 0 30px -8px rgba(144, 96, 240, 0.2);
 
-  /* ---------- Gradient tokens — dark mode ---------- */
-  --cdn-gradient-nav-start: #00002a;
-  --cdn-gradient-nav-mid:   #200050;
-  --cdn-gradient-nav-end:   #30006a;
+	/* Table header — elevated surface in dark mode to distinguish from data rows */
+	--color-background-table-header-hdjxos: #0a0a1f;
+
+	/* ---------- Gradient tokens — dark mode ---------- */
+	--cdn-gradient-nav-start: #00002a;
+	--cdn-gradient-nav-mid: #200050;
+	--cdn-gradient-nav-end: #30006a;
 }
 
 /* ==========================================================================
@@ -170,9 +213,9 @@
 
 /* Semibold weight + tighter tracking for column headers */
 [class*="header-cell"] {
-  font-weight: var(--cdn-weight-semibold);
-  font-size: var(--cdn-text-base);
-  letter-spacing: 0.03em;
+	font-weight: var(--cdn-weight-semibold);
+	font-size: var(--cdn-text-base);
+	letter-spacing: 0.03em;
 }
 
 /* ==========================================================================
@@ -183,12 +226,12 @@
    ========================================================================== */
 
 .cdn-card *:focus-visible {
-  outline: 2px solid var(--cdn-violet);
-  outline-offset: 2px;
+	outline: 2px solid var(--cdn-violet);
+	outline-offset: 2px;
 }
 
 .awsui-dark-mode .cdn-card *:focus-visible {
-  outline-color: var(--cdn-lavender);
+	outline-color: var(--cdn-lavender);
 }
 
 /* ==========================================================================
@@ -196,34 +239,31 @@
    ========================================================================== */
 
 .cdn-card {
-  position: relative;
-  border-radius: var(--cdn-radius-xl);
-  /* Light mode: warm sepia border */
-  border: 2px solid rgba(139, 90, 43, 0.16);
-  /* Light mode: warm cream gradient — not stark white */
-  background: linear-gradient(
-    135deg,
-    #faf7f0 0%,
-    #f5f0e4 40%,
-    #faf7f0 100%
-  );
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  box-shadow: var(--cdn-shadow-card-light);
-  transition: var(--cdn-transition-smooth);
-  overflow: hidden;
+	position: relative;
+	border-radius: var(--cdn-radius-xl);
+	/* Light mode: warm sepia border */
+	border: 2px solid rgba(139, 90, 43, 0.16);
+	/* Light mode: warm cream gradient — not stark white */
+	background: linear-gradient(135deg, #faf7f0 0%, #f5f0e4 40%, #faf7f0 100%);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
+	box-shadow: var(--cdn-shadow-card-light);
+	transition: var(--cdn-transition-smooth);
+	overflow: hidden;
 }
 
 /* Dark mode glass background */
 .awsui-dark-mode .cdn-card {
-  background: linear-gradient(
-    135deg,
-    rgba(28, 34, 48, 0.95) 0%,
-    rgba(30, 26, 48, 0.88) 30%,
-    rgba(17, 24, 39, 0.97) 100%
-  );
-  border-color: rgba(144, 96, 240, 0.15);
-  box-shadow: 0 8px 24px -6px rgba(0,0,0,0.3), 0 0 20px -8px rgba(144, 96, 240, 0.1);
+	background: linear-gradient(
+		135deg,
+		rgba(28, 34, 48, 0.95) 0%,
+		rgba(30, 26, 48, 0.88) 30%,
+		rgba(17, 24, 39, 0.97) 100%
+	);
+	border-color: rgba(144, 96, 240, 0.15);
+	box-shadow:
+		0 8px 24px -6px rgba(0, 0, 0, 0.3),
+		0 0 20px -8px rgba(144, 96, 240, 0.1);
 }
 
 /* ==========================================================================
@@ -231,41 +271,45 @@
    ========================================================================== */
 
 .cdn-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--cdn-purple) 20%,
-    var(--cdn-violet) 50%,
-    var(--cdn-aws-orange) 80%,
-    transparent 100%
-  );
-  opacity: 0.55; /* light mode: lower saturation reads better on white */
-  transition: var(--cdn-transition-fast);
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		var(--cdn-purple) 20%,
+		var(--cdn-violet) 50%,
+		var(--cdn-aws-orange) 80%,
+		transparent 100%
+	);
+	opacity: 0.55; /* light mode: lower saturation reads better on white */
+	transition: var(--cdn-transition-fast);
 }
 
 @keyframes cdn-gradient-sweep {
-  0%,
-  100% { background-position: 0% 50%; }
-  50%   { background-position: 100% 50%; }
+	0%,
+	100% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
 }
 
 .cdn-card:hover::before {
-  opacity: 1;
-  background: linear-gradient(
-    90deg,
-    var(--cdn-purple) 0%,
-    var(--cdn-violet) 40%,
-    var(--cdn-aws-orange) 70%,
-    var(--cdn-purple) 100%
-  );
-  background-size: 200% 100%;
-  animation: cdn-gradient-sweep 3s ease-in-out infinite;
+	opacity: 1;
+	background: linear-gradient(
+		90deg,
+		var(--cdn-purple) 0%,
+		var(--cdn-violet) 40%,
+		var(--cdn-aws-orange) 70%,
+		var(--cdn-purple) 100%
+	);
+	background-size: 200% 100%;
+	animation: cdn-gradient-sweep 3s ease-in-out infinite;
 }
 
 /* ==========================================================================
@@ -273,24 +317,24 @@
    ========================================================================== */
 
 .cdn-card:hover {
-  border-color: rgba(144, 96, 240, 0.28);
-  box-shadow: var(--cdn-shadow-glow);
-  transform: translateY(-3px);
-  filter: brightness(1.02);
+	border-color: rgba(144, 96, 240, 0.28);
+	box-shadow: var(--cdn-shadow-glow);
+	transform: translateY(-3px);
+	filter: brightness(1.02);
 }
 
 /* Light mode hover — warm amber lift instead of purple glow */
 :root:not(.awsui-dark-mode) .cdn-card:hover {
-  border-color: rgba(139, 90, 43, 0.32);
-  box-shadow: var(--cdn-shadow-card-hover-light);
+	border-color: rgba(139, 90, 43, 0.32);
+	box-shadow: var(--cdn-shadow-card-hover-light);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cdn-card,
-  .cdn-card::before {
-    transition: none;
-    animation: none;
-  }
+	.cdn-card,
+	.cdn-card::before {
+		transition: none;
+		animation: none;
+	}
 }
 
 /* ==========================================================================
@@ -300,20 +344,36 @@
    ========================================================================== */
 
 @keyframes cdn-card-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .cdn-card {
-    animation: cdn-card-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
-    will-change: transform, opacity;
-  }
-  .cdn-card:nth-child(2) { animation-delay: 0.07s; }
-  .cdn-card:nth-child(3) { animation-delay: 0.14s; }
-  .cdn-card:nth-child(4) { animation-delay: 0.21s; }
-  .cdn-card:nth-child(5) { animation-delay: 0.28s; }
-  .cdn-card:nth-child(6) { animation-delay: 0.35s; }
+	.cdn-card {
+		animation: cdn-card-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+		will-change: transform, opacity;
+	}
+	.cdn-card:nth-child(2) {
+		animation-delay: 0.07s;
+	}
+	.cdn-card:nth-child(3) {
+		animation-delay: 0.14s;
+	}
+	.cdn-card:nth-child(4) {
+		animation-delay: 0.21s;
+	}
+	.cdn-card:nth-child(5) {
+		animation-delay: 0.28s;
+	}
+	.cdn-card:nth-child(6) {
+		animation-delay: 0.35s;
+	}
 }
 
 /* ==========================================================================
@@ -325,19 +385,19 @@
 /* Light mode: amber-to-transparent left border */
 :root:not(.awsui-dark-mode) [class*="awsui_heading-variant-h2"],
 :root:not(.awsui-dark-mode) [class*="awsui_heading-variant-h3"] {
-  border-width: 0 0 0 3px;
-  border-style: solid;
-  border-image: linear-gradient(to bottom, var(--cdn-amber), transparent) 1;
-  padding-left: 10px;
+	border-width: 0 0 0 3px;
+	border-style: solid;
+	border-image: linear-gradient(to bottom, var(--cdn-amber), transparent) 1;
+	padding-left: 10px;
 }
 
 /* Dark mode: violet-to-transparent left border */
 .awsui-dark-mode [class*="awsui_heading-variant-h2"],
 .awsui-dark-mode [class*="awsui_heading-variant-h3"] {
-  border-width: 0 0 0 3px;
-  border-style: solid;
-  border-image: linear-gradient(to bottom, var(--cdn-violet), transparent) 1;
-  padding-left: 10px;
+	border-width: 0 0 0 3px;
+	border-style: solid;
+	border-image: linear-gradient(to bottom, var(--cdn-violet), transparent) 1;
+	padding-left: 10px;
 }
 
 /* ==========================================================================
@@ -346,24 +406,28 @@
    ========================================================================== */
 
 .awsui-dark-mode .cdn-card::before {
-  background: linear-gradient(
-    90deg,
-    var(--cdn-violet) 0%,
-    #00d4ff 50%,
-    var(--cdn-violet) 100%
-  );
-  opacity: 0.6;
+	background: linear-gradient(
+		90deg,
+		var(--cdn-violet) 0%,
+		#00d4ff 50%,
+		var(--cdn-violet) 100%
+	);
+	opacity: 0.6;
 }
 
 @keyframes cdn-accent-pulse {
-  from { opacity: 0.6; }
-  to   { opacity: 1.0; }
+	from {
+		opacity: 0.6;
+	}
+	to {
+		opacity: 1;
+	}
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .awsui-dark-mode .cdn-card::before {
-    animation: cdn-accent-pulse 3s ease-in-out infinite alternate;
-  }
+	.awsui-dark-mode .cdn-card::before {
+		animation: cdn-accent-pulse 3s ease-in-out infinite alternate;
+	}
 }
 
 /* ==========================================================================
@@ -375,14 +439,14 @@
 
 /* Light mode: warm amber focus ring with soft shadow */
 :root:not(.awsui-dark-mode) :focus-visible {
-  outline: 2px solid var(--cdn-amber);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(139, 90, 43, 0.2);
+	outline: 2px solid var(--cdn-amber);
+	outline-offset: 3px;
+	box-shadow: 0 0 0 4px rgba(139, 90, 43, 0.2);
 }
 
 /* Dark mode: violet focus ring with soft shadow */
 .awsui-dark-mode :focus-visible {
-  outline: 2px solid var(--cdn-violet);
-  outline-offset: 3px;
-  box-shadow: 0 0 0 4px rgba(144, 96, 240, 0.2);
+	outline: 2px solid var(--cdn-violet);
+	outline-offset: 3px;
+	box-shadow: 0 0 0 4px rgba(144, 96, 240, 0.2);
 }

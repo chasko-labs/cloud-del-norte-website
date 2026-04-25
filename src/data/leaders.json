@@ -1,130 +1,130 @@
 [
-  {
-    "id": "jacob-wright",
-    "name": "Jacob Wright",
-    "role": "Founder & Doña Ana County Lead",
-    "bio": "",
-    "organization": null,
-    "social": {
-      "github": null,
-      "linkedin": "jrwright121",
-      "twitter": null,
-      "website": null,
-      "meetup": null
-    },
-    "placeholder": false,
-    "retired": false
-  },
-  {
-    "id": "andres-moreno",
-    "name": "Andres Moreno",
-    "role": "Co-organizer",
-    "bio": "",
-    "organization": null,
-    "social": {
-      "github": "andmoredev",
-      "linkedin": null,
-      "twitter": "andmoredev",
-      "website": "https://andmore.dev",
-      "meetup": null
-    },
-    "placeholder": false,
-    "retired": false
-  },
-  {
-    "id": "lsm-lead",
-    "name": "Se Busca Líder LSM",
-    "role": "Líder de Lengua de Signos Mexicana",
-    "bio": "Ayúdanos a hacer los meetups accesibles para la comunidad sorda y con problemas de audición. Coordina intérpretes de LSM, aboga por planificación de eventos inclusivos, y conéctanos con recursos de accesibilidad.",
-    "organization": null,
-    "social": {
-      "github": null,
-      "linkedin": null,
-      "twitter": null,
-      "website": null,
-      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
-    },
-    "placeholder": true,
-    "retired": false
-  },
-  {
-    "id": "open-slot-en",
-    "name": "This Could Be You",
-    "role": "Future Leader",
-    "bio": "",
-    "organization": null,
-    "social": {
-      "github": null,
-      "linkedin": null,
-      "twitter": null,
-      "website": null,
-      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
-    },
-    "placeholder": true,
-    "retired": false
-  },
-  {
-    "id": "open-slot-es",
-    "name": "Esto Podrías Ser Tú",
-    "role": "Futuro Líder",
-    "bio": "",
-    "organization": null,
-    "social": {
-      "github": null,
-      "linkedin": null,
-      "twitter": null,
-      "website": null,
-      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
-    },
-    "placeholder": true,
-    "retired": false
-  },
-  {
-    "id": "asl-lead",
-    "name": "ASL Lead Wanted",
-    "role": "American Sign Language Lead",
-    "bio": "Help us make meetups accessible to the deaf and hard-of-hearing community. Coordinate ASL interpreters, advocate for inclusive event planning, and connect us with accessibility resources.",
-    "organization": null,
-    "social": {
-      "github": null,
-      "linkedin": null,
-      "twitter": null,
-      "website": null,
-      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
-    },
-    "placeholder": true,
-    "retired": false
-  },
-  {
-    "id": "bryan-chasko",
-    "name": "Bryan Chasko",
-    "role": "Founder & Organizer",
-    "bio": "",
-    "organization": null,
-    "social": {
-      "github": "BryanChasko",
-      "linkedin": "bryanchasko",
-      "twitter": "BryanChasko",
-      "website": null,
-      "meetup": "https://www.meetup.com/awsugclouddelnorte/"
-    },
-    "placeholder": false,
-    "retired": false
-  },
-  {
-    "id": "wayne-savage",
-    "name": "Wayne Savage",
-    "role": "Founder, Retired Organizer",
-    "bio": "",
-    "organization": "NMSU Arrowhead Research Park",
-    "social": {
-      "github": null,
-      "linkedin": null,
-      "twitter": null,
-      "website": null,
-      "meetup": null
-    },
-    "placeholder": false,
-    "retired": true
-  }
+	{
+		"id": "jacob-wright",
+		"name": "Jacob Wright",
+		"role": "Founder & Doña Ana County Lead",
+		"bio": "",
+		"organization": null,
+		"social": {
+			"github": null,
+			"linkedin": "jrwright121",
+			"twitter": null,
+			"website": null,
+			"meetup": null
+		},
+		"placeholder": false,
+		"retired": false
+	},
+	{
+		"id": "andres-moreno",
+		"name": "Andres Moreno",
+		"role": "Co-organizer",
+		"bio": "",
+		"organization": null,
+		"social": {
+			"github": "andmoredev",
+			"linkedin": null,
+			"twitter": "andmoredev",
+			"website": "https://andmore.dev",
+			"meetup": null
+		},
+		"placeholder": false,
+		"retired": false
+	},
+	{
+		"id": "lsm-lead",
+		"name": "Se Busca Líder LSM",
+		"role": "Líder de Lengua de Signos Mexicana",
+		"bio": "Ayúdanos a hacer los meetups accesibles para la comunidad sorda y con problemas de audición. Coordina intérpretes de LSM, aboga por planificación de eventos inclusivos, y conéctanos con recursos de accesibilidad.",
+		"organization": null,
+		"social": {
+			"github": null,
+			"linkedin": null,
+			"twitter": null,
+			"website": null,
+			"meetup": "https://www.meetup.com/awsugclouddelnorte/"
+		},
+		"placeholder": true,
+		"retired": false
+	},
+	{
+		"id": "open-slot-en",
+		"name": "This Could Be You",
+		"role": "Future Leader",
+		"bio": "",
+		"organization": null,
+		"social": {
+			"github": null,
+			"linkedin": null,
+			"twitter": null,
+			"website": null,
+			"meetup": "https://www.meetup.com/awsugclouddelnorte/"
+		},
+		"placeholder": true,
+		"retired": false
+	},
+	{
+		"id": "open-slot-es",
+		"name": "Esto Podrías Ser Tú",
+		"role": "Futuro Líder",
+		"bio": "",
+		"organization": null,
+		"social": {
+			"github": null,
+			"linkedin": null,
+			"twitter": null,
+			"website": null,
+			"meetup": "https://www.meetup.com/awsugclouddelnorte/"
+		},
+		"placeholder": true,
+		"retired": false
+	},
+	{
+		"id": "asl-lead",
+		"name": "ASL Lead Wanted",
+		"role": "American Sign Language Lead",
+		"bio": "Help us make meetups accessible to the deaf and hard-of-hearing community. Coordinate ASL interpreters, advocate for inclusive event planning, and connect us with accessibility resources.",
+		"organization": null,
+		"social": {
+			"github": null,
+			"linkedin": null,
+			"twitter": null,
+			"website": null,
+			"meetup": "https://www.meetup.com/awsugclouddelnorte/"
+		},
+		"placeholder": true,
+		"retired": false
+	},
+	{
+		"id": "bryan-chasko",
+		"name": "Bryan Chasko",
+		"role": "Founder & Organizer",
+		"bio": "",
+		"organization": null,
+		"social": {
+			"github": "BryanChasko",
+			"linkedin": "bryanchasko",
+			"twitter": "BryanChasko",
+			"website": null,
+			"meetup": "https://www.meetup.com/awsugclouddelnorte/"
+		},
+		"placeholder": false,
+		"retired": false
+	},
+	{
+		"id": "wayne-savage",
+		"name": "Wayne Savage",
+		"role": "Founder, Retired Organizer",
+		"bio": "",
+		"organization": "NMSU Arrowhead Research Park",
+		"social": {
+			"github": null,
+			"linkedin": null,
+			"twitter": null,
+			"website": null,
+			"meetup": null
+		},
+		"placeholder": false,
+		"retired": true
+	}
 ]
