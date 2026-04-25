@@ -80,3 +80,12 @@ steps:
     failure: ignore
     commands:
       - npm audit --audit-level=high || true
+
+  - name: scan-secrets
+    image: zricethezav/gitleaks:latest
+    failure: ignore
+    depends_on: [tier-0-metadata]
+    when:
+      - event: [push, pull_request, manual]
+    commands:
+      - gitleaks detect --verbose --source . --exit-code 1
