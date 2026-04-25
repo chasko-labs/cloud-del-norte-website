@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
 import Alert from '@cloudscape-design/components/alert';
 import Box from '@cloudscape-design/components/box';
-import Spinner from '@cloudscape-design/components/spinner';
 import SpaceBetween from '@cloudscape-design/components/space-between';
-import { fetchJitsiToken, BannedUserError } from '../../../lib/jitsi-token';
+import Spinner from '@cloudscape-design/components/spinner';
+import React, { useEffect, useRef, useState } from 'react';
+import { BannedUserError, fetchJitsiToken } from '../../../lib/jitsi-token';
 
 export interface JitsiEmbedProps {
   roomName: string;
@@ -11,7 +11,6 @@ export interface JitsiEmbedProps {
 }
 
 // Window global exposed by external_api.js once loaded.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 declare global {
   interface Window {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -131,9 +130,7 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
         <Box padding={{ vertical: 'm' }} textAlign="center">
           <SpaceBetween size="s" alignItems="center">
             <Spinner size="large" />
-            <Box variant="p">
-              {status === 'loading' ? 'requesting access token…' : 'connecting to meeting…'}
-            </Box>
+            <Box variant="p">{status === 'loading' ? 'requesting access token…' : 'connecting to meeting…'}</Box>
           </SpaceBetween>
         </Box>
       )}
