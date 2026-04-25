@@ -7,7 +7,7 @@
 #   heraldstack ci workload cert at /workload.{crt,key}
 #   aws_signing_helper at /usr/local/bin/aws_signing_helper
 #   → rolesanywhere ci-profile → heraldstack-ci-deploy role
-#   → s3 rw awsaerospace.org + cloudfront invalidate ECC3LP1BL2CZS
+#   → s3 rw awsaerospace.org (bucket) + cloudfront invalidate ECC3LP1BL2CZS (clouddelnorte.org)
 # mounts come from woodpecker-agent env WOODPECKER_BACKEND_DOCKER_VOLUMES
 # (~/code/heraldstack/heraldstack-infra/docker-compose.yml)
 
