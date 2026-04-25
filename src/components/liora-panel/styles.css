@@ -1,43 +1,38 @@
 /* Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. */
 /* SPDX-License-Identifier: MIT-0 */
 
-/* light mode default — matches cloudscape nav drawer background */
+/* ── CRT phosphor terminal — diesel-punk aesthetic ─────────────────────────
+   monochrome amber phosphor (p3), scanlines, screen vignette, phosphor flicker.
+   panel is always dark-screen in both light and dark page modes — it is a
+   terminal device, not a content panel. the dark screen against the light nav
+   is intentional: embedded retro hardware in a modern ui.
+   ───────────────────────────────────────────────────────────────────────── */
+
 .liora-panel-wrap {
 	position: relative;
 	width: 100%;
 	height: 300px;
 	overflow: hidden;
-	background: #f4f4f4;
+	background: #050607;
+	border-radius: 8px;
+	box-shadow:
+		inset 0 0 0 2px rgba(200, 140, 0, 0.22),
+		inset 0 0 55px rgba(0, 0, 0, 0.92),
+		0 0 10px rgba(200, 140, 0, 0.18),
+		0 0 2px  rgba(200, 140, 0, 0.42);
+	animation: crt-flicker 11s ease-in-out infinite;
 }
 
-/* dark mode override — babylon scene bg */
-:root.awsui-dark-mode .liora-panel-wrap {
-	background: #0d0f12;
-}
-
-/* light mode shimmer — subtle silver sweep */
+/* crt warm-up shimmer — dark amber sweep, screen powering on */
 .liora-placeholder {
 	position: absolute;
 	inset: 0;
 	background: linear-gradient(
 		135deg,
-		#e9ebed 0%,
-		#f8f8f8 40%,
-		#e9ebed 60%,
-		#f4f4f4 100%
-	);
-	background-size: 400% 400%;
-	animation: liora-shimmer 3s ease-in-out infinite;
-}
-
-/* dark mode shimmer — scene palette */
-:root.awsui-dark-mode .liora-placeholder {
-	background: linear-gradient(
-		135deg,
-		#111418 0%,
-		#1a1f26 40%,
-		#111418 60%,
-		#0d0f12 100%
+		#080600 0%,
+		#1c1400 40%,
+		#080600 60%,
+		#050607 100%
 	);
 	background-size: 400% 400%;
 	animation: liora-shimmer 3s ease-in-out infinite;
@@ -51,17 +46,13 @@
 }
 
 @keyframes liora-shimmer {
-	0% {
-		background-position: 0% 0%;
-	}
-	50% {
-		background-position: 100% 100%;
-	}
-	100% {
-		background-position: 0% 0%;
-	}
+	0%   { background-position:   0%   0%; }
+	50%  { background-position: 100% 100%; }
+	100% { background-position:   0%   0%; }
 }
 
+/* amber phosphor filter — p3 phosphor: warm amber, high contrast, desaturated source */
+/* grayscale strips source color → sepia+saturate+hue-rotate applies phosphor tone */
 .liora-canvas {
 	position: absolute;
 	inset: 0;
@@ -69,6 +60,7 @@
 	height: 100%;
 	opacity: 0;
 	transition: opacity 0.8s ease;
+	filter: grayscale(1) sepia(0.9) saturate(5) hue-rotate(15deg) brightness(1.15) contrast(1.3);
 }
 
 /* show canvas — BEM (new bundle) */
@@ -76,24 +68,42 @@
 	opacity: 1;
 }
 
-/* bleed overlay — fades panel edges into page background so there is no hard box edge */
+/* scanlines — horizontal line pairs every 4px, 18% darkening on odd rows */
+.liora-panel-wrap::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 3;
+	pointer-events: none;
+	background: repeating-linear-gradient(
+		to bottom,
+		transparent          0px,
+		transparent          3px,
+		rgba(0, 0, 0, 0.18)  3px,
+		rgba(0, 0, 0, 0.18)  4px
+	);
+}
+
+/* screen vignette + glare — phosphor falloff at edges, faint hotspot top-left */
 .liora-panel-wrap::after {
 	content: "";
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	z-index: 2;
+	z-index: 4;
 	background:
-		linear-gradient(to bottom, #f4f4f4 0%, transparent 30%),
-		linear-gradient(to top, #f4f4f4 0%, transparent 15%),
-		linear-gradient(to right, #f4f4f4 0%, transparent 20%),
-		linear-gradient(to left, #f4f4f4 0%, transparent 20%);
+		radial-gradient(ellipse 55% 35% at 25% 10%, rgba(255, 200, 80, 0.06) 0%, transparent 70%),
+		radial-gradient(ellipse 75% 75% at 50% 50%, transparent 35%, rgba(0, 0, 0, 0.72) 100%);
 }
 
-:root.awsui-dark-mode .liora-panel-wrap::after {
-	background:
-		linear-gradient(to bottom, #0d0f12 0%, transparent 30%),
-		linear-gradient(to top, #0d0f12 0%, transparent 15%),
-		linear-gradient(to right, #0d0f12 0%, transparent 20%),
-		linear-gradient(to left, #0d0f12 0%, transparent 20%);
+/* phosphor flicker — brightness variation ~4% range, irregular cadence */
+/* applied to wrap so canvas + scanlines + vignette all flicker together */
+@keyframes crt-flicker {
+	0%,  93%, 100% { filter: brightness(1.00); }
+	94%            { filter: brightness(0.97); }
+	95%            { filter: brightness(0.99); }
+	96%            { filter: brightness(0.96); }
+	97%            { filter: brightness(1.01); }
+	98%            { filter: brightness(0.98); }
+	99%            { filter: brightness(1.00); }
 }
