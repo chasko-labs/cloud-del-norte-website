@@ -75,3 +75,25 @@
 .liora-canvas.liora-canvas--visible {
 	opacity: 1;
 }
+
+/* bleed overlay — fades panel edges into page background so there is no hard box edge */
+.liora-panel-wrap::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	z-index: 2;
+	background:
+		linear-gradient(to bottom, #f4f4f4 0%, transparent 30%),
+		linear-gradient(to top, #f4f4f4 0%, transparent 15%),
+		linear-gradient(to right, #f4f4f4 0%, transparent 20%),
+		linear-gradient(to left, #f4f4f4 0%, transparent 20%);
+}
+
+:root.awsui-dark-mode .liora-panel-wrap::after {
+	background:
+		linear-gradient(to bottom, #0d0f12 0%, transparent 30%),
+		linear-gradient(to top, #0d0f12 0%, transparent 15%),
+		linear-gradient(to right, #0d0f12 0%, transparent 20%),
+		linear-gradient(to left, #0d0f12 0%, transparent 20%);
+}
