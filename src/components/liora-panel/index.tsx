@@ -59,18 +59,20 @@ export function LioraPanel() {
 	}, []);
 
 	return (
-		<div className="liora-panel-wrap">
-			<div
-				id="liora-shimmer"
-				className="liora-placeholder"
-				aria-hidden="true"
-			/>
-			<canvas
-				id="liora-canvas"
-				className="liora-canvas"
-				aria-hidden="true"
-				tabIndex={-1}
-			/>
+		<div className="liora-bezel">
+			<div className="liora-panel-wrap">
+				<div
+					id="liora-shimmer"
+					className="liora-placeholder"
+					aria-hidden="true"
+				/>
+				<canvas
+					id="liora-canvas"
+					className="liora-canvas"
+					aria-hidden="true"
+					tabIndex={-1}
+				/>
+			</div>
 		</div>
 	);
 }
