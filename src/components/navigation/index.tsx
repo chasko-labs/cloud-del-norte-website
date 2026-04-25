@@ -121,7 +121,6 @@ export default function Navigation() {
 
 	return (
 		<>
-			<LioraPanel />
 			<SideNavigation
 				activeHref={location.pathname}
 				header={{ href: "/home/index.html", text: t("navigation.home") }}
@@ -138,6 +137,7 @@ export default function Navigation() {
 					}
 				}}
 			/>
+			<LioraPanel />
 		</>
 	);
 }

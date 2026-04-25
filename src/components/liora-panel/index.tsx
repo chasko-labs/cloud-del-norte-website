@@ -60,7 +60,11 @@ export function LioraPanel() {
 
 	return (
 		<div className="liora-panel-wrap">
-			<div className="liora-placeholder" aria-hidden="true" />
+			<div
+				id="liora-shimmer"
+				className="liora-placeholder"
+				aria-hidden="true"
+			/>
 			<canvas
 				id="liora-canvas"
 				className="liora-canvas"

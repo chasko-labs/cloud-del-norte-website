@@ -1,22 +1,37 @@
 /* Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. */
 /* SPDX-License-Identifier: MIT-0 */
 
+/* light mode default — matches cloudscape nav drawer background */
 .liora-panel-wrap {
   position: relative;
   width: 100%;
   height: 300px;
   overflow: hidden;
+  background: #f4f4f4;
+}
+
+/* dark mode override — babylon scene bg */
+:root.awsui-dark-mode .liora-panel-wrap {
   background: #0d0f12;
 }
 
+/* light mode shimmer — subtle silver sweep */
 .liora-placeholder {
   position: absolute;
   inset: 0;
+  background: linear-gradient(135deg, #e9ebed 0%, #f8f8f8 40%, #e9ebed 60%, #f4f4f4 100%);
+  background-size: 400% 400%;
+  animation: liora-shimmer 3s ease-in-out infinite;
+}
+
+/* dark mode shimmer — scene palette */
+:root.awsui-dark-mode .liora-placeholder {
   background: linear-gradient(135deg, #111418 0%, #1a1f26 40%, #111418 60%, #0d0f12 100%);
   background-size: 400% 400%;
   animation: liora-shimmer 3s ease-in-out infinite;
 }
 
+/* hide shimmer — BEM (new bundle) */
 .liora-placeholder.liora-placeholder--hidden {
   opacity: 0;
   pointer-events: none;
@@ -38,6 +53,7 @@
   transition: opacity 0.8s ease;
 }
 
+/* show canvas — BEM (new bundle) */
 .liora-canvas.liora-canvas--visible {
   opacity: 1;
 }

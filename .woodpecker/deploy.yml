@@ -22,6 +22,7 @@ when:
         - package-lock.json
         - vite.config.ts
         - tsconfig.json
+        - .env.production
         - .woodpecker/**
 
 steps:
@@ -53,6 +54,7 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps
+      # liora/* and liora-embed/* are managed separately — exclude from --delete
+      - aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*"
       - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/*"
 # first run — trigger woodpecker webhook
