@@ -5,7 +5,6 @@ import Box from "@cloudscape-design/components/box";
 import ColumnLayout from "@cloudscape-design/components/column-layout";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
-import React from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 export interface ProductionOverviewProps {

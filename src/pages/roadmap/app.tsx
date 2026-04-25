@@ -3,7 +3,7 @@
 
 import ContentLayout from "@cloudscape-design/components/content-layout";
 import Header from "@cloudscape-design/components/header";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
 import { useTranslation } from "../../hooks/useTranslation";

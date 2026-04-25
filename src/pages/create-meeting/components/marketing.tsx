@@ -8,7 +8,7 @@ import Header from "@cloudscape-design/components/header";
 import Input from "@cloudscape-design/components/input";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Textarea from "@cloudscape-design/components/textarea";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { BasicValidationContext } from "../validation/basic-validation";
 

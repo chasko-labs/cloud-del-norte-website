@@ -4,7 +4,6 @@
 import SideNavigation, {
 	type SideNavigationProps,
 } from "@cloudscape-design/components/side-navigation";
-import React from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
 import { LioraPanel } from "../liora-panel";

@@ -5,7 +5,7 @@ import ContentLayout from "@cloudscape-design/components/content-layout";
 import Grid from "@cloudscape-design/components/grid";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
-import React, { useState } from "react";
+import { useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
 import { useTranslation } from "../../hooks/useTranslation";

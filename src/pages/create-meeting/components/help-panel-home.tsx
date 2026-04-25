@@ -1,6 +1,5 @@
 import HelpPanel from "@cloudscape-design/components/help-panel";
 import Icon from "@cloudscape-design/components/icon";
-import * as React from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 export const HelpPanelHome = () => {

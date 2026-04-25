@@ -1,7 +1,6 @@
 import Badge from "@cloudscape-design/components/badge";
 import Box from "@cloudscape-design/components/box";
 import Link from "@cloudscape-design/components/link";
-import React from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 
 export interface Leader {

@@ -2,13 +2,12 @@
 // SPDX-License-Identifier: MIT-0
 
 import Box from "@cloudscape-design/components/box";
-import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Modal from "@cloudscape-design/components/modal";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Table, { type TableProps } from "@cloudscape-design/components/table";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "../../../../hooks/useTranslation";
 import "./styles.css";
 

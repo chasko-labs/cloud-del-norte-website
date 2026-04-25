@@ -4,7 +4,6 @@
 import BreadcrumbGroup, {
 	type BreadcrumbGroupProps,
 } from "@cloudscape-design/components/breadcrumb-group";
-import React from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 
 export interface BreadcrumbsProps {

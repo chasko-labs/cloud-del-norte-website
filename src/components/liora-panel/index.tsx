@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 // React must be a value import — tsconfig jsx:"react" requires it in scope as the JSX factory
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import "./styles.css";
 
 interface LioraEmbedModule {

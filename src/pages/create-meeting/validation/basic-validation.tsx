@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { createContext, useRef, useState } from "react";
+import { createContext, useRef, useState } from "react";
 
 interface FormFieldMetaData {
 	isValid: boolean;

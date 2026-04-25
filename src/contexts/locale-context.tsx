@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { createContext, type ReactNode } from "react";
+import { createContext, type ReactNode } from "react";
 import enUS from "../locales/en-US.json";
 import esMX from "../locales/es-MX.json";
 import type { Locale } from "../utils/locale";

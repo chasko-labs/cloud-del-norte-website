@@ -5,7 +5,7 @@ import AppLayout, {
 	type AppLayoutProps,
 } from "@cloudscape-design/components/app-layout";
 import TopNavigation from "@cloudscape-design/components/top-navigation";
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Footer from "../../components/footer";
 import { AuthProvider } from "../../contexts/auth-context";
 import { LocaleProvider } from "../../contexts/locale-context";

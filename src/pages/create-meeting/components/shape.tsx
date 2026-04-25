@@ -5,7 +5,7 @@ import Container from "@cloudscape-design/components/container";
 import FormField from "@cloudscape-design/components/form-field";
 import Header from "@cloudscape-design/components/header";
 import Tiles from "@cloudscape-design/components/tiles";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 export default function Shape() {

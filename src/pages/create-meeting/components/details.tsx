@@ -9,7 +9,7 @@ import Multiselect, {
 } from "@cloudscape-design/components/multiselect";
 import RadioGroup from "@cloudscape-design/components/radio-group";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { meeting_type, services } from "../../meetings/data";
 import { BasicValidationContext } from "../validation/basic-validation";

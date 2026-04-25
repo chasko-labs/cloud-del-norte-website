@@ -1,6 +1,5 @@
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import React from "react";
 import leaders from "../../data/leaders.json";
 import { useTranslation } from "../../hooks/useTranslation";
 import type { Leader } from "./leader-card";

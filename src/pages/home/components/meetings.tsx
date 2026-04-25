@@ -8,8 +8,7 @@ import PieChart, {
 } from "@cloudscape-design/components/pie-chart";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import StatusIndicator from "@cloudscape-design/components/status-indicator";
-import Table, { type TableProps } from "@cloudscape-design/components/table";
-import React from "react";
+import { type TableProps } from "@cloudscape-design/components/table";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 const columnDefinitions = (

@@ -8,7 +8,7 @@ import ContentLayout from "@cloudscape-design/components/content-layout";
 import Grid from "@cloudscape-design/components/grid";
 import Header from "@cloudscape-design/components/header";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
 import { LocaleProvider } from "../../contexts/locale-context";

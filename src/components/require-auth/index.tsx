@@ -3,7 +3,7 @@ import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
-import React, { type ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { beginLogin } from "../../lib/auth";
 

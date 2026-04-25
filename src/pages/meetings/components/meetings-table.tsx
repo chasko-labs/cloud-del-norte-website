@@ -13,7 +13,7 @@ import Pagination from "@cloudscape-design/components/pagination";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Table, { type TableProps } from "@cloudscape-design/components/table";
 import TextFilter from "@cloudscape-design/components/text-filter";
-import React, { type ReactNode, useState } from "react";
+import { type ReactNode, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { useTranslation } from "../../../hooks/useTranslation";
 import type { meeting } from "../data";

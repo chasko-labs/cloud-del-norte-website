@@ -7,7 +7,7 @@ import Form from "@cloudscape-design/components/form";
 import Header from "@cloudscape-design/components/header";
 import HelpPanel from "@cloudscape-design/components/help-panel";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import React, { useState } from "react";
+import { useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
 import { RequireAuth } from "../../components/require-auth";
