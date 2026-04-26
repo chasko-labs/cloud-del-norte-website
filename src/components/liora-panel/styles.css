@@ -29,6 +29,7 @@
 		inset 0 1px 0 rgba(180, 150, 255, 0.10),
 		inset 0 0 28px rgba(0, 0, 0, 0.42);
 	box-sizing: border-box;
+	container-type: inline-size;
 }
 
 /* accent sweep — monitor top edge brand strip */
@@ -118,7 +119,10 @@
 .liora-panel-wrap {
 	position: relative;
 	width: 100%;
-	height: 300px;
+	height: auto;
+	aspect-ratio: 4 / 3;
+	min-height: 240px;
+	max-height: 300px;
 	overflow: hidden;
 	background: #050607;
 	border-radius: 6px;
@@ -839,7 +843,7 @@
 
 .liora-credits-title {
 	font-family: "VT323", "Courier New", Courier, monospace;
-	font-size: 56px;
+	font-size: clamp(32px, 20cqi, 56px);
 	letter-spacing: 0.35em;
 	text-transform: uppercase;
 	color: #fff;
