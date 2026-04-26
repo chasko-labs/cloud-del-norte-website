@@ -119,9 +119,7 @@
 		inset 0 0 55px rgba(0, 0, 0, 0.92),
 		0 0 10px rgba(0, 180, 40, 0.14),
 		0 0 2px rgba(0, 200, 60, 0.35);
-	animation:
-		crt-flicker 11s ease-in-out infinite,
-		crt-crackle 13.3s step-end infinite;
+	animation: crt-flicker 11s ease-in-out infinite;
 	transition: box-shadow 0.6s ease;
 }
 
@@ -177,7 +175,7 @@
 	opacity: 1;
 }
 
-/* scanlines + ben-day dots — stacked: dots (5px grid) over horizontal scanlines */
+/* scanlines + rolling phosphor sweep — classic CRT horizontal scroll */
 .liora-panel-wrap::before {
 	content: "";
 	position: absolute;
@@ -185,8 +183,14 @@
 	z-index: 3;
 	pointer-events: none;
 	background:
-		radial-gradient(circle, rgba(0, 0, 0, 0.13) 1.5px, transparent 1.5px) 0 0 /
-		5px 5px,
+		linear-gradient(
+			to bottom,
+			transparent 0%,
+			rgba(0, 220, 80, 0.025) 40%,
+			rgba(0, 220, 80, 0.055) 50%,
+			rgba(0, 220, 80, 0.025) 60%,
+			transparent 100%
+		),
 		repeating-linear-gradient(
 			to bottom,
 			transparent 0px,
@@ -194,6 +198,10 @@
 			rgba(0, 0, 0, 0.18) 3px,
 			rgba(0, 0, 0, 0.18) 4px
 		);
+	background-size:
+		100% 600px,
+		100% 4px;
+	animation: crt-roll 8s linear infinite;
 }
 
 /* screen vignette + glare */
@@ -252,35 +260,17 @@
 	}
 }
 
-/* tube crackle — occasional sharp discharge spikes at irregular moments */
-@keyframes crt-crackle {
-	0%,
-	6.8%,
-	7.3%,
-	29.8%,
-	30.5%,
-	67.8%,
-	68.6%,
+/* rolling scan band — phosphor sweep from top to bottom */
+@keyframes crt-roll {
+	0% {
+		background-position:
+			0 -300px,
+			0 0;
+	}
 	100% {
-		filter: brightness(1) contrast(1);
-	}
-	7% {
-		filter: brightness(1.75) contrast(0.55) saturate(0.2);
-	}
-	7.15% {
-		filter: brightness(0.83) contrast(1.18);
-	}
-	30% {
-		filter: brightness(1.42) contrast(0.7);
-	}
-	30.2% {
-		filter: brightness(0.88) contrast(1.12);
-	}
-	68% {
-		filter: brightness(1.28) contrast(0.8);
-	}
-	68.2% {
-		filter: brightness(0.86);
+		background-position:
+			0 300px,
+			0 0;
 	}
 }
 
