@@ -133,13 +133,13 @@ export function LioraPanel() {
 						aria-hidden="true"
 						tabIndex={-1}
 					/>
-					{/* sticky note — physical-paper warning that handwrites itself on top
-					    of the screen while the screen is intact. CSS hides + sheds the note
-					    when .liora-bezel.screen-tap-3 fires (shatter dismisses the warning) */}
-					<div className="liora-stickynote" aria-hidden="true">
-						<span className="liora-stickynote-line">do not tap</span>
-						<span className="liora-stickynote-sig">^.^</span>
-					</div>
+				</div>
+				{/* sticky note — physical-paper warning taped to the bezel chrome
+				    above the screen, dangling onto the panel. tap-1 sways the note;
+				    tap-2 rips the tape and the note falls off and disappears */}
+				<div className="liora-stickynote" aria-hidden="true">
+					<span className="liora-stickynote-line">not load bearing</span>
+					<span className="liora-stickynote-sig">- ^.^</span>
 				</div>
 				<div
 					id="liora-status-bar"
