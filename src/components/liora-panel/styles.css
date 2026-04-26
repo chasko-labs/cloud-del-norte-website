@@ -13,12 +13,21 @@
 
 /* ── outer bezel — glassmorphism card variant ────────────────────────────── */
 
+/* outer frame — caps the monitor at one stable size and provides layout slot for scene-over below */
+.liora-frame {
+	position: relative;
+	width: 100%;
+	max-width: 424px; /* caps bezel at 424px wide → screen at 400×300 — keeps monitor a stable 4:3 across viewport widths */
+	margin-inline: auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
 .liora-bezel {
 	position: relative;
 	display: block;
 	width: 100%;
-	max-width: 424px; /* caps screen at 400px wide × 300px tall — keeps monitor a stable 4:3 across viewport widths */
-	margin-inline: auto;
 	padding: 12px 12px 58px; /* 58px bottom: screen gap + LED glass (44px) + margin */
 	border-radius: 8px 8px 6px 6px; /* boxier top, squarer base — retro monitor */
 	border: 1.5px solid rgba(48, 38, 78, 0.78);
@@ -316,6 +325,7 @@
 	overflow: hidden;
 	pointer-events: none;
 	user-select: none;
+	text-align: center;
 	z-index: 22;
 	transition:
 		color 0.5s ease,
@@ -556,6 +566,7 @@
 	opacity: 0;
 	color: #9060f0;
 	text-decoration: none;
+	text-align: center;
 	animation:
 		neon-warmup 4.5s ease forwards,
 		neon-breathe 2s ease-in-out 4.5s infinite alternate;
@@ -935,7 +946,15 @@
 	isolation: isolate;
 	pointer-events: none;
 	overflow: hidden;
-	perspective: 320px;
+}
+
+/* clipping viewport for the names scroll — keeps the crawl inside the screen, never bleeds into subtitle or LED area */
+.liora-credits-scroll-window {
+	position: relative;
+	flex: 1 1 auto;
+	width: 100%;
+	overflow: hidden;
+	min-height: 0; /* permit flex shrinking below content size */
 }
 
 .liora-credits-title {
@@ -994,19 +1013,18 @@
 	line-height: 1.25;
 }
 
-/* ── scene-over indicator — top right corner ─────────────────────────────── */
+/* ── scene-over indicator — sits below the bezel inside .liora-frame ─────── */
 
 .liora-reconnect-wrap.liora-scene-over {
-	/* override centered inset:0 default */
+	/* override base inset:0 absolute centered — scene-over flows as a block below the monitor */
+	position: static;
 	inset: auto;
-	top: 6px;
-	right: 6px;
-	bottom: auto;
-	left: auto;
-	width: auto;
-	align-items: flex-end;
-	justify-content: flex-start;
-	gap: 5px;
+	width: 100%;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	margin-top: 12px;
 }
 
 .liora-reconnect-wrap.liora-scene-over .liora-reconnect-icon {
@@ -1016,14 +1034,14 @@
 }
 
 .liora-reconnect-wrap.liora-scene-over .liora-reconnect-label {
-	font-size: 9px;
-	letter-spacing: 0.1em;
+	font-size: 12px;
+	letter-spacing: 0.12em;
 }
 
 .liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn {
-	font-size: 12px;
-	letter-spacing: 0.1em;
-	padding: 3px 9px;
+	font-size: 13px;
+	letter-spacing: 0.12em;
+	padding: 4px 12px;
 	color: rgba(230, 210, 255, 0.97);
 	border-color: rgba(180, 130, 255, 0.85);
 	text-shadow: 0 0 6px rgba(180, 120, 255, 0.7);
@@ -1148,19 +1166,15 @@
 	}
 }
 
-/* ── 2-per-line credits names grid ───────────────────────────────────────── */
+/* ── credits names crawl — one per line, seamless infinite loop ──────────── */
 
+/* grid is duplicated 2x by the embed JS so translateY(-50%) lands at the start of the dupe set, producing a seamless wrap */
 @keyframes names-crawl {
 	0% {
-		transform: rotateX(0deg) translateY(0px);
-	}
-	60% {
-		transform: rotateX(10deg) translateY(-28px);
-		opacity: 1;
+		transform: translateY(0);
 	}
 	100% {
-		transform: rotateX(18deg) translateY(-62px);
-		opacity: 0.55;
+		transform: translateY(-50%);
 	}
 }
 
@@ -1168,23 +1182,21 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 1px;
+	gap: 4px;
 	width: 100%;
-	transform-origin: center bottom;
-	/* crawl starts 3s after credits appear — names already flashing in */
-	animation: names-crawl 13s ease-in 3s forwards;
+	/* crawl starts 8s after credits appear — original set has fully flashed in by then */
+	animation: names-crawl 32s linear 8s infinite;
 }
 
 .liora-credits-names-row {
-	display: flex;
-	justify-content: center;
-	gap: 12px;
+	display: block;
 	width: 100%;
+	text-align: center;
 }
 
 .liora-credits-names-row .liora-credits-name {
-	flex: 0 1 calc(50% - 6px);
+	display: block;
+	width: 100%;
 	text-align: center;
-	min-width: 0;
 }
 

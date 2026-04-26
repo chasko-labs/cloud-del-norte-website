@@ -119,28 +119,31 @@ export function LioraPanel() {
 	}, []);
 
 	return (
-		<div className="liora-bezel">
-			<div className="liora-panel-wrap">
+		<div className="liora-frame">
+			<div className="liora-bezel">
+				<div className="liora-panel-wrap">
+					<div
+						id="liora-shimmer"
+						className="liora-placeholder"
+						aria-hidden="true"
+					/>
+					<canvas
+						id="liora-canvas"
+						className="liora-canvas"
+						aria-hidden="true"
+						tabIndex={-1}
+					/>
+				</div>
 				<div
-					id="liora-shimmer"
-					className="liora-placeholder"
+					id="liora-status-bar"
+					className="liora-status-bar liora-status--green"
 					aria-hidden="true"
-				/>
-				<canvas
-					id="liora-canvas"
-					className="liora-canvas"
-					aria-hidden="true"
-					tabIndex={-1}
-				/>
+				>
+					<span id="liora-device-info">{deviceInfo}</span>
+					<span id="liora-sys-status"> &#9679; SYS:NOMINAL</span>
+				</div>
 			</div>
-			<div
-				id="liora-status-bar"
-				className="liora-status-bar liora-status--green"
-				aria-hidden="true"
-			>
-				<span id="liora-device-info">{deviceInfo}</span>
-				<span id="liora-sys-status"> &#9679; SYS:NOMINAL</span>
-			</div>
+			{/* scene-over indicator is appended here by liora-embed.ts after credits — sits below the monitor */}
 		</div>
 	);
 }
