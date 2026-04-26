@@ -160,8 +160,9 @@
 	}
 }
 
-/* phosphor filter — 8% grayscale lets skin tones and clothing hues bleed through;
-   sepia(0.15) adds amber cast without washing out hue; hue-rotate(68deg) tilts green */
+/* phosphor filter — grayscale + sepia desaturate slightly; saturate(1.8) retains
+   luminance separation between skin/hair/clothing; hue-rotate(68deg) tilts toward
+   classic phosphor green without destroying tonal detail */
 .liora-canvas {
 	position: absolute;
 	inset: 0;
@@ -171,8 +172,8 @@
 	transition:
 		opacity 0.8s ease,
 		filter 0.6s ease;
-	filter: grayscale(0.08) sepia(0.15) saturate(5) hue-rotate(68deg)
-		brightness(1.05) contrast(1.28);
+	filter: grayscale(0.12) sepia(0.2) saturate(1.8) hue-rotate(68deg)
+		brightness(0.92) contrast(1.15);
 }
 
 .liora-canvas.liora-canvas--visible {
@@ -790,52 +791,60 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: flex-start;
-	gap: 2px;
+	gap: 3px;
 	padding: 14px 10px 12px;
-	z-index: 12;
+	/* z-index 100 + isolation: isolate forces above GPU-composited WebGL canvas */
+	z-index: 100;
+	isolation: isolate;
 	pointer-events: none;
 	overflow: hidden;
 }
 
 .liora-credits-title {
 	font-family: "VT323", "Courier New", Courier, monospace;
-	font-size: 34px;
+	font-size: 36px;
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
-	color: #b090f8;
+	color: #e8d8ff;
 	opacity: 0;
 	animation: neon-warmup 2.5s ease forwards;
 	text-shadow:
-		0 0 6px #9060f0,
-		0 0 18px rgba(144, 96, 240, 0.85),
-		0 0 40px rgba(144, 96, 240, 0.5);
+		0 0 4px #fff,
+		0 0 10px #c090ff,
+		0 0 24px rgba(180, 120, 255, 0.9),
+		0 0 50px rgba(160, 90, 255, 0.55);
 	margin-bottom: 4px;
 	line-height: 1;
 }
 
 .liora-credits-subtitle {
 	font-family: "VT323", "Courier New", Courier, monospace;
-	font-size: 10px;
-	letter-spacing: 0.09em;
+	font-size: 13px;
+	letter-spacing: 0.06em;
 	text-transform: uppercase;
-	color: rgba(210, 185, 255, 0.72);
+	color: rgba(230, 210, 255, 0.95);
 	opacity: 0;
 	animation: liora-reconnect-fadein 0.6s ease 2.2s forwards;
-	margin-bottom: 5px;
+	margin-bottom: 6px;
 	text-align: center;
-	line-height: 1.3;
+	line-height: 1.35;
+	/* max-width forces "thank you to the amazon sumerian team" to wrap at ~2 lines */
+	max-width: 160px;
+	text-shadow: 0 0 6px rgba(200, 160, 255, 0.7);
 }
 
 .liora-credits-name {
 	font-family: "VT323", "Courier New", Courier, monospace;
-	font-size: 12px;
-	letter-spacing: 0.06em;
+	font-size: 15px;
+	letter-spacing: 0.07em;
 	text-transform: uppercase;
-	color: rgba(200, 175, 255, 0.84);
+	color: rgba(235, 220, 255, 0.98);
 	opacity: 0;
 	animation: liora-reconnect-fadein 0.4s ease forwards;
-	text-shadow: 0 0 5px rgba(144, 96, 240, 0.38);
-	line-height: 1.25;
+	text-shadow:
+		0 0 4px rgba(200, 160, 255, 0.8),
+		0 0 12px rgba(180, 130, 255, 0.45);
+	line-height: 1.3;
 }
 
 /* ── scene-over indicator — top right corner ─────────────────────────────── */
@@ -865,7 +874,10 @@
 }
 
 .liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn {
-	font-size: 10px;
-	letter-spacing: 0.09em;
-	padding: 2px 7px;
+	font-size: 12px;
+	letter-spacing: 0.1em;
+	padding: 3px 9px;
+	color: rgba(230, 210, 255, 0.97);
+	border-color: rgba(180, 130, 255, 0.85);
+	text-shadow: 0 0 6px rgba(180, 120, 255, 0.7);
 }
