@@ -167,8 +167,8 @@
 	transition:
 		opacity 0.8s ease,
 		filter 0.6s ease;
-	filter: grayscale(0.48) sepia(0.38) saturate(2.6) hue-rotate(68deg)
-		brightness(1) contrast(1.15);
+	filter: grayscale(0.28) sepia(0.32) saturate(2.8) hue-rotate(68deg)
+		brightness(1) contrast(1.12);
 }
 
 .liora-canvas.liora-canvas--visible {
@@ -348,21 +348,22 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 12px;
+	gap: 10px;
 	font-family: "Courier New", Courier, monospace;
-	font-size: 13px;
-	letter-spacing: 0.06em;
-	color: rgba(238, 224, 255, 1);
+	font-size: 11px;
+	letter-spacing: 0.02em;
+	color: #fff;
 	text-align: center;
-	line-height: 1.6;
-	padding: 16px;
+	line-height: 1.5;
+	padding: 8px;
 	pointer-events: none;
 	z-index: 12;
 	text-shadow:
-		0 0 3px rgba(255, 255, 255, 0.8),
-		0 0 10px rgba(200, 160, 255, 0.95),
-		0 0 22px rgba(144, 96, 240, 0.75),
-		0 0 44px rgba(144, 96, 240, 0.4);
+		0 0 2px rgba(255, 255, 255, 1),
+		0 0 8px rgba(220, 180, 255, 1),
+		0 0 18px rgba(144, 96, 240, 0.95),
+		0 0 36px rgba(144, 96, 240, 0.7),
+		0 0 60px rgba(144, 96, 240, 0.4);
 }
 
 @keyframes liora-message-out {
@@ -424,27 +425,27 @@
 
 @keyframes liora-icon-shimmer {
 	from {
-		border-color: rgba(144, 96, 240, 0.4);
-		box-shadow: 0 0 6px rgba(144, 96, 240, 0.25);
+		border-color: rgba(190, 140, 255, 0.75);
+		box-shadow: 0 0 8px rgba(144, 96, 240, 0.5);
 	}
 	to {
-		border-color: rgba(176, 144, 248, 0.95);
+		border-color: rgba(220, 180, 255, 1);
 		box-shadow:
-			0 0 14px rgba(144, 96, 240, 0.7),
-			0 0 28px rgba(144, 96, 240, 0.35);
+			0 0 16px rgba(144, 96, 240, 0.9),
+			0 0 32px rgba(144, 96, 240, 0.5);
 	}
 }
 
 @keyframes liora-text-shimmer {
 	from {
-		color: rgba(176, 144, 248, 0.65);
-		text-shadow: 0 0 4px rgba(144, 96, 240, 0.3);
+		color: rgba(200, 165, 255, 0.85);
+		text-shadow: 0 0 6px rgba(144, 96, 240, 0.6);
 	}
 	to {
-		color: rgba(210, 185, 255, 0.98);
+		color: rgba(230, 205, 255, 1);
 		text-shadow:
-			0 0 10px rgba(144, 96, 240, 0.85),
-			0 0 24px rgba(144, 96, 240, 0.45);
+			0 0 10px rgba(144, 96, 240, 1),
+			0 0 22px rgba(144, 96, 240, 0.6);
 	}
 }
 
@@ -455,54 +456,56 @@
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	gap: 14px;
+	gap: 12px;
 	z-index: 12;
 	pointer-events: none;
 	opacity: 0;
-	animation: liora-reconnect-fadein 0.7s ease 0.2s forwards;
+	animation: liora-reconnect-fadein 0.5s ease forwards;
 }
 
 .liora-reconnect-icon {
-	width: 44px;
-	height: 44px;
-	border: 2px dashed rgba(144, 96, 240, 0.5);
+	width: 40px;
+	height: 40px;
+	border: 2px dashed rgba(210, 170, 255, 0.9);
 	border-radius: 50%;
 	animation:
 		liora-icon-spin 3s linear infinite,
-		liora-icon-shimmer 1.8s ease-in-out infinite alternate;
+		liora-icon-shimmer 1.6s ease-in-out infinite alternate;
 }
 
 .liora-reconnect-label {
 	font-family: "Courier New", Courier, monospace;
 	font-size: 10px;
-	letter-spacing: 0.16em;
+	letter-spacing: 0.14em;
 	text-transform: uppercase;
-	animation: liora-text-shimmer 1.8s ease-in-out infinite alternate;
+	color: rgba(220, 190, 255, 0.95);
+	animation: liora-text-shimmer 1.6s ease-in-out infinite alternate;
 }
 
 .liora-reconnect-btn {
 	font-family: "Courier New", Courier, monospace;
-	font-size: 11px;
-	letter-spacing: 0.14em;
+	font-size: 10px;
+	letter-spacing: 0.12em;
 	text-transform: uppercase;
 	background: none;
-	border: 1px solid rgba(144, 96, 240, 0.5);
-	padding: 6px 16px;
-	border-radius: 4px;
+	border: 1px solid rgba(200, 160, 255, 0.8);
+	color: rgba(220, 190, 255, 0.95);
+	padding: 5px 14px;
+	border-radius: 3px;
 	cursor: pointer;
 	pointer-events: auto;
 	transition:
 		background 0.2s ease,
 		border-color 0.2s ease;
-	animation: liora-text-shimmer 1.8s ease-in-out 0.4s infinite alternate;
+	animation: liora-text-shimmer 1.6s ease-in-out 0.3s infinite alternate;
 }
 
 .liora-reconnect-btn:hover {
-	background: rgba(144, 96, 240, 0.18);
-	border-color: rgba(176, 144, 248, 0.9);
+	background: rgba(144, 96, 240, 0.22);
+	border-color: rgba(210, 170, 255, 1);
 	text-shadow:
-		0 0 8px rgba(144, 96, 240, 0.9),
-		0 0 18px rgba(144, 96, 240, 0.5);
+		0 0 6px rgba(144, 96, 240, 1),
+		0 0 14px rgba(144, 96, 240, 0.6);
 }
 
 /* ── powered-by neon link — appears in status slot after short circuit ─────── */
@@ -692,8 +695,8 @@
 /* tap-3: tube TV shutoff strobe */
 @keyframes liora-tube-off {
 	0% {
-		filter: grayscale(0.48) sepia(0.38) saturate(2.6) hue-rotate(68deg)
-			brightness(1) contrast(1.15);
+		filter: grayscale(0.28) sepia(0.32) saturate(2.8) hue-rotate(68deg)
+			brightness(1) contrast(1.12);
 	}
 	6% {
 		filter: brightness(14) contrast(0) saturate(0);
