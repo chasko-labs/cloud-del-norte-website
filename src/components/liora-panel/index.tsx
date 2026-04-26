@@ -20,6 +20,7 @@ function scheduleIdle(fn: () => void): void {
 export function LioraPanel() {
 	useEffect(() => {
 		let cancelled = false;
+		let drawerObserver: ResizeObserver | null = null;
 
 		const scriptSrc = import.meta.env.VITE_LIORA_SCRIPT_URL;
 		const assetBase = import.meta.env.VITE_LIORA_ASSET_BASE;
@@ -30,7 +31,7 @@ export function LioraPanel() {
 		const src = scriptSrc;
 		const base = assetBase;
 
-		function mount() {
+		function doMount() {
 			if (cancelled) return;
 			void (async () => {
 				try {
@@ -45,6 +46,32 @@ export function LioraPanel() {
 			})();
 		}
 
+		function mount() {
+			if (cancelled) return;
+			// On mobile the Cloudscape nav drawer is collapsed — canvas starts at 0×0.
+			// BabylonJS creates a degenerate context when given a zero-size canvas.
+			// Defer until the drawer opens and the canvas gets real dimensions.
+			const canvas = document.getElementById(
+				"liora-canvas",
+			) as HTMLCanvasElement | null;
+			if (canvas && canvas.clientWidth === 0) {
+				drawerObserver = new ResizeObserver(() => {
+					if (cancelled) {
+						drawerObserver?.disconnect();
+						return;
+					}
+					if (canvas.clientWidth > 0) {
+						drawerObserver?.disconnect();
+						drawerObserver = null;
+						doMount();
+					}
+				});
+				drawerObserver.observe(canvas);
+				return;
+			}
+			doMount();
+		}
+
 		if (document.readyState === "complete") {
 			scheduleIdle(mount);
 		} else {
@@ -55,6 +82,7 @@ export function LioraPanel() {
 
 		return () => {
 			cancelled = true;
+			drawerObserver?.disconnect();
 		};
 	}, []);
 
