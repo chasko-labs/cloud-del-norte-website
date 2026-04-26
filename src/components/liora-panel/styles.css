@@ -1,47 +1,61 @@
 /* Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. */
 /* SPDX-License-Identifier: MIT-0 */
 
-/* ── CRT phosphor terminal — diesel-punk aesthetic ─────────────────────────
-   outer bezel: hardware frame (liora-bezel)
+/* ── CRT phosphor terminal — glassmorphism bezel + green phosphor screen ────
+   outer bezel: cdn-card glassmorphism variant (liora-bezel)
    inner screen: green phosphor CRT (liora-panel-wrap)
-   crack states: crack-1 (chip) → crack-2 (crack) → crack-3 (shatter/unload)
-   tap states: screen-tap-1 (gold alert) → screen-tap-2 (red critical)
-   light mode bezel: cdn-navy #00002a  |  dark mode bezel: cdn-amber #8b5a2b
+   crack states: crack-1 (chip) → crack-2 (crack) → crack-3 (shatter)
+   tap states: screen-tap-1 (gold) → screen-tap-2 (red) — after dark-mode rules
    ───────────────────────────────────────────────────────────────────────── */
 
-/* ── outer bezel — hardware frame ─────────────────────────────────────────── */
+/* ── outer bezel — glassmorphism card variant ────────────────────────────── */
 
 .liora-bezel {
 	position: relative;
-	display: block;                  /* block fills nav drawer width on mobile */
+	display: block;
 	width: 100%;
-	padding: 10px 10px 36px;         /* 36px bottom: two-row status bar fits */
-	background: #1e1a14;             /* fallback — overridden by light/dark below */
-	border-radius: 10px;
+	padding: 10px 10px 36px;       /* 36px bottom: two-row status bar fits */
+	border-radius: 12px;
+	border: 2px solid rgba(139, 90, 43, 0.16);   /* light mode: sepia border */
+	background: linear-gradient(135deg, #faf7f0 0%, #f5f0e4 40%, #faf7f0 100%);
+	backdrop-filter: blur(8px);
+	-webkit-backdrop-filter: blur(8px);
 	box-shadow:
-		0 0 0 1px rgba(255, 200, 80, 0.08),
-		0 4px 18px rgba(0, 0, 0, 0.7),
-		inset 0 1px 0 rgba(255, 220, 100, 0.07);
+		0 4px 20px rgba(0, 0, 0, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.5);
 	box-sizing: border-box;
 }
 
-/* corner screws — four dots at bezel corners */
+/* gradient accent line at top — matches cdn-card brand sweep */
 .liora-bezel::before {
 	content: "";
 	position: absolute;
-	inset: 0;
-	border-radius: 10px;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	border-radius: 12px 12px 0 0;
 	pointer-events: none;
-	background:
-		radial-gradient(circle 3px at 8px 8px,   #3a3228 50%, transparent 51%),
-		radial-gradient(circle 3px at calc(100% - 8px) 8px,   #3a3228 50%, transparent 51%),
-		radial-gradient(circle 3px at 8px calc(100% - 8px),   #3a3228 50%, transparent 51%),
-		radial-gradient(circle 3px at calc(100% - 8px) calc(100% - 8px), #3a3228 50%, transparent 51%);
+	z-index: 1;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		var(--cdn-purple, #7040d8) 20%,
+		var(--cdn-violet, #9060f0) 50%,
+		var(--cdn-aws-orange, #ff9900) 80%,
+		transparent 100%
+	);
+	opacity: 0.6;
 }
 
-/* bottom bar slot — content is the real #liora-status-bar element */
+/* subtle glass inset highlight */
 .liora-bezel::after {
 	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 12px;
+	pointer-events: none;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12);
 }
 
 @keyframes led-critical {
@@ -54,7 +68,7 @@
 .liora-crack-overlay {
 	position: absolute;
 	inset: 0;
-	border-radius: 10px;
+	border-radius: 12px;
 	pointer-events: none;
 	z-index: 10;
 	background-repeat: no-repeat;
@@ -132,7 +146,7 @@
 	100% { background-position:   0%   0%; }
 }
 
-/* green phosphor filter — sepia base + hue-rotate(88deg) into green territory */
+/* green phosphor filter — sepia base + hue-rotate(88deg) into green */
 .liora-canvas {
 	position: absolute;
 	inset: 0;
@@ -145,30 +159,6 @@
 
 .liora-canvas.liora-canvas--visible {
 	opacity: 1;
-}
-
-/* tap-1: gold phosphor screen — cdn-gold territory */
-.liora-bezel.screen-tap-1 .liora-canvas {
-	filter: grayscale(1) sepia(1) saturate(4) hue-rotate(22deg) brightness(1.2) contrast(1.25);
-}
-.liora-bezel.screen-tap-1 .liora-panel-wrap {
-	box-shadow:
-		inset 0 0 0 2px rgba(201, 162, 63, 0.30),
-		inset 0 0 55px rgba(0, 0, 0, 0.92),
-		0 0 12px rgba(201, 162, 63, 0.22),
-		0 0 3px  rgba(201, 162, 63, 0.48);
-}
-
-/* tap-2: red phosphor screen */
-.liora-bezel.screen-tap-2 .liora-canvas {
-	filter: grayscale(1) sepia(1) saturate(4) hue-rotate(315deg) brightness(1.0) contrast(1.4);
-}
-.liora-bezel.screen-tap-2 .liora-panel-wrap {
-	box-shadow:
-		inset 0 0 0 2px rgba(239, 68, 68, 0.28),
-		inset 0 0 55px rgba(0, 0, 0, 0.92),
-		0 0 12px rgba(239, 68, 68, 0.18),
-		0 0 3px  rgba(239, 68, 68, 0.42);
 }
 
 /* scanlines — horizontal line pairs every 4px, 18% darkening on odd rows */
@@ -187,7 +177,7 @@
 	);
 }
 
-/* screen vignette + glare — phosphor falloff at edges, faint green hotspot */
+/* screen vignette + glare */
 .liora-panel-wrap::after {
 	content: "";
 	position: absolute;
@@ -230,7 +220,7 @@
 
 /* tap 0: phosphor terminal green */
 .liora-status-bar.liora-status--green {
-	color: rgba(34, 197, 94, 0.72);
+	color: rgba(34, 197, 94, 0.82);
 }
 
 /* tap 1: cdn-gold warning */
@@ -313,8 +303,7 @@
 	letter-spacing: 0.14em;
 }
 
-/* ── powered-by neon — fades into status bar slot after short circuit ────── */
-/* cdn-violet (#9060f0) bridges CRT aesthetic with the site palette */
+/* ── powered-by neon link — appears in status slot after short circuit ─────── */
 
 .liora-powered-by {
 	position: absolute;
@@ -361,25 +350,20 @@
 }
 
 /* ── design system integration — bezel adapts to page mode ──────────────── */
+/* these must appear before the tap-state overrides so tap states win on ties */
 
-/* light mode: cdn-navy bezel #00002a */
-:root:not(.awsui-dark-mode) .liora-bezel {
-	background: #00002a;
-	box-shadow:
-		0 0 0 1px rgba(255, 200, 80, 0.12),
-		0 4px 24px rgba(0, 0, 0, 0.5),
-		0 0 32px rgba(139, 90, 43, 0.1),
-		inset 0 1px 0 rgba(255, 220, 100, 0.09);
-}
-
-/* dark mode: cdn-amber bezel #8b5a2b */
+/* dark mode: navy/purple glass bezel */
 .awsui-dark-mode .liora-bezel {
-	background: #8b5a2b;
+	background: linear-gradient(
+		135deg,
+		rgba(28, 34, 48, 0.95) 0%,
+		rgba(30, 26, 48, 0.88) 30%,
+		rgba(17, 24, 39, 0.97) 100%
+	);
+	border-color: rgba(144, 96, 240, 0.15);
 	box-shadow:
-		0 0 0 1px rgba(144, 96, 240, 0.14),
-		0 4px 24px rgba(0, 0, 0, 0.78),
-		0 0 36px rgba(144, 96, 240, 0.07),
-		inset 0 1px 0 rgba(255, 220, 100, 0.07);
+		0 8px 24px -6px rgba(0, 0, 0, 0.4),
+		0 0 24px -8px rgba(144, 96, 240, 0.12);
 }
 
 /* dark mode: CRT screen gains a faint violet outer glow */
@@ -389,4 +373,30 @@
 		inset 0 0 55px rgba(0, 0, 0, 0.92),
 		0 0 16px rgba(144, 96, 240, 0.1),
 		0 0 3px  rgba(0, 200, 60, 0.28);
+}
+
+/* ── tap state overrides — AFTER dark-mode rules so they win on specificity ties */
+
+/* tap-1: gold phosphor screen */
+.liora-bezel.screen-tap-1 .liora-canvas {
+	filter: grayscale(1) sepia(1) saturate(4) hue-rotate(22deg) brightness(1.2) contrast(1.25);
+}
+.liora-bezel.screen-tap-1 .liora-panel-wrap {
+	box-shadow:
+		inset 0 0 0 2px rgba(201, 162, 63, 0.30),
+		inset 0 0 55px rgba(0, 0, 0, 0.92),
+		0 0 12px rgba(201, 162, 63, 0.22),
+		0 0 3px  rgba(201, 162, 63, 0.48);
+}
+
+/* tap-2: red phosphor screen */
+.liora-bezel.screen-tap-2 .liora-canvas {
+	filter: grayscale(1) sepia(1) saturate(4) hue-rotate(315deg) brightness(1.0) contrast(1.4);
+}
+.liora-bezel.screen-tap-2 .liora-panel-wrap {
+	box-shadow:
+		inset 0 0 0 2px rgba(239, 68, 68, 0.28),
+		inset 0 0 55px rgba(0, 0, 0, 0.92),
+		0 0 12px rgba(239, 68, 68, 0.18),
+		0 0 3px  rgba(239, 68, 68, 0.42);
 }
