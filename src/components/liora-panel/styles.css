@@ -39,28 +39,9 @@
 		radial-gradient(circle 3px at calc(100% - 8px) calc(100% - 8px), #3a3228 50%, transparent 51%);
 }
 
-/* bottom bar — manufacturer label + LED status */
+/* bottom bar slot — content is now the real #liora-status-bar element */
 .liora-bezel::after {
-	content: "DIESEL-SYSTEMS CRT-47  \25CF  UNIT-47 // SYS:NOMINAL";
-	position: absolute;
-	bottom: 4px;
-	left: 14px;
-	right: 14px;
-	font-family: "Courier New", Courier, monospace;
-	font-size: 8px;
-	letter-spacing: 0.08em;
-	color: rgba(200, 140, 0, 0.45);
-	text-transform: uppercase;
-	pointer-events: none;
-	white-space: nowrap;
-	overflow: hidden;
-}
-
-/* crack-3: LED goes red + blinks, label reads CRITICAL */
-.liora-bezel.crack-3::after {
-	content: "DIESEL-SYSTEMS CRT-47  \25CF  UNIT-47 // SYS:CRITICAL";
-	color: rgba(220, 60, 30, 0.7);
-	animation: led-critical 0.8s ease-in-out infinite alternate;
+	content: "";
 }
 
 @keyframes led-critical {
@@ -204,4 +185,157 @@
 	97%            { filter: brightness(1.01); }
 	98%            { filter: brightness(0.98); }
 	99%            { filter: brightness(1.00); }
+}
+
+/* ── status bar — dynamic device telemetry ────────────────────────────────── */
+
+.liora-status-bar {
+	position: absolute;
+	bottom: 4px;
+	left: 14px;
+	right: 14px;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 8px;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	overflow: hidden;
+	pointer-events: none;
+	user-select: none;
+	transition: color 0.5s ease, opacity 0.5s ease;
+}
+
+/* tap 0: phosphor terminal green */
+.liora-status-bar.liora-status--green {
+	color: rgba(34, 197, 94, 0.72);
+}
+
+/* tap 1: amber warning */
+.liora-status-bar.liora-status--yellow {
+	color: rgba(234, 179, 8, 0.85);
+}
+
+/* tap 2: critical red — borrows led-critical blink */
+.liora-status-bar.liora-status--red {
+	color: rgba(239, 68, 68, 0.88);
+	animation: led-critical 0.8s ease-in-out infinite alternate;
+}
+
+/* tap 3: short-circuit glitch */
+.liora-status-bar.liora-status--short-circuit {
+	color: rgba(239, 68, 68, 0.9);
+	animation:
+		led-critical 0.35s ease-in-out infinite alternate,
+		sc-jitter 0.25s step-end infinite;
+}
+
+@keyframes sc-jitter {
+	0%,  80%, 100% { transform: translateX(0); }
+	85%            { transform: translateX(-2px); }
+	90%            { transform: translateX(2px); }
+	95%            { transform: translateX(-1px); }
+}
+
+/* hidden — fades out before powered-by appears */
+.liora-status-bar.liora-status--hidden {
+	opacity: 0;
+}
+
+@keyframes led-critical {
+	from { opacity: 1; }
+	to   { opacity: 0.3; }
+}
+
+/* ── portal broken message — overlaid on CRT screen after shatter ─────────── */
+
+.liora-portal-message {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 11px;
+	letter-spacing: 0.06em;
+	color: rgba(144, 96, 240, 0.88);
+	text-align: center;
+	line-height: 1.5;
+	padding: 16px;
+	pointer-events: none;
+	opacity: 0;
+	z-index: 12;
+	animation: portal-msg-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards;
+}
+
+@keyframes portal-msg-in {
+	from { opacity: 0; transform: scale(0.88); }
+	to   { opacity: 1; transform: scale(1); }
+}
+
+/* ── powered-by neon — fades into the status bar slot after short circuit ─── */
+/* uses cdn-violet (#9060f0) to bridge the CRT aesthetic with the site palette */
+
+.liora-powered-by {
+	position: absolute;
+	bottom: 4px;
+	left: 14px;
+	right: 14px;
+	font-family: "Courier New", Courier, monospace;
+	font-size: 8px;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	white-space: nowrap;
+	overflow: hidden;
+	pointer-events: none;
+	opacity: 0;
+	color: #9060f0;
+	animation: neon-warmup 4.5s ease forwards;
+}
+
+@keyframes neon-warmup {
+	0%   { opacity: 0;    color: rgba(144, 96, 240, 0.1); text-shadow: none; }
+	14%  { opacity: 0;    color: rgba(144, 96, 240, 0.1); text-shadow: none; }
+	15%  { opacity: 0.4;  color: rgba(144, 96, 240, 0.5); text-shadow: 0 0 4px rgba(144, 96, 240, 0.5); }
+	16%  { opacity: 0.1;  text-shadow: none; }
+	19%  { opacity: 0.5;  text-shadow: 0 0 6px rgba(144, 96, 240, 0.55); }
+	20%  { opacity: 0.15; text-shadow: none; }
+	21%  { opacity: 0.6;  text-shadow: 0 0 6px rgba(144, 96, 240, 0.6); }
+	34%  { opacity: 0.7;  color: rgba(144, 96, 240, 0.78); text-shadow: 0 0 8px rgba(144, 96, 240, 0.6); }
+	35%  { opacity: 0.25; text-shadow: none; }
+	36%  { opacity: 0.75; text-shadow: 0 0 8px rgba(144, 96, 240, 0.65); }
+	50%  { opacity: 0.85; color: #a080e8; text-shadow: 0 0 8px rgba(144, 96, 240, 0.7), 0 0 16px rgba(144, 96, 240, 0.4); }
+	70%  { opacity: 1;    color: #b090f8; text-shadow: 0 0 4px #9060f0, 0 0 10px rgba(144, 96, 240, 0.7), 0 0 22px rgba(144, 96, 240, 0.4); }
+	74%  { opacity: 0.8;  text-shadow: 0 0 3px rgba(144, 96, 240, 0.7); }
+	78%  { opacity: 1;    text-shadow: 0 0 4px #9060f0, 0 0 12px rgba(144, 96, 240, 0.72); }
+	100% { opacity: 0.95; color: #b090f8; text-shadow: 0 0 4px #9060f0, 0 0 10px rgba(144, 96, 240, 0.7), 0 0 20px rgba(144, 96, 240, 0.35); }
+}
+
+/* ── design system integration — bezel glow adapts to page mode ───────────── */
+/* bezel is always dark hardware; the outer glow bridges it to the page palette */
+
+/* light mode: warm amber ambient bleed from the cream page */
+:root:not(.awsui-dark-mode) .liora-bezel {
+	box-shadow:
+		0 0 0 1px rgba(255, 200, 80, 0.12),
+		0 4px 24px rgba(0, 0, 0, 0.5),
+		0 0 32px rgba(139, 90, 43, 0.1),
+		inset 0 1px 0 rgba(255, 220, 100, 0.09);
+}
+
+/* dark mode: violet ambient bleed from the cdn navy/purple page */
+.awsui-dark-mode .liora-bezel {
+	box-shadow:
+		0 0 0 1px rgba(144, 96, 240, 0.14),
+		0 4px 24px rgba(0, 0, 0, 0.78),
+		0 0 36px rgba(144, 96, 240, 0.07),
+		inset 0 1px 0 rgba(255, 220, 100, 0.07);
+}
+
+/* dark mode: CRT screen gains a faint violet outer glow (phosphor stays amber) */
+.awsui-dark-mode .liora-panel-wrap {
+	box-shadow:
+		inset 0 0 0 2px rgba(200, 140, 0, 0.22),
+		inset 0 0 55px rgba(0, 0, 0, 0.92),
+		0 0 16px rgba(144, 96, 240, 0.1),
+		0 0 3px  rgba(200, 140, 0, 0.35);
 }

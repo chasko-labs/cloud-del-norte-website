@@ -2,8 +2,38 @@
 // SPDX-License-Identifier: MIT-0
 
 // React must be a value import — tsconfig jsx:"react" requires it in scope as the JSX factory
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import "./styles.css";
+
+function buildDeviceInfo(): string {
+	const ua = navigator.userAgent;
+	const isAndroid = /android/i.test(ua);
+	const isIPhone = /iphone/i.test(ua);
+	const isIPad =
+		/ipad/i.test(ua) || (/macintosh/i.test(ua) && "ontouchend" in document);
+	const isMobile =
+		isAndroid ||
+		isIPhone ||
+		isIPad ||
+		"ontouchstart" in window ||
+		(typeof window.matchMedia === "function" &&
+			window.matchMedia("(pointer: coarse)").matches);
+
+	let os: string;
+	if (isAndroid) os = "android";
+	else if (isIPhone) os = "ios";
+	else if (isIPad) os = "ipados";
+	else if (/windows/i.test(ua)) os = "windows";
+	else if (/mac os x/i.test(ua)) os = "macos";
+	else os = "linux";
+
+	const w = window.screen.width;
+	const h = window.screen.height;
+	const dpr = (window.devicePixelRatio ?? 1).toFixed(1);
+	const type = isMobile ? "mob" : "dsk";
+
+	return `${type} ● os:${os} ● ${w}×${h} ● dpr:${dpr}`;
+}
 
 interface LioraEmbedModule {
 	mountLioraPanel: (assetBase: string) => Promise<void>;
@@ -18,6 +48,8 @@ function scheduleIdle(fn: () => void): void {
 }
 
 export function LioraPanel() {
+	const deviceInfo = useMemo(() => buildDeviceInfo(), []);
+
 	useEffect(() => {
 		let cancelled = false;
 		let drawerObserver: ResizeObserver | null = null;
@@ -100,6 +132,14 @@ export function LioraPanel() {
 					aria-hidden="true"
 					tabIndex={-1}
 				/>
+			</div>
+			<div
+				id="liora-status-bar"
+				className="liora-status-bar liora-status--green"
+				aria-hidden="true"
+			>
+				<span id="liora-device-info">{deviceInfo}</span>
+				<span id="liora-sys-status"> &#9679; SYS:NOMINAL</span>
 			</div>
 		</div>
 	);
