@@ -318,21 +318,32 @@
 .liora-status-bar {
 	position: absolute;
 	bottom: 30px;
-	left: 14px;
-	right: 14px;
+	left: 16px;
+	right: 16px;
 	font-family: "VT323", "Courier New", Courier, monospace;
-	font-size: 12px;
-	letter-spacing: 0.06em;
+	font-size: 14px;
+	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	line-height: 1.4;
+	line-height: 1.5;
 	overflow: hidden;
 	pointer-events: none;
 	user-select: none;
-	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
 	z-index: 22;
 	transition:
 		color 0.5s ease,
 		opacity 0.5s ease;
+}
+
+#liora-device-info,
+#liora-sys-status {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	white-space: nowrap;
 }
 
 /* tap 0: phosphor terminal green */
@@ -378,6 +389,17 @@
 
 .liora-status-bar.liora-status--hidden {
 	opacity: 0;
+}
+
+/* end-credits status mode — calm cdn-violet, no flashing.
+   added when scene enters tap-3 credits sequence; killed by refreshScene. */
+.liora-status-bar.liora-status--credits {
+	color: var(--cdn-violet, #9060f0);
+	animation: none !important;
+	transform: none !important;
+	text-shadow:
+		0 0 4px rgba(144, 96, 240, 0.55),
+		0 0 12px rgba(144, 96, 240, 0.32);
 }
 
 /* ── portal broken message — overlaid on CRT screen after shatter ─────────── */
@@ -1381,9 +1403,9 @@
 
 .liora-reconnect-icon--inline {
 	display: inline-block;
-	width: 12px;
-	height: 12px;
-	border: 1.5px dashed rgba(240, 200, 255, 0.95);
+	width: 14px;
+	height: 14px;
+	border: 1.5px dashed var(--cdn-violet, #9060f0);
 	border-radius: 50%;
 	transition:
 		transform 0.35s cubic-bezier(0.2, 0.85, 0.35, 1.1),
@@ -1395,16 +1417,20 @@
 	vertical-align: middle;
 	transform-origin: center;
 	will-change: transform;
+	flex-shrink: 0;
 }
 
 .liora-reconnect-label--inline {
 	font-family: "VT323", "Courier New", Courier, monospace;
 	font-size: inherit;
-	letter-spacing: 0.1em;
-	color: rgba(230, 210, 255, 0.97);
-	text-shadow: 0 0 6px rgba(180, 120, 255, 0.65);
+	letter-spacing: 0.12em;
+	color: var(--cdn-violet, #9060f0);
+	text-shadow:
+		0 0 4px rgba(144, 96, 240, 0.55),
+		0 0 12px rgba(144, 96, 240, 0.32);
 	user-select: none;
 	-webkit-user-select: none;
+	white-space: nowrap;
 }
 
 /* hover: 3D push-out — perspective + translateZ + scale.
@@ -1441,9 +1467,15 @@
 	will-change: transform;
 }
 
-/* "amazon sumerian" inline span — inherit subtitle styles, distinguish via cursor */
+/* "amazon sumerian" inline span — needs inline-block so the popout 3D transform
+   actually renders. browsers ignore transform on plain inline boxes */
 .liora-credits-amzn {
-	display: inline;
+	display: inline-block;
+	color: var(--cdn-lavender, #d7c7ee);
+	text-shadow:
+		0 0 4px rgba(255, 255, 255, 0.85),
+		0 0 12px rgba(215, 199, 238, 0.7),
+		0 0 22px rgba(180, 130, 255, 0.5);
 }
 
 /* popped state — 3D translateZ push, slight scale, kept until next tap */
