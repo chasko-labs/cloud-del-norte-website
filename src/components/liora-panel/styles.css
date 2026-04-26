@@ -115,10 +115,11 @@
 	background: #050607;
 	border-radius: 6px;
 	box-shadow:
-		inset 0 0 0 2px rgba(0, 200, 60, 0.18),
-		inset 0 0 55px rgba(0, 0, 0, 0.92),
-		0 0 10px rgba(0, 180, 40, 0.14),
-		0 0 2px rgba(0, 200, 60, 0.35);
+		inset 0 0 0 2px rgba(0, 220, 70, 0.40),
+		inset 0 0 40px rgba(0, 0, 0, 0.88),
+		0 0 24px rgba(0, 210, 55, 0.38),
+		0 0 52px rgba(0, 180, 40, 0.18),
+		0 0 4px rgba(0, 230, 70, 0.65);
 	animation: crt-flicker 11s ease-in-out infinite;
 	transition: box-shadow 0.6s ease;
 }
@@ -167,8 +168,8 @@
 	transition:
 		opacity 0.8s ease,
 		filter 0.6s ease;
-	filter: grayscale(0.28) sepia(0.32) saturate(2.8) hue-rotate(68deg)
-		brightness(1) contrast(1.12);
+	filter: grayscale(0.08) sepia(0.15) saturate(5) hue-rotate(68deg)
+		brightness(1.05) contrast(1.28);
 }
 
 .liora-canvas.liora-canvas--visible {
@@ -186,17 +187,17 @@
 		linear-gradient(
 			to bottom,
 			transparent 0%,
-			rgba(0, 220, 80, 0.025) 40%,
-			rgba(0, 220, 80, 0.055) 50%,
-			rgba(0, 220, 80, 0.025) 60%,
+			rgba(0, 220, 80, 0.07) 35%,
+			rgba(0, 240, 90, 0.18) 50%,
+			rgba(0, 220, 80, 0.07) 65%,
 			transparent 100%
 		),
 		repeating-linear-gradient(
 			to bottom,
 			transparent 0px,
 			transparent 3px,
-			rgba(0, 0, 0, 0.18) 3px,
-			rgba(0, 0, 0, 0.18) 4px
+			rgba(0, 0, 0, 0.22) 3px,
+			rgba(0, 0, 0, 0.22) 4px
 		);
 	background-size:
 		100% 600px,
@@ -213,50 +214,50 @@
 	z-index: 4;
 	background:
 		radial-gradient(
-			ellipse 55% 35% at 25% 10%,
-			rgba(0, 220, 80, 0.05) 0%,
-			transparent 70%
+			ellipse 60% 40% at 22% 8%,
+			rgba(0, 230, 90, 0.12) 0%,
+			transparent 65%
 		),
 		radial-gradient(
 			ellipse 75% 75% at 50% 50%,
-			transparent 35%,
-			rgba(0, 0, 0, 0.72) 100%
+			transparent 30%,
+			rgba(0, 0, 0, 0.75) 100%
 		);
 }
 
-/* phosphor flicker — ~10% brightness swing, irregular multi-step cadence */
+/* phosphor flicker — ~22% brightness swing, aggressive irregular cadence */
 @keyframes crt-flicker {
 	0%,
-	90%,
+	82%,
 	100% {
 		filter: brightness(1);
 	}
-	91% {
-		filter: brightness(0.93);
+	83% {
+		filter: brightness(0.82);
 	}
-	92% {
-		filter: brightness(1.04);
+	85% {
+		filter: brightness(1.18);
+	}
+	87% {
+		filter: brightness(0.76);
+	}
+	89% {
+		filter: brightness(1.22);
+	}
+	91% {
+		filter: brightness(0.80);
 	}
 	93% {
-		filter: brightness(0.89);
-	}
-	94% {
-		filter: brightness(1.05);
+		filter: brightness(1.14);
 	}
 	95% {
-		filter: brightness(0.92);
-	}
-	96% {
-		filter: brightness(1.02);
+		filter: brightness(0.74);
 	}
 	97% {
-		filter: brightness(0.88);
-	}
-	98% {
-		filter: brightness(1.03);
+		filter: brightness(1.10);
 	}
 	99% {
-		filter: brightness(0.95);
+		filter: brightness(0.88);
 	}
 }
 
@@ -655,48 +656,51 @@
 		0 0 24px -8px rgba(144, 96, 240, 0.12);
 }
 
-/* dark mode: CRT screen gains a faint violet outer glow */
+/* dark mode: CRT screen — violet outer glow + punchy phosphor border */
 .awsui-dark-mode .liora-panel-wrap {
 	box-shadow:
-		inset 0 0 0 2px rgba(0, 200, 60, 0.18),
-		inset 0 0 55px rgba(0, 0, 0, 0.92),
-		0 0 16px rgba(144, 96, 240, 0.1),
-		0 0 3px rgba(0, 200, 60, 0.28);
+		inset 0 0 0 2px rgba(0, 220, 70, 0.40),
+		inset 0 0 40px rgba(0, 0, 0, 0.88),
+		0 0 28px rgba(144, 96, 240, 0.22),
+		0 0 52px rgba(0, 180, 40, 0.16),
+		0 0 4px rgba(0, 230, 70, 0.65);
 }
 
 /* ── tap state overrides — AFTER dark-mode rules so they win on specificity ties */
 
-/* tap-1: gold phosphor screen */
+/* tap-1: gold phosphor — punchy warm shift */
 .liora-bezel.screen-tap-1 .liora-canvas {
-	filter: grayscale(0.48) sepia(0.38) saturate(3.2) hue-rotate(18deg)
-		brightness(1.12) contrast(1.2);
+	filter: grayscale(0.06) sepia(0.45) saturate(5.5) hue-rotate(22deg)
+		brightness(1.15) contrast(1.32);
 }
 .liora-bezel.screen-tap-1 .liora-panel-wrap {
 	box-shadow:
-		inset 0 0 0 2px rgba(201, 162, 63, 0.3),
-		inset 0 0 55px rgba(0, 0, 0, 0.92),
-		0 0 12px rgba(201, 162, 63, 0.22),
-		0 0 3px rgba(201, 162, 63, 0.48);
+		inset 0 0 0 2px rgba(210, 168, 60, 0.55),
+		inset 0 0 38px rgba(0, 0, 0, 0.88),
+		0 0 28px rgba(201, 162, 63, 0.45),
+		0 0 56px rgba(201, 162, 63, 0.22),
+		0 0 5px rgba(220, 175, 60, 0.7);
 }
 
-/* tap-2: aws orange phosphor screen */
+/* tap-2: aws orange phosphor — maximum warmth */
 .liora-bezel.screen-tap-2 .liora-canvas {
-	filter: grayscale(0.48) sepia(0.38) saturate(3.8) hue-rotate(2deg)
-		brightness(1.18) contrast(1.15);
+	filter: grayscale(0.04) sepia(0.55) saturate(6) hue-rotate(5deg)
+		brightness(1.20) contrast(1.35);
 }
 .liora-bezel.screen-tap-2 .liora-panel-wrap {
 	box-shadow:
-		inset 0 0 0 2px rgba(255, 153, 0, 0.3),
-		inset 0 0 55px rgba(0, 0, 0, 0.92),
-		0 0 12px rgba(255, 153, 0, 0.22),
-		0 0 3px rgba(255, 153, 0, 0.48);
+		inset 0 0 0 2px rgba(255, 153, 0, 0.6),
+		inset 0 0 38px rgba(0, 0, 0, 0.88),
+		0 0 32px rgba(255, 153, 0, 0.50),
+		0 0 64px rgba(255, 130, 0, 0.25),
+		0 0 5px rgba(255, 165, 0, 0.8);
 }
 
 /* tap-3: tube TV shutoff strobe */
 @keyframes liora-tube-off {
 	0% {
-		filter: grayscale(0.28) sepia(0.32) saturate(2.8) hue-rotate(68deg)
-			brightness(1) contrast(1.12);
+		filter: grayscale(0.08) sepia(0.15) saturate(5) hue-rotate(68deg)
+			brightness(1.05) contrast(1.28);
 	}
 	6% {
 		filter: brightness(14) contrast(0) saturate(0);
