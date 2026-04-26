@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 // React must be a value import — tsconfig jsx:"react" requires it in scope as the JSX factory
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./styles.css";
 
 function buildDeviceInfo(): string {
@@ -40,6 +40,15 @@ function scheduleIdle(fn: () => void): void {
 
 export function LioraPanel() {
 	const deviceInfo = useMemo(() => buildDeviceInfo(), []);
+	// sticky note interaction — tiny by default, zoom + replay handwriting on click.
+	// stickyKey forces React to re-mount the element so the clip-path keyframes
+	// restart from 0% (cleanest cross-browser way to replay an in-progress animation)
+	const [stickyZoomed, setStickyZoomed] = useState(false);
+	const [stickyKey, setStickyKey] = useState(0);
+	const handleStickyToggle = () => {
+		setStickyZoomed((z) => !z);
+		setStickyKey((k) => k + 1);
+	};
 
 	useEffect(() => {
 		let cancelled = false;
@@ -144,9 +153,18 @@ export function LioraPanel() {
 				</div>
 			</div>
 			{/* sticky note — physical-paper note TAPED to the bottom edge of the
-			    monitor console, hangs DOWN below the bezel so it never covers the
-			    screen or any chrome. tap-1 sways; tap-2 rips and falls */}
-			<div className="liora-stickynote" aria-hidden="true">
+			    monitor console, hangs DOWN below the bezel. tiny default, click to
+			    zoom + replay handwriting, click again to shrink back. tap-1 on the
+			    SCREEN rips and falls (separate from this click handler) */}
+			<button
+				key={stickyKey}
+				type="button"
+				className={`liora-stickynote${stickyZoomed ? " liora-stickynote--zoomed" : ""}`}
+				onClick={handleStickyToggle}
+				aria-label={
+					stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
+				}
+			>
 				<span className="liora-stickynote-line liora-stickynote-line-1">
 					non load
 				</span>
@@ -154,7 +172,7 @@ export function LioraPanel() {
 					bearing
 				</span>
 				<span className="liora-stickynote-sig">- ^.^</span>
-			</div>
+			</button>
 			{/* scene-over "skip credits" button is appended into the bezel by liora-embed.ts
 			    at credits-time; this frame slot is reserved for future stage chrome */}
 		</div>
