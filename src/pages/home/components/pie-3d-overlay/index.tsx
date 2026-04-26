@@ -52,7 +52,14 @@ export default function PieOverlay3D({ items }: Props) {
 			if (cancelled) return;
 			const canvas = canvasRef.current;
 			if (!canvas) return;
-			if (canvas.clientWidth === 0 || canvas.clientHeight === 0) return;
+			if (canvas.clientWidth === 0 || canvas.clientHeight === 0) {
+				console.warn(
+					"[pie-3d-overlay] bail: canvas zero-size at boot",
+					canvas.clientWidth,
+					canvas.clientHeight,
+				);
+				return;
+			}
 
 			try {
 				const [
@@ -203,8 +210,8 @@ export default function PieOverlay3D({ items }: Props) {
 				// store remover so cleanup can detach
 				(engine as { __removeResize?: () => void }).__removeResize = () =>
 					window.removeEventListener("resize", onResize);
-			} catch {
-				// load failure — leave 2D chart visible, no overlay
+			} catch (err) {
+				console.warn("[pie-3d-overlay] bail: babylon load/init failed", err);
 			}
 		}
 
@@ -236,6 +243,7 @@ export default function PieOverlay3D({ items }: Props) {
 	return (
 		<canvas
 			ref={canvasRef}
+			data-testid="pie-3d-overlay"
 			aria-hidden="true"
 			tabIndex={-1}
 			style={{

@@ -1722,6 +1722,65 @@
 	}
 }
 
+/* per-word fade-out choreography on the alternating subtitle.
+   thanks line: full reveal, "the" fades, "to" fades, "thank you" holds for a beat
+   team  line: full reveal, "TEAM" fades, "AMAZON SUMERIAN" holds two extra beats
+   inline-block keeps each word's layout box stable so siblings don't reflow */
+.liora-credits-word-the,
+.liora-credits-word-to,
+.liora-credits-word-team {
+	display: inline-block;
+}
+
+.liora-credits-word-the {
+	animation: liora-word-the-fade 7.2s ease-in-out 2.4s infinite;
+}
+
+.liora-credits-word-to {
+	animation: liora-word-to-fade 7.2s ease-in-out 2.4s infinite;
+}
+
+.liora-credits-word-team {
+	animation: liora-word-team-fade 7.2s ease-in-out 2.4s infinite;
+}
+
+/* "the" fades 28-32% of the thanks-line cycle (right after full reveal at 22%) */
+@keyframes liora-word-the-fade {
+	0%,
+	28% {
+		opacity: 1;
+	}
+	32%,
+	100% {
+		opacity: 0;
+	}
+}
+
+/* "to" fades 37-41% — leaves "thank you" alone for the beat at 41-50% */
+@keyframes liora-word-to-fade {
+	0%,
+	37% {
+		opacity: 1;
+	}
+	41%,
+	100% {
+		opacity: 0;
+	}
+}
+
+/* "TEAM" fades 76-80% — leaves AMAZON SUMERIAN holding alone 80-95%
+   ≈ 1.08s, the requested two extra beats before the line itself fades */
+@keyframes liora-word-team-fade {
+	0%,
+	76% {
+		opacity: 1;
+	}
+	80%,
+	100% {
+		opacity: 0;
+	}
+}
+
 .liora-credits-name {
 	font-family: "VT323", "Courier New", Courier, monospace;
 	font-size: 18px;
@@ -2235,7 +2294,6 @@
 .liora-credits-amzn {
 	display: inline-block;
 	color: var(--cdn-aws-orange, #ff9900);
-	-webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.9);
 	text-shadow:
 		0 0 3px rgba(255, 200, 80, 0.9),
 		0 0 8px rgba(255, 153, 0, 0.7),
