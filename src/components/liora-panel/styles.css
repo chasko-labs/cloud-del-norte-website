@@ -344,25 +344,63 @@
 		0 0.2px 0 rgba(100, 65, 25, 0.3);
 }
 
-/* zoomed state — click toggles. font + padding scale up, max-width relaxes,
-   z-index lifts above the LED panel + scene-over chrome. handwriting replays
-   automatically because the React `key` bumps on each toggle, remounting */
+/* zoomed state — click toggles. ~4x default size with a "detach + bring forward"
+   feel: rotation flattens (as if held in hand, not taped to wall), translates
+   forward+down toward camera, gets a strong drop-shadow that sells the lift.
+   z-index lifts above all chrome. handwriting replays automatically because the
+   React `key` bumps on each toggle, remounting */
 .liora-stickynote.liora-stickynote--zoomed {
-	min-width: 80px;
-	max-width: clamp(110px, 32cqi, 150px);
-	padding: 9px 12px 11px;
-	font-size: clamp(14px, 4.6cqi, 17px);
-	z-index: 60;
+	min-width: 130px;
+	max-width: clamp(170px, 52cqi, 230px);
+	padding: 14px 18px 16px;
+	font-size: clamp(20px, 7cqi, 28px);
+	z-index: 80;
+	transform: rotate(-1deg) translate(6px, 14px) scale(1);
+	transform-origin: 50% 50%;
+	transition:
+		transform 0.45s cubic-bezier(0.2, 0.85, 0.4, 1.1),
+		box-shadow 0.45s ease,
+		font-size 0.45s ease,
+		padding 0.45s ease,
+		min-width 0.45s ease,
+		max-width 0.45s ease;
 	box-shadow:
-		3px 6px 10px rgba(0, 0, 0, 0.55),
-		2px 3px 5px rgba(0, 0, 0, 0.35),
-		inset 0 -3px 6px rgba(180, 130, 30, 0.22);
+		6px 14px 28px rgba(0, 0, 0, 0.62),
+		3px 6px 12px rgba(0, 0, 0, 0.42),
+		2px 3px 6px rgba(0, 0, 0, 0.32),
+		inset 0 -3px 7px rgba(180, 130, 30, 0.24);
+	background-image:
+		repeating-linear-gradient(
+			0deg,
+			rgba(120, 80, 20, 0.06) 0,
+			rgba(120, 80, 20, 0.06) 1px,
+			transparent 1px,
+			transparent 5px
+		),
+		linear-gradient(
+			135deg,
+			rgba(255, 244, 150, 0.94) 0%,
+			rgba(252, 232, 110, 0.92) 60%,
+			rgba(248, 218, 90, 0.9) 100%
+		);
+	background-size:
+		100% 5px,
+		100% 100%;
 }
 
+.liora-stickynote.liora-stickynote--zoomed .liora-stickynote-sig {
+	font-size: 1.2em;
+	margin-left: 6px;
+}
+
+/* tape stays at original anchor; the note has "pulled forward" so the tape
+   appears smaller relative to the now-larger note (real-life cue: lifting the
+   paper but the tape is still glued to the wall) */
 .liora-stickynote.liora-stickynote--zoomed::before {
-	width: 38px;
-	height: 14px;
-	top: -10px;
+	width: 28px;
+	height: 11px;
+	top: -8px;
+	opacity: 0.85;
 }
 
 /* note swings into rest below the bezel — pivots from the tape attachment point.
