@@ -17,6 +17,8 @@
 	position: relative;
 	display: block;
 	width: 100%;
+	max-width: 424px; /* caps screen at 400px wide × 300px tall — keeps monitor a stable 4:3 across viewport widths */
+	margin-inline: auto;
 	padding: 12px 12px 58px; /* 58px bottom: screen gap + LED glass (44px) + margin */
 	border-radius: 8px 8px 6px 6px; /* boxier top, squarer base — retro monitor */
 	border: 1.5px solid rgba(48, 38, 78, 0.78);
@@ -128,10 +130,7 @@
 .liora-panel-wrap {
 	position: relative;
 	width: 100%;
-	height: auto;
 	aspect-ratio: 4 / 3;
-	min-height: 240px;
-	max-height: 300px;
 	overflow: hidden;
 	background: #050607;
 	border-radius: 6px;
