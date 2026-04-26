@@ -201,21 +201,21 @@
 	}
 }
 
-/* sticky note — physical paper TAPED to the bezel chrome above the screen,
-   dangling onto the panel. lives at .liora-bezel level so its tape ::before
-   sits on the plastic between the vent grille and the screen edge.
+/* sticky note — physical paper TAPED to the bottom edge of the monitor console,
+   hangs DOWN below the bezel into .liora-frame's free space. zero overlap with
+   the screen or any bezel chrome.
    - tap-1: gentle sway
    - tap-2: harder shake → tape rips → note falls down + fades
    - tap-3: shatter dismiss (fallback if user reaches tap-3 before tap-2 ran) */
 .liora-stickynote {
 	position: absolute;
-	top: 16px;
-	left: 14px;
+	top: 100%;
+	left: 18px;
+	margin-top: 4px;
 	z-index: 30;
-	width: clamp(55px, 20cqi, 78px);
-	min-height: 50px;
-	padding: 10px 10px 11px;
-	transform-origin: 50% -2px;
+	width: clamp(74px, 24cqi, 96px);
+	padding: 9px 10px 10px;
+	transform-origin: 50% -10px;
 	background:
 		linear-gradient(135deg,
 			rgba(255, 240, 130, 1) 0%,
@@ -245,22 +245,37 @@
 		filter 0.55s ease;
 }
 
-/* tape — sits ABOVE the note on the bezel plastic between vent grille + screen.
-   ::before's transform-origin tracks bezel coordinate (top of stickynote = top
-   of tape attachment); the tape rips on tap-2 via stickynote-tape-rip keyframe */
+/* tape — straddles the bezel bottom edge; the upper half is on the monitor
+   plastic, the lower half overlaps the top of the sticky note. rips up
+   off the bezel on tap-2 via the stickynote-tape-rip keyframe */
 .liora-stickynote::before {
 	content: "";
 	position: absolute;
-	top: -7px;
+	top: -10px;
 	left: 50%;
 	transform: translateX(-50%) rotate(2deg);
 	transform-origin: 50% 100%;
-	width: 30px;
-	height: 11px;
-	background: rgba(225, 225, 225, 0.62);
+	width: 32px;
+	height: 13px;
+	background: rgba(225, 225, 225, 0.65);
 	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
 	border-radius: 1px;
 	z-index: 1;
+}
+
+.liora-stickynote-line {
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	clip-path: inset(0 100% 0 0);
+}
+
+.liora-stickynote-line-1 {
+	animation: liora-handwrite 0.65s steps(8, end) 2.1s forwards;
+}
+
+.liora-stickynote-line-2 {
+	animation: liora-handwrite 0.55s steps(7, end) 2.85s forwards;
 }
 
 .liora-stickynote-line,

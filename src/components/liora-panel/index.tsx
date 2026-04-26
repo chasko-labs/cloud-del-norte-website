@@ -134,13 +134,6 @@ export function LioraPanel() {
 						tabIndex={-1}
 					/>
 				</div>
-				{/* sticky note — physical-paper warning taped to the bezel chrome
-				    above the screen, dangling onto the panel. tap-1 sways the note;
-				    tap-2 rips the tape and the note falls off and disappears */}
-				<div className="liora-stickynote" aria-hidden="true">
-					<span className="liora-stickynote-line">not load bearing</span>
-					<span className="liora-stickynote-sig">- ^.^</span>
-				</div>
 				<div
 					id="liora-status-bar"
 					className="liora-status-bar liora-status--green"
@@ -149,6 +142,18 @@ export function LioraPanel() {
 					<span id="liora-device-info">{deviceInfo}</span>
 					<span id="liora-sys-status"> SYS:▓▓▓</span>
 				</div>
+			</div>
+			{/* sticky note — physical-paper note TAPED to the bottom edge of the
+			    monitor console, hangs DOWN below the bezel so it never covers the
+			    screen or any chrome. tap-1 sways; tap-2 rips and falls */}
+			<div className="liora-stickynote" aria-hidden="true">
+				<span className="liora-stickynote-line liora-stickynote-line-1">
+					non load
+				</span>
+				<span className="liora-stickynote-line liora-stickynote-line-2">
+					bearing
+				</span>
+				<span className="liora-stickynote-sig">- ^.^</span>
 			</div>
 			{/* scene-over "skip credits" button is appended into the bezel by liora-embed.ts
 			    at credits-time; this frame slot is reserved for future stage chrome */}
