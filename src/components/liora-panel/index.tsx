@@ -119,7 +119,12 @@ export function LioraPanel() {
 						aria-hidden="true"
 					>
 						<span className="liora-placeholder-label">
-							warming up character
+							modem connecting
+							<span className="liora-block-stream">
+								<span className="liora-block">▓</span>
+								<span className="liora-block">▓</span>
+								<span className="liora-block">▓</span>
+							</span>
 						</span>
 					</div>
 					<canvas
@@ -128,11 +133,6 @@ export function LioraPanel() {
 						aria-hidden="true"
 						tabIndex={-1}
 					/>
-					{/* tap-cue glows over the screen during idle to signal interactivity;
-					    liora-embed.ts hides it on the first bezel click */}
-					<div id="liora-tap-cue" className="liora-tap-cue" aria-hidden="true">
-						tap to interact
-					</div>
 				</div>
 				<div
 					id="liora-status-bar"
@@ -143,7 +143,8 @@ export function LioraPanel() {
 					<span id="liora-sys-status"> SYS:▓▓▓</span>
 				</div>
 			</div>
-			{/* scene-over indicator is appended here by liora-embed.ts after credits — sits below the monitor */}
+			{/* scene-over "skip credits" button is appended into the bezel by liora-embed.ts
+			    at credits-time; this frame slot is reserved for future stage chrome */}
 		</div>
 	);
 }

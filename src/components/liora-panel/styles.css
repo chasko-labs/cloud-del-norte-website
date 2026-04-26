@@ -201,61 +201,28 @@
 	}
 }
 
-/* tap-cue overlay — pulsing "tap to interact" hint over the screen during idle.
-   liora-embed.ts adds .liora-tap-cue--hidden on the first bezel click to fade it out.
-   Jake Smeester drift finding: presence alone does not signal interactivity */
-.liora-tap-cue {
-	position: absolute;
-	bottom: 16px;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 8;
-	font-family: "VT323", "Courier New", Courier, monospace;
-	font-size: clamp(10px, 3.5cqi, 14px);
-	letter-spacing: 0.18em;
-	text-transform: lowercase;
-	color: var(--cdn-gold, #c9a23f);
-	text-shadow:
-		0 0 4px rgba(201, 162, 63, 0.65),
-		0 0 14px rgba(201, 162, 63, 0.4);
-	animation:
-		liora-tap-cue-fadein 1.6s ease 1.8s both,
-		liora-tap-cue-pulse 2.2s ease-in-out 3.4s infinite alternate;
-	pointer-events: none;
-	user-select: none;
+/* modem-connecting block stream — staggered ▓ blocks instead of dots.
+   3 blocks fade in one-at-a-time then reset for an "INSERT COIN" arcade rhythm */
+.liora-block-stream {
+	display: inline-flex;
+	gap: 3px;
+	margin-left: 6px;
+	vertical-align: baseline;
+}
+
+.liora-block {
+	display: inline-block;
 	opacity: 0;
-	transition: opacity 0.6s ease;
-	white-space: nowrap;
-	border: 1px solid rgba(201, 162, 63, 0.4);
-	padding: 3px 10px;
-	border-radius: 2px;
-	background: rgba(0, 0, 0, 0.32);
-	backdrop-filter: blur(2px);
+	animation: liora-block-cycle 1.8s ease-in-out infinite;
 }
 
-@keyframes liora-tap-cue-fadein {
-	from { opacity: 0; transform: translateX(-50%) translateY(8px); }
-	to { opacity: 0.95; transform: translateX(-50%) translateY(0); }
-}
+.liora-block:nth-child(1) { animation-delay: 0s; }
+.liora-block:nth-child(2) { animation-delay: 0.4s; }
+.liora-block:nth-child(3) { animation-delay: 0.8s; }
 
-@keyframes liora-tap-cue-pulse {
-	0% { opacity: 0.55; }
-	100% { opacity: 1; }
-}
-
-.liora-tap-cue.liora-tap-cue--hidden {
-	opacity: 0 !important;
-	animation: none;
-}
-
-/* dark mode swap — gold reads warm in light mode, but a violet cue feels
-   right against the navy/purple chrome in dark mode */
-.awsui-dark-mode .liora-tap-cue {
-	color: var(--cdn-violet, #9060f0);
-	text-shadow:
-		0 0 4px rgba(144, 96, 240, 0.7),
-		0 0 16px rgba(144, 96, 240, 0.45);
-	border-color: rgba(144, 96, 240, 0.4);
+@keyframes liora-block-cycle {
+	0%, 90%, 100% { opacity: 0; }
+	18%, 80% { opacity: 1; }
 }
 
 .liora-placeholder.liora-placeholder--hidden {
@@ -664,7 +631,7 @@
 
 .liora-powered-by {
 	position: absolute;
-	bottom: 8px;
+	bottom: 30px;
 	left: 14px;
 	right: 14px;
 	font-family: "VT323", "Courier New", Courier, monospace;
@@ -1255,16 +1222,175 @@
 
 /* ── scene-over indicator — sits below the bezel inside .liora-frame ─────── */
 
+/* "skip credits" wrap sits INSIDE the bezel at the former powered-by row,
+   centered above the LED indicator panel. retro game-over arcade vibe */
 .liora-reconnect-wrap.liora-scene-over {
-	/* override base inset:0 absolute centered — scene-over flows as a block below the monitor */
-	position: static;
+	position: absolute;
 	inset: auto;
-	width: 100%;
+	bottom: 8px;
+	left: 14px;
+	right: 14px;
+	width: auto;
 	flex-direction: row;
 	align-items: center;
 	justify-content: center;
-	gap: 10px;
-	margin-top: 12px;
+	gap: 0;
+	margin-top: 0;
+	z-index: 24;
+	pointer-events: none;
+	filter: none;
+}
+
+.liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn {
+	pointer-events: auto;
+	font-family: "VT323", "Courier New", Courier, monospace;
+	font-size: 14px;
+	letter-spacing: 0.22em;
+	text-transform: uppercase;
+	color: var(--cdn-aws-orange, #ff9900);
+	background: linear-gradient(
+		180deg,
+		rgba(8, 4, 2, 0.92) 0%,
+		rgba(20, 10, 4, 0.88) 50%,
+		rgba(8, 4, 2, 0.92) 100%
+	);
+	border: 2px solid var(--cdn-aws-orange, #ff9900);
+	border-radius: 1px;
+	padding: 4px 18px 3px;
+	cursor: pointer;
+	user-select: none;
+	-webkit-user-select: none;
+	white-space: nowrap;
+	box-shadow:
+		0 0 6px rgba(255, 153, 0, 0.5),
+		0 0 14px rgba(255, 153, 0, 0.32),
+		inset 0 0 8px rgba(255, 153, 0, 0.18);
+	text-shadow:
+		0 0 4px rgba(255, 153, 0, 0.85),
+		0 0 10px rgba(255, 153, 0, 0.55);
+	/* CRT scanline scroll over the button face — repeating-gradient mask */
+	background-image:
+		repeating-linear-gradient(
+			0deg,
+			rgba(0, 0, 0, 0.18) 0,
+			rgba(0, 0, 0, 0.18) 1px,
+			transparent 1px,
+			transparent 3px
+		),
+		linear-gradient(
+			180deg,
+			rgba(8, 4, 2, 0.92) 0%,
+			rgba(20, 10, 4, 0.88) 50%,
+			rgba(8, 4, 2, 0.92) 100%
+		);
+	background-size: 100% 6px, 100% 100%;
+	animation:
+		liora-skip-scanline 2.4s linear infinite,
+		liora-skip-pulse 1.8s ease-in-out infinite alternate;
+	transition:
+		transform 0.18s cubic-bezier(0.2, 0.85, 0.4, 1.1),
+		filter 0.18s ease,
+		color 0.18s ease;
+}
+
+/* hover — glitch wobble + chromatic-aberration text-shadow, faster scanline */
+.liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn:hover {
+	color: #fff;
+	transform: scale(1.04);
+	animation:
+		liora-skip-scanline 0.9s linear infinite,
+		liora-skip-glitch 0.32s steps(2, end) infinite,
+		liora-skip-pulse 1.2s ease-in-out infinite alternate;
+	text-shadow:
+		-1.5px 0 0 rgba(255, 50, 50, 0.85),
+		1.5px 0 0 rgba(80, 200, 255, 0.85),
+		0 0 8px #fff,
+		0 0 18px rgba(255, 153, 0, 0.85);
+	box-shadow:
+		0 0 10px rgba(255, 153, 0, 0.85),
+		0 0 22px rgba(255, 153, 0, 0.55),
+		inset 0 0 14px rgba(255, 153, 0, 0.32);
+}
+
+/* power-down — JS adds .liora-skip-shutdown when the button is clicked, then
+   refreshScene fires after the animation completes (~600ms) */
+.liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn.liora-skip-shutdown {
+	animation: liora-skip-shutdown 0.55s ease-in forwards !important;
+	pointer-events: none;
+}
+
+@keyframes liora-skip-scanline {
+	from { background-position: 0 0, 0 0; }
+	to { background-position: 0 6px, 0 0; }
+}
+
+@keyframes liora-skip-pulse {
+	0% { box-shadow:
+		0 0 6px rgba(255, 153, 0, 0.5),
+		0 0 14px rgba(255, 153, 0, 0.32),
+		inset 0 0 8px rgba(255, 153, 0, 0.18); }
+	100% { box-shadow:
+		0 0 9px rgba(255, 153, 0, 0.75),
+		0 0 22px rgba(255, 153, 0, 0.5),
+		inset 0 0 12px rgba(255, 153, 0, 0.32); }
+}
+
+@keyframes liora-skip-glitch {
+	0% { transform: translateX(0) scale(1.04); }
+	25% { transform: translateX(-1px) scale(1.04); }
+	50% { transform: translateX(1px) scale(1.04); }
+	75% { transform: translateX(-0.5px) scale(1.04); }
+	100% { transform: translateX(0) scale(1.04); }
+}
+
+/* CRT power-off: flash bright, collapse vertical to a thin horizontal line, fade */
+@keyframes liora-skip-shutdown {
+	0% {
+		filter: brightness(1) saturate(1);
+		transform: scale(1, 1);
+		opacity: 1;
+	}
+	18% {
+		filter: brightness(8) saturate(0);
+		transform: scale(1.05, 1.05);
+		opacity: 1;
+	}
+	35% {
+		filter: brightness(4) saturate(0);
+		transform: scale(1.1, 0.04);
+		opacity: 1;
+	}
+	70% {
+		filter: brightness(1.5) saturate(0);
+		transform: scale(1.1, 0.02);
+		opacity: 0.8;
+	}
+	100% {
+		filter: brightness(0);
+		transform: scale(1, 0);
+		opacity: 0;
+	}
+}
+
+/* dark mode — violet trim instead of aws-orange, cooler pop against navy chrome */
+.awsui-dark-mode .liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn {
+	color: var(--cdn-violet, #9060f0);
+	border-color: var(--cdn-violet, #9060f0);
+	box-shadow:
+		0 0 6px rgba(144, 96, 240, 0.55),
+		0 0 14px rgba(144, 96, 240, 0.35),
+		inset 0 0 8px rgba(144, 96, 240, 0.18);
+	text-shadow:
+		0 0 4px rgba(144, 96, 240, 0.9),
+		0 0 12px rgba(144, 96, 240, 0.6);
+}
+
+.awsui-dark-mode .liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn:hover {
+	color: #fff;
+	box-shadow:
+		0 0 10px rgba(144, 96, 240, 0.85),
+		0 0 22px rgba(144, 96, 240, 0.55),
+		inset 0 0 14px rgba(144, 96, 240, 0.32);
 }
 
 .liora-reconnect-wrap.liora-scene-over .liora-reconnect-icon {
