@@ -936,6 +936,7 @@
 	isolation: isolate;
 	pointer-events: none;
 	overflow: hidden;
+	perspective: 320px;
 }
 
 .liora-credits-title {
@@ -1150,12 +1151,29 @@
 
 /* ── 2-per-line credits names grid ───────────────────────────────────────── */
 
+@keyframes names-crawl {
+	0% {
+		transform: rotateX(0deg) translateY(0px);
+	}
+	60% {
+		transform: rotateX(10deg) translateY(-28px);
+		opacity: 1;
+	}
+	100% {
+		transform: rotateX(18deg) translateY(-62px);
+		opacity: 0.55;
+	}
+}
+
 .liora-credits-names-grid {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 1px;
 	width: 100%;
+	transform-origin: center bottom;
+	/* crawl starts 3s after credits appear — names already flashing in */
+	animation: names-crawl 13s ease-in 3s forwards;
 }
 
 .liora-credits-names-row {
