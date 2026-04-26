@@ -8,8 +8,9 @@ import PieChart, {
 } from "@cloudscape-design/components/pie-chart";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import StatusIndicator from "@cloudscape-design/components/status-indicator";
-import { type TableProps } from "@cloudscape-design/components/table";
+import type { TableProps } from "@cloudscape-design/components/table";
 import { useTranslation } from "../../../hooks/useTranslation";
+import PieOverlay3D from "./pie-3d-overlay";
 
 const columnDefinitions = (
 	t: (key: string) => string,
@@ -48,21 +49,26 @@ export default function meetings({ data, items }: VariationsProps) {
 						<Header variant="h2">{t("dashboardPage.pastTopics.header")}</Header>
 					}
 				>
-					<PieChart
-						data={translatedData}
-						hideFilter={true}
-						i18nStrings={{
-							chartAriaRoleDescription: t("pieChart.chartAriaRoleDescription"),
-							detailPopoverDismissAriaLabel: t(
-								"pieChart.detailPopoverDismissAriaLabel",
-							),
-							legendAriaLabel: t("pieChart.legendAriaLabel"),
-							filterSelectedAriaLabel: t("pieChart.filterSelectedAriaLabel"),
-							segmentAriaRoleDescription: t(
-								"pieChart.segmentAriaRoleDescription",
-							),
-						}}
-					/>
+					<div style={{ position: "relative" }}>
+						<PieChart
+							data={translatedData}
+							hideFilter={true}
+							i18nStrings={{
+								chartAriaRoleDescription: t(
+									"pieChart.chartAriaRoleDescription",
+								),
+								detailPopoverDismissAriaLabel: t(
+									"pieChart.detailPopoverDismissAriaLabel",
+								),
+								legendAriaLabel: t("pieChart.legendAriaLabel"),
+								filterSelectedAriaLabel: t("pieChart.filterSelectedAriaLabel"),
+								segmentAriaRoleDescription: t(
+									"pieChart.segmentAriaRoleDescription",
+								),
+							}}
+						/>
+						<PieOverlay3D items={translatedData} />
+					</div>
 				</Container>
 				{/*       <Table
         sortingColumn={columnDefinitions[0]}

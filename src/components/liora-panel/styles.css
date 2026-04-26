@@ -213,18 +213,26 @@
 	left: 18px;
 	margin-top: 4px;
 	z-index: 30;
-	width: clamp(62px, 19cqi, 80px);
-	padding: 6px 8px 7px;
+	/* shrinks to the longest line of text + tight padding instead of a fixed
+	   clamp; "non load" / "bearing" / "- ^.^" each width-test naturally and the
+	   note hugs whichever is widest. min-width safety against zero-width edge
+	   case during the type-in animation; max-width prevents runaway */
+	width: fit-content;
+	min-width: 48px;
+	max-width: clamp(60px, 18cqi, 84px);
+	padding: 5px 8px 6px;
 	transform-origin: 50% -10px;
-	font-size: clamp(12px, 4.2cqi, 15px);
+	font-size: clamp(11px, 3.8cqi, 14px);
+	/* paper has natural transparency — light bleeds through real sticky notes.
+	   alpha 0.74-0.82 keeps it legible while it stops dominating liora + lights */
 	background:
 		linear-gradient(135deg,
-			rgba(255, 240, 130, 1) 0%,
-			rgba(252, 230, 100, 1) 60%,
-			rgba(248, 215, 80, 1) 100%);
+			rgba(255, 240, 130, 0.82) 0%,
+			rgba(252, 230, 100, 0.78) 60%,
+			rgba(248, 215, 80, 0.74) 100%);
 	color: #1a1208;
 	font-family: "Caveat", "Comic Sans MS", "Segoe Script", cursive;
-	font-size: clamp(12px, 4.2cqi, 15px);
+	font-size: clamp(11px, 3.8cqi, 14px);
 	line-height: 1.05;
 	text-align: left;
 	transform: rotate(-4.5deg);
@@ -369,19 +377,19 @@
 		filter 0.7s ease;
 }
 
-/* dark mode — sticky note stays a pale yellow paper either way (it's a physical
-   object on the screen, not a chrome element), but darken slightly to integrate */
+/* dark mode — same translucent paper, slightly darker base so the back-light
+   bleed reads against navy chrome instead of disappearing into it */
 .awsui-dark-mode .liora-stickynote {
 	background:
 		linear-gradient(135deg,
-			rgba(232, 218, 110, 1) 0%,
-			rgba(220, 200, 80, 1) 60%,
-			rgba(208, 184, 60, 1) 100%);
+			rgba(232, 218, 110, 0.78) 0%,
+			rgba(220, 200, 80, 0.72) 60%,
+			rgba(208, 184, 60, 0.68) 100%);
 	color: #0d0904;
 	box-shadow:
-		2px 4px 7px rgba(0, 0, 0, 0.65),
-		1px 2px 3px rgba(0, 0, 0, 0.45),
-		inset 0 -3px 5px rgba(140, 100, 20, 0.22);
+		1px 2px 5px rgba(0, 0, 0, 0.5),
+		1px 1px 2px rgba(0, 0, 0, 0.32),
+		inset 0 -2px 4px rgba(140, 100, 20, 0.18);
 }
 
 /* mobile / coarse-pointer — Cloudscape side-nav drawer often clips space below
