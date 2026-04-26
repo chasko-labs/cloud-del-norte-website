@@ -1588,6 +1588,11 @@
 	isolation: isolate;
 	pointer-events: none;
 	overflow: hidden;
+	/* perspective enables true 3D crawl on the names-grid + per-name pop-out
+	   on hover. larger value = subtler depth. transform-style preserve-3d
+	   lets nested transforms layer in the same 3D space */
+	perspective: 720px;
+	transform-style: preserve-3d;
 }
 
 /* clipping viewport for the names scroll — keeps the crawl inside the screen, never bleeds into subtitle or LED area */
@@ -2074,13 +2079,14 @@
 
 /* ── credits names crawl — one per line, seamless infinite loop ──────────── */
 
-/* grid is duplicated 2x by the embed JS so translateY(-50%) lands at the start of the dupe set, producing a seamless wrap */
+/* grid is duplicated 2x by the embed JS so translateY(-50%) lands at the start of the dupe set, producing a seamless wrap.
+   3D crawl: rotateX baked in for that "names rolling away into the distance" Star Wars / babylon-feel depth */
 @keyframes names-crawl {
 	0% {
-		transform: translateY(0);
+		transform: rotateX(0deg) translateY(0) translateZ(0);
 	}
 	100% {
-		transform: translateY(-50%);
+		transform: rotateX(12deg) translateY(-50%) translateZ(0);
 	}
 }
 
@@ -2090,6 +2096,8 @@
 	align-items: center;
 	gap: 4px;
 	width: 100%;
+	transform-origin: center bottom;
+	transform-style: preserve-3d;
 	/* crawl starts 8s after credits appear — original set has fully flashed in by then */
 	animation: names-crawl 32s linear 8s infinite;
 }
@@ -2220,15 +2228,60 @@
 	will-change: transform;
 }
 
-/* "amazon sumerian" inline span — needs inline-block so the popout 3D transform
-   actually renders. browsers ignore transform on plain inline boxes */
+/* AMAZON SUMERIAN words inside "AMAZON SUMERIAN TEAM" — the entity-name pop:
+   aws-orange foreground, hairline white text-stroke for ink-on-paper crispness,
+   layered purple backglow + drop-shadow for 3D depth, shimmer animation that
+   pulses while the team line is on-screen. inline-block needed for transforms */
 .liora-credits-amzn {
 	display: inline-block;
-	color: var(--cdn-lavender, #d7c7ee);
+	color: var(--cdn-aws-orange, #ff9900);
+	-webkit-text-stroke: 0.6px rgba(255, 255, 255, 0.9);
 	text-shadow:
-		0 0 4px rgba(255, 255, 255, 0.85),
-		0 0 12px rgba(215, 199, 238, 0.7),
-		0 0 22px rgba(180, 130, 255, 0.5);
+		0 0 3px rgba(255, 200, 80, 0.9),
+		0 0 8px rgba(255, 153, 0, 0.7),
+		0 0 14px rgba(144, 96, 240, 0.85),
+		0 0 28px rgba(144, 96, 240, 0.55),
+		0 2px 0 rgba(40, 20, 60, 0.55);
+	animation: liora-amzn-shimmer 1.4s ease-in-out infinite alternate;
+}
+
+@keyframes liora-amzn-shimmer {
+	0% {
+		text-shadow:
+			0 0 3px rgba(255, 200, 80, 0.85),
+			0 0 8px rgba(255, 153, 0, 0.7),
+			0 0 14px rgba(144, 96, 240, 0.7),
+			0 0 28px rgba(144, 96, 240, 0.45),
+			0 2px 0 rgba(40, 20, 60, 0.5);
+		filter: brightness(1) saturate(1);
+	}
+	100% {
+		text-shadow:
+			0 0 5px rgba(255, 220, 110, 1),
+			0 0 12px rgba(255, 175, 50, 0.95),
+			0 0 22px rgba(180, 120, 255, 1),
+			0 0 44px rgba(144, 96, 240, 0.7),
+			0 2px 0 rgba(40, 20, 60, 0.6);
+		filter: brightness(1.18) saturate(1.15);
+	}
+}
+
+/* hover on a credits-name: pop forward + scale + brighter glow + pause scroll.
+   the :has(.liora-credits-name:hover) rule below pauses the grid; this rule
+   gives the hovered name itself the zoom-toward-camera treatment */
+.liora-credits-name:hover {
+	transform: perspective(420px) translateZ(60px) scale(1.4);
+	z-index: 30;
+	color: #fff;
+	text-shadow:
+		0 0 6px #fff,
+		0 0 16px rgba(225, 185, 255, 1),
+		0 0 32px rgba(190, 130, 255, 0.9),
+		0 0 60px rgba(165, 105, 255, 0.55);
+	transition:
+		transform 0.28s cubic-bezier(0.2, 0.85, 0.4, 1.1),
+		text-shadow 0.28s ease,
+		color 0.28s ease;
 }
 
 /* exiting state — element grows large + fades into background as the
