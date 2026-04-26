@@ -11,13 +11,6 @@ function buildDeviceInfo(): string {
 	const isIPhone = /iphone/i.test(ua);
 	const isIPad =
 		/ipad/i.test(ua) || (/macintosh/i.test(ua) && "ontouchend" in document);
-	const isMobile =
-		isAndroid ||
-		isIPhone ||
-		isIPad ||
-		"ontouchstart" in window ||
-		(typeof window.matchMedia === "function" &&
-			window.matchMedia("(pointer: coarse)").matches);
 
 	let os: string;
 	if (isAndroid) os = "android";
@@ -29,10 +22,8 @@ function buildDeviceInfo(): string {
 
 	const w = window.screen.width;
 	const h = window.screen.height;
-	const dpr = (window.devicePixelRatio ?? 1).toFixed(1);
-	const type = isMobile ? "mob" : "dsk";
 
-	return `${type} ● os:${os} ● ${w}×${h} ● dpr:${dpr}`;
+	return `os:${os}  ${w}×${h}`;
 }
 
 interface LioraEmbedModule {
@@ -140,7 +131,7 @@ export function LioraPanel() {
 					aria-hidden="true"
 				>
 					<span id="liora-device-info">{deviceInfo}</span>
-					<span id="liora-sys-status"> &#9679; SYS:NOMINAL</span>
+					<span id="liora-sys-status"> SYS:▓▓▓</span>
 				</div>
 			</div>
 			{/* scene-over indicator is appended here by liora-embed.ts after credits — sits below the monitor */}
