@@ -923,3 +923,45 @@
 	border-color: rgba(180, 130, 255, 0.85);
 	text-shadow: 0 0 6px rgba(180, 120, 255, 0.7);
 }
+
+/* ── credits name fly-out — tap/click-and-hold on a name ────────────────── */
+
+.liora-credits-name {
+	pointer-events: auto; /* override parent pointer-events:none for hold detection */
+}
+
+@keyframes name-flyout-enter {
+	0% {
+		opacity: 0;
+		transform: perspective(500px) scale(0.6) translateY(16px);
+	}
+	100% {
+		opacity: 1;
+		transform: perspective(500px) scale(1) translateY(0);
+	}
+}
+
+.liora-name-flyout {
+	position: fixed;
+	z-index: 9999;
+	font-family: "VT323", "Courier New", Courier, monospace;
+	font-size: 54px;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	color: #fff;
+	-webkit-text-stroke: 1.5px rgba(210, 150, 255, 0.75);
+	text-shadow:
+		0 0 4px #fff,
+		0 0 14px #d090ff,
+		0 0 36px rgba(180, 100, 255, 0.95),
+		0 0 80px rgba(160, 80, 255, 0.65);
+	pointer-events: none;
+	white-space: nowrap;
+	transform-origin: center bottom;
+	animation: name-flyout-enter 0.25s ease forwards;
+	transition: opacity 0.2s ease;
+}
+
+.liora-name-flyout--out {
+	opacity: 0;
+}
