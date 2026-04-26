@@ -156,7 +156,8 @@
 	}
 }
 
-/* green phosphor filter — sepia base + hue-rotate(88deg) into green */
+/* green phosphor filter — grayscale(0.88) sepia(0.88) lets ~12% color bleed
+   through so skin tones and clothing hues remain faintly visible */
 .liora-canvas {
 	position: absolute;
 	inset: 0;
@@ -166,28 +167,31 @@
 	transition:
 		opacity 0.8s ease,
 		filter 0.6s ease;
-	filter: grayscale(1) sepia(1) saturate(5) hue-rotate(88deg) brightness(1.15)
-		contrast(1.3);
+	filter: grayscale(0.88) sepia(0.88) saturate(5) hue-rotate(88deg)
+		brightness(1.15) contrast(1.3);
 }
 
 .liora-canvas.liora-canvas--visible {
 	opacity: 1;
 }
 
-/* scanlines — horizontal line pairs every 4px, 18% darkening on odd rows */
+/* scanlines + ben-day dots — stacked: dots (5px grid) over horizontal scanlines */
 .liora-panel-wrap::before {
 	content: "";
 	position: absolute;
 	inset: 0;
 	z-index: 3;
 	pointer-events: none;
-	background: repeating-linear-gradient(
-		to bottom,
-		transparent 0px,
-		transparent 3px,
-		rgba(0, 0, 0, 0.18) 3px,
-		rgba(0, 0, 0, 0.18) 4px
-	);
+	background:
+		radial-gradient(circle, rgba(0, 0, 0, 0.13) 1.5px, transparent 1.5px) 0 0 /
+		5px 5px,
+		repeating-linear-gradient(
+			to bottom,
+			transparent 0px,
+			transparent 3px,
+			rgba(0, 0, 0, 0.18) 3px,
+			rgba(0, 0, 0, 0.18) 4px
+		);
 }
 
 /* screen vignette + glare */
@@ -510,8 +514,8 @@
 
 /* tap-1: gold phosphor screen */
 .liora-bezel.screen-tap-1 .liora-canvas {
-	filter: grayscale(1) sepia(1) saturate(4) hue-rotate(22deg) brightness(1.2)
-		contrast(1.25);
+	filter: grayscale(0.88) sepia(0.88) saturate(4) hue-rotate(22deg)
+		brightness(1.2) contrast(1.25);
 }
 .liora-bezel.screen-tap-1 .liora-panel-wrap {
 	box-shadow:
@@ -523,8 +527,8 @@
 
 /* tap-2: aws orange phosphor screen */
 .liora-bezel.screen-tap-2 .liora-canvas {
-	filter: grayscale(1) sepia(1) saturate(5) hue-rotate(5deg) brightness(1.25)
-		contrast(1.2);
+	filter: grayscale(0.88) sepia(0.88) saturate(5) hue-rotate(5deg)
+		brightness(1.25) contrast(1.2);
 }
 .liora-bezel.screen-tap-2 .liora-panel-wrap {
 	box-shadow:
@@ -537,8 +541,8 @@
 /* tap-3: tube TV shutoff strobe */
 @keyframes liora-tube-off {
 	0% {
-		filter: grayscale(1) sepia(1) saturate(5) hue-rotate(88deg) brightness(1.15)
-			contrast(1.3);
+		filter: grayscale(0.88) sepia(0.88) saturate(5) hue-rotate(88deg)
+			brightness(1.15) contrast(1.3);
 	}
 	6% {
 		filter: brightness(14) contrast(0) saturate(0);
