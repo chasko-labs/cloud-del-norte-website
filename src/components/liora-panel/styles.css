@@ -119,7 +119,9 @@
 		inset 0 0 55px rgba(0, 0, 0, 0.92),
 		0 0 10px rgba(0, 180, 40, 0.14),
 		0 0 2px rgba(0, 200, 60, 0.35);
-	animation: crt-flicker 11s ease-in-out infinite;
+	animation:
+		crt-flicker 11s ease-in-out infinite,
+		crt-crackle 13.3s step-end infinite;
 	transition: box-shadow 0.6s ease;
 }
 
@@ -156,8 +158,8 @@
 	}
 }
 
-/* green phosphor filter — grayscale(0.88) sepia(0.88) lets ~12% color bleed
-   through so skin tones and clothing hues remain faintly visible */
+/* phosphor filter — 48% grayscale lets skin tones and clothing hues bleed through;
+   sepia(0.38) adds amber cast without washing out hue; hue-rotate(68deg) tilts green */
 .liora-canvas {
 	position: absolute;
 	inset: 0;
@@ -167,8 +169,8 @@
 	transition:
 		opacity 0.8s ease,
 		filter 0.6s ease;
-	filter: grayscale(0.88) sepia(0.88) saturate(5) hue-rotate(88deg)
-		brightness(1.15) contrast(1.3);
+	filter: grayscale(0.48) sepia(0.38) saturate(2.6) hue-rotate(68deg)
+		brightness(1) contrast(1.15);
 }
 
 .liora-canvas.liora-canvas--visible {
@@ -214,30 +216,71 @@
 		);
 }
 
-/* phosphor flicker — brightness variation ~4% range, irregular cadence */
+/* phosphor flicker — ~10% brightness swing, irregular multi-step cadence */
 @keyframes crt-flicker {
 	0%,
-	93%,
+	90%,
 	100% {
 		filter: brightness(1);
 	}
+	91% {
+		filter: brightness(0.93);
+	}
+	92% {
+		filter: brightness(1.04);
+	}
+	93% {
+		filter: brightness(0.89);
+	}
 	94% {
-		filter: brightness(0.97);
+		filter: brightness(1.05);
 	}
 	95% {
-		filter: brightness(0.99);
+		filter: brightness(0.92);
 	}
 	96% {
-		filter: brightness(0.96);
+		filter: brightness(1.02);
 	}
 	97% {
-		filter: brightness(1.01);
+		filter: brightness(0.88);
 	}
 	98% {
-		filter: brightness(0.98);
+		filter: brightness(1.03);
 	}
 	99% {
-		filter: brightness(1);
+		filter: brightness(0.95);
+	}
+}
+
+/* tube crackle — occasional sharp discharge spikes at irregular moments */
+@keyframes crt-crackle {
+	0%,
+	6.8%,
+	7.3%,
+	29.8%,
+	30.5%,
+	67.8%,
+	68.6%,
+	100% {
+		filter: brightness(1) contrast(1);
+	}
+	7% {
+		filter: brightness(1.75) contrast(0.55) saturate(0.2);
+	}
+	7.15% {
+		filter: brightness(0.83) contrast(1.18);
+	}
+	30% {
+		filter: brightness(1.42) contrast(0.7);
+	}
+	30.2% {
+		filter: brightness(0.88) contrast(1.12);
+	}
+	68% {
+		filter: brightness(1.28) contrast(0.8);
+	}
+	68.2% {
+		filter: brightness(0.86);
 	}
 }
 
@@ -319,15 +362,48 @@
 	font-family: "Courier New", Courier, monospace;
 	font-size: 13px;
 	letter-spacing: 0.06em;
-	color: rgba(210, 185, 255, 0.96);
+	color: rgba(238, 224, 255, 1);
 	text-align: center;
 	line-height: 1.6;
 	padding: 16px;
 	pointer-events: none;
 	z-index: 12;
 	text-shadow:
-		0 0 8px rgba(144, 96, 240, 0.6),
-		0 1px 2px rgba(0, 0, 0, 0.8);
+		0 0 3px rgba(255, 255, 255, 0.8),
+		0 0 10px rgba(200, 160, 255, 0.95),
+		0 0 22px rgba(144, 96, 240, 0.75),
+		0 0 44px rgba(144, 96, 240, 0.4);
+}
+
+@keyframes liora-message-out {
+	0% {
+		opacity: 1;
+	}
+	12% {
+		opacity: 0.15;
+	}
+	24% {
+		opacity: 0.85;
+	}
+	40% {
+		opacity: 0.05;
+	}
+	55% {
+		opacity: 0.6;
+	}
+	70% {
+		opacity: 0;
+	}
+	85% {
+		opacity: 0.18;
+	}
+	100% {
+		opacity: 0;
+	}
+}
+
+.liora-portal-message--out {
+	animation: liora-message-out 0.8s ease-out forwards;
 }
 
 /* typewriter char — each letter sequences in with its own animation-delay */
@@ -342,36 +418,101 @@
 	}
 }
 
-/* j/k chars — neon flicker variant */
-.liora-char--jk {
-	animation: char-flicker-in 0.28s ease forwards;
-}
+/* ── reconnect UI — appears after portal message flickers out ─────────────── */
 
-@keyframes char-flicker-in {
-	0% {
-		opacity: 0;
-	}
-	25% {
-		opacity: 0.65;
-	}
-	45% {
-		opacity: 0.12;
-	}
-	65% {
-		opacity: 0.88;
-	}
-	82% {
-		opacity: 0.38;
-	}
-	100% {
+@keyframes liora-reconnect-fadein {
+	to {
 		opacity: 1;
 	}
 }
 
-.liora-jk-line {
-	color: rgba(210, 185, 255, 0.75);
+@keyframes liora-icon-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes liora-icon-shimmer {
+	from {
+		border-color: rgba(144, 96, 240, 0.4);
+		box-shadow: 0 0 6px rgba(144, 96, 240, 0.25);
+	}
+	to {
+		border-color: rgba(176, 144, 248, 0.95);
+		box-shadow:
+			0 0 14px rgba(144, 96, 240, 0.7),
+			0 0 28px rgba(144, 96, 240, 0.35);
+	}
+}
+
+@keyframes liora-text-shimmer {
+	from {
+		color: rgba(176, 144, 248, 0.65);
+		text-shadow: 0 0 4px rgba(144, 96, 240, 0.3);
+	}
+	to {
+		color: rgba(210, 185, 255, 0.98);
+		text-shadow:
+			0 0 10px rgba(144, 96, 240, 0.85),
+			0 0 24px rgba(144, 96, 240, 0.45);
+	}
+}
+
+.liora-reconnect-wrap {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 14px;
+	z-index: 12;
+	pointer-events: none;
+	opacity: 0;
+	animation: liora-reconnect-fadein 0.7s ease 0.2s forwards;
+}
+
+.liora-reconnect-icon {
+	width: 44px;
+	height: 44px;
+	border: 2px dashed rgba(144, 96, 240, 0.5);
+	border-radius: 50%;
+	animation:
+		liora-icon-spin 3s linear infinite,
+		liora-icon-shimmer 1.8s ease-in-out infinite alternate;
+}
+
+.liora-reconnect-label {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 10px;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	animation: liora-text-shimmer 1.8s ease-in-out infinite alternate;
+}
+
+.liora-reconnect-btn {
+	font-family: "Courier New", Courier, monospace;
+	font-size: 11px;
 	letter-spacing: 0.14em;
-	text-shadow: 0 0 6px rgba(144, 96, 240, 0.5);
+	text-transform: uppercase;
+	background: none;
+	border: 1px solid rgba(144, 96, 240, 0.5);
+	padding: 6px 16px;
+	border-radius: 4px;
+	cursor: pointer;
+	pointer-events: auto;
+	transition:
+		background 0.2s ease,
+		border-color 0.2s ease;
+	animation: liora-text-shimmer 1.8s ease-in-out 0.4s infinite alternate;
+}
+
+.liora-reconnect-btn:hover {
+	background: rgba(144, 96, 240, 0.18);
+	border-color: rgba(176, 144, 248, 0.9);
+	text-shadow:
+		0 0 8px rgba(144, 96, 240, 0.9),
+		0 0 18px rgba(144, 96, 240, 0.5);
 }
 
 /* ── powered-by neon link — appears in status slot after short circuit ─────── */
@@ -392,7 +533,9 @@
 	opacity: 0;
 	color: #9060f0;
 	text-decoration: none;
-	animation: neon-warmup 4.5s ease forwards;
+	animation:
+		neon-warmup 4.5s ease forwards,
+		neon-breathe 2s ease-in-out 4.5s infinite alternate;
 	z-index: 20;
 }
 
@@ -484,6 +627,24 @@
 	}
 }
 
+@keyframes neon-breathe {
+	from {
+		text-shadow:
+			0 0 4px #9060f0,
+			0 0 10px rgba(144, 96, 240, 0.7),
+			0 0 20px rgba(144, 96, 240, 0.35);
+		opacity: 0.95;
+	}
+	to {
+		text-shadow:
+			0 0 6px #b090f8,
+			0 0 16px rgba(144, 96, 240, 0.9),
+			0 0 32px rgba(144, 96, 240, 0.55),
+			0 0 52px rgba(144, 96, 240, 0.2);
+		opacity: 1;
+	}
+}
+
 /* ── design system integration — bezel adapts to page mode ──────────────── */
 /* these must appear before the tap-state overrides so tap states win on ties */
 
@@ -514,8 +675,8 @@
 
 /* tap-1: gold phosphor screen */
 .liora-bezel.screen-tap-1 .liora-canvas {
-	filter: grayscale(0.88) sepia(0.88) saturate(4) hue-rotate(22deg)
-		brightness(1.2) contrast(1.25);
+	filter: grayscale(0.48) sepia(0.38) saturate(3.2) hue-rotate(18deg)
+		brightness(1.12) contrast(1.2);
 }
 .liora-bezel.screen-tap-1 .liora-panel-wrap {
 	box-shadow:
@@ -527,8 +688,8 @@
 
 /* tap-2: aws orange phosphor screen */
 .liora-bezel.screen-tap-2 .liora-canvas {
-	filter: grayscale(0.88) sepia(0.88) saturate(5) hue-rotate(5deg)
-		brightness(1.25) contrast(1.2);
+	filter: grayscale(0.48) sepia(0.38) saturate(3.8) hue-rotate(2deg)
+		brightness(1.18) contrast(1.15);
 }
 .liora-bezel.screen-tap-2 .liora-panel-wrap {
 	box-shadow:
@@ -541,8 +702,8 @@
 /* tap-3: tube TV shutoff strobe */
 @keyframes liora-tube-off {
 	0% {
-		filter: grayscale(0.88) sepia(0.88) saturate(5) hue-rotate(88deg)
-			brightness(1.15) contrast(1.3);
+		filter: grayscale(0.48) sepia(0.38) saturate(2.6) hue-rotate(68deg)
+			brightness(1) contrast(1.15);
 	}
 	6% {
 		filter: brightness(14) contrast(0) saturate(0);
