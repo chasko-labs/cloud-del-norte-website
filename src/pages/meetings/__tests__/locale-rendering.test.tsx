@@ -3,7 +3,6 @@ import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../contexts/locale-context";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
 
 class ResizeObserverMock {
@@ -100,7 +99,6 @@ vi.mock("../../../layouts/shell", () => ({
 	default: ({ children, breadcrumbs }: AnyProps) =>
 		React.createElement(
 			LocaleProvider,
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any
 			{ locale: "us" } as any,
 			React.createElement(
 				"div",

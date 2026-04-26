@@ -4,7 +4,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AuthState } from "../../../contexts/auth-context";
 import { AuthContext } from "../../../contexts/auth-context";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyProps = Record<string, any>;
 
 class ResizeObserverMock {

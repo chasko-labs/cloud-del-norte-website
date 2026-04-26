@@ -8,7 +8,7 @@ import Select from "@cloudscape-design/components/select";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Table from "@cloudscape-design/components/table";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 interface MatchSummary {
@@ -54,7 +54,6 @@ const RiftRewindDashboard: React.FC = () => {
 	const [championApiResponse, setChampionApiResponse] = useState<string>("");
 	const [endpointDetails, setEndpointDetails] = useState<string>("");
 	const [hasTriedLiveData, setHasTriedLiveData] = useState(false);
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const [championsApiDetails, setChampionsApiDetails] = useState<any>(null);
 	const [contests, setContests] = useState<Contest[]>([]);
 	const [activeDemo, setActiveDemo] = useState<"contests" | "players" | null>(
@@ -248,7 +247,7 @@ const RiftRewindDashboard: React.FC = () => {
 		}
 	};
 
-	const loadDummyData = () => {
+	const loadDummyData = useCallback(() => {
 		const mockMatches: MatchSummary[] = [
 			{
 				matchId: "The Emperor of Shurima",
@@ -294,12 +293,11 @@ const RiftRewindDashboard: React.FC = () => {
 		setMatches(mockMatches);
 		setDataSource("mock");
 		setChampionsApiDetails(null);
-	};
+	}, []);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: mount-only initialization
 	useEffect(() => {
 		loadDummyData();
-	}, []);
+	}, [loadDummyData]);
 
 	const columnDefinitions = [
 		{
@@ -342,7 +340,6 @@ const RiftRewindDashboard: React.FC = () => {
 	];
 
 	const getTournamentWinners = (year: string) => {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		const winnersData: Record<string, any[]> = {
 			"2024": [
 				{
@@ -873,7 +870,6 @@ const RiftRewindDashboard: React.FC = () => {
 							{
 								id: "player",
 								header: t("learning.api.player"),
-								// eslint-disable-next-line @typescript-eslint/no-explicit-any
 								cell: (item: any) => (
 									<Box>
 										<Box variant="strong">{item.player}</Box>
@@ -884,13 +880,11 @@ const RiftRewindDashboard: React.FC = () => {
 							{
 								id: "champion",
 								header: t("learning.api.signatureChampionHeader"),
-								// eslint-disable-next-line @typescript-eslint/no-explicit-any
 								cell: (item: any) => item.championPlayed,
 							},
 							{
 								id: "tournamentRecord",
 								header: t("learning.api.tournamentRecordHeader"),
-								// eslint-disable-next-line @typescript-eslint/no-explicit-any
 								cell: (item: any) => (
 									<Box>
 										<Box variant="strong" color="text-status-info">
@@ -905,7 +899,6 @@ const RiftRewindDashboard: React.FC = () => {
 							{
 								id: "performance",
 								header: t("learning.api.performanceScoreHeader"),
-								// eslint-disable-next-line @typescript-eslint/no-explicit-any
 								cell: (item: any) => (
 									<Box variant="strong">{item.performanceScore}/100</Box>
 								),
@@ -913,7 +906,6 @@ const RiftRewindDashboard: React.FC = () => {
 							{
 								id: "achievement",
 								header: t("learning.api.achievement"),
-								// eslint-disable-next-line @typescript-eslint/no-explicit-any
 								cell: (item: any) => (
 									<Box>
 										🏆{" "}

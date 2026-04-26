@@ -61,7 +61,6 @@ export function createNavigationMock(importDepth: number) {
  * @param importDepth - Number of "../" needed to reach src/ from test file location
  */
 export function createBreadcrumbsMock(importDepth: number) {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	type AnyProps = Record<string, any>;
 
 	return {

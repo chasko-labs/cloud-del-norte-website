@@ -13,7 +13,6 @@ export interface JitsiEmbedProps {
 // Window global exposed by external_api.js once loaded.
 declare global {
 	interface Window {
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		JitsiMeetExternalAPI?: any;
 	}
 }
@@ -55,7 +54,6 @@ type Status = "loading" | "connecting" | "live" | "error";
 
 export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const apiRef = useRef<any>(null);
 	const [status, setStatus] = useState<Status>("loading");
 	const [errorMsg, setErrorMsg] = useState<string>("");
@@ -76,7 +74,6 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 				if (!hostRef.current) throw new Error("embed host node missing");
 
 				setStatus("connecting");
-				// eslint-disable-next-line @typescript-eslint/no-explicit-any
 				const api: any = new window.JitsiMeetExternalAPI(domain, {
 					roomName,
 					jwt: token,
