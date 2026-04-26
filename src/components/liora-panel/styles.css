@@ -213,9 +213,10 @@
 	left: 18px;
 	margin-top: 4px;
 	z-index: 30;
-	width: clamp(74px, 24cqi, 96px);
-	padding: 9px 10px 10px;
+	width: clamp(62px, 19cqi, 80px);
+	padding: 6px 8px 7px;
 	transform-origin: 50% -10px;
+	font-size: clamp(12px, 4.2cqi, 15px);
 	background:
 		linear-gradient(135deg,
 			rgba(255, 240, 130, 1) 0%,
@@ -223,14 +224,14 @@
 			rgba(248, 215, 80, 1) 100%);
 	color: #1a1208;
 	font-family: "Caveat", "Comic Sans MS", "Segoe Script", cursive;
-	font-size: clamp(14px, 5.5cqi, 19px);
+	font-size: clamp(12px, 4.2cqi, 15px);
 	line-height: 1.05;
 	text-align: left;
 	transform: rotate(-4.5deg);
 	box-shadow:
-		2px 4px 6px rgba(0, 0, 0, 0.42),
-		1px 2px 3px rgba(0, 0, 0, 0.32),
-		inset 0 -3px 5px rgba(180, 130, 30, 0.18);
+		1px 2px 4px rgba(0, 0, 0, 0.28),
+		1px 1px 2px rgba(0, 0, 0, 0.18),
+		inset 0 -2px 3px rgba(180, 130, 30, 0.12);
 	pointer-events: none;
 	user-select: none;
 	-webkit-user-select: none;
@@ -291,22 +292,32 @@
 	animation: liora-handwrite 1.05s steps(16, end) 2.1s forwards;
 }
 
-/* line 2 "^.^" signature — animates after line 1 completes */
+/* signature line — animates after the note text completes */
 .liora-stickynote-sig {
-	font-size: clamp(18px, 7cqi, 24px);
-	margin-left: 8px;
+	font-size: clamp(14px, 5cqi, 18px);
+	margin-left: 6px;
 	color: #5a3a14;
-	animation: liora-handwrite 0.55s steps(5, end) 3.4s forwards;
+	display: block;
+	overflow: hidden;
+	white-space: nowrap;
+	clip-path: inset(0 100% 0 0);
+	animation: liora-handwrite 0.55s steps(5, end) 3.6s forwards;
 }
 
+/* note swings into rest below the bezel — pivots from the tape attachment point.
+   slight overshoot + settle so it reads as "taped and hung" rather than "popped in" */
 @keyframes liora-stickynote-fadein {
-	from {
+	0% {
 		opacity: 0;
-		transform: rotate(-12deg) translate(-12px, -8px) scale(0.85);
+		transform: rotate(-22deg) translateY(-14px) scale(0.86);
 	}
-	to {
+	55% {
 		opacity: 1;
-		transform: rotate(-4.5deg) translate(0, 0) scale(1);
+		transform: rotate(3deg) translateY(2px) scale(1.02);
+	}
+	100% {
+		opacity: 1;
+		transform: rotate(-4.5deg) translateY(0) scale(1);
 	}
 }
 
@@ -315,27 +326,14 @@
 	to { clip-path: inset(0 0 0 0); }
 }
 
-/* tap-1: gentle sway as the impact rocks the taped note back and forth */
+/* tap-1: tape rips immediately + note falls off and is gone. one-shot.
+   does NOT reappear in the same scene; only a fresh mount (skip credits → refresh)
+   re-attaches a new note. note + tape::before each animate independently */
 .liora-bezel.screen-tap-1 .liora-stickynote {
-	animation: liora-stickynote-sway 0.85s ease-in-out 1 forwards;
-}
-
-@keyframes liora-stickynote-sway {
-	0% { transform: rotate(-4.5deg); }
-	18% { transform: rotate(-12deg); }
-	38% { transform: rotate(2deg); }
-	58% { transform: rotate(-9deg); }
-	78% { transform: rotate(-1deg); }
-	100% { transform: rotate(-4.5deg); }
-}
-
-/* tap-2: harder sway → tape rips → note falls + fades. note + tape::before
-   each have their own animation so the tape can detach independently */
-.liora-bezel.screen-tap-2 .liora-stickynote {
 	animation: liora-stickynote-ripfall 1.05s cubic-bezier(0.42, 0, 0.78, 1) 1 forwards;
 }
 
-.liora-bezel.screen-tap-2 .liora-stickynote::before {
+.liora-bezel.screen-tap-1 .liora-stickynote::before {
 	animation: liora-stickynote-tape-rip 0.42s ease-in 1 forwards;
 }
 
