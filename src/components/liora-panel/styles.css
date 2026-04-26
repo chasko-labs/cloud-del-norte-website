@@ -384,6 +384,20 @@
 		inset 0 -3px 5px rgba(140, 100, 20, 0.22);
 }
 
+/* mobile / coarse-pointer — Cloudscape side-nav drawer often clips space below
+   the bezel. lift the sticky note up so its body peeks above the cutoff line —
+   users see SOMETHING dangling without having to read it. desktop layout
+   unchanged so the full hung-paper effect still works at wider drawers */
+@media (pointer: coarse), (max-width: 600px) {
+	.liora-stickynote {
+		transform: rotate(-4.5deg) translateY(-34px);
+	}
+	.liora-stickynote::before {
+		/* tape moves with the note — stays attached to its top edge */
+		top: -10px;
+	}
+}
+
 /* modem-connecting block stream — staggered ▓ blocks instead of dots.
    3 blocks fade in one-at-a-time then reset for an "INSERT COIN" arcade rhythm */
 .liora-block-stream {
@@ -1392,6 +1406,7 @@
 }
 
 .liora-credits-subtitle {
+	position: relative;
 	font-family: "VT323", "Courier New", Courier, monospace;
 	font-size: 15px;
 	letter-spacing: 0.09em;
@@ -1402,11 +1417,52 @@
 	margin-bottom: 5px;
 	text-align: center;
 	line-height: 1.35;
-	max-width: 160px;
+	max-width: 200px;
+	min-height: 1.4em;
 	text-shadow:
 		0 0 3px #fff,
 		0 0 10px rgba(210, 160, 255, 0.9),
 		0 0 22px rgba(180, 120, 255, 0.6);
+}
+
+/* alternating subtitle — "thank you to the" types in / holds / fades →
+   "AMAZON SUMERIAN TEAM" types in / holds / fades → loop forever.
+   both lines stack absolutely so they share the same visual slot */
+.liora-credits-sub-line {
+	display: block;
+	position: absolute;
+	left: 50%;
+	top: 0;
+	transform: translateX(-50%);
+	overflow: hidden;
+	white-space: nowrap;
+	clip-path: inset(0 100% 0 0);
+}
+
+.liora-credits-sub-thanks {
+	animation: liora-credits-sub-cycle-a 7.2s ease-in-out 2.4s infinite;
+}
+
+.liora-credits-sub-team {
+	animation: liora-credits-sub-cycle-b 7.2s ease-in-out 2.4s infinite;
+}
+
+@keyframes liora-credits-sub-cycle-a {
+	0% { clip-path: inset(0 100% 0 0); opacity: 1; }
+	22% { clip-path: inset(0 0 0 0); opacity: 1; }
+	45% { clip-path: inset(0 0 0 0); opacity: 1; }
+	50% { clip-path: inset(0 0 0 0); opacity: 0; }
+	51% { clip-path: inset(0 100% 0 0); opacity: 0; }
+	100% { clip-path: inset(0 100% 0 0); opacity: 0; }
+}
+
+@keyframes liora-credits-sub-cycle-b {
+	0% { clip-path: inset(0 100% 0 0); opacity: 0; }
+	50% { clip-path: inset(0 100% 0 0); opacity: 0; }
+	52% { clip-path: inset(0 100% 0 0); opacity: 1; }
+	72% { clip-path: inset(0 0 0 0); opacity: 1; }
+	95% { clip-path: inset(0 0 0 0); opacity: 1; }
+	100% { clip-path: inset(0 0 0 0); opacity: 0; }
 }
 
 .liora-credits-name {
