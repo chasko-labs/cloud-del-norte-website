@@ -117,13 +117,22 @@ export function LioraPanel() {
 						id="liora-shimmer"
 						className="liora-placeholder"
 						aria-hidden="true"
-					/>
+					>
+						<span className="liora-placeholder-label">
+							warming up character
+						</span>
+					</div>
 					<canvas
 						id="liora-canvas"
 						className="liora-canvas"
 						aria-hidden="true"
 						tabIndex={-1}
 					/>
+					{/* tap-cue glows over the screen during idle to signal interactivity;
+					    liora-embed.ts hides it on the first bezel click */}
+					<div id="liora-tap-cue" className="liora-tap-cue" aria-hidden="true">
+						tap to interact
+					</div>
 				</div>
 				<div
 					id="liora-status-bar"

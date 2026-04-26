@@ -160,6 +160,9 @@
 .liora-placeholder {
 	position: absolute;
 	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	background: linear-gradient(
 		135deg,
 		#060806 0%,
@@ -169,6 +172,90 @@
 	);
 	background-size: 400% 400%;
 	animation: liora-shimmer 3s ease-in-out infinite;
+}
+
+/* loading-state label — fades when the canvas turns visible
+   (Jake Smeester principle: hosts take a few seconds to load — communicate it) */
+.liora-placeholder-label {
+	font-family: "VT323", "Courier New", Courier, monospace;
+	font-size: clamp(11px, 4cqi, 16px);
+	letter-spacing: 0.18em;
+	text-transform: lowercase;
+	color: rgba(34, 197, 94, 0.7);
+	text-shadow:
+		0 0 4px rgba(34, 197, 94, 0.55),
+		0 0 12px rgba(34, 197, 94, 0.3);
+	animation: liora-loading-pulse 1.6s ease-in-out infinite alternate;
+	pointer-events: none;
+	user-select: none;
+}
+
+@keyframes liora-loading-pulse {
+	0% {
+		opacity: 0.55;
+		letter-spacing: 0.18em;
+	}
+	100% {
+		opacity: 1;
+		letter-spacing: 0.22em;
+	}
+}
+
+/* tap-cue overlay — pulsing "tap to interact" hint over the screen during idle.
+   liora-embed.ts adds .liora-tap-cue--hidden on the first bezel click to fade it out.
+   Jake Smeester drift finding: presence alone does not signal interactivity */
+.liora-tap-cue {
+	position: absolute;
+	bottom: 16px;
+	left: 50%;
+	transform: translateX(-50%);
+	z-index: 8;
+	font-family: "VT323", "Courier New", Courier, monospace;
+	font-size: clamp(10px, 3.5cqi, 14px);
+	letter-spacing: 0.18em;
+	text-transform: lowercase;
+	color: var(--cdn-gold, #c9a23f);
+	text-shadow:
+		0 0 4px rgba(201, 162, 63, 0.65),
+		0 0 14px rgba(201, 162, 63, 0.4);
+	animation:
+		liora-tap-cue-fadein 1.6s ease 1.8s both,
+		liora-tap-cue-pulse 2.2s ease-in-out 3.4s infinite alternate;
+	pointer-events: none;
+	user-select: none;
+	opacity: 0;
+	transition: opacity 0.6s ease;
+	white-space: nowrap;
+	border: 1px solid rgba(201, 162, 63, 0.4);
+	padding: 3px 10px;
+	border-radius: 2px;
+	background: rgba(0, 0, 0, 0.32);
+	backdrop-filter: blur(2px);
+}
+
+@keyframes liora-tap-cue-fadein {
+	from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+	to { opacity: 0.95; transform: translateX(-50%) translateY(0); }
+}
+
+@keyframes liora-tap-cue-pulse {
+	0% { opacity: 0.55; }
+	100% { opacity: 1; }
+}
+
+.liora-tap-cue.liora-tap-cue--hidden {
+	opacity: 0 !important;
+	animation: none;
+}
+
+/* dark mode swap — gold reads warm in light mode, but a violet cue feels
+   right against the navy/purple chrome in dark mode */
+.awsui-dark-mode .liora-tap-cue {
+	color: var(--cdn-violet, #9060f0);
+	text-shadow:
+		0 0 4px rgba(144, 96, 240, 0.7),
+		0 0 16px rgba(144, 96, 240, 0.45);
+	border-color: rgba(144, 96, 240, 0.4);
 }
 
 .liora-placeholder.liora-placeholder--hidden {
