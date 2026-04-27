@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 220 56" width="220" height="56" role="img" aria-label="Cloud del Norte">
+  <!-- cloud silhouette via path — white on transparent, reads on dark jitsi bg -->
+  <path d="M38 42 Q28 42 28 33 Q28 24 37 24 Q38 16 46 15 Q53 8 63 12 Q70 8 76 13 Q84 13 86 21 Q93 22 93 30 Q93 38 84 40 Z"
+        fill="white" opacity="0.90"/>
+  <!-- north star / compass mark above cloud -->
+  <polygon points="60,5 62,12 60,10 58,12" fill="white" opacity="0.75"/>
+  <!-- wordmark -->
+  <text x="103" y="24" font-family="system-ui,-apple-system,BlinkMacSystemFont,sans-serif"
+        font-size="13.5" font-weight="700" fill="white" opacity="0.95" letter-spacing="0.3">
+    CLOUD DEL NORTE
+  </text>
+  <text x="103" y="40" font-family="system-ui,-apple-system,BlinkMacSystemFont,sans-serif"
+        font-size="9.5" font-weight="400" fill="white" opacity="0.65" letter-spacing="1.8">
+    AWS USER GROUP
+  </text>
+</svg>

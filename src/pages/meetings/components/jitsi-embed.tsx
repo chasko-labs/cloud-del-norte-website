@@ -83,7 +83,10 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
           },
           interfaceConfigOverwrite: {
             SHOW_JITSI_WATERMARK: false,
-            SHOW_BRAND_WATERMARK: false,
+            SHOW_BRAND_WATERMARK: true,
+            BRAND_WATERMARK_LINK: 'https://clouddelnorte.org',
+            DEFAULT_LOGO_URL: 'https://clouddelnorte.org/brand/logo.svg',
+            DEFAULT_WELCOME_PAGE_LOGO_URL: 'https://clouddelnorte.org/brand/logo.svg',
           },
         });
 
@@ -131,9 +134,7 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
         <Box padding={{ vertical: 'm' }} textAlign="center">
           <SpaceBetween size="s" alignItems="center">
             <Spinner size="large" />
-            <Box variant="p">
-              {status === 'loading' ? 'requesting access token…' : 'connecting to meeting…'}
-            </Box>
+            <Box variant="p">{status === 'loading' ? 'requesting access token…' : 'connecting to meeting…'}</Box>
           </SpaceBetween>
         </Box>
       )}
