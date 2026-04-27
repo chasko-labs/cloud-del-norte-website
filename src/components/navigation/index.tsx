@@ -57,7 +57,7 @@ export default function Navigation() {
     <>
       <SideNavigation
         activeHref={location.pathname}
-        header={{ href: '/feed/index.html', text: t('navigation.home') }}
+        header={{ href: '/feed/index.html', text: t('shell.siteTitle') }}
         items={items}
         onFollow={event => {
           // Let section expand/collapse toggles pass through to Cloudscape

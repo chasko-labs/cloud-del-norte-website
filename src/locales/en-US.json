@@ -28,15 +28,15 @@
     "learning": "Learning",
     "apiGuide": "API Guide",
     "restOverview": "REST Overview",
-    "uniformInterface": "1️⃣ Uniform Interface",
-    "clientServer": "2️⃣ Client-Server",
-    "stateless": "3️⃣ Stateless",
-    "cacheable": "4️⃣ Cacheable",
-    "layeredSystem": "5️⃣ Layered System",
-    "codeOnDemand": "6️⃣ Code on Demand",
-    "cheatSheet": "📋 API Cheat Sheet",
-    "howItWorks": "⚙️ How It Works",
-    "projectResources": "🔗 Project Resources"
+    "uniformInterface": "Uniform Interface",
+    "clientServer": "Client-Server",
+    "stateless": "Stateless",
+    "cacheable": "Cacheable",
+    "layeredSystem": "Layered System",
+    "codeOnDemand": "Code on Demand",
+    "cheatSheet": "API Cheat Sheet",
+    "howItWorks": "How It Works",
+    "projectResources": "Project Resources"
   },
   "breadcrumbs": {
     "home": "Cloud Del Norte"

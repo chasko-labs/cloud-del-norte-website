@@ -16,6 +16,7 @@ import YoutubeCarousel from './components/youtube-carousel';
 import TwitchSection from './components/twitch-section';
 import FeedSection from './components/feed-section';
 import BuilderCenterCard from './components/builder-center-card';
+import ArrowheadNews from './components/arrowhead-news';
 import './styles.css';
 
 function AppContent({
@@ -39,11 +40,12 @@ function AppContent({
         </Header>
       }
     >
-      <Grid gridDefinition={[{ colspan: 12 }, { colspan: 12 }, { colspan: 12 }, { colspan: 12 }]}>
-        <BuilderCenterCard />
+      <Grid gridDefinition={[{ colspan: 12 }, { colspan: 12 }, { colspan: 12 }, { colspan: 12 }, { colspan: 12 }]}>
         <YoutubeCarousel />
         <TwitchSection />
         <FeedSection />
+        <ArrowheadNews />
+        <BuilderCenterCard />
       </Grid>
     </ContentLayout>
   );
