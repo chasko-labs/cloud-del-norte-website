@@ -343,26 +343,42 @@
 		0 0.2px 0 rgba(100, 65, 25, 0.3);
 }
 
-/* zoomed state — click toggles. ~5x default size with a "detach + bring forward"
-   feel: rotation flattens (as if held in hand, not taped to wall), translates
-   forward+down toward camera, gets a strong drop-shadow that sells the lift.
-   z-index lifts above all chrome. handwriting replays automatically because the
-   React `key` bumps on each toggle, remounting */
+/* zoomed state — click toggles. ~5x default size, detaches from in-flow position
+   and floats fixed above the monitor face so the whole note is readable without
+   scrolling. rotation flattens (held-in-hand feel, not taped-to-wall). heavier
+   shadow sells the "picked up to read" depth. pointer-events:auto so a second
+   click dismisses back to the taped position. handwriting replays because React
+   bumps the `key` on each toggle (remount). */
 .liora-stickynote.liora-stickynote--zoomed {
-	min-width: 160px;
-	max-width: clamp(200px, 62cqi, 280px);
-	padding: 18px 22px 20px;
-	font-size: clamp(25px, 8.5cqi, 36px);
-	z-index: 80;
-	transform: rotate(-1deg) translate(6px, 14px) scale(1);
+	/* detach from bezel stacking context — floats above the monitor in viewport */
+	position: fixed;
+	/* horizontally: center over the page column (panel is centered, note follows).
+	   vertically: 8vh from top puts it clearly above the monitor bezel, full note
+	   visible without scrolling even on short viewports. */
+	top: 8vh;
+	left: 50%;
+	/* translateX(-50%) centers the note on the horizontal midpoint.
+	   slight rotate gives the "held up to read" feel — less than the taped angle */
+	transform: translateX(-50%) rotate(-1deg);
 	transform-origin: 50% 50%;
+	/* wide enough for "non load bearing" at zoomed font-size with breathing room.
+	   240px min ensures the longest word ("bearing") never clips at the right edge */
+	min-width: 240px;
+	max-width: clamp(240px, 72vw, 340px);
+	/* extra padding-right (28px) gives "bearing" breathing room beyond the visible text */
+	padding: 18px 28px 20px 22px;
+	font-size: clamp(25px, 8.5cqi, 36px);
+	/* above bezel (z-index:10) and canvas; below flying-out (z-index:9000) */
+	z-index: 500;
+	pointer-events: auto; /* clickable — second click toggles back to taped position */
 	transition:
 		transform 0.45s cubic-bezier(0.2, 0.85, 0.4, 1.1),
 		box-shadow 0.45s ease,
 		font-size 0.45s ease,
 		padding 0.45s ease,
 		min-width 0.45s ease,
-		max-width 0.45s ease;
+		max-width 0.45s ease,
+		opacity 0.35s ease;
 	/* heavier shadow sells the "picked up to read" depth — matches fly-out pattern */
 	box-shadow:
 		10px 22px 44px rgba(0, 0, 0, 0.7),
@@ -388,14 +404,24 @@
 		100% 100%;
 }
 
+/* ensure line text is never clipped when the note is zoomed — the base
+   overflow:hidden is required for the clip-path handwrite animation, but by
+   the time the user clicks to zoom that animation has already completed.
+   visible here prevents the right edge of "bearing" from disappearing. */
+.liora-stickynote.liora-stickynote--zoomed .liora-stickynote-line,
+.liora-stickynote.liora-stickynote--zoomed .liora-stickynote-line-1,
+.liora-stickynote.liora-stickynote--zoomed .liora-stickynote-line-2 {
+	overflow: visible;
+	white-space: nowrap;
+}
+
 .liora-stickynote.liora-stickynote--zoomed .liora-stickynote-sig {
 	font-size: 1.2em;
 	margin-left: 6px;
 }
 
-/* tape stays at original anchor; the note has "pulled forward" so the tape
-   appears smaller relative to the now-larger note (real-life cue: lifting the
-   paper but the tape is still glued to the wall) */
+/* tape stays visually attached to the top of the note even when fixed-positioned.
+   reads as "the note was peeled partway off — tape still clinging" */
 .liora-stickynote.liora-stickynote--zoomed::before {
 	width: 28px;
 	height: 11px;
