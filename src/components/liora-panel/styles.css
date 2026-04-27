@@ -2331,7 +2331,12 @@
 	gap: 4px;
 	width: 100%;
 	transform-origin: center bottom;
-	transform-style: preserve-3d;
+	/* preserve-3d removed: children have no 3D transforms of their own.
+	   with preserve-3d active, name-flash forwards-fill promoted first-set names
+	   to independent compositing layers, breaking parent translateY inheritance
+	   — they appeared frozen while the second (duplicate) set scrolled normally.
+	   flat stacking context ensures rotateX+translateY from names-crawl applies
+	   uniformly to all children. */
 	/* crawl starts 8s after credits appear — original set has fully flashed in by then */
 	animation: names-crawl 32s linear 8s infinite;
 }
