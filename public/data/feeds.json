@@ -1,0 +1,66 @@
+{
+  "andmore": [
+    {
+      "title": "Step Functions without ASL? Welcome Lambda Durable Functions",
+      "link": "https://andmore.dev/blog/lambda_durable_functions/",
+      "pubDate": "2025-12-17",
+      "excerpt": "During re:Invent, AWS announced a new feature within AWS Lambda called durable functions. These are the same Lambda functions we all love, but they let you run multi-step workflows by keeping checkpoi"
+    },
+    {
+      "title": "Log buffering with Lambda Powertools",
+      "link": "https://andmore.dev/blog/log-buffering/",
+      "pubDate": "2025-03-28",
+      "excerpt": "The Lambda Powertools team released a new feature that allows your Lambda functions to buffer logs. That sounded cool, but I didn&rsquo;t understand how it would work or how logs would show in CloudWa"
+    },
+    {
+      "title": "Using Amazon Cognito with the user-password flow",
+      "link": "https://andmore.dev/blog/api-cognito-user-password/",
+      "pubDate": "2024-07-31",
+      "excerpt": "On my post called Secure API Gateway with Amazon Cognito using SAM I talked about different Auth terms and walked through a setup to use the Client Credentials Flow, but Cognito recently introduced pr"
+    },
+    {
+      "title": "Creating users in Amazon Cognito programmatically",
+      "link": "https://andmore.dev/blog/create-cognito-user-programatically/",
+      "pubDate": "2024-07-11",
+      "excerpt": "When you have CI/CD pipelines that run automated tests against your APIs you might need to dynamically create users in Amazon Cognito to run them. If that is the case you are in the right place. In th"
+    },
+    {
+      "title": "Secure API Gateway with Amazon Cognito using SAM",
+      "link": "https://andmore.dev/blog/api-cognito/",
+      "pubDate": "2024-05-08",
+      "excerpt": "Backstory I create a lot of APIs, these are for blog posts, for playing around with new functionality or tools that I&rsquo;ve created for myself. All of these have been created without authentication"
+    }
+  ],
+  "awsml": [
+    {
+      "title": "Automate repetitive tasks with Amazon Quick Flows",
+      "link": "https://aws.amazon.com/blogs/machine-learning/automate-repetitive-tasks-with-amazon-quick-flows/",
+      "pubDate": "2026-04-27",
+      "excerpt": "This post shows you how to build your first AI-powered workflow, using Amazon Quick, starting with a financial analysis tool and progressing to an advanced employee onboarding automation."
+    },
+    {
+      "title": "Build and deploy an automatic sync solution for Amazon Bedrock Knowledge Bases",
+      "link": "https://aws.amazon.com/blogs/machine-learning/build-and-deploy-an-automatic-sync-solution-for-amazon-bedrock-knowledge-bases/",
+      "pubDate": "2026-04-27",
+      "excerpt": "In this post, we explore an automated solution that detects S3 events and triggers ingestion jobs while respecting service quotas and providing comprehensive monitoring. This serverless solution uses "
+    },
+    {
+      "title": "Build Strands Agents with SageMaker AI models and MLflow",
+      "link": "https://aws.amazon.com/blogs/machine-learning/build-strands-agents-with-sagemaker-ai-models-and-mlflow/",
+      "pubDate": "2026-04-27",
+      "excerpt": "In this post, we demonstrate how to build AI agents using Strands Agents SDK with models deployed on SageMaker AI endpoints. You will learn how to deploy foundation models from SageMaker JumpStart, in"
+    },
+    {
+      "title": "How Popsa used Amazon Nova to inspire customers with personalised title suggestions",
+      "link": "https://aws.amazon.com/blogs/machine-learning/how-popsa-used-amazon-nova-to-inspire-customers-with-personalised-title-suggestions/",
+      "pubDate": "2026-04-27",
+      "excerpt": "In this post, we share how we applied Amazon Bedrock and the Amazon Nova family of models to reimagine our Title Suggestion feature. By combining metadata, computer vision, and retrieval-augmented gen"
+    },
+    {
+      "title": "Building Workforce AI Agents with Visier and Amazon Quick",
+      "link": "https://aws.amazon.com/blogs/machine-learning/building-workforce-ai-agents-with-visier-and-amazon-quick/",
+      "pubDate": "2026-04-24",
+      "excerpt": "In this post, we show how connecting the Visier Workforce AI platform with Amazon Quick through Model Context Protocol (MCP) gives every knowledge worker a unified agentic workspace to ask questions i"
+    }
+  ]
+}

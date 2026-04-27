@@ -13,7 +13,7 @@
 
 when:
   - event: [push, manual]
-    branch: main
+    branch: [main, dev]
     path:
       include:
         - src/**
@@ -27,18 +27,27 @@ when:
 steps:
   - name: install
     image: node:22-slim
+    when:
+      - event: [push, manual]
+        branch: [main, dev]
     commands:
       - npm ci --no-audit --no-fund
 
   - name: build
     image: node:22-slim
     depends_on: [install]
+    when:
+      - event: [push, manual]
+        branch: [main, dev]
     commands:
       - npm run build
 
   - name: deploy
     image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [build]
+    when:
+      - event: [push, manual]
+        branch: main
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
@@ -55,4 +64,25 @@ steps:
       - aws sts get-caller-identity
       - aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps
       - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/*"
-# first run — trigger woodpecker webhook
+
+  - name: deploy-dev
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [build]
+    when:
+      - event: [push, manual]
+        branch: dev
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sts get-caller-identity
+      - aws s3 sync lib/ s3://dev.clouddelnorte.org/ --delete --exact-timestamps
+      # DEV_CF_DISTRIBUTION_ID set as Woodpecker secret after CloudFormation stack is applied
+      - aws cloudfront create-invalidation --distribution-id $DEV_CF_DISTRIBUTION_ID --paths "/*"

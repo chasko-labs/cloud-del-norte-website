@@ -17,6 +17,8 @@
   },
   "navigation": {
     "home": "Inicio del Grupo",
+    "feed": "Inicio",
+    "about": "Acerca de",
     "roadmap": "Roadmap",
     "meetings": "Juntas",
     "admin": "Admin",
@@ -45,7 +47,18 @@
     "communityDescription": "AWS User Group Nube of the North es parte de",
     "globalCommunity": "Comunidad Global de AWS User Groups",
     "communityFullDescription": "Somos voluntarios locales de Nuevo México, West Texas y Chihuahua, México. Creemos que los proyectos, las carreras y los problemas se pueden acelerar usando AWS, y queremos compartir nuestro conocimiento, conexiones y experiencias contigo para que veas lo que tú puedes",
-    "goBuild": "Go Build"
+    "goBuild": "Go Build",
+    "infoPanelLink": "Aprende más sobre nosotros en el panel de información"
+  },
+  "aboutPage": {
+    "breadcrumb": "Acerca de",
+    "header": "Acerca de",
+    "infoLink": "Info"
+  },
+  "feedPage": {
+    "breadcrumb": "Inicio",
+    "header": "Inicio",
+    "infoLink": "Info"
   },
   "dashboardPage": {
     "breadcrumb": "Tablero",
@@ -195,7 +208,11 @@
     "reachOutLinkedIn": "contáctalo en LinkedIn",
     "bryanChasko": "Bryan Chasko",
     "awsHeroBio": "Bio de AWS Hero",
-    "bryansHomepage": "Página de Bryan"
+    "bryansHomepage": "Página de Bryan",
+    "andresMoreno": "Andres Moreno",
+    "andresRole": "Arquitecto Principal de Software, Caylent — AWS Community Builder",
+    "andresWebsite": "andmore.dev",
+    "aboutPage": "Acerca de Cloud Del Norte"
   },
   "learning": {
     "api": {

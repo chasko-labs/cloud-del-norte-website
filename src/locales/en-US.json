@@ -17,6 +17,8 @@
   },
   "navigation": {
     "home": "User Group Home",
+    "feed": "Home",
+    "about": "About",
     "roadmap": "Roadmap",
     "meetings": "Meetings",
     "admin": "Admin",
@@ -45,7 +47,18 @@
     "communityDescription": "AWS User Group Cloud Del Norte is part of AWS User Groups'",
     "globalCommunity": "Global AWS User Group Community",
     "communityFullDescription": "We are run by volunteers local to New Mexico, West Texas & Chihuahua, Mexico. We believe projects, careers & issues can be accelerated using AWS, & wish to pass our knowledge, connections & experiences on to you & see what you",
-    "goBuild": "Go Build"
+    "goBuild": "Go Build",
+    "infoPanelLink": "Learn more about us in the info panel"
+  },
+  "aboutPage": {
+    "breadcrumb": "About",
+    "header": "About",
+    "infoLink": "Info"
+  },
+  "feedPage": {
+    "breadcrumb": "Home",
+    "header": "Home",
+    "infoLink": "Info"
   },
   "dashboardPage": {
     "breadcrumb": "Dashboard",
@@ -195,7 +208,11 @@
     "reachOutLinkedIn": "reach out on LinkedIn",
     "bryanChasko": "Bryan Chasko",
     "awsHeroBio": "AWS Hero Bio",
-    "bryansHomepage": "Bryan's HomePage"
+    "bryansHomepage": "Bryan's HomePage",
+    "andresMoreno": "Andres Moreno",
+    "andresRole": "Principal Software Architect, Caylent — AWS Community Builder",
+    "andresWebsite": "andmore.dev",
+    "aboutPage": "About Cloud Del Norte"
   },
   "learning": {
     "api": {

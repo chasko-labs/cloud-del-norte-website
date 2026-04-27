@@ -1,0 +1,167 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: dev.clouddelnorte.org static site — S3 + CloudFront + ACM + Route53
+
+Parameters:
+  ExistingCertArn:
+    Type: String
+    Default: ''
+    Description: >
+      ARN of an existing ACM certificate in us-east-1 that covers dev.clouddelnorte.org
+      (e.g. a wildcard *.clouddelnorte.org cert). Leave blank to create a new cert.
+
+  HostedZoneId:
+    Type: AWS::Route53::HostedZone::Id
+    Description: Route53 hosted zone ID for clouddelnorte.org
+
+Conditions:
+  CreateCert: !Equals [!Ref ExistingCertArn, '']
+
+Resources:
+  # ---------------------------------------------------------------------------
+  # S3 bucket — private, accessed only via CloudFront OAC
+  # ---------------------------------------------------------------------------
+  DevBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: dev.clouddelnorte.org
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      Tags:
+        - Key: Project
+          Value: clouddelnorte
+        - Key: Environment
+          Value: dev
+        - Key: ManagedBy
+          Value: heraldstack
+
+  DevBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref DevBucket
+      PolicyDocument:
+        Statement:
+          - Sid: AllowCloudFrontOAC
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub '${DevBucket.Arn}/*'
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub 'arn:aws:cloudfront::${AWS::AccountId}:distribution/${DevDistribution}'
+
+  # ---------------------------------------------------------------------------
+  # ACM certificate — only created if ExistingCertArn is blank
+  # Must be in us-east-1 for CloudFront
+  # ---------------------------------------------------------------------------
+  DevCert:
+    Type: AWS::CertificateManager::Certificate
+    Condition: CreateCert
+    Properties:
+      DomainName: dev.clouddelnorte.org
+      ValidationMethod: DNS
+      DomainValidationOptions:
+        - DomainName: dev.clouddelnorte.org
+          HostedZoneId: !Ref HostedZoneId
+      Tags:
+        - Key: Project
+          Value: clouddelnorte
+        - Key: Environment
+          Value: dev
+        - Key: ManagedBy
+          Value: heraldstack
+
+  # ---------------------------------------------------------------------------
+  # CloudFront Origin Access Control
+  # ---------------------------------------------------------------------------
+  DevOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: dev-clouddelnorte-oac
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  # ---------------------------------------------------------------------------
+  # CloudFront distribution
+  # ---------------------------------------------------------------------------
+  DevDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        Comment: dev.clouddelnorte.org beta site
+        Aliases:
+          - dev.clouddelnorte.org
+        DefaultRootObject: index.html
+        PriceClass: PriceClass_100
+        HttpVersion: http2and3
+        ViewerCertificate:
+          AcmCertificateArn: !If
+            - CreateCert
+            - !Ref DevCert
+            - !Ref ExistingCertArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion: TLSv1.2_2021
+        Origins:
+          - Id: DevS3Origin
+            DomainName: !GetAtt DevBucket.RegionalDomainName
+            OriginAccessControlId: !Ref DevOAC
+            S3OriginConfig: {}
+        DefaultCacheBehavior:
+          TargetOriginId: DevS3Origin
+          ViewerProtocolPolicy: redirect-to-https
+          CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 # CachingOptimized
+          Compress: true
+        CustomErrorResponses:
+          # SPA routing — all 403/404 from S3 → index.html with 200
+          - ErrorCode: 403
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 0
+          - ErrorCode: 404
+            ResponseCode: 200
+            ResponsePagePath: /index.html
+            ErrorCachingMinTTL: 0
+      Tags:
+        - Key: Project
+          Value: clouddelnorte
+        - Key: Environment
+          Value: dev
+        - Key: ManagedBy
+          Value: heraldstack
+
+  # ---------------------------------------------------------------------------
+  # Route53 A record — dev.clouddelnorte.org → CloudFront
+  # ---------------------------------------------------------------------------
+  DevDnsRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: dev.clouddelnorte.org
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt DevDistribution.DomainName
+        EvaluateTargetHealth: false
+        HostedZoneId: Z2FDTNDATAQYW2 # CloudFront global hosted zone (always this value)
+
+Outputs:
+  BucketName:
+    Value: !Ref DevBucket
+    Description: S3 bucket for dev site assets
+
+  DistributionId:
+    Value: !Ref DevDistribution
+    Description: CloudFront distribution ID — use for cache invalidations
+
+  DistributionDomain:
+    Value: !GetAtt DevDistribution.DomainName
+    Description: CloudFront domain before DNS propagates
+
+  DevUrl:
+    Value: https://dev.clouddelnorte.org
+    Description: Dev site URL

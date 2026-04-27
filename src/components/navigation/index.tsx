@@ -10,6 +10,8 @@ export default function Navigation() {
   const { isModerator } = useAuth();
 
   const items: SideNavigationProps['items'] = [
+    { type: 'link', text: t('navigation.feed'), href: '/feed/index.html' },
+    { type: 'link', text: t('navigation.about'), href: '/home/index.html' },
     { type: 'link', text: t('navigation.roadmap'), href: '/roadmap/index.html' },
     { type: 'link', text: t('navigation.meetings'), href: '/meetings/index.html' },
     ...(isModerator ? [{ type: 'link' as const, text: t('navigation.admin'), href: '/admin/index.html' }] : []),
@@ -20,8 +22,8 @@ export default function Navigation() {
       defaultExpanded: false,
       items: [
         { type: 'link', text: t('navigation.techDebtCountdowns'), href: '/maintenance-calendar/' },
-        { type: 'link', text: t('navigation.designSystem'), href: '/theme/index.html' }
-      ]
+        { type: 'link', text: t('navigation.designSystem'), href: '/theme/index.html' },
+      ],
     },
     { type: 'divider' },
     {
@@ -44,20 +46,20 @@ export default function Navigation() {
             { type: 'link', text: t('navigation.codeOnDemand'), href: '/learning/api/#code-on-demand' },
             { type: 'link', text: t('navigation.cheatSheet'), href: '/learning/api/#cheat-sheet' },
             { type: 'link', text: t('navigation.howItWorks'), href: '/learning/api/#how-it-works' },
-            { type: 'link', text: t('navigation.projectResources'), href: '/learning/api/#resources' }
-          ]
-        }
-      ]
-    }
+            { type: 'link', text: t('navigation.projectResources'), href: '/learning/api/#resources' },
+          ],
+        },
+      ],
+    },
   ];
 
   return (
     <>
       <SideNavigation
         activeHref={location.pathname}
-        header={{ href: '/home/index.html', text: t('navigation.home') }}
+        header={{ href: '/feed/index.html', text: t('navigation.home') }}
         items={items}
-        onFollow={(event) => {
+        onFollow={event => {
           // Let section expand/collapse toggles pass through to Cloudscape
           if (event.detail.type === 'section-header') return;
 

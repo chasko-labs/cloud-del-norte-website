@@ -1,0 +1,150 @@
+/* ==========================================================================
+   Feed page layout styles
+   Uses CDN token system: var(--cdn-space-*), var(--cdn-text-*), etc.
+   ========================================================================== */
+
+.feed-carousel {
+  position: relative;
+  width: 100%;
+}
+
+.feed-carousel__viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.feed-carousel__frame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+}
+
+.feed-carousel__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: var(--cdn-radius-md);
+}
+
+.feed-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cdn-space-md);
+  margin-top: var(--cdn-space-sm);
+}
+
+.feed-carousel__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--cdn-color-border);
+  border-radius: var(--cdn-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  font-size: var(--cdn-text-lg);
+  color: inherit;
+}
+
+.feed-carousel__btn:focus-visible {
+  outline: 2px solid var(--cdn-violet);
+  outline-offset: 2px;
+}
+
+.feed-carousel__counter {
+  font-size: var(--cdn-text-sm);
+  color: var(--cdn-color-text-secondary);
+}
+
+/* ---------- Twitch section ---------- */
+
+.feed-twitch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cdn-space-md);
+}
+
+@media (max-width: 600px) {
+  .feed-twitch {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feed-twitch__channel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-xs);
+}
+
+.feed-twitch__label {
+  font-size: var(--cdn-text-sm);
+  font-weight: var(--cdn-weight-medium);
+  color: var(--cdn-color-text-secondary);
+}
+
+.feed-twitch__frame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+}
+
+.feed-twitch__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: var(--cdn-radius-md);
+}
+
+.feed-twitch__fallback {
+  font-size: var(--cdn-text-sm);
+  color: var(--cdn-color-text-muted);
+}
+
+/* ---------- Feed posts section ---------- */
+
+.feed-posts__empty {
+  font-size: var(--cdn-text-base);
+  color: var(--cdn-color-text-muted);
+  padding: var(--cdn-space-lg) 0;
+}
+
+.feed-posts__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-xs);
+  padding: var(--cdn-space-sm) 0;
+  border-bottom: 1px solid var(--cdn-color-border);
+}
+
+.feed-posts__item:last-child {
+  border-bottom: none;
+}
+
+.feed-posts__title {
+  font-size: var(--cdn-text-base);
+  font-weight: var(--cdn-weight-medium);
+}
+
+.feed-posts__excerpt {
+  font-size: var(--cdn-text-sm);
+  color: var(--cdn-color-text-secondary);
+}
+
+.feed-posts__meta {
+  font-size: var(--cdn-text-sm);
+  color: var(--cdn-color-text-muted);
+}
+
+/* ---------- Builder center card ---------- */
+
+.feed-builder-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-sm);
+}

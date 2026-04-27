@@ -8,14 +8,15 @@ import Link from '@cloudscape-design/components/link';
 import Navigation from '../../components/navigation';
 import Breadcrumbs from '../../components/breadcrumbs';
 import Shell from '../../layouts/shell';
-import ProductionOverview from './components/production-overview';
-import Meetings from './components/meetings';
-import QualityReport from './components/quality-report';
 import { HelpPanelHome } from '../create-meeting/components/help-panel-home';
-import { variationData, breakdownItems, productionMetrics, notes } from './data';
 import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../utils/theme';
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 import { useTranslation } from '../../hooks/useTranslation';
+import YoutubeCarousel from './components/youtube-carousel';
+import TwitchSection from './components/twitch-section';
+import FeedSection from './components/feed-section';
+import BuilderCenterCard from './components/builder-center-card';
+import './styles.css';
 
 function AppContent({
   theme,
@@ -33,15 +34,16 @@ function AppContent({
   return (
     <ContentLayout
       header={
-        <Header variant="h1" info={<Link variant="info">{t('aboutPage.infoLink')}</Link>}>
-          {t('aboutPage.header')}
+        <Header variant="h1" info={<Link variant="info">{t('feedPage.infoLink')}</Link>}>
+          {t('feedPage.header')}
         </Header>
       }
     >
-      <Grid gridDefinition={[{ colspan: 12 }, { colspan: { default: 12, m: 8 } }, { colspan: { default: 12, m: 4 } }]}>
-        <ProductionOverview metrics={productionMetrics} />
-        <Meetings data={variationData} items={breakdownItems} />
-        <QualityReport notes={notes} />
+      <Grid gridDefinition={[{ colspan: 12 }, { colspan: 12 }, { colspan: 12 }, { colspan: 12 }]}>
+        <BuilderCenterCard />
+        <YoutubeCarousel />
+        <TwitchSection />
+        <FeedSection />
       </Grid>
     </ContentLayout>
   );
@@ -49,7 +51,7 @@ function AppContent({
 
 function BreadcrumbsContent() {
   const { t } = useTranslation();
-  return <Breadcrumbs active={{ text: t('aboutPage.breadcrumb'), href: '/home/index.html' }} />;
+  return <Breadcrumbs active={{ text: t('feedPage.breadcrumb'), href: '/feed/index.html' }} />;
 }
 
 export default function App() {

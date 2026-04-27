@@ -9,14 +9,14 @@ import './styles.css';
 
 export default function Footer() {
   const { t } = useTranslation();
-  
+
   return (
     <footer id="site-footer" className="cdn-footer" role="contentinfo">
       <SpaceBetween size="l">
         <div>
           <h2 className="cdn-footer-heading">{t('footer.ourLeaders')}</h2>
           <div className="cdn-footer-grid">
-            {(leaders as Leader[]).map((leader) => (
+            {(leaders as Leader[]).map(leader => (
               <LeaderCard key={leader.id} leader={leader} />
             ))}
           </div>
@@ -25,15 +25,26 @@ export default function Footer() {
         <div className="cdn-footer-bottom">
           <p className="cdn-footer-community">
             {t('footer.communityDescription')}{' '}
-            <Link
-              href="https://www.meetup.com/pro/global-aws-user-group-community/"
-              external
-              variant="primary"
-            >
+            <Link href="https://www.meetup.com/pro/global-aws-user-group-community/" external variant="primary">
               {t('footer.globalCommunity')}
             </Link>
             . {t('footer.communityFullDescription')}{' '}
             <strong className="cdn-footer-emphasis">{t('footer.goBuild')}</strong>.
+          </p>
+          <p className="cdn-footer-info-panel">
+            <button
+              className="cdn-footer-info-panel-button"
+              onClick={() => {
+                const toolsButton = document.querySelector(
+                  '[aria-label*="Help Panel"], [aria-label*="help panel"]',
+                ) as HTMLButtonElement;
+                if (toolsButton) {
+                  toolsButton.click();
+                }
+              }}
+            >
+              {t('footer.infoPanelLink')}
+            </button>
           </p>
         </div>
       </SpaceBetween>
