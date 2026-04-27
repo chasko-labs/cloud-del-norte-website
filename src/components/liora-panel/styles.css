@@ -343,16 +343,16 @@
 		0 0.2px 0 rgba(100, 65, 25, 0.3);
 }
 
-/* zoomed state — click toggles. ~4x default size with a "detach + bring forward"
+/* zoomed state — click toggles. ~5x default size with a "detach + bring forward"
    feel: rotation flattens (as if held in hand, not taped to wall), translates
    forward+down toward camera, gets a strong drop-shadow that sells the lift.
    z-index lifts above all chrome. handwriting replays automatically because the
    React `key` bumps on each toggle, remounting */
 .liora-stickynote.liora-stickynote--zoomed {
-	min-width: 130px;
-	max-width: clamp(170px, 52cqi, 230px);
-	padding: 14px 18px 16px;
-	font-size: clamp(20px, 7cqi, 28px);
+	min-width: 160px;
+	max-width: clamp(200px, 62cqi, 280px);
+	padding: 18px 22px 20px;
+	font-size: clamp(25px, 8.5cqi, 36px);
 	z-index: 80;
 	transform: rotate(-1deg) translate(6px, 14px) scale(1);
 	transform-origin: 50% 50%;
@@ -363,11 +363,12 @@
 		padding 0.45s ease,
 		min-width 0.45s ease,
 		max-width 0.45s ease;
+	/* heavier shadow sells the "picked up to read" depth — matches fly-out pattern */
 	box-shadow:
-		6px 14px 28px rgba(0, 0, 0, 0.62),
-		3px 6px 12px rgba(0, 0, 0, 0.42),
-		2px 3px 6px rgba(0, 0, 0, 0.32),
-		inset 0 -3px 7px rgba(180, 130, 30, 0.24);
+		10px 22px 44px rgba(0, 0, 0, 0.7),
+		5px 10px 20px rgba(0, 0, 0, 0.48),
+		2px 4px 8px rgba(0, 0, 0, 0.34),
+		inset 0 -4px 10px rgba(180, 130, 30, 0.28);
 	background-image:
 		repeating-linear-gradient(
 			0deg,
@@ -442,7 +443,11 @@
 /* tap-1: gentle pendulum sway. note stays attached — tape holds. */
 /* ~ sibling combinator: .liora-stickynote is a sibling of .liora-bezel, both
    children of .liora-frame — descendant selector ( ) would never match */
+/* opacity:1 is required: the sway animation overrides liora-stickynote-fadein,
+   which had fill-mode:forwards locking opacity at 1. without this explicit
+   declaration the element's base opacity:0 re-applies and the note disappears */
 .liora-bezel.screen-tap-1 ~ .liora-stickynote {
+	opacity: 1;
 	animation: liora-stickynote-sway 0.72s cubic-bezier(0.36, 0.07, 0.19, 0.97) 2
 		forwards;
 	pointer-events: auto; /* receive fly-out click during sway */
@@ -1771,10 +1776,12 @@
 @keyframes liora-credits-sub-cycle-a {
 	/* 0-11%: clip-path reveal (≈1.54s). 11-47%: fully visible — "the" + "to" fade
 	   within this window via their own keyframes; "thank you" alone from ~27%.
-	   47-50%: opacity out. 51-100%: hidden, letting cycle-b take the slot */
+	   47-50%: opacity out. 51-100%: hidden, letting cycle-b take the slot.
+	   opacity starts at 0 at 0% so any loop-boundary one-frame blip is invisible;
+	   opacity ramps to 1 only after the clip-path opens at 11% */
 	0% {
 		clip-path: inset(0 100% 0 0);
-		opacity: 1;
+		opacity: 0;
 	}
 	11% {
 		clip-path: inset(0 0 0 0);
@@ -1839,6 +1846,12 @@
 .liora-credits-word-to,
 .liora-credits-word-team {
 	display: inline-block;
+}
+
+/* leading gap between "SUMERIAN" and "TEAM" — inline-block strips textContent
+   leading space, so the gap must come from padding instead */
+.liora-credits-word-team {
+	padding-left: 0.3em;
 }
 
 .liora-credits-word-the {
