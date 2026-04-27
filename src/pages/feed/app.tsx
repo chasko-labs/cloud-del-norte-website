@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Grid from '@cloudscape-design/components/grid';
 import Header from '@cloudscape-design/components/header';
@@ -17,7 +17,28 @@ import TwitchSection from './components/twitch-section';
 import FeedSection from './components/feed-section';
 import BuilderCenterCard from './components/builder-center-card';
 import ArrowheadNews from './components/arrowhead-news';
+import AndresMedium from './components/andres-medium';
 import './styles.css';
+
+type SectionKey = 'youtube' | 'twitch' | 'feed' | 'builder' | 'arrowhead' | 'medium';
+
+const SECTIONS: Record<SectionKey, React.ReactNode> = {
+  youtube: <YoutubeCarousel />,
+  twitch: <TwitchSection />,
+  feed: <FeedSection />,
+  builder: <BuilderCenterCard />,
+  arrowhead: <ArrowheadNews />,
+  medium: <AndresMedium />,
+};
+
+function shuffled<T>(arr: T[]): T[] {
+  const copy = [...arr];
+  for (let i = copy.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
 
 function AppContent({
   theme,
@@ -32,6 +53,9 @@ function AppContent({
 }) {
   const { t } = useTranslation();
 
+  // Shuffle order is stable for the lifetime of this page load
+  const order = useMemo(() => shuffled(Object.keys(SECTIONS) as SectionKey[]), []);
+
   return (
     <ContentLayout
       header={
@@ -40,12 +64,10 @@ function AppContent({
         </Header>
       }
     >
-      <Grid gridDefinition={[{ colspan: 12 }, { colspan: 12 }, { colspan: 12 }, { colspan: 12 }, { colspan: 12 }]}>
-        <YoutubeCarousel />
-        <TwitchSection />
-        <FeedSection />
-        <ArrowheadNews />
-        <BuilderCenterCard />
+      <Grid gridDefinition={order.map(() => ({ colspan: 12 }))}>
+        {order.map(key => (
+          <React.Fragment key={key}>{SECTIONS[key]}</React.Fragment>
+        ))}
       </Grid>
     </ContentLayout>
   );

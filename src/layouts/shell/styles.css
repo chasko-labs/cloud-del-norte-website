@@ -209,3 +209,29 @@ main[class*="awsui_layout"] > [class*="content-container"] {
     animation: cdn-toggle-flip 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
+
+/* Help panel — leader sections */
+.help-panel-leader {
+  margin-bottom: var(--cdn-space-md, 1rem);
+}
+
+.help-panel-leader strong {
+  display: block;
+  font-size: var(--cdn-text-base, 1rem);
+  margin-bottom: 0.25rem;
+}
+
+.help-panel-leader p {
+  font-size: var(--cdn-text-sm, 0.875rem);
+  color: var(--cdn-color-text-secondary, inherit);
+  margin: 0.25rem 0;
+}
+
+.help-panel-leader ul {
+  margin: 0.25rem 0 0 0;
+  padding-left: 1.25rem;
+}
+
+.help-panel-leader li {
+  font-size: var(--cdn-text-sm, 0.875rem);
+}
