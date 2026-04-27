@@ -2463,18 +2463,28 @@
 }
 
 /* AMAZON SUMERIAN words inside "AMAZON SUMERIAN TEAM" — the entity-name pop:
-   aws-orange foreground, black text-stroke to define letter edges against the
-   warm glow (white was illegible on dark bg — removed in 75761f87; black is the
-   correct contrast direction), layered purple backglow + drop-shadow for 3D
-   depth, shimmer animation that pulses while the team line is on-screen.
-   inline-block needed for transforms */
+   aws-orange foreground, outside-only black outline via 8-direction text-shadow
+   stack (renders behind the glyph fill so the warm orange stays unobscured —
+   see 75761f87 for white-stroke removal, f3a3b431 for discontinued inside-stroke).
+   text-stroke paints on the glyph edge half-inside half-outside and is removed;
+   text-shadow at 0.5px cardinal + 0.35px diagonal gives a subtle outside-only ring.
+   layered purple backglow + drop-shadow for 3D depth, shimmer animation pulses
+   while the team line is on-screen. inline-block needed for transforms */
 .liora-credits-amzn {
 	display: inline-block;
 	color: var(--cdn-aws-orange, #ff9900);
-	/* black stroke anchors letterforms against peak glow brightness */
-	-webkit-text-stroke: 1.5px #000;
-	text-stroke: 1.5px #000;
+	/* outside-only black outline via 8-direction text-shadow stack (0.5px) —
+	   renders behind the glyph, no inside bleed. outline first in list = top layer */
 	text-shadow:
+		0.5px 0 0 #000,
+		-0.5px 0 0 #000,
+		0 0.5px 0 #000,
+		0 -0.5px 0 #000,
+		0.35px 0.35px 0 #000,
+		-0.35px 0.35px 0 #000,
+		0.35px -0.35px 0 #000,
+		-0.35px -0.35px 0 #000,
+		/* warm glow + depth shadows below */
 		0 0 3px rgba(255, 200, 80, 0.9),
 		0 0 8px rgba(255, 153, 0, 0.7),
 		0 0 14px rgba(144, 96, 240, 0.85),
@@ -2485,7 +2495,16 @@
 
 @keyframes liora-amzn-shimmer {
 	0% {
-		text-shadow:
+		text-shadow: /* outside-only black outline — held constant through shimmer cycle */
+			0.5px 0 0 #000,
+			-0.5px 0 0 #000,
+			0 0.5px 0 #000,
+			0 -0.5px 0 #000,
+			0.35px 0.35px 0 #000,
+			-0.35px 0.35px 0 #000,
+			0.35px -0.35px 0 #000,
+			-0.35px -0.35px 0 #000,
+			/* warm glow dim phase */
 			0 0 3px rgba(255, 200, 80, 0.85),
 			0 0 8px rgba(255, 153, 0, 0.7),
 			0 0 14px rgba(144, 96, 240, 0.7),
@@ -2494,7 +2513,16 @@
 		filter: brightness(1) saturate(1);
 	}
 	100% {
-		text-shadow:
+		text-shadow: /* outside-only black outline — held constant through shimmer cycle */
+			0.5px 0 0 #000,
+			-0.5px 0 0 #000,
+			0 0.5px 0 #000,
+			0 -0.5px 0 #000,
+			0.35px 0.35px 0 #000,
+			-0.35px 0.35px 0 #000,
+			0.35px -0.35px 0 #000,
+			-0.35px -0.35px 0 #000,
+			/* warm glow bright phase */
 			0 0 5px rgba(255, 220, 110, 1),
 			0 0 12px rgba(255, 175, 50, 0.95),
 			0 0 22px rgba(180, 120, 255, 1),
