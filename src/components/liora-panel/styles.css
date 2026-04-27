@@ -429,16 +429,103 @@
 	}
 }
 
-/* tap-1: tape rips immediately + note falls off and is gone. one-shot.
-   does NOT reappear in the same scene; only a fresh mount (skip credits → refresh)
-   re-attaches a new note. note + tape::before each animate independently */
+/* ── two-stage screen crack → sticky note choreography ───────────────────────
+   screen-tap-1 (first crack): note swings left-right — stays attached, no fall.
+   screen-tap-2 (second crack): note swings harder then tape rips + falls off.
+
+   fly-out override: clicking the note itself while swaying or falling cancels
+   the fall and sends the note flying to 5x zoom (picked up by the reader).
+   JS in liora-embed.ts manages .liora-stickynote--flying-out on the element.
+
+   pointer-events during sway + fall: the .liora-bezel.screen-tap-1 and
+   .screen-tap-2 selectors set pointer-events:auto directly on the note. ─────── */
+
+/* tap-1: gentle pendulum sway. note stays attached — tape holds. */
 .liora-bezel.screen-tap-1 .liora-stickynote {
-	animation: liora-stickynote-ripfall 1.05s cubic-bezier(0.42, 0, 0.78, 1) 1
-		forwards;
+	animation: liora-stickynote-sway 0.72s cubic-bezier(0.36, 0.07, 0.19, 0.97)
+		2 forwards;
+	pointer-events: auto; /* receive fly-out click during sway */
 }
 
-.liora-bezel.screen-tap-1 .liora-stickynote::before {
+/* tap-2: harder swing then tape rips + note falls. one-shot. */
+.liora-bezel.screen-tap-2 .liora-stickynote {
+	animation: liora-stickynote-ripfall 1.05s cubic-bezier(0.42, 0, 0.78, 1) 1
+		forwards;
+	pointer-events: auto; /* receive fly-out click mid-fall */
+}
+
+.liora-bezel.screen-tap-2 .liora-stickynote::before {
 	animation: liora-stickynote-tape-rip 0.42s ease-in 1 forwards;
+}
+
+/* fly-out — cancels any running fall; note zooms to 5x toward camera.
+   position:fixed centers in viewport so the reader can "pick up and read".
+   transform-origin center keeps the scale pivot stable during translate. */
+.liora-stickynote--flying-out {
+	position: fixed !important; /* break out of bezel stacking context */
+	/* centering via inset + margin so left/top state doesn't matter at fly-in */
+	inset: 0 !important;
+	margin: auto !important;
+	width: fit-content !important;
+	height: fit-content !important;
+	max-width: clamp(260px, 72vw, 420px) !important;
+	padding: 28px 36px 32px !important;
+	font-size: clamp(38px, 10vw, 54px) !important;
+	z-index: 9000 !important;
+	pointer-events: none !important; /* picked up — no further interaction */
+	animation: liora-stickynote-flyout 0.55s cubic-bezier(0.18, 0.89, 0.32, 1.1)
+		1 forwards !important;
+	transform-origin: center center !important;
+	/* heavier drop-shadow sells the "lifted off the wall" read */
+	box-shadow:
+		12px 28px 56px rgba(0, 0, 0, 0.72),
+		6px 12px 24px rgba(0, 0, 0, 0.5),
+		3px 5px 10px rgba(0, 0, 0, 0.36),
+		inset 0 -5px 14px rgba(180, 130, 30, 0.28) !important;
+}
+
+/* flyout: scale from near-current size up to 5x, translate to center,
+   then hold at rest so the reader can actually read the note.
+   perspective gives a z-depth feel matching the 3d name flyout pattern. */
+@keyframes liora-stickynote-flyout {
+	0% {
+		opacity: 0.9;
+		transform: perspective(600px) scale(0.55) translateY(40px);
+	}
+	60% {
+		opacity: 1;
+		transform: perspective(600px) scale(1.06) translateY(-6px);
+	}
+	100% {
+		opacity: 1;
+		transform: perspective(600px) scale(1) translateY(0);
+	}
+}
+
+/* sway — pendulum pivot from the tape attachment point at top-center.
+   two swings: left jerk then settle, mimics a physical bump from the other side */
+@keyframes liora-stickynote-sway {
+	0% {
+		transform: rotate(-4.5deg) translateY(0);
+	}
+	18% {
+		transform: rotate(-18deg) translateY(-3px);
+	}
+	38% {
+		transform: rotate(10deg) translateY(1px);
+	}
+	55% {
+		transform: rotate(-10deg) translateY(0);
+	}
+	72% {
+		transform: rotate(4deg) translateY(0);
+	}
+	85% {
+		transform: rotate(-6deg) translateY(0);
+	}
+	100% {
+		transform: rotate(-4.5deg) translateY(0);
+	}
 }
 
 @keyframes liora-stickynote-ripfall {
@@ -490,8 +577,9 @@
 	}
 }
 
-/* shatter dismiss — fallback only fires if tap-3 reached without tap-2 running
-   (e.g. extremely rapid input). normally tap-2 already disposed the note */
+/* shatter dismiss — fallback only fires if tap-3 reached without tap-2 fall
+   having disposed the note (e.g. note was intercepted by fly-out, so it is
+   already gone from the bezel by the time tap-3 fires). no-op in normal flow */
 .liora-bezel.screen-tap-3 .liora-stickynote {
 	transform: rotate(-32deg) translate(-22px, 60px) scale(0.92);
 	opacity: 0;

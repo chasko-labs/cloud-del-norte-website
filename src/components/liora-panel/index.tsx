@@ -42,10 +42,21 @@ export function LioraPanel() {
 	const deviceInfo = useMemo(() => buildDeviceInfo(), []);
 	// sticky note interaction — tiny by default, zoom + replay handwriting on click.
 	// stickyKey forces React to re-mount the element so the clip-path keyframes
-	// restart from 0% (cleanest cross-browser way to replay an in-progress animation)
+	// restart from 0% (cleanest cross-browser way to replay an in-progress animation).
+	// during sway (screen-tap-1) or fall (screen-tap-2) the embed's fly-out listener
+	// owns the click — this handler bails out so the two paths don't conflict.
 	const [stickyZoomed, setStickyZoomed] = useState(false);
 	const [stickyKey, setStickyKey] = useState(0);
 	const handleStickyToggle = () => {
+		// bail if the bezel is in a tap state — embed handles fly-out in that path
+		const bezel = document.querySelector(".liora-bezel");
+		if (
+			bezel instanceof HTMLElement &&
+			(bezel.classList.contains("screen-tap-1") ||
+				bezel.classList.contains("screen-tap-2"))
+		) {
+			return;
+		}
 		setStickyZoomed((z) => !z);
 		setStickyKey((k) => k + 1);
 	};
@@ -154,8 +165,11 @@ export function LioraPanel() {
 			</div>
 			{/* sticky note — physical-paper note TAPED to the bottom edge of the
 			    monitor console, hangs DOWN below the bezel. tiny default, click to
-			    zoom + replay handwriting, click again to shrink back. tap-1 on the
-			    SCREEN rips and falls (separate from this click handler) */}
+			    zoom + replay handwriting, click again to shrink back.
+			    screen click-1: note swings (sway, stays attached).
+			    screen click-2: note swings harder then tape rips + falls.
+			    clicking the note itself during sway or fall: fly-out 5x zoom
+			    (embed-owned; handleStickyToggle bails out during tap states) */}
 			<button
 				key={stickyKey}
 				type="button"
