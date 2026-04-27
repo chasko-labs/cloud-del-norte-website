@@ -1,9 +1,14 @@
-# AWS User Group Cloud Del Norte — Website
+```
+   ___ _    ___  _  _ ___     ___  ___ _      _  _  ___  ___ _____ ___
+  / __| |  / _ \| || |   \   |   \| __| |    | \| |/ _ \| _ \_   _| __|
+ | (__| |_| (_) | || | |) |  | |) | _|| |__  | .` | (_) |   / | | | _|
+  \___|____\___/ \__/|___/   |___/|___|____| |_|\_|\___/|_|_\ |_| |___|
+  aws user group — new mexico, west texas, chihuahua, mx
+```
 
-Community website for the **AWS User Group Cloud Del Norte** (formerly awsaerospace), serving the North Coast region.
+Community website for the **AWS User Group Cloud Del Norte** (formerly awsaerospace).
 
-🌐 **Live:** <https://d2ly3jmh1f74xt.cloudfront.net>
-📅 **Meetup:** <https://www.meetup.com/cloud-del-norte/>
+**live:** <https://clouddelnorte.org> | **dev:** <https://dev.clouddelnorte.org> | **meetup:** <https://www.meetup.com/awsugclouddelnorte/>
 
 ---
 
@@ -18,15 +23,15 @@ Community website for the **AWS User Group Cloud Del Norte** (formerly awsaerosp
 
 ## Stack
 
-| Layer | Technology |
-| ----- | ---------- |
-| Bundler | Vite 7 (multi-page app) |
-| UI | React 19 + [Cloudscape Design System](https://cloudscape.design/) 3.x |
-| Language | TypeScript 5.9 |
-| Tests | Vitest + @testing-library/react |
-| Linter | ESLint 10 (flat config — `eslint.config.js`) |
-| Build output | `./lib/` |
-| Hosting | S3 + CloudFront |
+| Layer        | Technology                                                            |
+| ------------ | --------------------------------------------------------------------- |
+| Bundler      | Vite 7 (multi-page app)                                               |
+| UI           | React 19 + [Cloudscape Design System](https://cloudscape.design/) 3.x |
+| Language     | TypeScript 5.9                                                        |
+| Tests        | Vitest + @testing-library/react                                       |
+| Linter       | ESLint 10 (flat config — `eslint.config.js`)                          |
+| Build output | `./lib/`                                                              |
+| Hosting      | S3 + CloudFront                                                       |
 
 ---
 
@@ -64,14 +69,15 @@ src/pages/<name>/
 
 ### Pages
 
-| Page | Path |
-| ---- | ---- |
-| Home | `src/pages/home/` |
-| Meetings | `src/pages/meetings/` |
-| Create Meeting | `src/pages/create-meeting/` |
-| Learning / API | `src/pages/learning/api/` |
-| Maintenance Calendar | `src/pages/maintenance-calendar/` |
-| Theme Preview | `src/pages/theme/` |
+| Page                 | Path                              | Notes                      |
+| -------------------- | --------------------------------- | -------------------------- |
+| Feed (landing)       | `src/pages/feed/`                 | default root redirect here |
+| About                | `src/pages/home/`                 |                            |
+| Meetings             | `src/pages/meetings/`             | auth-gated                 |
+| Create Meeting       | `src/pages/create-meeting/`       | moderator-only             |
+| Learning / API       | `src/pages/learning/api/`         |                            |
+| Maintenance Calendar | `src/pages/maintenance-calendar/` |                            |
+| Theme Preview        | `src/pages/theme/`                |                            |
 
 ### Adding a new page
 
@@ -147,7 +153,7 @@ export const METRIC_KEYS = [{ labelKey: 'home.metrics.activeMembers', value: 42 
 
 // In the component:
 const { t } = useTranslation();
-metrics.map(m => ({ ...m, label: t(m.labelKey) }))
+metrics.map(m => ({ ...m, label: t(m.labelKey) }));
 ```
 
 ### Key conventions
@@ -165,12 +171,13 @@ See [AGENTS.md](AGENTS.md) for the full architectural conventions and constraint
 
 The site supports two locales, toggled via 🇺🇸↔🇲🇽 in the top navigation:
 
-| Locale | Flag | Description |
-| ------ | ---- | ----------- |
-| `us` | 🇺🇸 | New Mexican English — El Paso Spanglish + local slang |
-| `mx` | 🇲🇽 | Chihuahua norteño Spanish — Ciudad Juárez dialect |
+| Locale | Flag | Description                                           |
+| ------ | ---- | ----------------------------------------------------- |
+| `us`   | 🇺🇸   | New Mexican English — El Paso Spanglish + local slang |
+| `mx`   | 🇲🇽   | Chihuahua norteño Spanish — Ciudad Juárez dialect     |
 
 Translation files live in `src/locales/`:
+
 - `en-US.json` — English (source of truth)
 - `es-MX.json` — Spanish (human-reviewed translations)
 
@@ -191,28 +198,23 @@ See [LOCALIZATION.md](LOCALIZATION.md) for dialect guides, key naming convention
 
 ## Deploy
 
-### CI/CD (GitHub Actions)
+### CI/CD (Woodpecker)
 
-`.github/workflows/deploy.yml` triggers on pushes to `main` that touch `src/`,
-`public/`, `package.json`, `package-lock.json`, `vite.config.ts`, or `tsconfig.json`.
+`.woodpecker/deploy.yml` triggers on push or manual dispatch to `main` or `dev`.
 
-It runs: `npm install` → `npm run build` → `aws s3 sync` → CloudFront invalidation.
+auth chain: workload x509 cert → IAM RolesAnywhere → `heraldstack-ci-deploy` role (no long-lived IAM keys)
 
-**Required repo secrets** (Settings → Secrets and variables → Actions):
+| branch | target                       | cloudfront distribution |
+| ------ | ---------------------------- | ----------------------- |
+| `main` | `s3://awsaerospace.org`      | `ECC3LP1BL2CZS`         |
+| `dev`  | `s3://dev.clouddelnorte.org` | woodpecker secret       |
 
-| Secret | Purpose |
-| ------ | ------- |
-| `AWS_ACCESS_KEY_ID` | IAM access key |
-| `AWS_SECRET_ACCESS_KEY` | IAM secret key |
-| `AWS_ROLE_ARN` | IAM role ARN for OIDC (optional if using keys) |
-
-> ⚠️ If secrets are not configured, the workflow builds successfully but
-> **silently skips** the S3 deploy and CloudFront invalidation.
+pipeline steps: `install` → `build` → `deploy` (main) or `deploy-dev` (dev)
 
 ### Manual deploy
 
 ```bash
-aws sso login --profile aerospaceug-admin
+aws sso login --profile aerospaceug-admin --use-device-code
 npm run lint && npm test && npm run build
 aws s3 sync lib/ s3://awsaerospace.org --delete --profile aerospaceug-admin
 aws cloudfront create-invalidation \
@@ -221,12 +223,14 @@ aws cloudfront create-invalidation \
   --profile aerospaceug-admin
 ```
 
-| Resource | Value |
-| -------- | ----- |
-| AWS CLI profile | `aerospaceug-admin` (SSO) |
-| S3 bucket | `awsaerospace.org` |
-| CloudFront distribution | `ECC3LP1BL2CZS` |
-| CloudFront domain | `d2ly3jmh1f74xt.cloudfront.net` |
+| Resource          | Value                   |
+| ----------------- | ----------------------- |
+| AWS CLI profile   | `aerospaceug-admin`     |
+| S3 bucket (prod)  | `awsaerospace.org`      |
+| S3 bucket (dev)   | `dev.clouddelnorte.org` |
+| CloudFront (prod) | `ECC3LP1BL2CZS`         |
+| prod URL          | `clouddelnorte.org`     |
+| dev URL           | `dev.clouddelnorte.org` |
 
 ---
 
@@ -257,11 +261,11 @@ tokens live in **sessionStorage** — tab-scoped, cleared on tab close. no local
 
 ### page gates
 
-| page | gate |
-| ---- | ---- |
-| /meetings | `<RequireAuth>` — any authenticated user |
+| page            | gate                                                      |
+| --------------- | --------------------------------------------------------- |
+| /meetings       | `<RequireAuth>` — any authenticated user                  |
 | /create-meeting | `<RequireAuth requireGroup="moderator">` — moderator-only |
-| all other pages | public |
+| all other pages | public                                                    |
 
 unauthenticated visitors are redirected to Hosted UI; `returnTo` encodes the original pathname so they land back after sign-in. moderator group mismatch renders a Cloudscape Alert with a sign-out option instead of the page content
 
@@ -275,26 +279,26 @@ unauthenticated visitors are redirected to Hosted UI; `returnTo` encodes the ori
 
 ### how it works — file layout
 
-| file | role |
-| ---- | ---- |
-| `src/lib/auth.ts` | OIDC PKCE core: `beginLogin`, `handleCallback`, `getIdToken`, `getAccessToken`, `refreshTokens`, `signOut`, `decodeToken` |
-| `src/lib/jitsi-token.ts` | fetches jitsi JWT from token-exchange API; module-scoped cache; handles 401 retry + typed `BannedUserError` |
-| `src/contexts/auth-context.tsx` | `AuthProvider` — silent-refresh timer at 80% token lifetime; storage event listener for cross-tab sign-out |
-| `src/hooks/useAuth.ts` | `useAuth()` — consumes AuthContext |
-| `src/components/require-auth/index.tsx` | wraps pages; calls `beginLogin` for unauthed, renders Alert for group mismatches |
-| `src/pages/auth/callback/` | MPA entry (`index.html` + `main.tsx` + `app.tsx`); handles `?code=` param, redirects to `returnTo` or renders error Alert |
-| `src/pages/meetings/components/jitsi-embed.tsx` | iframe embed component |
-| `src/pages/meetings/components/meetings-table.tsx` | Join column + Cloudscape Modal that mounts the embed |
+| file                                               | role                                                                                                                      |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `src/lib/auth.ts`                                  | OIDC PKCE core: `beginLogin`, `handleCallback`, `getIdToken`, `getAccessToken`, `refreshTokens`, `signOut`, `decodeToken` |
+| `src/lib/jitsi-token.ts`                           | fetches jitsi JWT from token-exchange API; module-scoped cache; handles 401 retry + typed `BannedUserError`               |
+| `src/contexts/auth-context.tsx`                    | `AuthProvider` — silent-refresh timer at 80% token lifetime; storage event listener for cross-tab sign-out                |
+| `src/hooks/useAuth.ts`                             | `useAuth()` — consumes AuthContext                                                                                        |
+| `src/components/require-auth/index.tsx`            | wraps pages; calls `beginLogin` for unauthed, renders Alert for group mismatches                                          |
+| `src/pages/auth/callback/`                         | MPA entry (`index.html` + `main.tsx` + `app.tsx`); handles `?code=` param, redirects to `returnTo` or renders error Alert |
+| `src/pages/meetings/components/jitsi-embed.tsx`    | iframe embed component                                                                                                    |
+| `src/pages/meetings/components/meetings-table.tsx` | Join column + Cloudscape Modal that mounts the embed                                                                      |
 
 the `Shell` layout (`src/layouts/shell/index.tsx`) is wrapped with `AuthProvider` at the top level. TopNavigation gains sign-in/sign-out UI: a menu-dropdown when authenticated (with "moderator" description for moderators), a button when not
 
 ### cognito identifiers
 
-| resource | value |
-| -------- | ----- |
-| user pool | `us-west-2_cyPQF4F3r` |
-| SPA app client | `57eikmt418ea6vti2f6h0pl74r` |
-| hosted UI domain | `cloud-del-norte.auth.us-west-2.amazoncognito.com` |
+| resource           | value                                                                |
+| ------------------ | -------------------------------------------------------------------- |
+| user pool          | `us-west-2_cyPQF4F3r`                                                |
+| SPA app client     | `57eikmt418ea6vti2f6h0pl74r`                                         |
+| hosted UI domain   | `cloud-del-norte.auth.us-west-2.amazoncognito.com`                   |
 | token-exchange API | `https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com/token/jitsi` |
 
 Cognito user pool + Lambda token-exchange infra lives in [`chasko-labs/cloud-del-norte-meet`](https://github.com/chasko-labs/cloud-del-norte-meet) (CDK)
@@ -306,9 +310,11 @@ the token-exchange Lambda reads the JWT signing secret from AWS Secrets Manager 
 
 **adjust CSP / security headers**
 response headers policy is managed out-of-band via CloudFront. the policy definition lives in `infra/cloudfront-security-headers.json`. to apply changes:
+
 ```bash
 AWS_PROFILE=aerospaceug-admin ./infra/apply-security-headers.sh
 ```
+
 see `infra/README.md` for the current policy state. changes take effect after CloudFront propagation (~60s), no invalidation required
 
 **deploy workflow**
