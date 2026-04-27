@@ -65,6 +65,9 @@ steps:
     depends_on: [install]
     failure: fail
     commands:
+      # generate releases.generated.json before typecheck — file is gitignored, must be
+      # produced at ci time. generator degrades gracefully when GITHUB_TOKEN is absent.
+      - node scripts/fetch-releases.mjs
       - npx tsc --noEmit
 
   - name: build
