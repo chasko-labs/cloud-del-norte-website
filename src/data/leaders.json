@@ -19,8 +19,8 @@
     "id": "andres-moreno",
     "name": "Andres Moreno",
     "role": "Co-organizer",
-    "bio": "",
-    "organization": null,
+    "bio": "Serverless architect, AWS Community Builder, and Cloud del Norte co-organizer. Focuses on Lambda, Step Functions, CI/CD, and improving developer experience.",
+    "organization": "Principal Software Architect, Caylent",
     "social": {
       "github": "andmoredev",
       "linkedin": null,

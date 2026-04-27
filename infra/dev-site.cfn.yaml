@@ -121,11 +121,11 @@ Resources:
           # SPA routing — all 403/404 from S3 → index.html with 200
           - ErrorCode: 403
             ResponseCode: 200
-            ResponsePagePath: /index.html
+            ResponsePagePath: /feed/index.html
             ErrorCachingMinTTL: 0
           - ErrorCode: 404
             ResponseCode: 200
-            ResponsePagePath: /index.html
+            ResponsePagePath: /feed/index.html
             ErrorCachingMinTTL: 0
       Tags:
         - Key: Project
