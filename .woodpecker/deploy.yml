@@ -75,7 +75,7 @@ steps:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
       DEV_CF_DISTRIBUTION_ID:
-        from_secret: DEV_CF_DISTRIBUTION_ID
+        from_secret: dev_cf_distribution_id
     commands:
       - mkdir -p /root/.aws
       - |
