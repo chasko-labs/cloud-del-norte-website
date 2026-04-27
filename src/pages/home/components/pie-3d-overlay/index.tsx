@@ -23,10 +23,11 @@ interface Props {
 	items: PieOverlayItem[];
 }
 
-// segment palette — matches verifier observation order:
-// servicenow lens (pink/magenta), games & 3d (orange-yellow),
-// space & satellite (green-blue), artificial intelligence (blue-purple)
-const SEGMENT_COLORS = ["#c94db5", "#e8a020", "#2e8fa3", "#6b5cdb"];
+// segment palette — cloudscape v3 categorical slots 1-4 (light mode resolved hex).
+// order matches variationData: games3d → artificialIntelligence → serverlessLens → spaceSatellite
+// source: @cloudscape-design/components internal/base-component/styles.scoped.css
+// color-charts-blue-2-300, color-charts-pink-500, color-charts-teal-300, color-charts-purple-500
+const SEGMENT_COLORS = ["#688ae8", "#c33d69", "#2ea597", "#8456ce"];
 
 function scheduleIdle(fn: () => void): void {
 	if ("requestIdleCallback" in window) {
@@ -108,12 +109,12 @@ export default function PieOverlay3D({ items }: Props) {
 
 				// camera tilted to show top face + side extrusion simultaneously
 				// alpha: -PI/2 faces front. beta: ~PI/3.5 (~51 deg from top) shows depth
-				// radius 5.5 fits the 1029x348 canvas without clipping outer labels
+				// radius 6.5 — pulled back from 5.5 to accommodate wider outerR without clipping
 				const camera = new ArcRotateCamera(
 					"cam",
 					-Math.PI / 2,
 					Math.PI / 3.5,
-					5.5,
+					6.5,
 					new Vector3(0, 0.15, 0),
 					scene,
 				);
@@ -137,8 +138,12 @@ export default function PieOverlay3D({ items }: Props) {
 				(dir as any).intensity = 0.9;
 
 				const total = items.reduce((s, it) => s + it.value, 0) || 1;
-				const innerR = 0.42;
-				const outerR = 1.0;
+				// radii tuned to match cloudscape donut geometry:
+				// cloudscape outer edge ≈ 75% of container half-height; inner hole ≈ 55% of outer.
+				// at camera beta=PI/3.5 (~51°), outerR=1.8 projected ≈ matches cloudscape outer ring.
+				// innerR=0.95 preserves the 53% inner/outer ratio cloudscape uses for its donut hole.
+				const innerR = 0.95;
+				const outerR = 1.8;
 				const extrudeH = 0.32; // visible extrusion depth
 				const arcSteps = 32; // smoother arcs
 				let cursor = 0;
