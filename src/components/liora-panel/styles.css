@@ -2314,13 +2314,31 @@
 /* ── credits names crawl — one per line, seamless infinite loop ──────────── */
 
 /* grid is duplicated 2x by the embed JS so translateY(-50%) lands at the start of the dupe set, producing a seamless wrap.
-   3D crawl: rotateX baked in for that "names rolling away into the distance" Star Wars / babylon-feel depth */
+   3D crawl: rotateX baked in for that "names rolling away into the distance" Star Wars / babylon-feel depth.
+   translateZ recession inspired by playground DK9140#3 — babylon ArcRotateCamera radius drift
+   replicated in CSS: camera pulling back === element moving into negative Z through parent perspective.
+   parent perspective: 720px. at translateZ(-400px): visible scale ≈ 720/(720+400) = 0.64.
+   names appear to shrink into the distance as they scroll, then reset seamlessly at 100%→0% loop. */
 @keyframes names-crawl {
 	0% {
+		/* near — full scale, no rotation, flush to perspective plane */
 		transform: rotateX(0deg) translateY(0) translateZ(0);
 	}
+	50% {
+		/* mid-scroll — angled + deepening into z-space, names visibly smaller */
+		transform: rotateX(8deg) translateY(-25%) translateZ(-200px);
+	}
 	100% {
-		transform: rotateX(12deg) translateY(-50%) translateZ(0);
+		/* fully receded — rotateX peaks, translateZ at max recession (~64% apparent scale) */
+		transform: rotateX(12deg) translateY(-50%) translateZ(-400px);
+	}
+}
+
+/* reduce motion: keep translateY crawl for readability, drop rotateX + translateZ depth transforms */
+@media (prefers-reduced-motion: reduce) {
+	@keyframes names-crawl {
+		0% { transform: translateY(0); }
+		100% { transform: translateY(-50%); }
 	}
 }
 
