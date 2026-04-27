@@ -1756,23 +1756,31 @@
 }
 
 .liora-credits-sub-thanks {
-	animation: liora-credits-sub-cycle-a 7.2s ease-in-out 2.4s infinite;
+	/* cycle-a: 14s — thanks line reveal → "thank you" alone glow → hide
+	   glow overlay fires on the same clock so the gold beat lands at 27-44% ≈ 3s */
+	animation:
+		liora-credits-sub-cycle-a 14s ease-in-out 2.4s infinite,
+		liora-thanks-glow 14s ease-in-out 2.4s infinite;
 }
 
 .liora-credits-sub-team {
-	animation: liora-credits-sub-cycle-b 7.2s ease-in-out 2.4s infinite;
+	/* cycle-b: 14s — team line hidden for first 51%, then reveals + holds */
+	animation: liora-credits-sub-cycle-b 14s ease-in-out 2.4s infinite;
 }
 
 @keyframes liora-credits-sub-cycle-a {
+	/* 0-11%: clip-path reveal (≈1.54s). 11-47%: fully visible — "the" + "to" fade
+	   within this window via their own keyframes; "thank you" alone from ~27%.
+	   47-50%: opacity out. 51-100%: hidden, letting cycle-b take the slot */
 	0% {
 		clip-path: inset(0 100% 0 0);
 		opacity: 1;
 	}
-	22% {
+	11% {
 		clip-path: inset(0 0 0 0);
 		opacity: 1;
 	}
-	45% {
+	47% {
 		clip-path: inset(0 0 0 0);
 		opacity: 1;
 	}
@@ -1791,11 +1799,15 @@
 }
 
 @keyframes liora-credits-sub-cycle-b {
+	/* 0-51%: hidden while cycle-a owns the slot.
+	   51-62%: clip-path reveal (≈1.54s). 62-95%: fully visible — "TEAM" fades
+	   via its own keyframe at 67-71%, "AMAZON SUMERIAN" alone from 71% ≈ 3.4s.
+	   95-100%: opacity out */
 	0% {
 		clip-path: inset(0 100% 0 0);
 		opacity: 0;
 	}
-	50% {
+	51% {
 		clip-path: inset(0 100% 0 0);
 		opacity: 0;
 	}
@@ -1803,7 +1815,7 @@
 		clip-path: inset(0 100% 0 0);
 		opacity: 1;
 	}
-	72% {
+	62% {
 		clip-path: inset(0 0 0 0);
 		opacity: 1;
 	}
@@ -1817,9 +1829,11 @@
 	}
 }
 
-/* per-word fade-out choreography on the alternating subtitle.
-   thanks line: full reveal, "the" fades, "to" fades, "thank you" holds for a beat
-   team  line: full reveal, "TEAM" fades, "AMAZON SUMERIAN" holds two extra beats
+/* per-word fade-out choreography on the alternating subtitle (14s cycle).
+   thanks line: reveal → "the" fades 18-22% → "to" fades 22-27% → "thank you"
+               glows gold 27-47% ≈ 3s → line fades 47-50%
+   team  line: reveal at 52% → "TEAM" fades 67-71% → "AMAZON SUMERIAN"
+               alone 71-95% ≈ 3.4s → line fades 95-100%
    inline-block keeps each word's layout box stable so siblings don't reflow */
 .liora-credits-word-the,
 .liora-credits-word-to,
@@ -1828,51 +1842,76 @@
 }
 
 .liora-credits-word-the {
-	animation: liora-word-the-fade 7.2s ease-in-out 2.4s infinite;
+	animation: liora-word-the-fade 14s ease-in-out 2.4s infinite;
 }
 
 .liora-credits-word-to {
-	animation: liora-word-to-fade 7.2s ease-in-out 2.4s infinite;
+	animation: liora-word-to-fade 14s ease-in-out 2.4s infinite;
 }
 
 .liora-credits-word-team {
-	animation: liora-word-team-fade 7.2s ease-in-out 2.4s infinite;
+	animation: liora-word-team-fade 14s ease-in-out 2.4s infinite;
 }
 
-/* "the" fades 28-32% of the thanks-line cycle (right after full reveal at 22%) */
+/* "the" fades 18-22% of the 14s cycle — staggered first, "to" follows */
 @keyframes liora-word-the-fade {
 	0%,
-	28% {
+	18% {
 		opacity: 1;
 	}
-	32%,
+	22%,
 	100% {
 		opacity: 0;
 	}
 }
 
-/* "to" fades 37-41% — leaves "thank you" alone for the beat at 41-50% */
+/* "to" fades 22-27% — leaves "thank you" alone 27-47% ≈ 2.94s of gold-glow hold */
 @keyframes liora-word-to-fade {
 	0%,
-	37% {
+	22% {
 		opacity: 1;
 	}
-	41%,
+	27%,
 	100% {
 		opacity: 0;
 	}
 }
 
-/* "TEAM" fades 76-80% — leaves AMAZON SUMERIAN holding alone 80-95%
-   ≈ 1.08s, the requested two extra beats before the line itself fades */
+/* "TEAM" fades 67-71% — leaves AMAZON SUMERIAN alone 71-95% ≈ 3.36s */
 @keyframes liora-word-team-fade {
 	0%,
-	76% {
+	67% {
 		opacity: 1;
 	}
-	80%,
+	71%,
 	100% {
 		opacity: 0;
+	}
+}
+
+/* "thank you" gold glow — rest state is a faint warm shimmer so the peak-entry
+   transition at 30% feels continuous, not a sudden flash; peak is full aws-orange */
+@keyframes liora-thanks-glow {
+	0%,
+	25% {
+		text-shadow:
+			0 0 4px rgba(255, 153, 0, 0.25),
+			0 0 12px rgba(255, 200, 80, 0.18);
+	}
+	30%,
+	44% {
+		text-shadow:
+			0 0 4px rgba(255, 220, 110, 1),
+			0 0 10px rgba(255, 153, 0, 0.95),
+			0 0 20px rgba(255, 175, 50, 0.8),
+			0 0 36px rgba(255, 200, 80, 0.55),
+			0 0 54px rgba(201, 162, 63, 0.35);
+	}
+	50%,
+	100% {
+		text-shadow:
+			0 0 4px rgba(255, 153, 0, 0.25),
+			0 0 12px rgba(255, 200, 80, 0.18);
 	}
 }
 
