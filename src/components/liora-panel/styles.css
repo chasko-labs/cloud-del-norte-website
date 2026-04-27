@@ -350,16 +350,18 @@
    click dismisses back to the taped position. handwriting replays because React
    bumps the `key` on each toggle (remount). */
 .liora-stickynote.liora-stickynote--zoomed {
-	/* detach from bezel stacking context — floats above the monitor in viewport */
-	position: fixed;
-	/* horizontally: center over the page column (panel is centered, note follows).
-	   vertically: 8vh from top puts it clearly above the monitor bezel, full note
-	   visible without scrolling even on short viewports. */
-	top: 8vh;
-	left: 50%;
-	/* translateX(-50%) centers the note on the horizontal midpoint.
-	   slight rotate gives the "held up to read" feel — less than the taped angle */
-	transform: translateX(-50%) rotate(-1deg);
+	/* stays inside .liora-frame (position:relative, no overflow) — anchored to the
+	   bezel rather than escaping to viewport. lifts up and slightly right so the
+	   note hovers over the monitor screen face, not the viewport top-center. */
+	position: absolute;
+	/* top 15% places the note in the upper third of .liora-frame, overlapping the
+	   bezel face. left 52% + translate(-20%) shifts it slightly right of center —
+	   over the screen, not the left bezel rail. */
+	top: 15%;
+	left: 52%;
+	/* translate(-20%) nudges left enough to keep the note inside the drawer width
+	   without hard-centering it. slight rotate gives the "held up to read" feel. */
+	transform: translate(-20%, 0) rotate(-1deg);
 	transform-origin: 50% 50%;
 	/* wide enough for "non load bearing" at zoomed font-size with breathing room.
 	   240px min ensures the longest word ("bearing") never clips at the right edge */
