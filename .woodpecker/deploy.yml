@@ -71,10 +71,11 @@ steps:
     when:
       - event: [push, manual]
         branch: dev
-    secrets: [DEV_CF_DISTRIBUTION_ID]
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      DEV_CF_DISTRIBUTION_ID:
+        from_secret: DEV_CF_DISTRIBUTION_ID
     commands:
       - mkdir -p /root/.aws
       - |
