@@ -35,6 +35,9 @@ steps:
     image: node:22-slim
     depends_on: [install]
     commands:
+      # generate releases.generated.json before build — file is gitignored, must be
+      # produced at ci time. generator degrades gracefully when GITHUB_TOKEN is absent.
+      - node scripts/fetch-releases.mjs
       - npm run build
 
   - name: deploy
