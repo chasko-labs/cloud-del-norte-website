@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT-0
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import ContentLayout from '@cloudscape-design/components/content-layout';
-import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
 import Navigation from '../../components/navigation';
@@ -19,10 +18,9 @@ import BuilderCenterCard from './components/builder-center-card';
 import ArrowheadNews from './components/arrowhead-news';
 import './styles.css';
 
-// liora panel — only mounts on dev.clouddelnorte.org and localhost
-// prod (clouddelnorte.org) omits this section entirely; the static index.html
-// scaffold in <body> is left as an inert fallback and does not activate on prod
-function LioraSection() {
+// liora panel — renders inside the left side navigation drawer, below SideNavigation
+// only mounts on dev.clouddelnorte.org and localhost; prod omits entirely
+function LioraSidebar() {
   const hostRef = useRef<HTMLDivElement>(null);
   const mounted = useRef(false);
 
@@ -31,10 +29,8 @@ function LioraSection() {
     mounted.current = true;
 
     const el = hostRef.current;
-    // show the panel now that it's inside the layout tree
     el.style.display = '';
 
-    // dynamic import keeps liora-embed out of the main bundle on prod
     const s = document.createElement('script');
     s.type = 'module';
     s.textContent = [
@@ -46,7 +42,7 @@ function LioraSection() {
   }, []);
 
   return (
-    <Container header={<Header variant="h2">liora</Header>}>
+    <div className="liora-sidebar">
       <div className="liora-bezel" style={{ display: 'none' }} id="liora-host-react" ref={hostRef}>
         <div className="liora-panel-wrap">
           <canvas id="liora-canvas" aria-hidden="true"></canvas>
@@ -56,7 +52,7 @@ function LioraSection() {
           </div>
         </div>
       </div>
-    </Container>
+    </div>
   );
 }
 
@@ -65,7 +61,7 @@ const IS_DEV =
   typeof window !== 'undefined' &&
   (window.location.hostname === 'dev.clouddelnorte.org' || window.location.hostname === 'localhost');
 
-type SectionKey = 'youtube' | 'twitch' | 'feed' | 'builder' | 'arrowhead' | 'liora';
+type SectionKey = 'youtube' | 'twitch' | 'feed' | 'builder' | 'arrowhead';
 
 const SECTIONS: Partial<Record<SectionKey, React.ReactNode>> = {
   youtube: <YoutubeCarousel />,
@@ -73,7 +69,6 @@ const SECTIONS: Partial<Record<SectionKey, React.ReactNode>> = {
   feed: <FeedSection />,
   builder: <BuilderCenterCard />,
   arrowhead: <ArrowheadNews />,
-  ...(IS_DEV ? { liora: <LioraSection /> } : {}),
 };
 
 function shuffled<T>(arr: T[]): T[] {
@@ -146,7 +141,12 @@ export default function App() {
       locale={locale}
       onLocaleChange={handleLocaleChange}
       breadcrumbs={<BreadcrumbsContent />}
-      navigation={<Navigation />}
+      navigation={
+        <>
+          <Navigation />
+          {IS_DEV && <LioraSidebar />}
+        </>
+      }
       tools={<HelpPanelHome />}
     >
       <AppContent theme={theme} onThemeChange={handleThemeChange} locale={locale} onLocaleChange={handleLocaleChange} />

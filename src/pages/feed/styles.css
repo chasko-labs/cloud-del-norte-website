@@ -270,19 +270,23 @@
   gap: var(--cdn-space-sm);
 }
 
-/* ---------- Liora panel ---------- */
+/* ---------- Liora panel — left side navigation drawer ---------- */
+
+.liora-sidebar {
+  padding: var(--cdn-space-s, 12px) var(--cdn-space-m, 16px);
+  margin-top: var(--cdn-space-s, 12px);
+  border-top: 1px solid var(--cdn-color-border, rgba(255, 255, 255, 0.08));
+}
 
 .liora-bezel {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: var(--cdn-space-md) 0;
 }
 
 .liora-panel-wrap {
   position: relative;
   width: 100%;
-  max-width: 640px;
   aspect-ratio: 4 / 3;
   background: #050607;
   border-radius: var(--cdn-radius-md);
