@@ -10,13 +10,17 @@
    Targets Cloudscape's internal header-background div (class confirmed via
    styles.selectors.js). Overlay uses rgba so Cloudscape's base color shows through. */
 
-/* Light mode: warm amber-to-cream gradient across the content header band */
+/* Light mode: cream base + subtle amber accent — !important overrides Cloudscape's
+   scoped background token so the header band matches the page cream exactly.
+   Without this, Cloudscape renders a near-white header that clashes with #ede5d4. */
 :root:not(.awsui-dark-mode) [class*="awsui_header-background"] {
-	background: linear-gradient(
-		135deg,
-		rgba(200, 150, 80, 0.14) 0%,
-		rgba(242, 237, 227, 0) 100%
-	);
+	background:
+		linear-gradient(
+			135deg,
+			rgba(139, 90, 43, 0.08) 0%,
+			rgba(139, 90, 43, 0) 60%
+		),
+		#ede5d4 !important;
 }
 
 /* Dark mode: deep navy-to-indigo with faint violet glow */
@@ -132,7 +136,7 @@ main[class*="awsui_layout"] {
    override both the outer wrapper and the inner layout-main element to close the gap. */
 :root:not(.awsui-dark-mode) main[class*="awsui_layout"],
 :root:not(.awsui-dark-mode) [class*="awsui_layout-main"] {
-  background: #ede5d4 !important;
+	background: #ede5d4 !important;
 }
 main[class*="awsui_layout"] > [class*="navigation-container"],
 main[class*="awsui_layout"] > [class*="tools-container"],
@@ -146,11 +150,11 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 [class*="awsui_tools_"][class*="awsui_root"],
 [class*="awsui_tools-container"],
 [class*="awsui_tools_"] [class*="awsui_help-panel"] {
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  touch-action: pan-y;
-  max-height: calc(100vh - 56px);
+	overflow-y: auto !important;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
+	touch-action: pan-y;
+	max-height: calc(100vh - 56px);
 }
 
 /* Light mode: cream overrides for Cloudscape layout chrome.
@@ -163,8 +167,8 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    the builder center section to flash on mouseover. */
 :root:not(.awsui-dark-mode) [class*="awsui_scrolling-background"],
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"] {
-  background: #ede5d4 !important;
-  background-color: #ede5d4 !important;
+	background: #ede5d4 !important;
+	background-color: #ede5d4 !important;
 }
 
 /* Light mode side nav — warm cream to match page.
@@ -308,57 +312,61 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 /* Light mode: palette purple (#5a1f8a) for interactive links */
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumb-group"] a,
 :root:not(.awsui-dark-mode) [class*="breadcrumb-group"] a {
-  color: var(--cdn-purple) !important; /* #5a1f8a — primary interactive, in-palette */
+	color: var(
+		--cdn-purple
+	) !important; /* #5a1f8a — primary interactive, in-palette */
 }
 
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumb-group"] a:hover,
 :root:not(.awsui-dark-mode) [class*="breadcrumb-group"] a:hover {
-  color: var(--cdn-violet) !important; /* #9060f0 — lighter on hover */
+	color: var(--cdn-violet) !important; /* #9060f0 — lighter on hover */
 }
 
 /* Dark mode: palette violet (#9060f0) — AAA contrast on dark navy backgrounds */
 .awsui-dark-mode [class*="awsui_breadcrumb-group"] a,
 .awsui-dark-mode [class*="breadcrumb-group"] a {
-  color: var(--cdn-violet) !important; /* #9060f0 — confirmed in-palette */
+	color: var(--cdn-violet) !important; /* #9060f0 — confirmed in-palette */
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumb-group"] a:hover,
 .awsui-dark-mode [class*="breadcrumb-group"] a:hover {
-  color: var(--cdn-lavender) !important; /* #d7c7ee — lighter lavender on hover */
+	color: var(
+		--cdn-lavender
+	) !important; /* #d7c7ee — lighter lavender on hover */
 }
 
 /* Help panel — leader sections */
 .help-panel-leader {
-  margin-bottom: var(--cdn-space-md, 1rem);
+	margin-bottom: var(--cdn-space-md, 1rem);
 }
 
 .help-panel-leader strong {
-  display: block;
-  font-size: var(--cdn-text-base, 1rem);
-  margin-bottom: 0.1rem;
+	display: block;
+	font-size: var(--cdn-text-base, 1rem);
+	margin-bottom: 0.1rem;
 }
 
 .help-panel-leader__role {
-  display: block;
-  font-size: var(--cdn-text-xs, 0.75rem);
-  color: var(--cdn-violet, #7c3aed);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-bottom: 0.35rem;
-  opacity: 0.85;
+	display: block;
+	font-size: var(--cdn-text-xs, 0.75rem);
+	color: var(--cdn-violet, #7c3aed);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	margin-bottom: 0.35rem;
+	opacity: 0.85;
 }
 
 .help-panel-leader p {
-  font-size: var(--cdn-text-sm, 0.875rem);
-  color: var(--cdn-color-text-secondary, inherit);
-  margin: 0.25rem 0;
+	font-size: var(--cdn-text-sm, 0.875rem);
+	color: var(--cdn-color-text-secondary, inherit);
+	margin: 0.25rem 0;
 }
 
 .help-panel-leader ul {
-  margin: 0.25rem 0 0 0;
-  padding-left: 1.25rem;
+	margin: 0.25rem 0 0 0;
+	padding-left: 1.25rem;
 }
 
 .help-panel-leader li {
-  font-size: var(--cdn-text-sm, 0.875rem);
+	font-size: var(--cdn-text-sm, 0.875rem);
 }
