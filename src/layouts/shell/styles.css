@@ -95,6 +95,14 @@
 main[class*="awsui_layout"] {
   min-block-size: auto !important;
 }
+
+/* Light mode: warm cream fills the layout seam between nav and content containers.
+   awsui_layout-main gets background-color: #ffffff from Cloudscape's scoped CSS —
+   override both the outer wrapper and the inner layout-main element to close the gap. */
+:root:not(.awsui-dark-mode) main[class*="awsui_layout"],
+:root:not(.awsui-dark-mode) [class*="awsui_layout-main"] {
+  background: #ede5d4 !important;
+}
 main[class*="awsui_layout"] > [class*="navigation-container"],
 main[class*="awsui_layout"] > [class*="tools-container"],
 main[class*="awsui_layout"] > [class*="content-container"] {

@@ -68,6 +68,7 @@ function KruxPlayer() {
   const [fading, setFading] = useState(false);
   const [nowPlaying, setNowPlaying] = useState<Record<string, string>>({});
   const [carouselVersion, setCarouselVersion] = useState(0);
+  const resumeOnSkipRef = useRef(false);
 
   const stream = STREAMS[idx];
 
@@ -113,12 +114,29 @@ function KruxPlayer() {
     return () => clearInterval(id);
   }, [playing, stream, fetchMeta]);
 
+  // after a skip: if a stream was playing, reload the new src and resume
+  useEffect(() => {
+    if (!resumeOnSkipRef.current) return;
+    resumeOnSkipRef.current = false;
+    const a = audioRef.current;
+    if (!a) return;
+    setLoading(true);
+    a.load();
+    a.play().catch(() => setLoading(false));
+  }, [idx]);
+
   const skipStation = useCallback(() => {
+    const a = audioRef.current;
+    const wasPlaying = a ? !a.paused : false;
+    if (wasPlaying && a) {
+      a.pause();
+    }
+    resumeOnSkipRef.current = wasPlaying;
     setFading(true);
     setTimeout(() => {
       setIdx(i => (i + 1) % STREAMS.length);
       setFading(false);
-      setCarouselVersion(v => v + 1);
+      if (!wasPlaying) setCarouselVersion(v => v + 1);
     }, FADE_MS);
   }, []);
 

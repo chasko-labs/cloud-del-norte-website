@@ -6,15 +6,10 @@ import { useTranslation } from '../../../hooks/useTranslation';
 
 // Twitch Embed SDK types (loaded via script tag at runtime)
 interface TwitchEmbed {
-  getPlayer(): TwitchPlayer;
-  addEventListener(event: string, callback: () => void): void;
-}
-interface TwitchPlayer {
   addEventListener(event: string, callback: () => void): void;
 }
 interface TwitchEmbedConstructor {
   new (el: HTMLElement, opts: Record<string, unknown>): TwitchEmbed;
-  VIDEO_READY: string;
 }
 interface TwitchStatic {
   Embed: TwitchEmbedConstructor;
@@ -94,16 +89,14 @@ function TwitchChannelEmbed({
         autoplay: false,
         layout: 'video',
       });
-      embed.addEventListener(twitch.Embed.VIDEO_READY, () => {
-        const player = embed.getPlayer();
-        player.addEventListener(twitch.Player.OFFLINE, () => {
-          setOffline(true);
-          setLive(false);
-        });
-        player.addEventListener(twitch.Player.ONLINE, () => {
-          setOffline(false);
-          setLive(true);
-        });
+      // OFFLINE/ONLINE fire on the embed directly — not on getPlayer()
+      embed.addEventListener(twitch.Player.OFFLINE, () => {
+        setOffline(true);
+        setLive(false);
+      });
+      embed.addEventListener(twitch.Player.ONLINE, () => {
+        setOffline(false);
+        setLive(true);
       });
     });
   }, [channelId, hostname]);
@@ -131,8 +124,7 @@ function TwitchChannelEmbed({
             loading="lazy"
             src={`https://www.youtube.com/embed/${fallbackVideoId}?autoplay=0`}
             title={`${label} ${t('feedPage.twitchRecentVideo')}`}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
           />
         </div>
       )}

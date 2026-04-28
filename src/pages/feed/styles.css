@@ -420,9 +420,8 @@
   padding: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: stretch; /* rows stretch so equal-height is enforced per row */
-  /* row gap bumped to cdn-space-lg (24px) for breathing room; col gap tighter */
-  gap: var(--cdn-space-lg, 24px) var(--cdn-space-md, 16px);
+  align-items: stretch;
+  gap: 10px var(--cdn-space-md, 16px);
   counter-reset: mini-card;
 }
 
@@ -439,11 +438,11 @@
 .feed-mini-card__link {
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
-  gap: 12px;
+  align-items: center;
+  gap: 10px;
   height: 100%;
-  min-height: 72px;
-  padding: 10px 14px;
+  min-height: 48px;
+  padding: 7px 12px;
   border: 1px solid rgba(139, 90, 43, 0.22);
   border-radius: var(--cdn-radius-md, 8px);
   background: #ffffff;
@@ -502,25 +501,27 @@
 .feed-mini-card__body {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 3px;
   min-width: 0;
+  justify-content: center;
 }
 
 .feed-mini-card__title {
   font-size: var(--cdn-text-base, 0.875rem);
   font-weight: var(--cdn-weight-medium);
   line-height: 1.3;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
+  white-space: nowrap;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .feed-mini-card__meta {
-  margin-top: auto;
   font-size: var(--cdn-text-xs, 11px);
   color: var(--cdn-color-text-muted);
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -544,6 +545,7 @@
   align-items: flex-start;
   justify-content: center;
   gap: 4px;
+  margin-inline-end: 6px;
 }
 
 /* top row: skip | label (secondary control) | round play button */
@@ -554,30 +556,29 @@
   gap: 8px;
 }
 
-/* skip button — leftmost, distinct pill background */
+/* skip button — leftmost, gradient pill */
 .feed-krux__skip {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: rgba(144, 96, 240, 0.08);
-  border: 1px solid rgba(144, 96, 240, 0.18);
-  border-radius: 6px;
-  padding: 3px 7px;
-  margin-inline-end: 4px;
+  background: linear-gradient(135deg, rgba(144, 96, 240, 0.12) 0%, rgba(144, 96, 240, 0.06) 100%);
+  border: 1px solid rgba(144, 96, 240, 0.28);
+  border-radius: 7px;
+  padding: 3px 8px;
+  margin-inline-end: 2px;
   cursor: pointer;
   font-size: 0.85rem;
   line-height: 1;
-  color: var(--cdn-color-text-muted);
-  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease,
-    transform 0.18s ease, box-shadow 0.18s ease;
+  color: var(--cdn-violet, #9060f0);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 3px rgba(144, 96, 240, 0.12);
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .feed-krux__skip:hover {
-  background: rgba(144, 96, 240, 0.16);
-  border-color: rgba(144, 96, 240, 0.42);
-  color: var(--cdn-violet, #9060f0);
-  transform: translateX(1px) scale(1.08);
-  box-shadow: 0 0 0 2px rgba(144, 96, 240, 0.14);
+  background: linear-gradient(135deg, rgba(144, 96, 240, 0.22) 0%, rgba(144, 96, 240, 0.12) 100%);
+  border-color: rgba(144, 96, 240, 0.52);
+  transform: scale(1.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 3px rgba(144, 96, 240, 0.15), 0 0 10px rgba(144, 96, 240, 0.2);
 }
 
 .feed-krux__skip:focus-visible {
@@ -605,19 +606,29 @@
   transition: color 0.2s ease;
 }
 
-.feed-krux__label:hover .feed-krux__station,
-.feed-krux__label--playing .feed-krux__station {
+.feed-krux__label:hover .feed-krux__station {
   color: var(--cdn-violet, #9060f0);
+  background: none;
+  -webkit-text-fill-color: var(--cdn-violet, #9060f0);
+  animation: none;
 }
 
-/* headphones emoji — subtle bounce + glow on play */
+.feed-krux__label--playing .feed-krux__station {
+  animation: none;
+  background: none;
+  -webkit-text-fill-color: var(--cdn-violet, #9060f0);
+}
+
+/* headphones emoji — ambient glow idle, stronger on play */
 .feed-krux__headphones {
   display: inline-block;
   transition: transform 0.2s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 2px rgba(144, 96, 240, 0.25));
 }
 
 .feed-krux__label:hover .feed-krux__headphones {
   transform: scale(1.15);
+  filter: drop-shadow(0 0 5px rgba(144, 96, 240, 0.55));
 }
 
 @keyframes krux-headphones-bob {
@@ -631,9 +642,32 @@
   filter: drop-shadow(0 0 4px rgba(144, 96, 240, 0.6));
 }
 
-/* station name fades between carousel items */
+/* station name — periodic shimmer sweep when idle (not playing, not hovering)
+   3s cycle: shimmer sweeps in first ~0.4s, static for the rest.
+   Playing + hover states cancel the animation via animation: none overrides above. */
+
+@keyframes krux-station-shimmer {
+  0%   { background-position: 200% center; }
+  14%  { background-position: -200% center; }
+  100% { background-position: -200% center; }
+}
+
 .feed-krux__station {
-  transition: opacity 0.5s ease, color 0.2s ease;
+  background: linear-gradient(
+    90deg,
+    var(--cdn-color-text-secondary, #6b5b7a) 0%,
+    var(--cdn-color-text-secondary, #6b5b7a) 25%,
+    rgba(255, 255, 255, 0.85) 50%,
+    var(--cdn-color-text-secondary, #6b5b7a) 75%,
+    var(--cdn-color-text-secondary, #6b5b7a) 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--cdn-color-text-secondary);
+  transition: opacity 0.5s ease;
+  animation: krux-station-shimmer 3s ease-in-out infinite;
 }
 
 .feed-krux__station--fading {
@@ -666,8 +700,40 @@
   cursor: pointer;
   font-size: 12px;
   line-height: 1;
+  position: relative;
+  overflow: visible;
   transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease,
     box-shadow 0.2s ease;
+}
+
+/* glassmorphism rotating ring — conic gradient arc sweeps the button perimeter */
+@keyframes krux-glass-ring {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.feed-krux__btn::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(144, 96, 240, 0) 0%,
+    rgba(144, 96, 240, 0.55) 25%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(144, 96, 240, 0.55) 75%,
+    rgba(144, 96, 240, 0) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+  animation: krux-glass-ring 3s linear infinite;
 }
 
 .feed-krux__btn:hover {
@@ -712,9 +778,17 @@
     transition: none;
     animation: none;
   }
+  .feed-krux__btn::before {
+    animation: none;
+  }
   .feed-krux__btn:hover,
   .feed-krux__skip:hover {
     transform: none;
+  }
+  /* station shimmer: show plain text fill, no gradient animation */
+  .feed-krux__station {
+    background: none;
+    -webkit-text-fill-color: var(--cdn-color-text-secondary);
   }
 }
 
@@ -722,6 +796,56 @@
   .feed-krux {
     align-self: flex-start;
   }
+}
+
+/* ---------- Info button pill badge — Cloudscape Link variant="info" ---------- */
+/* Renders the header info link as a small purple/violet pill badge chip
+   rather than Cloudscape's default blue text link. Scoped to ContentLayout header band. */
+
+:root:not(.awsui-dark-mode) [class*="awsui_link"][class*="variant-info"] {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid rgba(90, 31, 138, 0.35);
+  background: rgba(90, 31, 138, 0.08);
+  color: var(--cdn-purple, #5a1f8a) !important;
+  text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+:root:not(.awsui-dark-mode) [class*="awsui_link"][class*="variant-info"]:hover {
+  background: rgba(144, 96, 240, 0.14);
+  border-color: rgba(144, 96, 240, 0.55);
+  color: var(--cdn-violet, #9060f0) !important;
+  box-shadow: 0 0 6px rgba(144, 96, 240, 0.2);
+}
+
+.awsui-dark-mode [class*="awsui_link"][class*="variant-info"] {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid rgba(144, 96, 240, 0.4);
+  background: rgba(144, 96, 240, 0.1);
+  color: var(--cdn-violet, #9060f0) !important;
+  text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.awsui-dark-mode [class*="awsui_link"][class*="variant-info"]:hover {
+  background: rgba(144, 96, 240, 0.2);
+  border-color: rgba(144, 96, 240, 0.7);
+  color: var(--cdn-lavender, #d7c7ee) !important;
+  box-shadow: 0 0 8px rgba(144, 96, 240, 0.25);
 }
 
 /* ---------- Global link color — extend design system palette to Cloudscape Links ---------- */
