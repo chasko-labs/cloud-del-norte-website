@@ -469,9 +469,8 @@
 
 .feed-mini-card__link:hover,
 .feed-mini-card__link:focus-visible {
-  box-shadow: 0 10px 24px -10px rgba(144, 96, 240, 0.35);
-  transform: translateY(-2px);
-  filter: brightness(1.03);
+  box-shadow: 0 8px 20px -8px rgba(144, 96, 240, 0.3), 0 0 0 1px rgba(144, 96, 240, 0.15);
+  border-color: rgba(144, 96, 240, 0.35);
 }
 
 .feed-mini-card__link:focus-visible {

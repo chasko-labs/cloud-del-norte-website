@@ -65,14 +65,17 @@ export function LioraPanel() {
 		let cancelled = false;
 		let drawerObserver: ResizeObserver | null = null;
 
-		const scriptSrc = import.meta.env.VITE_LIORA_SCRIPT_URL;
-		const assetBase = import.meta.env.VITE_LIORA_ASSET_BASE;
-
-		if (!scriptSrc || !assetBase) return;
-
-		// Narrowed consts — safe to capture in nested async closure
-		const src = scriptSrc;
-		const base = assetBase;
+		// Use origin-relative URLs at runtime so dev.clouddelnorte.org loads from
+		// its own liora-embed.js rather than the production domain baked into env vars.
+		const envSrc = import.meta.env.VITE_LIORA_SCRIPT_URL as string | undefined;
+		const envBase = import.meta.env.VITE_LIORA_ASSET_BASE as string | undefined;
+		const origin = window.location.origin;
+		const src = envSrc
+			? envSrc.replace(/^https:\/\/[^/]+/, origin)
+			: `${origin}/liora-embed/liora-embed.js`;
+		const base = envBase
+			? envBase.replace(/^https:\/\/[^/]+/, origin)
+			: `${origin}/liora`;
 
 		function doMount() {
 			if (cancelled) return;
