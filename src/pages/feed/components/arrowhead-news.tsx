@@ -42,9 +42,27 @@ export default function ArrowheadNews() {
             {article.excerpt}
           </Box>
         </div>
-        <span className="feed-article-carousel__counter">
-          {index + 1} / {total}
-        </span>
+        <div className="feed-article-carousel__progress" aria-hidden="true">
+          <div
+            key={`progress-${index}`}
+            className={`feed-article-carousel__progress-fill${paused ? '' : ' feed-article-carousel__progress-fill--running'}`}
+          />
+        </div>
+        <div className="feed-article-carousel__dots" role="tablist" aria-label="article selector">
+          {articles.map((_: unknown, i: number) => (
+            <button
+              key={i}
+              role="tab"
+              aria-selected={i === index}
+              aria-label={`article ${i + 1} of ${total}`}
+              className={`feed-article-carousel__dot${i === index ? ' feed-article-carousel__dot--active' : ''}`}
+              onClick={() => {
+                setIndex(i);
+                setPaused(true);
+              }}
+            />
+          ))}
+        </div>
       </div>
     </Container>
   );

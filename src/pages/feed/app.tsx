@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import ContentLayout from '@cloudscape-design/components/content-layout';
-import Grid from '@cloudscape-design/components/grid';
+import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
 import Navigation from '../../components/navigation';
@@ -19,14 +19,61 @@ import BuilderCenterCard from './components/builder-center-card';
 import ArrowheadNews from './components/arrowhead-news';
 import './styles.css';
 
-type SectionKey = 'youtube' | 'twitch' | 'feed' | 'builder' | 'arrowhead';
+// liora panel — only mounts on dev.clouddelnorte.org and localhost
+// prod (clouddelnorte.org) omits this section entirely; the static index.html
+// scaffold in <body> is left as an inert fallback and does not activate on prod
+function LioraSection() {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const mounted = useRef(false);
 
-const SECTIONS: Record<SectionKey, React.ReactNode> = {
+  useEffect(() => {
+    if (mounted.current || !hostRef.current) return;
+    mounted.current = true;
+
+    const el = hostRef.current;
+    // show the panel now that it's inside the layout tree
+    el.style.display = '';
+
+    // dynamic import keeps liora-embed out of the main bundle on prod
+    const s = document.createElement('script');
+    s.type = 'module';
+    s.textContent = [
+      "import { mountLioraPanel } from '/liora-embed/liora-embed.js';",
+      "var h = document.getElementById('liora-host-react');",
+      "if (h) mountLioraPanel('/liora');",
+    ].join('\n');
+    document.body.appendChild(s);
+  }, []);
+
+  return (
+    <Container header={<Header variant="h2">liora</Header>}>
+      <div className="liora-bezel" style={{ display: 'none' }} id="liora-host-react" ref={hostRef}>
+        <div className="liora-panel-wrap">
+          <canvas id="liora-canvas" aria-hidden="true"></canvas>
+          <div id="liora-shimmer" aria-hidden="true"></div>
+          <div id="liora-status-bar" role="status" aria-live="polite">
+            <span id="liora-sys-status"></span>
+          </div>
+        </div>
+      </div>
+    </Container>
+  );
+}
+
+// hostname check runs once at module init — stable for page lifetime
+const IS_DEV =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'dev.clouddelnorte.org' || window.location.hostname === 'localhost');
+
+type SectionKey = 'youtube' | 'twitch' | 'feed' | 'builder' | 'arrowhead' | 'liora';
+
+const SECTIONS: Partial<Record<SectionKey, React.ReactNode>> = {
   youtube: <YoutubeCarousel />,
   twitch: <TwitchSection />,
   feed: <FeedSection />,
   builder: <BuilderCenterCard />,
   arrowhead: <ArrowheadNews />,
+  ...(IS_DEV ? { liora: <LioraSection /> } : {}),
 };
 
 function shuffled<T>(arr: T[]): T[] {
@@ -62,11 +109,11 @@ function AppContent({
         </Header>
       }
     >
-      <Grid gridDefinition={order.map(() => ({ colspan: 12 }))}>
+      <div className="feed-grid">
         {order.map(key => (
           <React.Fragment key={key}>{SECTIONS[key]}</React.Fragment>
         ))}
-      </Grid>
+      </div>
     </ContentLayout>
   );
 }

@@ -75,9 +75,27 @@ export default function BuilderCenterCard() {
             {item.author}
           </Box>
         </div>
-        <span className="feed-article-carousel__counter">
-          {index + 1} / {FEATURED.length}
-        </span>
+        <div className="feed-article-carousel__progress" aria-hidden="true">
+          <div
+            key={`progress-${index}`}
+            className={`feed-article-carousel__progress-fill${paused ? '' : ' feed-article-carousel__progress-fill--running'}`}
+          />
+        </div>
+        <div className="feed-article-carousel__dots" role="tablist" aria-label="article selector">
+          {FEATURED.map((_, i) => (
+            <button
+              key={i}
+              role="tab"
+              aria-selected={i === index}
+              aria-label={`article ${i + 1} of ${FEATURED.length}`}
+              className={`feed-article-carousel__dot${i === index ? ' feed-article-carousel__dot--active' : ''}`}
+              onClick={() => {
+                setIndex(i);
+                setPaused(true);
+              }}
+            />
+          ))}
+        </div>
       </div>
     </Container>
   );

@@ -11,27 +11,9 @@
   <body>
     <div id="root"></div>
     <script type="module" src="./main.tsx"></script>
-    <!-- liora panel scaffold — mountLioraPanel wires babylon.js into #liora-canvas -->
-    <div class="liora-bezel" style="display:none" id="liora-host">
-      <div class="liora-panel-wrap">
-        <canvas id="liora-canvas" aria-hidden="true"></canvas>
-        <div id="liora-shimmer" aria-hidden="true"></div>
-        <div id="liora-status-bar" role="status" aria-live="polite">
-          <span id="liora-sys-status"></span>
-        </div>
-      </div>
-    </div>
-    <script>
-      if (location.hostname === 'dev.clouddelnorte.org' || location.hostname === 'localhost') {
-        var s = document.createElement('script');
-        s.type = 'module';
-        s.textContent = [
-          "import { mountLioraPanel } from '/liora-embed/liora-embed.js';",
-          "var h = document.getElementById('liora-host');",
-          "if (h) { h.style.display = ''; mountLioraPanel('/liora'); }"
-        ].join('\n');
-        document.body.appendChild(s);
-      }
-    </script>
+    <!-- liora panel is now mounted inside the React Grid via LioraSection in app.tsx.
+         this static scaffold is intentionally inert (no script, display:none permanent)
+         and retained only as a structural reference. -->
+    <div style="display:none" id="liora-host" aria-hidden="true"></div>
   </body>
 </html>

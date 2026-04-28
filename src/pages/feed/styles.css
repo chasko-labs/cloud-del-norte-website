@@ -62,9 +62,11 @@
 
 /* ---------- Article carousel (auto-rotating content cards) ---------- */
 
-@keyframes feed-article-fade-in {
-  from { opacity: 0; transform: translateY(3px); }
-  to   { opacity: 1; transform: translateY(0); }
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes feed-article-fade-in {
+    from { opacity: 0; transform: translateY(3px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
 }
 
 .feed-article-carousel {
@@ -74,16 +76,81 @@
 }
 
 .feed-article-carousel__item {
-  animation: feed-article-fade-in 0.4s ease;
   display: flex;
   flex-direction: column;
   gap: var(--cdn-space-xs);
+  /* stable height prevents layout jump between posts of varying excerpt length */
+  min-height: 96px;
 }
 
-.feed-article-carousel__counter {
-  font-size: var(--cdn-text-sm);
-  color: var(--cdn-color-text-muted);
+@media (prefers-reduced-motion: no-preference) {
+  .feed-article-carousel__item {
+    animation: feed-article-fade-in 0.4s ease;
+  }
+}
+
+/* dot indicator row */
+.feed-article-carousel__dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   align-self: flex-end;
+  margin-top: var(--cdn-space-xs);
+}
+
+.feed-article-carousel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--cdn-color-text-muted);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.feed-article-carousel__dot:focus-visible {
+  outline: 2px solid var(--cdn-violet);
+  outline-offset: 2px;
+}
+
+.feed-article-carousel__dot--active {
+  background: var(--cdn-color-text-secondary);
+  border-color: var(--cdn-color-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-article-carousel__dot {
+    transition: none;
+  }
+}
+
+/* progress bar — 6s countdown strip at bottom of carousel */
+.feed-article-carousel__progress {
+  height: 2px;
+  background: var(--cdn-color-border);
+  border-radius: 1px;
+  overflow: hidden;
+  margin-top: var(--cdn-space-xs);
+}
+
+.feed-article-carousel__progress-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--cdn-color-text-secondary);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .feed-article-carousel__progress-fill--running {
+    animation: feed-progress-bar 6s linear forwards;
+  }
+}
+
+@keyframes feed-progress-bar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
 /* ---------- Twitch section ---------- */
@@ -107,9 +174,37 @@
 }
 
 .feed-twitch__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   font-size: var(--cdn-text-sm);
   font-weight: var(--cdn-weight-medium);
   color: var(--cdn-color-text-secondary);
+}
+
+/* pulsing red dot for live state */
+.feed-twitch__live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e91916;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes feed-live-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.75); }
+  }
+
+  .feed-twitch__live-dot {
+    animation: feed-live-pulse 1.4s ease-in-out infinite;
+  }
+}
+
+.feed-twitch__live-label {
+  color: #e91916;
 }
 
 .feed-twitch__frame {
@@ -233,4 +328,12 @@
 
 #liora-sys-status {
   display: none;
+}
+
+/* ---------- Feed page grid density ---------- */
+/* tighten the default 24px Cloudscape Grid gap to reduce vertical sprawl */
+.feed-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-md); /* 16px vs cloudscape default 24px */
 }

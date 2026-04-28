@@ -112,13 +112,10 @@ function TwitchChannelEmbed({
   return (
     <div className="feed-twitch__channel">
       <span className="feed-twitch__label">
+        {live && <span className="feed-twitch__live-dot" aria-hidden="true" />}
         {label}
-        {live && <span style={{ color: '#e91916', marginLeft: '0.4em' }}>· {t('feedPage.twitchLive')}</span>}
-        {offline && (
-          <span style={{ opacity: 0.6, marginLeft: '0.4em', fontSize: '0.8em' }}>
-            · {t('feedPage.twitchRecentVideo')}
-          </span>
-        )}
+        {live && <span className="feed-twitch__live-label">{t('feedPage.twitchLive')}</span>}
+        {offline && <span style={{ opacity: 0.6, fontSize: '0.8em' }}>· {t('feedPage.twitchRecentVideo')}</span>}
       </span>
       {/* Twitch embed container: always in DOM once initialized so SDK doesn't lose state */}
       <div style={{ display: offline ? 'none' : 'block' }}>
