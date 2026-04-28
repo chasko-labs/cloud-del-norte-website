@@ -148,3 +148,63 @@
   flex-direction: column;
   gap: var(--cdn-space-sm);
 }
+
+/* ---------- Liora panel ---------- */
+
+.liora-bezel {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: var(--cdn-space-md) 0;
+}
+
+.liora-panel-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 640px;
+  aspect-ratio: 4 / 3;
+  background: #050607;
+  border-radius: var(--cdn-radius-md);
+  overflow: hidden;
+}
+
+#liora-canvas {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+#liora-canvas.liora-canvas--visible {
+  display: block;
+}
+
+#liora-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0c10 0%, #111520 50%, #0a0c10 100%);
+  transition: opacity 0.6s ease;
+}
+
+#liora-shimmer.liora-placeholder--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#liora-status-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background 0.3s;
+}
+
+#liora-status-bar.liora-status--green { background: #00c853; }
+#liora-status-bar.liora-status--yellow { background: #ffd600; }
+#liora-status-bar.liora-status--red { background: #d50000; }
+#liora-status-bar.liora-status--short-circuit { background: #e040fb; }
+
+#liora-sys-status {
+  display: none;
+}

@@ -11,5 +11,26 @@
   <body>
     <div id="root"></div>
     <script type="module" src="./main.tsx"></script>
+    <!-- liora panel scaffold — mountLioraPanel wires babylon.js into #liora-canvas -->
+    <div class="liora-bezel" style="display:none" id="liora-host">
+      <div class="liora-panel-wrap">
+        <canvas id="liora-canvas" aria-hidden="true"></canvas>
+        <div id="liora-shimmer" aria-hidden="true"></div>
+        <div id="liora-status-bar" role="status" aria-live="polite">
+          <span id="liora-sys-status"></span>
+        </div>
+      </div>
+    </div>
+    <script type="module">
+      if (location.hostname === 'dev.clouddelnorte.org' || location.hostname === 'localhost') {
+        import('/liora-embed/liora-embed.js').then(({ mountLioraPanel }) => {
+          const host = document.getElementById('liora-host');
+          if (host) {
+            host.style.display = '';
+            mountLioraPanel('/liora');
+          }
+        });
+      }
+    </script>
   </body>
 </html>

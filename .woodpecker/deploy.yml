@@ -74,8 +74,6 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
-      DEV_CF_DISTRIBUTION_ID:
-        from_secret: dev_cf_distribution_id
     commands:
       - mkdir -p /root/.aws
       - |
@@ -86,5 +84,4 @@ steps:
         EOF
       - aws sts get-caller-identity
       - aws s3 sync lib/ s3://dev.clouddelnorte.org/ --delete --exact-timestamps
-      # DEV_CF_DISTRIBUTION_ID set as Woodpecker secret after CloudFormation stack is applied
-      - aws cloudfront create-invalidation --distribution-id $DEV_CF_DISTRIBUTION_ID --paths "/*"
+      - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/*"
