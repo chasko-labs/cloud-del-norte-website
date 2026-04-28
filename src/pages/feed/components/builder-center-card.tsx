@@ -4,7 +4,6 @@ import React from 'react';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
-import Icon from '@cloudscape-design/components/icon';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 // "top 4" tumblr-style mini-cards. each card carries a giant numeral on the
@@ -44,7 +43,7 @@ export default function BuilderCenterCard() {
           variant="h2"
           actions={
             <Link href="https://builder.aws.com/" external fontSize="body-s">
-              {t('feedPage.builderCenterOpen')} <Icon name="external" />
+              {t('feedPage.builderCenterOpen')}
             </Link>
           }
         >

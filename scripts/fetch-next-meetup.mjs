@@ -30,7 +30,7 @@ const GROUP_URL = 'https://www.meetup.com/awsugclouddelnorte/';
 // upcoming event from ical wins automatically once it appears).
 const PAST_FALLBACK = {
   status: 'past',
-  title: '👩🏾‍💻 Beginner Friendly 👩🏻‍🎓 Overview from AWS 🤖 Learn AI & Cloud 📚',
+  summary: '👩🏾‍💻 Beginner Friendly 👩🏻‍🎓 Overview from AWS 🤖 Learn AI & Cloud 📚',
   url: 'https://www.meetup.com/awsugclouddelnorte/events/312792622/',
   location: 'Online event',
   description:
@@ -154,7 +154,7 @@ function shapeForOutput(meetup) {
   const description = meetup.description ? String(meetup.description).replace(/\s+/g, ' ').trim().slice(0, 240) : '';
   return {
     status: meetup.status,
-    title: meetup.summary ?? '',
+    summary: meetup.summary ?? '',
     url: meetup.url ?? GROUP_URL,
     location: meetup.location ?? '',
     description,
