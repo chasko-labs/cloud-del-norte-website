@@ -17,7 +17,6 @@ export const HelpPanelHome = () => {
 
         <div>
           <h3>{t('helpPanel.organizersWantedHeader')}</h3>
-          <p>{t('helpPanel.organizersWantedIntro')}</p>
           <ul>
             <li>
               <strong>{t('helpPanel.aslLeadRole')}</strong> — {t('helpPanel.aslLeadDesc')}

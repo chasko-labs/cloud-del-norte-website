@@ -408,8 +408,9 @@
   padding: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  /* increased spacing between cards per bryan */
-  gap: var(--cdn-space-md, 16px) var(--cdn-space-md, 16px);
+  align-items: stretch; /* rows stretch so equal-height is enforced per row */
+  /* row gap bumped to cdn-space-lg (24px) for breathing room; col gap tighter */
+  gap: var(--cdn-space-lg, 24px) var(--cdn-space-md, 16px);
   counter-reset: mini-card;
 }
 
@@ -427,9 +428,10 @@
   display: flex;
   flex-direction: row;
   align-items: stretch;
-  gap: var(--cdn-space-md, 16px);
+  gap: 20px; /* wider gap separates numeral from title block at larger numeral size */
   height: 100%;
-  padding: var(--cdn-space-md, 16px);
+  min-height: 140px; /* prevents short-title cards from collapsing; shortest card matches tallest in row */
+  padding: 20px;
   border: 1px solid rgba(139, 90, 43, 0.16);
   border-radius: var(--cdn-radius-md, 8px);
   background: linear-gradient(135deg, #faf7f0 0%, #f5f0e4 50%, #faf7f0 100%);
@@ -468,8 +470,9 @@
 /* the giant numeral on the left — color cycles per card */
 .feed-mini-card__number {
   flex-shrink: 0;
-  align-self: center;
-  font-size: 4.5rem;
+  align-self: flex-start; /* anchors numeral to top of card so it doesn't float when title is 3 lines */
+  /* clamp: 4rem floor → scales up to 6rem on wide viewports, ensuring numeral outweighs the title block */
+  font-size: clamp(4rem, 8vw, 6rem);
   font-weight: 800;
   line-height: 0.9;
   letter-spacing: -0.04em;

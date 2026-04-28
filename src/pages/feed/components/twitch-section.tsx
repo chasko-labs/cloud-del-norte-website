@@ -136,37 +136,50 @@ function TwitchChannelEmbed({
   );
 }
 
-export default function TwitchSection() {
+function useHostname(): string | null {
   const [hostname, setHostname] = useState<string | null>(null);
-
   useEffect(() => {
     setHostname(window.location.hostname);
   }, []);
+  return hostname;
+}
 
+function TwitchChannelCard({ channel }: { channel: (typeof CHANNELS)[number] }) {
+  const hostname = useHostname();
   return (
-    <Container header={<Header variant="h2">Live on Twitch</Header>}>
-      <div className="feed-twitch">
-        {CHANNELS.map(channel =>
-          hostname ? (
-            <TwitchChannelEmbed
-              key={channel.id}
-              channelId={channel.id}
-              label={channel.label}
-              hostname={hostname}
-              fallbackVideoId={channel.fallbackVideoId}
-            />
-          ) : (
-            <div key={channel.id} className="feed-twitch__channel">
-              <span className="feed-twitch__label">{channel.label}</span>
-              <p className="feed-twitch__fallback">
-                <a href={`https://www.twitch.tv/${channel.id}`} target="_blank" rel="noopener noreferrer">
-                  Watch {channel.label} on Twitch
-                </a>
-              </p>
-            </div>
-          ),
-        )}
-      </div>
+    <Container header={<Header variant="h2">{channel.label} on Twitch</Header>}>
+      {hostname ? (
+        <TwitchChannelEmbed
+          channelId={channel.id}
+          label={channel.label}
+          hostname={hostname}
+          fallbackVideoId={channel.fallbackVideoId}
+        />
+      ) : (
+        <p className="feed-twitch__fallback">
+          <a href={`https://www.twitch.tv/${channel.id}`} target="_blank" rel="noopener noreferrer">
+            Watch {channel.label} on Twitch
+          </a>
+        </p>
+      )}
     </Container>
+  );
+}
+
+export function TwitchAws() {
+  return <TwitchChannelCard channel={CHANNELS[0]} />;
+}
+
+export function TwitchAwsOnAir() {
+  return <TwitchChannelCard channel={CHANNELS[1]} />;
+}
+
+// backward-compat default kept in case old imports remain
+export default function TwitchSection() {
+  return (
+    <>
+      <TwitchAws />
+      <TwitchAwsOnAir />
+    </>
   );
 }

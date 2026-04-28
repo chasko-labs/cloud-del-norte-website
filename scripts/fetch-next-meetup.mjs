@@ -23,6 +23,23 @@ const OUT_PATH = join(OUT_DIR, 'next-meetup.json');
 const ICAL_URL = 'https://www.meetup.com/awsugclouddelnorte/events/ical/';
 const GROUP_URL = 'https://www.meetup.com/awsugclouddelnorte/';
 
+// hardcoded past-event fallback. used only when the ical feed returns 0
+// parseable events (current state, since meetup.com does not always include
+// past events in the public ical export). update this when a more recent
+// past meetup should display, or when an upcoming meetup is scheduled (the
+// upcoming event from ical wins automatically once it appears).
+const PAST_FALLBACK = {
+  status: 'past',
+  title: '👩🏾‍💻 Beginner Friendly 👩🏻‍🎓 Overview from AWS 🤖 Learn AI & Cloud 📚',
+  url: 'https://www.meetup.com/awsugclouddelnorte/events/312792622/',
+  location: 'Online event',
+  description:
+    'AWS Strands Agents — beginner-friendly overview hosted by Bryan C. Hands-on with live expert guidance: compute basics, databases, serverless, AI applications, cost management. Part of the 10,000 AIdeas competition for $1000 in cloud credits using AWS Free Tier 2026.',
+  // 2026-01-15 13:00 MST (UTC-7) = 2026-01-15 20:00 UTC
+  dtstart: '2026-01-15T20:00:00.000Z',
+  dtend: '2026-01-15T21:00:00.000Z',
+};
+
 // ── iCal parsing ──────────────────────────────────────────────────────────
 // minimal RFC 5545 parser sufficient for meetup.com VEVENTs
 // handles line unfolding (CRLF + leading space/tab continues previous line)
@@ -168,11 +185,12 @@ try {
   if (payload) {
     console.log(`[fetch-next-meetup] selected ${payload.status} event: ${payload.title} (${payload.dtstart})`);
   } else {
-    console.log('[fetch-next-meetup] feed had no parseable events; payload=null');
+    console.log('[fetch-next-meetup] feed had no parseable events; using PAST_FALLBACK');
+    payload = PAST_FALLBACK;
   }
 } catch (err) {
-  console.warn(`[fetch-next-meetup] warn: fetch/parse failed — ${err.message}. Writing null payload.`);
-  payload = null;
+  console.warn(`[fetch-next-meetup] warn: fetch/parse failed — ${err.message}. Using PAST_FALLBACK.`);
+  payload = PAST_FALLBACK;
 }
 
 writeFileSync(OUT_PATH, JSON.stringify(payload, null, 2));

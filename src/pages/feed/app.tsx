@@ -12,7 +12,7 @@ import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../u
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 import { useTranslation } from '../../hooks/useTranslation';
 import YoutubeCarousel from './components/youtube-carousel';
-import TwitchSection from './components/twitch-section';
+import { TwitchAws, TwitchAwsOnAir } from './components/twitch-section';
 import { FeedAndmore, FeedAwsml } from './components/feed-section';
 import BuilderCenterCard from './components/builder-center-card';
 import ArrowheadNews from './components/arrowhead-news';
@@ -184,19 +184,18 @@ const IS_DEV =
 
 // builder center top-4 is rendered as its own pinned section (between two hr
 // dividers, just below next-meetup) — NOT part of the rotating shuffled feed.
-type SectionKey = 'youtube' | 'twitch' | 'andmore' | 'awsml' | 'arrowhead';
+// twitch was previously one full-span card with two panes; split into per-channel
+// cards so the 2-up grid is even (6 cells, 3 rows of 2 instead of 5 with one wide).
+type SectionKey = 'youtube' | 'twitchAws' | 'twitchAwsOnAir' | 'andmore' | 'awsml' | 'arrowhead';
 
 const SECTIONS: Partial<Record<SectionKey, React.ReactNode>> = {
   youtube: <YoutubeCarousel />,
-  twitch: <TwitchSection />,
+  twitchAws: <TwitchAws />,
+  twitchAwsOnAir: <TwitchAwsOnAir />,
   andmore: <FeedAndmore />,
   awsml: <FeedAwsml />,
   arrowhead: <ArrowheadNews />,
 };
-
-// twitch already shows two channel panes side by side — span the full grid width
-// so it doesn't squeeze into a single column. all other cells fit the 2-up tablet grid.
-const FULL_SPAN_SECTIONS = new Set<SectionKey>(['twitch']);
 
 function shuffled<T>(arr: T[]): T[] {
   const copy = [...arr];
@@ -258,10 +257,7 @@ function AppContent({
       <hr className="feed-section-divider" />
       <div className="feed-grid">
         {order.map(key => (
-          <div
-            key={key}
-            className={`feed-grid__cell cdn-card${FULL_SPAN_SECTIONS.has(key) ? ' feed-grid__cell--full' : ''}`}
-          >
+          <div key={key} className="feed-grid__cell cdn-card">
             {SECTIONS[key]}
           </div>
         ))}
