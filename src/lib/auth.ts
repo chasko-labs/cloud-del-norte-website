@@ -3,6 +3,8 @@
 // Signatures are NOT verified client-side — token-exchange API and prosody enforce on the server.
 
 const HOSTED_UI = "https://cloud-del-norte.auth.us-west-2.amazoncognito.com";
+
+export const AUTH_LOGIN_URL = "https://auth.clouddelnorte.org/login/index.html";
 const CLIENT_ID = "57eikmt418ea6vti2f6h0pl74r";
 const SCOPES = "openid email profile";
 

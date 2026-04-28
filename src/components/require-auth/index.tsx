@@ -5,7 +5,7 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import { type ReactNode, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { beginLogin } from "../../lib/auth";
+import { AUTH_LOGIN_URL } from "../../lib/auth";
 
 export interface RequireAuthProps {
 	children: ReactNode;
@@ -22,8 +22,7 @@ export function RequireAuth({
 
 	useEffect(() => {
 		if (!auth.isAuthenticated) {
-			const returnTo = window.location.pathname + window.location.search;
-			void beginLogin(returnTo);
+			window.location.assign(AUTH_LOGIN_URL);
 		}
 	}, [auth.isAuthenticated]);
 

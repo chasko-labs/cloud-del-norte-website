@@ -11,7 +11,7 @@ import { AuthProvider } from "../../contexts/auth-context";
 import { LocaleProvider } from "../../contexts/locale-context";
 import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
-import { beginLogin } from "../../lib/auth";
+import { AUTH_LOGIN_URL } from "../../lib/auth";
 import {
 	getStoredNavState,
 	type Locale,
@@ -172,7 +172,7 @@ function ShellContent({
 									type: "button",
 									text: "sign in",
 									onClick: () => {
-										void beginLogin();
+										window.location.assign(AUTH_LOGIN_URL);
 									},
 								},
 					]}

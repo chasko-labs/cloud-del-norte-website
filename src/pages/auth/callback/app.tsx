@@ -4,7 +4,7 @@ import Button from "@cloudscape-design/components/button";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import { useEffect, useState } from "react";
-import { beginLogin, handleCallback } from "../../../lib/auth";
+import { AUTH_LOGIN_URL, handleCallback } from "../../../lib/auth";
 
 type Status = "exchanging" | "redirecting" | "error";
 
@@ -41,7 +41,7 @@ export default function App() {
 							<Button
 								variant="primary"
 								onClick={() => {
-									void beginLogin("/");
+									window.location.assign(AUTH_LOGIN_URL);
 								}}
 							>
 								sign in again
