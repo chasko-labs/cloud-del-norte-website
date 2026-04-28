@@ -287,32 +287,18 @@
 .liora-sidebar__info {
   margin: var(--cdn-space-s, 12px) 0 0 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
   font-size: 11px;
   color: var(--cdn-color-text-muted, rgba(255, 255, 255, 0.55));
 }
 
-.liora-sidebar__info-row {
-  display: grid;
-  grid-template-columns: 56px 1fr;
-  gap: 8px;
-  align-items: baseline;
-}
-
-.liora-sidebar__info-row dt {
-  text-transform: lowercase;
-  letter-spacing: 0.04em;
-  opacity: 0.65;
-  margin: 0;
-}
-
-.liora-sidebar__info-row dd {
-  margin: 0;
+.liora-sidebar__info-val {
   color: var(--cdn-color-text-secondary, rgba(255, 255, 255, 0.85));
   word-break: break-all;
+  letter-spacing: 0.02em;
 }
 
 .liora-panel-wrap {
