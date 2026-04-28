@@ -13,11 +13,63 @@ import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../
 import { useTranslation } from '../../hooks/useTranslation';
 import YoutubeCarousel from './components/youtube-carousel';
 import TwitchSection from './components/twitch-section';
-import FeedSection from './components/feed-section';
+import { FeedAndmore, FeedAwsml } from './components/feed-section';
 import BuilderCenterCard from './components/builder-center-card';
 import ArrowheadNews from './components/arrowhead-news';
 import NextMeetup from './components/next-meetup';
 import './styles.css';
+
+// KRUX 91.5 FM (NMSU student radio) — Icecast stream toggle.
+// label "🎧 stream krux" sits above a small round play/stop button; the button's
+// horizontal position is the anchor — the "s" in "stream" left-aligns with it.
+const KRUX_STREAM_URL = 'https://kruxstream.nmsu.edu/KRUX';
+
+function KruxPlayer() {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const toggle = () => {
+    const a = audioRef.current;
+    if (!a) return;
+    if (a.paused) {
+      setLoading(true);
+      a.play()
+        .then(() => setLoading(false))
+        .catch(() => setLoading(false));
+    } else {
+      a.pause();
+    }
+  };
+
+  return (
+    <div className="feed-krux">
+      <span className="feed-krux__label">
+        <span aria-hidden="true">🎧</span> <span>stream krux</span>
+      </span>
+      <button
+        type="button"
+        className="feed-krux__btn"
+        onClick={toggle}
+        aria-pressed={playing}
+        aria-label={playing ? 'stop krux stream' : 'play krux stream'}
+        data-state={loading ? 'loading' : playing ? 'playing' : 'paused'}
+      >
+        <span aria-hidden="true">{playing ? '■' : '▶'}</span>
+      </button>
+      <audio
+        ref={audioRef}
+        src={KRUX_STREAM_URL}
+        preload="none"
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => setPlaying(false)}
+        onWaiting={() => setLoading(true)}
+        onPlaying={() => setLoading(false)}
+      />
+    </div>
+  );
+}
 
 // detect browser-side OS from userAgent — minimal, no library
 function detectOS(): string {
@@ -132,12 +184,13 @@ const IS_DEV =
 
 // builder center top-4 is rendered as its own pinned section (between two hr
 // dividers, just below next-meetup) — NOT part of the rotating shuffled feed.
-type SectionKey = 'youtube' | 'twitch' | 'feed' | 'arrowhead';
+type SectionKey = 'youtube' | 'twitch' | 'andmore' | 'awsml' | 'arrowhead';
 
 const SECTIONS: Partial<Record<SectionKey, React.ReactNode>> = {
   youtube: <YoutubeCarousel />,
   twitch: <TwitchSection />,
-  feed: <FeedSection />,
+  andmore: <FeedAndmore />,
+  awsml: <FeedAwsml />,
   arrowhead: <ArrowheadNews />,
 };
 
@@ -189,27 +242,7 @@ function AppContent({
               {t('feedPage.infoLink')}
             </Link>
           }
-          actions={
-            <div className="feed-krux">
-              <a
-                className="feed-krux__label"
-                href="https://kruxstream.nmsu.edu/KRUX"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {t('feedPage.streamKrux')}
-              </a>
-              <audio
-                className="feed-krux__player"
-                controls
-                preload="none"
-                src="https://kruxstream.nmsu.edu/KRUX"
-                aria-label={t('feedPage.streamKrux')}
-              >
-                {t('feedPage.streamKruxFallback')}
-              </audio>
-            </div>
-          }
+          actions={<KruxPlayer />}
         >
           {t('feedPage.header')}
         </Header>

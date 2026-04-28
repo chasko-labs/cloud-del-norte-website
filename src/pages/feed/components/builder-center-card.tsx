@@ -7,9 +7,15 @@ import Link from '@cloudscape-design/components/link';
 import Icon from '@cloudscape-design/components/icon';
 import { useTranslation } from '../../../hooks/useTranslation';
 
-// "top 4" tumblr-style mini-card grid — 4 featured AWS Builder Center articles.
-// each card is a compact tile with title + author. clicking opens the article externally.
+// "top 4" tumblr-style mini-cards. each card carries a giant numeral on the
+// left + title/author block on the right. per-card accent color cycles through
+// the cdn palette via .feed-mini-card--n{1..4} modifier classes.
 const TOP_FOUR = [
+  {
+    title: 'Can it run DOOM? Playing DOOM in Claude Code with DOOM MCP',
+    author: 'Gunnar Grosch',
+    url: 'https://builder.aws.com/content/3AmPDxn7EBkb5DTI9ERcCwPWjqk/can-it-run-doom-playing-doom-in-claude-code-with-doom-mcp',
+  },
   {
     title: 'Step Functions without ASL? Welcome Lambda Durable Functions',
     author: 'Andres Moreno',
@@ -23,13 +29,8 @@ const TOP_FOUR = [
   },
   {
     title: "Applied Technology — Amazon Leo: How AWS Brought Amazon's Project Kuiper to Market",
-    author: 'AWS Builder Center',
+    author: 'Bryan Chasko',
     url: 'https://builder.aws.com/content/36fvKToWy99YcAK3sDn34yjS6FE/applied-technology-amazon-leo-how-aws-brought-amazons-project-kuiper-to-market',
-  },
-  {
-    title: 'Can it run DOOM? Playing DOOM in Claude Code with DOOM MCP',
-    author: 'Gunnar Grosch',
-    url: 'https://builder.aws.com/content/3AmPDxn7EBkb5DTI9ERcCwPWjqk/can-it-run-doom-playing-doom-in-claude-code-with-doom-mcp',
   },
 ];
 
@@ -51,16 +52,21 @@ export default function BuilderCenterCard() {
         </Header>
       }
     >
-      <ul className="feed-mini-grid" role="list">
+      <ol className="feed-mini-grid" role="list">
         {TOP_FOUR.map((item, i) => (
-          <li key={i} className="feed-mini-card">
+          <li key={i} className={`feed-mini-card feed-mini-card--n${i + 1}`}>
             <a href={item.url} target="_blank" rel="noopener noreferrer" className="feed-mini-card__link">
-              <span className="feed-mini-card__title">{item.title}</span>
-              <span className="feed-mini-card__meta">{item.author}</span>
+              <span className="feed-mini-card__number" aria-hidden="true">
+                {i + 1}
+              </span>
+              <div className="feed-mini-card__body">
+                <span className="feed-mini-card__title">{item.title}</span>
+                <span className="feed-mini-card__meta">{item.author}</span>
+              </div>
             </a>
           </li>
         ))}
-      </ul>
+      </ol>
     </Container>
   );
 }

@@ -398,7 +398,9 @@
   grid-column: 1 / -1;
 }
 
-/* ---------- Builder center "top 4" mini-card grid (tumblr feel) ---------- */
+/* ---------- Builder center "top 4" mini-card grid (tumblr feel) ----------
+   each card: big numeral left, title + author block right; per-card accent
+   color cycles through the cdn palette; cards spaced via larger gap. */
 
 .feed-mini-grid {
   list-style: none;
@@ -406,7 +408,15 @@
   padding: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--cdn-space-s, 12px);
+  /* increased spacing between cards per bryan */
+  gap: var(--cdn-space-md, 16px) var(--cdn-space-md, 16px);
+  counter-reset: mini-card;
+}
+
+@media (max-width: 600px) {
+  .feed-mini-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .feed-mini-card {
@@ -415,13 +425,13 @@
 
 .feed-mini-card__link {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  flex-direction: row;
+  align-items: stretch;
+  gap: var(--cdn-space-md, 16px);
   height: 100%;
-  padding: var(--cdn-space-s, 12px);
+  padding: var(--cdn-space-md, 16px);
   border: 1px solid rgba(139, 90, 43, 0.16);
   border-radius: var(--cdn-radius-md, 8px);
-  /* glass surface — light mode warm cream gradient */
   background: linear-gradient(135deg, #faf7f0 0%, #f5f0e4 50%, #faf7f0 100%);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
@@ -432,36 +442,22 @@
   overflow: hidden;
 }
 
-/* dark mode glass */
 .awsui-dark-mode .feed-mini-card__link {
   background: linear-gradient(135deg, rgba(28, 34, 48, 0.95) 0%, rgba(30, 26, 48, 0.88) 50%, rgba(17, 24, 39, 0.97) 100%);
   border-color: rgba(144, 96, 240, 0.18);
 }
 
-/* gradient accent line at top of each mini-card — matches cdn-card vibe */
-.feed-mini-card__link::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent 0%, var(--cdn-purple, #5a1f8a) 30%, var(--cdn-violet, #9060f0) 60%, transparent 100%);
-  opacity: 0.5;
-  transition: opacity 0.2s ease;
-}
+/* per-card accent: left-edge color stripe in palette colors */
+.feed-mini-card--n1 .feed-mini-card__link { border-left: 4px solid var(--cdn-violet, #9060f0); }
+.feed-mini-card--n2 .feed-mini-card__link { border-left: 4px solid var(--cdn-aws-orange, #FF9900); }
+.feed-mini-card--n3 .feed-mini-card__link { border-left: 4px solid var(--cdn-purple, #5a1f8a); }
+.feed-mini-card--n4 .feed-mini-card__link { border-left: 4px solid var(--cdn-amber, #8b5a2b); }
 
 .feed-mini-card__link:hover,
 .feed-mini-card__link:focus-visible {
-  border-color: var(--cdn-violet, #9060f0);
-  box-shadow: 0 8px 18px -8px rgba(144, 96, 240, 0.4);
+  box-shadow: 0 10px 24px -10px rgba(144, 96, 240, 0.35);
   transform: translateY(-2px);
   filter: brightness(1.03);
-}
-
-.feed-mini-card__link:hover::before,
-.feed-mini-card__link:focus-visible::before {
-  opacity: 1;
 }
 
 .feed-mini-card__link:focus-visible {
@@ -469,11 +465,35 @@
   outline-offset: 2px;
 }
 
+/* the giant numeral on the left — color cycles per card */
+.feed-mini-card__number {
+  flex-shrink: 0;
+  align-self: center;
+  font-size: 4.5rem;
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  /* color set per nth via modifier class below */
+}
+
+.feed-mini-card--n1 .feed-mini-card__number { color: var(--cdn-violet, #9060f0); }
+.feed-mini-card--n2 .feed-mini-card__number { color: var(--cdn-aws-orange, #FF9900); }
+.feed-mini-card--n3 .feed-mini-card__number { color: var(--cdn-purple, #5a1f8a); }
+.feed-mini-card--n4 .feed-mini-card__number { color: var(--cdn-amber, #8b5a2b); }
+
+.feed-mini-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
 .feed-mini-card__title {
   font-size: var(--cdn-text-sm);
   font-weight: var(--cdn-weight-medium);
   line-height: 1.3;
-  /* clamp to 4 lines so titles of varying length share visual weight */
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
@@ -498,60 +518,122 @@
 }
 
 /* ---------- KRUX stream — page header actions slot ---------- */
-/* two-line stack (label + audio player) right-aligned in the Header actions slot.
-   flex-direction column with justify-content: center vertically aligns the
-   midpoint between the two lines with the h1 "home" baseline center. */
+/* two-line left-aligned stack: label "🎧 stream krux" on top, round play/stop
+   button below. align-items:flex-start makes the "s" of "stream" left-edge align
+   with the play button's left edge (the visual anchor bryan asked for). */
 
 .feed-krux {
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: center;
-  gap: 4px;
-  /* prevent shrinking below player width — native audio control needs room */
-  min-width: 240px;
+  gap: 6px;
+  /* the label sits above the button; both share the button's left edge */
+  padding-left: 0;
 }
 
 .feed-krux__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
   font-size: var(--cdn-text-sm);
   font-weight: var(--cdn-weight-medium);
-  text-transform: lowercase;
   letter-spacing: 0.04em;
   color: var(--cdn-color-text-secondary);
-  text-decoration: none;
-  border-bottom: 1px dotted transparent;
-  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+  white-space: nowrap;
+  /* shift the label so the "s" of "stream" left-aligns with the play button.
+     the headphones emoji + space is decorative; pull the visible word back to
+     the left edge of the column via negative margin offset matching emoji width.
+     using padding-left: 0 on the label and indent the emoji inline with margin
+     keeps the alphabetic "s" at the column origin. */
 }
 
-.feed-krux__label:hover,
-.feed-krux__label:focus-visible {
+.feed-krux__label > span:first-child {
+  /* headphones emoji — visually sits BEFORE the label start, so it doesn't
+     push "s" off the alignment line */
+  margin-left: -22px;
+  font-size: 1em;
+}
+
+.feed-krux__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--cdn-color-border);
+  border-radius: 50%;
+  background: var(--cdn-color-background-container, transparent);
   color: var(--cdn-violet, #9060f0);
-  border-bottom-color: var(--cdn-violet, #9060f0);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
 }
 
-.feed-krux__label:focus-visible {
+.feed-krux__btn:hover {
+  border-color: var(--cdn-violet, #9060f0);
+  box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.18);
+  transform: scale(1.05);
+}
+
+.feed-krux__btn:focus-visible {
   outline: 2px solid var(--cdn-violet, #9060f0);
   outline-offset: 3px;
-  border-radius: 2px;
 }
 
-.feed-krux__player {
-  /* compact native audio control; height matches a typical chrome/safari player */
-  height: 32px;
-  width: 240px;
-  max-width: 100%;
+.feed-krux__btn[data-state='playing'] {
+  background: var(--cdn-violet, #9060f0);
+  color: #fff;
+  border-color: var(--cdn-violet, #9060f0);
 }
 
-/* mobile: fall in line below the heading instead of crowding actions slot */
+.feed-krux__btn[data-state='loading'] {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-krux__btn {
+    transition: none;
+  }
+  .feed-krux__btn:hover {
+    transform: none;
+  }
+}
+
+/* mobile: stay left-aligned with full label visible; emoji offset preserved */
 @media (max-width: 600px) {
   .feed-krux {
-    align-items: flex-start;
-    min-width: 0;
-    width: 100%;
+    align-self: flex-start;
   }
-  .feed-krux__player {
-    width: 100%;
-  }
+}
+
+/* ---------- Global link color — extend design system palette to Cloudscape Links ---------- */
+/* Cloudscape ships its own blue token for <Link>. Override at the app root so
+   every Cloudscape Link picks up the cdn purple/violet/lavender palette. */
+
+:root:not(.awsui-dark-mode) [class*="awsui_link"] {
+  color: var(--cdn-purple, #5a1f8a);
+}
+:root:not(.awsui-dark-mode) [class*="awsui_link"]:hover {
+  color: var(--cdn-violet, #9060f0);
+}
+
+.awsui-dark-mode [class*="awsui_link"] {
+  color: var(--cdn-violet, #9060f0);
+}
+.awsui-dark-mode [class*="awsui_link"]:hover {
+  color: var(--cdn-lavender, #d7c7ee);
+}
+
+/* plain anchor tags inside content (next-meetup CTA, help-panel ul anchors) */
+:root:not(.awsui-dark-mode) .cdn-card a:not([class*="awsui_link"]) {
+  color: var(--cdn-purple, #5a1f8a);
+}
+.awsui-dark-mode .cdn-card a:not([class*="awsui_link"]) {
+  color: var(--cdn-violet, #9060f0);
 }
 
 /* ---------- Next meetup section divider ---------- */

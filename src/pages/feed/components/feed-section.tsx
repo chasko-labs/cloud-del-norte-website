@@ -6,10 +6,9 @@ import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
 import Icon from '@cloudscape-design/components/icon';
 import Box from '@cloudscape-design/components/box';
-import SpaceBetween from '@cloudscape-design/components/space-between';
 import { useTranslation } from '../../../hooks/useTranslation';
 
-interface FeedPost {
+export interface FeedPost {
   title: string;
   link: string;
   pubDate: string;
@@ -19,6 +18,32 @@ interface FeedPost {
 interface FeedsData {
   andmore: FeedPost[];
   awsml: FeedPost[];
+}
+
+// shared module-level cache so both feed components fetch /data/feeds.json once
+let feedsCache: FeedsData | null = null;
+let feedsPromise: Promise<FeedsData | null> | null = null;
+
+function loadFeeds(): Promise<FeedsData | null> {
+  if (feedsCache) return Promise.resolve(feedsCache);
+  if (feedsPromise) return feedsPromise;
+  feedsPromise = fetch('/data/feeds.json')
+    .then(r => (r.ok ? (r.json() as Promise<FeedsData>) : null))
+    .then(data => {
+      if (data) feedsCache = data;
+      return data;
+    })
+    .catch(() => null);
+  return feedsPromise;
+}
+
+function useFeed(key: 'andmore' | 'awsml'): { posts: FeedPost[]; ready: boolean } {
+  const [data, setData] = useState<FeedsData | null>(feedsCache);
+  useEffect(() => {
+    if (data) return;
+    loadFeeds().then(d => setData(d));
+  }, [data]);
+  return { posts: data?.[key]?.slice(0, 5) ?? [], ready: data !== null };
 }
 
 function PostCarousel({ posts }: { posts: FeedPost[] }) {
@@ -34,7 +59,6 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
   if (posts.length === 0) {
     return <p className="feed-posts__empty">Check back soon.</p>;
   }
-
   const post = posts[index];
 
   return (
@@ -61,7 +85,7 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
         />
       </div>
       <div className="feed-article-carousel__dots" role="tablist" aria-label="article selector">
-        {posts.map((_: FeedPost, i: number) => (
+        {posts.map((_post, i) => (
           <button
             key={i}
             role="tab"
@@ -79,66 +103,58 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
   );
 }
 
-export default function FeedSection() {
+export function FeedAndmore() {
   const { t } = useTranslation();
-  const [data, setData] = useState<FeedsData | null>(null);
-  const [error, setError] = useState(false);
-
-  useEffect(() => {
-    fetch('/data/feeds.json')
-      .then(res => {
-        if (!res.ok) throw new Error('fetch failed');
-        return res.json() as Promise<FeedsData>;
-      })
-      .then(setData)
-      .catch(() => setError(true));
-  }, []);
-
-  if (error) {
-    return (
-      <Container header={<Header variant="h2">{t('feedPage.andmoreDotDev')}</Header>}>
-        <p className="feed-posts__empty">Feed unavailable — check back soon.</p>
-      </Container>
-    );
-  }
-
-  const andmore = data?.andmore?.slice(0, 5) ?? [];
-  const awsml = data?.awsml?.slice(0, 5) ?? [];
-
+  const { posts } = useFeed('andmore');
   return (
-    <SpaceBetween size="m">
-      <Container
-        header={
-          <Header
-            variant="h2"
-            actions={
-              <Link href="https://andmore.dev" external fontSize="body-s">
-                All posts <Icon name="external" />
-              </Link>
-            }
-          >
-            {t('feedPage.andmoreDotDev')}
-          </Header>
-        }
-      >
-        <PostCarousel posts={andmore} />
-      </Container>
-      <Container
-        header={
-          <Header
-            variant="h2"
-            actions={
-              <Link href="https://aws.amazon.com/blogs/machine-learning/" external fontSize="body-s">
-                All posts <Icon name="external" />
-              </Link>
-            }
-          >
-            {t('feedPage.awsMlBlog')}
-          </Header>
-        }
-      >
-        <PostCarousel posts={awsml} />
-      </Container>
-    </SpaceBetween>
+    <Container
+      header={
+        <Header
+          variant="h2"
+          actions={
+            <Link href="https://andmore.dev" external fontSize="body-s">
+              All posts <Icon name="external" />
+            </Link>
+          }
+        >
+          {t('feedPage.andmoreDotDev')}
+        </Header>
+      }
+    >
+      <PostCarousel posts={posts} />
+    </Container>
+  );
+}
+
+export function FeedAwsml() {
+  const { t } = useTranslation();
+  const { posts } = useFeed('awsml');
+  return (
+    <Container
+      header={
+        <Header
+          variant="h2"
+          actions={
+            <Link href="https://aws.amazon.com/blogs/machine-learning/" external fontSize="body-s">
+              All posts <Icon name="external" />
+            </Link>
+          }
+        >
+          {t('feedPage.awsMlBlog')}
+        </Header>
+      }
+    >
+      <PostCarousel posts={posts} />
+    </Container>
+  );
+}
+
+// backward-compat default export retained in case any other importer references the old name
+export default function FeedSection() {
+  return (
+    <>
+      <FeedAndmore />
+      <FeedAwsml />
+    </>
   );
 }
