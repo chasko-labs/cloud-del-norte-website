@@ -17,22 +17,28 @@ import { initializeTheme, applyTheme, setStoredTheme, type Theme } from '../../u
 import { initializeLocale, applyLocale, setStoredLocale, type Locale } from '../../utils/locale';
 import { useTranslation } from '../../hooks/useTranslation';
 
-function AppContent({ theme, onThemeChange, locale, onLocaleChange }: { theme: Theme; onThemeChange: (t: Theme) => void; locale: Locale; onLocaleChange: (l: Locale) => void }) {
+function AppContent({
+  theme,
+  onThemeChange,
+  locale,
+  onLocaleChange,
+}: {
+  theme: Theme;
+  onThemeChange: (t: Theme) => void;
+  locale: Locale;
+  onLocaleChange: (l: Locale) => void;
+}) {
   const { t } = useTranslation();
 
   return (
     <ContentLayout
       header={
-        <Header variant="h1" info={<Link variant="info">{t('dashboardPage.infoLink')}</Link>}>
-          {t('dashboardPage.header')}
+        <Header variant="h1" info={<Link variant="info">{t('aboutPage.infoLink')}</Link>}>
+          {t('aboutPage.header')}
         </Header>
       }
     >
-      <Grid gridDefinition={[
-        { colspan: 12 },
-        { colspan: { default: 12, m: 8 } },
-        { colspan: { default: 12, m: 4 } },
-      ]}>
+      <Grid gridDefinition={[{ colspan: 12 }, { colspan: { default: 12, m: 8 } }, { colspan: { default: 12, m: 4 } }]}>
         <ProductionOverview metrics={productionMetrics} />
         <Meetings data={variationData} items={breakdownItems} />
         <QualityReport notes={notes} />
@@ -43,7 +49,7 @@ function AppContent({ theme, onThemeChange, locale, onLocaleChange }: { theme: T
 
 function BreadcrumbsContent() {
   const { t } = useTranslation();
-  return <Breadcrumbs active={{ text: t('dashboardPage.breadcrumb'), href: '/home/index.html' }} />;
+  return <Breadcrumbs active={{ text: t('aboutPage.breadcrumb'), href: '/home/index.html' }} />;
 }
 
 export default function App() {

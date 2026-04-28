@@ -422,6 +422,56 @@
 }
 
 /* --------------------------------------------------------------------------
+   Info panel link — clickable text that opens the help panel
+   -------------------------------------------------------------------------- */
+.cdn-footer-info-panel {
+  max-width: 800px;
+  margin: var(--cdn-space-lg) auto 0;
+  text-align: center;
+  padding-top: var(--cdn-space-md);
+}
+
+.cdn-footer-info-panel-button {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.3em;
+  font-size: var(--cdn-text-lg);
+  line-height: var(--cdn-leading-relaxed);
+  letter-spacing: var(--cdn-letter-spacing-body);
+  color: var(--cdn-color-text);
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.cdn-footer-info-panel-button:hover {
+  color: var(--cdn-amber);
+  text-decoration-color: var(--cdn-amber);
+}
+
+.cdn-footer-info-panel-button:focus {
+  outline: 2px solid var(--cdn-amber);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.awsui-dark-mode .cdn-footer-info-panel-button {
+  color: var(--cdn-lavender);
+}
+
+.awsui-dark-mode .cdn-footer-info-panel-button:hover {
+  color: var(--cdn-violet);
+  text-decoration-color: var(--cdn-violet);
+}
+
+.awsui-dark-mode .cdn-footer-info-panel-button:focus {
+  outline-color: var(--cdn-violet);
+}
+
+/* --------------------------------------------------------------------------
    Reduced motion — disable all animations and transitions
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {

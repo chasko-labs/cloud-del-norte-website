@@ -17,6 +17,11 @@ export interface ShellProps {
   breadcrumbs?: AppLayoutProps['breadcrumbs'];
   contentType?: Extract<AppLayoutProps.ContentType, 'default' | 'table' | 'form'>;
   tools?: AppLayoutProps['tools'];
+  /** Controlled tools-panel open state. If provided Shell becomes a controlled
+   *  component for the tools panel — caller must also supply onToolsChange.
+   *  If omitted Shell self-manages tools state as before (backward compatible). */
+  toolsOpen?: boolean;
+  onToolsChange?: (open: boolean) => void;
   children?: AppLayoutProps['content'];
   navigation?: AppLayoutProps['navigation'];
   notifications?: AppLayoutProps['notifications'];
@@ -27,37 +32,65 @@ export interface ShellProps {
   pageTitle?: string;
 }
 
-function ShellContent({ children, contentType, breadcrumbs, tools, navigation, notifications, theme, onThemeChange, locale, onLocaleChange, pageTitle }: ShellProps) {
+function ShellContent({
+  children,
+  contentType,
+  breadcrumbs,
+  tools,
+  toolsOpen: toolsOpenProp,
+  onToolsChange,
+  navigation,
+  notifications,
+  theme,
+  onThemeChange,
+  locale,
+  onLocaleChange,
+  pageTitle,
+}: ShellProps) {
   const { t } = useTranslation();
   const auth = useAuth();
   const [animating, setAnimating] = useState(false);
   const [animatingLocale, setAnimatingLocale] = useState(false);
-  
+  // internal tools state — used only when caller does not pass toolsOpen (uncontrolled)
+  const [toolsOpenInternal, setToolsOpenInternal] = useState(false);
+  const isControlled = toolsOpenProp !== undefined;
+  const toolsOpen = isControlled ? toolsOpenProp : toolsOpenInternal;
+  const handleToolsChange = useCallback(
+    (event: { detail: { open: boolean } }) => {
+      if (isControlled) {
+        onToolsChange?.(event.detail.open);
+      } else {
+        setToolsOpenInternal(event.detail.open);
+      }
+    },
+    [isControlled, onToolsChange],
+  );
+
   // Initialize nav state from localStorage OR viewport (Cloudscape breakpoint: 688px)
   const [navOpen, setNavOpen] = useState(() => {
     const stored = getStoredNavState();
     if (stored !== null) return stored;
     return typeof window !== 'undefined' && window.innerWidth >= 688;
   });
-  
+
   const handleNavigationChange = useCallback((event: { detail: { open: boolean } }) => {
     const newState = event.detail.open;
     setNavOpen(newState);
     setStoredNavState(newState);
   }, []);
-  
+
   // Add resize listener to handle viewport changes
   useEffect(() => {
     function handleResize() {
       const isDesktop = window.innerWidth >= 688;
       const stored = getStoredNavState();
-      
+
       // Only auto-adjust if user hasn't set a preference
       if (stored === null) {
         setNavOpen(isDesktop);
       }
     }
-    
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -83,12 +116,16 @@ function ShellContent({ children, contentType, breadcrumbs, tools, navigation, n
 
   return (
     <>
-      <div id="top-nav" data-cdn-animating={animating || undefined} data-cdn-animating-locale={animatingLocale || undefined}>
+      <div
+        id="top-nav"
+        data-cdn-animating={animating || undefined}
+        data-cdn-animating-locale={animatingLocale || undefined}
+      >
         <TopNavigation
           identity={{
             /*             logo: { src: '/logo.svg', alt: 'Cloud Del Norte Logo' }, */
             title: t('shell.siteTitle'),
-            href: '/home/index.html',
+            href: '/feed/index.html',
           }}
           utilities={[
             {
@@ -137,6 +174,8 @@ function ShellContent({ children, contentType, breadcrumbs, tools, navigation, n
         notifications={notifications}
         stickyNotifications={true}
         tools={tools}
+        toolsOpen={toolsOpen}
+        onToolsChange={handleToolsChange}
         content={children}
         headerSelector="#top-nav"
         ariaLabels={{

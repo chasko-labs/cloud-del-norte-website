@@ -1,0 +1,1388 @@
+/* ==========================================================================
+   Feed page layout styles
+   Uses CDN token system: var(--cdn-space-*), var(--cdn-text-*), etc.
+   ========================================================================== */
+
+.feed-carousel {
+  position: relative;
+  width: 100%;
+}
+
+.feed-carousel__viewport {
+  width: 100%;
+  overflow: hidden;
+}
+
+.feed-carousel__frame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%; /* 16:9 aspect ratio */
+}
+
+.feed-carousel__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: var(--cdn-radius-md);
+}
+
+.feed-carousel__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--cdn-space-md);
+  margin-top: var(--cdn-space-sm);
+}
+
+.feed-carousel__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--cdn-color-border);
+  border-radius: var(--cdn-radius-sm);
+  background: transparent;
+  cursor: pointer;
+  font-size: var(--cdn-text-lg);
+  color: inherit;
+}
+
+.feed-carousel__btn:focus-visible {
+  outline: 2px solid var(--cdn-violet);
+  outline-offset: 2px;
+}
+
+.feed-carousel__counter {
+  font-size: var(--cdn-text-sm);
+  color: var(--cdn-color-text-secondary);
+}
+
+/* ---------- Article carousel (auto-rotating content cards) ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes feed-article-fade-in {
+    from { opacity: 0; transform: translateY(3px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+}
+
+.feed-article-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-sm);
+}
+
+.feed-article-carousel__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-xs);
+  /* stable height prevents layout jump between posts of varying excerpt length */
+  min-height: 96px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .feed-article-carousel__item {
+    animation: feed-article-fade-in 0.4s ease;
+  }
+}
+
+/* dot indicator row */
+.feed-article-carousel__dots {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-end;
+  margin-top: var(--cdn-space-xs);
+}
+
+.feed-article-carousel__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--cdn-color-text-muted);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.feed-article-carousel__dot:focus-visible {
+  outline: 2px solid var(--cdn-violet);
+  outline-offset: 2px;
+}
+
+.feed-article-carousel__dot--active {
+  background: var(--cdn-color-text-secondary);
+  border-color: var(--cdn-color-text-secondary);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-article-carousel__dot {
+    transition: none;
+  }
+}
+
+/* progress bar — 6s countdown strip at bottom of carousel */
+.feed-article-carousel__progress {
+  height: 2px;
+  background: var(--cdn-color-border);
+  border-radius: 1px;
+  overflow: hidden;
+  margin-top: var(--cdn-space-xs);
+}
+
+.feed-article-carousel__progress-fill {
+  height: 100%;
+  width: 100%;
+  background: var(--cdn-color-text-secondary);
+  transform-origin: left center;
+  transform: scaleX(0);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .feed-article-carousel__progress-fill--running {
+    animation: feed-progress-bar 6s linear forwards;
+  }
+}
+
+@keyframes feed-progress-bar {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ---------- Twitch section ---------- */
+
+.feed-twitch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cdn-space-md);
+}
+
+@media (max-width: 600px) {
+  .feed-twitch {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feed-twitch__channel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-xs);
+}
+
+.feed-twitch__label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--cdn-text-sm);
+  font-weight: var(--cdn-weight-medium);
+  color: var(--cdn-color-text-secondary);
+}
+
+/* pulsing red dot for live state */
+.feed-twitch__live-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e91916;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes feed-live-pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.5; transform: scale(0.75); }
+  }
+
+  .feed-twitch__live-dot {
+    animation: feed-live-pulse 1.4s ease-in-out infinite;
+  }
+}
+
+.feed-twitch__live-label {
+  color: #e91916;
+}
+
+.feed-twitch__frame {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+}
+
+.feed-twitch__frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: var(--cdn-radius-md);
+}
+
+.feed-twitch__fallback {
+  font-size: var(--cdn-text-sm);
+  color: var(--cdn-color-text-muted);
+}
+
+/* ---------- Feed posts section ---------- */
+
+.feed-posts__empty {
+  font-size: var(--cdn-text-base);
+  color: var(--cdn-color-text-muted);
+  padding: var(--cdn-space-lg) 0;
+}
+
+.feed-posts__item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-xs);
+  padding: var(--cdn-space-sm) 0;
+  border-bottom: 1px solid var(--cdn-color-border);
+}
+
+.feed-posts__item:last-child {
+  border-bottom: none;
+}
+
+.feed-posts__title {
+  font-size: var(--cdn-text-base);
+  font-weight: var(--cdn-weight-medium);
+}
+
+.feed-posts__excerpt {
+  font-size: var(--cdn-text-sm);
+  color: var(--cdn-color-text-secondary);
+}
+
+.feed-posts__meta {
+  font-size: var(--cdn-text-sm);
+  color: var(--cdn-color-text-muted);
+}
+
+/* ---------- Builder center card ---------- */
+
+.feed-builder-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-sm);
+}
+
+/* ---------- Liora panel — left side navigation drawer ---------- */
+
+.liora-sidebar {
+  padding: var(--cdn-space-s, 12px) var(--cdn-space-m, 16px);
+  margin-top: var(--cdn-space-s, 12px);
+  border-top: 1px solid var(--cdn-color-border, rgba(255, 255, 255, 0.08));
+}
+
+.liora-bezel {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.liora-sidebar__info {
+  margin: var(--cdn-space-s, 12px) 0 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 11px;
+  color: var(--cdn-color-text-muted, rgba(255, 255, 255, 0.55));
+}
+
+.liora-sidebar__info-val {
+  color: var(--cdn-color-text-secondary, rgba(255, 255, 255, 0.85));
+  word-break: break-all;
+  letter-spacing: 0.02em;
+}
+
+.liora-panel-wrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #050607;
+  border-radius: var(--cdn-radius-md);
+  overflow: hidden;
+}
+
+#liora-canvas {
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+#liora-canvas.liora-canvas--visible {
+  display: block;
+}
+
+#liora-shimmer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #0a0c10 0%, #111520 50%, #0a0c10 100%);
+  transition: opacity 0.6s ease;
+}
+
+#liora-shimmer.liora-placeholder--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+#liora-status-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: transparent;
+  transition: background 0.3s;
+}
+
+#liora-status-bar.liora-status--green { background: #00c853; }
+#liora-status-bar.liora-status--yellow { background: #ffd600; }
+#liora-status-bar.liora-status--red { background: #d50000; }
+#liora-status-bar.liora-status--short-circuit { background: #e040fb; }
+
+#liora-sys-status {
+  display: none;
+}
+
+/* ---------- Feed page grid — tumblr-style 2-up on tablet+ ---------- */
+/* mobile: 1 column; tablet+: 2 columns. cells with --full span both columns. */
+.feed-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--cdn-space-md);
+}
+
+.feed-grid__cell {
+  min-width: 0; /* allow children to shrink inside the column track */
+}
+
+/* glassmorphism — suppress Container chrome so the cdn-card glass surface shows.
+   descendant (not direct-child) combinator handles any React wrapper divs between
+   cdn-card and the Cloudscape root element. */
+.cdn-card [class*="awsui_root"],
+.cdn-card [class*="awsui_content_"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+/* header: suppress bg + side/top borders; keep a subtle bottom separator */
+.cdn-card [class*="awsui_header_"] {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid rgba(139, 90, 43, 0.14) !important;
+  padding-bottom: 2px !important;
+}
+.awsui-dark-mode .cdn-card [class*="awsui_header_"] {
+  border-bottom-color: rgba(144, 96, 240, 0.18) !important;
+}
+
+/* two-line card header: primary name + secondary descriptor below */
+.feed-card-header-sub {
+  display: block;
+  font-size: var(--cdn-text-sm, 0.75rem);
+  font-weight: 400;
+  color: var(--cdn-color-text-secondary, #5a3a1e);
+  line-height: 1.3;
+  margin-top: 2px;
+  letter-spacing: 0.01em;
+}
+.awsui-dark-mode .feed-card-header-sub {
+  color: rgba(214, 197, 238, 0.7);
+}
+
+@media (min-width: 768px) {
+  .feed-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.feed-grid__cell--full {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Builder center "top 4" mini-card grid (tumblr feel) ----------
+   each card: big numeral left, title + author block right; per-card accent
+   color cycles through the cdn palette; cards spaced via larger gap. */
+
+.feed-mini-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 10px var(--cdn-space-md, 16px);
+  counter-reset: mini-card;
+}
+
+@media (max-width: 600px) {
+  .feed-mini-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.feed-mini-card {
+  margin: 0;
+}
+
+.feed-mini-card__link {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  height: 100%;
+  min-height: 48px;
+  padding: 7px 12px;
+  border: 1px solid rgba(139, 90, 43, 0.22);
+  border-radius: var(--cdn-radius-md, 8px);
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(139, 90, 43, 0.18), 0 0 0 1px rgba(139, 90, 43, 0.08);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.awsui-dark-mode .feed-mini-card__link {
+  /* slightly lighter than outer dark glass so cards visually lift */
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(144, 96, 240, 0.22);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(144, 96, 240, 0.10);
+}
+
+/* per-card accent: left-edge color stripe in palette colors */
+.feed-mini-card--n1 .feed-mini-card__link { border-left: 4px solid var(--cdn-violet, #9060f0); }
+.feed-mini-card--n2 .feed-mini-card__link { border-left: 4px solid var(--cdn-aws-orange, #FF9900); }
+.feed-mini-card--n3 .feed-mini-card__link { border-left: 4px solid var(--cdn-purple, #5a1f8a); }
+.feed-mini-card--n4 .feed-mini-card__link { border-left: 4px solid var(--cdn-amber, #8b5a2b); }
+
+.feed-mini-card__link:hover,
+.feed-mini-card__link:focus-visible {
+  box-shadow: 0 10px 24px -10px rgba(144, 96, 240, 0.35);
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+}
+
+.feed-mini-card__link:focus-visible {
+  outline: 2px solid var(--cdn-violet, #9060f0);
+  outline-offset: 2px;
+}
+
+/* ranked numeral on the left — compact, not display-sized */
+.feed-mini-card__number {
+  flex-shrink: 0;
+  align-self: flex-start;
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+  font-family: ui-serif, Georgia, "Times New Roman", serif;
+  min-width: 1.8rem;
+  text-align: center;
+}
+
+.feed-mini-card--n1 .feed-mini-card__number { color: var(--cdn-violet, #9060f0); }
+.feed-mini-card--n2 .feed-mini-card__number { color: var(--cdn-aws-orange, #FF9900); }
+.feed-mini-card--n3 .feed-mini-card__number { color: var(--cdn-purple, #5a1f8a); }
+.feed-mini-card--n4 .feed-mini-card__number { color: var(--cdn-amber, #8b5a2b); }
+
+.feed-mini-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+  justify-content: center;
+}
+
+.feed-mini-card__title {
+  font-size: var(--cdn-text-base, 0.875rem);
+  font-weight: var(--cdn-weight-medium);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.feed-mini-card__meta {
+  font-size: var(--cdn-text-xs, 11px);
+  color: var(--cdn-color-text-muted);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-mini-card__link {
+    transition: none;
+  }
+  .feed-mini-card__link:hover,
+  .feed-mini-card__link:focus-visible {
+    transform: none;
+  }
+}
+
+/* ---------- KRUX stream — page header actions slot ---------- */
+/* two-line left-aligned stack: label "🎧 stream krux" on top, round play/stop
+   button below. align-items:flex-start makes the "s" of "stream" left-edge align
+   with the play button's left edge (the visual anchor bryan asked for). */
+
+.feed-krux {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 4px;
+  margin-inline-end: 6px;
+}
+
+/* top row: skip | label (secondary control) | round play button */
+.feed-krux__top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+/* skip button — leftmost, gradient pill */
+.feed-krux__skip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(144, 96, 240, 0.12) 0%, rgba(144, 96, 240, 0.06) 100%);
+  border: 1px solid rgba(144, 96, 240, 0.28);
+  border-radius: 7px;
+  padding: 3px 8px;
+  margin-inline-end: 2px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  color: var(--cdn-violet, #9060f0);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 1px 3px rgba(144, 96, 240, 0.12);
+  transition: background 0.18s ease, border-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.feed-krux__skip:hover {
+  background: linear-gradient(135deg, rgba(144, 96, 240, 0.22) 0%, rgba(144, 96, 240, 0.12) 100%);
+  border-color: rgba(144, 96, 240, 0.52);
+  transform: scale(1.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 0 0 3px rgba(144, 96, 240, 0.15), 0 0 10px rgba(144, 96, 240, 0.2);
+}
+
+.feed-krux__skip:focus-visible {
+  outline: 2px solid var(--cdn-violet, #9060f0);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* label is a button-reset element — secondary click target */
+.feed-krux__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  font-size: var(--cdn-text-sm);
+  font-weight: var(--cdn-weight-medium);
+  letter-spacing: 0.04em;
+  color: var(--cdn-color-text-secondary);
+  white-space: nowrap;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.feed-krux__label:hover .feed-krux__station {
+  color: var(--cdn-violet, #9060f0);
+  background: none;
+  -webkit-text-fill-color: var(--cdn-violet, #9060f0);
+  animation: none;
+}
+
+.feed-krux__label--playing .feed-krux__station {
+  animation: none;
+  background: none;
+  -webkit-text-fill-color: var(--cdn-violet, #9060f0);
+}
+
+/* headphones emoji — ambient glow idle, stronger on play */
+.feed-krux__headphones {
+  display: inline-block;
+  transition: transform 0.2s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 2px rgba(144, 96, 240, 0.25));
+}
+
+.feed-krux__label:hover .feed-krux__headphones {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 5px rgba(144, 96, 240, 0.55));
+}
+
+@keyframes krux-headphones-bob {
+  0%, 100% { transform: translateY(0) scale(1.0); }
+  30%       { transform: translateY(-1.5px) scale(1.08); }
+  60%       { transform: translateY(0.5px) scale(1.04); }
+}
+
+.feed-krux__headphones--playing {
+  animation: krux-headphones-bob 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(144, 96, 240, 0.6));
+}
+
+/* station name — periodic shimmer sweep when idle (not playing, not hovering)
+   3s cycle: shimmer sweeps in first ~0.4s, static for the rest.
+   Playing + hover states cancel the animation via animation: none overrides above. */
+
+@keyframes krux-station-shimmer {
+  0%   { background-position: 200% center; }
+  14%  { background-position: -200% center; }
+  100% { background-position: -200% center; }
+}
+
+.feed-krux__station {
+  background: linear-gradient(
+    90deg,
+    var(--cdn-color-text-secondary, #6b5b7a) 0%,
+    var(--cdn-color-text-secondary, #6b5b7a) 25%,
+    rgba(255, 255, 255, 0.85) 50%,
+    var(--cdn-color-text-secondary, #6b5b7a) 75%,
+    var(--cdn-color-text-secondary, #6b5b7a) 100%
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--cdn-color-text-secondary);
+  transition: opacity 0.5s ease;
+  animation: krux-station-shimmer 3s ease-in-out infinite;
+}
+
+.feed-krux__station--fading {
+  opacity: 0;
+}
+
+/* tiny now-playing line */
+.feed-krux__now-playing {
+  font-size: var(--cdn-text-xs, 0.6875rem);
+  color: var(--cdn-color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
+}
+
+.feed-krux__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--cdn-color-border);
+  border-radius: 50%;
+  background: var(--cdn-color-background-container, transparent);
+  color: var(--cdn-violet, #9060f0);
+  cursor: pointer;
+  font-size: 12px;
+  line-height: 1;
+  position: relative;
+  overflow: visible;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease,
+    box-shadow 0.2s ease;
+}
+
+/* glassmorphism rotating ring — conic gradient arc sweeps the button perimeter */
+@keyframes krux-glass-ring {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.feed-krux__btn::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(
+    from 0deg,
+    rgba(144, 96, 240, 0) 0%,
+    rgba(144, 96, 240, 0.55) 25%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(144, 96, 240, 0.55) 75%,
+    rgba(144, 96, 240, 0) 100%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: -1;
+  animation: krux-glass-ring 3s linear infinite;
+}
+
+.feed-krux__btn:hover {
+  border-color: var(--cdn-violet, #9060f0);
+  box-shadow: 0 0 0 4px rgba(144, 96, 240, 0.2), 0 0 8px rgba(144, 96, 240, 0.18);
+  transform: scale(1.08);
+}
+
+.feed-krux__btn:focus-visible {
+  outline: 2px solid var(--cdn-violet, #9060f0);
+  outline-offset: 3px;
+}
+
+@keyframes krux-playing-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.22), 0 0 8px rgba(144, 96, 240, 0.28); }
+  50%       { box-shadow: 0 0 0 6px rgba(144, 96, 240, 0.34), 0 0 16px rgba(144, 96, 240, 0.44); }
+}
+
+.feed-krux__btn[data-state='playing'] {
+  background: var(--cdn-violet, #9060f0);
+  color: #fff;
+  border-color: var(--cdn-violet, #9060f0);
+  animation: krux-playing-pulse 2s ease-in-out infinite;
+}
+
+@keyframes krux-loading-orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.feed-krux__btn[data-state='loading'] {
+  opacity: 0.65;
+  cursor: progress;
+  animation: krux-loading-orbit 0.9s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-krux__btn,
+  .feed-krux__station,
+  .feed-krux__skip,
+  .feed-krux__headphones {
+    transition: none;
+    animation: none;
+  }
+  .feed-krux__btn::before {
+    animation: none;
+  }
+  .feed-krux__btn:hover,
+  .feed-krux__skip:hover {
+    transform: none;
+  }
+  /* station shimmer: show plain text fill, no gradient animation */
+  .feed-krux__station {
+    background: none;
+    -webkit-text-fill-color: var(--cdn-color-text-secondary);
+  }
+}
+
+@media (max-width: 600px) {
+  .feed-krux {
+    align-self: flex-start;
+  }
+}
+
+/* ---------- Info button pill badge — Cloudscape Link variant="info" ---------- */
+/* Renders the header info link as a small purple/violet pill badge chip
+   rather than Cloudscape's default blue text link. Scoped to ContentLayout header band. */
+
+:root:not(.awsui-dark-mode) [class*="awsui_link"][class*="variant-info"] {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid rgba(90, 31, 138, 0.35);
+  background: rgba(90, 31, 138, 0.08);
+  color: var(--cdn-purple, #5a1f8a) !important;
+  text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+:root:not(.awsui-dark-mode) [class*="awsui_link"][class*="variant-info"]:hover {
+  background: rgba(144, 96, 240, 0.14);
+  border-color: rgba(144, 96, 240, 0.55);
+  color: var(--cdn-violet, #9060f0) !important;
+  box-shadow: 0 0 6px rgba(144, 96, 240, 0.2);
+}
+
+.awsui-dark-mode [class*="awsui_link"][class*="variant-info"] {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 8px;
+  border-radius: 10px;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid rgba(144, 96, 240, 0.4);
+  background: rgba(144, 96, 240, 0.1);
+  color: var(--cdn-violet, #9060f0) !important;
+  text-decoration: none;
+  transition: background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.awsui-dark-mode [class*="awsui_link"][class*="variant-info"]:hover {
+  background: rgba(144, 96, 240, 0.2);
+  border-color: rgba(144, 96, 240, 0.7);
+  color: var(--cdn-lavender, #d7c7ee) !important;
+  box-shadow: 0 0 8px rgba(144, 96, 240, 0.25);
+}
+
+/* ---------- Global link color — extend design system palette to Cloudscape Links ---------- */
+/* Cloudscape ships its own blue token for <Link>. Override at the app root so
+   every Cloudscape Link picks up the cdn purple/violet/lavender palette. */
+
+:root:not(.awsui-dark-mode) [class*="awsui_link"] {
+  color: var(--cdn-purple, #5a1f8a);
+}
+:root:not(.awsui-dark-mode) [class*="awsui_link"]:hover {
+  color: var(--cdn-violet, #9060f0);
+}
+
+.awsui-dark-mode [class*="awsui_link"] {
+  color: var(--cdn-violet, #9060f0);
+}
+.awsui-dark-mode [class*="awsui_link"]:hover {
+  color: var(--cdn-lavender, #d7c7ee);
+}
+
+/* plain anchor tags inside content (next-meetup CTA, help-panel ul anchors) */
+:root:not(.awsui-dark-mode) .cdn-card a:not([class*="awsui_link"]) {
+  color: var(--cdn-purple, #5a1f8a);
+}
+.awsui-dark-mode .cdn-card a:not([class*="awsui_link"]) {
+  color: var(--cdn-violet, #9060f0);
+}
+
+/* ---------- Next meetup section divider ---------- */
+
+.feed-section-divider {
+  border: none;
+  border-top: 1px solid var(--cdn-color-border);
+  margin-block: var(--cdn-space-lg, 24px);
+}
+
+/* ==========================================================================
+   Liora injected DOM elements — host-page CSS contract
+   liora-embed.js injects these elements into .liora-bezel at runtime.
+   The embed source notes "no separate CSS file — host page must provide styles."
+   Sidebar context: ~280px wide bezel, aspect-ratio 4/3 → ~280×210px.
+   ========================================================================== */
+
+/* ---------- LED indicator strip ---------- */
+/* UNIVAC-style 12 neon glow lamps in a recessed strip below the screen glass.
+   Positioned below the panel-wrap, inside the bezel, so overflow:hidden on
+   panel-wrap does not clip it. */
+
+.liora-led-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 4px 8px;
+  height: 18px;
+  background: #050607;
+  border-radius: 0 0 var(--cdn-radius-md) var(--cdn-radius-md);
+}
+
+/* each lamp: small pill, neon palette cycling via nth-child */
+.liora-led {
+  width: 14px;
+  height: 8px;
+  border-radius: 3px;
+  background: #22c55e; /* phosphor green default */
+  box-shadow: 0 0 4px rgba(34, 197, 94, 0.75);
+  opacity: 0.7;
+}
+
+/* asymmetric blink cadence — nth-child spread */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-led-blink {
+    0%, 85%, 100% { opacity: 0.7; }
+    90%           { opacity: 0.15; }
+  }
+
+  .liora-led { animation: liora-led-blink 2s ease-in-out infinite; }
+  .liora-led:nth-child(2)  { animation-delay: 0.3s;  animation-duration: 2.2s; }
+  .liora-led:nth-child(3)  { animation-delay: 0.7s;  animation-duration: 1.8s; background: #c9a23f; box-shadow: 0 0 4px rgba(201,162,63,0.82); }
+  .liora-led:nth-child(4)  { animation-delay: 1.1s;  animation-duration: 2.5s; }
+  .liora-led:nth-child(5)  { animation-delay: 0.5s;  animation-duration: 2.0s; background: #ff9900; box-shadow: 0 0 4px rgba(255,153,0,0.82); }
+  .liora-led:nth-child(6)  { animation-delay: 1.4s;  animation-duration: 1.9s; }
+  .liora-led:nth-child(7)  { animation-delay: 0.2s;  animation-duration: 2.3s; background: #60a5fa; box-shadow: 0 0 4px rgba(96,165,250,0.78); }
+  .liora-led:nth-child(8)  { animation-delay: 0.9s;  animation-duration: 2.1s; }
+  .liora-led:nth-child(9)  { animation-delay: 1.6s;  animation-duration: 1.7s; background: #b090f8; box-shadow: 0 0 4px rgba(176,144,248,0.88); }
+  .liora-led:nth-child(10) { animation-delay: 0.4s;  animation-duration: 2.4s; background: #22c55e; }
+  .liora-led:nth-child(11) { animation-delay: 1.2s;  animation-duration: 2.0s; }
+  .liora-led:nth-child(12) { animation-delay: 0.8s;  animation-duration: 2.2s; background: #c9a23f; box-shadow: 0 0 4px rgba(201,162,63,0.82); }
+}
+
+/* liora-bezel--ticker-active: LED strip fades when ticker takes visual focus */
+.liora-bezel--ticker-active .liora-led-display {
+  opacity: 0.25;
+  transition: opacity 0.8s ease;
+}
+
+/* ---------- Ticker wrap ---------- */
+/* Horizontal slide-in/out ticker — injected with inline style cssText, hidden
+   in narrow sidebar (< 400px). The ticker element uses inline style for
+   position/bottom/z-index set by JS, so we only need the hide rule here. */
+
+.liora-ticker-wrap {
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+}
+
+/* hide ticker in the narrow sidebar — not enough room for CNN-style text crawl */
+@container (max-width: 399px) {
+  .liora-ticker-wrap { display: none; }
+}
+
+/* fallback when container queries not supported: hide at viewport-level */
+@media (max-width: 480px) {
+  .liora-sidebar .liora-ticker-wrap { display: none; }
+}
+
+/* ---------- Powered-by link ---------- */
+/* Small neon anchor, bottom-right corner of the bezel.
+   Initial position before JS moves it into tickerWrap. */
+
+.liora-powered-by {
+  position: absolute;
+  bottom: 22px;
+  right: 8px;
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 9px;
+  color: #22c55e;
+  text-shadow: 0 0 6px rgba(34, 197, 94, 0.75), 0 0 18px rgba(34, 197, 94, 0.45);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  pointer-events: auto;
+  z-index: 22;
+}
+
+.liora-powered-by:hover {
+  color: #a0f8b0;
+  text-decoration: underline;
+  text-decoration-color: rgba(34, 197, 94, 0.4);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-neon-warmup {
+    0%   { opacity: 0; }
+    20%  { opacity: 0.3; text-shadow: none; }
+    50%  { opacity: 0.8; }
+    100% { opacity: 1; }
+  }
+
+  .liora-powered-by {
+    animation: liora-neon-warmup 1.2s ease forwards;
+  }
+}
+
+/* ---------- Credits overlay ---------- */
+/* Full-panel credits block injected into .liora-bezel (sibling of .liora-panel-wrap)
+   after tap-3. z-index:100 ensures it paints above crack-overlay (z:10). */
+
+.liora-credits {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 14px;
+  background: rgba(5, 6, 7, 0.92);
+  z-index: 100;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.liora-credits * { pointer-events: auto; }
+
+/* title — "liora" in large neon violet */
+.liora-credits-title {
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 22px;
+  font-weight: var(--cdn-weight-bold);
+  letter-spacing: 0.12em;
+  color: #b090f8;
+  text-shadow: 0 0 10px rgba(176, 144, 248, 0.88), 0 0 30px rgba(176, 144, 248, 0.4);
+  text-transform: lowercase;
+  margin-bottom: 6px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* subtitle container — "thank you to the" + "AMAZON SUMERIAN TEAM" stacked */
+.liora-credits-subtitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  min-height: 32px;
+  margin-bottom: 8px;
+}
+
+/* individual subtitle lines */
+.liora-credits-sub-line {
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 8px;
+  letter-spacing: 0.08em;
+  color: rgba(240, 240, 240, 0.55);
+  text-align: center;
+}
+
+/* "thank you to the" line — per-word fade animation targets child spans */
+.liora-credits-sub-thanks { }
+
+/* "the" fades first, then "to", leaving "thank you" alone */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-word-fade {
+    0%, 60% { opacity: 1; }
+    85%, 100% { opacity: 0; }
+  }
+  .liora-credits-word-the { animation: liora-word-fade 6s ease 2s both; }
+  .liora-credits-word-to  { animation: liora-word-fade 6s ease 4s both; }
+}
+
+/* "AMAZON SUMERIAN TEAM" — aws orange + shimmer for the AMAZON SUMERIAN span */
+.liora-credits-amzn {
+  color: #ff9900;
+  text-shadow: 0 0 8px rgba(255, 153, 0, 0.82);
+  font-weight: var(--cdn-weight-bold);
+  letter-spacing: 0.1em;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* "TEAM" word — fades out after a beat */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-team-fade {
+    0%, 50% { opacity: 1; }
+    80%, 100% { opacity: 0; }
+  }
+  .liora-credits-word-team { animation: liora-team-fade 8s ease 3s both; }
+}
+
+/* popout elements — grow + fade into background on click */
+.liora-credits-popout {
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.3s ease, opacity 0.3s ease, filter 0.3s ease;
+}
+
+.liora-credits-popout:hover {
+  filter: brightness(1.3);
+}
+
+.liora-popped--exiting {
+  transform: scale(4);
+  opacity: 0;
+  filter: blur(4px);
+  pointer-events: none;
+  transition: transform 0.5s ease, opacity 0.5s ease, filter 0.5s ease;
+}
+
+/* ---------- Credits scroll window + names grid ---------- */
+
+.liora-credits-scroll-window {
+  width: 100%;
+  height: 80px;
+  overflow: hidden;
+  position: relative;
+  /* scaled-down font for narrow sidebar — original playground designed for 640px */
+  font-size: 10px;
+}
+
+.liora-credits-names-grid {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* seamless infinite scroll: translateY animates from 0 to -50% and loops */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-credits-scroll {
+    0%   { transform: translateY(0); }
+    100% { transform: translateY(-50%); }
+  }
+
+  .liora-credits-names-grid {
+    animation: liora-credits-scroll 18s linear infinite;
+  }
+}
+
+.liora-credits-names-row {
+  display: flex;
+  justify-content: center;
+  padding: 3px 0;
+}
+
+.liora-credits-name {
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  color: rgba(240, 240, 240, 0.75);
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* flash-in animation for first set — each name applied via inline animationDelay from JS */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-name-flash {
+    0%   { opacity: 0; filter: brightness(3); }
+    15%  { opacity: 1; filter: brightness(1.8); }
+    100% { opacity: 1; filter: brightness(1); }
+  }
+
+  .liora-credits-name {
+    animation: liora-name-flash 0.6s ease both;
+    opacity: 0;
+  }
+}
+
+/* ---------- Credits prompt overlay (skip credits?) ---------- */
+
+.liora-credits-prompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: rgba(5, 6, 7, 0.88);
+  z-index: 110;
+}
+
+.liora-credits-prompt-q {
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 11px;
+  color: rgba(240, 240, 240, 0.8);
+  letter-spacing: 0.06em;
+}
+
+.liora-credits-prompt-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.liora-credits-prompt-btn {
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 3px;
+  border: 1px solid;
+  cursor: pointer;
+  background: transparent;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.liora-credits-prompt-yes {
+  color: #22c55e;
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+.liora-credits-prompt-yes:hover {
+  background: rgba(34, 197, 94, 0.15);
+}
+
+.liora-credits-prompt-no {
+  color: rgba(240, 240, 240, 0.6);
+  border-color: rgba(240, 240, 240, 0.2);
+}
+
+.liora-credits-prompt-no:hover {
+  background: rgba(240, 240, 240, 0.07);
+}
+
+.liora-credits-prompt-active .liora-credits-names-grid {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-prompt-exit {
+    to { opacity: 0; transform: scale(0.95); }
+  }
+  .liora-credits-prompt--exit {
+    animation: liora-prompt-exit 0.28s ease forwards;
+  }
+}
+
+/* skip shutdown: power-off flicker on yes button */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-shutdown-flicker {
+    0%, 40%, 80% { opacity: 1; }
+    20%, 60%     { opacity: 0.1; }
+    100%         { opacity: 0; }
+  }
+  .liora-skip-shutdown {
+    animation: liora-shutdown-flicker 0.38s ease forwards;
+  }
+}
+
+/* ---------- Reconnect wrap (scene-over refresh button) ---------- */
+/* Appended below the bezel (parentElement), not inside panel-wrap */
+
+.liora-reconnect-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 0;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* rotating refresh knob icon — both the standalone and inline variants */
+.liora-reconnect-icon {
+  display: inline-block;
+  font-size: 12px;
+  color: #9060f0; /* --cdn-violet */
+  cursor: pointer;
+}
+
+.liora-reconnect-icon--inline {
+  font-size: 10px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  .liora-reconnect-icon {
+    animation: liora-spin 2s linear infinite;
+  }
+}
+
+.liora-reconnect-label {
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 10px;
+  color: rgba(240, 240, 240, 0.6);
+  letter-spacing: 0.05em;
+  cursor: pointer;
+}
+
+.liora-reconnect-label--inline {
+  font-size: 9px;
+}
+
+/* ---------- Crack overlay + crack points ---------- */
+/* crack-overlay: full-screen tint over panel-wrap after tap-3 */
+
+.liora-crack-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 170, 0, 0.04); /* amber tint: matches SVG stroke color */
+  z-index: 10;
+  pointer-events: none;
+}
+
+/* crack-point: positioned SVG centered on tap coordinates, clipped by panel-wrap overflow:hidden */
+.liora-crack-point {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 11;
+}
+
+.liora-crack-point svg {
+  display: block;
+}
+
+/* crack burst: expand + fade after shatter */
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-crack-burst {
+    0%   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+  }
+  .liora-crack-point.liora-crack-burst {
+    animation: liora-crack-burst 0.6s ease forwards;
+  }
+}
+
+/* ---------- Shatter flash ---------- */
+/* Brief amber-white flash confined to screen glass (panel-wrap has overflow:hidden) */
+
+.liora-shatter-flash {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 250, 220, 0.92);
+  z-index: 20;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes liora-flash-fade {
+    0%   { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .liora-shatter-flash {
+    animation: liora-flash-fade 0.5s ease forwards;
+  }
+}
+
+/* ---------- sys-scene-over (inline status bar state) ---------- */
+/* The status bar element becomes a flex row with a rotating knob + "scene over" label */
+
+.liora-sys-scene-over {
+  display: flex !important; /* override the default display:none on #liora-sys-status */
+  align-items: center;
+  gap: 4px;
+  font-family: var(--cdn-font-mono, ui-monospace, "SF Mono", Menlo, Consolas, monospace);
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  color: #9060f0; /* cdn-violet — calm contrast with short-circuit red bar */
+  cursor: pointer;
+  user-select: none;
+  padding-left: 6px;
+}
+
+/* ---------- Status bar modifier: hidden ---------- */
+/* Hides the status bar after tap-3 credits start, revealing powered-by space */
+
+#liora-status-bar.liora-status--hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* credits mode: status bar switches from short-circuit jitter to calm violet */
+#liora-status-bar.liora-status--credits {
+  background: transparent;
+  animation: none;
+}
+
+/* ---------- Bezel tap state classes ---------- */
+/* screen-tap-1/2/3 applied to .liora-bezel to drive sway/fall animations
+   on .liora-stickynote (sticky note React element) — no standalone CSS needed
+   here beyond the state marker. The animations on stickynote live in the
+   liora-sidebar styles that own that element. */
+
+/* crack-1/2/3 are removed from the cleanup list — confirmed not used as
+   classes in the source (only screen-tap-1/2/3 and liora-bezel--ticker-active
+   are set on bezel). No CSS needed. */

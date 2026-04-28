@@ -16,6 +16,7 @@ export default defineConfig({
     outDir: resolve(__dirname, './lib'),
     rollupOptions: {
       input: {
+        feed: resolve(__dirname, './src/pages/feed/index.html'),
         home: resolve(__dirname, './src/pages/home/index.html'),
         roadmap: resolve(__dirname, './src/pages/roadmap/index.html'),
         meetings: resolve(__dirname, './src/pages/meetings/index.html'),

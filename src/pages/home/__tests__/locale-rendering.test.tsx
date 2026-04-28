@@ -14,15 +14,11 @@ vi.mock('@cloudscape-design/components/content-layout', () => ({
     React.createElement('div', { 'data-testid': 'content-layout' }, header, children),
 }));
 vi.mock('@cloudscape-design/components/grid', () => ({
-  default: ({ children }: AnyProps) =>
-    React.createElement('div', { 'data-testid': 'grid' }, children),
+  default: ({ children }: AnyProps) => React.createElement('div', { 'data-testid': 'grid' }, children),
 }));
 vi.mock('@cloudscape-design/components/header', () => ({
   default: ({ children, info }: AnyProps) =>
-    React.createElement('div', null,
-      React.createElement('h1', null, children),
-      info
-    ),
+    React.createElement('div', null, React.createElement('h1', null, children), info),
 }));
 vi.mock('@cloudscape-design/components/link', () => ({
   default: ({ children }: AnyProps) => React.createElement('a', null, children),
@@ -35,7 +31,7 @@ vi.mock('../../../layouts/shell', () => ({
       LocaleProvider,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       { locale: 'us' } as any,
-      React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children)
+      React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children),
     ),
 }));
 vi.mock('../../../components/navigation', () => ({
@@ -81,9 +77,9 @@ describe('Home page locale rendering', () => {
     mockTranslation.locale = 'mx';
     mockTranslation.t = (key: string) => {
       const spanishMap: Record<string, string> = {
-        'dashboardPage.breadcrumb': 'Tablero',
-        'dashboardPage.header': 'Tablero',
-        'dashboardPage.infoLink': 'Info',
+        'aboutPage.breadcrumb': 'Acerca de',
+        'aboutPage.header': 'Acerca de',
+        'aboutPage.infoLink': 'Info',
       };
       return spanishMap[key] ?? key;
     };
@@ -91,16 +87,16 @@ describe('Home page locale rendering', () => {
     render(<App />);
 
     // Verify Spanish header appears
-    expect(screen.getByText('Tablero')).toBeTruthy();
+    expect(screen.getByText('Acerca de')).toBeTruthy();
   });
 
   it('renders English strings when locale is us', () => {
     mockTranslation.locale = 'us';
     mockTranslation.t = (key: string) => {
       const englishMap: Record<string, string> = {
-        'dashboardPage.breadcrumb': 'Dashboard',
-        'dashboardPage.header': 'Dashboard',
-        'dashboardPage.infoLink': 'Info',
+        'aboutPage.breadcrumb': 'About',
+        'aboutPage.header': 'About',
+        'aboutPage.infoLink': 'Info',
       };
       return englishMap[key] ?? key;
     };
@@ -108,6 +104,6 @@ describe('Home page locale rendering', () => {
     render(<App />);
 
     // Verify English header appears
-    expect(screen.getByText('Dashboard')).toBeTruthy();
+    expect(screen.getByText('About')).toBeTruthy();
   });
 });

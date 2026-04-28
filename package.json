@@ -7,7 +7,7 @@
   "homepage": "https://github.com/aws-samples/cloudscape-design-system-workshop",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/fetch-releases.mjs && tsc && vite build",
+    "build": "node scripts/fetch-feeds.mjs && node scripts/fetch-releases.mjs && node scripts/fetch-next-meetup.mjs && tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint .",
     "test": "vitest run",
@@ -38,6 +38,7 @@
     "@vitejs/plugin-react": "^5.1.4",
     "@vitest/ui": "^4.0.18",
     "eslint": "^10.0.3",
+    "fast-xml-parser": "^5.7.2",
     "globals": "^17.4.0",
     "jsdom": "^28.1.0",
     "typescript": "^5.9.3",

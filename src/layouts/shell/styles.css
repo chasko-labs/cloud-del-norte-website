@@ -95,10 +95,31 @@
 main[class*="awsui_layout"] {
   min-block-size: auto !important;
 }
+
+/* Light mode: warm cream fills the layout seam between nav and content containers.
+   awsui_layout-main gets background-color: #ffffff from Cloudscape's scoped CSS —
+   override both the outer wrapper and the inner layout-main element to close the gap. */
+:root:not(.awsui-dark-mode) main[class*="awsui_layout"],
+:root:not(.awsui-dark-mode) [class*="awsui_layout-main"] {
+  background: #ede5d4 !important;
+}
 main[class*="awsui_layout"] > [class*="navigation-container"],
 main[class*="awsui_layout"] > [class*="tools-container"],
 main[class*="awsui_layout"] > [class*="content-container"] {
   block-size: auto !important;
+}
+
+/* Mobile + small viewport: tools panel needs explicit overflow + touch-action so the
+   help-panel content scrolls/drags. Cloudscape's tools drawer otherwise locks the
+   inner panel when content exceeds viewport on touch devices. */
+[class*="awsui_tools_"][class*="awsui_root"],
+[class*="awsui_tools-container"],
+[class*="awsui_tools_"] [class*="awsui_help-panel"] {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  max-height: calc(100vh - 56px);
 }
 
 /* Light mode side nav — warm cream to match page.
@@ -108,7 +129,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 :root:not(.awsui-dark-mode) [class*="navigation-container"],
 :root:not(.awsui-dark-mode) [class*="side-navigation"],
 :root:not(.awsui-dark-mode) [class*="navigation__drawer"] {
-  background: #ede8db;
+  background: #ede5d4;
 }
 
 /* Font smoothing scoped to app shell — improves warm-bg readability.
@@ -208,4 +229,69 @@ main[class*="awsui_layout"] > [class*="content-container"] {
   #top-nav[data-cdn-animating-locale] [class*="utility-button"]:has([title*="Inglés"]) {
     animation: cdn-toggle-flip 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
   }
+}
+
+/* ── Breadcrumb link color — palette override ──
+   Cloudscape BreadcrumbGroup renders links with its own link blue token
+   (#0073bb / similar) that falls outside the Cloud Del Norte palette.
+   Override with the canonical interactive color tokens for each mode.
+   Selector pattern follows the existing [class*="awsui_..."] pattern used
+   throughout this file. */
+
+/* Light mode: palette purple (#5a1f8a) for interactive links */
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumb-group"] a,
+:root:not(.awsui-dark-mode) [class*="breadcrumb-group"] a {
+  color: var(--cdn-purple) !important; /* #5a1f8a — primary interactive, in-palette */
+}
+
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumb-group"] a:hover,
+:root:not(.awsui-dark-mode) [class*="breadcrumb-group"] a:hover {
+  color: var(--cdn-violet) !important; /* #9060f0 — lighter on hover */
+}
+
+/* Dark mode: palette violet (#9060f0) — AAA contrast on dark navy backgrounds */
+.awsui-dark-mode [class*="awsui_breadcrumb-group"] a,
+.awsui-dark-mode [class*="breadcrumb-group"] a {
+  color: var(--cdn-violet) !important; /* #9060f0 — confirmed in-palette */
+}
+
+.awsui-dark-mode [class*="awsui_breadcrumb-group"] a:hover,
+.awsui-dark-mode [class*="breadcrumb-group"] a:hover {
+  color: var(--cdn-lavender) !important; /* #d7c7ee — lighter lavender on hover */
+}
+
+/* Help panel — leader sections */
+.help-panel-leader {
+  margin-bottom: var(--cdn-space-md, 1rem);
+}
+
+.help-panel-leader strong {
+  display: block;
+  font-size: var(--cdn-text-base, 1rem);
+  margin-bottom: 0.1rem;
+}
+
+.help-panel-leader__role {
+  display: block;
+  font-size: var(--cdn-text-xs, 0.75rem);
+  color: var(--cdn-violet, #7c3aed);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  opacity: 0.85;
+}
+
+.help-panel-leader p {
+  font-size: var(--cdn-text-sm, 0.875rem);
+  color: var(--cdn-color-text-secondary, inherit);
+  margin: 0.25rem 0;
+}
+
+.help-panel-leader ul {
+  margin: 0.25rem 0 0 0;
+  padding-left: 1.25rem;
+}
+
+.help-panel-leader li {
+  font-size: var(--cdn-text-sm, 0.875rem);
 }

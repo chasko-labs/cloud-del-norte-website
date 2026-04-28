@@ -13,58 +13,47 @@ vi.mock('@cloudscape-design/components/content-layout', () => ({
     React.createElement('div', { 'data-testid': 'content-layout' }, header, children),
 }));
 vi.mock('@cloudscape-design/components/grid', () => ({
-  default: ({ children }: AnyProps) =>
-    React.createElement('div', { 'data-testid': 'grid' }, children),
+  default: ({ children }: AnyProps) => React.createElement('div', { 'data-testid': 'grid' }, children),
 }));
 vi.mock('@cloudscape-design/components/header', () => ({
-  default: ({ children }: AnyProps) =>
-    React.createElement('h2', { 'data-testid': 'header' }, children),
+  default: ({ children }: AnyProps) => React.createElement('h2', { 'data-testid': 'header' }, children),
 }));
 vi.mock('@cloudscape-design/components/link', () => ({
-  default: ({ children }: AnyProps) =>
-    React.createElement('a', null, children),
+  default: ({ children }: AnyProps) => React.createElement('a', null, children),
 }));
 vi.mock('@cloudscape-design/components/box', () => ({
-  default: ({ children }: AnyProps) =>
-    React.createElement('div', { 'data-testid': 'box' }, children),
+  default: ({ children }: AnyProps) => React.createElement('div', { 'data-testid': 'box' }, children),
 }));
 vi.mock('@cloudscape-design/components/container', () => ({
   default: ({ children, header }: AnyProps) =>
     React.createElement('div', { 'data-testid': 'container' }, header, children),
 }));
 vi.mock('@cloudscape-design/components/column-layout', () => ({
-  default: ({ children }: AnyProps) =>
-    React.createElement('div', { 'data-testid': 'column-layout' }, children),
+  default: ({ children }: AnyProps) => React.createElement('div', { 'data-testid': 'column-layout' }, children),
 }));
 vi.mock('@cloudscape-design/components/button', () => ({
-  default: ({ children }: AnyProps) =>
-    React.createElement('button', { 'data-testid': 'button' }, children),
+  default: ({ children }: AnyProps) => React.createElement('button', { 'data-testid': 'button' }, children),
 }));
 vi.mock('@cloudscape-design/components/modal', () => ({
   default: ({ children, visible }: AnyProps) =>
     visible ? React.createElement('div', { 'data-testid': 'modal' }, children) : null,
 }));
 vi.mock('@cloudscape-design/components/table', () => ({
-  default: () =>
-    React.createElement('table', { 'data-testid': 'table' }),
+  default: () => React.createElement('table', { 'data-testid': 'table' }),
 }));
 vi.mock('@cloudscape-design/components/pie-chart', () => ({
-  default: () =>
-    React.createElement('div', { 'data-testid': 'pie-chart' }, 'PieChart'),
+  default: () => React.createElement('div', { 'data-testid': 'pie-chart' }, 'PieChart'),
 }));
 vi.mock('@cloudscape-design/components/status-indicator', () => ({
-  default: ({ children }: AnyProps) =>
-    React.createElement('span', { 'data-testid': 'status-indicator' }, children),
+  default: ({ children }: AnyProps) => React.createElement('span', { 'data-testid': 'status-indicator' }, children),
 }));
 // Barrel import (current code) — SpaceBetween is a named export
 vi.mock('@cloudscape-design/components', () => ({
-  SpaceBetween: ({ children }: AnyProps) =>
-    React.createElement('div', { 'data-testid': 'space-between' }, children),
+  SpaceBetween: ({ children }: AnyProps) => React.createElement('div', { 'data-testid': 'space-between' }, children),
 }));
 // Deep import (after Lyren's barrel-fix) — SpaceBetween is a default export
 vi.mock('@cloudscape-design/components/space-between', () => ({
-  default: ({ children }: AnyProps) =>
-    React.createElement('div', { 'data-testid': 'space-between' }, children),
+  default: ({ children }: AnyProps) => React.createElement('div', { 'data-testid': 'space-between' }, children),
 }));
 
 // --- Mock Shell, Navigation, Breadcrumbs ---
@@ -75,7 +64,7 @@ vi.mock('../../../layouts/shell', () => ({
       LocaleProvider,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       { locale: 'us' } as any,
-      React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children)
+      React.createElement('div', { 'data-testid': 'shell' }, breadcrumbs, children),
     ),
 }));
 vi.mock('../../../components/navigation', () => ({
@@ -95,14 +84,15 @@ vi.mock('../../../hooks/useTranslation', () => ({
     locale: 'us' as const,
     t: (key: string) => {
       const translations: Record<string, string> = {
-        'dashboardPage.breadcrumb': 'Dashboard',
-        'dashboardPage.header': 'Dashboard',
-        'dashboardPage.infoLink': 'Info',
+        'aboutPage.breadcrumb': 'About',
+        'aboutPage.header': 'About',
+        'aboutPage.infoLink': 'Info',
         'dashboardPage.productionOverview.header': 'Production Overview',
         'dashboardPage.pastTopics.header': 'Past Topics',
         'dashboardPage.groupNotesModal': 'Group Notes',
         'userGroupHero.header': 'User Group',
-        'userGroupHero.description': "Holding our first meetup on International Women's Day 2021, we continue to build a community of cloud enthusiasts in the Southwest.",
+        'userGroupHero.description':
+          "Holding our first meetup on International Women's Day 2021, we continue to build a community of cloud enthusiasts in the Southwest.",
         'productionTable.headers.name': 'Name',
         'productionTable.headers.status': 'Status',
         'productionTable.headers.mixing': 'Mixing',
@@ -164,9 +154,7 @@ describe('Home page', () => {
 
   it('renders community description text', () => {
     render(<App />);
-    expect(
-      screen.getByText(/Holding our first meetup on International Women's Day/)
-    ).toBeTruthy();
+    expect(screen.getByText(/Holding our first meetup on International Women's Day/)).toBeTruthy();
   });
 
   describe('production metrics', () => {

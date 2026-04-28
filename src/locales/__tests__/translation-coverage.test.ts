@@ -35,20 +35,26 @@ describe('translation coverage', () => {
 
   it('no empty string values in en-US', () => {
     for (const key of enKeys) {
-      const value = key.split('.').reduce((obj: Record<string, unknown>, k: string) => {
-        if (obj && typeof obj === 'object') return (obj as Record<string, unknown>)[k] as Record<string, unknown>;
-        return undefined as unknown as Record<string, unknown>;
-      }, enUS as unknown as Record<string, unknown>);
+      const value = key.split('.').reduce(
+        (obj: Record<string, unknown>, k: string) => {
+          if (obj && typeof obj === 'object') return (obj as Record<string, unknown>)[k] as Record<string, unknown>;
+          return undefined as unknown as Record<string, unknown>;
+        },
+        enUS as unknown as Record<string, unknown>,
+      );
       expect(value, `en-US key "${key}" should not be empty`).not.toBe('');
     }
   });
 
   it('no empty string values in es-MX', () => {
     for (const key of mxKeys) {
-      const value = key.split('.').reduce((obj: Record<string, unknown>, k: string) => {
-        if (obj && typeof obj === 'object') return (obj as Record<string, unknown>)[k] as Record<string, unknown>;
-        return undefined as unknown as Record<string, unknown>;
-      }, esMX as unknown as Record<string, unknown>);
+      const value = key.split('.').reduce(
+        (obj: Record<string, unknown>, k: string) => {
+          if (obj && typeof obj === 'object') return (obj as Record<string, unknown>)[k] as Record<string, unknown>;
+          return undefined as unknown as Record<string, unknown>;
+        },
+        esMX as unknown as Record<string, unknown>,
+      );
       expect(value, `es-MX key "${key}" should not be empty`).not.toBe('');
     }
   });
@@ -61,35 +67,39 @@ describe('translation coverage', () => {
   it('es-MX translations differ from en-US (no untranslated values)', () => {
     // Allowlist for keys that should be identical (proper nouns, technical terms, common tech terms)
     const allowIdentical = new Set([
-      'shell.siteTitle',                              // "Cloud Del Norte" - proper noun
-      'breadcrumbs.home',                             // "Cloud Del Norte" - proper noun
-      'home.infoLink',                                // "Info" - universal abbreviation
-      'home.metrics.est',                             // "Est." - abbreviation used in both locales
-      'home.topics.serverlessLens',                   // "Serverless Lens" - AWS technical term
-      'common.info',                                  // "Info" - universal abbreviation
-      'footer.goBuild',                               // "Go Build" - AWS tagline
-      'navigation.apiGuide',                          // "API" - common in Spanish
-      'navigation.cacheable',                         // "Cacheable" - technical term used in Spanish
-      'apiGuide.api',                                 // "API" - acronym
-      'meetingDetail.rsvp',                           // "RSVP" - universal abbreviation
-      'createMeeting.url',                            // "URL" - universal abbreviation
-      'createMeeting.api',                            // "API" - acronym
-      'createMeeting.details.no',                     // "No" - same in Spanish
+      'shell.siteTitle', // "Cloud Del Norte" - proper noun
+      'breadcrumbs.home', // "Cloud Del Norte" - proper noun
+      'home.infoLink', // "Info" - universal abbreviation
+      'home.metrics.est', // "Est." - abbreviation used in both locales
+      'home.topics.serverlessLens', // "Serverless Lens" - AWS technical term
+      'common.info', // "Info" - universal abbreviation
+      'footer.goBuild', // "Go Build" - AWS tagline
+      'navigation.apiGuide', // "API" - common in Spanish
+      'navigation.cacheable', // "Cacheable" - technical term used in Spanish
+      'apiGuide.api', // "API" - acronym
+      'meetingDetail.rsvp', // "RSVP" - universal abbreviation
+      'createMeeting.url', // "URL" - universal abbreviation
+      'createMeeting.api', // "API" - acronym
+      'createMeeting.details.no', // "No" - same in Spanish
       'createMeeting.meetingDetails.errorIconAriaLabel', // "Error" - common tech term
-      'createMeeting.meetingType.virtual',            // "Virtual" - same in Spanish
-      'maintenanceCalendar.lts',                      // "LTS" - technical acronym
-      'maintenanceCalendar.releaseNotes',             // "Release Notes" - technical term
-      'meetings.tableHeaders.onDemand',               // "On-Demand" - technical term
-      'home.userGroupHeader',                         // Contains "#AWS User Group" - proper noun
-      'helpPanel.bryanChasko',                        // Proper name
-      'helpPanel.jacobWright',                        // Proper name
-      'helpPanel.userGroupTitle',                     // "AWS User Group" - proper noun
-      'navigation.roadmap',                           // "Roadmap" - universally understood term
-      'roadmap.title',                                // "Roadmap" - universally understood term
-      'roadmap.breadcrumb',                           // "Roadmap" - universally understood term
-      'roadmap.idea',                                 // "Idea" - same in Spanish
-      'navigation.admin',                             // "Admin" - technical term used in both locales
-      'admin.breadcrumb',                             // "Admin" - technical term
+      'createMeeting.meetingType.virtual', // "Virtual" - same in Spanish
+      'maintenanceCalendar.lts', // "LTS" - technical acronym
+      'maintenanceCalendar.releaseNotes', // "Release Notes" - technical term
+      'meetings.tableHeaders.onDemand', // "On-Demand" - technical term
+      'home.userGroupHeader', // Contains "#AWS User Group" - proper noun
+      'helpPanel.bryanChasko', // Proper name
+      'helpPanel.jacobWright', // Proper name
+      'helpPanel.userGroupTitle', // "AWS User Group" - proper noun
+      'navigation.roadmap', // "Roadmap" - universally understood term
+      'roadmap.title', // "Roadmap" - universally understood term
+      'roadmap.breadcrumb', // "Roadmap" - universally understood term
+      'roadmap.idea', // "Idea" - same in Spanish
+      'navigation.admin', // "Admin" - technical term used in both locales
+      'admin.breadcrumb', // "Admin" - technical term
+      'aboutPage.infoLink', // "Info" - universal abbreviation
+      'feedPage.infoLink', // "Info" - universal abbreviation
+      'helpPanel.andresWebsite', // "andmore.dev" - proper domain name
+      'helpPanel.andresMoreno', // Proper name
     ]);
 
     // Helper to get value by dot-notation key
@@ -104,13 +114,13 @@ describe('translation coverage', () => {
     const untranslated: string[] = [];
     for (const key of enKeys) {
       if (allowIdentical.has(key)) continue;
-      
+
       const enValue = getValue(enUS as Record<string, unknown>, key);
       const mxValue = getValue(esMX as Record<string, unknown>, key);
-      
+
       // Skip if either value is not a string (nested objects)
       if (typeof enValue !== 'string' || typeof mxValue !== 'string') continue;
-      
+
       // Flag if values are identical (case-insensitive comparison)
       if (enValue.toLowerCase().trim() === mxValue.toLowerCase().trim()) {
         untranslated.push(key);
