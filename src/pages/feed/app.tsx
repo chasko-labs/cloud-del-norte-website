@@ -16,6 +16,7 @@ import TwitchSection from './components/twitch-section';
 import FeedSection from './components/feed-section';
 import BuilderCenterCard from './components/builder-center-card';
 import ArrowheadNews from './components/arrowhead-news';
+import NextMeetup from './components/next-meetup';
 import './styles.css';
 
 // detect browser-side OS from userAgent — minimal, no library
@@ -153,11 +154,13 @@ function AppContent({
   onThemeChange,
   locale,
   onLocaleChange,
+  onOpenTools,
 }: {
   theme: Theme;
   onThemeChange: (t: Theme) => void;
   locale: Locale;
   onLocaleChange: (l: Locale) => void;
+  onOpenTools: () => void;
 }) {
   const { t } = useTranslation();
 
@@ -167,11 +170,27 @@ function AppContent({
   return (
     <ContentLayout
       header={
-        <Header variant="h1" info={<Link variant="info">{t('feedPage.infoLink')}</Link>}>
+        <Header
+          variant="h1"
+          info={
+            <Link
+              variant="info"
+              onFollow={e => {
+                e.preventDefault();
+                onOpenTools();
+              }}
+              ariaLabel={t('feedPage.infoLinkAriaLabel')}
+            >
+              {t('feedPage.infoLink')}
+            </Link>
+          }
+        >
           {t('feedPage.header')}
         </Header>
       }
     >
+      <NextMeetup />
+      <hr className="feed-section-divider" />
       <div className="feed-grid">
         {order.map(key => (
           <React.Fragment key={key}>{SECTIONS[key]}</React.Fragment>
@@ -189,6 +208,7 @@ function BreadcrumbsContent() {
 export default function App() {
   const [theme, setTheme] = useState<Theme>(() => initializeTheme());
   const [locale, setLocale] = useState<Locale>(() => initializeLocale());
+  const [toolsOpen, setToolsOpen] = useState(false);
 
   const handleThemeChange = (newTheme: Theme) => {
     setTheme(newTheme);
@@ -216,8 +236,16 @@ export default function App() {
         </>
       }
       tools={<HelpPanelHome />}
+      toolsOpen={toolsOpen}
+      onToolsChange={setToolsOpen}
     >
-      <AppContent theme={theme} onThemeChange={handleThemeChange} locale={locale} onLocaleChange={handleLocaleChange} />
+      <AppContent
+        theme={theme}
+        onThemeChange={handleThemeChange}
+        locale={locale}
+        onLocaleChange={handleLocaleChange}
+        onOpenTools={() => setToolsOpen(true)}
+      />
     </Shell>
   );
 }

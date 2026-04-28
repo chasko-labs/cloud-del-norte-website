@@ -9,10 +9,9 @@ export default function Navigation() {
   const { t } = useTranslation();
   const { isModerator } = useAuth();
 
+  // home (feed) is reachable via the "cloud del norte" header above and the top-nav title.
+  // about is reachable from the right-side info panel only — not duplicated in the left nav.
   const items: SideNavigationProps['items'] = [
-    { type: 'link', text: t('navigation.feed'), href: '/feed/index.html' },
-    { type: 'link', text: t('navigation.about'), href: '/home/index.html' },
-    { type: 'link', text: t('navigation.roadmap'), href: '/roadmap/index.html' },
     { type: 'link', text: t('navigation.meetings'), href: '/meetings/index.html' },
     ...(isModerator ? [{ type: 'link' as const, text: t('navigation.admin'), href: '/admin/index.html' }] : []),
     { type: 'divider' },
@@ -21,6 +20,7 @@ export default function Navigation() {
       text: t('navigation.resources'),
       defaultExpanded: false,
       items: [
+        { type: 'link', text: t('navigation.ugRoadmap'), href: '/roadmap/index.html' },
         { type: 'link', text: t('navigation.techDebtCountdowns'), href: '/maintenance-calendar/' },
         { type: 'link', text: t('navigation.designSystem'), href: '/theme/index.html' },
       ],
