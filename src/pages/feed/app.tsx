@@ -18,11 +18,32 @@ import BuilderCenterCard from './components/builder-center-card';
 import ArrowheadNews from './components/arrowhead-news';
 import './styles.css';
 
+// detect browser-side OS from userAgent — minimal, no library
+function detectOS(): string {
+  if (typeof navigator === 'undefined') return 'unknown';
+  const ua = navigator.userAgent;
+  if (/Windows NT 10/.test(ua)) return 'windows 10/11';
+  if (/Windows/.test(ua)) return 'windows';
+  if (/Mac OS X/.test(ua)) return 'macos';
+  if (/Android/.test(ua)) return 'android';
+  if (/iPhone|iPad|iPod/.test(ua)) return 'ios';
+  if (/Linux/.test(ua)) return 'linux';
+  return 'unknown';
+}
+
+interface VisitorInfo {
+  ip: string;
+  country: string;
+}
+
 // liora panel — renders inside the left side navigation drawer, below SideNavigation
 // only mounts on dev.clouddelnorte.org and localhost; prod omits entirely
 function LioraSidebar() {
   const hostRef = useRef<HTMLDivElement>(null);
   const mounted = useRef(false);
+  const [viewport, setViewport] = useState<string>('');
+  const [os] = useState<string>(() => detectOS());
+  const [visitor, setVisitor] = useState<VisitorInfo | null>(null);
 
   useEffect(() => {
     if (mounted.current || !hostRef.current) return;
@@ -41,6 +62,31 @@ function LioraSidebar() {
     document.body.appendChild(s);
   }, []);
 
+  // viewport size — track on resize
+  useEffect(() => {
+    const update = () => setViewport(`${window.innerWidth}×${window.innerHeight}`);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+
+  // visitor ip + country — single fetch on mount, free api, no key
+  useEffect(() => {
+    let cancelled = false;
+    fetch('https://ipapi.co/json/')
+      .then(r => (r.ok ? r.json() : null))
+      .then(data => {
+        if (cancelled || !data) return;
+        setVisitor({ ip: data.ip ?? '—', country: data.country_name ?? data.country ?? '—' });
+      })
+      .catch(() => {
+        // network/cors failure — leave visitor null, panel renders without ip/country rows
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <div className="liora-sidebar">
       <div className="liora-bezel" style={{ display: 'none' }} id="liora-host-react" ref={hostRef}>
@@ -52,6 +98,28 @@ function LioraSidebar() {
           </div>
         </div>
       </div>
+      <dl className="liora-sidebar__info" aria-label="visitor session info">
+        <div className="liora-sidebar__info-row">
+          <dt>os</dt>
+          <dd>{os}</dd>
+        </div>
+        <div className="liora-sidebar__info-row">
+          <dt>display</dt>
+          <dd>{viewport || '—'}</dd>
+        </div>
+        {visitor && (
+          <>
+            <div className="liora-sidebar__info-row">
+              <dt>ip</dt>
+              <dd>{visitor.ip}</dd>
+            </div>
+            <div className="liora-sidebar__info-row">
+              <dt>country</dt>
+              <dd>{visitor.country}</dd>
+            </div>
+          </>
+        )}
+      </dl>
     </div>
   );
 }
