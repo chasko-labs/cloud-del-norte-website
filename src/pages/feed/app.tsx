@@ -138,10 +138,24 @@ function KruxPlayer() {
   return (
     <div className="feed-krux">
       <div className="feed-krux__top">
+        <button
+          type="button"
+          className="feed-krux__skip"
+          onClick={skipStation}
+          aria-label={`next station: ${STREAMS[(idx + 1) % STREAMS.length].label}`}
+        >
+          <span aria-hidden="true">⏭</span>
+        </button>
         {/* label is a secondary click target — aria-hidden so screen readers
             only interact with the labelled round button below */}
-        <button type="button" className="feed-krux__label" onClick={toggle} aria-hidden="true" tabIndex={-1}>
-          <span>🎧</span>
+        <button
+          type="button"
+          className={`feed-krux__label${playing ? ' feed-krux__label--playing' : ''}`}
+          onClick={toggle}
+          aria-hidden="true"
+          tabIndex={-1}
+        >
+          <span className={`feed-krux__headphones${playing ? ' feed-krux__headphones--playing' : ''}`}>🎧</span>
           <span className={`feed-krux__station${fading ? ' feed-krux__station--fading' : ''}`}>{stream.label}</span>
         </button>
         <button
@@ -153,14 +167,6 @@ function KruxPlayer() {
           data-state={loading ? 'loading' : playing ? 'playing' : 'paused'}
         >
           <span aria-hidden="true">{playing ? '■' : '▶'}</span>
-        </button>
-        <button
-          type="button"
-          className="feed-krux__skip"
-          onClick={skipStation}
-          aria-label={`next station: ${STREAMS[(idx + 1) % STREAMS.length].label}`}
-        >
-          <span aria-hidden="true">›</span>
         </button>
       </div>
       {nowPlaying[stream.key] && (
@@ -181,76 +187,6 @@ function KruxPlayer() {
     </div>
   );
 }
-
-interface VisitorInfo {
-  ip: string;
-  country: string;
-}
-
-// liora panel — renders inside the left side navigation drawer, below SideNavigation
-// only mounts on dev.clouddelnorte.org and localhost; prod omits entirely
-function LioraSidebar() {
-  const hostRef = useRef<HTMLDivElement>(null);
-  const mounted = useRef(false);
-  const [visitor, setVisitor] = useState<VisitorInfo | null>(null);
-
-  useEffect(() => {
-    if (mounted.current || !hostRef.current) return;
-    mounted.current = true;
-
-    const el = hostRef.current;
-    el.style.display = '';
-
-    const s = document.createElement('script');
-    s.type = 'module';
-    s.textContent = [
-      "import { mountLioraPanel } from '/liora-embed/liora-embed.js';",
-      "var h = document.getElementById('liora-host-react');",
-      "if (h) mountLioraPanel('/liora');",
-    ].join('\n');
-    document.body.appendChild(s);
-  }, []);
-
-  // visitor ip + country — single fetch on mount, free api, no key
-  useEffect(() => {
-    let cancelled = false;
-    fetch('https://ipapi.co/json/')
-      .then(r => (r.ok ? r.json() : null))
-      .then(data => {
-        if (cancelled || !data) return;
-        setVisitor({ ip: data.ip ?? '—', country: data.country_name ?? data.country ?? '—' });
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  return (
-    <div className="liora-sidebar">
-      <div className="liora-bezel" style={{ display: 'none' }} id="liora-host-react" ref={hostRef}>
-        <div className="liora-panel-wrap">
-          <canvas id="liora-canvas" aria-hidden="true"></canvas>
-          <div id="liora-shimmer" aria-hidden="true"></div>
-          <div id="liora-status-bar" role="status" aria-live="polite">
-            <span id="liora-sys-status"></span>
-          </div>
-        </div>
-      </div>
-      {visitor && (
-        <div className="liora-sidebar__info" aria-label="visitor session info">
-          <span className="liora-sidebar__info-val">{visitor.ip}</span>
-          <span className="liora-sidebar__info-val">{visitor.country}</span>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// hostname check runs once at module init — stable for page lifetime
-const IS_DEV =
-  typeof window !== 'undefined' &&
-  (window.location.hostname === 'dev.clouddelnorte.org' || window.location.hostname === 'localhost');
 
 // builder center top-4 is rendered as its own pinned section (between two hr
 // dividers, just below next-meetup) — NOT part of the rotating shuffled feed.
@@ -365,12 +301,7 @@ export default function App() {
       locale={locale}
       onLocaleChange={handleLocaleChange}
       breadcrumbs={<BreadcrumbsContent />}
-      navigation={
-        <>
-          <Navigation />
-          {IS_DEV && <LioraSidebar />}
-        </>
-      }
+      navigation={<Navigation />}
       tools={<HelpPanelHome />}
       toolsOpen={toolsOpen}
       onToolsChange={setToolsOpen}

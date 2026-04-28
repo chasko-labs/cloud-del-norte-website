@@ -546,12 +546,44 @@
   gap: 4px;
 }
 
-/* top row: label (secondary control) + round play button */
+/* top row: skip | label (secondary control) | round play button */
 .feed-krux__top {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 8px;
+}
+
+/* skip button — leftmost, distinct pill background */
+.feed-krux__skip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(144, 96, 240, 0.08);
+  border: 1px solid rgba(144, 96, 240, 0.18);
+  border-radius: 6px;
+  padding: 3px 7px;
+  margin-inline-end: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  line-height: 1;
+  color: var(--cdn-color-text-muted);
+  transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease,
+    transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.feed-krux__skip:hover {
+  background: rgba(144, 96, 240, 0.16);
+  border-color: rgba(144, 96, 240, 0.42);
+  color: var(--cdn-violet, #9060f0);
+  transform: translateX(1px) scale(1.08);
+  box-shadow: 0 0 0 2px rgba(144, 96, 240, 0.14);
+}
+
+.feed-krux__skip:focus-visible {
+  outline: 2px solid var(--cdn-violet, #9060f0);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 /* label is a button-reset element — secondary click target */
@@ -570,10 +602,33 @@
   color: var(--cdn-color-text-secondary);
   white-space: nowrap;
   line-height: 1;
+  transition: color 0.2s ease;
 }
 
-.feed-krux__label:hover .feed-krux__station {
+.feed-krux__label:hover .feed-krux__station,
+.feed-krux__label--playing .feed-krux__station {
   color: var(--cdn-violet, #9060f0);
+}
+
+/* headphones emoji — subtle bounce + glow on play */
+.feed-krux__headphones {
+  display: inline-block;
+  transition: transform 0.2s ease, filter 0.3s ease;
+}
+
+.feed-krux__label:hover .feed-krux__headphones {
+  transform: scale(1.15);
+}
+
+@keyframes krux-headphones-bob {
+  0%, 100% { transform: translateY(0) scale(1.0); }
+  30%       { transform: translateY(-1.5px) scale(1.08); }
+  60%       { transform: translateY(0.5px) scale(1.04); }
+}
+
+.feed-krux__headphones--playing {
+  animation: krux-headphones-bob 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(144, 96, 240, 0.6));
 }
 
 /* station name fades between carousel items */
@@ -611,13 +666,14 @@
   cursor: pointer;
   font-size: 12px;
   line-height: 1;
-  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.15s ease,
+    box-shadow 0.2s ease;
 }
 
 .feed-krux__btn:hover {
   border-color: var(--cdn-violet, #9060f0);
-  box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.18);
-  transform: scale(1.05);
+  box-shadow: 0 0 0 4px rgba(144, 96, 240, 0.2), 0 0 8px rgba(144, 96, 240, 0.18);
+  transform: scale(1.08);
 }
 
 .feed-krux__btn:focus-visible {
@@ -625,49 +681,39 @@
   outline-offset: 3px;
 }
 
+@keyframes krux-playing-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.22), 0 0 8px rgba(144, 96, 240, 0.28); }
+  50%       { box-shadow: 0 0 0 6px rgba(144, 96, 240, 0.34), 0 0 16px rgba(144, 96, 240, 0.44); }
+}
+
 .feed-krux__btn[data-state='playing'] {
   background: var(--cdn-violet, #9060f0);
   color: #fff;
   border-color: var(--cdn-violet, #9060f0);
+  animation: krux-playing-pulse 2s ease-in-out infinite;
+}
+
+@keyframes krux-loading-orbit {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
 
 .feed-krux__btn[data-state='loading'] {
-  opacity: 0.6;
+  opacity: 0.65;
   cursor: progress;
-}
-
-.feed-krux__skip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  border: none;
-  padding: 0 2px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  line-height: 1;
-  color: var(--cdn-color-text-muted);
-  opacity: 0.6;
-  transition: opacity 0.15s ease, color 0.15s ease;
-}
-
-.feed-krux__skip:hover {
-  opacity: 1;
-  color: var(--cdn-violet, #9060f0);
-}
-
-.feed-krux__skip:focus-visible {
-  outline: 2px solid var(--cdn-violet, #9060f0);
-  outline-offset: 2px;
-  border-radius: 2px;
+  animation: krux-loading-orbit 0.9s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .feed-krux__btn,
-  .feed-krux__station {
+  .feed-krux__station,
+  .feed-krux__skip,
+  .feed-krux__headphones {
     transition: none;
+    animation: none;
   }
-  .feed-krux__btn:hover {
+  .feed-krux__btn:hover,
+  .feed-krux__skip:hover {
     transform: none;
   }
 }
