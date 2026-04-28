@@ -3,8 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
-import SpaceBetween from '@cloudscape-design/components/space-between';
 import Link from '@cloudscape-design/components/link';
+import Icon from '@cloudscape-design/components/icon';
+import Box from '@cloudscape-design/components/box';
+import SpaceBetween from '@cloudscape-design/components/space-between';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface FeedPost {
   title: string;
@@ -18,28 +21,48 @@ interface FeedsData {
   awsml: FeedPost[];
 }
 
-function PostList({ posts }: { posts: FeedPost[] }) {
+function PostCarousel({ posts }: { posts: FeedPost[] }) {
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused || posts.length <= 1) return;
+    const id = setInterval(() => setIndex(i => (i + 1) % posts.length), 6000);
+    return () => clearInterval(id);
+  }, [paused, posts.length]);
+
   if (posts.length === 0) {
     return <p className="feed-posts__empty">Check back soon.</p>;
   }
+
+  const post = posts[index];
+
   return (
-    <div>
-      {posts.map((post, i) => (
-        <div key={i} className="feed-posts__item">
-          <div className="feed-posts__title">
-            <Link href={post.link} external>
-              {post.title}
-            </Link>
-          </div>
-          {post.excerpt && <p className="feed-posts__excerpt">{post.excerpt}</p>}
-          <span className="feed-posts__meta">{post.pubDate}</span>
+    <div className="feed-article-carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+      <div key={index} className="feed-article-carousel__item">
+        <div className="feed-posts__title">
+          <Link href={post.link} external>
+            {post.title}
+          </Link>
         </div>
-      ))}
+        {post.excerpt && (
+          <Box color="text-body-secondary" fontSize="body-s">
+            {post.excerpt}
+          </Box>
+        )}
+        <Box color="text-status-inactive" fontSize="body-s">
+          {post.pubDate}
+        </Box>
+      </div>
+      <span className="feed-article-carousel__counter">
+        {index + 1} / {posts.length}
+      </span>
     </div>
   );
 }
 
 export default function FeedSection() {
+  const { t } = useTranslation();
   const [data, setData] = useState<FeedsData | null>(null);
   const [error, setError] = useState(false);
 
@@ -53,24 +76,50 @@ export default function FeedSection() {
       .catch(() => setError(true));
   }, []);
 
-  const andmore = data?.andmore?.slice(0, 3) ?? [];
-  const awsml = data?.awsml?.slice(0, 3) ?? [];
-
   if (error) {
     return (
-      <Container header={<Header variant="h2">Community Feed</Header>}>
+      <Container header={<Header variant="h2">{t('feedPage.andmoreDotDev')}</Header>}>
         <p className="feed-posts__empty">Feed unavailable — check back soon.</p>
       </Container>
     );
   }
 
+  const andmore = data?.andmore?.slice(0, 5) ?? [];
+  const awsml = data?.awsml?.slice(0, 5) ?? [];
+
   return (
     <SpaceBetween size="m">
-      <Container header={<Header variant="h2">andmore.dev</Header>}>
-        <PostList posts={andmore} />
+      <Container
+        header={
+          <Header
+            variant="h2"
+            actions={
+              <Link href="https://andmore.dev" external fontSize="body-s">
+                All posts <Icon name="external" />
+              </Link>
+            }
+          >
+            {t('feedPage.andmoreDotDev')}
+          </Header>
+        }
+      >
+        <PostCarousel posts={andmore} />
       </Container>
-      <Container header={<Header variant="h2">AWS Machine Learning Blog</Header>}>
-        <PostList posts={awsml} />
+      <Container
+        header={
+          <Header
+            variant="h2"
+            actions={
+              <Link href="https://aws.amazon.com/blogs/machine-learning/" external fontSize="body-s">
+                All posts <Icon name="external" />
+              </Link>
+            }
+          >
+            {t('feedPage.awsMlBlog')}
+          </Header>
+        }
+      >
+        <PostCarousel posts={awsml} />
       </Container>
     </SpaceBetween>
   );

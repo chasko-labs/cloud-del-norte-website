@@ -17,10 +17,9 @@ import TwitchSection from './components/twitch-section';
 import FeedSection from './components/feed-section';
 import BuilderCenterCard from './components/builder-center-card';
 import ArrowheadNews from './components/arrowhead-news';
-import AndresMedium from './components/andres-medium';
 import './styles.css';
 
-type SectionKey = 'youtube' | 'twitch' | 'feed' | 'builder' | 'arrowhead' | 'medium';
+type SectionKey = 'youtube' | 'twitch' | 'feed' | 'builder' | 'arrowhead';
 
 const SECTIONS: Record<SectionKey, React.ReactNode> = {
   youtube: <YoutubeCarousel />,
@@ -28,7 +27,6 @@ const SECTIONS: Record<SectionKey, React.ReactNode> = {
   feed: <FeedSection />,
   builder: <BuilderCenterCard />,
   arrowhead: <ArrowheadNews />,
-  medium: <AndresMedium />,
 };
 
 function shuffled<T>(arr: T[]): T[] {

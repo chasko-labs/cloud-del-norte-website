@@ -65,7 +65,11 @@
     "builderCenterOpen": "Open AWS Builder Center",
     "arrowheadHeader": "Arrowhead Research Park & NMSU",
     "previousArticle": "Previous article",
-    "nextArticle": "Next article"
+    "nextArticle": "Next article",
+    "andmoreDotDev": "andmore.dev",
+    "awsMlBlog": "AWS Machine Learning Blog",
+    "twitchLive": "LIVE",
+    "twitchRecentVideo": "recent video"
   },
   "dashboardPage": {
     "breadcrumb": "Dashboard",
