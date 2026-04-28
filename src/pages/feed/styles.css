@@ -250,6 +250,9 @@
 .feed-posts__title {
   font-size: var(--cdn-text-base);
   font-weight: var(--cdn-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .feed-posts__excerpt {
@@ -400,7 +403,7 @@
   color: rgba(214, 197, 238, 0.7);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 680px) {
   .feed-grid {
     grid-template-columns: 1fr 1fr;
   }
@@ -420,12 +423,12 @@
   padding: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  align-items: stretch;
-  gap: 10px var(--cdn-space-md, 16px);
+  align-items: start; /* don't stretch — each card owns its own height */
+  gap: 8px 12px;
   counter-reset: mini-card;
 }
 
-@media (max-width: 600px) {
+@media (max-width: 480px) {
   .feed-mini-grid {
     grid-template-columns: 1fr;
   }
@@ -440,17 +443,16 @@
   flex-direction: row;
   align-items: center;
   gap: 10px;
-  height: 100%;
-  min-height: 48px;
-  padding: 7px 12px;
+  /* fixed height — all 4 cards identical, no layout jitter */
+  height: 52px;
+  padding: 0 12px;
   border: 1px solid rgba(139, 90, 43, 0.22);
   border-radius: var(--cdn-radius-md, 8px);
-  background: #faf7f0; /* warm cream — matches card surface token, not cold white */
-  box-shadow: 0 2px 8px rgba(139, 90, 43, 0.18), 0 0 0 1px rgba(139, 90, 43, 0.08);
+  background: #faf7f0;
+  box-shadow: 0 1px 4px rgba(139, 90, 43, 0.12);
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
-  position: relative;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
   overflow: hidden;
 }
 
@@ -478,17 +480,16 @@
   outline-offset: 2px;
 }
 
-/* ranked numeral on the left — compact, not display-sized */
+/* ranked numeral on the left — fixed size, no viewport-relative value */
 .feed-mini-card__number {
   flex-shrink: 0;
-  align-self: flex-start;
-  font-size: clamp(1.5rem, 3vw, 2rem);
+  font-size: 1.6rem;
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.03em;
   font-variant-numeric: tabular-nums;
   font-family: ui-serif, Georgia, "Times New Roman", serif;
-  min-width: 1.8rem;
+  width: 2rem;
   text-align: center;
 }
 
@@ -500,22 +501,22 @@
 .feed-mini-card__body {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   min-width: 0;
-  justify-content: center;
+  overflow: hidden; /* clip children so title never bleeds past card edge */
 }
 
 .feed-mini-card__title {
-  font-size: var(--cdn-text-base, 0.875rem);
+  font-size: 0.8125rem; /* 13px — fixed, not token-relative to avoid vw jitter */
   font-weight: var(--cdn-weight-medium);
-  line-height: 1.3;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .feed-mini-card__meta {
-  font-size: var(--cdn-text-xs, 11px);
+  font-size: 0.6875rem; /* 11px fixed */
   color: var(--cdn-color-text-muted);
   letter-spacing: 0.02em;
   white-space: nowrap;
