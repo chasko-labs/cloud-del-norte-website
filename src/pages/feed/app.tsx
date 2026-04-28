@@ -130,13 +130,14 @@ const IS_DEV =
   typeof window !== 'undefined' &&
   (window.location.hostname === 'dev.clouddelnorte.org' || window.location.hostname === 'localhost');
 
-type SectionKey = 'youtube' | 'twitch' | 'feed' | 'builder' | 'arrowhead';
+// builder center top-4 is rendered as its own pinned section (between two hr
+// dividers, just below next-meetup) — NOT part of the rotating shuffled feed.
+type SectionKey = 'youtube' | 'twitch' | 'feed' | 'arrowhead';
 
 const SECTIONS: Partial<Record<SectionKey, React.ReactNode>> = {
   youtube: <YoutubeCarousel />,
   twitch: <TwitchSection />,
   feed: <FeedSection />,
-  builder: <BuilderCenterCard />,
   arrowhead: <ArrowheadNews />,
 };
 
@@ -216,6 +217,10 @@ function AppContent({
     >
       <div className="feed-grid__cell cdn-card feed-grid__cell--full">
         <NextMeetup />
+      </div>
+      <hr className="feed-section-divider" />
+      <div className="feed-grid__cell cdn-card feed-grid__cell--full">
+        <BuilderCenterCard />
       </div>
       <hr className="feed-section-divider" />
       <div className="feed-grid">
