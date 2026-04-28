@@ -497,6 +497,63 @@
   }
 }
 
+/* ---------- KRUX stream — page header actions slot ---------- */
+/* two-line stack (label + audio player) right-aligned in the Header actions slot.
+   flex-direction column with justify-content: center vertically aligns the
+   midpoint between the two lines with the h1 "home" baseline center. */
+
+.feed-krux {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 4px;
+  /* prevent shrinking below player width — native audio control needs room */
+  min-width: 240px;
+}
+
+.feed-krux__label {
+  font-size: var(--cdn-text-sm);
+  font-weight: var(--cdn-weight-medium);
+  text-transform: lowercase;
+  letter-spacing: 0.04em;
+  color: var(--cdn-color-text-secondary);
+  text-decoration: none;
+  border-bottom: 1px dotted transparent;
+  transition: color 0.2s ease, border-bottom-color 0.2s ease;
+}
+
+.feed-krux__label:hover,
+.feed-krux__label:focus-visible {
+  color: var(--cdn-violet, #9060f0);
+  border-bottom-color: var(--cdn-violet, #9060f0);
+}
+
+.feed-krux__label:focus-visible {
+  outline: 2px solid var(--cdn-violet, #9060f0);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.feed-krux__player {
+  /* compact native audio control; height matches a typical chrome/safari player */
+  height: 32px;
+  width: 240px;
+  max-width: 100%;
+}
+
+/* mobile: fall in line below the heading instead of crowding actions slot */
+@media (max-width: 600px) {
+  .feed-krux {
+    align-items: flex-start;
+    min-width: 0;
+    width: 100%;
+  }
+  .feed-krux__player {
+    width: 100%;
+  }
+}
+
 /* ---------- Next meetup section divider ---------- */
 
 .feed-section-divider {

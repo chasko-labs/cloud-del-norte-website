@@ -76,7 +76,9 @@
     "nextMeetupFallback": "Visita meetup.com para ver nuestro próximo evento.",
     "nextMeetupCta": "Visitar meetup.com →",
     "nextMeetupPastLabel": "Último meetup:",
-    "infoLinkAriaLabel": "Abrir panel de ayuda"
+    "infoLinkAriaLabel": "Abrir panel de ayuda",
+    "streamKrux": "escucha krux",
+    "streamKruxFallback": "Tu navegador no soporta audio en vivo. Visita kruxstream.nmsu.edu/KRUX para escuchar."
   },
   "dashboardPage": {
     "breadcrumb": "Tablero",

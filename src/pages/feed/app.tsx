@@ -188,6 +188,27 @@ function AppContent({
               {t('feedPage.infoLink')}
             </Link>
           }
+          actions={
+            <div className="feed-krux">
+              <a
+                className="feed-krux__label"
+                href="https://kruxstream.nmsu.edu/KRUX"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {t('feedPage.streamKrux')}
+              </a>
+              <audio
+                className="feed-krux__player"
+                controls
+                preload="none"
+                src="https://kruxstream.nmsu.edu/KRUX"
+                aria-label={t('feedPage.streamKrux')}
+              >
+                {t('feedPage.streamKruxFallback')}
+              </audio>
+            </div>
+          }
         >
           {t('feedPage.header')}
         </Header>
