@@ -140,6 +140,10 @@ const SECTIONS: Partial<Record<SectionKey, React.ReactNode>> = {
   arrowhead: <ArrowheadNews />,
 };
 
+// twitch already shows two channel panes side by side — span the full grid width
+// so it doesn't squeeze into a single column. all other cells fit the 2-up tablet grid.
+const FULL_SPAN_SECTIONS = new Set<SectionKey>(['twitch']);
+
 function shuffled<T>(arr: T[]): T[] {
   const copy = [...arr];
   for (let i = copy.length - 1; i > 0; i--) {
@@ -193,7 +197,9 @@ function AppContent({
       <hr className="feed-section-divider" />
       <div className="feed-grid">
         {order.map(key => (
-          <React.Fragment key={key}>{SECTIONS[key]}</React.Fragment>
+          <div key={key} className={`feed-grid__cell${FULL_SPAN_SECTIONS.has(key) ? ' feed-grid__cell--full' : ''}`}>
+            {SECTIONS[key]}
+          </div>
         ))}
       </div>
     </ContentLayout>

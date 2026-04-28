@@ -15,7 +15,7 @@ export default function YoutubeCarousel() {
   const videoId = VIDEO_IDS[current];
 
   return (
-    <Container header={<Header variant="h2">Featured Videos</Header>}>
+    <Container header={<Header variant="h2">on YouTube</Header>}>
       <div className="feed-carousel">
         <div className="feed-carousel__viewport">
           <div className="feed-carousel__frame">

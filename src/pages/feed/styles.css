@@ -365,12 +365,95 @@
   display: none;
 }
 
-/* ---------- Feed page grid density ---------- */
-/* tighten the default 24px Cloudscape Grid gap to reduce vertical sprawl */
+/* ---------- Feed page grid — tumblr-style 2-up on tablet+ ---------- */
+/* mobile: 1 column; tablet+: 2 columns. cells with --full span both columns. */
 .feed-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--cdn-space-md);
+}
+
+.feed-grid__cell {
+  min-width: 0; /* allow children to shrink inside the column track */
+}
+
+@media (min-width: 768px) {
+  .feed-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.feed-grid__cell--full {
+  grid-column: 1 / -1;
+}
+
+/* ---------- Builder center "top 4" mini-card grid (tumblr feel) ---------- */
+
+.feed-mini-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--cdn-space-s, 12px);
+}
+
+.feed-mini-card {
+  margin: 0;
+}
+
+.feed-mini-card__link {
   display: flex;
   flex-direction: column;
-  gap: var(--cdn-space-md); /* 16px vs cloudscape default 24px */
+  gap: 6px;
+  height: 100%;
+  padding: var(--cdn-space-s, 12px);
+  border: 1px solid var(--cdn-color-border);
+  border-radius: var(--cdn-radius-sm, 4px);
+  background: var(--cdn-color-background-container, transparent);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feed-mini-card__link:hover,
+.feed-mini-card__link:focus-visible {
+  border-color: var(--cdn-violet, #9060f0);
+  box-shadow: 0 0 0 1px var(--cdn-violet, #9060f0) inset;
+  transform: translateY(-1px);
+}
+
+.feed-mini-card__link:focus-visible {
+  outline: 2px solid var(--cdn-violet, #9060f0);
+  outline-offset: 2px;
+}
+
+.feed-mini-card__title {
+  font-size: var(--cdn-text-sm);
+  font-weight: var(--cdn-weight-medium);
+  line-height: 1.3;
+  /* clamp to 4 lines so titles of varying length share visual weight */
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.feed-mini-card__meta {
+  margin-top: auto;
+  font-size: var(--cdn-text-xs, 11px);
+  color: var(--cdn-color-text-muted);
+  letter-spacing: 0.02em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .feed-mini-card__link {
+    transition: none;
+  }
+  .feed-mini-card__link:hover,
+  .feed-mini-card__link:focus-visible {
+    transform: none;
+  }
 }
 
 /* ---------- Next meetup section divider ---------- */

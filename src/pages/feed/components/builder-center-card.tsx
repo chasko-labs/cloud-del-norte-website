@@ -1,50 +1,40 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
 import Icon from '@cloudscape-design/components/icon';
-import Box from '@cloudscape-design/components/box';
 import { useTranslation } from '../../../hooks/useTranslation';
 
-const FEATURED = [
+// "top 4" tumblr-style mini-card grid — 4 featured AWS Builder Center articles.
+// each card is a compact tile with title + author. clicking opens the article externally.
+const TOP_FOUR = [
   {
     title: 'Step Functions without ASL? Welcome Lambda Durable Functions',
     author: 'Andres Moreno',
     url: 'https://builder.aws.com/content/2c0uRhtYh1arjgygZUvxKOspmrw/step-functions-without-asl-welcome-lambda-durable-functions',
-    excerpt:
-      'Deep dive into Lambda Durable Functions and how they let you run multi-step workflows using familiar code instead of Amazon State Language.',
   },
   {
     title:
       'Core Concepts of Containers: Technical Intro to Running Software on Containers featuring Amazon ECS Express Mode',
     author: 'Bryan Chasko',
     url: 'https://builder.aws.com/content/38G26lD5rr5GOqDtjfeo3cO4Z1g/core-concepts-of-containers-technical-intro-to-running-software-on-containers-featuring-amazon-ecs-express-mode',
-    excerpt:
-      'A technical introduction to containers, Docker, and ECS Express Mode — what they are, how they work, and why they matter for modern app deployment.',
   },
   {
     title: "Applied Technology — Amazon Leo: How AWS Brought Amazon's Project Kuiper to Market",
     author: 'AWS Builder Center',
     url: 'https://builder.aws.com/content/36fvKToWy99YcAK3sDn34yjS6FE/applied-technology-amazon-leo-how-aws-brought-amazons-project-kuiper-to-market',
-    excerpt:
-      "Amazon Leo is AWS's new internet backbone. Low-latency, high-bandwidth global connectivity leveraging familiar AWS building blocks scaled to constellation level.",
+  },
+  {
+    title: 'Can it run DOOM? Playing DOOM in Claude Code with DOOM MCP',
+    author: 'AWS Builder Center',
+    url: 'https://builder.aws.com/content/3AmPDxn7EBkb5DTI9ERcCwPWjqk/can-it-run-doom-playing-doom-in-claude-code-with-doom-mcp',
   },
 ];
 
 export default function BuilderCenterCard() {
   const { t } = useTranslation();
-  const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-
-  useEffect(() => {
-    if (paused || FEATURED.length <= 1) return;
-    const id = setInterval(() => setIndex(i => (i + 1) % FEATURED.length), 6000);
-    return () => clearInterval(id);
-  }, [paused]);
-
-  const item = FEATURED[index];
 
   return (
     <Container
@@ -61,42 +51,16 @@ export default function BuilderCenterCard() {
         </Header>
       }
     >
-      <div className="feed-article-carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-        <div key={index} className="feed-article-carousel__item">
-          <div className="feed-posts__title">
-            <Link href={item.url} external>
-              {item.title}
-            </Link>
-          </div>
-          <Box color="text-body-secondary" fontSize="body-s">
-            {item.excerpt}
-          </Box>
-          <Box color="text-status-inactive" fontSize="body-s">
-            {item.author}
-          </Box>
-        </div>
-        <div className="feed-article-carousel__progress" aria-hidden="true">
-          <div
-            key={`progress-${index}`}
-            className={`feed-article-carousel__progress-fill${paused ? '' : ' feed-article-carousel__progress-fill--running'}`}
-          />
-        </div>
-        <div className="feed-article-carousel__dots" role="tablist" aria-label="article selector">
-          {FEATURED.map((_, i) => (
-            <button
-              key={i}
-              role="tab"
-              aria-selected={i === index}
-              aria-label={`article ${i + 1} of ${FEATURED.length}`}
-              className={`feed-article-carousel__dot${i === index ? ' feed-article-carousel__dot--active' : ''}`}
-              onClick={() => {
-                setIndex(i);
-                setPaused(true);
-              }}
-            />
-          ))}
-        </div>
-      </div>
+      <ul className="feed-mini-grid" role="list">
+        {TOP_FOUR.map((item, i) => (
+          <li key={i} className="feed-mini-card">
+            <a href={item.url} target="_blank" rel="noopener noreferrer" className="feed-mini-card__link">
+              <span className="feed-mini-card__title">{item.title}</span>
+              <span className="feed-mini-card__meta">{item.author}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
     </Container>
   );
 }
