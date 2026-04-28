@@ -1,38 +1,43 @@
-import React from 'react';
-import Link from '@cloudscape-design/components/link';
-import { useTranslation } from '../../hooks/useTranslation';
-import './styles.css';
+import Link from "@cloudscape-design/components/link";
+import { useTranslation } from "../../hooks/useTranslation";
+import "./styles.css";
 
 export default function Footer() {
-  const { t } = useTranslation();
+	const { t } = useTranslation();
 
-  return (
-    <footer id="site-footer" className="cdn-footer" role="contentinfo">
-      <div className="cdn-footer-bottom">
-        <p className="cdn-footer-community">
-          {t('footer.communityDescription')}{' '}
-          <Link href="https://www.meetup.com/pro/global-aws-user-group-community/" external variant="primary">
-            {t('footer.globalCommunity')}
-          </Link>
-          . {t('footer.communityFullDescription')}{' '}
-          <strong className="cdn-footer-emphasis">{t('footer.goBuild')}</strong>.
-        </p>
-        <p className="cdn-footer-info-panel">
-          <button
-            className="cdn-footer-info-panel-button"
-            onClick={() => {
-              const toolsButton = document.querySelector(
-                '[aria-label*="Help Panel"], [aria-label*="help panel"]',
-              ) as HTMLButtonElement;
-              if (toolsButton) {
-                toolsButton.click();
-              }
-            }}
-          >
-            {t('footer.infoPanelLink')}
-          </button>
-        </p>
-      </div>
-    </footer>
-  );
+	return (
+		<footer id="site-footer" className="cdn-footer" role="contentinfo">
+			<div className="cdn-footer-bottom">
+				<p className="cdn-footer-community">
+					{t("footer.communityDescription")}{" "}
+					<Link
+						href="https://www.meetup.com/pro/global-aws-user-group-community/"
+						external
+						variant="primary"
+					>
+						{t("footer.globalCommunity")}
+					</Link>
+					. {t("footer.communityFullDescription")}{" "}
+					<strong className="cdn-footer-emphasis">{t("footer.goBuild")}</strong>
+					.
+				</p>
+				<p className="cdn-footer-info-panel">
+					<button
+						type="button"
+						className="cdn-footer-info-panel-button"
+						onClick={() => {
+							const toolsButton = document.querySelector(
+								'[aria-label*="Help Panel"], [aria-label*="help panel"]',
+							) as HTMLButtonElement;
+							if (toolsButton) {
+								toolsButton.click();
+							}
+						}}
+					>
+						{t("footer.infoPanelLink")}
+					</button>
+				</p>
+			</div>
+		</footer>
+	);
 }

@@ -1,0 +1,194 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
+// React must be a value import — tsconfig jsx:"react" requires it in scope as the JSX factory
+import { useEffect, useMemo, useState } from "react";
+import "./styles.css";
+
+function buildDeviceInfo(): string {
+	const ua = navigator.userAgent;
+	const isAndroid = /android/i.test(ua);
+	const isIPhone = /iphone/i.test(ua);
+	const isIPad =
+		/ipad/i.test(ua) || (/macintosh/i.test(ua) && "ontouchend" in document);
+
+	let os: string;
+	if (isAndroid) os = "android";
+	else if (isIPhone) os = "ios";
+	else if (isIPad) os = "ipados";
+	else if (/windows/i.test(ua)) os = "windows";
+	else if (/mac os x/i.test(ua)) os = "macos";
+	else os = "linux";
+
+	const w = window.screen.width;
+	const h = window.screen.height;
+
+	return `os:${os}  ${w}×${h}`;
+}
+
+interface LioraEmbedModule {
+	mountLioraPanel: (assetBase: string) => Promise<void>;
+}
+
+function scheduleIdle(fn: () => void): void {
+	if ("requestIdleCallback" in window) {
+		requestIdleCallback(fn, { timeout: 4000 });
+	} else {
+		setTimeout(fn, 200);
+	}
+}
+
+export function LioraPanel() {
+	const deviceInfo = useMemo(() => buildDeviceInfo(), []);
+	// sticky note interaction — tiny by default, zoom + replay handwriting on click.
+	// stickyKey forces React to re-mount the element so the clip-path keyframes
+	// restart from 0% (cleanest cross-browser way to replay an in-progress animation).
+	// during sway (screen-tap-1) or fall (screen-tap-2) the embed's fly-out listener
+	// owns the click — this handler bails out so the two paths don't conflict.
+	const [stickyZoomed, setStickyZoomed] = useState(false);
+	const [stickyKey, setStickyKey] = useState(0);
+	const handleStickyToggle = () => {
+		// bail if the bezel is in a tap state — embed handles fly-out in that path
+		const bezel = document.querySelector(".liora-bezel");
+		if (
+			bezel instanceof HTMLElement &&
+			(bezel.classList.contains("screen-tap-1") ||
+				bezel.classList.contains("screen-tap-2"))
+		) {
+			return;
+		}
+		setStickyZoomed((z) => !z);
+		setStickyKey((k) => k + 1);
+	};
+
+	useEffect(() => {
+		let cancelled = false;
+		let drawerObserver: ResizeObserver | null = null;
+
+		const scriptSrc = import.meta.env.VITE_LIORA_SCRIPT_URL;
+		const assetBase = import.meta.env.VITE_LIORA_ASSET_BASE;
+
+		if (!scriptSrc || !assetBase) return;
+
+		// Narrowed consts — safe to capture in nested async closure
+		const src = scriptSrc;
+		const base = assetBase;
+
+		function doMount() {
+			if (cancelled) return;
+			void (async () => {
+				try {
+					const mod = (await import(
+						/* @vite-ignore */ src
+					)) as LioraEmbedModule;
+					if (cancelled) return;
+					await mod.mountLioraPanel(base);
+				} catch {
+					// mount failure — shimmer stays as permanent panel fill
+				}
+			})();
+		}
+
+		function mount() {
+			if (cancelled) return;
+			// On mobile the Cloudscape nav drawer is collapsed — canvas starts at 0×0.
+			// BabylonJS creates a degenerate context when given a zero-size canvas.
+			// Defer until the drawer opens and the canvas gets real dimensions.
+			const canvas = document.getElementById(
+				"liora-canvas",
+			) as HTMLCanvasElement | null;
+			if (canvas && canvas.clientWidth === 0) {
+				drawerObserver = new ResizeObserver(() => {
+					if (cancelled) {
+						drawerObserver?.disconnect();
+						return;
+					}
+					if (canvas.clientWidth > 0) {
+						drawerObserver?.disconnect();
+						drawerObserver = null;
+						doMount();
+					}
+				});
+				drawerObserver.observe(canvas);
+				return;
+			}
+			doMount();
+		}
+
+		if (document.readyState === "complete") {
+			scheduleIdle(mount);
+		} else {
+			window.addEventListener("load", () => scheduleIdle(mount), {
+				once: true,
+			});
+		}
+
+		return () => {
+			cancelled = true;
+			drawerObserver?.disconnect();
+		};
+	}, []);
+
+	return (
+		<div className="liora-frame">
+			<div className="liora-bezel">
+				<div className="liora-panel-wrap">
+					<div
+						id="liora-shimmer"
+						className="liora-placeholder"
+						aria-hidden="true"
+					>
+						<span className="liora-placeholder-label">
+							modem connecting
+							<span className="liora-block-stream">
+								<span className="liora-block">▓</span>
+								<span className="liora-block">▓</span>
+								<span className="liora-block">▓</span>
+							</span>
+						</span>
+					</div>
+					<canvas
+						id="liora-canvas"
+						className="liora-canvas"
+						aria-hidden="true"
+						tabIndex={-1}
+					/>
+				</div>
+				<div
+					id="liora-status-bar"
+					className="liora-status-bar liora-status--green"
+					aria-hidden="true"
+				>
+					<span id="liora-device-info">{deviceInfo}</span>
+					<span id="liora-sys-status"> SYS:▓▓▓</span>
+				</div>
+			</div>
+			{/* sticky note — physical-paper note TAPED to the bottom edge of the
+			    monitor console, hangs DOWN below the bezel. tiny default, click to
+			    zoom + replay handwriting, click again to shrink back.
+			    screen click-1: note swings (sway, stays attached).
+			    screen click-2: note swings harder then tape rips + falls.
+			    clicking the note itself during sway or fall: fly-out 5x zoom
+			    (embed-owned; handleStickyToggle bails out during tap states) */}
+			<button
+				key={stickyKey}
+				type="button"
+				className={`liora-stickynote${stickyZoomed ? " liora-stickynote--zoomed" : ""}`}
+				onClick={handleStickyToggle}
+				aria-label={
+					stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
+				}
+			>
+				<span className="liora-stickynote-line liora-stickynote-line-1">
+					non load
+				</span>
+				<span className="liora-stickynote-line liora-stickynote-line-2">
+					bearing
+				</span>
+				<span className="liora-stickynote-sig">- ^.^</span>
+			</button>
+			{/* scene-over "skip credits" button is appended into the bezel by liora-embed.ts
+			    at credits-time; this frame slot is reserved for future stage chrome */}
+		</div>
+	);
+}

@@ -12,127 +12,137 @@
    Footer container — gradient background + gradient accent top-border
    -------------------------------------------------------------------------- */
 .cdn-footer {
-  position: relative;
-  padding: var(--cdn-space-xl) var(--cdn-space-lg) var(--cdn-space-lg);
-  /* Warm cream gradient with subtle amber warmth */
-  background: linear-gradient(
-    180deg,
-    var(--color-background-layout-main-5ilwcb) 0%,
-    color-mix(in srgb, var(--color-background-layout-main-5ilwcb) 95%, var(--cdn-amber) 5%) 40%,
-    color-mix(in srgb, var(--color-background-layout-main-5ilwcb) 90%, var(--cdn-amber) 10%) 100%
-  );
-  /* No plain border-top — gradient accent ::after handles it */
-  border-top: none;
+	position: relative;
+	padding: var(--cdn-space-xl) var(--cdn-space-lg) var(--cdn-space-lg);
+	/* Warm cream gradient with subtle amber warmth */
+	background: linear-gradient(
+		180deg,
+		var(--color-background-layout-main-5ilwcb) 0%,
+		color-mix(
+				in srgb,
+				var(--color-background-layout-main-5ilwcb) 95%,
+				var(--cdn-amber) 5%
+			)
+			40%,
+		color-mix(
+				in srgb,
+				var(--color-background-layout-main-5ilwcb) 90%,
+				var(--cdn-amber) 10%
+			)
+			100%
+	);
+	/* No plain border-top — gradient accent ::after handles it */
+	border-top: none;
 }
 
 /* Gradient accent line at top of footer — mirrors .cdn-card::before pattern */
 .cdn-footer::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--cdn-amber) 20%,
-    color-mix(in srgb, var(--cdn-amber) 60%, var(--cdn-aws-orange) 40%) 50%,
-    var(--cdn-aws-orange) 80%,
-    transparent 100%
-  );
-  opacity: 0.7;
-  transition: var(--cdn-transition-fast);
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		var(--cdn-amber) 20%,
+		color-mix(in srgb, var(--cdn-amber) 60%, var(--cdn-aws-orange) 40%) 50%,
+		var(--cdn-aws-orange) 80%,
+		transparent 100%
+	);
+	opacity: 0.7;
+	transition: var(--cdn-transition-fast);
 }
 
 /* Dark mode: cosmic navy→indigo→purple gradient (matches top nav) */
 .awsui-dark-mode .cdn-footer {
-  background: linear-gradient(
-    135deg,
-    var(--cdn-gradient-nav-start) 0%,
-    var(--cdn-gradient-nav-mid) 50%,
-    var(--cdn-gradient-nav-end) 100%
-  );
+	background: linear-gradient(
+		135deg,
+		var(--cdn-gradient-nav-start) 0%,
+		var(--cdn-gradient-nav-mid) 50%,
+		var(--cdn-gradient-nav-end) 100%
+	);
 }
 
 .awsui-dark-mode .cdn-footer::after {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--cdn-violet) 20%,
-    #00d4ff 50%,
-    var(--cdn-violet) 80%,
-    transparent 100%
-  );
-  opacity: 0.8;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		var(--cdn-violet) 20%,
+		#00d4ff 50%,
+		var(--cdn-violet) 80%,
+		transparent 100%
+	);
+	opacity: 0.8;
 }
 
 /* --------------------------------------------------------------------------
    "AWS User Group Organizers" heading — centered with gradient underline accent
    -------------------------------------------------------------------------- */
 .cdn-footer-heading {
-  text-align: center;
-  margin-bottom: var(--cdn-space-xl);
-  padding-bottom: var(--cdn-space-sm);
-  font-size: var(--cdn-text-xl);
-  font-weight: var(--cdn-weight-bold);
-  letter-spacing: 0.03em;
-  color: var(--cdn-color-text);
-  position: relative;
+	text-align: center;
+	margin-bottom: var(--cdn-space-xl);
+	padding-bottom: var(--cdn-space-sm);
+	font-size: var(--cdn-text-xl);
+	font-weight: var(--cdn-weight-bold);
+	letter-spacing: 0.03em;
+	color: var(--cdn-color-text);
+	position: relative;
 }
 
 /* Centered gradient underline — amber→violet→orange (light mode accent palette) */
 .cdn-footer-heading::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 3px;
-  border-radius: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--cdn-amber),
-    color-mix(in srgb, var(--cdn-amber) 50%, var(--cdn-aws-orange) 50%),
-    var(--cdn-aws-orange)
-  );
+	content: "";
+	position: absolute;
+	bottom: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 80px;
+	height: 3px;
+	border-radius: 2px;
+	background: linear-gradient(
+		90deg,
+		var(--cdn-amber),
+		color-mix(in srgb, var(--cdn-amber) 50%, var(--cdn-aws-orange) 50%),
+		var(--cdn-aws-orange)
+	);
 }
 
 .awsui-dark-mode .cdn-footer-heading {
-  color: var(--cdn-lavender);
+	color: var(--cdn-lavender);
 }
 
 .awsui-dark-mode .cdn-footer-heading::after {
-  background: linear-gradient(
-    90deg,
-    var(--cdn-violet),
-    #00d4ff,
-    var(--cdn-violet)
-  );
+	background: linear-gradient(
+		90deg,
+		var(--cdn-violet),
+		#00d4ff,
+		var(--cdn-violet)
+	);
 }
 
 /* --------------------------------------------------------------------------
    Responsive grid — 6 leader cards (3 × 2 at desktop)
    -------------------------------------------------------------------------- */
 .cdn-footer-grid {
-  display: grid;
-  gap: var(--cdn-space-lg);
-  grid-template-columns: 1fr;
-  max-width: 1400px;
-  margin: 0 auto;
+	display: grid;
+	gap: var(--cdn-space-lg);
+	grid-template-columns: 1fr;
+	max-width: 1400px;
+	margin: 0 auto;
 }
 
 @media (min-width: 768px) {
-  .cdn-footer-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+	.cdn-footer-grid {
+		grid-template-columns: repeat(2, 1fr);
+	}
 }
 
 @media (min-width: 1200px) {
-  .cdn-footer-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
+	.cdn-footer-grid {
+		grid-template-columns: repeat(3, 1fr);
+	}
 }
 
 /* --------------------------------------------------------------------------
@@ -141,284 +151,289 @@
    backdrop-filter, ::before accent line, hover lift+glow, entrance animation.
    -------------------------------------------------------------------------- */
 .cdn-footer-card {
-  min-height: 180px;
-  padding: var(--cdn-space-lg) var(--cdn-space-md) var(--cdn-space-md);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: var(--cdn-space-sm);
+	min-height: 180px;
+	padding: var(--cdn-space-lg) var(--cdn-space-md) var(--cdn-space-md);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	text-align: center;
+	gap: var(--cdn-space-sm);
 }
 
 /* Leader name */
 .cdn-footer-card-name {
-  font-size: var(--cdn-text-lg);
-  font-weight: var(--cdn-weight-bold);
-  line-height: var(--cdn-leading-tight);
-  letter-spacing: 0.01em;
-  color: var(--cdn-color-text);
-  margin: 0;
+	font-size: var(--cdn-text-lg);
+	font-weight: var(--cdn-weight-bold);
+	line-height: var(--cdn-leading-tight);
+	letter-spacing: 0.01em;
+	color: var(--cdn-color-text);
+	margin: 0;
 }
 
 .awsui-dark-mode .cdn-footer-card-name {
-  color: var(--cdn-white);
+	color: var(--cdn-white);
 }
 
 /* Organization affiliation — secondary label below name */
 .cdn-footer-card-org {
-  display: block;
-  font-size: var(--cdn-text-sm);
-  font-weight: var(--cdn-weight-normal);
-  line-height: var(--cdn-leading-tight);
-  color: var(--cdn-color-text-secondary);
-  margin-top: calc(-1 * var(--cdn-space-xs));
+	display: block;
+	font-size: var(--cdn-text-sm);
+	font-weight: var(--cdn-weight-normal);
+	line-height: var(--cdn-leading-tight);
+	color: var(--cdn-color-text-secondary);
+	margin-top: calc(-1 * var(--cdn-space-xs));
 }
 
 .awsui-dark-mode .cdn-footer-card-org {
-  color: var(--cdn-lavender);
+	color: var(--cdn-lavender);
 }
 
 /* Bio text */
 .cdn-footer-card-bio {
-  font-size: var(--cdn-text-sm);
-  line-height: var(--cdn-leading-normal);
-  color: var(--cdn-color-text-muted);
-  flex: 1;
+	font-size: var(--cdn-text-sm);
+	line-height: var(--cdn-leading-normal);
+	color: var(--cdn-color-text-muted);
+	flex: 1;
 }
 
 .awsui-dark-mode .cdn-footer-card-bio {
-  color: var(--cdn-lavender);
+	color: var(--cdn-lavender);
 }
 
 /* --------------------------------------------------------------------------
    Social links row — pill-shaped accessible touch targets
    -------------------------------------------------------------------------- */
 .cdn-footer-social {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--cdn-space-sm);
-  margin-top: auto;
-  padding-top: var(--cdn-space-sm);
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--cdn-space-sm);
+	margin-top: auto;
+	padding-top: var(--cdn-space-sm);
 }
 
 /* Pill container wrapping Cloudscape Link */
 .cdn-footer-social [role="listitem"] {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  padding: var(--cdn-space-xs) var(--cdn-space-md);
-  border-radius: 22px;
-  border: 1.5px solid rgba(139, 90, 43, 0.22);
-  background: rgba(250, 247, 240, 0.5);
-  transition: background-color 0.2s ease, border-color 0.2s ease,
-              box-shadow 0.2s ease, transform 0.2s ease;
-  cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 44px;
+	min-height: 44px;
+	padding: var(--cdn-space-xs) var(--cdn-space-md);
+	border-radius: 22px;
+	border: 1.5px solid rgba(139, 90, 43, 0.22);
+	background: rgba(250, 247, 240, 0.5);
+	transition:
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
+		transform 0.2s ease;
+	cursor: pointer;
 }
 
 /* Light mode hover — mirrors side-nav inset accent pattern */
 .cdn-footer-social [role="listitem"]:hover {
-  border-color: var(--cdn-amber);
-  background-color: rgba(139, 90, 43, 0.10);
-  box-shadow: inset 0 -2px 0 var(--cdn-amber),
-              0 4px 12px rgba(139, 90, 43, 0.18),
-              0 0 8px rgba(139, 90, 43, 0.08);
-  transform: translateY(-1px);
+	border-color: var(--cdn-amber);
+	background-color: rgba(139, 90, 43, 0.1);
+	box-shadow:
+		inset 0 -2px 0 var(--cdn-amber),
+		0 4px 12px rgba(139, 90, 43, 0.18),
+		0 0 8px rgba(139, 90, 43, 0.08);
+	transform: translateY(-1px);
 }
 
 /* Dark mode pill */
 .awsui-dark-mode .cdn-footer-social [role="listitem"] {
-  border-color: rgba(144, 96, 240, 0.22);
-  background: rgba(28, 34, 48, 0.5);
+	border-color: rgba(144, 96, 240, 0.22);
+	background: rgba(28, 34, 48, 0.5);
 }
 
 .awsui-dark-mode .cdn-footer-social [role="listitem"]:hover {
-  border-color: var(--cdn-violet);
-  background-color: rgba(144, 96, 240, 0.08);
-  box-shadow: inset 0 -2px 0 var(--cdn-violet),
-              0 0 12px rgba(144, 96, 240, 0.15);
+	border-color: var(--cdn-violet);
+	background-color: rgba(144, 96, 240, 0.08);
+	box-shadow:
+		inset 0 -2px 0 var(--cdn-violet),
+		0 0 12px rgba(144, 96, 240, 0.15);
 }
 
 /* --------------------------------------------------------------------------
    Placeholder card — "open slot" dashed border style
    -------------------------------------------------------------------------- */
 .cdn-footer-placeholder {
-  border-style: dashed !important;
-  border-width: 2px;
-  border-color: rgba(139, 90, 43, 0.30);
-  opacity: 0.82;
-  background: linear-gradient(
-    135deg,
-    rgba(250, 247, 240, 0.65) 0%,
-    rgba(245, 240, 228, 0.55) 100%
-  );
+	border-style: dashed !important;
+	border-width: 2px;
+	border-color: rgba(139, 90, 43, 0.3);
+	opacity: 0.82;
+	background: linear-gradient(
+		135deg,
+		rgba(250, 247, 240, 0.65) 0%,
+		rgba(245, 240, 228, 0.55) 100%
+	);
 }
 
 /* AWS-orange accent line to differentiate from active leaders */
 .cdn-footer-placeholder::before {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--cdn-aws-orange) 30%,
-    #ffb84d 60%,
-    transparent 100%
-  ) !important;
-  opacity: 0.45 !important;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		var(--cdn-aws-orange) 30%,
+		#ffb84d 60%,
+		transparent 100%
+	) !important;
+	opacity: 0.45 !important;
 }
 
 .awsui-dark-mode .cdn-footer-placeholder {
-  border-color: rgba(144, 96, 240, 0.28);
-  background: linear-gradient(
-    135deg,
-    rgba(28, 34, 48, 0.55) 0%,
-    rgba(30, 26, 48, 0.45) 100%
-  );
+	border-color: rgba(144, 96, 240, 0.28);
+	background: linear-gradient(
+		135deg,
+		rgba(28, 34, 48, 0.55) 0%,
+		rgba(30, 26, 48, 0.45) 100%
+	);
 }
 
 .awsui-dark-mode .cdn-footer-placeholder::before {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--cdn-aws-orange) 30%,
-    #ffb84d 60%,
-    transparent 100%
-  ) !important;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		var(--cdn-aws-orange) 30%,
+		#ffb84d 60%,
+		transparent 100%
+	) !important;
 }
 
 .cdn-footer-placeholder .cdn-footer-card-name {
-  color: var(--cdn-amber);
+	color: var(--cdn-amber);
 }
 
 .awsui-dark-mode .cdn-footer-placeholder .cdn-footer-card-name {
-  color: var(--cdn-aws-orange);
+	color: var(--cdn-aws-orange);
 }
 
 /* --------------------------------------------------------------------------
    Retired / emeritus card — dignified but subtly distinguished
    -------------------------------------------------------------------------- */
 .cdn-footer-retired {
-  filter: saturate(0.72) brightness(0.97);
-  opacity: 0.88;
-  box-shadow: var(--cdn-shadow-sm);
+	filter: saturate(0.72) brightness(0.97);
+	opacity: 0.88;
+	box-shadow: var(--cdn-shadow-sm);
 }
 
 /* Amber→gold accent line — warm and honoring */
 .cdn-footer-retired::before {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--cdn-amber) 25%,
-    var(--cdn-gold) 50%,
-    var(--cdn-amber) 75%,
-    transparent 100%
-  ) !important;
-  opacity: 0.5 !important;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		var(--cdn-amber) 25%,
+		var(--cdn-gold) 50%,
+		var(--cdn-amber) 75%,
+		transparent 100%
+	) !important;
+	opacity: 0.5 !important;
 }
 
 .cdn-footer-retired:hover {
-  filter: saturate(0.85) brightness(1.0);
-  box-shadow: var(--cdn-shadow-md);
+	filter: saturate(0.85) brightness(1);
+	box-shadow: var(--cdn-shadow-md);
 }
 
 .awsui-dark-mode .cdn-footer-retired {
-  box-shadow: var(--cdn-shadow-sm);
+	box-shadow: var(--cdn-shadow-sm);
 }
 
 .awsui-dark-mode .cdn-footer-retired::before {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    #c9a23f 25%,
-    var(--cdn-aws-orange) 50%,
-    #c9a23f 75%,
-    transparent 100%
-  ) !important;
-  opacity: 0.45 !important;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		#c9a23f 25%,
+		var(--cdn-aws-orange) 50%,
+		#c9a23f 75%,
+		transparent 100%
+	) !important;
+	opacity: 0.45 !important;
 }
 
 /* --------------------------------------------------------------------------
    Footer bottom section — community description
    -------------------------------------------------------------------------- */
 .cdn-footer-bottom {
-  margin-top: var(--cdn-space-xl);
-  padding-top: var(--cdn-space-lg);
-  /* Gradient divider line — reuses accent palette */
-  border-top: none;
-  position: relative;
+	margin-top: var(--cdn-space-xl);
+	padding-top: var(--cdn-space-lg);
+	/* Gradient divider line — reuses accent palette */
+	border-top: none;
+	position: relative;
 }
 
 /* Gradient top-border for the divider */
 .cdn-footer-bottom::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: min(100%, 600px);
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    color-mix(in srgb, var(--cdn-amber) 25%, transparent) 20%,
-    color-mix(in srgb, var(--cdn-amber) 35%, transparent) 50%,
-    color-mix(in srgb, var(--cdn-amber) 25%, transparent) 80%,
-    transparent 100%
-  );
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 50%;
+	transform: translateX(-50%);
+	width: min(100%, 600px);
+	height: 1px;
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		color-mix(in srgb, var(--cdn-amber) 25%, transparent) 20%,
+		color-mix(in srgb, var(--cdn-amber) 35%, transparent) 50%,
+		color-mix(in srgb, var(--cdn-amber) 25%, transparent) 80%,
+		transparent 100%
+	);
 }
 
 .awsui-dark-mode .cdn-footer-bottom::before {
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(144, 96, 240, 0.2) 20%,
-    rgba(144, 96, 240, 0.3) 50%,
-    rgba(144, 96, 240, 0.2) 80%,
-    transparent 100%
-  );
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(144, 96, 240, 0.2) 20%,
+		rgba(144, 96, 240, 0.3) 50%,
+		rgba(144, 96, 240, 0.2) 80%,
+		transparent 100%
+	);
 }
 
 /* Community text — prominent, readable, centered */
 .cdn-footer-community {
-  max-width: 800px;
-  margin: 0 auto;
-  text-align: center;
-  font-size: var(--cdn-text-lg);
-  line-height: var(--cdn-leading-relaxed);
-  letter-spacing: var(--cdn-letter-spacing-body);
-  color: var(--cdn-color-text);
-  padding: var(--cdn-space-sm) 0;
+	max-width: 800px;
+	margin: 0 auto;
+	text-align: center;
+	font-size: var(--cdn-text-lg);
+	line-height: var(--cdn-leading-relaxed);
+	letter-spacing: var(--cdn-letter-spacing-body);
+	color: var(--cdn-color-text);
+	padding: var(--cdn-space-sm) 0;
 }
 
 .awsui-dark-mode .cdn-footer-community {
-  color: var(--cdn-lavender);
+	color: var(--cdn-lavender);
 }
 
 /* "Go Build" call-to-action — gradient text effect */
 .cdn-footer-emphasis {
-  font-weight: var(--cdn-weight-bold);
-  letter-spacing: 0.04em;
-  background: linear-gradient(
-    90deg,
-    var(--cdn-amber) 0%,
-    var(--cdn-aws-orange) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+	font-weight: var(--cdn-weight-bold);
+	letter-spacing: 0.04em;
+	background: linear-gradient(
+		90deg,
+		var(--cdn-amber) 0%,
+		var(--cdn-aws-orange) 100%
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
 .awsui-dark-mode .cdn-footer-emphasis {
-  background: linear-gradient(
-    90deg,
-    var(--cdn-violet) 0%,
-    #00d4ff 50%,
-    var(--cdn-violet) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+	background: linear-gradient(
+		90deg,
+		var(--cdn-violet) 0%,
+		#00d4ff 50%,
+		var(--cdn-violet) 100%
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
 /* --------------------------------------------------------------------------
@@ -475,51 +490,51 @@
    Reduced motion — disable all animations and transitions
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-  .cdn-footer-social [role="listitem"] {
-    transition: none;
-  }
-  .cdn-footer-placeholder::before,
-  .cdn-footer-retired::before {
-    animation: none;
-  }
-  .cdn-footer::after {
-    transition: none;
-  }
+	.cdn-footer-social [role="listitem"] {
+		transition: none;
+	}
+	.cdn-footer-placeholder::before,
+	.cdn-footer-retired::before {
+		animation: none;
+	}
+	.cdn-footer::after {
+		transition: none;
+	}
 }
 
 /* --------------------------------------------------------------------------
    Print styles — simplified for paper
    -------------------------------------------------------------------------- */
 @media print {
-  .cdn-footer {
-    background: #fff;
-    border-top: 1px solid #ccc;
-    box-shadow: none;
-  }
-  .cdn-footer::after,
-  .cdn-footer .cdn-card::before,
-  .cdn-footer-social {
-    display: none;
-  }
-  .cdn-footer-placeholder {
-    border-style: solid;
-    opacity: 0.5;
-  }
-  .cdn-footer-retired {
-    filter: none;
-    opacity: 0.7;
-  }
-  .cdn-footer-emphasis {
-    background: none;
-    -webkit-text-fill-color: inherit;
-    color: inherit;
-    font-weight: var(--cdn-weight-bold);
-  }
-  .cdn-footer-community {
-    max-width: 100%;
-    font-size: var(--cdn-text-base);
-  }
-  .cdn-footer-bottom::before {
-    display: none;
-  }
+	.cdn-footer {
+		background: #fff;
+		border-top: 1px solid #ccc;
+		box-shadow: none;
+	}
+	.cdn-footer::after,
+	.cdn-footer .cdn-card::before,
+	.cdn-footer-social {
+		display: none;
+	}
+	.cdn-footer-placeholder {
+		border-style: solid;
+		opacity: 0.5;
+	}
+	.cdn-footer-retired {
+		filter: none;
+		opacity: 0.7;
+	}
+	.cdn-footer-emphasis {
+		background: none;
+		-webkit-text-fill-color: inherit;
+		color: inherit;
+		font-weight: var(--cdn-weight-bold);
+	}
+	.cdn-footer-community {
+		max-width: 100%;
+		font-size: var(--cdn-text-base);
+	}
+	.cdn-footer-bottom::before {
+		display: none;
+	}
 }
