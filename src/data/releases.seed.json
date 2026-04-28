@@ -1,595 +1,595 @@
 [
-  {
-    "id": "python",
-    "name": "Python",
-    "category": "Language",
-    "dataSource": "api",
-    "sourceUrl": "https://www.python.org/downloads/",
-    "mostRecentLTS": {
-      "version": "3.12.7",
-      "date": "2024-10-01",
-      "releaseNotesUrl": "https://docs.python.org/3/whatsnew/3.12.html",
-      "isLTS": true
-    },
-    "mostRecentAny": {
-      "version": "3.13.0",
-      "date": "2024-10-07",
-      "releaseNotesUrl": "https://docs.python.org/3/whatsnew/3.13.html",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-10-01",
-      "confidence": "high",
-      "basedOn": "Python releases a new minor version annually each October",
-      "sourceUrl": "https://peps.python.org/pep-0745/"
-    },
-    "projectedNextLTS": {
-      "projectedDate": "2025-10-01",
-      "confidence": "high",
-      "basedOn": "Python 3.14 expected October 2025; each release is supported 5 years"
-    },
-    "priorLTS": {
-      "version": "3.11.10",
-      "date": "2024-09-07",
-      "releaseNotesUrl": "https://docs.python.org/3/whatsnew/3.11.html",
-      "isLTS": true
-    },
-    "secondPriorLTS": {
-      "version": "3.10.15",
-      "date": "2024-09-07",
-      "releaseNotesUrl": "https://docs.python.org/3/whatsnew/3.10.html",
-      "isLTS": true
-    }
-  },
-  {
-    "id": "rust",
-    "name": "Rust",
-    "category": "Language",
-    "dataSource": "api",
-    "sourceUrl": "https://blog.rust-lang.org/",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "1.83.0",
-      "date": "2024-11-28",
-      "releaseNotesUrl": "https://blog.rust-lang.org/2024/11/28/Rust-1.83.0.html",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-01-09",
-      "confidence": "high",
-      "basedOn": "Rust releases a new stable version every 6 weeks"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "typescript",
-    "name": "TypeScript",
-    "category": "Language",
-    "dataSource": "api",
-    "sourceUrl": "https://devblogs.microsoft.com/typescript/",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "5.7.2",
-      "date": "2024-11-22",
-      "releaseNotesUrl": "https://devblogs.microsoft.com/typescript/announcing-typescript-5-7/",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-03-01",
-      "confidence": "high",
-      "basedOn": "TypeScript releases a new minor version approximately every 3 months"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "java",
-    "name": "Java (OpenJDK)",
-    "category": "Language",
-    "dataSource": "api",
-    "sourceUrl": "https://openjdk.org/projects/jdk/",
-    "mostRecentLTS": {
-      "version": "21",
-      "date": "2023-09-19",
-      "releaseNotesUrl": "https://openjdk.org/projects/jdk/21/",
-      "isLTS": true
-    },
-    "mostRecentAny": {
-      "version": "23",
-      "date": "2024-09-17",
-      "releaseNotesUrl": "https://openjdk.org/projects/jdk/23/",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-03-18",
-      "confidence": "announced",
-      "basedOn": "Java 24 GA scheduled for March 2025 per OpenJDK release calendar",
-      "announcedDate": "2025-03-18",
-      "sourceUrl": "https://openjdk.org/projects/jdk/24/"
-    },
-    "projectedNextLTS": {
-      "projectedDate": "2025-09-16",
-      "confidence": "announced",
-      "basedOn": "Java 25 is the next LTS, targeted for September 2025",
-      "announcedDate": "2025-09-16"
-    },
-    "priorLTS": {
-      "version": "17",
-      "date": "2021-09-14",
-      "releaseNotesUrl": "https://openjdk.org/projects/jdk/17/",
-      "isLTS": true
-    },
-    "secondPriorLTS": {
-      "version": "11",
-      "date": "2018-09-25",
-      "releaseNotesUrl": "https://openjdk.org/projects/jdk/11/",
-      "isLTS": true
-    }
-  },
-  {
-    "id": "php",
-    "name": "PHP",
-    "category": "Language",
-    "dataSource": "api",
-    "sourceUrl": "https://www.php.net/releases/",
-    "mostRecentLTS": {
-      "version": "8.3.14",
-      "date": "2024-11-21",
-      "releaseNotesUrl": "https://www.php.net/ChangeLog-8.php#8.3.14",
-      "isLTS": true
-    },
-    "mostRecentAny": {
-      "version": "8.4.1",
-      "date": "2024-11-21",
-      "releaseNotesUrl": "https://www.php.net/ChangeLog-8.php#8.4.1",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-11-01",
-      "confidence": "high",
-      "basedOn": "PHP releases a new minor version annually each November"
-    },
-    "projectedNextLTS": {
-      "projectedDate": "2025-11-01",
-      "confidence": "high",
-      "basedOn": "PHP 8.5 expected November 2025"
-    },
-    "priorLTS": {
-      "version": "8.2.26",
-      "date": "2024-11-21",
-      "releaseNotesUrl": "https://www.php.net/ChangeLog-8.php#8.2.26",
-      "isLTS": true
-    },
-    "secondPriorLTS": {
-      "version": "8.1.31",
-      "date": "2024-11-21",
-      "releaseNotesUrl": "https://www.php.net/ChangeLog-8.php#8.1.31",
-      "isLTS": true
-    }
-  },
-  {
-    "id": "react",
-    "name": "React",
-    "category": "Framework",
-    "dataSource": "api",
-    "sourceUrl": "https://react.dev/versions",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "19.0.0",
-      "date": "2024-12-05",
-      "releaseNotesUrl": "https://react.dev/blog/2024/12/05/react-19",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-06-01",
-      "confidence": "low",
-      "basedOn": "React major releases are infrequent; minor/patch updates expected throughout 2025"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "dotnet",
-    "name": ".NET",
-    "category": "Framework",
-    "dataSource": "api",
-    "sourceUrl": "https://dotnet.microsoft.com/en-us/download/dotnet",
-    "mostRecentLTS": {
-      "version": ".NET 8.0",
-      "date": "2023-11-14",
-      "releaseNotesUrl": "https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8/overview",
-      "isLTS": true
-    },
-    "mostRecentAny": {
-      "version": ".NET 9.0",
-      "date": "2024-11-12",
-      "releaseNotesUrl": "https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-9/overview",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-11-01",
-      "confidence": "announced",
-      "basedOn": ".NET 10 LTS scheduled for November 2025 per Microsoft release schedule",
-      "announcedDate": "2025-11-01",
-      "sourceUrl": "https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/overview"
-    },
-    "projectedNextLTS": {
-      "projectedDate": "2025-11-01",
-      "confidence": "announced",
-      "basedOn": ".NET 10 is an LTS release, even-numbered versions are LTS",
-      "announcedDate": "2025-11-01"
-    },
-    "priorLTS": {
-      "version": ".NET 6.0",
-      "date": "2021-11-08",
-      "releaseNotesUrl": "https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6",
-      "isLTS": true
-    },
-    "secondPriorLTS": null
-  },
-  {
-    "id": "aws-mcp",
-    "name": "AWS MCP Servers",
-    "category": "Tool",
-    "dataSource": "api",
-    "sourceUrl": "https://github.com/awslabs/mcp",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "1.0.0",
-      "date": "2025-01-15",
-      "releaseNotesUrl": "https://github.com/awslabs/mcp/releases",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-04-01",
-      "confidence": "low",
-      "basedOn": "New project; release cadence not yet established"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "anthropic-claude",
-    "name": "Anthropic Claude",
-    "category": "AI Model",
-    "dataSource": "manual",
-    "lastManualUpdate": "2026-03-09",
-    "sourceUrl": "https://www.anthropic.com/news",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "Claude 3.7 Sonnet",
-      "date": "2025-02-24",
-      "releaseNotesUrl": "https://www.anthropic.com/news/claude-3-7-sonnet",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-06-01",
-      "confidence": "low",
-      "basedOn": "Estimated based on ~3 month release cadence for major Claude versions"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "google-models",
-    "name": "Google Gemini Models",
-    "category": "AI Model",
-    "dataSource": "manual",
-    "lastManualUpdate": "2026-03-09",
-    "sourceUrl": "https://deepmind.google/technologies/gemini/",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "Gemini 2.0 Flash",
-      "date": "2025-02-05",
-      "releaseNotesUrl": "https://blog.google/products/gemini/gemini-2-flash-thinking-experimental/",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-05-01",
-      "confidence": "low",
-      "basedOn": "Estimated based on Google I/O 2025 expected announcements and ~3-4 month cadence"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "huggingface",
-    "name": "Hugging Face Transformers",
-    "category": "AI Model",
-    "dataSource": "api",
-    "sourceUrl": "https://github.com/huggingface/transformers/releases",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "4.47.1",
-      "date": "2024-12-16",
-      "releaseNotesUrl": "https://github.com/huggingface/transformers/releases/tag/v4.47.1",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-02-01",
-      "confidence": "high",
-      "basedOn": "Transformers releases minor versions approximately monthly"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "meta-llama",
-    "name": "Meta Llama",
-    "category": "AI Model",
-    "dataSource": "api",
-    "sourceUrl": "https://github.com/meta-llama/llama/releases",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "Llama 3.3 70B",
-      "date": "2024-12-06",
-      "releaseNotesUrl": "https://github.com/meta-llama/llama-models/releases",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-04-01",
-      "confidence": "low",
-      "basedOn": "Meta releases major Llama versions approximately every 6 months"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "aws-lambda",
-    "name": "AWS Lambda",
-    "category": "AWS Service",
-    "dataSource": "rss",
-    "sourceUrl": "https://aws.amazon.com/lambda/",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "Python 3.13 runtime support",
-      "date": "2024-11-19",
-      "releaseNotesUrl": "https://aws.amazon.com/about-aws/whats-new/2024/11/aws-lambda-python-3-13/",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-03-01",
-      "confidence": "low",
-      "basedOn": "AWS Lambda feature updates are continuous; next notable release estimated based on runtime cadence"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "aws-s3",
-    "name": "Amazon S3",
-    "category": "AWS Service",
-    "dataSource": "rss",
-    "sourceUrl": "https://aws.amazon.com/s3/",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "S3 Express One Zone GA",
-      "date": "2023-11-28",
-      "releaseNotesUrl": "https://aws.amazon.com/about-aws/whats-new/2023/11/amazon-s3-express-one-zone/",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-04-01",
-      "confidence": "low",
-      "basedOn": "AWS S3 feature updates are continuous and driven by re:Invent and summit announcements"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "amazon-bedrock",
-    "name": "Amazon Bedrock",
-    "category": "AWS Service",
-    "dataSource": "rss",
-    "sourceUrl": "https://aws.amazon.com/bedrock/",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "Amazon Nova Models GA",
-      "date": "2024-12-02",
-      "releaseNotesUrl": "https://aws.amazon.com/about-aws/whats-new/2024/12/amazon-nova-foundation-models/",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-03-01",
-      "confidence": "medium",
-      "basedOn": "Bedrock receives model additions and feature updates approximately monthly"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "aws-ai",
-    "name": "AWS AI Services",
-    "category": "AWS Service",
-    "dataSource": "rss",
-    "sourceUrl": "https://aws.amazon.com/machine-learning/",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "Amazon Q Developer GA",
-      "date": "2024-04-30",
-      "releaseNotesUrl": "https://aws.amazon.com/about-aws/whats-new/2024/04/amazon-q-generally-available/",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-04-01",
-      "confidence": "low",
-      "basedOn": "AWS AI service announcements cluster around re:Invent and AWS Summits"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "aws-iot",
-    "name": "AWS IoT",
-    "category": "AWS Service",
-    "dataSource": "rss",
-    "sourceUrl": "https://aws.amazon.com/iot/",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "IoT Greengrass 2.13",
-      "date": "2024-10-15",
-      "releaseNotesUrl": "https://docs.aws.amazon.com/greengrass/v2/developerguide/greengrass-release-notes.html",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-04-01",
-      "confidence": "low",
-      "basedOn": "AWS IoT Greengrass releases minor versions approximately quarterly"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "open-webui",
-    "name": "Open WebUI",
-    "category": "Tool",
-    "dataSource": "api",
-    "sourceUrl": "https://github.com/open-webui/open-webui/releases",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "0.5.3",
-      "date": "2024-12-24",
-      "releaseNotesUrl": "https://github.com/open-webui/open-webui/releases/tag/v0.5.3",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-02-01",
-      "confidence": "high",
-      "basedOn": "Open WebUI releases new versions approximately every 1-2 weeks"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "gimp",
-    "name": "GIMP",
-    "category": "Tool",
-    "dataSource": "rss",
-    "sourceUrl": "https://www.gimp.org/news/",
-    "mostRecentLTS": {
-      "version": "2.10.38",
-      "date": "2024-02-05",
-      "releaseNotesUrl": "https://www.gimp.org/news/2024/02/05/gimp-2-10-38-released/",
-      "isLTS": true
-    },
-    "mostRecentAny": {
-      "version": "3.0.0",
-      "date": "2025-03-15",
-      "releaseNotesUrl": "https://www.gimp.org/news/2025/03/15/gimp-3-0-0-released/",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-06-01",
-      "confidence": "low",
-      "basedOn": "GIMP 3.x patch releases expected in 2025 following the major 3.0 release"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "unreal-engine",
-    "name": "Unreal Engine",
-    "category": "Tool",
-    "dataSource": "rss",
-    "sourceUrl": "https://www.unrealengine.com/en-US/release-notes",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "5.5",
-      "date": "2024-11-12",
-      "releaseNotesUrl": "https://www.unrealengine.com/en-US/blog/unreal-engine-5-5-is-now-available",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-06-01",
-      "confidence": "medium",
-      "basedOn": "Epic Games releases major Unreal Engine versions approximately every 6-12 months"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "nvidia",
-    "name": "NVIDIA CUDA / Drivers",
-    "category": "Tool",
-    "dataSource": "rss",
-    "sourceUrl": "https://developer.nvidia.com/cuda-toolkit-archive",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "CUDA 12.6.3",
-      "date": "2024-10-29",
-      "releaseNotesUrl": "https://developer.nvidia.com/cuda-12-6-3-download-archive",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-03-01",
-      "confidence": "medium",
-      "basedOn": "NVIDIA releases new CUDA toolkit versions approximately quarterly"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "css-w3c",
-    "name": "CSS (W3C Specifications)",
-    "category": "Standard",
-    "dataSource": "manual",
-    "lastManualUpdate": "2026-03-09",
-    "sourceUrl": "https://www.w3.org/Style/CSS/current-work",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "CSS Grid Layout Level 2 (W3C REC)",
-      "date": "2024-08-06",
-      "releaseNotesUrl": "https://www.w3.org/TR/css-grid-2/",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-09-01",
-      "confidence": "low",
-      "basedOn": "W3C CSS specifications advance on an ongoing basis; next major CSS REC expected late 2025"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  },
-  {
-    "id": "iso-standards",
-    "name": "ISO/IEC AI Standards",
-    "category": "Standard",
-    "dataSource": "manual",
-    "lastManualUpdate": "2026-03-09",
-    "sourceUrl": "https://www.iso.org/committee/6794475.html",
-    "mostRecentLTS": null,
-    "mostRecentAny": {
-      "version": "ISO/IEC 42001:2023 (AI Management Systems)",
-      "date": "2023-12-18",
-      "releaseNotesUrl": "https://www.iso.org/standard/81230.html",
-      "isLTS": false
-    },
-    "projectedNextVersion": {
-      "projectedDate": "2025-06-01",
-      "confidence": "low",
-      "basedOn": "ISO/IEC JTC 1/SC 42 AI standards committee has multiple standards in ballot/publication pipeline for 2025"
-    },
-    "projectedNextLTS": null,
-    "priorLTS": null,
-    "secondPriorLTS": null
-  }
+	{
+		"id": "python",
+		"name": "Python",
+		"category": "Language",
+		"dataSource": "api",
+		"sourceUrl": "https://www.python.org/downloads/",
+		"mostRecentLTS": {
+			"version": "3.12.7",
+			"date": "2024-10-01",
+			"releaseNotesUrl": "https://docs.python.org/3/whatsnew/3.12.html",
+			"isLTS": true
+		},
+		"mostRecentAny": {
+			"version": "3.13.0",
+			"date": "2024-10-07",
+			"releaseNotesUrl": "https://docs.python.org/3/whatsnew/3.13.html",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-10-01",
+			"confidence": "high",
+			"basedOn": "Python releases a new minor version annually each October",
+			"sourceUrl": "https://peps.python.org/pep-0745/"
+		},
+		"projectedNextLTS": {
+			"projectedDate": "2025-10-01",
+			"confidence": "high",
+			"basedOn": "Python 3.14 expected October 2025; each release is supported 5 years"
+		},
+		"priorLTS": {
+			"version": "3.11.10",
+			"date": "2024-09-07",
+			"releaseNotesUrl": "https://docs.python.org/3/whatsnew/3.11.html",
+			"isLTS": true
+		},
+		"secondPriorLTS": {
+			"version": "3.10.15",
+			"date": "2024-09-07",
+			"releaseNotesUrl": "https://docs.python.org/3/whatsnew/3.10.html",
+			"isLTS": true
+		}
+	},
+	{
+		"id": "rust",
+		"name": "Rust",
+		"category": "Language",
+		"dataSource": "api",
+		"sourceUrl": "https://blog.rust-lang.org/",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "1.83.0",
+			"date": "2024-11-28",
+			"releaseNotesUrl": "https://blog.rust-lang.org/2024/11/28/Rust-1.83.0.html",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-01-09",
+			"confidence": "high",
+			"basedOn": "Rust releases a new stable version every 6 weeks"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "typescript",
+		"name": "TypeScript",
+		"category": "Language",
+		"dataSource": "api",
+		"sourceUrl": "https://devblogs.microsoft.com/typescript/",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "5.7.2",
+			"date": "2024-11-22",
+			"releaseNotesUrl": "https://devblogs.microsoft.com/typescript/announcing-typescript-5-7/",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-03-01",
+			"confidence": "high",
+			"basedOn": "TypeScript releases a new minor version approximately every 3 months"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "java",
+		"name": "Java (OpenJDK)",
+		"category": "Language",
+		"dataSource": "api",
+		"sourceUrl": "https://openjdk.org/projects/jdk/",
+		"mostRecentLTS": {
+			"version": "21",
+			"date": "2023-09-19",
+			"releaseNotesUrl": "https://openjdk.org/projects/jdk/21/",
+			"isLTS": true
+		},
+		"mostRecentAny": {
+			"version": "23",
+			"date": "2024-09-17",
+			"releaseNotesUrl": "https://openjdk.org/projects/jdk/23/",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-03-18",
+			"confidence": "announced",
+			"basedOn": "Java 24 GA scheduled for March 2025 per OpenJDK release calendar",
+			"announcedDate": "2025-03-18",
+			"sourceUrl": "https://openjdk.org/projects/jdk/24/"
+		},
+		"projectedNextLTS": {
+			"projectedDate": "2025-09-16",
+			"confidence": "announced",
+			"basedOn": "Java 25 is the next LTS, targeted for September 2025",
+			"announcedDate": "2025-09-16"
+		},
+		"priorLTS": {
+			"version": "17",
+			"date": "2021-09-14",
+			"releaseNotesUrl": "https://openjdk.org/projects/jdk/17/",
+			"isLTS": true
+		},
+		"secondPriorLTS": {
+			"version": "11",
+			"date": "2018-09-25",
+			"releaseNotesUrl": "https://openjdk.org/projects/jdk/11/",
+			"isLTS": true
+		}
+	},
+	{
+		"id": "php",
+		"name": "PHP",
+		"category": "Language",
+		"dataSource": "api",
+		"sourceUrl": "https://www.php.net/releases/",
+		"mostRecentLTS": {
+			"version": "8.3.14",
+			"date": "2024-11-21",
+			"releaseNotesUrl": "https://www.php.net/ChangeLog-8.php#8.3.14",
+			"isLTS": true
+		},
+		"mostRecentAny": {
+			"version": "8.4.1",
+			"date": "2024-11-21",
+			"releaseNotesUrl": "https://www.php.net/ChangeLog-8.php#8.4.1",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-11-01",
+			"confidence": "high",
+			"basedOn": "PHP releases a new minor version annually each November"
+		},
+		"projectedNextLTS": {
+			"projectedDate": "2025-11-01",
+			"confidence": "high",
+			"basedOn": "PHP 8.5 expected November 2025"
+		},
+		"priorLTS": {
+			"version": "8.2.26",
+			"date": "2024-11-21",
+			"releaseNotesUrl": "https://www.php.net/ChangeLog-8.php#8.2.26",
+			"isLTS": true
+		},
+		"secondPriorLTS": {
+			"version": "8.1.31",
+			"date": "2024-11-21",
+			"releaseNotesUrl": "https://www.php.net/ChangeLog-8.php#8.1.31",
+			"isLTS": true
+		}
+	},
+	{
+		"id": "react",
+		"name": "React",
+		"category": "Framework",
+		"dataSource": "api",
+		"sourceUrl": "https://react.dev/versions",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "19.0.0",
+			"date": "2024-12-05",
+			"releaseNotesUrl": "https://react.dev/blog/2024/12/05/react-19",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-06-01",
+			"confidence": "low",
+			"basedOn": "React major releases are infrequent; minor/patch updates expected throughout 2025"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "dotnet",
+		"name": ".NET",
+		"category": "Framework",
+		"dataSource": "api",
+		"sourceUrl": "https://dotnet.microsoft.com/en-us/download/dotnet",
+		"mostRecentLTS": {
+			"version": ".NET 8.0",
+			"date": "2023-11-14",
+			"releaseNotesUrl": "https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-8/overview",
+			"isLTS": true
+		},
+		"mostRecentAny": {
+			"version": ".NET 9.0",
+			"date": "2024-11-12",
+			"releaseNotesUrl": "https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-9/overview",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-11-01",
+			"confidence": "announced",
+			"basedOn": ".NET 10 LTS scheduled for November 2025 per Microsoft release schedule",
+			"announcedDate": "2025-11-01",
+			"sourceUrl": "https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-10/overview"
+		},
+		"projectedNextLTS": {
+			"projectedDate": "2025-11-01",
+			"confidence": "announced",
+			"basedOn": ".NET 10 is an LTS release, even-numbered versions are LTS",
+			"announcedDate": "2025-11-01"
+		},
+		"priorLTS": {
+			"version": ".NET 6.0",
+			"date": "2021-11-08",
+			"releaseNotesUrl": "https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-6",
+			"isLTS": true
+		},
+		"secondPriorLTS": null
+	},
+	{
+		"id": "aws-mcp",
+		"name": "AWS MCP Servers",
+		"category": "Tool",
+		"dataSource": "api",
+		"sourceUrl": "https://github.com/awslabs/mcp",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "1.0.0",
+			"date": "2025-01-15",
+			"releaseNotesUrl": "https://github.com/awslabs/mcp/releases",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-04-01",
+			"confidence": "low",
+			"basedOn": "New project; release cadence not yet established"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "anthropic-claude",
+		"name": "Anthropic Claude",
+		"category": "AI Model",
+		"dataSource": "manual",
+		"lastManualUpdate": "2026-03-09",
+		"sourceUrl": "https://www.anthropic.com/news",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "Claude 3.7 Sonnet",
+			"date": "2025-02-24",
+			"releaseNotesUrl": "https://www.anthropic.com/news/claude-3-7-sonnet",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-06-01",
+			"confidence": "low",
+			"basedOn": "Estimated based on ~3 month release cadence for major Claude versions"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "google-models",
+		"name": "Google Gemini Models",
+		"category": "AI Model",
+		"dataSource": "manual",
+		"lastManualUpdate": "2026-03-09",
+		"sourceUrl": "https://deepmind.google/technologies/gemini/",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "Gemini 2.0 Flash",
+			"date": "2025-02-05",
+			"releaseNotesUrl": "https://blog.google/products/gemini/gemini-2-flash-thinking-experimental/",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-05-01",
+			"confidence": "low",
+			"basedOn": "Estimated based on Google I/O 2025 expected announcements and ~3-4 month cadence"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "huggingface",
+		"name": "Hugging Face Transformers",
+		"category": "AI Model",
+		"dataSource": "api",
+		"sourceUrl": "https://github.com/huggingface/transformers/releases",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "4.47.1",
+			"date": "2024-12-16",
+			"releaseNotesUrl": "https://github.com/huggingface/transformers/releases/tag/v4.47.1",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-02-01",
+			"confidence": "high",
+			"basedOn": "Transformers releases minor versions approximately monthly"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "meta-llama",
+		"name": "Meta Llama",
+		"category": "AI Model",
+		"dataSource": "api",
+		"sourceUrl": "https://github.com/meta-llama/llama/releases",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "Llama 3.3 70B",
+			"date": "2024-12-06",
+			"releaseNotesUrl": "https://github.com/meta-llama/llama-models/releases",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-04-01",
+			"confidence": "low",
+			"basedOn": "Meta releases major Llama versions approximately every 6 months"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "aws-lambda",
+		"name": "AWS Lambda",
+		"category": "AWS Service",
+		"dataSource": "rss",
+		"sourceUrl": "https://aws.amazon.com/lambda/",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "Python 3.13 runtime support",
+			"date": "2024-11-19",
+			"releaseNotesUrl": "https://aws.amazon.com/about-aws/whats-new/2024/11/aws-lambda-python-3-13/",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-03-01",
+			"confidence": "low",
+			"basedOn": "AWS Lambda feature updates are continuous; next notable release estimated based on runtime cadence"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "aws-s3",
+		"name": "Amazon S3",
+		"category": "AWS Service",
+		"dataSource": "rss",
+		"sourceUrl": "https://aws.amazon.com/s3/",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "S3 Express One Zone GA",
+			"date": "2023-11-28",
+			"releaseNotesUrl": "https://aws.amazon.com/about-aws/whats-new/2023/11/amazon-s3-express-one-zone/",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-04-01",
+			"confidence": "low",
+			"basedOn": "AWS S3 feature updates are continuous and driven by re:Invent and summit announcements"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "amazon-bedrock",
+		"name": "Amazon Bedrock",
+		"category": "AWS Service",
+		"dataSource": "rss",
+		"sourceUrl": "https://aws.amazon.com/bedrock/",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "Amazon Nova Models GA",
+			"date": "2024-12-02",
+			"releaseNotesUrl": "https://aws.amazon.com/about-aws/whats-new/2024/12/amazon-nova-foundation-models/",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-03-01",
+			"confidence": "medium",
+			"basedOn": "Bedrock receives model additions and feature updates approximately monthly"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "aws-ai",
+		"name": "AWS AI Services",
+		"category": "AWS Service",
+		"dataSource": "rss",
+		"sourceUrl": "https://aws.amazon.com/machine-learning/",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "Amazon Q Developer GA",
+			"date": "2024-04-30",
+			"releaseNotesUrl": "https://aws.amazon.com/about-aws/whats-new/2024/04/amazon-q-generally-available/",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-04-01",
+			"confidence": "low",
+			"basedOn": "AWS AI service announcements cluster around re:Invent and AWS Summits"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "aws-iot",
+		"name": "AWS IoT",
+		"category": "AWS Service",
+		"dataSource": "rss",
+		"sourceUrl": "https://aws.amazon.com/iot/",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "IoT Greengrass 2.13",
+			"date": "2024-10-15",
+			"releaseNotesUrl": "https://docs.aws.amazon.com/greengrass/v2/developerguide/greengrass-release-notes.html",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-04-01",
+			"confidence": "low",
+			"basedOn": "AWS IoT Greengrass releases minor versions approximately quarterly"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "open-webui",
+		"name": "Open WebUI",
+		"category": "Tool",
+		"dataSource": "api",
+		"sourceUrl": "https://github.com/open-webui/open-webui/releases",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "0.5.3",
+			"date": "2024-12-24",
+			"releaseNotesUrl": "https://github.com/open-webui/open-webui/releases/tag/v0.5.3",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-02-01",
+			"confidence": "high",
+			"basedOn": "Open WebUI releases new versions approximately every 1-2 weeks"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "gimp",
+		"name": "GIMP",
+		"category": "Tool",
+		"dataSource": "rss",
+		"sourceUrl": "https://www.gimp.org/news/",
+		"mostRecentLTS": {
+			"version": "2.10.38",
+			"date": "2024-02-05",
+			"releaseNotesUrl": "https://www.gimp.org/news/2024/02/05/gimp-2-10-38-released/",
+			"isLTS": true
+		},
+		"mostRecentAny": {
+			"version": "3.0.0",
+			"date": "2025-03-15",
+			"releaseNotesUrl": "https://www.gimp.org/news/2025/03/15/gimp-3-0-0-released/",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-06-01",
+			"confidence": "low",
+			"basedOn": "GIMP 3.x patch releases expected in 2025 following the major 3.0 release"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "unreal-engine",
+		"name": "Unreal Engine",
+		"category": "Tool",
+		"dataSource": "rss",
+		"sourceUrl": "https://www.unrealengine.com/en-US/release-notes",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "5.5",
+			"date": "2024-11-12",
+			"releaseNotesUrl": "https://www.unrealengine.com/en-US/blog/unreal-engine-5-5-is-now-available",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-06-01",
+			"confidence": "medium",
+			"basedOn": "Epic Games releases major Unreal Engine versions approximately every 6-12 months"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "nvidia",
+		"name": "NVIDIA CUDA / Drivers",
+		"category": "Tool",
+		"dataSource": "rss",
+		"sourceUrl": "https://developer.nvidia.com/cuda-toolkit-archive",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "CUDA 12.6.3",
+			"date": "2024-10-29",
+			"releaseNotesUrl": "https://developer.nvidia.com/cuda-12-6-3-download-archive",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-03-01",
+			"confidence": "medium",
+			"basedOn": "NVIDIA releases new CUDA toolkit versions approximately quarterly"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "css-w3c",
+		"name": "CSS (W3C Specifications)",
+		"category": "Standard",
+		"dataSource": "manual",
+		"lastManualUpdate": "2026-03-09",
+		"sourceUrl": "https://www.w3.org/Style/CSS/current-work",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "CSS Grid Layout Level 2 (W3C REC)",
+			"date": "2024-08-06",
+			"releaseNotesUrl": "https://www.w3.org/TR/css-grid-2/",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-09-01",
+			"confidence": "low",
+			"basedOn": "W3C CSS specifications advance on an ongoing basis; next major CSS REC expected late 2025"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	},
+	{
+		"id": "iso-standards",
+		"name": "ISO/IEC AI Standards",
+		"category": "Standard",
+		"dataSource": "manual",
+		"lastManualUpdate": "2026-03-09",
+		"sourceUrl": "https://www.iso.org/committee/6794475.html",
+		"mostRecentLTS": null,
+		"mostRecentAny": {
+			"version": "ISO/IEC 42001:2023 (AI Management Systems)",
+			"date": "2023-12-18",
+			"releaseNotesUrl": "https://www.iso.org/standard/81230.html",
+			"isLTS": false
+		},
+		"projectedNextVersion": {
+			"projectedDate": "2025-06-01",
+			"confidence": "low",
+			"basedOn": "ISO/IEC JTC 1/SC 42 AI standards committee has multiple standards in ballot/publication pipeline for 2025"
+		},
+		"projectedNextLTS": null,
+		"priorLTS": null,
+		"secondPriorLTS": null
+	}
 ]

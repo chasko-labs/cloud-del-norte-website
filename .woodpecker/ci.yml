@@ -53,25 +53,21 @@ steps:
     commands:
       - npm ci
 
-  - name: lint
-    image: node:22-slim
-    depends_on: [install]
+  - name: biome
+    image: ghcr.io/biomejs/biome:2.4.13
+    depends_on: [tier-0-metadata]
     failure: fail
     commands:
-      - npm run lint
-
-  - name: format-check
-    image: node:22-slim
-    depends_on: [install]
-    failure: fail
-    commands:
-      - npx prettier --check src/
+      - biome ci --diagnostic-level=error src/
 
   - name: typecheck
     image: node:22-slim
     depends_on: [install]
     failure: fail
     commands:
+      # generate releases.generated.json before typecheck — file is gitignored, must be
+      # produced at ci time. generator degrades gracefully when GITHUB_TOKEN is absent.
+      - node scripts/fetch-releases.mjs
       - npx tsc --noEmit
 
   - name: build
@@ -87,3 +83,12 @@ steps:
     failure: ignore
     commands:
       - npm audit --audit-level=high || true
+
+  - name: scan-secrets
+    image: zricethezav/gitleaks:latest
+    failure: ignore
+    depends_on: [tier-0-metadata]
+    when:
+      - event: [push, pull_request, manual]
+    commands:
+      - gitleaks detect --verbose --source . --exit-code 1

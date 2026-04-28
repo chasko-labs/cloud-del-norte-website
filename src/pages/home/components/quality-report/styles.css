@@ -1,9 +1,9 @@
 /* Community description text — readable line length and spacing. */
 .quote {
-  color: inherit;
-  opacity: 0.85;
-  line-height: 1.7;
-  font-size: var(--cdn-text-md, 0.95rem);
-  margin: 0;
-  max-width: 60ch;
+	color: inherit;
+	opacity: 0.85;
+	line-height: 1.7;
+	font-size: var(--cdn-text-md, 0.95rem);
+	margin: 0;
+	max-width: 60ch;
 }
