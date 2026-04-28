@@ -557,32 +557,58 @@
   flex-direction: column;
   align-items: flex-start;
   justify-content: center;
-  gap: 6px;
-  /* the label sits above the button; both share the button's left edge */
-  padding-left: 0;
+  gap: 4px;
 }
 
+/* top row: label (secondary control) + round play button */
+.feed-krux__top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+
+/* label is a button-reset element — secondary click target */
 .feed-krux__label {
   display: inline-flex;
-  align-items: baseline;
-  gap: 4px;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
   font-size: var(--cdn-text-sm);
   font-weight: var(--cdn-weight-medium);
   letter-spacing: 0.04em;
   color: var(--cdn-color-text-secondary);
   white-space: nowrap;
-  /* shift the label so the "s" of "stream" left-aligns with the play button.
-     the headphones emoji + space is decorative; pull the visible word back to
-     the left edge of the column via negative margin offset matching emoji width.
-     using padding-left: 0 on the label and indent the emoji inline with margin
-     keeps the alphabetic "s" at the column origin. */
+  line-height: 1;
 }
 
-.feed-krux__label > span:first-child {
-  /* headphones emoji — visually sits BEFORE the label start, so it doesn't
-     push "s" off the alignment line */
-  margin-left: -22px;
-  font-size: 1em;
+.feed-krux__label:hover .feed-krux__station {
+  color: var(--cdn-violet, #9060f0);
+}
+
+/* station name fades between carousel items */
+.feed-krux__station {
+  transition: opacity 0.5s ease, color 0.2s ease;
+}
+
+.feed-krux__station--fading {
+  opacity: 0;
+}
+
+/* tiny now-playing line */
+.feed-krux__now-playing {
+  font-size: var(--cdn-text-xs, 0.6875rem);
+  color: var(--cdn-color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+  letter-spacing: 0.01em;
+  line-height: 1.2;
 }
 
 .feed-krux__btn {
@@ -625,7 +651,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .feed-krux__btn {
+  .feed-krux__btn,
+  .feed-krux__station {
     transition: none;
   }
   .feed-krux__btn:hover {
@@ -633,7 +660,6 @@
   }
 }
 
-/* mobile: stay left-aligned with full label visible; emoji offset preserved */
 @media (max-width: 600px) {
   .feed-krux {
     align-self: flex-start;

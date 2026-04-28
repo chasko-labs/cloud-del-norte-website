@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import ContentLayout from '@cloudscape-design/components/content-layout';
 import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
@@ -19,17 +19,100 @@ import ArrowheadNews from './components/arrowhead-news';
 import NextMeetup from './components/next-meetup';
 import './styles.css';
 
-// KRUX 91.5 FM (NMSU student radio) — Icecast stream toggle.
-// label "🎧 stream krux" sits above a small round play/stop button; the button's
-// horizontal position is the anchor — the "s" in "stream" left-aligns with it.
-const KRUX_STREAM_URL = 'https://kruxstream.nmsu.edu/KRUX';
+interface StreamDef {
+  readonly key: string;
+  readonly url: string;
+  readonly label: string;
+  readonly metaUrl: string;
+  parseMeta(data: unknown): string | null;
+}
+
+const STREAMS: StreamDef[] = [
+  {
+    key: 'krux',
+    url: 'https://kruxstream.nmsu.edu/KRUX',
+    label: 'krux 91.5',
+    metaUrl: 'https://kruxstream.nmsu.edu/status-json.xsl',
+    parseMeta(data) {
+      const d = data as { icestats?: { source?: { title?: string } | Array<{ title?: string }> } };
+      const src = d?.icestats?.source;
+      const s = Array.isArray(src) ? src[0] : src;
+      return s?.title ?? null;
+    },
+  },
+  {
+    key: 'kexp',
+    url: 'https://kexp.streamguys1.com/kexp160.aac',
+    label: 'kexp 90.3',
+    metaUrl: 'https://api.kexp.org/v2/plays/?limit=1&format=json',
+    parseMeta(data) {
+      const d = data as { results?: Array<{ artist_name?: string; song?: string }> };
+      const play = d?.results?.[0];
+      if (!play) return null;
+      const { artist_name: artist, song } = play;
+      if (artist && song) return `${song} — ${artist}`;
+      return song ?? artist ?? null;
+    },
+  },
+];
+
+const CAROUSEL_MS = 10_000;
+const FADE_MS = 500;
+const POLL_MS = 30_000;
 
 function KruxPlayer() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [idx, setIdx] = useState(0);
+  const [fading, setFading] = useState(false);
+  const [nowPlaying, setNowPlaying] = useState<Record<string, string>>({});
 
-  const toggle = () => {
+  const stream = STREAMS[idx];
+
+  const fetchMeta = useCallback((s: StreamDef) => {
+    fetch(s.metaUrl)
+      .then(r => (r.ok ? r.json() : null))
+      .then((data: unknown) => {
+        if (!data) return;
+        const text = s.parseMeta(data);
+        if (text) setNowPlaying(prev => ({ ...prev, [s.key]: text }));
+      })
+      .catch(() => {});
+  }, []);
+
+  // fetch both stations on mount for initial now-playing display
+  useEffect(() => {
+    STREAMS.forEach(s => fetchMeta(s));
+  }, [fetchMeta]);
+
+  // carousel: fade out → swap station → fade in, every 10s while not playing
+  useEffect(() => {
+    if (playing) return;
+    let tid: ReturnType<typeof setTimeout> | null = null;
+    const id = setInterval(() => {
+      setFading(true);
+      tid = setTimeout(() => {
+        setIdx(i => (i + 1) % STREAMS.length);
+        setFading(false);
+        tid = null;
+      }, FADE_MS);
+    }, CAROUSEL_MS);
+    return () => {
+      clearInterval(id);
+      if (tid) clearTimeout(tid);
+    };
+  }, [playing]);
+
+  // poll now-playing every 30s while playing
+  useEffect(() => {
+    if (!playing) return;
+    fetchMeta(stream);
+    const id = setInterval(() => fetchMeta(stream), POLL_MS);
+    return () => clearInterval(id);
+  }, [playing, stream, fetchMeta]);
+
+  const toggle = useCallback(() => {
     const a = audioRef.current;
     if (!a) return;
     if (a.paused) {
@@ -40,26 +123,36 @@ function KruxPlayer() {
     } else {
       a.pause();
     }
-  };
+  }, []);
 
   return (
     <div className="feed-krux">
-      <span className="feed-krux__label">
-        <span aria-hidden="true">🎧</span> <span>stream krux</span>
-      </span>
-      <button
-        type="button"
-        className="feed-krux__btn"
-        onClick={toggle}
-        aria-pressed={playing}
-        aria-label={playing ? 'stop krux stream' : 'play krux stream'}
-        data-state={loading ? 'loading' : playing ? 'playing' : 'paused'}
-      >
-        <span aria-hidden="true">{playing ? '■' : '▶'}</span>
-      </button>
+      <div className="feed-krux__top">
+        {/* label is a secondary click target — aria-hidden so screen readers
+            only interact with the labelled round button below */}
+        <button type="button" className="feed-krux__label" onClick={toggle} aria-hidden="true" tabIndex={-1}>
+          <span>🎧</span>
+          <span className={`feed-krux__station${fading ? ' feed-krux__station--fading' : ''}`}>{stream.label}</span>
+        </button>
+        <button
+          type="button"
+          className="feed-krux__btn"
+          onClick={toggle}
+          aria-pressed={playing}
+          aria-label={playing ? `stop ${stream.label}` : `play ${stream.label}`}
+          data-state={loading ? 'loading' : playing ? 'playing' : 'paused'}
+        >
+          <span aria-hidden="true">{playing ? '■' : '▶'}</span>
+        </button>
+      </div>
+      {nowPlaying[stream.key] && (
+        <span className="feed-krux__now-playing" aria-live="polite" aria-atomic="true">
+          {nowPlaying[stream.key]}
+        </span>
+      )}
       <audio
         ref={audioRef}
-        src={KRUX_STREAM_URL}
+        src={stream.url}
         preload="none"
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
