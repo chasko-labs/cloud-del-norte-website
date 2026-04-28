@@ -60,6 +60,32 @@
   color: var(--cdn-color-text-secondary);
 }
 
+/* ---------- Article carousel (auto-rotating content cards) ---------- */
+
+@keyframes feed-article-fade-in {
+  from { opacity: 0; transform: translateY(3px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.feed-article-carousel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-sm);
+}
+
+.feed-article-carousel__item {
+  animation: feed-article-fade-in 0.4s ease;
+  display: flex;
+  flex-direction: column;
+  gap: var(--cdn-space-xs);
+}
+
+.feed-article-carousel__counter {
+  font-size: var(--cdn-text-sm);
+  color: var(--cdn-color-text-muted);
+  align-self: flex-end;
+}
+
 /* ---------- Twitch section ---------- */
 
 .feed-twitch {

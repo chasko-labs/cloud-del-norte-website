@@ -1,12 +1,13 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
 import Icon from '@cloudscape-design/components/icon';
-import SpaceBetween from '@cloudscape-design/components/space-between';
+import Box from '@cloudscape-design/components/box';
 import posts from '../../../data/andres-medium.json';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 interface Post {
   title: string;
@@ -16,6 +17,19 @@ interface Post {
 }
 
 export default function AndresMedium() {
+  const { t } = useTranslation();
+  const items = posts as Post[];
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused || items.length <= 1) return;
+    const id = setInterval(() => setIndex(i => (i + 1) % items.length), 6000);
+    return () => clearInterval(id);
+  }, [paused, items.length]);
+
+  const post = items[index];
+
   return (
     <Container
       header={
@@ -23,27 +37,34 @@ export default function AndresMedium() {
           variant="h2"
           actions={
             <Link href="https://andmoredev.medium.com/" external fontSize="body-s">
-              All posts <Icon name="external" />
+              {t('feedPage.andresMediumAllPosts')} <Icon name="external" />
             </Link>
           }
         >
-          Andres Moreno — andmoredev
+          {t('feedPage.andresMediumHeader')}
         </Header>
       }
     >
-      <SpaceBetween size="m">
-        {(posts as Post[]).map((post, i) => (
-          <div key={i} className="feed-posts__item">
-            <div className="feed-posts__title">
-              <Link href={post.url} external>
-                {post.title}
-              </Link>
-            </div>
-            {post.excerpt && <p className="feed-posts__excerpt">{post.excerpt}</p>}
-            <span className="feed-posts__meta">{post.date}</span>
+      <div className="feed-article-carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+        <div key={index} className="feed-article-carousel__item">
+          <div className="feed-posts__title">
+            <Link href={post.url} external>
+              {post.title}
+            </Link>
           </div>
-        ))}
-      </SpaceBetween>
+          {post.excerpt && (
+            <Box color="text-body-secondary" fontSize="body-s">
+              {post.excerpt}
+            </Box>
+          )}
+          <Box color="text-status-inactive" fontSize="body-s">
+            {post.date}
+          </Box>
+        </div>
+        <span className="feed-article-carousel__counter">
+          {index + 1} / {items.length}
+        </span>
+      </div>
     </Container>
   );
 }

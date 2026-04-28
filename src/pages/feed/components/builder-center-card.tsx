@@ -1,11 +1,12 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Container from '@cloudscape-design/components/container';
 import Header from '@cloudscape-design/components/header';
 import Link from '@cloudscape-design/components/link';
-import SpaceBetween from '@cloudscape-design/components/space-between';
 import Icon from '@cloudscape-design/components/icon';
+import Box from '@cloudscape-design/components/box';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 const FEATURED = [
   {
@@ -33,6 +34,18 @@ const FEATURED = [
 ];
 
 export default function BuilderCenterCard() {
+  const { t } = useTranslation();
+  const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    if (paused || FEATURED.length <= 1) return;
+    const id = setInterval(() => setIndex(i => (i + 1) % FEATURED.length), 6000);
+    return () => clearInterval(id);
+  }, [paused]);
+
+  const item = FEATURED[index];
+
   return (
     <Container
       header={
@@ -40,27 +53,32 @@ export default function BuilderCenterCard() {
           variant="h2"
           actions={
             <Link href="https://builder.aws.com/" external fontSize="body-s">
-              Open AWS Builder Center <Icon name="external" />
+              {t('feedPage.builderCenterOpen')} <Icon name="external" />
             </Link>
           }
         >
-          AWS Builder Center
+          {t('feedPage.builderCenterHeader')}
         </Header>
       }
     >
-      <SpaceBetween size="m">
-        {FEATURED.map((item, i) => (
-          <div key={i} className="feed-posts__item">
-            <div className="feed-posts__title">
-              <Link href={item.url} external>
-                {item.title}
-              </Link>
-            </div>
-            <p className="feed-posts__excerpt">{item.excerpt}</p>
-            <span className="feed-posts__meta">{item.author}</span>
+      <div className="feed-article-carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+        <div key={index} className="feed-article-carousel__item">
+          <div className="feed-posts__title">
+            <Link href={item.url} external>
+              {item.title}
+            </Link>
           </div>
-        ))}
-      </SpaceBetween>
+          <Box color="text-body-secondary" fontSize="body-s">
+            {item.excerpt}
+          </Box>
+          <Box color="text-status-inactive" fontSize="body-s">
+            {item.author}
+          </Box>
+        </div>
+        <span className="feed-article-carousel__counter">
+          {index + 1} / {FEATURED.length}
+        </span>
+      </div>
     </Container>
   );
 }

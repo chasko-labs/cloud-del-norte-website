@@ -58,7 +58,14 @@
   "feedPage": {
     "breadcrumb": "Inicio",
     "header": "Inicio",
-    "infoLink": "Info"
+    "infoLink": "Info",
+    "andresMediumHeader": "Andres Moreno — andmoredev",
+    "andresMediumAllPosts": "Todos los posts",
+    "builderCenterHeader": "AWS Builder Center",
+    "builderCenterOpen": "Abrir AWS Builder Center",
+    "arrowheadHeader": "Arrowhead Research Park y NMSU",
+    "previousArticle": "Artículo anterior",
+    "nextArticle": "Artículo siguiente"
   },
   "dashboardPage": {
     "breadcrumb": "Tablero",
@@ -212,7 +219,27 @@
     "andresMoreno": "Andres Moreno",
     "andresRole": "Arquitecto Principal de Software, Caylent — AWS Community Builder",
     "andresWebsite": "andmore.dev",
-    "aboutPage": "Acerca de Cloud Del Norte"
+    "aboutPage": "Acerca de Cloud Del Norte",
+    "communityLeaders": "Líderes de la Comunidad",
+    "communityFounded": "Meetups presenciales, virtuales e híbridos en el corredor Juárez MX / El Paso y Las Cruces, todo Nuevo México, y áreas rurales de alrededor. Fundado el Día Internacional de la Mujer — 8 de marzo de 2021 — en",
+    "arrowheadPark": "Arrowhead Research Park",
+    "communityFoundedSuffix": ", NMSU.",
+    "andresMorenoRole": "Co-organizador · AWS Community Builder",
+    "andresMorenoBioPrefix": "Arquitecto Principal de Software en Caylent. Especialista en serverless — Lambda, Step Functions, CI/CD y experiencia de desarrollador. Escribe en",
+    "andresMorenoBioSuffix": "sobre patrones serverless del mundo real en sistemas de producción.",
+    "bryanChaskoRole": "Fundador · AWS Hero · AWS Content Builder",
+    "bryanChaskoBio": "Organizador enfocado en builders, radicado en El Paso. Reconocimiento AWS Hero por contribuciones a la comunidad en la región fronteriza. Crea contenido práctico sobre contenedores, serverless e infraestructura de IA/ML. Coordina la programación técnica y el pipeline de speakers del grupo.",
+    "awsHeroProfile": "Perfil de AWS Hero",
+    "jacobWrightRole": "Fundador · Líder del Condado de Doña Ana",
+    "jacobWrightBio": "Co-fundó el grupo en Las Cruces. Ancla del capítulo del Condado de Doña Ana y sur de Nuevo México — la columna geográfica que conecta El Paso y Albuquerque en los eventos presenciales del grupo.",
+    "wayneSavageRole": "Fundador · Organizador Jubilado",
+    "wayneSavageBioPrefix": "Parte del equipo fundador. Conectó al grupo con",
+    "wayneSavageBioSuffix": "en la NMSU, donde se realizó el primer meetup. La alianza con Arrowhead sigue siendo un hilo en las raíces neomexicanas del grupo.",
+    "organizersWantedIntro": "Nube of the North es un grupo de voluntarios. Estos roles están abiertos:",
+    "aslLeadRole": "Líder de ASL",
+    "aslLeadDesc": "coordinar la interpretación de Lengua de Señas Americana en eventos, abogar por la accesibilidad en la planeación de sesiones",
+    "lsmLeadDesc": "Lengua de Señas Mexicana — conectar la comunidad sorda de Juárez con los eventos del grupo",
+    "reachOutOnMeetup": "Contáctanos en Meetup"
   },
   "learning": {
     "api": {
