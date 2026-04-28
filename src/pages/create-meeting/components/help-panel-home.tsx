@@ -9,13 +9,45 @@ export const HelpPanelHome = () => {
   const { t } = useTranslation();
 
   return (
-    <HelpPanel
-      footer={
+    <HelpPanel header={<h2>{t('helpPanel.userGroupTitle')}</h2>}>
+      <SpaceBetween size="l">
+        <div>
+          <p>{t('helpPanel.communityDescription')}</p>
+        </div>
+
+        <div>
+          <h3>{t('helpPanel.organizersWantedHeader')}</h3>
+          <p>{t('helpPanel.organizersWantedIntro')}</p>
+          <ul>
+            <li>
+              <strong>{t('helpPanel.aslLeadRole')}</strong> — {t('helpPanel.aslLeadDesc')}
+            </li>
+            <li>
+              <strong>LSM Lead</strong> — {t('helpPanel.lsmLeadDesc')}
+            </li>
+            <li>{t('helpPanel.spanishSpeakers')}</li>
+            <li>{t('helpPanel.studentsStepUp')}</li>
+            <li>{t('helpPanel.womenWelcome')}</li>
+          </ul>
+          <p>
+            <Link href="https://www.meetup.com/awsugclouddelnorte/" external>
+              {t('helpPanel.reachOutOnMeetup')} <Icon name="external" />
+            </Link>
+          </p>
+        </div>
+
+        <div>
+          <h4>{t('helpPanel.globalCommunityHeader')}</h4>
+          <Link href="https://www.meetup.com/pro/global-aws-user-group-community/" external>
+            {t('helpPanel.findLocalGroup')} <Icon name="external" />
+          </Link>
+        </div>
+
         <div>
           <h3>{t('helpPanel.rsvpHeader')}</h3>
           <ul>
             <li>
-              <a target="_blank" href="https://www.meetup.com/awsugclouddelnorte/">
+              <a target="_blank" rel="noopener noreferrer" href="https://www.meetup.com/awsugclouddelnorte/">
                 {t('helpPanel.cloudDelNorteMeetups')} <Icon name="external" />
               </a>
             </li>
@@ -23,20 +55,6 @@ export const HelpPanelHome = () => {
               <a href="/home/index.html">{t('helpPanel.aboutPage')}</a>
             </li>
           </ul>
-        </div>
-      }
-      header={<h2>{t('helpPanel.userGroupTitle')}</h2>}
-    >
-      <SpaceBetween size="l">
-        <div>
-          <p>{t('helpPanel.communityDescription')}</p>
-          <p>
-            {t('helpPanel.communityFounded')}{' '}
-            <Link href="https://arrowheadcenter.nmsu.edu/" external>
-              {t('helpPanel.arrowheadPark')}
-            </Link>
-            {t('helpPanel.communityFoundedSuffix')}
-          </p>
         </div>
 
         <div>
@@ -74,7 +92,6 @@ export const HelpPanelHome = () => {
           <div className="help-panel-leader">
             <strong>Bryan Chasko</strong>
             <span className="help-panel-leader__role">{t('helpPanel.bryanChaskoRole')}</span>
-            <p>{t('helpPanel.bryanChaskoBio')}</p>
             <ul>
               <li>
                 <Link href="https://aws.amazon.com/developer/community/heroes/bryan-chasko/" external>
@@ -118,34 +135,6 @@ export const HelpPanelHome = () => {
               {t('helpPanel.wayneSavageBioSuffix')}
             </p>
           </div>
-        </div>
-
-        <div>
-          <h3>{t('helpPanel.organizersWantedHeader')}</h3>
-          <p>{t('helpPanel.organizersWantedIntro')}</p>
-          <ul>
-            <li>
-              <strong>{t('helpPanel.aslLeadRole')}</strong> — {t('helpPanel.aslLeadDesc')}
-            </li>
-            <li>
-              <strong>LSM Lead</strong> — {t('helpPanel.lsmLeadDesc')}
-            </li>
-            <li>{t('helpPanel.spanishSpeakers')}</li>
-            <li>{t('helpPanel.studentsStepUp')}</li>
-            <li>{t('helpPanel.womenWelcome')}</li>
-          </ul>
-          <p>
-            <Link href="https://www.meetup.com/awsugclouddelnorte/" external>
-              {t('helpPanel.reachOutOnMeetup')} <Icon name="external" />
-            </Link>
-          </p>
-        </div>
-
-        <div>
-          <h4>{t('helpPanel.globalCommunityHeader')}</h4>
-          <Link href="https://www.meetup.com/pro/global-aws-user-group-community/" external>
-            {t('helpPanel.findLocalGroup')} <Icon name="external" />
-          </Link>
         </div>
       </SpaceBetween>
     </HelpPanel>

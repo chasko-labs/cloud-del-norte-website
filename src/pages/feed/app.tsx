@@ -193,11 +193,16 @@ function AppContent({
         </Header>
       }
     >
-      <NextMeetup />
+      <div className="feed-grid__cell cdn-card feed-grid__cell--full">
+        <NextMeetup />
+      </div>
       <hr className="feed-section-divider" />
       <div className="feed-grid">
         {order.map(key => (
-          <div key={key} className={`feed-grid__cell${FULL_SPAN_SECTIONS.has(key) ? ' feed-grid__cell--full' : ''}`}>
+          <div
+            key={key}
+            className={`feed-grid__cell cdn-card${FULL_SPAN_SECTIONS.has(key) ? ' feed-grid__cell--full' : ''}`}
+          >
             {SECTIONS[key]}
           </div>
         ))}

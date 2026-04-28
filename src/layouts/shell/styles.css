@@ -101,6 +101,19 @@ main[class*="awsui_layout"] > [class*="content-container"] {
   block-size: auto !important;
 }
 
+/* Mobile + small viewport: tools panel needs explicit overflow + touch-action so the
+   help-panel content scrolls/drags. Cloudscape's tools drawer otherwise locks the
+   inner panel when content exceeds viewport on touch devices. */
+[class*="awsui_tools_"][class*="awsui_root"],
+[class*="awsui_tools-container"],
+[class*="awsui_tools_"] [class*="awsui_help-panel"] {
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
+  max-height: calc(100vh - 56px);
+}
+
 /* Light mode side nav — warm cream to match page.
    No --color-background-layout-side token exists in @cloudscape-design/design-tokens,
    so CSS selector fallback is used, scoped to light mode via :root:not(.awsui-dark-mode).

@@ -28,7 +28,7 @@ const TOP_FOUR = [
   },
   {
     title: 'Can it run DOOM? Playing DOOM in Claude Code with DOOM MCP',
-    author: 'AWS Builder Center',
+    author: 'Gunnar Grosch',
     url: 'https://builder.aws.com/content/3AmPDxn7EBkb5DTI9ERcCwPWjqk/can-it-run-doom-playing-doom-in-claude-code-with-doom-mcp',
   },
 ];

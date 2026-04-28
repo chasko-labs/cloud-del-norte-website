@@ -377,6 +377,17 @@
   min-width: 0; /* allow children to shrink inside the column track */
 }
 
+/* glassmorphism — when .cdn-card wraps a Cloudscape Container, suppress the
+   Container's own background so the cdn-card's warm/dark glass surface shows
+   through. preserves Container's internal padding + header structure. */
+.feed-grid__cell.cdn-card > [class*="awsui_root"][class*="awsui_container"],
+.feed-grid__cell.cdn-card [class*="awsui_content_"][class*="awsui_container"],
+.feed-grid__cell.cdn-card [class*="awsui_header_"][class*="awsui_container"] {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
 @media (min-width: 768px) {
   .feed-grid {
     grid-template-columns: 1fr 1fr;
@@ -408,19 +419,49 @@
   gap: 6px;
   height: 100%;
   padding: var(--cdn-space-s, 12px);
-  border: 1px solid var(--cdn-color-border);
-  border-radius: var(--cdn-radius-sm, 4px);
-  background: var(--cdn-color-background-container, transparent);
+  border: 1px solid rgba(139, 90, 43, 0.16);
+  border-radius: var(--cdn-radius-md, 8px);
+  /* glass surface — light mode warm cream gradient */
+  background: linear-gradient(135deg, #faf7f0 0%, #f5f0e4 50%, #faf7f0 100%);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   color: inherit;
   text-decoration: none;
-  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* dark mode glass */
+.awsui-dark-mode .feed-mini-card__link {
+  background: linear-gradient(135deg, rgba(28, 34, 48, 0.95) 0%, rgba(30, 26, 48, 0.88) 50%, rgba(17, 24, 39, 0.97) 100%);
+  border-color: rgba(144, 96, 240, 0.18);
+}
+
+/* gradient accent line at top of each mini-card — matches cdn-card vibe */
+.feed-mini-card__link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--cdn-purple, #5a1f8a) 30%, var(--cdn-violet, #9060f0) 60%, transparent 100%);
+  opacity: 0.5;
+  transition: opacity 0.2s ease;
 }
 
 .feed-mini-card__link:hover,
 .feed-mini-card__link:focus-visible {
   border-color: var(--cdn-violet, #9060f0);
-  box-shadow: 0 0 0 1px var(--cdn-violet, #9060f0) inset;
-  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -8px rgba(144, 96, 240, 0.4);
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+}
+
+.feed-mini-card__link:hover::before,
+.feed-mini-card__link:focus-visible::before {
+  opacity: 1;
 }
 
 .feed-mini-card__link:focus-visible {

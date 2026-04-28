@@ -33,6 +33,18 @@
   ],
   "awsml": [
     {
+      "title": "Migrating a text agent to a voice assistant with Amazon Nova 2 Sonic",
+      "link": "https://aws.amazon.com/blogs/machine-learning/migrating-a-text-agent-to-a-voice-assistant-with-amazon-nova-2-sonic/",
+      "pubDate": "2026-04-28",
+      "excerpt": "In this post, we explore what it takes to migrate a traditional text agent into a conversational voice assistant using Amazon Nova 2 Sonic. We compare text and voice agent requirements, highlight desi"
+    },
+    {
+      "title": "NVIDIA Nemotron 3 Nano Omni model now available on Amazon SageMaker JumpStart",
+      "link": "https://aws.amazon.com/blogs/machine-learning/nvidia-nemotron-3-nano-omni-model-now-available-on-amazon-sagemaker-jumpstart/",
+      "pubDate": "2026-04-28",
+      "excerpt": "Today, we are excited to announce the day zero availability of NVIDIA Nemotron 3 Nano Omni on Amazon SageMaker JumpStart. In this post, we walk through the model architecture and key capabilities of N"
+    },
+    {
       "title": "Automate repetitive tasks with Amazon Quick Flows",
       "link": "https://aws.amazon.com/blogs/machine-learning/automate-repetitive-tasks-with-amazon-quick-flows/",
       "pubDate": "2026-04-27",
@@ -49,18 +61,6 @@
       "link": "https://aws.amazon.com/blogs/machine-learning/build-strands-agents-with-sagemaker-ai-models-and-mlflow/",
       "pubDate": "2026-04-27",
       "excerpt": "In this post, we demonstrate how to build AI agents using Strands Agents SDK with models deployed on SageMaker AI endpoints. You will learn how to deploy foundation models from SageMaker JumpStart, in"
-    },
-    {
-      "title": "How Popsa used Amazon Nova to inspire customers with personalised title suggestions",
-      "link": "https://aws.amazon.com/blogs/machine-learning/how-popsa-used-amazon-nova-to-inspire-customers-with-personalised-title-suggestions/",
-      "pubDate": "2026-04-27",
-      "excerpt": "In this post, we share how we applied Amazon Bedrock and the Amazon Nova family of models to reimagine our Title Suggestion feature. By combining metadata, computer vision, and retrieval-augmented gen"
-    },
-    {
-      "title": "Building Workforce AI Agents with Visier and Amazon Quick",
-      "link": "https://aws.amazon.com/blogs/machine-learning/building-workforce-ai-agents-with-visier-and-amazon-quick/",
-      "pubDate": "2026-04-24",
-      "excerpt": "In this post, we show how connecting the Visier Workforce AI platform with Amazon Quick through Model Context Protocol (MCP) gives every knowledge worker a unified agentic workspace to ask questions i"
     }
   ]
 }
