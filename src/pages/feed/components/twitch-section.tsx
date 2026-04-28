@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT-0
 import React, { useEffect, useRef, useState } from 'react';
 import Container from '@cloudscape-design/components/container';
-import Header from '@cloudscape-design/components/header';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 // Twitch Embed SDK types (loaded via script tag at runtime)
@@ -111,12 +110,17 @@ function TwitchChannelEmbed({
 
   return (
     <div className="feed-twitch__channel">
-      <span className="feed-twitch__label">
-        {live && <span className="feed-twitch__live-dot" aria-hidden="true" />}
-        {label}
-        {live && <span className="feed-twitch__live-label">{t('feedPage.twitchLive')}</span>}
-        {offline && <span style={{ opacity: 0.6, fontSize: '0.8em' }}>· {t('feedPage.twitchRecentVideo')}</span>}
-      </span>
+      {(live || offline) && (
+        <span className="feed-twitch__label">
+          {live && (
+            <>
+              <span className="feed-twitch__live-dot" aria-hidden="true" />
+              <span className="feed-twitch__live-label">{t('feedPage.twitchLive')}</span>
+            </>
+          )}
+          {offline && <span style={{ opacity: 0.6, fontSize: '0.8em' }}>{t('feedPage.twitchRecentVideo')}</span>}
+        </span>
+      )}
       {/* Twitch embed container: always in DOM once initialized so SDK doesn't lose state */}
       <div style={{ display: offline ? 'none' : 'block' }}>
         <div ref={containerRef} style={{ width: '100%', height: 300 }} />
@@ -147,7 +151,7 @@ function useHostname(): string | null {
 function TwitchChannelCard({ channel }: { channel: (typeof CHANNELS)[number] }) {
   const hostname = useHostname();
   return (
-    <Container header={<Header variant="h2">{channel.label} on Twitch</Header>}>
+    <Container>
       {hostname ? (
         <TwitchChannelEmbed
           channelId={channel.id}

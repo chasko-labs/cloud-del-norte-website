@@ -104,7 +104,6 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
 }
 
 export function FeedAndmore() {
-  const { t } = useTranslation();
   const { posts } = useFeed('andmore');
   return (
     <Container
@@ -117,7 +116,7 @@ export function FeedAndmore() {
             </Link>
           }
         >
-          {t('feedPage.andmoreDotDev')}
+          andmore.dev<span className="feed-card-header-sub">by Andres Moreno</span>
         </Header>
       }
     >

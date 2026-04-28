@@ -24,7 +24,13 @@ export default function ArrowheadNews() {
   const article = articles[index];
 
   return (
-    <Container header={<Header variant="h2">{t('feedPage.arrowheadHeader')}</Header>}>
+    <Container
+      header={
+        <Header variant="h2">
+          Arrowhead Research Park<span className="feed-card-header-sub">at NMSU</span>
+        </Header>
+      }
+    >
       <div className="feed-article-carousel" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
         <div key={index} className="feed-article-carousel__item">
           <Box>

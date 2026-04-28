@@ -400,6 +400,20 @@
   border-bottom-color: rgba(144, 96, 240, 0.18) !important;
 }
 
+/* two-line card header: primary name + secondary descriptor below */
+.feed-card-header-sub {
+  display: block;
+  font-size: var(--cdn-text-sm, 0.75rem);
+  font-weight: 400;
+  color: var(--cdn-color-text-secondary, #5a3a1e);
+  line-height: 1.3;
+  margin-top: 2px;
+  letter-spacing: 0.01em;
+}
+.awsui-dark-mode .feed-card-header-sub {
+  color: rgba(214, 197, 238, 0.7);
+}
+
 @media (min-width: 768px) {
   .feed-grid {
     grid-template-columns: 1fr 1fr;
