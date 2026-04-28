@@ -121,7 +121,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 :root:not(.awsui-dark-mode) [class*="navigation-container"],
 :root:not(.awsui-dark-mode) [class*="side-navigation"],
 :root:not(.awsui-dark-mode) [class*="navigation__drawer"] {
-  background: #ede8db;
+  background: #ede5d4;
 }
 
 /* Font smoothing scoped to app shell — improves warm-bg readability.
