@@ -1504,7 +1504,8 @@
 	background-size:
 		90px 90px,
 		100% 100%;
-	box-shadow: /* outer drops — deeper, more industrial */
+	/* outer drops — deeper, more industrial */
+	box-shadow:
 		0 28px 78px rgba(0, 0, 0, 0.86),
 		0 10px 28px rgba(0, 0, 0, 0.62),
 		0 3px 8px rgba(0, 0, 0, 0.5),
@@ -2337,8 +2338,12 @@
 /* reduce motion: keep translateY crawl for readability, drop rotateX + translateZ depth transforms */
 @media (prefers-reduced-motion: reduce) {
 	@keyframes names-crawl {
-		0% { transform: translateY(0); }
-		100% { transform: translateY(-50%); }
+		0% {
+			transform: translateY(0);
+		}
+		100% {
+			transform: translateY(-50%);
+		}
 	}
 }
 
@@ -2518,7 +2523,8 @@
 
 @keyframes liora-amzn-shimmer {
 	0% {
-		text-shadow: /* outside-only black outline — held constant through shimmer cycle */
+		/* outside-only black outline — held constant through shimmer cycle */
+		text-shadow:
 			0.5px 0 0 #000,
 			-0.5px 0 0 #000,
 			0 0.5px 0 #000,
@@ -2536,7 +2542,8 @@
 		filter: brightness(1) saturate(1);
 	}
 	100% {
-		text-shadow: /* outside-only black outline — held constant through shimmer cycle */
+		/* outside-only black outline — held constant through shimmer cycle */
+		text-shadow:
 			0.5px 0 0 #000,
 			-0.5px 0 0 #000,
 			0 0.5px 0 #000,

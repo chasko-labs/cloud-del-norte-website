@@ -89,7 +89,12 @@
 	--color-background-input-default-ifz5bb: #fdfcf8; /* near-white warm — reads as interactive */
 	--color-text-body-default-vvtq8u: #2c1a0e; /* deep warm brown — excellent contrast on cream */
 	--color-text-heading-default-izpp46: #1a0f05; /* darker warm brown — headings anchor content */
-	--color-border-divider-default-nr68jt: rgba(139, 90, 43, 0.18); /* warm amber divider */
+	--color-border-divider-default-nr68jt: rgba(
+		139,
+		90,
+		43,
+		0.18
+	); /* warm amber divider */
 
 	/* ---------- Warm shadow system — light mode ---------- */
 	--cdn-shadow-container-light:

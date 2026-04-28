@@ -1,20 +1,20 @@
 [
-  {
-    "title": "Step Functions without ASL? Welcome Lambda Durable Functions",
-    "excerpt": "AWS announced Lambda Durable Functions at re:Invent 2025. Run multi-step workflows with checkpoints and state using familiar code — without Amazon State Language.",
-    "date": "Dec 21, 2025",
-    "url": "https://awstip.com/step-functions-without-asl-welcome-lambda-durable-functions-053a25bafd54"
-  },
-  {
-    "title": "Log buffering with Lambda Powertools",
-    "excerpt": "Lambda Powertools now supports log buffering. Capture logs at debug level and flush them only when an error occurs — zero noise, full context when it matters.",
-    "date": "Mar 29, 2025",
-    "url": "https://awstip.com/log-buffering-with-lambda-powertools-87853c7526d1"
-  },
-  {
-    "title": "Using Amazon Cognito with the user-password flow",
-    "excerpt": "A practical guide to authenticating users in Amazon Cognito with the USER_PASSWORD_AUTH flow — when to use it, how to configure it, and what to watch out for.",
-    "date": "Aug 1, 2024",
-    "url": "https://awstip.com/using-amazon-cognito-with-the-user-password-flow-3db65d75e145"
-  }
+	{
+		"title": "Step Functions without ASL? Welcome Lambda Durable Functions",
+		"excerpt": "AWS announced Lambda Durable Functions at re:Invent 2025. Run multi-step workflows with checkpoints and state using familiar code — without Amazon State Language.",
+		"date": "Dec 21, 2025",
+		"url": "https://awstip.com/step-functions-without-asl-welcome-lambda-durable-functions-053a25bafd54"
+	},
+	{
+		"title": "Log buffering with Lambda Powertools",
+		"excerpt": "Lambda Powertools now supports log buffering. Capture logs at debug level and flush them only when an error occurs — zero noise, full context when it matters.",
+		"date": "Mar 29, 2025",
+		"url": "https://awstip.com/log-buffering-with-lambda-powertools-87853c7526d1"
+	},
+	{
+		"title": "Using Amazon Cognito with the user-password flow",
+		"excerpt": "A practical guide to authenticating users in Amazon Cognito with the USER_PASSWORD_AUTH flow — when to use it, how to configure it, and what to watch out for.",
+		"date": "Aug 1, 2024",
+		"url": "https://awstip.com/using-amazon-cognito-with-the-user-password-flow-3db65d75e145"
+	}
 ]

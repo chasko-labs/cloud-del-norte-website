@@ -1,655 +1,655 @@
 {
-  "shell": {
-    "siteTitle": "Cloud Del Norte",
-    "switchToMx": "Switch to Spanish",
-    "switchToUs": "Switch to English",
-    "switchToLightMode": "Switch to light mode",
-    "switchToDarkMode": "Switch to dark mode",
-    "more": "More",
-    "all": "All",
-    "navigationDrawer": "Navigation drawer",
-    "closeNavigationDrawer": "Close navigation drawer",
-    "openNavigationDrawer": "Open navigation drawer",
-    "notifications": "Notifications",
-    "helpPanel": "Help panel",
-    "closeHelpPanel": "Close help panel",
-    "openHelpPanel": "Open help panel"
-  },
-  "navigation": {
-    "home": "user group home",
-    "feed": "home",
-    "about": "about",
-    "roadmap": "roadmap",
-    "ugRoadmap": "ug roadmap",
-    "meetings": "meetings",
-    "admin": "admin",
-    "resources": "resources",
-    "techDebtCountdowns": "tech debt countdowns",
-    "designSystem": "design system",
-    "learning": "learning",
-    "apiGuide": "api guide",
-    "restOverview": "rest overview",
-    "uniformInterface": "uniform interface",
-    "clientServer": "client-server",
-    "stateless": "stateless",
-    "cacheable": "cacheable",
-    "layeredSystem": "layered system",
-    "codeOnDemand": "code on demand",
-    "cheatSheet": "api cheat sheet",
-    "howItWorks": "how it works",
-    "projectResources": "project resources"
-  },
-  "breadcrumbs": {
-    "home": "Cloud Del Norte"
-  },
-  "footer": {
-    "ourLeaders": "AWS User Group Organizers",
-    "joinUs": "Join us on Meetup →",
-    "communityDescription": "AWS User Group Cloud Del Norte is part of AWS User Groups'",
-    "globalCommunity": "Global AWS User Group Community",
-    "communityFullDescription": "We are run by volunteers local to New Mexico, West Texas & Chihuahua, Mexico. We believe projects, careers & issues can be accelerated using AWS, & wish to pass our knowledge, connections & experiences on to you & see what you",
-    "goBuild": "Go Build",
-    "infoPanelLink": "Learn more about us in the info panel"
-  },
-  "aboutPage": {
-    "breadcrumb": "About",
-    "header": "About",
-    "infoLink": "Info"
-  },
-  "feedPage": {
-    "breadcrumb": "Home",
-    "header": "Home",
-    "infoLink": "Info",
-    "andresMediumHeader": "Andres Moreno — andmoredev",
-    "andresMediumAllPosts": "All posts",
-    "builderCenterHeader": "AWS Builder Center",
-    "builderCenterOpen": "Open AWS Builder Center",
-    "arrowheadHeader": "Arrowhead Research Park & NMSU",
-    "previousArticle": "Previous article",
-    "nextArticle": "Next article",
-    "andmoreDotDev": "andmore.dev by Andres Moreno",
-    "awsMlBlog": "AWS Machine Learning Blog",
-    "twitchLive": "LIVE",
-    "twitchRecentVideo": "recent video",
-    "nextMeetupHeader": "Next Meetup",
-    "nextMeetupLoading": "Loading meetup info…",
-    "nextMeetupFallback": "Check meetup.com for our next event.",
-    "nextMeetupCta": "Visit meetup.com →",
-    "nextMeetupPastLabel": "Last meetup:",
-    "infoLinkAriaLabel": "Open help panel",
-    "streamKrux": "stream krux",
-    "streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen."
-  },
-  "dashboardPage": {
-    "breadcrumb": "Dashboard",
-    "header": "Dashboard",
-    "infoLink": "Info",
-    "productionOverview": {
-      "header": "Production overview"
-    },
-    "pastTopics": {
-      "header": "Past Topics"
-    },
-    "groupNotesModal": "Group notes"
-  },
-  "userGroupHero": {
-    "header": "#AWS User Group Cloud Del Norte",
-    "description": "Holding our first meetup on International Women's Day 03/08/21 & Started at Arrowhead Research Park to further the community learning, business awareness, student engagement, career opportunities, and general entrepreneurial-garage-hobbyist spirit. We aim to learn from, serve, educate, and entertain the diverse people of the Juarez MX/El Paso + Las Cruces, all of New Mexico, and surrounding rural areas."
-  },
-  "userGroupMetrics": {
-    "communityMembers": "Community Members",
-    "fiveStarReviews": "5 Star Reviews",
-    "meetupsHeld": "Meetups Held",
-    "est": "Est."
-  },
-  "pastTopics": {
-    "games3d": "Games & 3D",
-    "artificialIntelligence": "Artificial Intelligence",
-    "serverlessLens": "Serverless Lens",
-    "spaceSatellite": "Space & Satellite"
-  },
-  "flavorNotes": {
-    "cherry": "cherry",
-    "raspberry": "raspberry",
-    "rose": "rose",
-    "strawberry": "strawberry"
-  },
-  "productionTable": {
-    "headers": {
-      "name": "Name",
-      "status": "Status",
-      "mixing": "Mixing (kg/h)",
-      "molding": "Molding (kg/h)"
-    }
-  },
-  "qualityTable": {
-    "headers": {
-      "name": "Name",
-      "strong": "Strong",
-      "mild": "Mild",
-      "unnoticed": "Unnoticed"
-    }
-  },
-  "pieChart": {
-    "chartAriaRoleDescription": "Pie chart",
-    "detailPopoverDismissAriaLabel": "Dismiss details",
-    "legendAriaLabel": "Legend",
-    "filterSelectedAriaLabel": "Selected",
-    "segmentAriaRoleDescription": "Segment"
-  },
-  "meetings": {
-    "breadcrumb": "Meetings",
-    "header": "meetings",
-    "createButton": "Create meeting",
-    "editButton": "Edit",
-    "findPlaceholder": "Find meetings",
-    "tableHeaders": {
-      "meetupTitle": "Meetup Title",
-      "presenters": "Presenters",
-      "happened": "Happened?",
-      "onDemand": "On-Demand",
-      "eventPage": "Event Page"
-    },
-    "empty": {
-      "noMatches": "No matches",
-      "noMatchesSubtitle": "We can't find a match.",
-      "clearFilter": "Clear filter",
-      "noMeetings": "No meetings",
-      "noMeetingsSubtitle": "No meetings to display."
-    },
-    "preferences": {
-      "title": "Preferences",
-      "pageSize": "Select page size",
-      "resources10": "10 resources",
-      "resources20": "20 resources",
-      "resources50": "50 resources",
-      "resources100": "100 resources",
-      "confirm": "Confirm",
-      "cancel": "Cancel"
-    },
-    "aria": {
-      "selectionGroup": "Items selection",
-      "tableLabel": "meetings table"
-    }
-  },
-  "createMeeting": {
-    "breadcrumb": "Create meeting",
-    "header": "Create meeting",
-    "description": "Create a new meeting by specifying details, event link, and speakers.",
-    "cancel": "Cancel",
-    "submit": "Create meeting",
-    "helpPanelHeader": "Help panel",
-    "meetingType": {
-      "header": "Meeting Type",
-      "shapeLabel": "Shape",
-      "virtual": "Virtual",
-      "virtualDescription": "Virtual Only Meetups",
-      "inPerson": "In-Person",
-      "inPersonDescription": "In person hosted events, including hybrid"
-    },
-    "meetingDetails": {
-      "header": "MeetingDetails",
-      "pricesLabel": "Prices",
-      "pricesDescription": "Define the prices for wholesale and retail.",
-      "meetupLinkLabel": "Meetup Link",
-      "speakerNamesLabel": "Speaker Names",
-      "additionalNotesLabel": "Additional notes",
-      "optional": " - optional",
-      "linkRequired": "Link is required.",
-      "presenterRequired": "Presenter is required.",
-      "errorIconAriaLabel": "Error"
-    },
-    "details": {
-      "header": "details",
-      "listLabel": "List of details",
-      "selectPlaceholder": "Select all details",
-      "listRequired": "List of details is required.",
-      "publishedLabel": "Published",
-      "no": "No",
-      "yes": "Yes",
-      "deselectAriaLabel": "Deselect",
-      "noLabel": "no label"
-    }
-  },
-  "helpPanel": {
-    "rsvpHeader": "RSVP for Live Events",
-    "cloudDelNorteMeetups": "Cloud Del Norte Meetups",
-    "blenderMeetups": "Blender & Graphic Design:NE3D",
-    "userGroupTitle": "volunteers wanted",
-    "communityDescription": "AWS UG Cloud Del Norte is a quest to network, experiment, and upskill together. We hold in-person, virtual, and hybrid meetups focusing on regional topics to rural New Mexico, West Texas, Northern Chihuaha, the Borderplex and beyond.",
-    "organizersWantedHeader": "Organizers Wanted",
-    "spanishSpeakers": "Spanish-Speakers Sought",
-    "studentsStepUp": "Students to Step Up",
-    "womenWelcome": "Women Welcome",
-    "globalCommunityHeader": "AWS Global Community",
-    "findLocalGroup": "Find your local AWS User Group on Meetup.",
-    "communityLeadersHeader": "Community Leaders",
-    "jacobWright": "Jacob Wright",
-    "reachOutLinkedIn": "reach out on LinkedIn",
-    "bryanChasko": "Bryan Chasko",
-    "awsHeroBio": "AWS Hero Bio",
-    "bryansHomepage": "Bryan's HomePage",
-    "andresMoreno": "Andres Moreno",
-    "andresRole": "Principal Software Architect, Caylent — AWS Community Builder",
-    "andresWebsite": "andmore.dev",
-    "aboutPage": "About Cloud Del Norte",
-    "communityLeaders": "Community Leaders",
-    "communityFounded": "In-person, virtual, and hybrid meetups across the Juárez MX / El Paso and Las Cruces corridor, all of New Mexico, and surrounding rural areas. Founded on International Women's Day — March 8, 2021 — at",
-    "arrowheadPark": "Arrowhead Research Park",
-    "communityFoundedSuffix": ", NMSU.",
-    "andresMorenoRole": "Co-organizer · AWS Community Builder",
-    "andresMorenoBioPrefix": "Principal Software Architect at Caylent. Serverless specialist — Lambda, Step Functions, CI/CD, and developer experience. Writes at",
-    "andresMorenoBioSuffix": "on real-world serverless patterns from production systems.",
-    "bryanChaskoRole": "Founder · AWS Hero",
-    "bryanChaskoBio": "Builder-focused organizer based in El Paso. AWS Hero recognition for community contributions across the US/MX border region. Creates hands-on content around containers, serverless, and AI/ML infrastructure. Runs the group's technical programming and speaker pipeline.",
-    "awsHeroProfile": "AWS Hero profile",
-    "jacobWrightRole": "Founder · Doña Ana County Lead",
-    "jacobWrightBio": "Co-founded the group in Las Cruces. Anchor for the Doña Ana County.",
-    "wayneSavageRole": "Founder · Retired Organizer",
-    "wayneSavageBioPrefix": "Part of the founding team. Connected the group to",
-    "wayneSavageBioSuffix": "at NMSU, where the first meetup took place. The Arrowhead partnership remains a thread in the group's New Mexico roots.",
-    "organizersWantedIntro": "Cloud del Norte is a volunteer-run group. These roles are open:",
-    "aslLeadRole": "ASL Lead",
-    "aslLeadDesc": "coordinate American Sign Language interpretation for events, advocate for accessibility in session planning",
-    "lsmLeadDesc": "Lengua de Señas Mexicana — conectar la comunidad sorda de Juárez con los eventos del grupo",
-    "reachOutOnMeetup": "Reach out on Meetup"
-  },
-  "learning": {
-    "api": {
-      "howRiotAPIRESTful": "🌐 How Riot Games API is RESTful",
-      "uniformInterfaceDemonstration": "🎯 Uniform Interface Demonstration",
-      "contestsEndpoint": "1️⃣ Contests Endpoint",
-      "apiAccessDataStructure": "📊 API Access & Data Structure",
-      "availableWithBasicKey": "✅ Available with Basic API Key",
-      "requiresSpecialAccess": "❌ Requires Special Access",
-      "tournamentDataStructure": "🏆 Tournament Data Structure",
-      "technicalImplementation": "🛠️ Technical Implementation",
-      "dataSources": "📊 Data Sources",
-      "architectureStack": "🏧 Architecture Stack",
-      "championDataMapping": "🎯 Champion Data Mapping",
-      "title": "Cloud Del Norte - API Learning",
-      "restDescription": "REST (REpresentational State Transfer) and API (Application Programming Interface - a way for programs to talk to each other) work together. The Riot Games API demonstrates all 6 REST constraints:",
-      "uniformInterfaceTitle": "1️⃣ Uniform Interface",
-      "uniformInterfaceDesc": "Standard HTTP GET method with consistent JSON responses across all resources:",
-      "uniformInterfaceExample": "GET /contests?year=2024",
-      "uniformInterfaceReturns": "Always returns:",
-      "clientServerTitle": "2️⃣ Client-Server",
-      "clientServerDesc": "Our React (web framework) app is the client, Riot's computers are the server. We call their API, they respond with data. Each side can update independently.",
-      "statelessTitle": "3️⃣ Stateless",
-      "statelessDesc": "Every API call (request) to Riot includes the X-Riot-Token header (our authentication key). No login sessions - each request is complete.",
-      "cacheableTitle": "4️⃣ Cacheable",
-      "cacheableDesc": "Riot's Data Dragon CDN (fast global servers) uses version numbers like 13.24.1. Our browser can save champion data and reuse it.",
-      "layeredSystemTitle": "5️⃣ Layered System",
-      "layeredSystemDesc": "Riot hides their internal structure. We call api.riotgames.com but don't know if it goes through load balancers, databases, or game servers.",
-      "codeOnDemandTitle": "6️⃣ Code on Demand",
-      "codeOnDemandDesc": "Our React hook fetches data dynamically:",
-      "codeOnDemandExample": "const [data, setData] = useState(); fetch(riotApiUrl).then(setData)",
-      "codeOnDemandImages": "Champion images load from Riot's CDN only when needed.",
-      "uniformInterfaceDesc2": "The same HTTP GET method and JSON format work across different resources:",
-      "contestsDescription": "Recent tournaments and competitions",
-      "selectYear": "Select Year:",
-      "requestUrl": "Request URL:",
-      "responseExpected": "Response we expect:",
-      "responseExpectedDesc": "with JSON array of contest objects:",
-      "sendGetRequest": "Send GET Request",
-      "contestsResponse": "🏆 Contests Response",
-      "contestsResponseDesc": "🟢 Live contest data from Lambda endpoint - Recent tournament results",
-      "responseReceived": "Response received:",
-      "responseReceivedDesc": "with JSON array containing",
-      "contestObjects": "contest objects",
-      "dataStructure": "Data structure:",
-      "dataStructureDesc": "Each contest object contains:",
-      "endpoint": "Endpoint:",
-      "worldsChampions": "🏆 Worlds",
-      "worldsChampionsDesc": "Champions",
-      "worldsChampionsDescLong": "Performance scores based on tournament KDA, objective control, and team impact metrics",
-      "performanceScore": "Performance Score:",
-      "performanceScoreDesc": "Calculated from tournament KDA, objective control, and team fight impact (0-100 scale).",
-      "tournamentRecord": "Tournament Record:",
-      "tournamentRecordDesc": "Actual wins/losses from Worlds",
-      "matches": "matches.",
-      "signatureChampion": "Signature Champion:",
-      "signatureChampionDesc": "Most impactful champion played during the tournament run.",
-      "championApiRequestDetails": "🎮 Champions API Request Details",
-      "expectedUrl": "Expected URL:",
-      "expectedResponse": "Expected Response:",
-      "actualStatus": "Actual Status:",
-      "actualResponse": "Actual Response:",
-      "dataSource": "Data Source:",
-      "authentication": "Authentication:",
-      "responseFormat": "Response Format:",
-      "player": "Player",
-      "signatureChampionHeader": "Signature Champion",
-      "tournamentRecordHeader": "Tournament Record",
-      "performanceScoreHeader": "Performance Score",
-      "achievement": "Achievement",
-      "worldsGreatestWinningPlayers": "Worlds Greatest Winning Players",
-      "worldsChampionshipDesc": "championship team performance data",
-      "noTournamentData": "No tournament data available",
-      "selectYearToView": "Select a year to view championship data",
-      "apiIntegrationStatus": "API Integration Status",
-      "responseStatus": "Response Status:",
-      "errorDetails": "Error Details:",
-      "support": "Support:",
-      "lambdaFunction": "Lambda Function:",
-      "liveChampionData": "Live Champion Performance Data",
-      "liveChampionDataDesc": "🟢 Live champion data from Riot Games Data Dragon API - Real stats updated from League of Legends servers",
-      "demoChampionData": "Demo Champion Performance Data",
-      "demoChampionDataDesc": "🟡 Demo data (Click \"Fetch from Riot API\" to load live data and trigger AWS Lambda)",
-      "championDataApiStatus": "🎮 Champion Data API Status",
-      "dataSources2": "Data Sources:",
-      "apiEndpoints": "API Endpoints:",
-      "issues": "Issues:",
-      "lambdaEndpoint": "Lambda Endpoint:",
-      "dataFormat": "Data Format:",
-      "jsonRestApi": "JSON REST API",
-      "liveChampionsData": "Live Champions Data",
-      "demoChampionsData": "Demo Champions Data",
-      "fetchFromRiotApi": "🚀 Fetch from Riot API",
-      "refreshLiveData": "Refresh Live Data",
-      "resetToDemoData": "Reset to Demo Data",
-      "noChampionData": "No champion data available",
-      "tournament": "Tournament",
-      "status": "Status",
-      "winner": "Winner",
-      "noContests": "No contests available",
-      "championName": "Champion Name",
-      "championTitle": "Champion Title",
-      "attackPower": "Attack Power",
-      "defenseRating": "Defense Rating",
-      "speedRating": "Speed Rating",
-      "tierStatus": "Tier Status",
-      "sTier": "S-Tier",
-      "aTier": "A-Tier",
-      "availableWithBasicKeyList": "• Data Dragon API: Champion stats, abilities<br/>• Challenger League: Top ranked players<br/>• Champion Mastery: Player expertise<br/>• Match History: Recent game results",
-      "requiresSpecialAccessList": "• Tournament API: Official esports matches<br/>• Featured Games: Live high-level matches<br/>• Esports Data: Professional results<br/>• Production Keys: Higher rate limits",
-      "dataSourcesFromRiot": "✅ From Riot API:",
-      "dataSourcesFromRiotList": "• Champion names & lore titles<br/>• Attack damage, health, speed stats<br/>• Official game balance data",
-      "ourProcessing": "🛠️ Our Processing:",
-      "ourProcessingList": "• Tier rankings (S/A-Tier algorithm)<br/>• Display scaling (÷10, ÷100, ÷20)<br/>• Performance calculations",
-      "frontend": "Frontend:",
-      "frontendValue": "React 18 + TypeScript",
-      "build": "Build:",
-      "buildValue": "Vite 5 → Static HTML/CSS/JS",
-      "hosting": "Hosting:",
-      "hostingValue": "S3 + CloudFront CDN",
-      "api": "API:",
-      "apiValue": "AWS Lambda Function URL",
-      "data": "Data:",
-      "dataValue": "Riot Games API integration",
-      "attackPowerMapping": "⚔️ Attack Power",
-      "attackPowerMappingValue": "stats.attackdamage ÷ 10",
-      "defenseRatingMapping": "🛡️ Defense Rating",
-      "defenseRatingMappingValue": "stats.hp ÷ 100",
-      "speedRatingMapping": "💨 Speed Rating",
-      "speedRatingMappingValue": "stats.movespeed ÷ 20"
-    }
-  },
-  "admin": {
-    "breadcrumb": "Admin",
-    "pageTitle": "admin — pending users",
-    "tableHeader": "pending users",
-    "loadingText": "loading users",
-    "emptyTitle": "no pending users",
-    "emptySubtitle": "all confirmed users have been assigned to a group",
-    "columnEmail": "email",
-    "columnStatus": "status",
-    "columnCreated": "created",
-    "columnActions": "actions",
-    "approveButton": "approve",
-    "errorHeader": "failed to load users"
-  },
-  "roadmap": {
-    "title": "Roadmap",
-    "breadcrumb": "Roadmap",
-    "idea": "Idea",
-    "todo": "Todo",
-    "inProgress": "In Progress",
-    "inReview": "In Review",
-    "done": "Done",
-    "emptyColumn": "No items"
-  },
-  "maintenanceCalendar": {
-    "breadcrumb": "Maintenance Calendar",
-    "header": "Maintenance Calendar",
-    "description": "Release cadence tracker for 23 technologies — LTS history, recent releases, and projected dates.",
-    "filterByCategory": "Filter by category",
-    "exportAll": "Export All (.ics)",
-    "export": "Export (.ics)",
-    "allCategories": "All categories",
-    "noDataAvailable": "No data available",
-    "tableHeaders": {
-      "mostRecentLTS": "Most Recent LTS",
-      "priorLTS": "Prior LTS",
-      "secondPriorLTS": "2nd Prior LTS",
-      "mostRecentRelease": "Most Recent Release",
-      "projectedNextRelease": "Projected Next Release",
-      "projectedNextLTS": "Projected Next LTS"
-    },
-    "releaseNotes": "Release notes",
-    "source": "Source"
-  },
-  "themePage": {
-    "pageTitle": "Design System — Cloud Del Norte",
-    "breadcrumb": "Design System",
-    "header": "Cloud Del Norte Design System",
-    "sections": {
-      "brandColors": "Brand Color Palette",
-      "brandColorsDescription": "Colors extracted from the Cloud Del Norte Meetup banner — dark nebula sky with star-on-mountain logo.",
-      "textEmphasis": "Text Emphasis Hierarchy",
-      "textEmphasisDescription": "Three-level hierarchy for readable content (light & dark mode).",
-      "elevation": "Dark Mode Elevation",
-      "elevationDescription": "Progressive lightening creates depth perception on dark backgrounds.",
-      "shadows": "Shadow Tokens",
-      "shadowsDescription": "Ambient depth for cards, modals, and floating elements.",
-      "typography": "Typography Scale",
-      "typographyDescription": "Font size tokens for body text, headings, and labels.",
-      "cardExample": "Glassmorphism Card",
-      "cardExampleDescription": "The .cdn-card class — gradient background + blur + animated accent line."
-    },
-    "colors": {
-      "navy": {
-        "name": "Navy",
-        "description": "Base dark background"
-      },
-      "amber": {
-        "name": "Amber",
-        "description": "Warm sepia accents"
-      },
-      "purple": {
-        "name": "Purple",
-        "description": "Primary interactive color"
-      },
-      "violet": {
-        "name": "Violet",
-        "description": "Accent & glow effects"
-      },
-      "lavender": {
-        "name": "Lavender",
-        "description": "Light mode borders"
-      },
-      "awsOrange": {
-        "name": "AWS Orange",
-        "description": "Call-to-action emphasis"
-      },
-      "gold": {
-        "name": "Gold",
-        "description": "Emeritus accents"
-      }
-    },
-    "emphasis": {
-      "high": {
-        "name": "High Emphasis",
-        "description": "Headings, primary text"
-      },
-      "medium": {
-        "name": "Medium Emphasis",
-        "description": "Secondary labels, descriptions"
-      },
-      "low": {
-        "name": "Low Emphasis",
-        "description": "Disabled, hints, placeholders"
-      }
-    },
-    "elevation": {
-      "level": "Level",
-      "level0": "Base background",
-      "level1": "Cards, panels",
-      "level2": "Modals, dropdowns",
-      "level3": "Tooltips, popovers"
-    },
-    "shadows": {
-      "small": {
-        "name": "Small",
-        "usage": "Subtle elevation"
-      },
-      "medium": {
-        "name": "Medium",
-        "usage": "Card depth"
-      },
-      "glow": {
-        "name": "Glow",
-        "usage": "Emphasis, hover states"
-      }
-    },
-    "typography": {
-      "small": {
-        "name": "Small",
-        "usage": "Captions, metadata, badges"
-      },
-      "base": {
-        "name": "Base",
-        "usage": "Body copy (Cloudscape default)"
-      },
-      "large": {
-        "name": "Large",
-        "usage": "Emphasized body, card labels"
-      },
-      "extraLarge": {
-        "name": "Extra Large",
-        "usage": "Section headings"
-      },
-      "twoExtraLarge": {
-        "name": "2XL",
-        "usage": "Page headings"
-      }
-    },
-    "cardExample": {
-      "title": "Sample Glassmorphism Card",
-      "description": "Gradient background with blur, animated gradient accent line on top, warm shadows in light mode, cosmic glow in dark mode.",
-      "technicalNote": "Apply .cdn-card class to any div — defined in src/styles/tokens.css"
-    }
-  },
-  "common": {
-    "cancel": "Cancel",
-    "confirm": "Confirm",
-    "submit": "Submit",
-    "edit": "Edit",
-    "create": "Create",
-    "delete": "Delete",
-    "save": "Save",
-    "close": "Close",
-    "info": "Info"
-  },
-  "auth": {
-    "siteTitle": "Cloud Del Norte",
-    "login": {
-      "title": "Sign in",
-      "emailLabel": "Email",
-      "emailPlaceholder": "you@example.com",
-      "passwordLabel": "Password",
-      "signInButton": "Sign in",
-      "forgotPassword": "Forgot password?",
-      "noAccount": "New here? Apply to join",
-      "invalidCredentials": "Email or password is incorrect",
-      "genericError": "Something went wrong. Try again."
-    },
-    "signup": {
-      "title": "Apply to join",
-      "step1Title": "Create your account",
-      "step2Title": "About you",
-      "step3Title": "Your interests",
-      "step4Title": "Verify your email",
-      "emailLabel": "Email",
-      "emailPlaceholder": "you@example.com",
-      "passwordLabel": "Password",
-      "passwordHint": "12+ characters — upper, lower, digit, symbol",
-      "confirmPasswordLabel": "Confirm password",
-      "passwordMismatch": "Passwords do not match",
-      "memberTypeLabel": "How do you connect with Cloud Del Norte?",
-      "memberTypePlaceholder": "e.g. first-time attendee, organizer, speaker, cloud hobbyist",
-      "locationLabel": "Where are you based?",
-      "locationPlaceholder": "city, state / ciudad, estado",
-      "topicsLabel": "Topics you'd like us to cover",
-      "topicsPlaceholder": "e.g. serverless, machine learning, networking, security",
-      "backgroundLabel": "Background you'd like to share",
-      "backgroundPlaceholder": "e.g. AWS solutions architect, Python hobbyist, total beginner",
-      "verifyCodeLabel": "Verification code",
-      "verifyCodePlaceholder": "6-digit code",
-      "resendCode": "Resend code",
-      "resendCooldown": "Resend available in {{seconds}}s",
-      "alreadyHaveAccount": "Already applied? Sign in",
-      "nextButton": "Next",
-      "backButton": "Back",
-      "submitButton": "Submit application",
-      "emailExists": "An account with this email already exists",
-      "weakPassword": "Password must be 12+ characters with upper, lower, digit, and symbol",
-      "genericError": "Something went wrong. Try again."
-    },
-    "verify": {
-      "title": "Check your email",
-      "description": "We sent a 6-digit code to {{email}}",
-      "codeLabel": "Verification code",
-      "codePlaceholder": "6-digit code",
-      "confirmButton": "Confirm",
-      "resendCode": "Resend code",
-      "genericError": "Something went wrong. Try again."
-    },
-    "forgotPassword": {
-      "title": "Reset your password",
-      "step1Title": "Enter your email",
-      "step2Title": "Enter the code",
-      "emailLabel": "Email",
-      "emailPlaceholder": "you@example.com",
-      "sendCodeButton": "Send reset code",
-      "codeLabel": "Reset code",
-      "codePlaceholder": "6-digit code",
-      "newPasswordLabel": "New password",
-      "newPasswordHint": "12+ characters — upper, lower, digit, symbol",
-      "resetButton": "Reset password",
-      "backToSignIn": "Back to sign in",
-      "genericError": "Something went wrong. Try again."
-    }
-  },
-  "awsug": {
-    "pending": {
-      "title": "Application received",
-      "description": "Your application is with the organizers. You'll get an email when approved.",
-      "memberTypeLabel": "How you connect",
-      "locationLabel": "Based in",
-      "topicsLabel": "Topics",
-      "backgroundLabel": "Background"
-    },
-    "admin": {
-      "title": "Member management",
-      "filterPending": "Pending",
-      "filterMembers": "Members",
-      "filterBanned": "Banned",
-      "colEmail": "Email",
-      "colMemberType": "How they connect",
-      "colLocation": "Based in",
-      "colTopics": "Topics",
-      "colBackground": "Background",
-      "colJoined": "Joined",
-      "colActions": "Actions",
-      "approveButton": "Approve",
-      "banButton": "Ban",
-      "unbanButton": "Unban",
-      "banPopoverTitle": "User banned",
-      "banPopoverBody": "Banned from future sessions. To remove from an active call, join as moderator and use participant controls.",
-      "emptyPending": "No applications pending",
-      "emptyMembers": "No members",
-      "emptyBanned": "No banned users"
-    }
-  }
+	"shell": {
+		"siteTitle": "Cloud Del Norte",
+		"switchToMx": "Switch to Spanish",
+		"switchToUs": "Switch to English",
+		"switchToLightMode": "Switch to light mode",
+		"switchToDarkMode": "Switch to dark mode",
+		"more": "More",
+		"all": "All",
+		"navigationDrawer": "Navigation drawer",
+		"closeNavigationDrawer": "Close navigation drawer",
+		"openNavigationDrawer": "Open navigation drawer",
+		"notifications": "Notifications",
+		"helpPanel": "Help panel",
+		"closeHelpPanel": "Close help panel",
+		"openHelpPanel": "Open help panel"
+	},
+	"navigation": {
+		"home": "user group home",
+		"feed": "home",
+		"about": "about",
+		"roadmap": "roadmap",
+		"ugRoadmap": "ug roadmap",
+		"meetings": "meetings",
+		"admin": "admin",
+		"resources": "resources",
+		"techDebtCountdowns": "tech debt countdowns",
+		"designSystem": "design system",
+		"learning": "learning",
+		"apiGuide": "api guide",
+		"restOverview": "rest overview",
+		"uniformInterface": "uniform interface",
+		"clientServer": "client-server",
+		"stateless": "stateless",
+		"cacheable": "cacheable",
+		"layeredSystem": "layered system",
+		"codeOnDemand": "code on demand",
+		"cheatSheet": "api cheat sheet",
+		"howItWorks": "how it works",
+		"projectResources": "project resources"
+	},
+	"breadcrumbs": {
+		"home": "Cloud Del Norte"
+	},
+	"footer": {
+		"ourLeaders": "AWS User Group Organizers",
+		"joinUs": "Join us on Meetup →",
+		"communityDescription": "AWS User Group Cloud Del Norte is part of AWS User Groups'",
+		"globalCommunity": "Global AWS User Group Community",
+		"communityFullDescription": "We are run by volunteers local to New Mexico, West Texas & Chihuahua, Mexico. We believe projects, careers & issues can be accelerated using AWS, & wish to pass our knowledge, connections & experiences on to you & see what you",
+		"goBuild": "Go Build",
+		"infoPanelLink": "Learn more about us in the info panel"
+	},
+	"aboutPage": {
+		"breadcrumb": "About",
+		"header": "About",
+		"infoLink": "Info"
+	},
+	"feedPage": {
+		"breadcrumb": "Home",
+		"header": "Home",
+		"infoLink": "Info",
+		"andresMediumHeader": "Andres Moreno — andmoredev",
+		"andresMediumAllPosts": "All posts",
+		"builderCenterHeader": "AWS Builder Center",
+		"builderCenterOpen": "Open AWS Builder Center",
+		"arrowheadHeader": "Arrowhead Research Park & NMSU",
+		"previousArticle": "Previous article",
+		"nextArticle": "Next article",
+		"andmoreDotDev": "andmore.dev by Andres Moreno",
+		"awsMlBlog": "AWS Machine Learning Blog",
+		"twitchLive": "LIVE",
+		"twitchRecentVideo": "recent video",
+		"nextMeetupHeader": "Next Meetup",
+		"nextMeetupLoading": "Loading meetup info…",
+		"nextMeetupFallback": "Check meetup.com for our next event.",
+		"nextMeetupCta": "Visit meetup.com →",
+		"nextMeetupPastLabel": "Last meetup:",
+		"infoLinkAriaLabel": "Open help panel",
+		"streamKrux": "stream krux",
+		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen."
+	},
+	"dashboardPage": {
+		"breadcrumb": "Dashboard",
+		"header": "Dashboard",
+		"infoLink": "Info",
+		"productionOverview": {
+			"header": "Production overview"
+		},
+		"pastTopics": {
+			"header": "Past Topics"
+		},
+		"groupNotesModal": "Group notes"
+	},
+	"userGroupHero": {
+		"header": "#AWS User Group Cloud Del Norte",
+		"description": "Holding our first meetup on International Women's Day 03/08/21 & Started at Arrowhead Research Park to further the community learning, business awareness, student engagement, career opportunities, and general entrepreneurial-garage-hobbyist spirit. We aim to learn from, serve, educate, and entertain the diverse people of the Juarez MX/El Paso + Las Cruces, all of New Mexico, and surrounding rural areas."
+	},
+	"userGroupMetrics": {
+		"communityMembers": "Community Members",
+		"fiveStarReviews": "5 Star Reviews",
+		"meetupsHeld": "Meetups Held",
+		"est": "Est."
+	},
+	"pastTopics": {
+		"games3d": "Games & 3D",
+		"artificialIntelligence": "Artificial Intelligence",
+		"serverlessLens": "Serverless Lens",
+		"spaceSatellite": "Space & Satellite"
+	},
+	"flavorNotes": {
+		"cherry": "cherry",
+		"raspberry": "raspberry",
+		"rose": "rose",
+		"strawberry": "strawberry"
+	},
+	"productionTable": {
+		"headers": {
+			"name": "Name",
+			"status": "Status",
+			"mixing": "Mixing (kg/h)",
+			"molding": "Molding (kg/h)"
+		}
+	},
+	"qualityTable": {
+		"headers": {
+			"name": "Name",
+			"strong": "Strong",
+			"mild": "Mild",
+			"unnoticed": "Unnoticed"
+		}
+	},
+	"pieChart": {
+		"chartAriaRoleDescription": "Pie chart",
+		"detailPopoverDismissAriaLabel": "Dismiss details",
+		"legendAriaLabel": "Legend",
+		"filterSelectedAriaLabel": "Selected",
+		"segmentAriaRoleDescription": "Segment"
+	},
+	"meetings": {
+		"breadcrumb": "Meetings",
+		"header": "meetings",
+		"createButton": "Create meeting",
+		"editButton": "Edit",
+		"findPlaceholder": "Find meetings",
+		"tableHeaders": {
+			"meetupTitle": "Meetup Title",
+			"presenters": "Presenters",
+			"happened": "Happened?",
+			"onDemand": "On-Demand",
+			"eventPage": "Event Page"
+		},
+		"empty": {
+			"noMatches": "No matches",
+			"noMatchesSubtitle": "We can't find a match.",
+			"clearFilter": "Clear filter",
+			"noMeetings": "No meetings",
+			"noMeetingsSubtitle": "No meetings to display."
+		},
+		"preferences": {
+			"title": "Preferences",
+			"pageSize": "Select page size",
+			"resources10": "10 resources",
+			"resources20": "20 resources",
+			"resources50": "50 resources",
+			"resources100": "100 resources",
+			"confirm": "Confirm",
+			"cancel": "Cancel"
+		},
+		"aria": {
+			"selectionGroup": "Items selection",
+			"tableLabel": "meetings table"
+		}
+	},
+	"createMeeting": {
+		"breadcrumb": "Create meeting",
+		"header": "Create meeting",
+		"description": "Create a new meeting by specifying details, event link, and speakers.",
+		"cancel": "Cancel",
+		"submit": "Create meeting",
+		"helpPanelHeader": "Help panel",
+		"meetingType": {
+			"header": "Meeting Type",
+			"shapeLabel": "Shape",
+			"virtual": "Virtual",
+			"virtualDescription": "Virtual Only Meetups",
+			"inPerson": "In-Person",
+			"inPersonDescription": "In person hosted events, including hybrid"
+		},
+		"meetingDetails": {
+			"header": "MeetingDetails",
+			"pricesLabel": "Prices",
+			"pricesDescription": "Define the prices for wholesale and retail.",
+			"meetupLinkLabel": "Meetup Link",
+			"speakerNamesLabel": "Speaker Names",
+			"additionalNotesLabel": "Additional notes",
+			"optional": " - optional",
+			"linkRequired": "Link is required.",
+			"presenterRequired": "Presenter is required.",
+			"errorIconAriaLabel": "Error"
+		},
+		"details": {
+			"header": "details",
+			"listLabel": "List of details",
+			"selectPlaceholder": "Select all details",
+			"listRequired": "List of details is required.",
+			"publishedLabel": "Published",
+			"no": "No",
+			"yes": "Yes",
+			"deselectAriaLabel": "Deselect",
+			"noLabel": "no label"
+		}
+	},
+	"helpPanel": {
+		"rsvpHeader": "RSVP for Live Events",
+		"cloudDelNorteMeetups": "Cloud Del Norte Meetups",
+		"blenderMeetups": "Blender & Graphic Design:NE3D",
+		"userGroupTitle": "volunteers wanted",
+		"communityDescription": "AWS UG Cloud Del Norte is a quest to network, experiment, and upskill together. We hold in-person, virtual, and hybrid meetups focusing on regional topics to rural New Mexico, West Texas, Northern Chihuaha, the Borderplex and beyond.",
+		"organizersWantedHeader": "Organizers Wanted",
+		"spanishSpeakers": "Spanish-Speakers Sought",
+		"studentsStepUp": "Students to Step Up",
+		"womenWelcome": "Women Welcome",
+		"globalCommunityHeader": "AWS Global Community",
+		"findLocalGroup": "Find your local AWS User Group on Meetup.",
+		"communityLeadersHeader": "Community Leaders",
+		"jacobWright": "Jacob Wright",
+		"reachOutLinkedIn": "reach out on LinkedIn",
+		"bryanChasko": "Bryan Chasko",
+		"awsHeroBio": "AWS Hero Bio",
+		"bryansHomepage": "Bryan's HomePage",
+		"andresMoreno": "Andres Moreno",
+		"andresRole": "Principal Software Architect, Caylent — AWS Community Builder",
+		"andresWebsite": "andmore.dev",
+		"aboutPage": "About Cloud Del Norte",
+		"communityLeaders": "Community Leaders",
+		"communityFounded": "In-person, virtual, and hybrid meetups across the Juárez MX / El Paso and Las Cruces corridor, all of New Mexico, and surrounding rural areas. Founded on International Women's Day — March 8, 2021 — at",
+		"arrowheadPark": "Arrowhead Research Park",
+		"communityFoundedSuffix": ", NMSU.",
+		"andresMorenoRole": "Co-organizer · AWS Community Builder",
+		"andresMorenoBioPrefix": "Principal Software Architect at Caylent. Serverless specialist — Lambda, Step Functions, CI/CD, and developer experience. Writes at",
+		"andresMorenoBioSuffix": "on real-world serverless patterns from production systems.",
+		"bryanChaskoRole": "Founder · AWS Hero",
+		"bryanChaskoBio": "Builder-focused organizer based in El Paso. AWS Hero recognition for community contributions across the US/MX border region. Creates hands-on content around containers, serverless, and AI/ML infrastructure. Runs the group's technical programming and speaker pipeline.",
+		"awsHeroProfile": "AWS Hero profile",
+		"jacobWrightRole": "Founder · Doña Ana County Lead",
+		"jacobWrightBio": "Co-founded the group in Las Cruces. Anchor for the Doña Ana County.",
+		"wayneSavageRole": "Founder · Retired Organizer",
+		"wayneSavageBioPrefix": "Part of the founding team. Connected the group to",
+		"wayneSavageBioSuffix": "at NMSU, where the first meetup took place. The Arrowhead partnership remains a thread in the group's New Mexico roots.",
+		"organizersWantedIntro": "Cloud del Norte is a volunteer-run group. These roles are open:",
+		"aslLeadRole": "ASL Lead",
+		"aslLeadDesc": "coordinate American Sign Language interpretation for events, advocate for accessibility in session planning",
+		"lsmLeadDesc": "Lengua de Señas Mexicana — conectar la comunidad sorda de Juárez con los eventos del grupo",
+		"reachOutOnMeetup": "Reach out on Meetup"
+	},
+	"learning": {
+		"api": {
+			"howRiotAPIRESTful": "🌐 How Riot Games API is RESTful",
+			"uniformInterfaceDemonstration": "🎯 Uniform Interface Demonstration",
+			"contestsEndpoint": "1️⃣ Contests Endpoint",
+			"apiAccessDataStructure": "📊 API Access & Data Structure",
+			"availableWithBasicKey": "✅ Available with Basic API Key",
+			"requiresSpecialAccess": "❌ Requires Special Access",
+			"tournamentDataStructure": "🏆 Tournament Data Structure",
+			"technicalImplementation": "🛠️ Technical Implementation",
+			"dataSources": "📊 Data Sources",
+			"architectureStack": "🏧 Architecture Stack",
+			"championDataMapping": "🎯 Champion Data Mapping",
+			"title": "Cloud Del Norte - API Learning",
+			"restDescription": "REST (REpresentational State Transfer) and API (Application Programming Interface - a way for programs to talk to each other) work together. The Riot Games API demonstrates all 6 REST constraints:",
+			"uniformInterfaceTitle": "1️⃣ Uniform Interface",
+			"uniformInterfaceDesc": "Standard HTTP GET method with consistent JSON responses across all resources:",
+			"uniformInterfaceExample": "GET /contests?year=2024",
+			"uniformInterfaceReturns": "Always returns:",
+			"clientServerTitle": "2️⃣ Client-Server",
+			"clientServerDesc": "Our React (web framework) app is the client, Riot's computers are the server. We call their API, they respond with data. Each side can update independently.",
+			"statelessTitle": "3️⃣ Stateless",
+			"statelessDesc": "Every API call (request) to Riot includes the X-Riot-Token header (our authentication key). No login sessions - each request is complete.",
+			"cacheableTitle": "4️⃣ Cacheable",
+			"cacheableDesc": "Riot's Data Dragon CDN (fast global servers) uses version numbers like 13.24.1. Our browser can save champion data and reuse it.",
+			"layeredSystemTitle": "5️⃣ Layered System",
+			"layeredSystemDesc": "Riot hides their internal structure. We call api.riotgames.com but don't know if it goes through load balancers, databases, or game servers.",
+			"codeOnDemandTitle": "6️⃣ Code on Demand",
+			"codeOnDemandDesc": "Our React hook fetches data dynamically:",
+			"codeOnDemandExample": "const [data, setData] = useState(); fetch(riotApiUrl).then(setData)",
+			"codeOnDemandImages": "Champion images load from Riot's CDN only when needed.",
+			"uniformInterfaceDesc2": "The same HTTP GET method and JSON format work across different resources:",
+			"contestsDescription": "Recent tournaments and competitions",
+			"selectYear": "Select Year:",
+			"requestUrl": "Request URL:",
+			"responseExpected": "Response we expect:",
+			"responseExpectedDesc": "with JSON array of contest objects:",
+			"sendGetRequest": "Send GET Request",
+			"contestsResponse": "🏆 Contests Response",
+			"contestsResponseDesc": "🟢 Live contest data from Lambda endpoint - Recent tournament results",
+			"responseReceived": "Response received:",
+			"responseReceivedDesc": "with JSON array containing",
+			"contestObjects": "contest objects",
+			"dataStructure": "Data structure:",
+			"dataStructureDesc": "Each contest object contains:",
+			"endpoint": "Endpoint:",
+			"worldsChampions": "🏆 Worlds",
+			"worldsChampionsDesc": "Champions",
+			"worldsChampionsDescLong": "Performance scores based on tournament KDA, objective control, and team impact metrics",
+			"performanceScore": "Performance Score:",
+			"performanceScoreDesc": "Calculated from tournament KDA, objective control, and team fight impact (0-100 scale).",
+			"tournamentRecord": "Tournament Record:",
+			"tournamentRecordDesc": "Actual wins/losses from Worlds",
+			"matches": "matches.",
+			"signatureChampion": "Signature Champion:",
+			"signatureChampionDesc": "Most impactful champion played during the tournament run.",
+			"championApiRequestDetails": "🎮 Champions API Request Details",
+			"expectedUrl": "Expected URL:",
+			"expectedResponse": "Expected Response:",
+			"actualStatus": "Actual Status:",
+			"actualResponse": "Actual Response:",
+			"dataSource": "Data Source:",
+			"authentication": "Authentication:",
+			"responseFormat": "Response Format:",
+			"player": "Player",
+			"signatureChampionHeader": "Signature Champion",
+			"tournamentRecordHeader": "Tournament Record",
+			"performanceScoreHeader": "Performance Score",
+			"achievement": "Achievement",
+			"worldsGreatestWinningPlayers": "Worlds Greatest Winning Players",
+			"worldsChampionshipDesc": "championship team performance data",
+			"noTournamentData": "No tournament data available",
+			"selectYearToView": "Select a year to view championship data",
+			"apiIntegrationStatus": "API Integration Status",
+			"responseStatus": "Response Status:",
+			"errorDetails": "Error Details:",
+			"support": "Support:",
+			"lambdaFunction": "Lambda Function:",
+			"liveChampionData": "Live Champion Performance Data",
+			"liveChampionDataDesc": "🟢 Live champion data from Riot Games Data Dragon API - Real stats updated from League of Legends servers",
+			"demoChampionData": "Demo Champion Performance Data",
+			"demoChampionDataDesc": "🟡 Demo data (Click \"Fetch from Riot API\" to load live data and trigger AWS Lambda)",
+			"championDataApiStatus": "🎮 Champion Data API Status",
+			"dataSources2": "Data Sources:",
+			"apiEndpoints": "API Endpoints:",
+			"issues": "Issues:",
+			"lambdaEndpoint": "Lambda Endpoint:",
+			"dataFormat": "Data Format:",
+			"jsonRestApi": "JSON REST API",
+			"liveChampionsData": "Live Champions Data",
+			"demoChampionsData": "Demo Champions Data",
+			"fetchFromRiotApi": "🚀 Fetch from Riot API",
+			"refreshLiveData": "Refresh Live Data",
+			"resetToDemoData": "Reset to Demo Data",
+			"noChampionData": "No champion data available",
+			"tournament": "Tournament",
+			"status": "Status",
+			"winner": "Winner",
+			"noContests": "No contests available",
+			"championName": "Champion Name",
+			"championTitle": "Champion Title",
+			"attackPower": "Attack Power",
+			"defenseRating": "Defense Rating",
+			"speedRating": "Speed Rating",
+			"tierStatus": "Tier Status",
+			"sTier": "S-Tier",
+			"aTier": "A-Tier",
+			"availableWithBasicKeyList": "• Data Dragon API: Champion stats, abilities<br/>• Challenger League: Top ranked players<br/>• Champion Mastery: Player expertise<br/>• Match History: Recent game results",
+			"requiresSpecialAccessList": "• Tournament API: Official esports matches<br/>• Featured Games: Live high-level matches<br/>• Esports Data: Professional results<br/>• Production Keys: Higher rate limits",
+			"dataSourcesFromRiot": "✅ From Riot API:",
+			"dataSourcesFromRiotList": "• Champion names & lore titles<br/>• Attack damage, health, speed stats<br/>• Official game balance data",
+			"ourProcessing": "🛠️ Our Processing:",
+			"ourProcessingList": "• Tier rankings (S/A-Tier algorithm)<br/>• Display scaling (÷10, ÷100, ÷20)<br/>• Performance calculations",
+			"frontend": "Frontend:",
+			"frontendValue": "React 18 + TypeScript",
+			"build": "Build:",
+			"buildValue": "Vite 5 → Static HTML/CSS/JS",
+			"hosting": "Hosting:",
+			"hostingValue": "S3 + CloudFront CDN",
+			"api": "API:",
+			"apiValue": "AWS Lambda Function URL",
+			"data": "Data:",
+			"dataValue": "Riot Games API integration",
+			"attackPowerMapping": "⚔️ Attack Power",
+			"attackPowerMappingValue": "stats.attackdamage ÷ 10",
+			"defenseRatingMapping": "🛡️ Defense Rating",
+			"defenseRatingMappingValue": "stats.hp ÷ 100",
+			"speedRatingMapping": "💨 Speed Rating",
+			"speedRatingMappingValue": "stats.movespeed ÷ 20"
+		}
+	},
+	"admin": {
+		"breadcrumb": "Admin",
+		"pageTitle": "admin — pending users",
+		"tableHeader": "pending users",
+		"loadingText": "loading users",
+		"emptyTitle": "no pending users",
+		"emptySubtitle": "all confirmed users have been assigned to a group",
+		"columnEmail": "email",
+		"columnStatus": "status",
+		"columnCreated": "created",
+		"columnActions": "actions",
+		"approveButton": "approve",
+		"errorHeader": "failed to load users"
+	},
+	"roadmap": {
+		"title": "Roadmap",
+		"breadcrumb": "Roadmap",
+		"idea": "Idea",
+		"todo": "Todo",
+		"inProgress": "In Progress",
+		"inReview": "In Review",
+		"done": "Done",
+		"emptyColumn": "No items"
+	},
+	"maintenanceCalendar": {
+		"breadcrumb": "Maintenance Calendar",
+		"header": "Maintenance Calendar",
+		"description": "Release cadence tracker for 23 technologies — LTS history, recent releases, and projected dates.",
+		"filterByCategory": "Filter by category",
+		"exportAll": "Export All (.ics)",
+		"export": "Export (.ics)",
+		"allCategories": "All categories",
+		"noDataAvailable": "No data available",
+		"tableHeaders": {
+			"mostRecentLTS": "Most Recent LTS",
+			"priorLTS": "Prior LTS",
+			"secondPriorLTS": "2nd Prior LTS",
+			"mostRecentRelease": "Most Recent Release",
+			"projectedNextRelease": "Projected Next Release",
+			"projectedNextLTS": "Projected Next LTS"
+		},
+		"releaseNotes": "Release notes",
+		"source": "Source"
+	},
+	"themePage": {
+		"pageTitle": "Design System — Cloud Del Norte",
+		"breadcrumb": "Design System",
+		"header": "Cloud Del Norte Design System",
+		"sections": {
+			"brandColors": "Brand Color Palette",
+			"brandColorsDescription": "Colors extracted from the Cloud Del Norte Meetup banner — dark nebula sky with star-on-mountain logo.",
+			"textEmphasis": "Text Emphasis Hierarchy",
+			"textEmphasisDescription": "Three-level hierarchy for readable content (light & dark mode).",
+			"elevation": "Dark Mode Elevation",
+			"elevationDescription": "Progressive lightening creates depth perception on dark backgrounds.",
+			"shadows": "Shadow Tokens",
+			"shadowsDescription": "Ambient depth for cards, modals, and floating elements.",
+			"typography": "Typography Scale",
+			"typographyDescription": "Font size tokens for body text, headings, and labels.",
+			"cardExample": "Glassmorphism Card",
+			"cardExampleDescription": "The .cdn-card class — gradient background + blur + animated accent line."
+		},
+		"colors": {
+			"navy": {
+				"name": "Navy",
+				"description": "Base dark background"
+			},
+			"amber": {
+				"name": "Amber",
+				"description": "Warm sepia accents"
+			},
+			"purple": {
+				"name": "Purple",
+				"description": "Primary interactive color"
+			},
+			"violet": {
+				"name": "Violet",
+				"description": "Accent & glow effects"
+			},
+			"lavender": {
+				"name": "Lavender",
+				"description": "Light mode borders"
+			},
+			"awsOrange": {
+				"name": "AWS Orange",
+				"description": "Call-to-action emphasis"
+			},
+			"gold": {
+				"name": "Gold",
+				"description": "Emeritus accents"
+			}
+		},
+		"emphasis": {
+			"high": {
+				"name": "High Emphasis",
+				"description": "Headings, primary text"
+			},
+			"medium": {
+				"name": "Medium Emphasis",
+				"description": "Secondary labels, descriptions"
+			},
+			"low": {
+				"name": "Low Emphasis",
+				"description": "Disabled, hints, placeholders"
+			}
+		},
+		"elevation": {
+			"level": "Level",
+			"level0": "Base background",
+			"level1": "Cards, panels",
+			"level2": "Modals, dropdowns",
+			"level3": "Tooltips, popovers"
+		},
+		"shadows": {
+			"small": {
+				"name": "Small",
+				"usage": "Subtle elevation"
+			},
+			"medium": {
+				"name": "Medium",
+				"usage": "Card depth"
+			},
+			"glow": {
+				"name": "Glow",
+				"usage": "Emphasis, hover states"
+			}
+		},
+		"typography": {
+			"small": {
+				"name": "Small",
+				"usage": "Captions, metadata, badges"
+			},
+			"base": {
+				"name": "Base",
+				"usage": "Body copy (Cloudscape default)"
+			},
+			"large": {
+				"name": "Large",
+				"usage": "Emphasized body, card labels"
+			},
+			"extraLarge": {
+				"name": "Extra Large",
+				"usage": "Section headings"
+			},
+			"twoExtraLarge": {
+				"name": "2XL",
+				"usage": "Page headings"
+			}
+		},
+		"cardExample": {
+			"title": "Sample Glassmorphism Card",
+			"description": "Gradient background with blur, animated gradient accent line on top, warm shadows in light mode, cosmic glow in dark mode.",
+			"technicalNote": "Apply .cdn-card class to any div — defined in src/styles/tokens.css"
+		}
+	},
+	"common": {
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"submit": "Submit",
+		"edit": "Edit",
+		"create": "Create",
+		"delete": "Delete",
+		"save": "Save",
+		"close": "Close",
+		"info": "Info"
+	},
+	"auth": {
+		"siteTitle": "Cloud Del Norte",
+		"login": {
+			"title": "Sign in",
+			"emailLabel": "Email",
+			"emailPlaceholder": "you@example.com",
+			"passwordLabel": "Password",
+			"signInButton": "Sign in",
+			"forgotPassword": "Forgot password?",
+			"noAccount": "New here? Apply to join",
+			"invalidCredentials": "Email or password is incorrect",
+			"genericError": "Something went wrong. Try again."
+		},
+		"signup": {
+			"title": "Apply to join",
+			"step1Title": "Create your account",
+			"step2Title": "About you",
+			"step3Title": "Your interests",
+			"step4Title": "Verify your email",
+			"emailLabel": "Email",
+			"emailPlaceholder": "you@example.com",
+			"passwordLabel": "Password",
+			"passwordHint": "12+ characters — upper, lower, digit, symbol",
+			"confirmPasswordLabel": "Confirm password",
+			"passwordMismatch": "Passwords do not match",
+			"memberTypeLabel": "How do you connect with Cloud Del Norte?",
+			"memberTypePlaceholder": "e.g. first-time attendee, organizer, speaker, cloud hobbyist",
+			"locationLabel": "Where are you based?",
+			"locationPlaceholder": "city, state / ciudad, estado",
+			"topicsLabel": "Topics you'd like us to cover",
+			"topicsPlaceholder": "e.g. serverless, machine learning, networking, security",
+			"backgroundLabel": "Background you'd like to share",
+			"backgroundPlaceholder": "e.g. AWS solutions architect, Python hobbyist, total beginner",
+			"verifyCodeLabel": "Verification code",
+			"verifyCodePlaceholder": "6-digit code",
+			"resendCode": "Resend code",
+			"resendCooldown": "Resend available in {{seconds}}s",
+			"alreadyHaveAccount": "Already applied? Sign in",
+			"nextButton": "Next",
+			"backButton": "Back",
+			"submitButton": "Submit application",
+			"emailExists": "An account with this email already exists",
+			"weakPassword": "Password must be 12+ characters with upper, lower, digit, and symbol",
+			"genericError": "Something went wrong. Try again."
+		},
+		"verify": {
+			"title": "Check your email",
+			"description": "We sent a 6-digit code to {{email}}",
+			"codeLabel": "Verification code",
+			"codePlaceholder": "6-digit code",
+			"confirmButton": "Confirm",
+			"resendCode": "Resend code",
+			"genericError": "Something went wrong. Try again."
+		},
+		"forgotPassword": {
+			"title": "Reset your password",
+			"step1Title": "Enter your email",
+			"step2Title": "Enter the code",
+			"emailLabel": "Email",
+			"emailPlaceholder": "you@example.com",
+			"sendCodeButton": "Send reset code",
+			"codeLabel": "Reset code",
+			"codePlaceholder": "6-digit code",
+			"newPasswordLabel": "New password",
+			"newPasswordHint": "12+ characters — upper, lower, digit, symbol",
+			"resetButton": "Reset password",
+			"backToSignIn": "Back to sign in",
+			"genericError": "Something went wrong. Try again."
+		}
+	},
+	"awsug": {
+		"pending": {
+			"title": "Application received",
+			"description": "Your application is with the organizers. You'll get an email when approved.",
+			"memberTypeLabel": "How you connect",
+			"locationLabel": "Based in",
+			"topicsLabel": "Topics",
+			"backgroundLabel": "Background"
+		},
+		"admin": {
+			"title": "Member management",
+			"filterPending": "Pending",
+			"filterMembers": "Members",
+			"filterBanned": "Banned",
+			"colEmail": "Email",
+			"colMemberType": "How they connect",
+			"colLocation": "Based in",
+			"colTopics": "Topics",
+			"colBackground": "Background",
+			"colJoined": "Joined",
+			"colActions": "Actions",
+			"approveButton": "Approve",
+			"banButton": "Ban",
+			"unbanButton": "Unban",
+			"banPopoverTitle": "User banned",
+			"banPopoverBody": "Banned from future sessions. To remove from an active call, join as moderator and use participant controls.",
+			"emptyPending": "No applications pending",
+			"emptyMembers": "No members",
+			"emptyBanned": "No banned users"
+		}
+	}
 }
