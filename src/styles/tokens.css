@@ -82,6 +82,7 @@
   --cdn-shadow-nav-light:       2px 0 8px rgba(139, 90, 43, 0.08);
 
   /* ---------- Typography scale ---------- */
+  --cdn-text-xs:   0.6875rem;  /* 11px — micro labels, card meta */
   --cdn-text-sm:   0.75rem;    /* 12px — captions, metadata, badges */
   --cdn-text-base: 0.875rem;   /* 14px — body copy (Cloudscape default) */
   --cdn-text-lg:   1rem;       /* 16px — emphasized body, card labels */

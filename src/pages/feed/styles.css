@@ -378,11 +378,13 @@
 }
 
 /* glassmorphism — when .cdn-card wraps a Cloudscape Container, suppress the
-   Container's own background so the cdn-card's warm/dark glass surface shows
-   through. preserves Container's internal padding + header structure. */
-.feed-grid__cell.cdn-card > [class*="awsui_root"][class*="awsui_container"],
-.feed-grid__cell.cdn-card [class*="awsui_content_"][class*="awsui_container"],
-.feed-grid__cell.cdn-card [class*="awsui_header_"][class*="awsui_container"] {
+   Container's own background/border/shadow so the cdn-card glass surface shows
+   through. Selectors confirmed against container/styles.selectors.js:
+   root = awsui_root_*, header = awsui_header_*, content = awsui_content_*
+   (no "awsui_container" fragment appears in any Container class name). */
+.cdn-card > [class*="awsui_root"],
+.cdn-card [class*="awsui_content_"],
+.cdn-card [class*="awsui_header_"] {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -644,7 +646,7 @@
 .feed-section-divider {
   border: none;
   border-top: 1px solid var(--cdn-color-border);
-  margin-block: 16px;
+  margin-block: var(--cdn-space-lg, 24px);
 }
 
 /* ==========================================================================
