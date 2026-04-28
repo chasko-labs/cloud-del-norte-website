@@ -21,15 +21,16 @@
         </div>
       </div>
     </div>
-    <script type="module">
+    <script>
       if (location.hostname === 'dev.clouddelnorte.org' || location.hostname === 'localhost') {
-        import('/liora-embed/liora-embed.js').then(({ mountLioraPanel }) => {
-          const host = document.getElementById('liora-host');
-          if (host) {
-            host.style.display = '';
-            mountLioraPanel('/liora');
-          }
-        });
+        var s = document.createElement('script');
+        s.type = 'module';
+        s.textContent = [
+          "import { mountLioraPanel } from '/liora-embed/liora-embed.js';",
+          "var h = document.getElementById('liora-host');",
+          "if (h) { h.style.display = ''; mountLioraPanel('/liora'); }"
+        ].join('\n');
+        document.body.appendChild(s);
       }
     </script>
   </body>
