@@ -67,6 +67,7 @@ function KruxPlayer() {
   const [idx, setIdx] = useState(0);
   const [fading, setFading] = useState(false);
   const [nowPlaying, setNowPlaying] = useState<Record<string, string>>({});
+  const [carouselVersion, setCarouselVersion] = useState(0);
 
   const stream = STREAMS[idx];
 
@@ -102,7 +103,7 @@ function KruxPlayer() {
       clearInterval(id);
       if (tid) clearTimeout(tid);
     };
-  }, [playing]);
+  }, [playing, carouselVersion]);
 
   // poll now-playing every 30s while playing
   useEffect(() => {
@@ -111,6 +112,15 @@ function KruxPlayer() {
     const id = setInterval(() => fetchMeta(stream), POLL_MS);
     return () => clearInterval(id);
   }, [playing, stream, fetchMeta]);
+
+  const skipStation = useCallback(() => {
+    setFading(true);
+    setTimeout(() => {
+      setIdx(i => (i + 1) % STREAMS.length);
+      setFading(false);
+      setCarouselVersion(v => v + 1);
+    }, FADE_MS);
+  }, []);
 
   const toggle = useCallback(() => {
     const a = audioRef.current;
@@ -143,6 +153,14 @@ function KruxPlayer() {
           data-state={loading ? 'loading' : playing ? 'playing' : 'paused'}
         >
           <span aria-hidden="true">{playing ? '■' : '▶'}</span>
+        </button>
+        <button
+          type="button"
+          className="feed-krux__skip"
+          onClick={skipStation}
+          aria-label={`next station: ${STREAMS[(idx + 1) % STREAMS.length].label}`}
+        >
+          <span aria-hidden="true">›</span>
         </button>
       </div>
       {nowPlaying[stream.key] && (
