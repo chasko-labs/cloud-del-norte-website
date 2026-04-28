@@ -218,7 +218,17 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 .help-panel-leader strong {
   display: block;
   font-size: var(--cdn-text-base, 1rem);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.1rem;
+}
+
+.help-panel-leader__role {
+  display: block;
+  font-size: var(--cdn-text-xs, 0.75rem);
+  color: var(--cdn-violet, #7c3aed);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.35rem;
+  opacity: 0.85;
 }
 
 .help-panel-leader p {
