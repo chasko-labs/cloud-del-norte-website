@@ -210,7 +210,7 @@ export default function NextMeetup() {
             {t('feedPage.nextMeetupPastLabel')}
           </Box>
         )}
-        <Box fontWeight="bold" fontSize="body-m">
+        <Box fontWeight="bold" fontSize="heading-m">
           {event.url ? (
             <Link href={event.url} external>
               {event.summary}

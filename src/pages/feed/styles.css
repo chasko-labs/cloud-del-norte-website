@@ -377,17 +377,27 @@
   min-width: 0; /* allow children to shrink inside the column track */
 }
 
-/* glassmorphism — when .cdn-card wraps a Cloudscape Container, suppress the
-   Container's own background/border/shadow so the cdn-card glass surface shows
-   through. Selectors confirmed against container/styles.selectors.js:
-   root = awsui_root_*, header = awsui_header_*, content = awsui_content_*
-   (no "awsui_container" fragment appears in any Container class name). */
-.cdn-card > [class*="awsui_root"],
-.cdn-card [class*="awsui_content_"],
-.cdn-card [class*="awsui_header_"] {
+/* glassmorphism — suppress Container chrome so the cdn-card glass surface shows.
+   descendant (not direct-child) combinator handles any React wrapper divs between
+   cdn-card and the Cloudscape root element. */
+.cdn-card [class*="awsui_root"],
+.cdn-card [class*="awsui_content_"] {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
+}
+/* header: suppress bg + side/top borders; keep a subtle bottom separator */
+.cdn-card [class*="awsui_header_"] {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  border-bottom: 1px solid rgba(139, 90, 43, 0.14) !important;
+  padding-bottom: 2px !important;
+}
+.awsui-dark-mode .cdn-card [class*="awsui_header_"] {
+  border-bottom-color: rgba(144, 96, 240, 0.18) !important;
 }
 
 @media (min-width: 768px) {
@@ -436,7 +446,9 @@
   padding: 20px;
   border: 1px solid rgba(139, 90, 43, 0.16);
   border-radius: var(--cdn-radius-md, 8px);
-  background: linear-gradient(135deg, #faf7f0 0%, #f5f0e4 50%, #faf7f0 100%);
+  /* near-white so cards visually lift off the warm cream outer glass surface */
+  background: #fffdf9;
+  box-shadow: 0 1px 4px rgba(139, 90, 43, 0.14), 0 0 0 1px rgba(139, 90, 43, 0.08);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
   color: inherit;
@@ -447,8 +459,10 @@
 }
 
 .awsui-dark-mode .feed-mini-card__link {
-  background: linear-gradient(135deg, rgba(28, 34, 48, 0.95) 0%, rgba(30, 26, 48, 0.88) 50%, rgba(17, 24, 39, 0.97) 100%);
-  border-color: rgba(144, 96, 240, 0.18);
+  /* slightly lighter than outer dark glass so cards visually lift */
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(144, 96, 240, 0.22);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(144, 96, 240, 0.10);
 }
 
 /* per-card accent: left-edge color stripe in palette colors */
