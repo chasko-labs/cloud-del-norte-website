@@ -153,14 +153,29 @@ main[class*="awsui_layout"] > [class*="content-container"] {
   max-height: calc(100vh - 56px);
 }
 
+/* Light mode: cream overrides for Cloudscape layout chrome.
+   Three internal elements emit hardcoded white backgrounds:
+   - awsui_scrolling-background: the full-width header band below top nav
+   - awsui_breadcrumbs: the breadcrumb bar div
+   - awsui_background + has-default-background: container header default bg
+   All three are overridden to warm cream so no white stripe appears against
+   the #ede5d4 page ground. */
+:root:not(.awsui-dark-mode) [class*="awsui_scrolling-background"],
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"],
+:root:not(.awsui-dark-mode) [class*="awsui_background"][class*="has-default-background"] {
+  background: #ede5d4 !important;
+  background-color: #ede5d4 !important;
+}
+
 /* Light mode side nav — warm cream to match page.
    No --color-background-layout-side token exists in @cloudscape-design/design-tokens,
    so CSS selector fallback is used, scoped to light mode via :root:not(.awsui-dark-mode).
    Applied to both the navigation elements AND the container for full-height background. */
 :root:not(.awsui-dark-mode) [class*="navigation-container"],
 :root:not(.awsui-dark-mode) [class*="side-navigation"],
-:root:not(.awsui-dark-mode) [class*="navigation__drawer"] {
-	background: #ede5d4;
+:root:not(.awsui-dark-mode) [class*="navigation__drawer"],
+:root:not(.awsui-dark-mode) nav[class*="awsui_navigation"] {
+	background: #ede5d4 !important; /* Cloudscape scoped CSS sets white on the nav element directly */
 }
 
 /* Font smoothing scoped to app shell — improves warm-bg readability.
