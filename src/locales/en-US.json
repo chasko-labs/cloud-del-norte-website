@@ -573,7 +573,7 @@
 			"emailLabel": "Email",
 			"emailPlaceholder": "you@example.com",
 			"passwordLabel": "Password",
-			"passwordHint": "12+ characters — upper, lower, digit, symbol",
+			"passwordHint": "12+ characters with upper, lower, and digit — symbols optional",
 			"confirmPasswordLabel": "Confirm password",
 			"passwordMismatch": "Passwords do not match",
 			"memberTypeLabel": "How do you connect with Cloud Del Norte?",

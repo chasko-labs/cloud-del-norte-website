@@ -21,7 +21,9 @@ import {
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
 
-const RESEND_COOLDOWN_SECS = 30;
+/* 120s gives users time to switch to authenticator/email apps and back
+   without missing the resend window — was 30s, too short for app-switch UX */
+const RESEND_COOLDOWN_SECS = 120;
 
 function VerifyForm() {
 	const { t } = useTranslation();
