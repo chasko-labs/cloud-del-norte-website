@@ -1231,7 +1231,9 @@
 	z-index: 100;
 	isolation: isolate;
 	pointer-events: none;
-	perspective: 720px;
+	/* depth feel preserved at 1200px (was 720px) — softer recession reduces
+	   the matrix3d skew that was stretching individual lines mid-crawl */
+	perspective: 1200px;
 	transform-style: preserve-3d;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -1271,7 +1273,8 @@
 		Courier New,
 		Courier,
 		monospace;
-	font-size: clamp(32px, 20cqi, 56px);
+	/* sidebar-tuned: 14cqi at 254px = 35.6px (was 50.8px / 20cqi — too dominant) */
+	font-size: clamp(28px, 14cqi, 44px);
 	line-height: 1;
 	animation:
 		2.5s forwards neon-warmup,
@@ -1290,7 +1293,8 @@
 		0 0 22px #b478ff99;
 	max-width: 200px;
 	min-height: 1.4em;
-	margin-bottom: 5px;
+	/* lift subtitle off names grid below — was 5px */
+	margin-bottom: 12px;
 	font-family:
 		VT323,
 		Courier New,
@@ -1385,6 +1389,13 @@
 
 .liora-credits-word-team {
 	padding-left: 0.3em;
+	/* brighten "TEAM" — was lost next to amber AMAZON SUMERIAN */
+	color: #fff;
+	font-weight: 700;
+	text-shadow:
+		0 0 4px #fff,
+		0 0 12px #d2a0ffe6,
+		0 0 24px #b478ffcc;
 }
 
 .liora-credits-word-the {
@@ -2190,16 +2201,15 @@
 }
 @keyframes names-crawl {
 	0% {
-		/* near — full scale, no rotation, flush to perspective plane */
+		/* tuned for sidebar 254px panel — reduced rotateX (was 12deg) to stop
+		   per-line skew artifact on small text. translateZ retained for depth */
 		transform: rotateX(0deg) translateY(0) translateZ(0);
 	}
 	50% {
-		/* mid-scroll — angled + deepening into z-space, names visibly smaller */
-		transform: rotateX(8deg) translateY(-25%) translateZ(-200px);
+		transform: rotateX(3deg) translateY(-25%) translateZ(-150px);
 	}
 	100% {
-		/* fully receded — rotateX peaks, translateZ at max recession (~64% apparent scale) */
-		transform: rotateX(12deg) translateY(-50%) translateZ(-400px);
+		transform: rotateX(5deg) translateY(-50%) translateZ(-250px);
 	}
 }
 @keyframes neon-warmup {

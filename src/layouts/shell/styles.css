@@ -7,12 +7,23 @@
 }
 
 /* ENHANCEMENT 1 — Page hero gradient on ContentLayout header background
-   Targets Cloudscape's internal header-background div (class confirmed via
-   styles.selectors.js). Overlay uses rgba so Cloudscape's base color shows through. */
+   Cloudscape renamed the scoped class from `awsui_header-background` to
+   `awsui_background` (still combined with `awsui_has-default-background`).
+   The legacy selector no longer matches. Target the ContentLayout descendant
+   directly to avoid touching Container chrome (which has its own hover
+   animation we must not fight — see TASK 7 + the layout-main note below). */
 
-/* Light mode: cream base + subtle amber accent — !important overrides Cloudscape's
-   scoped background token so the header band matches the page cream exactly.
-   Without this, Cloudscape renders a near-white header that clashes with #ede5d4. */
+/* Light mode: cream base + subtle amber accent.
+   ContentLayout renders <div.awsui_layout_*.awsui_has-header_*> > <div.awsui_background_*>.
+   Targeting via parent's stable awsui_has-header marker reaches ContentLayout's hero
+   strip without matching Container backgrounds (which have awsui_has-default-background
+   but live inside cdn-card wrappers — see line 165 comment about hover flash). */
+:root:not(.awsui-dark-mode)
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"],
+:root:not(.awsui-dark-mode)
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"],
 :root:not(.awsui-dark-mode) [class*="awsui_header-background"] {
 	background:
 		linear-gradient(
@@ -24,12 +35,14 @@
 }
 
 /* Dark mode: deep navy-to-indigo with faint violet glow */
+.awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"],
+.awsui-dark-mode [class*="awsui_content-layout"] > [class*="awsui_background"],
 .awsui-dark-mode [class*="awsui_header-background"] {
 	background: linear-gradient(
 		135deg,
 		rgba(48, 0, 106, 0.55) 0%,
 		rgba(0, 0, 42, 0) 100%
-	);
+	) !important;
 }
 
 /* ENHANCEMENT 5 — Top nav shimmer via ::after pseudo-element
@@ -133,10 +146,94 @@ main[class*="awsui_layout"] {
 
 /* Light mode: warm cream fills the layout seam between nav and content containers.
    awsui_layout-main gets background-color: #ffffff from Cloudscape's scoped CSS —
-   override both the outer wrapper and the inner layout-main element to close the gap. */
+   override both the outer wrapper and the inner layout-main element to close the gap.
+
+   Ambient layer: drifting amber spotlight + faint paper grain texture on top of
+   the cream base. Pseudo-elements live on the layout wrapper so they cover the
+   full page-content viewport without affecting any descendant's stacking context.
+   Honor prefers-reduced-motion: paint the layer but kill the drift animation. */
 :root:not(.awsui-dark-mode) main[class*="awsui_layout"],
 :root:not(.awsui-dark-mode) [class*="awsui_layout-main"] {
-	background: #ede5d4 !important;
+	background:
+		/* spotlight: warm amber ellipse drifting top-left → bottom-right */
+		radial-gradient(
+			60% 45% at 25% 15%,
+			rgba(201, 162, 63, 0.12) 0%,
+			rgba(201, 162, 63, 0) 70%
+		),
+		/* counter-spotlight: faint violet ellipse bottom-right */
+		radial-gradient(
+			50% 40% at 80% 85%,
+			rgba(144, 96, 240, 0.08) 0%,
+			rgba(144, 96, 240, 0) 65%
+		),
+		/* paper grain: stacked diagonal stripes at low opacity */
+		repeating-linear-gradient(
+			135deg,
+			rgba(139, 90, 43, 0.018) 0 2px,
+			transparent 2px 5px
+		),
+		#ede5d4 !important;
+	background-attachment: fixed, fixed, fixed, scroll;
+	background-size: 180% 180%, 180% 180%, auto, auto;
+}
+
+@keyframes cdn-ambient-drift {
+	0% {
+		background-position: 0% 0%, 100% 100%, 0 0, 0 0;
+	}
+	50% {
+		background-position: 18% 12%, 82% 88%, 0 0, 0 0;
+	}
+	100% {
+		background-position: 0% 0%, 100% 100%, 0 0, 0 0;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	:root:not(.awsui-dark-mode) main[class*="awsui_layout"] {
+		animation: cdn-ambient-drift 28s ease-in-out infinite;
+	}
+}
+
+/* Dark mode: deep navy with violet/indigo spotlights — same architecture */
+.awsui-dark-mode main[class*="awsui_layout"],
+.awsui-dark-mode [class*="awsui_layout-main"] {
+	background:
+		radial-gradient(
+			60% 45% at 25% 15%,
+			rgba(144, 96, 240, 0.18) 0%,
+			rgba(144, 96, 240, 0) 70%
+		),
+		radial-gradient(
+			50% 40% at 80% 85%,
+			rgba(48, 0, 106, 0.32) 0%,
+			rgba(48, 0, 106, 0) 65%
+		),
+		repeating-linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.012) 0 2px,
+			transparent 2px 5px
+		),
+		#0a0c14 !important;
+	background-attachment: fixed, fixed, fixed, scroll;
+	background-size: 180% 180%, 180% 180%, auto, auto;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.awsui-dark-mode main[class*="awsui_layout"] {
+		animation: cdn-ambient-drift 28s ease-in-out infinite;
+	}
+}
+
+/* Mouseover tearing fix on cdn-card containers: Cloudscape Container fires
+   a 0.18s `transition: all` on its awsui_root which animates background-color
+   and box-shadow. cdn-card overrides bg+shadow with !important — the
+   transition tries to interpolate the overridden values, causing flicker.
+   Disable the transition specifically on cdn-card descendants while keeping
+   it intact on Containers elsewhere on the page. */
+.cdn-card [class*="awsui_root"] {
+	transition: none !important;
 }
 main[class*="awsui_layout"] > [class*="navigation-container"],
 main[class*="awsui_layout"] > [class*="tools-container"],
