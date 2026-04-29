@@ -213,15 +213,13 @@ function KruxPlayer() {
 					<span aria-hidden="true">{playing ? "■" : "▶"}</span>
 				</button>
 			</div>
-			{nowPlaying[stream.key] && (
-				<span
-					className="feed-krux__now-playing"
-					aria-live="polite"
-					aria-atomic="true"
-				>
-					{nowPlaying[stream.key]}
-				</span>
-			)}
+			<span
+				className="feed-krux__now-playing"
+				aria-live="polite"
+				aria-atomic="true"
+			>
+				{nowPlaying[stream.key] ?? ""}
+			</span>
 			{/* biome-ignore lint/a11y/useMediaCaption: live radio stream — no caption track available */}
 			<audio
 				ref={audioRef}

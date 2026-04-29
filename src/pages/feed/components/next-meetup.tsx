@@ -28,7 +28,8 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 const MEETUP_GROUP = "awsugclouddelnorte";
@@ -185,39 +186,33 @@ export default function NextMeetup() {
 
 	const header = <Header variant="h2">{t("feedPage.nextMeetupHeader")}</Header>;
 
+	let content: React.ReactNode;
+
 	if (state === "loading") {
-		return (
-			<Container header={header}>
-				<Box color="text-status-inactive" fontSize="body-s">
-					{t("feedPage.nextMeetupLoading")}
+		content = (
+			<Box color="text-status-inactive" fontSize="body-s">
+				{t("feedPage.nextMeetupLoading")}
+			</Box>
+		);
+	} else if (state === "fallback" || !event) {
+		content = (
+			<SpaceBetween size="s">
+				<Box color="text-body-secondary" fontSize="body-s">
+					{t("feedPage.nextMeetupFallback")}
 				</Box>
-			</Container>
+				<Button
+					variant="link"
+					href={MEETUP_GROUP_URL}
+					target="_blank"
+					iconAlign="right"
+					iconName="external"
+				>
+					{t("feedPage.nextMeetupCta")}
+				</Button>
+			</SpaceBetween>
 		);
-	}
-
-	if (state === "fallback" || !event) {
-		return (
-			<Container header={header}>
-				<SpaceBetween size="s">
-					<Box color="text-body-secondary" fontSize="body-s">
-						{t("feedPage.nextMeetupFallback")}
-					</Box>
-					<Button
-						variant="link"
-						href={MEETUP_GROUP_URL}
-						target="_blank"
-						iconAlign="right"
-						iconName="external"
-					>
-						{t("feedPage.nextMeetupCta")}
-					</Button>
-				</SpaceBetween>
-			</Container>
-		);
-	}
-
-	return (
-		<Container header={header}>
+	} else {
+		content = (
 			<SpaceBetween size="s">
 				{event.isPast && (
 					<Box color="text-status-inactive" fontSize="body-s">
@@ -248,6 +243,12 @@ export default function NextMeetup() {
 					</Box>
 				)}
 			</SpaceBetween>
-		</Container>
+		);
+	}
+
+	return (
+		<div className="feed-next-meetup">
+			<Container header={header}>{content}</Container>
+		</div>
 	);
 }
