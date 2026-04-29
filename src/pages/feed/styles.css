@@ -344,15 +344,8 @@
 	overflow: hidden;
 }
 
-#liora-canvas {
-	display: none;
-	width: 100%;
-	height: 100%;
-}
-
-#liora-canvas.liora-canvas--visible {
-	display: block;
-}
+/* canvas visibility is owned by navigation/liora.css (.liora-canvas opacity 0→1).
+   ID-selector display:none was blocking clientWidth, preventing BabylonJS from mounting. */
 
 #liora-shimmer {
 	position: absolute;
