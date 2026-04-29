@@ -11,15 +11,8 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import Table from "@cloudscape-design/components/table";
 import Tabs from "@cloudscape-design/components/tabs";
-import React, { useCallback, useEffect, useState } from "react";
-import { LocaleProvider } from "../../../contexts/locale-context";
+import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
-import {
-	applyLocale,
-	initializeLocale,
-	type Locale,
-	setStoredLocale,
-} from "../../../utils/locale";
 import AwsugLayout from "../_layout";
 import {
 	type AdminUser,
@@ -335,7 +328,7 @@ function AdminWithLayout() {
 
 	if (!isMember(auth)) {
 		return (
-			<AwsugLayout auth={auth}>
+			<AwsugLayout>
 				<Container>
 					<Alert type="info">
 						Admin access requires member approval. Your application is still
@@ -347,25 +340,12 @@ function AdminWithLayout() {
 	}
 
 	return (
-		<AwsugLayout auth={auth}>
+		<AwsugLayout>
 			<AdminPanel />
 		</AwsugLayout>
 	);
 }
 
 export default function App() {
-	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
-
-	function handleLocaleChange(next: Locale) {
-		setLocale(next);
-		applyLocale(next);
-		setStoredLocale(next);
-	}
-	void handleLocaleChange;
-
-	return (
-		<LocaleProvider locale={locale}>
-			<AdminWithLayout />
-		</LocaleProvider>
-	);
+	return <AdminWithLayout />;
 }

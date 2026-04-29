@@ -9,15 +9,8 @@ import Header from "@cloudscape-design/components/header";
 import KeyValuePairs from "@cloudscape-design/components/key-value-pairs";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
-import React, { useEffect, useState } from "react";
-import { LocaleProvider } from "../../contexts/locale-context";
+import { useEffect, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
-import {
-	applyLocale,
-	initializeLocale,
-	type Locale,
-	setStoredLocale,
-} from "../../utils/locale";
 import AwsugLayout from "./_layout";
 import {
 	type AuthState,
@@ -26,7 +19,7 @@ import {
 	requireAuth,
 } from "./_shared/auth";
 
-function PendingScreen({ auth }: { auth: AuthState }) {
+function PendingScreen(_: { auth: AuthState }) {
 	const { t } = useTranslation();
 	return (
 		<Container
@@ -115,25 +108,12 @@ function AwsugHomeWithLayout() {
 	}
 
 	return (
-		<AwsugLayout auth={auth}>
+		<AwsugLayout>
 			<AwsugHome />
 		</AwsugLayout>
 	);
 }
 
 export default function App() {
-	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
-
-	function handleLocaleChange(next: Locale) {
-		setLocale(next);
-		applyLocale(next);
-		setStoredLocale(next);
-	}
-	void handleLocaleChange;
-
-	return (
-		<LocaleProvider locale={locale}>
-			<AwsugHomeWithLayout />
-		</LocaleProvider>
-	);
+	return <AwsugHomeWithLayout />;
 }

@@ -1,34 +1,52 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import TopNavigation from "@cloudscape-design/components/top-navigation";
+import ContentLayout from "@cloudscape-design/components/content-layout";
 import type React from "react";
-import { type AuthState, signOut } from "../_shared/auth";
+import { useState } from "react";
+import Shell from "../../../layouts/shell";
+import { HelpPanelHome } from "../../../pages/create-meeting/components/help-panel-home";
+import {
+	applyLocale,
+	initializeLocale,
+	type Locale,
+	setStoredLocale,
+} from "../../../utils/locale";
+import {
+	applyTheme,
+	initializeTheme,
+	setStoredTheme,
+	type Theme,
+} from "../../../utils/theme";
+import AwsugNavigation from "./navigation";
 
-interface AwsugLayoutProps {
+export default function AwsugLayout({
+	children,
+}: {
 	children: React.ReactNode;
-	auth: AuthState;
-}
+}) {
+	const [theme, setTheme] = useState<Theme>(() => initializeTheme());
+	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
-export default function AwsugLayout({ children, auth }: AwsugLayoutProps) {
 	return (
-		<>
-			<TopNavigation
-				identity={{ href: "/index.html", title: "Cloud Del Norte — Members" }}
-				utilities={[
-					{ type: "button", text: "Meetings", href: "/meetings/index.html" },
-					{ type: "button", text: "Admin", href: "/admin/index.html" },
-					{
-						type: "menu-dropdown",
-						text: auth.email,
-						items: [{ id: "signout", text: "Sign out" }],
-						onItemClick: ({ detail }) => {
-							if (detail.id === "signout") signOut();
-						},
-					},
-				]}
-			/>
-			<div style={{ padding: "24px" }}>{children}</div>
-		</>
+		<Shell
+			theme={theme}
+			onThemeChange={(t) => {
+				setTheme(t);
+				applyTheme(t);
+				setStoredTheme(t);
+			}}
+			locale={locale}
+			onLocaleChange={(l) => {
+				setLocale(l);
+				applyLocale(l);
+				setStoredLocale(l);
+			}}
+			navigation={<AwsugNavigation />}
+			tools={<HelpPanelHome />}
+			identityHref="https://clouddelnorte.org/feed/index.html"
+		>
+			<ContentLayout>{children}</ContentLayout>
+		</Shell>
 	);
 }

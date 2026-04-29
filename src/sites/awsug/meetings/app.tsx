@@ -9,13 +9,6 @@ import Header from "@cloudscape-design/components/header";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import React, { useEffect, useState } from "react";
-import { LocaleProvider } from "../../../contexts/locale-context";
-import {
-	applyLocale,
-	initializeLocale,
-	type Locale,
-	setStoredLocale,
-} from "../../../utils/locale";
 import AwsugLayout from "../_layout";
 import { fetchJitsiToken, type JitsiTokenResponse } from "../_shared/api";
 import { type AuthState, isMember, requireAuth } from "../_shared/auth";
@@ -122,25 +115,12 @@ function MeetingsWithLayout() {
 	}
 
 	return (
-		<AwsugLayout auth={auth}>
+		<AwsugLayout>
 			<MeetingsPage auth={auth} />
 		</AwsugLayout>
 	);
 }
 
 export default function App() {
-	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
-
-	function handleLocaleChange(next: Locale) {
-		setLocale(next);
-		applyLocale(next);
-		setStoredLocale(next);
-	}
-	void handleLocaleChange;
-
-	return (
-		<LocaleProvider locale={locale}>
-			<MeetingsWithLayout />
-		</LocaleProvider>
-	);
+	return <MeetingsWithLayout />;
 }

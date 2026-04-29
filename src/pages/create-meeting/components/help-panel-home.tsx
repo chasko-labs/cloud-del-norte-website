@@ -1,9 +1,11 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import HelpPanel from "@cloudscape-design/components/help-panel";
-import Icon from "@cloudscape-design/components/icon";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import * as React from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
+import "./help-panel.css";
 
 export const HelpPanelHome = () => {
 	const { t } = useTranslation();
@@ -11,13 +13,19 @@ export const HelpPanelHome = () => {
 	return (
 		<HelpPanel header={<h2>{t("helpPanel.userGroupTitle")}</h2>}>
 			<SpaceBetween size="l">
+				{/* Community description */}
 				<div>
-					<p>{t("helpPanel.communityDescription")}</p>
+					<p className="hp-body">{t("helpPanel.communityDescription")}</p>
 				</div>
 
+				<hr className="hp-divider" />
+
+				{/* Organizers wanted */}
 				<div>
-					<h3>{t("helpPanel.organizersWantedHeader")}</h3>
-					<ul>
+					<h3 className="hp-section-heading">
+						{t("helpPanel.organizersWantedHeader")}
+					</h3>
+					<ul className="hp-role-list">
 						<li>
 							<strong>{t("helpPanel.aslLeadRole")}</strong> —{" "}
 							{t("helpPanel.aslLeadDesc")}
@@ -29,130 +37,103 @@ export const HelpPanelHome = () => {
 						<li>{t("helpPanel.studentsStepUp")}</li>
 						<li>{t("helpPanel.womenWelcome")}</li>
 					</ul>
-					<p>
+					<p className="hp-body" style={{ marginTop: "12px" }}>
 						<Link href="https://www.meetup.com/awsugclouddelnorte/" external>
-							{t("helpPanel.reachOutOnMeetup")} <Icon name="external" />
+							{t("helpPanel.reachOutOnMeetup")}
 						</Link>
 					</p>
 				</div>
 
-				<div>
-					<h4>{t("helpPanel.globalCommunityHeader")}</h4>
-					<Link
-						href="https://www.meetup.com/pro/global-aws-user-group-community/"
-						external
-					>
-						{t("helpPanel.findLocalGroup")} <Icon name="external" />
-					</Link>
-				</div>
+				<hr className="hp-divider" />
 
+				{/* Community leaders */}
 				<div>
-					<h3>{t("helpPanel.rsvpHeader")}</h3>
-					<ul>
-						<li>
-							<a
-								target="_blank"
-								rel="noopener noreferrer"
-								href="https://www.meetup.com/awsugclouddelnorte/"
-							>
-								{t("helpPanel.cloudDelNorteMeetups")} <Icon name="external" />
-							</a>
-						</li>
-						<li>
-							<a href="/home/index.html">{t("helpPanel.aboutPage")}</a>
-						</li>
-					</ul>
-				</div>
-
-				<div>
-					<h3>{t("helpPanel.communityLeaders")}</h3>
-
-					<div className="help-panel-leader">
-						<strong>Andres Moreno</strong>
-						<span className="help-panel-leader__role">
-							{t("helpPanel.andresMorenoRole")}
-						</span>
-						<p>
-							{t("helpPanel.andresMorenoBioPrefix")}{" "}
-							<Link href="https://andmoredev.medium.com/" external>
-								andmoredev.medium.com
-							</Link>{" "}
-							{t("helpPanel.andresMorenoBioSuffix")}
-						</p>
-						<ul>
-							<li>
+					<h3 className="hp-section-heading">
+						{t("helpPanel.communityLeaders")}
+					</h3>
+					<SpaceBetween size="s">
+						<div className="hp-leader">
+							<p className="hp-leader-name">Andres Moreno</p>
+							<p className="hp-leader-role">
+								{t("helpPanel.andresMorenoRole")}
+							</p>
+							<p className="hp-leader-bio">
+								{t("helpPanel.andresMorenoBioPrefix")}{" "}
+								<Link href="https://andmoredev.medium.com/" external>
+									andmoredev.medium.com
+								</Link>{" "}
+								{t("helpPanel.andresMorenoBioSuffix")}
+							</p>
+							<div className="hp-social">
 								<Link href="https://andmore.dev" external>
-									andmore.dev <Icon name="external" />
+									<span className="hp-social-pill">andmore.dev</span>
 								</Link>
-							</li>
-							<li>
 								<Link href="https://x.com/andmoredev" external>
-									X @andmoredev <Icon name="external" />
+									<span className="hp-social-pill">X @andmoredev</span>
 								</Link>
-							</li>
-							<li>
 								<Link href="https://github.com/andmoredev" external>
-									GitHub @andmoredev <Icon name="external" />
+									<span className="hp-social-pill">GitHub</span>
 								</Link>
-							</li>
-						</ul>
-					</div>
+							</div>
+						</div>
 
-					<div className="help-panel-leader">
-						<strong>Bryan Chasko</strong>
-						<span className="help-panel-leader__role">
-							{t("helpPanel.bryanChaskoRole")}
-						</span>
-						<ul>
-							<li>
+						<div className="hp-leader">
+							<p className="hp-leader-name">Bryan Chasko</p>
+							<p className="hp-leader-role">{t("helpPanel.bryanChaskoRole")}</p>
+							<div className="hp-social">
 								<Link
 									href="https://aws.amazon.com/developer/community/heroes/bryan-chasko/"
 									external
 								>
-									{t("helpPanel.awsHeroProfile")} <Icon name="external" />
+									<span className="hp-social-pill">AWS Hero</span>
 								</Link>
-							</li>
-							<li>
 								<Link href="https://bryanchasko.com" external>
-									bryanchasko.com <Icon name="external" />
+									<span className="hp-social-pill">bryanchasko.com</span>
 								</Link>
-							</li>
-							<li>
 								<Link href="https://github.com/BryanChasko" external>
-									GitHub @BryanChasko <Icon name="external" />
+									<span className="hp-social-pill">GitHub</span>
 								</Link>
-							</li>
-						</ul>
-					</div>
+							</div>
+						</div>
 
-					<div className="help-panel-leader">
-						<strong>Jacob Wright</strong>
-						<span className="help-panel-leader__role">
-							{t("helpPanel.jacobWrightRole")}
-						</span>
-						<p>{t("helpPanel.jacobWrightBio")}</p>
-						<ul>
-							<li>
+						<div className="hp-leader">
+							<p className="hp-leader-name">Jacob Wright</p>
+							<p className="hp-leader-role">{t("helpPanel.jacobWrightRole")}</p>
+							<p className="hp-leader-bio">{t("helpPanel.jacobWrightBio")}</p>
+							<div className="hp-social">
 								<Link href="https://www.linkedin.com/in/jrwright121" external>
-									LinkedIn <Icon name="external" />
+									<span className="hp-social-pill">LinkedIn</span>
 								</Link>
-							</li>
-						</ul>
-					</div>
+							</div>
+						</div>
 
-					<div className="help-panel-leader">
-						<strong>Wayne Savage</strong>
-						<span className="help-panel-leader__role">
-							{t("helpPanel.wayneSavageRole")}
-						</span>
-						<p>
-							{t("helpPanel.wayneSavageBioPrefix")}{" "}
-							<Link href="https://arrowheadcenter.nmsu.edu/" external>
-								{t("helpPanel.arrowheadPark")}
-							</Link>{" "}
-							{t("helpPanel.wayneSavageBioSuffix")}
-						</p>
-					</div>
+						<div className="hp-leader">
+							<p className="hp-leader-name">Wayne Savage</p>
+							<p className="hp-leader-role">{t("helpPanel.wayneSavageRole")}</p>
+							<p className="hp-leader-bio">
+								{t("helpPanel.wayneSavageBioPrefix")}{" "}
+								<Link href="https://arrowheadcenter.nmsu.edu/" external>
+									{t("helpPanel.arrowheadPark")}
+								</Link>{" "}
+								{t("helpPanel.wayneSavageBioSuffix")}
+							</p>
+						</div>
+					</SpaceBetween>
+				</div>
+
+				<hr className="hp-divider" />
+
+				{/* Global community */}
+				<div>
+					<h4 className="hp-sub-heading">
+						{t("helpPanel.globalCommunityHeader")}
+					</h4>
+					<Link
+						href="https://www.meetup.com/pro/global-aws-user-group-community/"
+						external
+					>
+						{t("helpPanel.findLocalGroup")}
+					</Link>
 				</div>
 			</SpaceBetween>
 		</HelpPanel>

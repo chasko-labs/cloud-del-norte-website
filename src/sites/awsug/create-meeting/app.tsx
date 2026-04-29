@@ -14,13 +14,6 @@ import Spinner from "@cloudscape-design/components/spinner";
 import Textarea from "@cloudscape-design/components/textarea";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { LocaleProvider } from "../../../contexts/locale-context";
-import {
-	applyLocale,
-	initializeLocale,
-	type Locale,
-	setStoredLocale,
-} from "../../../utils/locale";
 import AwsugLayout from "../_layout";
 import { type AuthState, isMember, requireAuth } from "../_shared/auth";
 
@@ -158,25 +151,12 @@ function CreateMeetingWithLayout() {
 	}
 
 	return (
-		<AwsugLayout auth={auth}>
+		<AwsugLayout>
 			<CreateMeetingForm auth={auth} />
 		</AwsugLayout>
 	);
 }
 
 export default function App() {
-	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
-
-	function handleLocaleChange(next: Locale) {
-		setLocale(next);
-		applyLocale(next);
-		setStoredLocale(next);
-	}
-	void handleLocaleChange;
-
-	return (
-		<LocaleProvider locale={locale}>
-			<CreateMeetingWithLayout />
-		</LocaleProvider>
-	);
+	return <CreateMeetingWithLayout />;
 }

@@ -95,6 +95,10 @@
 		43,
 		0.18
 	); /* warm amber divider */
+	/* surfaces that default to pure #ffffff — warm-tinted to prevent jarring white pops */
+	--color-background-card-p5vrq0: #faf7f0; /* Cloudscape Card component → match container content */
+	--color-background-popover-e20fy8: #fefcf8; /* PieChart detail popover, tooltips → near-white warm */
+	--color-background-dropdown-item-default-qmc033: #fdfcf8; /* dropdown/select menu items */
 
 	/* ---------- Warm shadow system — light mode ---------- */
 	--cdn-shadow-container-light:
