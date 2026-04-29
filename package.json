@@ -31,6 +31,7 @@
 		"@cloudscape-design/components-themeable": "^3.0.1231",
 		"@cloudscape-design/design-tokens": "^3.0.73",
 		"@cloudscape-design/global-styles": "^1.0.51",
+		"fast-xml-parser": "5.7.2",
 		"react": "^19.2.4",
 		"react-dom": "^19.2.4"
 	},
