@@ -4,9 +4,172 @@
 import SideNavigation, {
 	type SideNavigationProps,
 } from "@cloudscape-design/components/side-navigation";
+import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
-import { LioraPanel } from "../liora-panel";
+import "./liora.css";
+
+function detectDeviceInfo(): string {
+	if (typeof navigator === "undefined") return "";
+	const ua = navigator.userAgent;
+	let os = "linux";
+	if (/android/i.test(ua)) os = "android";
+	else if (/iphone/i.test(ua)) os = "ios";
+	else if (
+		/ipad/i.test(ua) ||
+		(/macintosh/i.test(ua) && "ontouchend" in document)
+	)
+		os = "ipados";
+	else if (/windows/i.test(ua)) os = "windows";
+	else if (/mac os x/i.test(ua)) os = "macos";
+	const w = window.screen.width;
+	const h = window.screen.height;
+	return `os:${os}  ${w}×${h}`;
+}
+
+function scheduleIdle(fn: () => void): void {
+	if ("requestIdleCallback" in window) {
+		requestIdleCallback(fn, { timeout: 4000 });
+	} else {
+		setTimeout(fn, 200);
+	}
+}
+
+function LioraFrame() {
+	const deviceInfo = useMemo(() => detectDeviceInfo(), []);
+	const [stickyZoomed, setStickyZoomed] = useState(false);
+	const [stickyKey, setStickyKey] = useState(0);
+
+	useEffect(() => {
+		let cancelled = false;
+		let observer: ResizeObserver | null = null;
+
+		async function mount() {
+			if (cancelled) return;
+			// data-liora-mounted guard — React StrictMode reuses the same DOM element
+			// across simulated unmount/remount; this persists where a module-level flag
+			// would be left true by a cancelled first run and block the second.
+			const canvasEl = document.getElementById("liora-canvas");
+			if (canvasEl?.dataset.lioraMounted === "1") return;
+			canvasEl?.setAttribute("data-liora-mounted", "1");
+			try {
+				const origin = window.location.origin;
+				const mod = (await (
+					Function("u", "return import(u)") as (
+						u: string,
+					) => Promise<{ mountLioraPanel: (base: string) => Promise<void> }>
+				)(`${origin}/liora-embed/liora-embed.js`)) as {
+					mountLioraPanel: (base: string) => Promise<void>;
+				};
+				if (cancelled) return;
+				await mod.mountLioraPanel(`${origin}/liora`);
+			} catch {
+				canvasEl?.removeAttribute("data-liora-mounted");
+				// embed unavailable — canvas stays as shimmer
+			}
+		}
+
+		function tryMount() {
+			if (cancelled) return;
+			const canvas = document.getElementById(
+				"liora-canvas",
+			) as HTMLCanvasElement | null;
+			if (canvas && canvas.clientWidth === 0) {
+				observer = new ResizeObserver(() => {
+					if (cancelled) {
+						observer?.disconnect();
+						return;
+					}
+					if ((canvas as HTMLCanvasElement).clientWidth > 0) {
+						observer?.disconnect();
+						observer = null;
+						void mount();
+					}
+				});
+				observer.observe(canvas);
+				return;
+			}
+			void mount();
+		}
+
+		if (document.readyState === "complete") {
+			scheduleIdle(tryMount);
+		} else {
+			window.addEventListener("load", () => scheduleIdle(tryMount), {
+				once: true,
+			});
+		}
+
+		return () => {
+			cancelled = true;
+			observer?.disconnect();
+		};
+	}, []);
+
+	return (
+		<div className="liora-frame">
+			<div className="liora-bezel">
+				<div className="liora-panel-wrap">
+					<div
+						id="liora-shimmer"
+						className="liora-placeholder"
+						aria-hidden="true"
+					>
+						<span className="liora-placeholder-label">
+							modem connecting
+							<span className="liora-block-stream">
+								<span className="liora-block">▓</span>
+								<span className="liora-block">▓</span>
+								<span className="liora-block">▓</span>
+							</span>
+						</span>
+					</div>
+					<canvas
+						id="liora-canvas"
+						className="liora-canvas"
+						aria-hidden="true"
+						tabIndex={-1}
+					/>
+				</div>
+				<div
+					id="liora-status-bar"
+					className="liora-status-bar liora-status--green"
+					aria-hidden="true"
+				>
+					<span id="liora-device-info">{deviceInfo}</span>
+					<span id="liora-sys-status"> SYS:▓▓▓</span>
+				</div>
+			</div>
+			<button
+				key={stickyKey}
+				type="button"
+				className={`liora-stickynote${stickyZoomed ? " liora-stickynote--zoomed" : ""}`}
+				onClick={() => {
+					const bezel = document.querySelector(".liora-bezel");
+					if (
+						bezel instanceof HTMLElement &&
+						(bezel.classList.contains("screen-tap-1") ||
+							bezel.classList.contains("screen-tap-2"))
+					)
+						return;
+					setStickyZoomed((v) => !v);
+					setStickyKey((k) => k + 1);
+				}}
+				aria-label={
+					stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
+				}
+			>
+				<span className="liora-stickynote-line liora-stickynote-line-1">
+					non load
+				</span>
+				<span className="liora-stickynote-line liora-stickynote-line-2">
+					bearing
+				</span>
+				<span className="liora-stickynote-sig">- ^.^</span>
+			</button>
+		</div>
+	);
+}
 
 export default function Navigation() {
 	const { t } = useTranslation();
@@ -135,7 +298,7 @@ export default function Navigation() {
 					}
 				}}
 			/>
-			<LioraPanel />
+			<LioraFrame />
 		</>
 	);
 }
