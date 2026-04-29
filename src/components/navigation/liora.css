@@ -199,9 +199,14 @@
 		filter 0.55s;
 	animation: 0.6s 1.4s forwards liora-stickynote-fadein;
 	display: flex;
-	position: absolute;
-	top: 100%;
-	left: 18px;
+	/* note now flows in normal layout below the bezel — was position:absolute
+	   with top:100% which pushed it below the parent frame and offscreen on
+	   mobile/short-viewport loads. relative + align-self keeps left-anchor
+	   while letting liora-frame grow to contain the note */
+	position: relative;
+	align-self: flex-start;
+	margin-left: 18px;
+	margin-top: 6px;
 	transform: rotate(-4.5deg);
 	box-shadow:
 		1px 2px 4px #00000047,
@@ -612,7 +617,10 @@
 }
 
 .liora-status-bar {
-	letter-spacing: 0.08em;
+	/* tightened from letter-spacing:0.08em + gap:14px to fit longer device-info
+	   strings ("OS:MACOS 1920×1080  SYS:▓▓▓" was clipping ▓▓▓ at right edge of
+	   254px panel). preserves VT323 monospace + 14px size for readability */
+	letter-spacing: 0.04em;
 	text-transform: uppercase;
 	pointer-events: none;
 	-webkit-user-select: none;
@@ -620,13 +628,13 @@
 	z-index: 22;
 	justify-content: center;
 	align-items: center;
-	gap: 14px;
+	gap: 8px;
 	font-family:
 		VT323,
 		Courier New,
 		Courier,
 		monospace;
-	font-size: 14px;
+	font-size: 13px;
 	line-height: 1.5;
 	transition:
 		color 0.5s,

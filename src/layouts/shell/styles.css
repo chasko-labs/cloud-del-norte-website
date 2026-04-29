@@ -25,11 +25,19 @@
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"],
 :root:not(.awsui-dark-mode) [class*="awsui_header-background"] {
+	/* radial-only accent (no diagonal line that 135deg gradient produced) +
+	   bottom feather to bleed into page bg without seam against Container tops */
 	background:
 		linear-gradient(
-			135deg,
-			rgba(139, 90, 43, 0.08) 0%,
-			rgba(139, 90, 43, 0) 60%
+			180deg,
+			rgba(139, 90, 43, 0) 70%,
+			rgba(237, 229, 212, 0.4) 90%,
+			transparent 100%
+		),
+		radial-gradient(
+			80% 60% at 20% 30%,
+			rgba(139, 90, 43, 0.05) 0%,
+			rgba(139, 90, 43, 0) 65%
 		),
 		#ede5d4 !important;
 }
@@ -38,11 +46,20 @@
 .awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"],
 .awsui-dark-mode [class*="awsui_content-layout"] > [class*="awsui_background"],
 .awsui-dark-mode [class*="awsui_header-background"] {
-	background: linear-gradient(
-		135deg,
-		rgba(48, 0, 106, 0.55) 0%,
-		rgba(0, 0, 42, 0) 100%
-	) !important;
+	/* dark mode mirror — radial violet glow + bottom feather, no diagonal line */
+	background:
+		linear-gradient(
+			180deg,
+			rgba(0, 0, 0, 0) 70%,
+			rgba(10, 12, 20, 0.5) 90%,
+			rgba(10, 12, 20, 0.95) 100%
+		),
+		radial-gradient(
+			80% 60% at 20% 30%,
+			rgba(144, 96, 240, 0.18) 0%,
+			rgba(48, 0, 106, 0.08) 40%,
+			rgba(48, 0, 106, 0) 70%
+		) !important;
 }
 
 /* ENHANCEMENT 5 — Top nav shimmer via ::after pseudo-element
@@ -224,6 +241,31 @@ main[class*="awsui_layout"] {
 	.awsui-dark-mode main[class*="awsui_layout"] {
 		animation: cdn-ambient-drift 28s ease-in-out infinite;
 	}
+}
+
+/* ── cdn-card glassmorphism — shared utility class ──────────────────
+   Was scoped to feed/styles.css but home/dashboard pages don't import
+   that file, so cdn-card-wrapped Containers on /home rendered with full
+   white Cloudscape chrome (visible jagged edges against cream page bg).
+   Moved here so every page picks it up via Shell. */
+.cdn-card [class*="awsui_root"],
+.cdn-card [class*="awsui_content_"] {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+/* header: suppress bg + side/top borders; keep a subtle bottom separator */
+.cdn-card [class*="awsui_header_"] {
+	background: transparent !important;
+	box-shadow: none !important;
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: 1px solid rgba(139, 90, 43, 0.14) !important;
+	padding-bottom: var(--cdn-space-sm, 8px) !important;
+}
+.awsui-dark-mode .cdn-card [class*="awsui_header_"] {
+	border-bottom-color: rgba(144, 96, 240, 0.18) !important;
 }
 
 /* Mouseover tearing fix on cdn-card containers: Cloudscape Container fires
