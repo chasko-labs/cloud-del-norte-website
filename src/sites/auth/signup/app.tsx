@@ -10,7 +10,6 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Textarea from "@cloudscape-design/components/textarea";
 import Wizard from "@cloudscape-design/components/wizard";
 import React, { useEffect, useRef, useState } from "react";
-import { LocaleProvider } from "../../../contexts/locale-context";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	AuthError,
@@ -21,12 +20,6 @@ import {
 	signInWithPassword,
 	signUp,
 } from "../../../lib/cognito";
-import {
-	applyLocale,
-	initializeLocale,
-	type Locale,
-	setStoredLocale,
-} from "../../../utils/locale";
 import AuthLayout from "../_layout";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
@@ -393,20 +386,9 @@ function SignupWizard() {
 }
 
 export default function App() {
-	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
-
-	function handleLocaleChange(next: Locale) {
-		setLocale(next);
-		applyLocale(next);
-		setStoredLocale(next);
-	}
-	void handleLocaleChange;
-
 	return (
-		<LocaleProvider locale={locale}>
-			<AuthLayout maxWidth="640px">
-				<SignupWizard />
-			</AuthLayout>
-		</LocaleProvider>
+		<AuthLayout>
+			<SignupWizard />
+		</AuthLayout>
 	);
 }

@@ -40,6 +40,8 @@ export interface ShellProps {
 	locale?: Locale;
 	onLocaleChange?: (locale: Locale) => void;
 	pageTitle?: string;
+	/** Override the identity link href — use absolute URL when Shell renders on a subdomain */
+	identityHref?: string;
 }
 
 function ShellContent({
@@ -56,6 +58,7 @@ function ShellContent({
 	locale,
 	onLocaleChange,
 	pageTitle,
+	identityHref = "/feed/index.html",
 }: ShellProps) {
 	const { t } = useTranslation();
 	const auth = useAuth();
@@ -138,7 +141,7 @@ function ShellContent({
 					identity={{
 						/*             logo: { src: '/logo.svg', alt: 'Cloud Del Norte Logo' }, */
 						title: t("shell.siteTitle"),
-						href: "/feed/index.html",
+						href: identityHref,
 					}}
 					utilities={[
 						{

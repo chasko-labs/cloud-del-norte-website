@@ -12,19 +12,12 @@ import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import type React from "react";
 import { useState } from "react";
-import { LocaleProvider } from "../../../contexts/locale-context";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	AuthError,
 	assertNonEmpty,
 	signInWithPassword,
 } from "../../../lib/cognito";
-import {
-	applyLocale,
-	initializeLocale,
-	type Locale,
-	setStoredLocale,
-} from "../../../utils/locale";
 import AuthLayout from "../_layout";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
@@ -153,20 +146,9 @@ function LoginForm() {
 }
 
 export default function App() {
-	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
-
-	function handleLocaleChange(next: Locale) {
-		setLocale(next);
-		applyLocale(next);
-		setStoredLocale(next);
-	}
-	void handleLocaleChange;
-
 	return (
-		<LocaleProvider locale={locale}>
-			<AuthLayout>
-				<LoginForm />
-			</AuthLayout>
-		</LocaleProvider>
+		<AuthLayout>
+			<LoginForm />
+		</AuthLayout>
 	);
 }

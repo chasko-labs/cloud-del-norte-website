@@ -1,40 +1,53 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import Box from "@cloudscape-design/components/box";
-import SpaceBetween from "@cloudscape-design/components/space-between";
+import ContentLayout from "@cloudscape-design/components/content-layout";
 import type React from "react";
-import { useTranslation } from "../../../hooks/useTranslation";
-
-interface AuthLayoutProps {
-	children: React.ReactNode;
-	maxWidth?: string;
-}
+import { useState } from "react";
+import Shell from "../../../layouts/shell";
+import { HelpPanelHome } from "../../../pages/create-meeting/components/help-panel-home";
+import {
+	applyLocale,
+	initializeLocale,
+	type Locale,
+	setStoredLocale,
+} from "../../../utils/locale";
+import {
+	applyTheme,
+	initializeTheme,
+	setStoredTheme,
+	type Theme,
+} from "../../../utils/theme";
+import AuthNavigation from "./navigation";
 
 export default function AuthLayout({
 	children,
-	maxWidth = "480px",
-}: AuthLayoutProps) {
-	const { t } = useTranslation();
+}: {
+	children: React.ReactNode;
+}) {
+	const [theme, setTheme] = useState<Theme>(() => initializeTheme());
+	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
+
 	return (
-		<div
-			style={{
-				minHeight: "100vh",
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				justifyContent: "center",
-				padding: "24px 16px",
+		<Shell
+			theme={theme}
+			onThemeChange={(t) => {
+				setTheme(t);
+				applyTheme(t);
+				setStoredTheme(t);
 			}}
+			locale={locale}
+			onLocaleChange={(l) => {
+				setLocale(l);
+				applyLocale(l);
+				setStoredLocale(l);
+			}}
+			navigation={<AuthNavigation />}
+			tools={<HelpPanelHome />}
+			contentType="form"
+			identityHref="https://clouddelnorte.org/feed/index.html"
 		>
-			<SpaceBetween size="l">
-				<Box textAlign="center">
-					<Box variant="h1" fontSize="heading-xl">
-						{t("auth.siteTitle")}
-					</Box>
-				</Box>
-				<div style={{ width: "100%", maxWidth }}>{children}</div>
-			</SpaceBetween>
-		</div>
+			<ContentLayout>{children}</ContentLayout>
+		</Shell>
 	);
 }

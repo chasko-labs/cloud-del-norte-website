@@ -12,7 +12,6 @@ import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
-import { LocaleProvider } from "../../../contexts/locale-context";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	AuthError,
@@ -20,12 +19,6 @@ import {
 	confirmSignUp,
 	resendConfirmationCode,
 } from "../../../lib/cognito";
-import {
-	applyLocale,
-	initializeLocale,
-	type Locale,
-	setStoredLocale,
-} from "../../../utils/locale";
 import AuthLayout from "../_layout";
 
 const RESEND_COOLDOWN_SECS = 30;
@@ -175,20 +168,9 @@ function VerifyForm() {
 }
 
 export default function App() {
-	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
-
-	function handleLocaleChange(next: Locale) {
-		setLocale(next);
-		applyLocale(next);
-		setStoredLocale(next);
-	}
-	void handleLocaleChange;
-
 	return (
-		<LocaleProvider locale={locale}>
-			<AuthLayout>
-				<VerifyForm />
-			</AuthLayout>
-		</LocaleProvider>
+		<AuthLayout>
+			<VerifyForm />
+		</AuthLayout>
 	);
 }
