@@ -6,6 +6,8 @@ import SideNavigation, {
 } from "@cloudscape-design/components/side-navigation";
 import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
+import { LioraPanel } from "../liora-panel";
+
 export default function Navigation() {
 	const { t } = useTranslation();
 	const { isModerator } = useAuth();
@@ -119,18 +121,21 @@ export default function Navigation() {
 	];
 
 	return (
-		<SideNavigation
-			activeHref={location.pathname}
-			header={{ href: "/feed/index.html", text: t("shell.siteTitle") }}
-			items={items}
-			onFollow={(event) => {
-				if (event.detail.type === "section-header") return;
-				const href = event.detail.href;
-				if (!event.detail.external && href && href !== "#") {
-					event.preventDefault();
-					window.location.href = href;
-				}
-			}}
-		/>
+		<>
+			<SideNavigation
+				activeHref={location.pathname}
+				header={{ href: "/feed/index.html", text: t("shell.siteTitle") }}
+				items={items}
+				onFollow={(event) => {
+					if (event.detail.type === "section-header") return;
+					const href = event.detail.href;
+					if (!event.detail.external && href && href !== "#") {
+						event.preventDefault();
+						window.location.href = href;
+					}
+				}}
+			/>
+			<LioraPanel />
+		</>
 	);
 }
