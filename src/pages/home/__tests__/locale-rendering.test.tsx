@@ -101,9 +101,9 @@ describe("Home page locale rendering", () => {
 		mockTranslation.locale = "mx";
 		mockTranslation.t = (key: string) => {
 			const spanishMap: Record<string, string> = {
-				"dashboardPage.breadcrumb": "Tablero",
-				"dashboardPage.header": "Tablero",
-				"dashboardPage.infoLink": "Info",
+				"aboutPage.breadcrumb": "Acerca de",
+				"aboutPage.header": "Acerca de",
+				"aboutPage.infoLink": "Info",
 			};
 			return spanishMap[key] ?? key;
 		};
@@ -111,16 +111,16 @@ describe("Home page locale rendering", () => {
 		render(<App />);
 
 		// Verify Spanish header appears
-		expect(screen.getByText("Tablero")).toBeTruthy();
+		expect(screen.getByText("Acerca de")).toBeTruthy();
 	});
 
 	it("renders English strings when locale is us", () => {
 		mockTranslation.locale = "us";
 		mockTranslation.t = (key: string) => {
 			const englishMap: Record<string, string> = {
-				"dashboardPage.breadcrumb": "Dashboard",
-				"dashboardPage.header": "Dashboard",
-				"dashboardPage.infoLink": "Info",
+				"aboutPage.breadcrumb": "About",
+				"aboutPage.header": "About",
+				"aboutPage.infoLink": "Info",
 			};
 			return englishMap[key] ?? key;
 		};
@@ -128,6 +128,6 @@ describe("Home page locale rendering", () => {
 		render(<App />);
 
 		// Verify English header appears
-		expect(screen.getByText("Dashboard")).toBeTruthy();
+		expect(screen.getByText("About")).toBeTruthy();
 	});
 });

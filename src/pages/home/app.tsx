@@ -51,9 +51,9 @@ function AppContent({
 			header={
 				<Header
 					variant="h1"
-					info={<Link variant="info">{t("dashboardPage.infoLink")}</Link>}
+					info={<Link variant="info">{t("aboutPage.infoLink")}</Link>}
 				>
-					{t("dashboardPage.header")}
+					{t("aboutPage.header")}
 				</Header>
 			}
 		>
@@ -76,7 +76,7 @@ function BreadcrumbsContent() {
 	const { t } = useTranslation();
 	return (
 		<Breadcrumbs
-			active={{ text: t("dashboardPage.breadcrumb"), href: "/home/index.html" }}
+			active={{ text: t("aboutPage.breadcrumb"), href: "/home/index.html" }}
 		/>
 	);
 }

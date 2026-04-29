@@ -119,9 +119,9 @@ vi.mock("../../../hooks/useTranslation", () => ({
 		locale: "us" as const,
 		t: (key: string) => {
 			const translations: Record<string, string> = {
-				"dashboardPage.breadcrumb": "Dashboard",
-				"dashboardPage.header": "Dashboard",
-				"dashboardPage.infoLink": "Info",
+				"aboutPage.breadcrumb": "About",
+				"aboutPage.header": "About",
+				"aboutPage.infoLink": "Info",
 				"dashboardPage.productionOverview.header": "Production Overview",
 				"dashboardPage.pastTopics.header": "Past Topics",
 				"dashboardPage.groupNotesModal": "Group Notes",

@@ -1235,13 +1235,15 @@
 		0.88s step-end infinite crt-alert-hue;
 }
 
+/* === credits typography v2 — restore retro/babylon-credits personality === */
 .liora-credits {
 	z-index: 100;
 	isolation: isolate;
 	pointer-events: none;
-	/* depth feel preserved at 1200px (was 720px) — softer recession reduces
-	   the matrix3d skew that was stretching individual lines mid-crawl */
-	perspective: 1200px;
+	/* 900px: between original 720 (too much skew) and 1200 (too flat) —
+	   enough recession to feel like deep-screen Babylon credits without
+	   triggering per-line matrix3d stretch artifact at small font sizes */
+	perspective: 900px;
 	transform-style: preserve-3d;
 	flex-direction: column;
 	justify-content: flex-start;
@@ -1252,6 +1254,31 @@
 	position: absolute;
 	inset: 10px 10px 60px;
 	overflow: hidden;
+}
+
+/* CRT scanline overlay specific to credits — sits above the credits content
+   at z-index 101 so it renders over names/title but below any popouts.
+   Uses pointer-events:none to preserve all click targets underneath. */
+.liora-credits::after {
+	content: "";
+	pointer-events: none;
+	z-index: 101;
+	opacity: 0.09;
+	background: repeating-linear-gradient(
+		0deg,
+		#000 0px,
+		#000 1px,
+		transparent 1px,
+		transparent 3px
+	);
+	position: absolute;
+	inset: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.liora-credits::after {
+		display: none;
+	}
 }
 
 .liora-credits-scroll-window {
@@ -1267,26 +1294,30 @@
 	text-transform: uppercase;
 	color: #fff;
 	opacity: 0;
-	-webkit-text-stroke: 1px #d296ffb3;
+	/* 1.5px stroke: crisp neon tube edge visible against glow bloom */
+	-webkit-text-stroke: 1.5px #d296ffcc;
 	text-shadow:
 		0 0 2px #fff,
 		0 0 8px #fff,
 		0 0 18px #d090ff,
 		0 0 36px #b464fff2,
 		0 0 70px #a050ffbf,
-		0 0 120px #8c3cff73;
+		0 0 120px #8c3cff73,
+		0 0 180px #6818ff40;
 	margin-bottom: 2px;
 	font-family:
 		VT323,
 		Courier New,
 		Courier,
 		monospace;
-	/* sidebar-tuned: 14cqi at 254px = 35.6px (was 50.8px / 20cqi — too dominant) */
-	font-size: clamp(28px, 14cqi, 44px);
+	/* restored toward original scale — 18cqi at 254px = 45.7px, close to
+	   original 50.8px. clamped at 56px for wider panels. 34px floor keeps
+	   it legible at minimum panel widths */
+	font-size: clamp(34px, 18cqi, 56px);
 	line-height: 1;
 	animation:
 		2.5s forwards neon-warmup,
-		3s ease-in-out 2.5s infinite title-throb;
+		5.5s ease-in-out 2.5s infinite title-throb;
 }
 
 .liora-credits-subtitle {
@@ -1480,11 +1511,15 @@
 	text-transform: uppercase;
 	color: #fff;
 	opacity: 0;
+	/* VHS settle: white core + purple mid + deep outer — mimics CRT tube warm-on */
 	text-shadow:
-		0 0 3px #fff,
+		0 0 1px #fff,
+		0 0 4px #fffde0cc,
 		0 0 9px #e1b9fff2,
 		0 0 20px #be82ffb3,
 		0 0 40px #a569ff66;
+	/* 0.5px stroke: letterform definition at small sizes without bloating glyph */
+	-webkit-text-stroke: 0.5px #d296ff80;
 	font-family:
 		VT323,
 		Courier New,
@@ -1874,6 +1909,9 @@
 
 .liora-credits-amzn {
 	color: var(--cdn-aws-orange, #f90);
+	letter-spacing: 0.06em;
+	/* layered: white hot core → orange mid → red outer → purple bloom
+	   gives the "luminous neon amazon orange" tube feel vs flat text */
 	text-shadow:
 		0.5px 0 #000,
 		-0.5px 0 #000,
@@ -1883,13 +1921,20 @@
 		-0.35px 0.35px #000,
 		0.35px -0.35px #000,
 		-0.35px -0.35px #000,
-		0 0 3px #ffc850e6,
-		0 0 8px #ff9900b3,
-		0 0 14px #9060f0d9,
-		0 0 28px #9060f08c,
+		0 0 2px #fff8f0f2,
+		0 0 4px #ffdc6ef2,
+		0 0 8px #ffaf32e6,
+		0 0 16px #ff9900cc,
+		0 0 28px #cc5500a6,
+		0 0 44px #9060f08c,
 		0 2px #28143c8c;
 	animation: 1.4s ease-in-out infinite alternate liora-amzn-shimmer;
 	display: inline-block;
+	transition: letter-spacing 0.4s ease;
+}
+
+.liora-credits-amzn:hover {
+	letter-spacing: 0.12em;
 }
 
 @keyframes liora-amzn-shimmer {
@@ -1903,12 +1948,14 @@
 			-0.35px 0.35px #000,
 			0.35px -0.35px #000,
 			-0.35px -0.35px #000,
-			0 0 3px #ffc850d9,
-			0 0 8px #ff9900b3,
-			0 0 14px #9060f0b3,
-			0 0 28px #9060f073,
+			0 0 2px #fff8f0e6,
+			0 0 5px #ffdc6ee6,
+			0 0 10px #ffaf32cc,
+			0 0 20px #ff990099,
+			0 0 32px #cc550073,
+			0 0 48px #9060f066,
 			0 2px #28143c80;
-		filter: brightness() saturate();
+		filter: brightness(1) saturate(1);
 	}
 	to {
 		text-shadow:
@@ -1920,12 +1967,14 @@
 			-0.35px 0.35px #000,
 			0.35px -0.35px #000,
 			-0.35px -0.35px #000,
-			0 0 5px #ffdc6e,
-			0 0 12px #ffaf32f2,
-			0 0 22px #b478ff,
-			0 0 44px #9060f0b3,
+			0 0 3px #fff,
+			0 0 7px #ffdc6e,
+			0 0 14px #ffaf32f2,
+			0 0 26px #ff9900d9,
+			0 0 42px #cc5500a6,
+			0 0 64px #9060f0b3,
 			0 2px #28143c99;
-		filter: brightness(1.18) saturate(1.15);
+		filter: brightness(1.22) saturate(1.2);
 	}
 }
 
@@ -2209,15 +2258,15 @@
 }
 @keyframes names-crawl {
 	0% {
-		/* tuned for sidebar 254px panel — reduced rotateX (was 12deg) to stop
-		   per-line skew artifact on small text. translateZ retained for depth */
+		/* restored depth: 900px perspective keeps recession dramatic without
+		   the matrix3d per-line skew artifact that 720px produced at small sizes */
 		transform: rotateX(0deg) translateY(0) translateZ(0);
 	}
 	50% {
-		transform: rotateX(3deg) translateY(-25%) translateZ(-150px);
+		transform: rotateX(5deg) translateY(-25%) translateZ(-200px);
 	}
 	100% {
-		transform: rotateX(5deg) translateY(-50%) translateZ(-250px);
+		transform: rotateX(9deg) translateY(-50%) translateZ(-320px);
 	}
 }
 @keyframes neon-warmup {
@@ -2317,12 +2366,25 @@
 	}
 }
 @keyframes title-throb {
-	0%,
-	100% {
-		filter: brightness(1);
+	/* slow neon breathing: dips slightly below baseline to mimic phosphor
+	   discharge, then surges bright — 5.5s cycle = genuine breathing cadence */
+	0% {
+		filter: brightness(0.92) saturate(1.05);
 	}
-	50% {
-		filter: brightness(1.55);
+	12% {
+		filter: brightness(0.78) saturate(0.95);
+	}
+	30% {
+		filter: brightness(1.65) saturate(1.2);
+	}
+	55% {
+		filter: brightness(1.1) saturate(1.1);
+	}
+	78% {
+		filter: brightness(1.72) saturate(1.25);
+	}
+	100% {
+		filter: brightness(0.92) saturate(1.05);
 	}
 }
 @keyframes sc-jitter {
@@ -2458,4 +2520,112 @@
 	to {
 		opacity: 1;
 	}
+}
+
+/* === LED pattern at credits state — 2 steady, 1 custom-blink, 9 dim ===
+   classes added by liora-embed.ts at screen-tap-3 setTimeout block.
+   important needed because base .liora-led runs led-blink 2.4s infinite */
+.liora-led--credits-steady {
+	animation: none !important;
+	filter: brightness(1.6) !important;
+	opacity: 1 !important;
+}
+
+.liora-led--credits-blink {
+	animation:
+		1.7s steps(2, jump-none) infinite liora-led-credits-blink !important;
+}
+
+@keyframes liora-led-credits-blink {
+	0%, 22% { opacity: 1; filter: brightness(1.4); }
+	23%, 47% { opacity: 0.18; filter: brightness(0.4); }
+	48%, 64% { opacity: 1; filter: brightness(1.4); }
+	65%, 100% { opacity: 0.18; filter: brightness(0.4); }
+}
+
+.liora-led--credits-dim {
+	animation: none !important;
+	opacity: 0.18 !important;
+	filter: brightness(0.4) !important;
+}
+
+/* === sticky note 2: visitor greeting + IP ============================
+   second sticky placed in the right gutter below the bezel, mirroring
+   sticky note 1's position on the left. greeting from ipinfo.io country
+   lookup (cached 24h in localStorage), falls back to "friend" on error. */
+.liora-stickynote-2 {
+	position: relative;
+	align-self: flex-end;
+	margin-right: 18px;
+	margin-top: 4px;
+	padding: 3px 6px 4px;
+	max-width: clamp(72px, 22cqi, 110px);
+	width: fit-content;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	background-image:
+		repeating-linear-gradient(0deg, #5a32100d 0 1px, #0000 1px 4px),
+		linear-gradient(135deg, #d9f0ffd1 0%, #c4e1f5c7 60%, #a8cceabd 100%);
+	background-size: 100% 4px, 100% 100%;
+	color: #1a1424;
+	font-family: Caveat, "Comic Sans MS", "Segoe Script", cursive;
+	font-size: clamp(7px, 2cqi, 10px);
+	line-height: 1.1;
+	letter-spacing: 0.02em;
+	transform: rotate(2.8deg);
+	transform-origin: 50% -8px;
+	box-shadow:
+		1px 2px 4px #00000047,
+		1px 1px 2px #0000002e,
+		inset 0 -2px 3px #1e6090b5;
+	pointer-events: none;
+	-webkit-user-select: none;
+	user-select: none;
+	opacity: 0;
+	animation: 0.6s 1.6s forwards liora-stickynote-fadein;
+}
+
+.liora-stickynote-2:before {
+	content: "";
+	pointer-events: none;
+	position: absolute;
+	top: -10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 18px;
+	height: 12px;
+	background: repeating-linear-gradient(
+		90deg,
+		#b4b4b46b 0 1px,
+		#e4e4e499 1px 2.5px
+	);
+	border-radius: 1px;
+	opacity: 0.62;
+}
+
+.liora-stickynote-2-line {
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.liora-stickynote-2-flag {
+	font-family:
+		"Apple Color Emoji",
+		"Segoe UI Emoji",
+		"Noto Color Emoji",
+		emoji;
+	margin-left: 1px;
+}
+
+.liora-stickynote-2-ip {
+	font-family: VT323, "Courier New", monospace;
+	font-size: 0.85em;
+	letter-spacing: 0.02em;
+	opacity: 0.75;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

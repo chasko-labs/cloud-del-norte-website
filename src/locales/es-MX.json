@@ -48,8 +48,7 @@
 		"communityDescription": "AWS User Group Nube of the North es parte de",
 		"globalCommunity": "Comunidad Global de AWS User Groups",
 		"communityFullDescription": "Somos voluntarios locales de Nuevo México, West Texas y Chihuahua, México. Creemos que los proyectos, las carreras y los problemas se pueden acelerar usando AWS, y queremos compartir nuestro conocimiento, conexiones y experiencias contigo para que veas lo que tú puedes",
-		"goBuild": "Go Build",
-		"infoPanelLink": "Aprende más sobre nosotros en el panel de información"
+		"goBuild": "Go Build"
 	},
 	"aboutPage": {
 		"breadcrumb": "Acerca de",
@@ -81,9 +80,6 @@
 		"streamKruxFallback": "Tu navegador no soporta audio en vivo. Visita kruxstream.nmsu.edu/KRUX para escuchar."
 	},
 	"dashboardPage": {
-		"breadcrumb": "Tablero",
-		"header": "Tablero",
-		"infoLink": "Información",
 		"productionOverview": {
 			"header": "Resumen de producción"
 		},

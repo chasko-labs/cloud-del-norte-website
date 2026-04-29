@@ -48,8 +48,7 @@
 		"communityDescription": "AWS User Group Cloud Del Norte is part of AWS User Groups'",
 		"globalCommunity": "Global AWS User Group Community",
 		"communityFullDescription": "We are run by volunteers local to New Mexico, West Texas & Chihuahua, Mexico. We believe projects, careers & issues can be accelerated using AWS, & wish to pass our knowledge, connections & experiences on to you & see what you",
-		"goBuild": "Go Build",
-		"infoPanelLink": "Learn more about us in the info panel"
+		"goBuild": "Go Build"
 	},
 	"aboutPage": {
 		"breadcrumb": "About",
@@ -81,9 +80,6 @@
 		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen."
 	},
 	"dashboardPage": {
-		"breadcrumb": "Dashboard",
-		"header": "Dashboard",
-		"infoLink": "Info",
 		"productionOverview": {
 			"header": "Production overview"
 		},

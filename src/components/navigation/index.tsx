@@ -35,10 +35,133 @@ function scheduleIdle(fn: () => void): void {
 	}
 }
 
+// ISO 3166-1 alpha-2 → regional-indicator pair → flag emoji.
+// 65 (charCode 'A') → 0x1F1E6 (regional indicator A) requires offset 127397.
+function countryToFlag(code: string): string {
+	if (!/^[A-Za-z]{2}$/.test(code)) return "";
+	return code
+		.toUpperCase()
+		.split("")
+		.map((c) => String.fromCodePoint(127397 + c.charCodeAt(0)))
+		.join("");
+}
+
+// Common ISO codes → English country names. Subset only — falls back to the
+// raw country code if not in this map. Keeps bundle slim vs shipping a full
+// ISO 3166 dictionary for a sticky note.
+const COUNTRY_NAME: Record<string, string> = {
+	US: "neighbor",
+	MX: "vecino",
+	CA: "neighbor",
+	GB: "friend",
+	DE: "Freund",
+	FR: "ami",
+	ES: "amigo",
+	BR: "amigo",
+	JP: "tomodachi",
+	IN: "dost",
+	AU: "mate",
+	NZ: "mate",
+	IE: "cara",
+	IT: "amico",
+	NL: "vriend",
+	SE: "vän",
+	NO: "venn",
+	DK: "ven",
+	FI: "ystävä",
+	PL: "przyjaciel",
+	RU: "drug",
+	UA: "druh",
+	CN: "péngyǒu",
+	KR: "chingu",
+	TH: "phueuan",
+	VN: "ban",
+	ID: "teman",
+	PH: "kaibigan",
+	TR: "arkadaş",
+	GR: "fílos",
+	IL: "chaver",
+	SA: "sadeeq",
+	AE: "sadeeq",
+	EG: "sadeeq",
+	NG: "friend",
+	ZA: "friend",
+	KE: "rafiki",
+	AR: "amigo",
+	CL: "amigo",
+	CO: "amigo",
+	PE: "amigo",
+	VE: "amigo",
+};
+
+interface VisitorInfo {
+	ip: string;
+	country: string;
+	greeting: string;
+	flag: string;
+}
+
+const VISITOR_CACHE_KEY = "cdn.visitor";
+const VISITOR_TTL_MS = 24 * 60 * 60 * 1000;
+
+async function loadVisitorInfo(): Promise<VisitorInfo | null> {
+	try {
+		const cached = localStorage.getItem(VISITOR_CACHE_KEY);
+		if (cached) {
+			const parsed = JSON.parse(cached) as {
+				ts: number;
+				data: VisitorInfo;
+			};
+			if (Date.now() - parsed.ts < VISITOR_TTL_MS) {
+				return parsed.data;
+			}
+		}
+	} catch {
+		// fall through to fetch
+	}
+	try {
+		const res = await fetch("https://ipinfo.io/json", {
+			headers: { accept: "application/json" },
+		});
+		if (!res.ok) return null;
+		const data = (await res.json()) as { ip?: string; country?: string };
+		if (!data.ip || !data.country) return null;
+		const code = data.country.toUpperCase();
+		const info: VisitorInfo = {
+			ip: data.ip,
+			country: code,
+			greeting: COUNTRY_NAME[code] ?? "friend",
+			flag: countryToFlag(code),
+		};
+		try {
+			localStorage.setItem(
+				VISITOR_CACHE_KEY,
+				JSON.stringify({ ts: Date.now(), data: info }),
+			);
+		} catch {
+			// localStorage disabled — non-fatal
+		}
+		return info;
+	} catch {
+		return null;
+	}
+}
+
 function LioraFrame() {
 	const deviceInfo = useMemo(() => detectDeviceInfo(), []);
 	const [stickyZoomed, setStickyZoomed] = useState(false);
 	const [stickyKey, setStickyKey] = useState(0);
+	const [visitor, setVisitor] = useState<VisitorInfo | null>(null);
+
+	useEffect(() => {
+		let cancelled = false;
+		void loadVisitorInfo().then((info) => {
+			if (!cancelled) setVisitor(info);
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, []);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -167,6 +290,28 @@ function LioraFrame() {
 				</span>
 				<span className="liora-stickynote-sig">- ^.^</span>
 			</button>
+			<div
+				className="liora-stickynote-2"
+				role="note"
+				aria-label={
+					visitor
+						? `Hello, ${visitor.greeting}. Visiting from ${visitor.country}.`
+						: "Hello, friend"
+				}
+			>
+				<span className="liora-stickynote-2-line">
+					hello, {visitor?.greeting ?? "friend"}
+					{visitor?.flag ? (
+						<span className="liora-stickynote-2-flag" aria-hidden="true">
+							{" "}
+							{visitor.flag}
+						</span>
+					) : null}
+				</span>
+				{visitor?.ip ? (
+					<span className="liora-stickynote-2-ip">{visitor.ip}</span>
+				) : null}
+			</div>
 		</div>
 	);
 }

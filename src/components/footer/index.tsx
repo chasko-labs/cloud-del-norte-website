@@ -21,22 +21,6 @@ export default function Footer() {
 					<strong className="cdn-footer-emphasis">{t("footer.goBuild")}</strong>
 					.
 				</p>
-				<p className="cdn-footer-info-panel">
-					<button
-						type="button"
-						className="cdn-footer-info-panel-button"
-						onClick={() => {
-							const toolsButton = document.querySelector(
-								'[aria-label*="Help Panel"], [aria-label*="help panel"]',
-							) as HTMLButtonElement;
-							if (toolsButton) {
-								toolsButton.click();
-							}
-						}}
-					>
-						{t("footer.infoPanelLink")}
-					</button>
-				</p>
 			</div>
 		</footer>
 	);
