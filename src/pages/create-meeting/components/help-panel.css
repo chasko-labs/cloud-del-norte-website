@@ -70,7 +70,11 @@
 .hp-leader {
 	border-radius: var(--cdn-radius-md);
 	border: 1.5px solid rgba(139, 90, 43, 0.2);
-	background: linear-gradient(135deg, rgba(250, 247, 240, 0.9) 0%, rgba(245, 240, 228, 0.8) 100%);
+	background: linear-gradient(
+		135deg,
+		rgba(250, 247, 240, 0.9) 0%,
+		rgba(245, 240, 228, 0.8) 100%
+	);
 	padding: var(--cdn-space-md);
 	position: relative;
 	overflow: hidden;
@@ -103,7 +107,11 @@
 
 .awsui-dark-mode .hp-leader {
 	border-color: rgba(144, 96, 240, 0.2);
-	background: linear-gradient(135deg, rgba(28, 34, 48, 0.9) 0%, rgba(30, 26, 48, 0.8) 100%);
+	background: linear-gradient(
+		135deg,
+		rgba(28, 34, 48, 0.9) 0%,
+		rgba(30, 26, 48, 0.8) 100%
+	);
 }
 
 .awsui-dark-mode .hp-leader::before {
@@ -178,7 +186,9 @@
 	background: rgba(250, 247, 240, 0.6);
 	color: var(--cdn-amber);
 	text-decoration: none;
-	transition: background-color 0.15s ease, border-color 0.15s ease;
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease;
 	cursor: pointer;
 }
 

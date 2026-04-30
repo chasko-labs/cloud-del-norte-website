@@ -2403,14 +2403,17 @@
 	}
 	6% {
 		opacity: 0.96;
+		/* biome-ignore lint/suspicious/noShorthandPropertyOverrides: keyframe stops are independent declaration blocks */
 		background: #fffbe0;
 	}
 	18% {
 		opacity: 0.72;
+		/* biome-ignore lint/suspicious/noShorthandPropertyOverrides: keyframe stops are independent declaration blocks */
 		background: #ffe080;
 	}
 	40% {
 		opacity: 0.28;
+		/* biome-ignore lint/suspicious/noShorthandPropertyOverrides: keyframe stops are independent declaration blocks */
 		background: #120c04;
 	}
 	100% {
@@ -2632,7 +2635,8 @@
 }
 
 .liora-stickynote-2-flag {
-	font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", emoji;
+	font-family:
+		"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
 	margin-left: 1px;
 }
 
