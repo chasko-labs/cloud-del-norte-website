@@ -510,7 +510,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 /* Nav logo — size to fit top-nav bar height */
 #top-nav [class*="awsui_logo"] img,
 #top-nav [class*="awsui_logo"] {
-	height: 36px;
+	height: 48px;
 	width: auto;
 	object-fit: contain;
 }
