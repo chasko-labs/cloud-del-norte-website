@@ -7,6 +7,7 @@ import AppLayout, {
 import TopNavigation from "@cloudscape-design/components/top-navigation";
 import { useCallback, useEffect, useState } from "react";
 import Footer from "../../components/footer";
+import PersistentPlayer from "../../components/persistent-player";
 import { AuthProvider } from "../../contexts/auth-context";
 import { LocaleProvider } from "../../contexts/locale-context";
 import { useAuth } from "../../hooks/useAuth";
@@ -209,6 +210,7 @@ function ShellContent({
 				}}
 			/>
 			<Footer />
+			<PersistentPlayer />
 		</>
 	);
 }

@@ -22,6 +22,8 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../utils/theme";
+import { clearPlayerState, savePlayerState } from "../../lib/player-persist";
+import { type StreamDef, STREAMS } from "../../lib/streams";
 import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
 import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
@@ -30,47 +32,6 @@ import NextMeetup from "./components/next-meetup";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
 import YoutubeCarousel from "./components/youtube-carousel";
 import "./styles.css";
-
-interface StreamDef {
-	readonly key: string;
-	readonly url: string;
-	readonly label: string;
-	readonly metaUrl: string;
-	parseMeta(data: unknown): string | null;
-}
-
-const STREAMS: StreamDef[] = [
-	{
-		key: "krux",
-		url: "https://kruxstream.nmsu.edu/KRUX",
-		label: "krux 91.5",
-		metaUrl: "https://kruxstream.nmsu.edu/status-json.xsl",
-		parseMeta(data) {
-			const d = data as {
-				icestats?: { source?: { title?: string } | Array<{ title?: string }> };
-			};
-			const src = d?.icestats?.source;
-			const s = Array.isArray(src) ? src[0] : src;
-			return s?.title ?? null;
-		},
-	},
-	{
-		key: "kexp",
-		url: "https://kexp.streamguys1.com/kexp160.aac",
-		label: "kexp 90.3",
-		metaUrl: "https://api.kexp.org/v2/plays/?limit=1&format=json",
-		parseMeta(data) {
-			const d = data as {
-				results?: Array<{ artist_name?: string; song?: string }>;
-			};
-			const play = d?.results?.[0];
-			if (!play) return null;
-			const { artist_name: artist, song } = play;
-			if (artist && song) return `${song} — ${artist}`;
-			return song ?? artist ?? null;
-		},
-	},
-];
 
 const CAROUSEL_MS = 10_000;
 const FADE_MS = 500;
@@ -152,10 +113,17 @@ function KruxPlayer() {
 					detail: { element: a, stationKey: stream.key },
 				}),
 			);
+			savePlayerState({
+				stationKey: stream.key,
+				stationUrl: stream.url,
+				stationLabel: stream.label,
+				metaUrl: stream.metaUrl,
+			});
 		} else {
 			window.dispatchEvent(new CustomEvent("cdn:audio:stop"));
+			clearPlayerState();
 		}
-	}, [playing, stream.key]);
+	}, [playing, stream.key, stream.url, stream.label, stream.metaUrl]);
 
 	const skipStation = useCallback(() => {
 		const a = audioRef.current;
