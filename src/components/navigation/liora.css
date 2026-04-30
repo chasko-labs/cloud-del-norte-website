@@ -2554,9 +2554,10 @@
    sticky note 1's position on the left. greeting from ipinfo.io country
    lookup (cached 24h in localStorage), falls back to "friend" on error. */
 .liora-stickynote-2 {
-	position: absolute;
-	right: -6px;
-	top: 44px;
+	position: relative;
+	align-self: flex-end;
+	margin-right: 18px;
+	margin-top: 6px;
 	padding: 3px 6px 4px;
 	max-width: clamp(72px, 22cqi, 110px);
 	width: fit-content;
@@ -2572,8 +2573,8 @@
 	font-size: clamp(7px, 2cqi, 10px);
 	line-height: 1.1;
 	letter-spacing: 0.02em;
-	transform: rotate(-1.8deg);
-	transform-origin: calc(100% - 4px) 6px;
+	transform: rotate(2.8deg);
+	transform-origin: 50% -8px;
 	box-shadow:
 		1px 2px 4px #00000047,
 		1px 1px 2px #0000002e,
@@ -2589,13 +2590,13 @@
 	content: "";
 	pointer-events: none;
 	position: absolute;
-	top: 50%;
-	left: -10px;
-	transform: translateY(-50%);
-	width: 12px;
-	height: 18px;
+	top: -10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 18px;
+	height: 9px;
 	background: repeating-linear-gradient(
-		0deg,
+		90deg,
 		#b4b4b46b 0 1px,
 		#e4e4e499 1px 2.5px
 	);

@@ -261,28 +261,28 @@ function LioraFrame() {
 					<span id="liora-device-info">{deviceInfo}</span>
 					<span id="liora-sys-status"> SYS:▓▓▓</span>
 				</div>
-				<div
-					className="liora-stickynote-2"
-					role="note"
-					aria-label={
-						visitor
-							? `Hello, ${visitor.greeting}.`
-							: "Hello"
-					}
-				>
-					<span className="liora-stickynote-2-line">
-						hello, {visitor?.greeting ?? "friend"}
-						{visitor?.flag ? (
-							<span className="liora-stickynote-2-flag" aria-hidden="true">
-								{" "}
-								{visitor.flag}
-							</span>
-						) : null}
-					</span>
-					{visitor?.ip ? (
-						<span className="liora-stickynote-2-ip">{visitor.ip}</span>
+			</div>
+			<div
+				className="liora-stickynote-2"
+				role="note"
+				aria-label={
+					visitor
+						? `Hello, ${visitor.greeting}.`
+						: "Hello"
+				}
+			>
+				<span className="liora-stickynote-2-line">
+					hello, {visitor?.greeting ?? "friend"}
+					{visitor?.flag ? (
+						<span className="liora-stickynote-2-flag" aria-hidden="true">
+							{" "}
+							{visitor.flag}
+						</span>
 					) : null}
-				</div>
+				</span>
+				{visitor?.ip ? (
+					<span className="liora-stickynote-2-ip">{visitor.ip}</span>
+				) : null}
 			</div>
 			<button
 				key={stickyKey}
