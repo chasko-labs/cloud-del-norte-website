@@ -533,7 +533,8 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 .cdn-logo-hero img {
-	height: 88px;
+	/* responsive: ~44px mobile → 80px desktop, scales with viewport */
+	height: clamp(44px, 8vw, 80px);
 	width: auto;
 	display: block;
 	transform-origin: left center;
@@ -546,9 +547,13 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	transform: scale(1.08);
 }
 
-/* Cloudscape nav needs left padding to clear the 88px logo + 14px offset */
+/* Nav bar breathing room — padding above/below so star isn't edge-to-edge */
 #top-nav [class*="awsui_top-navigation"] {
-	padding-left: 110px !important;
+	padding-top: 10px !important;
+	padding-bottom: 10px !important;
+	/* left padding clears the logo: 14px offset + max logo width (~80px) + 16px gap */
+	padding-left: clamp(70px, 12vw, 110px) !important;
+	box-sizing: border-box;
 }
 
 /* ── Dark mode: multi-layer volumetric neon glow ─────────────────────────────
