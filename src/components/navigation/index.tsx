@@ -150,6 +150,7 @@ function LioraFrame() {
 	const deviceInfo = useMemo(() => detectDeviceInfo(), []);
 	const [stickyZoomed, setStickyZoomed] = useState(false);
 	const [stickyKey, setStickyKey] = useState(0);
+	const [sticky2Fallen, setSticky2Fallen] = useState(false);
 	const [visitor, setVisitor] = useState<VisitorInfo | null>(null);
 
 	useEffect(() => {
@@ -291,9 +292,10 @@ function LioraFrame() {
 					<span className="liora-stickynote-sig">- ^.^</span>
 				</button>
 				<div
-					className="liora-stickynote-2"
+					className={`liora-stickynote-2${sticky2Fallen ? " liora-stickynote-2--fallen" : ""}`}
 					role="note"
 					aria-label={visitor ? `Welcome, ${visitor.greeting}.` : "Welcome"}
+					onClick={() => setSticky2Fallen(true)}
 				>
 					<span className="liora-stickynote-2-line">
 						welcome, {visitor?.greeting ?? ""}
