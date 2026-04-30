@@ -67,8 +67,6 @@ workload x509 cert + aws_signing_helper → IAM RolesAnywhere ci-profile (arn: `
 | ------------------------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------- |
 | aerospaceug-admin / chasko-labs | 211125425201 | 4 CF distributions, 4 S3 buckets, Route53 zone (inferred), heraldstack-ci-deploy role, RolesAnywhere trust anchor             |
 | kiro                            | 946179428633 | sumerian-hosts-playground stack (TTS lambda, sumerian-hosts-site bucket, dev playground) — does NOT hold clouddelnorte.org CF |
-| msp-ghel (candidate)            | 889670351271 | Cognito user pool likely here — unconfirmed                                                                                   |
-| msp-foundation (candidate)      | 809797236453 | Cognito user pool possibly here — unconfirmed                                                                                 |
 
 the Cognito hosted UI domain is `cloud-del-norte.auth.us-west-2.amazoncognito.com`. the pool was not found in 211125425201 or 946179428633 via `aws cognito-idp list-user-pools`. pool id, client id, account location, and pool IaC are all gaps — see section 5.
 
@@ -82,7 +80,7 @@ the Cognito hosted UI domain is `cloud-del-norte.auth.us-west-2.amazoncognito.co
 | (gap) auth CF ECQ44FO9MBTCY — no IaC                           | same — draft IaC, reconcile with any manual config drift                                                                                                                |
 | (gap) awsug CF E2QLAWFVIT1AR8 — no IaC                         | same                                                                                                                                                                    |
 | (gap) Route53 hosted zone for clouddelnorte.org — no IaC       | confirm zone id via `aws route53 list-hosted-zones --profile aerospaceug-admin`; author IaC                                                                             |
-| (gap) Cognito user pool account — unconfirmed                  | run `aws cognito-idp list-user-pools --max-results 60` against 889670351271 and 809797236453; match on hosted domain `cloud-del-norte.auth.us-west-2.amazoncognito.com` |
+| Cognito user pool — RESOLVED                                   | pool `us-west-2_cyPQF4F3r` named `cloud-del-norte-members` lives in account 170473530355 (jitsi-video-hosting / aws-ug-events-jitsi). hosted domain alias `cloud-del-norte.auth.us-west-2.amazoncognito.com` resolves there. password policy updated 2026-04-30 to RequireSymbols=false (MinimumLength=12, RequireUppercase/Lowercase/Numbers=true). still no IaC for this pool. |
 | (gap) Cognito pool id + client id — unknown                    | obtain from whichever account owns the pool                                                                                                                             |
 | (gap) Cognito IaC — none anywhere local                        | author CloudFormation for user pool + app client + hosted domain once account is confirmed                                                                              |
 | (gap) dev CF EEHVTUEQ97V0X default root object — not confirmed | inspect dev distribution config: `aws cloudfront get-distribution-config --id EEHVTUEQ97V0X`                                                                            |
@@ -144,7 +142,7 @@ do not duplicate verifier recipe content here. use the canonical sources:
 
 ## 10. open questions
 
-- **Cognito pool account** — not found in 211125425201 or 946179428633. most likely msp-ghel (889670351271) or msp-foundation (809797236453). requires `list-user-pools` sweep across both accounts to confirm
+- **Cognito pool** — pool `us-west-2_cyPQF4F3r` (`cloud-del-norte-members`) confirmed in account 170473530355 (jitsi-video-hosting / aws-ug-events-jitsi profile `jitsi-video-hosting`). still missing IaC for the pool, client, hosted domain, and any custom attributes/groups.
 - **IaC reconciliation** — three CF distributions (ECC3LP1BL2CZS, ECQ44FO9MBTCY, E2QLAWFVIT1AR8) have no IaC. Route53 zone has no IaC. no dedicated infra repo exists yet — all infra IaC currently lives in `infra/` within cloud-del-norte-website
 - **prod CF defaults for auth + awsug distributions** — DefaultRootObject for ECQ44FO9MBTCY and E2QLAWFVIT1AR8 not captured in stratia's session. retrieve before authoring IaC
 - **dev CF default root object** — EEHVTUEQ97V0X default root object not confirmed; inspect before assuming parity with prod
