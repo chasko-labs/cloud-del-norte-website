@@ -16,6 +16,7 @@ const KEY_EXPIRES_AT = "cdn.expiresAt";
 export const FIELD_LIMITS: Record<string, number> = {
 	email: 254,
 	password: 256,
+	display_name: 100,
 	member_type: 200,
 	location: 100,
 	topics: 500,
@@ -140,30 +141,51 @@ export async function signInWithPassword(
 export interface SignUpFields {
 	email: string;
 	password: string;
-	memberType: string;
-	location: string;
-	topics: string;
-	background: string;
+	displayName: string;
+	memberType?: string;
+	location?: string;
+	topics?: string;
+	background?: string;
 }
 
 export async function signUp(fields: SignUpFields): Promise<void> {
+	// only send attributes the user actually filled in. cognito's
+	// `name` attribute (OIDC standard) holds the display name. all
+	// custom: attributes are pool-side optional, so we just skip
+	// them when empty rather than sending empty strings
+	const attrs: Array<{ Name: string; Value: string }> = [
+		{ Name: "email", Value: sanitize(fields.email, "email") },
+		{ Name: "name", Value: sanitize(fields.displayName, "display_name") },
+	];
+	if (fields.memberType?.trim()) {
+		attrs.push({
+			Name: "custom:member_type",
+			Value: sanitize(fields.memberType, "member_type"),
+		});
+	}
+	if (fields.location?.trim()) {
+		attrs.push({
+			Name: "custom:location",
+			Value: sanitize(fields.location, "location"),
+		});
+	}
+	if (fields.topics?.trim()) {
+		attrs.push({
+			Name: "custom:topics",
+			Value: sanitize(fields.topics, "topics"),
+		});
+	}
+	if (fields.background?.trim()) {
+		attrs.push({
+			Name: "custom:background",
+			Value: sanitize(fields.background, "background"),
+		});
+	}
 	await cognitoPost("SignUp", {
 		ClientId: CLIENT_ID,
 		Username: sanitize(fields.email, "email"),
 		Password: fields.password,
-		UserAttributes: [
-			{ Name: "email", Value: sanitize(fields.email, "email") },
-			{
-				Name: "custom:member_type",
-				Value: sanitize(fields.memberType, "member_type"),
-			},
-			{ Name: "custom:location", Value: sanitize(fields.location, "location") },
-			{ Name: "custom:topics", Value: sanitize(fields.topics, "topics") },
-			{
-				Name: "custom:background",
-				Value: sanitize(fields.background, "background"),
-			},
-		],
+		UserAttributes: attrs,
 	});
 }
 

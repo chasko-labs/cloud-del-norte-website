@@ -23,7 +23,9 @@ import {
 import AuthLayout from "../_layout";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
-const RESEND_COOLDOWN_SECS = 30;
+/* match verify/app.tsx — 120s gives time to switch to email/authenticator
+   apps and back without missing the resend window. was 30s, too short */
+const RESEND_COOLDOWN_SECS = 120;
 
 function SignupWizard() {
 	const { t } = useTranslation();
@@ -31,13 +33,14 @@ function SignupWizard() {
 
 	const [activeStepIndex, setActiveStepIndex] = useState(0);
 
-	// step 1
+	// step 1 — only required fields per ux: email, password, display name
 	const [email, setEmail] = useState("");
+	const [displayName, setDisplayName] = useState("");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 
-	// step 2
+	// step 2 — optional now (not required to advance)
 	const [memberType, setMemberType] = useState("");
 	const [location, setLocation] = useState("");
 
@@ -52,7 +55,6 @@ function SignupWizard() {
 
 	// error state
 	const [step1Errors, setStep1Errors] = useState<Record<string, string>>({});
-	const [step2Errors, setStep2Errors] = useState<Record<string, string>>({});
 	const [step4Errors, setStep4Errors] = useState<Record<string, string>>({});
 	const [formError, setFormError] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -86,6 +88,11 @@ function SignupWizard() {
 			errs.email = t("auth.signup.emailLabel") + " is required";
 		}
 		try {
+			assertNonEmpty(displayName, t("auth.signup.displayNameLabel"));
+		} catch {
+			errs.displayName = t("auth.signup.displayNameLabel") + " is required";
+		}
+		try {
 			assertNonEmpty(password, t("auth.signup.passwordLabel"));
 		} catch {
 			errs.password = t("auth.signup.passwordLabel") + " is required";
@@ -96,21 +103,8 @@ function SignupWizard() {
 		return Object.keys(errs).length === 0;
 	}
 
-	function validateStep2(): boolean {
-		const errs: Record<string, string> = {};
-		try {
-			assertNonEmpty(memberType, t("auth.signup.memberTypeLabel"));
-		} catch {
-			errs.memberType = t("auth.signup.memberTypeLabel") + " is required";
-		}
-		try {
-			assertNonEmpty(location, t("auth.signup.locationLabel"));
-		} catch {
-			errs.location = t("auth.signup.locationLabel") + " is required";
-		}
-		setStep2Errors(errs);
-		return Object.keys(errs).length === 0;
-	}
+	// step 2 fields are now optional — no validation gate. bryan's call:
+	// don't be overly prohibitive. mod adds enforcement back if needed.
 
 	async function handleNavigate({
 		detail,
@@ -121,7 +115,7 @@ function SignupWizard() {
 
 		if (requestedStepIndex > activeStepIndex) {
 			if (activeStepIndex === 0 && !validateStep1()) return;
-			if (activeStepIndex === 1 && !validateStep2()) return;
+			// step 2 (member type + location) is optional — no validation gate
 
 			// transition from interests (2) → verify (3): call signUp
 			if (activeStepIndex === 2 && !signUpCalled) {
@@ -131,6 +125,7 @@ function SignupWizard() {
 					await signUp({
 						email,
 						password,
+						displayName,
 						memberType,
 						location,
 						topics,
@@ -234,6 +229,18 @@ function SignupWizard() {
 						/>
 					</FormField>
 					<FormField
+						label={t("auth.signup.displayNameLabel")}
+						description={t("auth.signup.displayNameHint")}
+						errorText={step1Errors.displayName ?? undefined}
+						constraintText={`${displayName.length} / ${FIELD_LIMITS.display_name}`}
+					>
+						<Input
+							value={displayName}
+							onChange={({ detail }) => setDisplayName(detail.value)}
+							placeholder={t("auth.signup.displayNamePlaceholder")}
+						/>
+					</FormField>
+					<FormField
 						label={t("auth.signup.passwordLabel")}
 						description={t("auth.signup.passwordHint")}
 						errorText={step1Errors.password ?? undefined}
@@ -273,7 +280,6 @@ function SignupWizard() {
 				<SpaceBetween size="m">
 					<FormField
 						label={t("auth.signup.memberTypeLabel")}
-						errorText={step2Errors.memberType ?? undefined}
 						constraintText={`${memberType.length} / ${FIELD_LIMITS.member_type}`}
 					>
 						<Input
@@ -284,7 +290,6 @@ function SignupWizard() {
 					</FormField>
 					<FormField
 						label={t("auth.signup.locationLabel")}
-						errorText={step2Errors.location ?? undefined}
 						constraintText={`${location.length} / ${FIELD_LIMITS.location}`}
 					>
 						<Input
