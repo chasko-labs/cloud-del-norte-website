@@ -24,8 +24,12 @@ export function mount(): () => void {
 	}
 
 	function onStop(): void {
-		stopLoop();
+		// disconnect audio bridge but keep ambient loop running
+		destroyAudio();
 	}
+
+	// ambient loop runs immediately; audio reactivity added when a stream plays
+	startLoop();
 
 	window.addEventListener("cdn:audio:play", onPlay);
 	window.addEventListener("cdn:audio:stop", onStop);
