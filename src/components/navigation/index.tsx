@@ -265,11 +265,7 @@ function LioraFrame() {
 			<div
 				className="liora-stickynote-2"
 				role="note"
-				aria-label={
-					visitor
-						? `Hello, ${visitor.greeting}.`
-						: "Hello"
-				}
+				aria-label={visitor ? `Hello, ${visitor.greeting}.` : "Hello"}
 			>
 				<span className="liora-stickynote-2-line">
 					hello, {visitor?.greeting ?? "friend"}

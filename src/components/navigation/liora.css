@@ -2532,15 +2532,30 @@
 }
 
 .liora-led--credits-blink {
-	animation:
-		1.7s steps(2, jump-none) infinite liora-led-credits-blink !important;
+	animation: 1.7s steps(2, jump-none) infinite liora-led-credits-blink !important;
 }
 
 @keyframes liora-led-credits-blink {
-	0%, 22% { opacity: 1; filter: brightness(1.4); }
-	23%, 47% { opacity: 0.18; filter: brightness(0.4); }
-	48%, 64% { opacity: 1; filter: brightness(1.4); }
-	65%, 100% { opacity: 0.18; filter: brightness(0.4); }
+	0%,
+	22% {
+		opacity: 1;
+		filter: brightness(1.4);
+	}
+	23%,
+	47% {
+		opacity: 0.18;
+		filter: brightness(0.4);
+	}
+	48%,
+	64% {
+		opacity: 1;
+		filter: brightness(1.4);
+	}
+	65%,
+	100% {
+		opacity: 0.18;
+		filter: brightness(0.4);
+	}
 }
 
 .liora-led--credits-dim {
@@ -2567,7 +2582,9 @@
 	background-image:
 		repeating-linear-gradient(0deg, #5a32100d 0 1px, #0000 1px 4px),
 		linear-gradient(135deg, #d9f0ffd1 0%, #c4e1f5c7 60%, #a8cceabd 100%);
-	background-size: 100% 4px, 100% 100%;
+	background-size:
+		100% 4px,
+		100% 100%;
 	color: #1a1424;
 	font-family: Caveat, "Comic Sans MS", "Segoe Script", cursive;
 	font-size: clamp(7px, 2cqi, 10px);
@@ -2612,11 +2629,7 @@
 }
 
 .liora-stickynote-2-flag {
-	font-family:
-		"Apple Color Emoji",
-		"Segoe UI Emoji",
-		"Noto Color Emoji",
-		emoji;
+	font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", emoji;
 	margin-left: 1px;
 }
 
