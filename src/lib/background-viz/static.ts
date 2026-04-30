@@ -29,32 +29,15 @@ function drawLogoWatermark(
 ): void {
 	if (!logoBitmap) return;
 
-	const scale = Math.min(
-		(w * 0.52) / logoBitmap.width,
-		(h * 0.38) / logoBitmap.height,
-	);
-	const lw = logoBitmap.width * scale;
-	const lh = logoBitmap.height * scale;
-	const lx = (w - lw) / 2;
-	const ly = h * 0.22 - lh / 2;
+	// logo is square (1024×1024) — size to ~40% of the shorter viewport dimension
+	const side = Math.min(w, h) * 0.4;
+	const lx = (w - side) / 2;
+	const ly = h * 0.2 - side / 2;
 
 	ctx.save();
-
-	if (mode === "light") {
-		// tint white logo paths to warm amber using source-in composite
-		const tmp = new OffscreenCanvas(Math.ceil(lw), Math.ceil(lh));
-		const tc = tmp.getContext("2d")!;
-		tc.drawImage(logoBitmap, 0, 0, lw, lh);
-		tc.globalCompositeOperation = "source-in";
-		tc.fillStyle = "rgba(139,90,43,1)";
-		tc.fillRect(0, 0, lw, lh);
-		ctx.globalAlpha = 0.1;
-		ctx.drawImage(tmp, lx, ly);
-	} else {
-		ctx.globalAlpha = 0.07;
-		ctx.drawImage(logoBitmap, lx, ly, lw, lh);
-	}
-
+	// traced logo has its own colors (purple fills + near-white structure) — draw at low alpha
+	ctx.globalAlpha = mode === "light" ? 0.1 : 0.08;
+	ctx.drawImage(logoBitmap, lx, ly, side, side);
 	ctx.restore();
 }
 
