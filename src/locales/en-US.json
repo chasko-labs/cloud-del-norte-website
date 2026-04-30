@@ -56,8 +56,8 @@
 		"infoLink": "Info"
 	},
 	"feedPage": {
-		"breadcrumb": "Home",
-		"header": "Home",
+		"breadcrumb": "Feed",
+		"header": "Feed",
 		"infoLink": "Info",
 		"andresMediumHeader": "Andres Moreno — andmoredev",
 		"andresMediumAllPosts": "All posts",

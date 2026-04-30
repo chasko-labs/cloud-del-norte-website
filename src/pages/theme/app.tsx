@@ -677,6 +677,37 @@ function AppContent({
 			header={<Header variant="h1">{t("themePage.header")}</Header>}
 		>
 			<SpaceBetween size="l">
+				{/* ── Brand logo ── */}
+				<Container header={<Header variant="h2">brand logo</Header>}>
+					<div className="theme-logo-showcase">
+						<img
+							src="/brand/logo.svg"
+							alt="Cloud Del Norte AWS User Group"
+							className="theme-logo-img"
+						/>
+						<div className="theme-logo-meta">
+							<p>
+								<strong>asset:</strong>{" "}
+								<code>/brand/logo.svg</code>
+							</p>
+							<p>
+								<strong>viewBox:</strong> 1024×1024 — square, transparent
+							</p>
+							<p>
+								<strong>structure:</strong> 3 large purple star-arm paths +
+								12 small circular bulb dots in a ring + near-white inner
+								geometric structure (vtracer polygon trace)
+							</p>
+							<p>
+								<strong>filters:</strong> SVG <code>&lt;defs&gt;</code> with{" "}
+								<code>cdn-bulb-glow</code> (dual feGaussianBlur core+bloom)
+								and <code>cdn-arm-glow</code>; bulbs animate independently
+								with staggered <code>animation-delay</code> 0–2.75s
+							</p>
+						</div>
+					</div>
+				</Container>
+
 				{/* ── TOC ── */}
 				<Container header={<Header variant="h2">token index</Header>}>
 					<nav className="theme-toc" aria-label="jump to section">

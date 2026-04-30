@@ -4,6 +4,38 @@
  * /theme/ showcase page only. Global CDN tokens live in src/styles/tokens.css.
  */
 
+/* ── Brand logo showcase ───────────────────────────────────────────────── */
+.theme-logo-showcase {
+	display: flex;
+	gap: 32px;
+	align-items: center;
+	flex-wrap: wrap;
+	padding: 24px 8px;
+}
+
+.theme-logo-img {
+	height: 200px;
+	width: auto;
+	flex-shrink: 0;
+}
+
+.theme-logo-meta {
+	flex: 1;
+	min-width: 280px;
+}
+
+.theme-logo-meta p {
+	margin: 0 0 8px 0;
+	font-size: var(--cdn-text-base, 14px);
+}
+
+.theme-logo-meta code {
+	background: var(--color-background-input-default-ifz5bb, rgba(139, 90, 43, 0.08));
+	padding: 1px 6px;
+	border-radius: 3px;
+	font-size: 0.92em;
+}
+
 /* ==========================================================================
    Animation demos — live running instances of CDN animation vocabulary
    ========================================================================== */

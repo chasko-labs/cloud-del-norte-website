@@ -547,10 +547,10 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	transform: scale(1.08);
 }
 
-/* Nav bar breathing room — padding above/below so star isn't edge-to-edge */
+/* Nav bar breathing — minimal 1px padding above/below the star */
 #top-nav [class*="awsui_top-navigation"] {
-	padding-top: 10px !important;
-	padding-bottom: 10px !important;
+	padding-top: 1px !important;
+	padding-bottom: 1px !important;
 	/* left padding clears the logo: 14px offset + max logo width (~80px) + 16px gap */
 	padding-left: clamp(70px, 12vw, 110px) !important;
 	box-sizing: border-box;
