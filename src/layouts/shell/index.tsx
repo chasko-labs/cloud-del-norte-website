@@ -96,14 +96,6 @@ function ShellContent({
 		[],
 	);
 
-	// logo lazy-load — blank during load, logo on success, fallback text only on failure
-	const [logoState, setLogoState] = useState<"loading" | "ready" | "failed">("loading");
-	useEffect(() => {
-		const img = new Image();
-		img.onload = () => setLogoState("ready");
-		img.onerror = () => setLogoState("failed");
-		img.src = "/brand/logo.svg";
-	}, []);
 
 	// background-viz canvas — mounts once per page load, cleans up on unmount
 	useEffect(() => {
@@ -159,19 +151,10 @@ function ShellContent({
 				data-cdn-animating-locale={animatingLocale || undefined}
 			>
 				<TopNavigation
-					identity={
-						logoState === "ready"
-							? {
-									logo: {
-										src: "/brand/logo.svg",
-										alt: "Cloud Del Norte",
-									},
-									href: identityHref,
-								}
-							: logoState === "failed"
-								? { title: t("shell.siteTitle"), href: identityHref }
-								: { href: identityHref }
-					}
+					identity={{
+						logo: { src: "/brand/logo.svg", alt: "Cloud Del Norte" },
+						href: identityHref,
+					}}
 					utilities={[
 						{
 							type: "button",
