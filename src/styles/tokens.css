@@ -200,7 +200,7 @@
 		0 8px 24px -6px rgba(0, 0, 0, 0.35), 0 4px 12px -3px rgba(0, 0, 0, 0.25),
 		inset 0 1px 0 rgba(255, 255, 255, 0.04);
 	--cdn-shadow-glow:
-		0 16px 32px -8px rgba(0, 0, 0, 0.4), 0 0 30px -8px rgba(144, 96, 240, 0.2);
+		0 16px 32px -8px rgba(0, 0, 0, 0.4), 0 0 30px -8px rgba(144, 96, 240, calc(0.2 + var(--cdn-mid) * 0.15));
 
 	/* Table header — elevated surface in dark mode to distinguish from data rows */
 	--color-background-table-header-hdjxos: #0a0a1f;

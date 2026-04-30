@@ -1,3 +1,14 @@
+@property --cdn-bass {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@property --cdn-mid {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+
 #top-nav {
 	position: sticky;
 	left: 0;
@@ -174,7 +185,7 @@ main[class*="awsui_layout"] {
 	background:
 		/* spotlight: warm amber ellipse drifting top-left → bottom-right */
 		radial-gradient(
-			60% 45% at 25% 15%,
+			calc(60% + var(--cdn-bass) * 20%) 45% at 25% 15%,
 			rgba(201, 162, 63, 0.12) 0%,
 			rgba(201, 162, 63, 0) 70%
 		),
@@ -224,7 +235,7 @@ main[class*="awsui_layout"] {
 		),
 		radial-gradient(
 			50% 40% at 80% 85%,
-			rgba(48, 0, 106, 0.32) 0%,
+			rgba(48, 0, 106, calc(0.32 + var(--cdn-bass) * 0.12)) 0%,
 			rgba(48, 0, 106, 0) 65%
 		),
 		repeating-linear-gradient(
