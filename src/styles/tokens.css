@@ -70,8 +70,8 @@
 	--cdn-status-error-bg: rgba(220, 38, 38, 0.08);
 	--cdn-status-warning: #d97706; /* amber-600 */
 	--cdn-status-warning-bg: rgba(217, 119, 6, 0.08);
-	--cdn-status-info: #2563eb; /* blue-600 */
-	--cdn-status-info-bg: rgba(37, 99, 235, 0.08);
+	--cdn-status-info: #6330c8; /* brand violet — brand-adjacent, replaces generic blue-600 */
+	--cdn-status-info-bg: rgba(99, 48, 200, 0.08);
 
 	/* ---------- Radius tokens ---------- */
 	--cdn-radius-sm: 4px; /* reserved for future use */
@@ -202,7 +202,7 @@
 	--cdn-status-success: #4ade80; /* green-400 */
 	--cdn-status-error: #f87171; /* red-400 */
 	--cdn-status-warning: #fbbf24; /* amber-400 */
-	--cdn-status-info: #60a5fa; /* blue-400 */
+	--cdn-status-info: var(--cdn-violet-soft); /* #a080e8 — lighter violet for dark bg */
 
 	--cdn-color-primary: var(
 		--cdn-violet

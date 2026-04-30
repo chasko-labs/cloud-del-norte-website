@@ -96,11 +96,12 @@ function ShellContent({
 		[],
 	);
 
-	// logo lazy-load — start with text title, swap to logo image once loaded
-	const [logoReady, setLogoReady] = useState(false);
+	// logo lazy-load — blank during load, logo on success, fallback text only on failure
+	const [logoState, setLogoState] = useState<"loading" | "ready" | "failed">("loading");
 	useEffect(() => {
 		const img = new Image();
-		img.onload = () => setLogoReady(true);
+		img.onload = () => setLogoState("ready");
+		img.onerror = () => setLogoState("failed");
 		img.src = "/brand/logo.svg";
 	}, []);
 
@@ -159,7 +160,7 @@ function ShellContent({
 			>
 				<TopNavigation
 					identity={
-						logoReady
+						logoState === "ready"
 							? {
 									logo: {
 										src: "/brand/logo.svg",
@@ -167,7 +168,9 @@ function ShellContent({
 									},
 									href: identityHref,
 								}
-							: { title: t("shell.siteTitle"), href: identityHref }
+							: logoState === "failed"
+								? { title: t("shell.siteTitle"), href: identityHref }
+								: { href: identityHref }
 					}
 					utilities={[
 						{

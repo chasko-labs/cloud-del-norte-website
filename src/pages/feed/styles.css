@@ -787,7 +787,7 @@
 
 .feed-krux__btn[data-state="playing"] {
 	background: var(--cdn-violet, #9060f0);
-	color: #fff;
+	color: var(--cdn-white, #f0f0f0);
 	border-color: var(--cdn-violet, #9060f0);
 	animation: krux-playing-pulse 2s ease-in-out infinite;
 }

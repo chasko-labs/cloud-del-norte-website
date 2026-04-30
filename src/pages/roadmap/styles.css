@@ -38,7 +38,7 @@
 	font-size: var(--cdn-text-sm);
 	text-transform: uppercase;
 	letter-spacing: 0.07em;
-	color: #fff;
+	color: var(--cdn-white, #f0f0f0);
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 	/* Default — overridden per column below */
 	background: linear-gradient(135deg, #7a4e1c 0%, #b88b2a 100%);

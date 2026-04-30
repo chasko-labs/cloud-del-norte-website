@@ -29,14 +29,22 @@ function drawLogoWatermark(
 ): void {
 	if (!logoBitmap) return;
 
-	// logo is square (1024×1024) — size to ~40% of the shorter viewport dimension
-	const side = Math.min(w, h) * 0.4;
+	// logo is square (1024×1024) — size to ~42% of the shorter viewport dimension
+	const side = Math.min(w, h) * 0.42;
 	const lx = (w - side) / 2;
-	const ly = h * 0.2 - side / 2;
+	// center at 38% down so it reads behind the nav but above page fold
+	const ly = h * 0.38 - side / 2;
 
 	ctx.save();
-	// traced logo has its own colors (purple fills + near-white structure) — draw at low alpha
-	ctx.globalAlpha = mode === "light" ? 0.1 : 0.08;
+	if (mode === "light") {
+		// cream bg makes near-white SVG fills invisible — add purple glow + amber shadow
+		// to define the star silhouette against the warm ground
+		ctx.shadowColor = "rgba(90,31,138,0.55)";
+		ctx.shadowBlur = 22;
+		ctx.globalAlpha = 0.22;
+	} else {
+		ctx.globalAlpha = 0.08;
+	}
 	ctx.drawImage(logoBitmap, lx, ly, side, side);
 	ctx.restore();
 }
