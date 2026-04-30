@@ -292,9 +292,9 @@
 		max-width 0.45s,
 		opacity 0.35s;
 	position: absolute;
-	top: 15%;
-	left: 52%;
-	transform: translate(-20%) rotate(-1deg);
+	top: 75%;
+	left: 5%;
+	transform: rotate(-2deg);
 	box-shadow:
 		10px 22px 44px #000000b3,
 		5px 10px 20px #0000007a,
@@ -478,6 +478,19 @@
 		opacity 0.7s 0.1s,
 		filter 0.7s;
 	transform: rotate(-32deg) translate(-22px, 60px) scale(0.92);
+}
+
+/* sticky note 2 falls off on first screen tap or direct click */
+.liora-bezel.screen-tap-1 ~ .liora-notes-row .liora-stickynote-2,
+.liora-stickynote-2--fallen {
+	pointer-events: none;
+	animation: 1.05s cubic-bezier(0.42, 0, 0.78, 1) forwards
+		liora-stickynote-ripfall;
+}
+
+.liora-bezel.screen-tap-1 ~ .liora-notes-row .liora-stickynote-2:before,
+.liora-stickynote-2--fallen:before {
+	animation: 0.42s ease-in forwards liora-stickynote-tape-rip;
 }
 
 .awsui-dark-mode .liora-stickynote {
@@ -2602,7 +2615,8 @@
 		1px 2px 4px #00000047,
 		1px 1px 2px #0000002e,
 		inset 0 -2px 3px #1e6090b5;
-	pointer-events: none;
+	pointer-events: auto;
+	cursor: pointer;
 	-webkit-user-select: none;
 	user-select: none;
 	opacity: 0;
