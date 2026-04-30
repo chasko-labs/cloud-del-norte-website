@@ -63,6 +63,16 @@
 	--cdn-space-lg: 24px;
 	--cdn-space-xl: 40px;
 
+	/* ---------- Status / semantic action colors — light mode ---------- */
+	--cdn-status-success: #16a34a; /* green-600 */
+	--cdn-status-success-bg: rgba(22, 163, 74, 0.08);
+	--cdn-status-error: #dc2626; /* red-600 */
+	--cdn-status-error-bg: rgba(220, 38, 38, 0.08);
+	--cdn-status-warning: #d97706; /* amber-600 */
+	--cdn-status-warning-bg: rgba(217, 119, 6, 0.08);
+	--cdn-status-info: #2563eb; /* blue-600 */
+	--cdn-status-info-bg: rgba(37, 99, 235, 0.08);
+
 	/* ---------- Radius tokens ---------- */
 	--cdn-radius-sm: 4px; /* reserved for future use */
 	--cdn-radius-md: 8px; /* reserved for future use */
@@ -187,6 +197,12 @@
 	/* Contrast ratios on #00002a: violet-soft=8.4:1 (AAA), orange-soft=13.2:1 (AAA) */
 	--cdn-violet-soft: #a080e8; /* lighter, less saturated violet for dark mode */
 	--cdn-orange-soft: #ffb347; /* softer orange for dark mode emphasis */
+
+	/* ---------- Status colors — brighter on dark backgrounds ---------- */
+	--cdn-status-success: #4ade80; /* green-400 */
+	--cdn-status-error: #f87171; /* red-400 */
+	--cdn-status-warning: #fbbf24; /* amber-400 */
+	--cdn-status-info: #60a5fa; /* blue-400 */
 
 	--cdn-color-primary: var(
 		--cdn-violet

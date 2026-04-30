@@ -27,8 +27,9 @@ import {
 	type Theme,
 } from "../../utils/theme";
 import {
-	brandColors,
 	elevationLevels,
+	paletteGroups,
+	radiusTokens,
 	shadowTokens,
 	textEmphasisLevels,
 	typographyScale,
@@ -36,85 +37,44 @@ import {
 import "./custom-theme.css";
 
 /* --------------------------------------------------------------------------
-   palette data — full CDN color system including semantic tokens
+   Palette group section component
    -------------------------------------------------------------------------- */
 
-interface SwatchEntry {
-	name: string;
-	token: string;
-	hex: string;
-	note?: string;
+function PaletteGroupSection() {
+	return (
+		<SpaceBetween size="l">
+			{paletteGroups.map((group) => (
+				<div key={group.label} className="theme-palette-group">
+					<div className="theme-palette-group__label">{group.label}</div>
+					<div className="theme-palette-group__swatches">
+						{group.swatches.map((swatch) => (
+							<div key={swatch.token} className="theme-palette-swatch">
+								<div
+									className="theme-palette-swatch__chip"
+									role="img"
+									aria-label={`${swatch.name} — ${swatch.hex}`}
+									style={{ backgroundColor: swatch.hex }}
+								/>
+								<span className="theme-palette-swatch__name">
+									{swatch.name}
+								</span>
+								<span className="theme-palette-swatch__token">
+									{swatch.token}
+								</span>
+								<span className="theme-palette-swatch__hex">{swatch.hex}</span>
+								{swatch.role && (
+									<span className="theme-palette-swatch__role">
+										{swatch.role}
+									</span>
+								)}
+							</div>
+						))}
+					</div>
+				</div>
+			))}
+		</SpaceBetween>
+	);
 }
-
-const allPaletteSwatches: SwatchEntry[] = [
-	{ name: "Navy", token: "--cdn-navy", hex: "#00002a", note: "base dark bg" },
-	{
-		name: "Navy Mid",
-		token: "--cdn-navy-mid",
-		hex: "#000040",
-		note: "mid navy",
-	},
-	{
-		name: "Espresso",
-		token: "--cdn-gradient-nav-start",
-		hex: "#2c1206",
-		note: "top nav / espresso",
-	},
-	{
-		name: "Purple Deep",
-		token: "--cdn-purple-deep",
-		hex: "#30006a",
-		note: "dark mode nav end",
-	},
-	{
-		name: "Purple",
-		token: "--cdn-purple",
-		hex: "#5a1f8a",
-		note: "primary interactive",
-	},
-	{
-		name: "Violet",
-		token: "--cdn-violet",
-		hex: "#9060f0",
-		note: "accent + glow",
-	},
-	{
-		name: "Lavender",
-		token: "--cdn-lavender",
-		hex: "#d7c7ee",
-		note: "light borders / dark text",
-	},
-	{
-		name: "Amber",
-		token: "--cdn-amber",
-		hex: "#8b5a2b",
-		note: "warm sepia accent",
-	},
-	{
-		name: "Gold",
-		token: "--cdn-gold",
-		hex: "#c9a23f",
-		note: "emeritus accent",
-	},
-	{
-		name: "AWS Orange",
-		token: "--cdn-aws-orange",
-		hex: "#FF9900",
-		note: "CTA emphasis",
-	},
-	{
-		name: "Cream",
-		token: "--color-background-container-content-6u8rvp",
-		hex: "#faf7f0",
-		note: "card surface (light)",
-	},
-	{
-		name: "Indigo",
-		token: "--cdn-elevation-2",
-		hex: "#1a1a4a",
-		note: "elevation 2 (dark)",
-	},
-];
 
 /* --------------------------------------------------------------------------
    spacing data
@@ -698,344 +658,370 @@ function AppContent({
 		document.title = t("themePage.pageTitle");
 	}, [t]);
 
+	const tocItems = [
+		{ id: "colors", label: "color palette" },
+		{ id: "borders", label: "borders + radius" },
+		{ id: "motion", label: "motion + animations" },
+		{ id: "player", label: "radio player" },
+		{ id: "interactive", label: "interactive states" },
+		{ id: "typography", label: "typography" },
+		{ id: "glassmorphism", label: "glassmorphism" },
+		{ id: "spacing", label: "spacing" },
+		{ id: "text-emphasis", label: "text emphasis" },
+		{ id: "elevation", label: "elevation" },
+		{ id: "shadows", label: "shadows" },
+	];
+
 	return (
 		<ContentLayout
 			header={<Header variant="h1">{t("themePage.header")}</Header>}
 		>
 			<SpaceBetween size="l">
-				{/* ── 1. Color palette ── */}
-				<Container
-					header={
-						<Header variant="h2">{t("themePage.sections.brandColors")}</Header>
-					}
-				>
-					<SpaceBetween size="m">
-						<Box variant="p">
-							{t("themePage.sections.brandColorsDescription")}
-						</Box>
+				{/* ── TOC ── */}
+				<Container header={<Header variant="h2">token index</Header>}>
+					<nav className="theme-toc" aria-label="jump to section">
+						{tocItems.map(({ id, label }) => (
+							<a key={id} href={`#section-${id}`} className="theme-toc__link">
+								{label}
+							</a>
+						))}
+					</nav>
+				</Container>
 
-						{/* original brand swatches from data.ts */}
-						<Grid
-							gridDefinition={[
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-							]}
-						>
-							{brandColors.map((color) => (
-								<Box key={color.variable} padding="s">
-									<SpaceBetween size="xs">
+				{/* ── 1. Color palette ── */}
+				<div id="section-colors">
+					<Container
+						header={
+							<Header variant="h2">
+								{t("themePage.sections.brandColors")}
+							</Header>
+						}
+					>
+						<SpaceBetween size="m">
+							<Box variant="p">
+								{t("themePage.sections.brandColorsDescription")}
+							</Box>
+							<PaletteGroupSection />
+						</SpaceBetween>
+					</Container>
+				</div>
+
+				{/* ── 1b. Borders + radius ── */}
+				<div id="section-borders">
+					<Container header={<Header variant="h2">borders + radius</Header>}>
+						<SpaceBetween size="m">
+							<Box variant="p" fontSize="body-s">
+								border-radius tokens used across all cdn components — from tight
+								chips to large glass cards.
+							</Box>
+							<div className="theme-radius-grid">
+								{radiusTokens.map((token) => (
+									<div key={token.variable} className="theme-radius-swatch">
 										<div
-											style={{
-												backgroundColor: color.hex,
-												height: "80px",
-												borderRadius: "8px",
-												border: "1px solid var(--cdn-color-border)",
-											}}
+											className="theme-radius-swatch__box"
+											style={{ borderRadius: token.value }}
+											role="img"
+											aria-label={`${token.name} radius — ${token.value}`}
 										/>
-										<Box variant="strong" fontSize="body-s">
-											{t(color.name)}
-										</Box>
+										<span className="theme-radius-swatch__name">
+											{token.name}
+										</span>
 										<Box variant="code" fontSize="body-s">
-											{color.variable}
+											{token.variable}
 										</Box>
 										<Box variant="small" color="text-body-secondary">
-											{color.hex}
+											{token.value}
 										</Box>
-										<Box variant="p" fontSize="body-s">
-											{t(color.description)}
+										<Box variant="small" color="text-body-secondary">
+											{token.usage}
 										</Box>
-									</SpaceBetween>
-								</Box>
-							))}
-						</Grid>
-
-						{/* full palette grid including semantic / light-mode-only tokens */}
-						<Box variant="h3" fontSize="heading-s" padding={{ top: "m" }}>
-							full system palette
-						</Box>
-						<div className="theme-color-grid">
-							{allPaletteSwatches.map((s) => (
-								<div key={s.token} className="theme-color-swatch">
-									<div
-										className="theme-color-swatch__chip"
-										role="img"
-										style={{ backgroundColor: s.hex }}
-										aria-label={`${s.name} color chip`}
-									/>
-									<span className="theme-color-swatch__name">{s.name}</span>
-									<span className="theme-color-swatch__token">{s.token}</span>
-									<span className="theme-color-swatch__hex">{s.hex}</span>
-									{s.note && (
-										<span className="theme-color-swatch__hex">{s.note}</span>
-									)}
-								</div>
-							))}
-						</div>
-					</SpaceBetween>
-				</Container>
+									</div>
+								))}
+							</div>
+						</SpaceBetween>
+					</Container>
+				</div>
 
 				{/* ── 2. Motion & animations ── */}
-				<Container
-					header={<Header variant="h2">motion &amp; animations</Header>}
-				>
-					<SpaceBetween size="m">
-						<Box variant="p" fontSize="body-s">
-							live running demos of every animation in the cdn vocabulary.
-							toggle flip and article fade are clickable to replay. all
-							animations pause under prefers-reduced-motion.
-						</Box>
-						<Grid
-							gridDefinition={[
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-								{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
-							]}
-						>
-							{animationDemos.map((demo) => (
-								<AnimDemoTile key={demo.key} demo={demo} />
-							))}
-						</Grid>
-					</SpaceBetween>
-				</Container>
+				<div id="section-motion">
+					<Container
+						header={<Header variant="h2">motion &amp; animations</Header>}
+					>
+						<SpaceBetween size="m">
+							<Box variant="p" fontSize="body-s">
+								live running demos of every animation in the cdn vocabulary.
+								toggle flip and article fade are clickable to replay. all
+								animations pause under prefers-reduced-motion.
+							</Box>
+							<Grid
+								gridDefinition={[
+									{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
+									{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
+									{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
+									{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
+									{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
+									{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
+									{ colspan: { default: 12, xs: 6, s: 4, m: 3 } },
+								]}
+							>
+								{animationDemos.map((demo) => (
+									<AnimDemoTile key={demo.key} demo={demo} />
+								))}
+							</Grid>
+						</SpaceBetween>
+					</Container>
+				</div>
 
 				{/* ── 3. Radio player (KruxPlayer widget) ── */}
-				<Container header={<Header variant="h2">radio player widget</Header>}>
-					<SpaceBetween size="m">
-						<Box variant="p" fontSize="body-s">
-							full KruxPlayer widget in idle and playing states. idle: periodic
-							station shimmer + rotating glass ring. playing: pulsing play
-							button + headphone bob + steady violet text.
-						</Box>
-						<KruxWidgetDemo />
-					</SpaceBetween>
-				</Container>
+				<div id="section-player">
+					<Container header={<Header variant="h2">radio player widget</Header>}>
+						<SpaceBetween size="m">
+							<Box variant="p" fontSize="body-s">
+								full KruxPlayer widget in idle and playing states. idle:
+								periodic station shimmer + rotating glass ring. playing: pulsing
+								play button + headphone bob + steady violet text.
+							</Box>
+							<KruxWidgetDemo />
+						</SpaceBetween>
+					</Container>
+				</div>
 
 				{/* ── 4. Interactive states ── */}
-				<Container header={<Header variant="h2">interactive states</Header>}>
-					<SpaceBetween size="m">
-						<Box variant="p" fontSize="body-s">
-							hover over each element to see the CDN interactive treatment.
-						</Box>
-						<InteractiveStatesDemo />
-					</SpaceBetween>
-				</Container>
+				<div id="section-interactive">
+					<Container header={<Header variant="h2">interactive states</Header>}>
+						<SpaceBetween size="m">
+							<Box variant="p" fontSize="body-s">
+								hover over each element to see the CDN interactive treatment.
+							</Box>
+							<InteractiveStatesDemo />
+						</SpaceBetween>
+					</Container>
+				</div>
 
 				{/* ── 5. Typography ── */}
-				<Container
-					header={
-						<Header variant="h2">{t("themePage.sections.typography")}</Header>
-					}
-				>
-					<SpaceBetween size="m">
-						<Box variant="p">
-							{t("themePage.sections.typographyDescription")}
-						</Box>
-						<SpaceBetween size="s">
-							{typographyScale.map((type) => (
-								<Box key={type.variable} padding="s">
-									<ColumnLayout columns={3} variant="text-grid">
-										<div>
-											<Box
-												variant="strong"
-												fontSize={
-													type.variable === "--cdn-text-sm"
-														? "body-s"
-														: type.variable === "--cdn-text-base"
-															? "body-m"
-															: type.variable === "--cdn-text-lg"
-																? "heading-s"
-																: type.variable === "--cdn-text-xl"
-																	? "heading-m"
-																	: "heading-l"
-												}
-											>
-												{t(type.name)}
+				<div id="section-typography">
+					<Container
+						header={
+							<Header variant="h2">{t("themePage.sections.typography")}</Header>
+						}
+					>
+						<SpaceBetween size="m">
+							<Box variant="p">
+								{t("themePage.sections.typographyDescription")}
+							</Box>
+							<SpaceBetween size="s">
+								{typographyScale.map((type) => (
+									<Box key={type.variable} padding="s">
+										<ColumnLayout columns={3} variant="text-grid">
+											<div>
+												<Box
+													variant="strong"
+													fontSize={
+														type.variable === "--cdn-text-sm"
+															? "body-s"
+															: type.variable === "--cdn-text-base"
+																? "body-m"
+																: type.variable === "--cdn-text-lg"
+																	? "heading-s"
+																	: type.variable === "--cdn-text-xl"
+																		? "heading-m"
+																		: "heading-l"
+													}
+												>
+													{t(type.name)}
+												</Box>
+											</div>
+											<div>
+												<SpaceBetween size="xxs">
+													<Box variant="code" fontSize="body-s">
+														{type.variable}
+													</Box>
+													<Box variant="small" color="text-body-secondary">
+														{type.size}
+													</Box>
+												</SpaceBetween>
+											</div>
+											<Box variant="p" fontSize="body-s">
+												{t(type.usage)}
 											</Box>
-										</div>
-										<div>
-											<SpaceBetween size="xxs">
-												<Box variant="code" fontSize="body-s">
-													{type.variable}
-												</Box>
-												<Box variant="small" color="text-body-secondary">
-													{type.size}
-												</Box>
-											</SpaceBetween>
-										</div>
-										<Box variant="p" fontSize="body-s">
-											{t(type.usage)}
-										</Box>
-									</ColumnLayout>
-								</Box>
-							))}
+										</ColumnLayout>
+									</Box>
+								))}
+							</SpaceBetween>
+							<TypographyExtrasDemo />
 						</SpaceBetween>
-						<TypographyExtrasDemo />
-					</SpaceBetween>
-				</Container>
+					</Container>
+				</div>
 
 				{/* ── 6. Glassmorphism / surface patterns ── */}
-				<Container
-					header={
-						<Header variant="h2">glassmorphism &amp; surface patterns</Header>
-					}
-				>
-					<GlassmorphismDemo />
-				</Container>
+				<div id="section-glassmorphism">
+					<Container
+						header={
+							<Header variant="h2">glassmorphism &amp; surface patterns</Header>
+						}
+					>
+						<GlassmorphismDemo />
+					</Container>
+				</div>
 
 				{/* ── 7. Spacing scale ── */}
-				<Container header={<Header variant="h2">spacing scale</Header>}>
-					<SpaceBetween size="m">
-						<Box variant="p" fontSize="body-s">
-							spacing tokens — use these for padding, gap, and margin decisions.
-						</Box>
-						<div className="theme-spacing-ruler">
-							{spacingTokens.map((s) => (
-								<div key={s.token} className="theme-spacing-row">
-									<span className="theme-spacing-row__token">{s.token}</span>
-									<div
-										className="theme-spacing-row__bar"
-										role="img"
-										style={{ width: s.px * 3 }}
-										aria-label={`${s.value} spacing bar`}
-									/>
-									<span className="theme-spacing-row__value">{s.value}</span>
-								</div>
-							))}
-						</div>
-					</SpaceBetween>
-				</Container>
-
-				{/* ── text emphasis (retained from original) ── */}
-				<Container
-					header={
-						<Header variant="h2">{t("themePage.sections.textEmphasis")}</Header>
-					}
-				>
-					<SpaceBetween size="m">
-						<Box variant="p">
-							{t("themePage.sections.textEmphasisDescription")}
-						</Box>
-						<ColumnLayout columns={3} variant="text-grid">
-							{textEmphasisLevels.map((level) => (
-								<Box key={level.variable} padding="s">
-									<SpaceBetween size="xs">
-										<Box variant="strong" fontSize="heading-m">
-											{t(level.name)}
-										</Box>
-										<Box variant="code" fontSize="body-s">
-											{level.variable}
-										</Box>
-										<Box variant="small" color="text-body-secondary">
-											{level.hex}
-										</Box>
-										<Box variant="p" fontSize="body-s">
-											{t(level.description)}
-										</Box>
-									</SpaceBetween>
-								</Box>
-							))}
-						</ColumnLayout>
-					</SpaceBetween>
-				</Container>
-
-				{/* ── dark mode elevation (retained from original) ── */}
-				<Container
-					header={
-						<Header variant="h2">{t("themePage.sections.elevation")}</Header>
-					}
-				>
-					<SpaceBetween size="m">
-						<Box variant="p">
-							{t("themePage.sections.elevationDescription")}
-						</Box>
-						<ColumnLayout columns={4} variant="text-grid">
-							{elevationLevels.map((elevation) => (
-								<Box key={elevation.variable} padding="s">
-									<SpaceBetween size="xs">
+				<div id="section-spacing">
+					<Container header={<Header variant="h2">spacing scale</Header>}>
+						<SpaceBetween size="m">
+							<Box variant="p" fontSize="body-s">
+								spacing tokens — use these for padding, gap, and margin
+								decisions.
+							</Box>
+							<div className="theme-spacing-ruler">
+								{spacingTokens.map((s) => (
+									<div key={s.token} className="theme-spacing-row">
+										<span className="theme-spacing-row__token">{s.token}</span>
 										<div
-											style={{
-												backgroundColor: elevation.hex,
-												height: "80px",
-												borderRadius: "8px",
-												border: "1px solid var(--cdn-color-border)",
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-												color: "var(--cdn-color-text-high)",
-											}}
-										>
-											<Box variant="strong">{`${t("themePage.elevation.level")} ${elevation.level}`}</Box>
-										</div>
-										<Box variant="code" fontSize="body-s">
-											{elevation.variable}
-										</Box>
-										<Box variant="small" color="text-body-secondary">
-											{elevation.hex}
-										</Box>
-										<Box variant="p" fontSize="body-s">
-											{t(elevation.usage)}
-										</Box>
-									</SpaceBetween>
-								</Box>
-							))}
-						</ColumnLayout>
-					</SpaceBetween>
-				</Container>
+											className="theme-spacing-row__bar"
+											role="img"
+											style={{ width: s.px * 3 }}
+											aria-label={`${s.value} spacing bar`}
+										/>
+										<span className="theme-spacing-row__value">{s.value}</span>
+									</div>
+								))}
+							</div>
+						</SpaceBetween>
+					</Container>
+				</div>
 
-				{/* ── shadow tokens (retained from original) ── */}
-				<Container
-					header={
-						<Header variant="h2">{t("themePage.sections.shadows")}</Header>
-					}
-				>
-					<SpaceBetween size="m">
-						<Box variant="p">{t("themePage.sections.shadowsDescription")}</Box>
-						<Grid
-							gridDefinition={[
-								{ colspan: { default: 12, s: 4 } },
-								{ colspan: { default: 12, s: 4 } },
-								{ colspan: { default: 12, s: 4 } },
-							]}
-						>
-							{shadowTokens.map((shadow) => (
-								<Box key={shadow.variable} padding="s">
-									<SpaceBetween size="xs">
-										<div
-											style={{
-												backgroundColor: "var(--cdn-color-surface)",
-												height: "100px",
-												borderRadius: "8px",
-												boxShadow: `var(${shadow.variable})`,
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-											}}
-										>
-											<Box variant="strong">{t(shadow.name)}</Box>
-										</div>
-										<Box variant="code" fontSize="body-s">
-											{shadow.variable}
-										</Box>
-										<Box variant="p" fontSize="body-s">
-											{t(shadow.usage)}
-										</Box>
-									</SpaceBetween>
-								</Box>
-							))}
-						</Grid>
-					</SpaceBetween>
-				</Container>
+				{/* ── text emphasis ── */}
+				<div id="section-text-emphasis">
+					<Container
+						header={
+							<Header variant="h2">
+								{t("themePage.sections.textEmphasis")}
+							</Header>
+						}
+					>
+						<SpaceBetween size="m">
+							<Box variant="p">
+								{t("themePage.sections.textEmphasisDescription")}
+							</Box>
+							<ColumnLayout columns={3} variant="text-grid">
+								{textEmphasisLevels.map((level) => (
+									<Box key={level.variable} padding="s">
+										<SpaceBetween size="xs">
+											<Box variant="strong" fontSize="heading-m">
+												{t(level.name)}
+											</Box>
+											<Box variant="code" fontSize="body-s">
+												{level.variable}
+											</Box>
+											<Box variant="small" color="text-body-secondary">
+												{level.hex}
+											</Box>
+											<Box variant="p" fontSize="body-s">
+												{t(level.description)}
+											</Box>
+										</SpaceBetween>
+									</Box>
+								))}
+							</ColumnLayout>
+						</SpaceBetween>
+					</Container>
+				</div>
 
-				{/* ── glassmorphism card example (retained from original) ── */}
+				{/* ── dark mode elevation ── */}
+				<div id="section-elevation">
+					<Container
+						header={
+							<Header variant="h2">{t("themePage.sections.elevation")}</Header>
+						}
+					>
+						<SpaceBetween size="m">
+							<Box variant="p">
+								{t("themePage.sections.elevationDescription")}
+							</Box>
+							<ColumnLayout columns={4} variant="text-grid">
+								{elevationLevels.map((elevation) => (
+									<Box key={elevation.variable} padding="s">
+										<SpaceBetween size="xs">
+											<div
+												style={{
+													backgroundColor: elevation.hex,
+													height: "80px",
+													borderRadius: "8px",
+													border: "1px solid var(--cdn-color-border)",
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+													color: "var(--cdn-color-text-high)",
+												}}
+											>
+												<Box variant="strong">{`${t("themePage.elevation.level")} ${elevation.level}`}</Box>
+											</div>
+											<Box variant="code" fontSize="body-s">
+												{elevation.variable}
+											</Box>
+											<Box variant="small" color="text-body-secondary">
+												{elevation.hex}
+											</Box>
+											<Box variant="p" fontSize="body-s">
+												{t(elevation.usage)}
+											</Box>
+										</SpaceBetween>
+									</Box>
+								))}
+							</ColumnLayout>
+						</SpaceBetween>
+					</Container>
+				</div>
+
+				{/* ── shadow tokens ── */}
+				<div id="section-shadows">
+					<Container
+						header={
+							<Header variant="h2">{t("themePage.sections.shadows")}</Header>
+						}
+					>
+						<SpaceBetween size="m">
+							<Box variant="p">
+								{t("themePage.sections.shadowsDescription")}
+							</Box>
+							<Grid
+								gridDefinition={[
+									{ colspan: { default: 12, s: 4 } },
+									{ colspan: { default: 12, s: 4 } },
+									{ colspan: { default: 12, s: 4 } },
+								]}
+							>
+								{shadowTokens.map((shadow) => (
+									<Box key={shadow.variable} padding="s">
+										<SpaceBetween size="xs">
+											<div
+												style={{
+													backgroundColor: "var(--cdn-color-surface)",
+													height: "100px",
+													borderRadius: "8px",
+													boxShadow: `var(${shadow.variable})`,
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
+												<Box variant="strong">{t(shadow.name)}</Box>
+											</div>
+											<Box variant="code" fontSize="body-s">
+												{shadow.variable}
+											</Box>
+											<Box variant="p" fontSize="body-s">
+												{t(shadow.usage)}
+											</Box>
+										</SpaceBetween>
+									</Box>
+								))}
+							</Grid>
+						</SpaceBetween>
+					</Container>
+				</div>
+
+				{/* ── glassmorphism card example ── */}
 				<Container
 					header={
 						<Header variant="h2">{t("themePage.sections.cardExample")}</Header>
