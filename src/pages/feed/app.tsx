@@ -8,8 +8,11 @@ import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
+import { useAndresLive } from "../../hooks/useAndresLive";
 import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
+import { clearPlayerState, savePlayerState } from "../../lib/player-persist";
+import { STREAMS, type StreamDef } from "../../lib/streams";
 import {
 	applyLocale,
 	initializeLocale,
@@ -23,6 +26,7 @@ import {
 	type Theme,
 } from "../../utils/theme";
 import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
+import AndresYoutubeLive from "./components/andres-youtube-live";
 import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
 import { FeedAndmore, FeedAwsml } from "./components/feed-section";
@@ -30,47 +34,6 @@ import NextMeetup from "./components/next-meetup";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
 import YoutubeCarousel from "./components/youtube-carousel";
 import "./styles.css";
-
-interface StreamDef {
-	readonly key: string;
-	readonly url: string;
-	readonly label: string;
-	readonly metaUrl: string;
-	parseMeta(data: unknown): string | null;
-}
-
-const STREAMS: StreamDef[] = [
-	{
-		key: "krux",
-		url: "https://kruxstream.nmsu.edu/KRUX",
-		label: "krux 91.5",
-		metaUrl: "https://kruxstream.nmsu.edu/status-json.xsl",
-		parseMeta(data) {
-			const d = data as {
-				icestats?: { source?: { title?: string } | Array<{ title?: string }> };
-			};
-			const src = d?.icestats?.source;
-			const s = Array.isArray(src) ? src[0] : src;
-			return s?.title ?? null;
-		},
-	},
-	{
-		key: "kexp",
-		url: "https://kexp.streamguys1.com/kexp160.aac",
-		label: "kexp 90.3",
-		metaUrl: "https://api.kexp.org/v2/plays/?limit=1&format=json",
-		parseMeta(data) {
-			const d = data as {
-				results?: Array<{ artist_name?: string; song?: string }>;
-			};
-			const play = d?.results?.[0];
-			if (!play) return null;
-			const { artist_name: artist, song } = play;
-			if (artist && song) return `${song} — ${artist}`;
-			return song ?? artist ?? null;
-		},
-	},
-];
 
 const CAROUSEL_MS = 10_000;
 const FADE_MS = 500;
@@ -152,10 +115,17 @@ function KruxPlayer() {
 					detail: { element: a, stationKey: stream.key },
 				}),
 			);
+			savePlayerState({
+				stationKey: stream.key,
+				stationUrl: stream.url,
+				stationLabel: stream.label,
+				metaUrl: stream.metaUrl,
+			});
 		} else {
 			window.dispatchEvent(new CustomEvent("cdn:audio:stop"));
+			clearPlayerState();
 		}
-	}, [playing, stream.key]);
+	}, [playing, stream.key, stream.url, stream.label, stream.metaUrl]);
 
 	const skipStation = useCallback(() => {
 		const a = audioRef.current;
@@ -262,14 +232,19 @@ type SectionKey =
 	| "awsml"
 	| "arrowhead";
 
-const SECTIONS: Partial<Record<SectionKey, React.ReactNode>> = {
-	youtube: <YoutubeCarousel />,
-	twitchAws: <TwitchAws />,
-	twitchAwsOnAir: <TwitchAwsOnAir />,
-	andmore: <FeedAndmore />,
-	awsml: <FeedAwsml />,
-	arrowhead: <ArrowheadNews />,
-};
+// priority order for live hero — first live item wins the top slot
+const LIVE_PRIORITY = ["twitchAwsOnAir", "twitchAws", "andresYoutube"] as const;
+type LiveKey = (typeof LIVE_PRIORITY)[number];
+
+// stable shuffled order generated once per page load
+const SECTION_KEYS: SectionKey[] = [
+	"youtube",
+	"twitchAws",
+	"twitchAwsOnAir",
+	"andmore",
+	"awsml",
+	"arrowhead",
+];
 
 function shuffled<T>(arr: T[]): T[] {
 	const copy = [...arr];
@@ -295,11 +270,53 @@ function AppContent({
 }) {
 	const { t } = useTranslation();
 
-	// Shuffle order is stable for the lifetime of this page load
-	const order = useMemo(
-		() => shuffled(Object.keys(SECTIONS) as SectionKey[]),
-		[],
+	const [liveKeys, setLiveKeys] = useState<Set<string>>(new Set());
+
+	const markLive = useCallback((key: string, isLive: boolean) => {
+		setLiveKeys((prev) => {
+			// bail out if nothing changes — avoids remount loops when SDK re-fires
+			if (prev.has(key) === isLive) return prev;
+			const next = new Set(prev);
+			if (isLive) next.add(key);
+			else next.delete(key);
+			return next;
+		});
+	}, []);
+
+	const { live: andresLive, videoId: andresVideoId } = useAndresLive();
+
+	// sections wired with live callbacks — stable because markLive is stable
+	const sections = useMemo<Partial<Record<SectionKey, React.ReactNode>>>(
+		() => ({
+			youtube: <YoutubeCarousel />,
+			twitchAws: (
+				<TwitchAws onLiveChange={(live) => markLive("twitchAws", live)} />
+			),
+			twitchAwsOnAir: (
+				<TwitchAwsOnAir
+					onLiveChange={(live) => markLive("twitchAwsOnAir", live)}
+				/>
+			),
+			andmore: <FeedAndmore />,
+			awsml: <FeedAwsml />,
+			arrowhead: <ArrowheadNews />,
+		}),
+		[markLive],
 	);
+
+	// stable shuffle — recomputed only if sections reference changes (it won't)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: SECTION_KEYS is module-level constant
+	const shuffledOrder = useMemo<SectionKey[]>(() => shuffled(SECTION_KEYS), []);
+
+	// union of twitch + andres live keys
+	const allLiveKeys = useMemo(() => {
+		const s = new Set(liveKeys);
+		if (andresLive) s.add("andresYoutube");
+		return s;
+	}, [liveKeys, andresLive]);
+
+	const liveToShow = LIVE_PRIORITY.filter((k) => allLiveKeys.has(k));
+	const gridOrder = shuffledOrder.filter((k) => !allLiveKeys.has(k));
 
 	return (
 		<ContentLayout
@@ -324,6 +341,23 @@ function AppContent({
 				</Header>
 			}
 		>
+			{liveToShow.length > 0 && (
+				<div className="feed-live-hero">
+					{liveToShow.map((key) => (
+						<div
+							key={key}
+							className="feed-grid__cell cdn-card feed-grid__cell--full feed-live-hero__card"
+						>
+							{key === "andresYoutube" ? (
+								<AndresYoutubeLive videoId={andresVideoId} />
+							) : (
+								sections[key as SectionKey]
+							)}
+						</div>
+					))}
+					<hr className="feed-section-divider" />
+				</div>
+			)}
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<NextMeetup />
 			</div>
@@ -333,9 +367,9 @@ function AppContent({
 			</div>
 			<hr className="feed-section-divider" />
 			<div className="feed-grid">
-				{order.map((key) => (
+				{gridOrder.map((key) => (
 					<div key={key} className="feed-grid__cell cdn-card">
-						{SECTIONS[key]}
+						{sections[key]}
 					</div>
 				))}
 			</div>
@@ -356,16 +390,6 @@ export default function App() {
 	const [theme, setTheme] = useState<Theme>(() => initializeTheme());
 	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 	const [toolsOpen, setToolsOpen] = useState(false);
-
-	useEffect(() => {
-		let cleanup: (() => void) | null = null;
-		void import("../../lib/background-viz/index").then((mod) => {
-			cleanup = mod.mount();
-		});
-		return () => {
-			cleanup?.();
-		};
-	}, []);
 
 	const handleThemeChange = (newTheme: Theme) => {
 		setTheme(newTheme);

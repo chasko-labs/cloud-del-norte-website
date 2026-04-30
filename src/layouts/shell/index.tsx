@@ -7,6 +7,7 @@ import AppLayout, {
 import TopNavigation from "@cloudscape-design/components/top-navigation";
 import { useCallback, useEffect, useState } from "react";
 import Footer from "../../components/footer";
+import PersistentPlayer from "../../components/persistent-player";
 import { AuthProvider } from "../../contexts/auth-context";
 import { LocaleProvider } from "../../contexts/locale-context";
 import { useAuth } from "../../hooks/useAuth";
@@ -94,6 +95,17 @@ function ShellContent({
 		},
 		[],
 	);
+
+	// background-viz canvas — mounts once per page load, cleans up on unmount
+	useEffect(() => {
+		let cleanup: (() => void) | null = null;
+		void import("../../lib/background-viz/index").then((mod) => {
+			cleanup = mod.mount();
+		});
+		return () => {
+			cleanup?.();
+		};
+	}, []);
 
 	// Add resize listener to handle viewport changes
 	useEffect(() => {
@@ -209,6 +221,7 @@ function ShellContent({
 				}}
 			/>
 			<Footer />
+			<PersistentPlayer />
 		</>
 	);
 }

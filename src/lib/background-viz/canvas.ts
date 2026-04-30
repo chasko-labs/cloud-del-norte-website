@@ -34,7 +34,7 @@ function normBand(bins: Uint8Array, lo: number, hi: number): number {
 
 function rebuildStaticLayers(w: number, h: number): void {
 	starPositions = generateStarPositions(w, h);
-	staticLightCanvas = buildStaticLight(w, h);
+	staticLightCanvas = buildStaticLight(w, h, starPositions);
 	staticDarkCanvas = buildStaticDark(w, h, starPositions);
 }
 
@@ -56,6 +56,7 @@ function createCanvas(): {
 	el.style.cssText =
 		"position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none";
 	document.body.appendChild(el);
+	document.documentElement.classList.add("cdn-viz-active");
 
 	const context = el.getContext("2d");
 	if (!context) throw new Error("canvas 2d context unavailable");

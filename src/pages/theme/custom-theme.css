@@ -633,6 +633,141 @@
 }
 
 /* ==========================================================================
+   Token index TOC
+   ========================================================================== */
+
+.theme-toc {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 4px 0;
+}
+
+.theme-toc__link {
+	font-size: var(--cdn-text-sm);
+	font-weight: var(--cdn-weight-medium);
+	color: var(--cdn-color-primary, var(--cdn-purple));
+	text-decoration: none;
+	padding: 4px 10px;
+	border-radius: var(--cdn-radius-sm);
+	border: 1px solid var(--cdn-color-border);
+	transition:
+		background 0.15s ease,
+		border-color 0.15s ease;
+	white-space: nowrap;
+}
+
+.theme-toc__link:hover {
+	background: var(--cdn-color-glow, rgba(90, 31, 138, 0.08));
+	border-color: var(--cdn-color-primary, var(--cdn-purple));
+}
+
+/* ==========================================================================
+   Semantic palette groups
+   ========================================================================== */
+
+.theme-palette-group {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.theme-palette-group__label {
+	font-size: var(--cdn-text-xs);
+	font-weight: var(--cdn-weight-semibold);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--cdn-color-text-muted, var(--cdn-color-text-low));
+	padding-bottom: 6px;
+	border-bottom: 1px solid var(--cdn-color-border);
+}
+
+.theme-palette-group__swatches {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+	gap: 12px;
+}
+
+.theme-palette-swatch {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.theme-palette-swatch__chip {
+	height: 88px;
+	border-radius: var(--cdn-radius-md);
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	flex-shrink: 0;
+}
+
+.awsui-dark-mode .theme-palette-swatch__chip {
+	border-color: rgba(255, 255, 255, 0.08);
+}
+
+.theme-palette-swatch__name {
+	font-size: var(--cdn-text-xs);
+	font-weight: var(--cdn-weight-semibold);
+	color: var(--cdn-color-text-high);
+	margin-top: 2px;
+}
+
+.theme-palette-swatch__token {
+	font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	font-size: 9px;
+	color: var(--cdn-color-text-medium);
+	overflow-wrap: break-word;
+	word-break: break-all;
+	line-height: 1.3;
+}
+
+.theme-palette-swatch__hex {
+	font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+	font-size: var(--cdn-text-xs);
+	color: var(--cdn-color-text-low);
+}
+
+.theme-palette-swatch__role {
+	font-size: 9px;
+	font-style: italic;
+	color: var(--cdn-color-text-low);
+	line-height: 1.35;
+}
+
+/* ==========================================================================
+   Border + radius token showcase
+   ========================================================================== */
+
+.theme-radius-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 20px;
+}
+
+.theme-radius-swatch {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.theme-radius-swatch__box {
+	width: 80px;
+	height: 48px;
+	background: var(--cdn-color-surface, #fff);
+	border: 2px solid var(--cdn-color-border);
+}
+
+.awsui-dark-mode .theme-radius-swatch__box {
+	background: var(--cdn-elevation-1, #12123a);
+}
+
+.theme-radius-swatch__name {
+	font-size: var(--cdn-text-xs);
+	font-weight: var(--cdn-weight-semibold);
+	color: var(--cdn-color-text-high);
+}
+
+/* ==========================================================================
    prefers-reduced-motion — stop all showcase animations
    ========================================================================== */
 

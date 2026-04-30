@@ -320,6 +320,13 @@ export default function Navigation() {
 	const { t } = useTranslation();
 	const { isModerator } = useAuth();
 
+	const currentPath = location.pathname;
+	const isOnResources =
+		currentPath.startsWith("/roadmap") ||
+		currentPath.startsWith("/maintenance-calendar") ||
+		currentPath.startsWith("/theme");
+	const isOnLearning = currentPath.startsWith("/learning");
+
 	// home (feed) is reachable via the "cloud del norte" header above and the top-nav title.
 	// about is reachable from the right-side info panel only — not duplicated in the left nav.
 	const items: SideNavigationProps["items"] = [
@@ -341,7 +348,7 @@ export default function Navigation() {
 		{
 			type: "section",
 			text: t("navigation.resources"),
-			defaultExpanded: false,
+			defaultExpanded: isOnResources,
 			items: [
 				{
 					type: "link",
@@ -364,13 +371,13 @@ export default function Navigation() {
 		{
 			type: "section",
 			text: t("navigation.learning"),
-			defaultExpanded: false,
+			defaultExpanded: isOnLearning,
 			items: [
 				{
 					type: "expandable-link-group",
 					text: t("navigation.apiGuide"),
 					href: "/learning/api/",
-					defaultExpanded: false,
+					defaultExpanded: isOnLearning,
 					items: [
 						{
 							type: "link",
@@ -431,7 +438,7 @@ export default function Navigation() {
 	return (
 		<>
 			<SideNavigation
-				activeHref={location.pathname}
+				activeHref={location.pathname + location.hash}
 				header={{ href: "/feed/index.html", text: t("shell.siteTitle") }}
 				items={items}
 				onFollow={(event) => {

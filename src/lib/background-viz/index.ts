@@ -24,8 +24,13 @@ export function mount(): () => void {
 	}
 
 	function onStop(): void {
-		stopLoop();
+		// audio paused — analyser bins drop to silence naturally; ambient loop continues.
+		// do NOT destroy/close the AudioContext here: MediaElementSourceNode can only be
+		// created once per element, and destroyAudio() nulls the context, breaking reconnect.
 	}
+
+	// ambient loop runs immediately; audio reactivity added when a stream plays
+	startLoop();
 
 	window.addEventListener("cdn:audio:play", onPlay);
 	window.addEventListener("cdn:audio:stop", onStop);
@@ -42,5 +47,6 @@ export function mount(): () => void {
 		window.removeEventListener("cdn:audio:stop", onStop);
 		window.removeEventListener("resize", resize);
 		canvas.remove();
+		document.documentElement.classList.remove("cdn-viz-active");
 	};
 }
