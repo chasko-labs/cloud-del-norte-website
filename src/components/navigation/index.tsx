@@ -100,7 +100,7 @@ interface VisitorInfo {
 	flag: string;
 }
 
-const VISITOR_CACHE_KEY = "cdn.visitor";
+const VISITOR_CACHE_KEY = "cdn.visitor.v2";
 const VISITOR_TTL_MS = 24 * 60 * 60 * 1000;
 
 async function loadVisitorInfo(): Promise<VisitorInfo | null> {
@@ -262,51 +262,53 @@ function LioraFrame() {
 					<span id="liora-sys-status"> SYS:▓▓▓</span>
 				</div>
 			</div>
-			<div
-				className="liora-stickynote-2"
-				role="note"
-				aria-label={visitor ? `Hello, ${visitor.greeting}.` : "Hello"}
-			>
-				<span className="liora-stickynote-2-line">
-					hello, {visitor?.greeting ?? "friend"}
-					{visitor?.flag ? (
-						<span className="liora-stickynote-2-flag" aria-hidden="true">
-							{" "}
-							{visitor.flag}
-						</span>
+			<div className="liora-notes-row">
+				<button
+					key={stickyKey}
+					type="button"
+					className={`liora-stickynote${stickyZoomed ? " liora-stickynote--zoomed" : ""}`}
+					onClick={() => {
+						const bezel = document.querySelector(".liora-bezel");
+						if (
+							bezel instanceof HTMLElement &&
+							(bezel.classList.contains("screen-tap-1") ||
+								bezel.classList.contains("screen-tap-2"))
+						)
+							return;
+						setStickyZoomed((v) => !v);
+						setStickyKey((k) => k + 1);
+					}}
+					aria-label={
+						stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
+					}
+				>
+					<span className="liora-stickynote-line liora-stickynote-line-1">
+						non load
+					</span>
+					<span className="liora-stickynote-line liora-stickynote-line-2">
+						bearing
+					</span>
+					<span className="liora-stickynote-sig">- ^.^</span>
+				</button>
+				<div
+					className="liora-stickynote-2"
+					role="note"
+					aria-label={visitor ? `Welcome, ${visitor.greeting}.` : "Welcome"}
+				>
+					<span className="liora-stickynote-2-line">
+						welcome, {visitor?.greeting ?? ""}
+						{visitor?.flag ? (
+							<span className="liora-stickynote-2-flag" aria-hidden="true">
+								{" "}
+								{visitor.flag}
+							</span>
+						) : null}
+					</span>
+					{visitor?.ip ? (
+						<span className="liora-stickynote-2-ip">{visitor.ip}</span>
 					) : null}
-				</span>
-				{visitor?.ip ? (
-					<span className="liora-stickynote-2-ip">{visitor.ip}</span>
-				) : null}
+				</div>
 			</div>
-			<button
-				key={stickyKey}
-				type="button"
-				className={`liora-stickynote${stickyZoomed ? " liora-stickynote--zoomed" : ""}`}
-				onClick={() => {
-					const bezel = document.querySelector(".liora-bezel");
-					if (
-						bezel instanceof HTMLElement &&
-						(bezel.classList.contains("screen-tap-1") ||
-							bezel.classList.contains("screen-tap-2"))
-					)
-						return;
-					setStickyZoomed((v) => !v);
-					setStickyKey((k) => k + 1);
-				}}
-				aria-label={
-					stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
-				}
-			>
-				<span className="liora-stickynote-line liora-stickynote-line-1">
-					non load
-				</span>
-				<span className="liora-stickynote-line liora-stickynote-line-2">
-					bearing
-				</span>
-				<span className="liora-stickynote-sig">- ^.^</span>
-			</button>
 		</div>
 	);
 }

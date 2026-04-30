@@ -15,7 +15,11 @@ export function mount(): () => void {
 			element: HTMLAudioElement;
 			stationKey: string;
 		};
-		initAudio(element, stationKey);
+		try {
+			initAudio(element, stationKey);
+		} catch {
+			// CORS or AudioContext failure — loop still starts, bins will be zeros
+		}
 		startLoop();
 	}
 

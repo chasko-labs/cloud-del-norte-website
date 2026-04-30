@@ -199,14 +199,8 @@
 		filter 0.55s;
 	animation: 0.6s 1.4s forwards liora-stickynote-fadein;
 	display: flex;
-	/* note now flows in normal layout below the bezel — was position:absolute
-	   with top:100% which pushed it below the parent frame and offscreen on
-	   mobile/short-viewport loads. relative + align-self keeps left-anchor
-	   while letting liora-frame grow to contain the note */
 	position: relative;
-	align-self: flex-start;
 	margin-left: 18px;
-	margin-top: 6px;
 	transform: rotate(-4.5deg);
 	box-shadow:
 		1px 2px 4px #00000047,
@@ -351,20 +345,20 @@
 	}
 }
 
-.liora-bezel.screen-tap-1 ~ .liora-stickynote {
+.liora-bezel.screen-tap-1 ~ .liora-notes-row .liora-stickynote {
 	opacity: 1;
 	pointer-events: auto;
 	animation: 0.72s cubic-bezier(0.36, 0.07, 0.19, 0.97) 2 forwards
 		liora-stickynote-sway;
 }
 
-.liora-bezel.screen-tap-2 ~ .liora-stickynote {
+.liora-bezel.screen-tap-2 ~ .liora-notes-row .liora-stickynote {
 	pointer-events: auto;
 	animation: 1.05s cubic-bezier(0.42, 0, 0.78, 1) forwards
 		liora-stickynote-ripfall;
 }
 
-.liora-bezel.screen-tap-2 ~ .liora-stickynote:before {
+.liora-bezel.screen-tap-2 ~ .liora-notes-row .liora-stickynote:before {
 	animation: 0.42s ease-in forwards liora-stickynote-tape-rip;
 }
 
@@ -476,7 +470,7 @@
 	}
 }
 
-.liora-bezel.screen-tap-3 ~ .liora-stickynote {
+.liora-bezel.screen-tap-3 ~ .liora-notes-row .liora-stickynote {
 	opacity: 0;
 	filter: blur(1.5px);
 	transition:
@@ -2564,15 +2558,24 @@
 	filter: brightness(0.4) !important;
 }
 
+/* === notes row: holds sticky note 1 (left) and sticky note 2 (right) side by side
+   so both are visible without adding vertical height below the bezel. */
+.liora-notes-row {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: flex-start;
+	width: 100%;
+	margin-top: 6px;
+}
+
 /* === sticky note 2: visitor greeting + IP ============================
    second sticky placed in the right gutter below the bezel, mirroring
-   sticky note 1's position on the left. greeting from ipinfo.io country
-   lookup (cached 24h in localStorage), falls back to "friend" on error. */
+   sticky note 1's position on the left. both notes live in .liora-notes-row
+   (flex row) so they appear side by side without stacking vertically. */
 .liora-stickynote-2 {
 	position: relative;
-	align-self: flex-end;
 	margin-right: 18px;
-	margin-top: 6px;
 	padding: 3px 6px 4px;
 	max-width: clamp(72px, 22cqi, 110px);
 	width: fit-content;
