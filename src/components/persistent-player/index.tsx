@@ -54,6 +54,20 @@ function PersistentPlayerBar({
 		setBlocked(false);
 	}, []);
 
+	const handlePlay = useCallback(() => {
+		const a = audioRef.current;
+		if (!a) return;
+		window.dispatchEvent(
+			new CustomEvent("cdn:audio:play", {
+				detail: { element: a, stationKey: state.stationKey },
+			}),
+		);
+	}, [state.stationKey]);
+
+	const handlePause = useCallback(() => {
+		window.dispatchEvent(new CustomEvent("cdn:audio:stop"));
+	}, []);
+
 	return (
 		<section className="cdn-pp" aria-label="now playing">
 			{/* biome-ignore lint/a11y/useMediaCaption: live radio stream — no caption track available */}
@@ -62,6 +76,8 @@ function PersistentPlayerBar({
 				src={state.stationUrl}
 				preload="none"
 				crossOrigin="anonymous"
+				onPlay={handlePlay}
+				onPause={handlePause}
 			/>
 			<span className="cdn-pp__headphones" aria-hidden="true">
 				🎧

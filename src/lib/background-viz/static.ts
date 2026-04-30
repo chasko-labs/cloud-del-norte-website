@@ -4,17 +4,62 @@ export interface StarPoint {
 	size: number;
 	opacity: number;
 	bright: boolean;
+	constellation: boolean; // true = part of the ⭐ outline cluster
+}
+
+/** Compute the 10 vertices of a 5-pointed star centred at (cx,cy). */
+function starVerts(
+	cx: number,
+	cy: number,
+	R: number,
+	r: number,
+): [number, number][] {
+	const pts: [number, number][] = [];
+	for (let i = 0; i < 10; i++) {
+		const angle = (i * Math.PI) / 5 - Math.PI / 2; // top-point up
+		const radius = i % 2 === 0 ? R : r;
+		pts.push([cx + Math.cos(angle) * radius, cy + Math.sin(angle) * radius]);
+	}
+	return pts;
 }
 
 export function generateStarPositions(w: number, h: number): StarPoint[] {
 	const stars: StarPoint[] = [];
-	for (let i = 0; i < 350; i++) {
+
+	// ── ⭐ constellation outline ──────────────────────────────────────────────
+	// Centre upper-right quadrant so it's visible but doesn't compete with cards.
+	const cx = w * 0.62;
+	const cy = h * 0.28;
+	const R = Math.min(w, h) * 0.26; // outer radius
+	const r = R * 0.42; // inner radius (slightly fatter than pure ≈0.382)
+	const verts = starVerts(cx, cy, R, r);
+
+	const outlineCount = 90;
+	const jitter = R * 0.04;
+	for (let i = 0; i < outlineCount; i++) {
+		const seg = Math.floor(Math.random() * 10);
+		const t = Math.random();
+		const [x1, y1] = verts[seg];
+		const [x2, y2] = verts[(seg + 1) % 10];
+		stars.push({
+			x: x1 + (x2 - x1) * t + (Math.random() - 0.5) * 2 * jitter,
+			y: y1 + (y2 - y1) * t + (Math.random() - 0.5) * 2 * jitter,
+			size: 0.9 + Math.random() * 1.3,
+			opacity: 0.55 + Math.random() * 0.45,
+			bright: false,
+			constellation: true,
+		});
+	}
+
+	// ── background star field ────────────────────────────────────────────────
+	for (let i = 0; i < 260; i++) {
 		stars.push({
 			x: Math.random() * w,
 			y: Math.random() * h,
-			size: 0.5 + Math.random() * 1.5,
-			opacity: 0.3 + Math.random() * 0.6,
+			size: 0.4 + Math.random() * 1.2,
+			opacity: 0.18 + Math.random() * 0.45,
 			bright: false,
+			constellation: false,
 		});
 	}
 
@@ -27,7 +72,11 @@ export function generateStarPositions(w: number, h: number): StarPoint[] {
 	return stars;
 }
 
-export function buildStaticLight(w: number, h: number): OffscreenCanvas {
+export function buildStaticLight(
+	w: number,
+	h: number,
+	starPositions: StarPoint[],
+): OffscreenCanvas {
 	const canvas = new OffscreenCanvas(w, h);
 	const ctx = canvas.getContext("2d")!;
 
@@ -55,6 +104,18 @@ export function buildStaticLight(w: number, h: number): OffscreenCanvas {
 	}
 	ctx.restore();
 
+	// ⭐ constellation as faint warm-amber dots on the cream static layer
+	ctx.save();
+	for (const star of starPositions) {
+		if (!star.constellation) continue;
+		const alpha = star.opacity * 0.22; // subdued on static layer
+		ctx.beginPath();
+		ctx.arc(star.x, star.y, star.size * 0.85, 0, Math.PI * 2);
+		ctx.fillStyle = `rgba(139,90,43,${alpha.toFixed(3)})`;
+		ctx.fill();
+	}
+	ctx.restore();
+
 	return canvas;
 }
 
@@ -70,11 +131,12 @@ export function buildStaticDark(
 	ctx.fillStyle = "#0a0c14";
 	ctx.fillRect(0, 0, w, h);
 
-	// star field
+	// star field — constellation stars rendered slightly brighter
 	for (const star of starPositions) {
+		const opacityBoost = star.constellation ? 1.18 : 1;
 		ctx.beginPath();
 		ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-		ctx.fillStyle = `rgba(255,255,255,${star.opacity.toFixed(3)})`;
+		ctx.fillStyle = `rgba(255,255,255,${Math.min(1, star.opacity * opacityBoost).toFixed(3)})`;
 		ctx.fill();
 	}
 

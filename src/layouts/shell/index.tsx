@@ -96,6 +96,17 @@ function ShellContent({
 		[],
 	);
 
+	// background-viz canvas — mounts once per page load, cleans up on unmount
+	useEffect(() => {
+		let cleanup: (() => void) | null = null;
+		void import("../../lib/background-viz/index").then((mod) => {
+			cleanup = mod.mount();
+		});
+		return () => {
+			cleanup?.();
+		};
+	}, []);
+
 	// Add resize listener to handle viewport changes
 	useEffect(() => {
 		function handleResize() {

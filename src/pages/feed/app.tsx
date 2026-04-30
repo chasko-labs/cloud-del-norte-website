@@ -391,16 +391,6 @@ export default function App() {
 	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 	const [toolsOpen, setToolsOpen] = useState(false);
 
-	useEffect(() => {
-		let cleanup: (() => void) | null = null;
-		void import("../../lib/background-viz/index").then((mod) => {
-			cleanup = mod.mount();
-		});
-		return () => {
-			cleanup?.();
-		};
-	}, []);
-
 	const handleThemeChange = (newTheme: Theme) => {
 		setTheme(newTheme);
 		applyTheme(newTheme);

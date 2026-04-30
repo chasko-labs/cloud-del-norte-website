@@ -34,7 +34,7 @@ function normBand(bins: Uint8Array, lo: number, hi: number): number {
 
 function rebuildStaticLayers(w: number, h: number): void {
 	starPositions = generateStarPositions(w, h);
-	staticLightCanvas = buildStaticLight(w, h);
+	staticLightCanvas = buildStaticLight(w, h, starPositions);
 	staticDarkCanvas = buildStaticDark(w, h, starPositions);
 }
 
