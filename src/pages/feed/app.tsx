@@ -143,6 +143,20 @@ function KruxPlayer() {
 		a.play().catch(() => setLoading(false));
 	}, [idx]);
 
+	useEffect(() => {
+		const a = audioRef.current;
+		if (!a) return;
+		if (playing) {
+			window.dispatchEvent(
+				new CustomEvent("cdn:audio:play", {
+					detail: { element: a, stationKey: stream.key },
+				}),
+			);
+		} else {
+			window.dispatchEvent(new CustomEvent("cdn:audio:stop"));
+		}
+	}, [playing, stream.key]);
+
 	const skipStation = useCallback(() => {
 		const a = audioRef.current;
 		const wasPlaying = a ? !a.paused : false;
@@ -225,6 +239,7 @@ function KruxPlayer() {
 				ref={audioRef}
 				src={stream.url}
 				preload="none"
+				crossOrigin="anonymous"
 				onPlay={() => setPlaying(true)}
 				onPause={() => setPlaying(false)}
 				onEnded={() => setPlaying(false)}
@@ -341,6 +356,16 @@ export default function App() {
 	const [theme, setTheme] = useState<Theme>(() => initializeTheme());
 	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 	const [toolsOpen, setToolsOpen] = useState(false);
+
+	useEffect(() => {
+		let cleanup: (() => void) | null = null;
+		void import("../../lib/background-viz/index").then((mod) => {
+			cleanup = mod.mount();
+		});
+		return () => {
+			cleanup?.();
+		};
+	}, []);
 
 	const handleThemeChange = (newTheme: Theme) => {
 		setTheme(newTheme);
