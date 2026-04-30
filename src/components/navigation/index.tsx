@@ -291,6 +291,7 @@ function LioraFrame() {
 					</span>
 					<span className="liora-stickynote-sig">- ^.^</span>
 				</button>
+				{/* biome-ignore lint/a11y/useKeyWithClickEvents: decorative note, not keyboard-navigable */}
 				<div
 					className={`liora-stickynote-2${sticky2Fallen ? " liora-stickynote-2--fallen" : ""}`}
 					role="note"
