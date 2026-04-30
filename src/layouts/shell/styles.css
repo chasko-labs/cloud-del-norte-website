@@ -525,11 +525,11 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 #top-nav [class*="awsui_logo"] img {
-	height: 72px !important;
+	height: 144px !important;
 	width: auto !important;
 	object-fit: contain;
-	/* Pull upward so the star extends above the nav edge */
-	margin-top: -12px;
+	/* Pull upward so the star spills above + below the nav bar */
+	margin-top: -48px;
 	position: relative;
 	z-index: 1200;
 	transform-origin: left center;
@@ -539,7 +539,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 #top-nav [class*="awsui_logo"] img:hover {
-	transform: scale(1.1);
+	transform: scale(1.08);
 }
 
 /* ── Dark mode: multi-layer volumetric neon glow ─────────────────────────────
