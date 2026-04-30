@@ -42,5 +42,6 @@ export function mount(): () => void {
 		window.removeEventListener("cdn:audio:stop", onStop);
 		window.removeEventListener("resize", resize);
 		canvas.remove();
+		document.documentElement.classList.remove("cdn-viz-active");
 	};
 }
