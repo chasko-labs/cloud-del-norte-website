@@ -150,11 +150,12 @@ function ShellContent({
 				data-cdn-animating={animating || undefined}
 				data-cdn-animating-locale={animatingLocale || undefined}
 			>
+				{/* Custom logo — absolutely positioned so it's free of Cloudscape's identity sizing constraints */}
+				<a href={identityHref} className="cdn-logo-hero" aria-label="Cloud Del Norte — home">
+					<img src="/brand/logo.svg" alt="" aria-hidden="true" />
+				</a>
 				<TopNavigation
-					identity={{
-						logo: { src: "/brand/logo.svg", alt: "Cloud Del Norte" },
-						href: identityHref,
-					}}
+					identity={{ href: identityHref }}
 					utilities={[
 						{
 							type: "button",

@@ -507,39 +507,48 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	background-color: #ede5d4 !important;
 }
 
-/* ── Logo hero — break Cloudscape's identity constraint ──────────────────────
-   The TopNavigation identity link is a flex item in a fixed-height row (~48px).
-   overflow: visible on the identity, logo wrapper, and header lets the img
-   spill above/below the nav bar for a "larger than life" silhouette.
-   The header itself stays the same height — only the img overflows visually. */
+/* ── Logo hero — custom element, free of Cloudscape identity sizing ──────────
+   Absolutely positioned over #top-nav so Cloudscape cannot constrain its size.
+   Cloudscape identity gets href only (no logo prop) so the identity link area
+   is empty and our hero sits flush left in its place.
+   overflow: visible on top-nav + header so the star spills above/below the bar. */
 
-#top-nav [class*="awsui_header"],
-#top-nav [class*="awsui_identity"],
-#top-nav [class*="awsui_logo"] {
+#top-nav {
+	position: relative;
+}
+
+#top-nav [class*="awsui_header"] {
 	overflow: visible !important;
 }
 
-/* Position: relative on identity so ::after light-spill is anchored there */
-#top-nav [class*="awsui_identity"] {
-	position: relative;
+.cdn-logo-hero {
+	position: absolute;
+	left: 14px;
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 1200;
+	display: block;
+	line-height: 0;
+	/* push Cloudscape nav content right so hero doesn't underlap hamburger */
 }
 
-#top-nav [class*="awsui_logo"] img {
-	height: 144px !important;
-	width: auto !important;
-	object-fit: contain;
-	/* Pull upward so the star spills above + below the nav bar */
-	margin-top: -48px;
-	position: relative;
-	z-index: 1200;
+.cdn-logo-hero img {
+	height: 88px;
+	width: auto;
+	display: block;
 	transform-origin: left center;
 	transition:
 		transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
 		filter 0.35s ease;
 }
 
-#top-nav [class*="awsui_logo"] img:hover {
+.cdn-logo-hero:hover img {
 	transform: scale(1.08);
+}
+
+/* Cloudscape nav needs left padding to clear the 88px logo + 14px offset */
+#top-nav [class*="awsui_top-navigation"] {
+	padding-left: 110px !important;
 }
 
 /* ── Dark mode: multi-layer volumetric neon glow ─────────────────────────────
@@ -572,7 +581,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	}
 }
 
-.awsui-dark-mode #top-nav [class*="awsui_logo"] img {
+.awsui-dark-mode .cdn-logo-hero img {
 	filter:
 		drop-shadow(0 0 2px rgba(201, 162, 63, 0.85))
 		drop-shadow(0 0 4px rgba(155, 92, 244, 1))
@@ -582,20 +591,20 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	.awsui-dark-mode #top-nav [class*="awsui_logo"] img {
+	.awsui-dark-mode .cdn-logo-hero img {
 		animation: cdn-logo-breathe 5s ease-in-out infinite;
 	}
 }
 
-/* Area light floor spill — light pooling on the surface beneath the sign */
-.awsui-dark-mode #top-nav [class*="awsui_identity"]::after {
+/* Area light floor spill — light pooling beneath the star */
+.awsui-dark-mode .cdn-logo-hero::after {
 	content: "";
 	position: absolute;
 	left: 50%;
-	bottom: -18px;
+	bottom: -20px;
 	transform: translateX(-50%);
-	width: 88px;
-	height: 22px;
+	width: 100px;
+	height: 24px;
 	background: radial-gradient(
 		ellipse at center,
 		rgba(144, 96, 240, 0.38) 0%,
@@ -604,11 +613,10 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	);
 	filter: blur(7px);
 	pointer-events: none;
-	z-index: 1100;
 	border-radius: 50%;
 }
 
-/* ── Light mode: warm amber area glow — sunlit carved-star effect ────────── */
+/* ── Light mode: warm amber area glow ───────────────────────────────────── */
 
 @keyframes cdn-logo-breathe-light {
 	0%,
@@ -627,7 +635,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	}
 }
 
-:root:not(.awsui-dark-mode) #top-nav [class*="awsui_logo"] img {
+:root:not(.awsui-dark-mode) .cdn-logo-hero img {
 	filter:
 		drop-shadow(0 0 3px rgba(139, 90, 43, 0.72))
 		drop-shadow(0 0 9px rgba(201, 162, 63, 0.45))
@@ -635,7 +643,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	:root:not(.awsui-dark-mode) #top-nav [class*="awsui_logo"] img {
+	:root:not(.awsui-dark-mode) .cdn-logo-hero img {
 		animation: cdn-logo-breathe-light 6s ease-in-out infinite;
 	}
 }
