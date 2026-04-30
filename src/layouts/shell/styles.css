@@ -507,12 +507,137 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	background-color: #ede5d4 !important;
 }
 
-/* Nav logo — size to fit top-nav bar height */
-#top-nav [class*="awsui_logo"] img,
+/* ── Logo hero — break Cloudscape's identity constraint ──────────────────────
+   The TopNavigation identity link is a flex item in a fixed-height row (~48px).
+   overflow: visible on the identity, logo wrapper, and header lets the img
+   spill above/below the nav bar for a "larger than life" silhouette.
+   The header itself stays the same height — only the img overflows visually. */
+
+#top-nav [class*="awsui_header"],
+#top-nav [class*="awsui_identity"],
 #top-nav [class*="awsui_logo"] {
-	height: 48px;
-	width: auto;
+	overflow: visible !important;
+}
+
+/* Position: relative on identity so ::after light-spill is anchored there */
+#top-nav [class*="awsui_identity"] {
+	position: relative;
+}
+
+#top-nav [class*="awsui_logo"] img {
+	height: 72px !important;
+	width: auto !important;
 	object-fit: contain;
+	/* Pull upward so the star extends above the nav edge */
+	margin-top: -12px;
+	position: relative;
+	z-index: 1200;
+	transform-origin: left center;
+	transition:
+		transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+		filter 0.35s ease;
+}
+
+#top-nav [class*="awsui_logo"] img:hover {
+	transform: scale(1.1);
+}
+
+/* ── Dark mode: multi-layer volumetric neon glow ─────────────────────────────
+   Layers simulate area-light falloff:
+     1. tight gold edge highlight (filament rim)
+     2. tight violet core (emissive surface)
+     3. mid violet halo (direct illumination cone)
+     4. wide violet ambient (room spill)
+     5. deep purple bloom (far field)
+   Breathing animation = plasma/filament intensity variation */
+
+@keyframes cdn-logo-breathe {
+	0%,
+	100% {
+		filter:
+			drop-shadow(0 0 2px rgba(201, 162, 63, 0.85))
+			drop-shadow(0 0 4px rgba(155, 92, 244, 1))
+			drop-shadow(0 0 11px rgba(144, 96, 240, 0.75))
+			drop-shadow(0 0 26px rgba(144, 96, 240, 0.38))
+			drop-shadow(0 0 52px rgba(90, 31, 138, 0.18));
+	}
+	50% {
+		filter:
+			drop-shadow(0 0 3px rgba(201, 162, 63, 0.7))
+			drop-shadow(0 0 7px rgba(155, 92, 244, 1))
+			drop-shadow(0 0 18px rgba(144, 96, 240, 0.88))
+			drop-shadow(0 0 44px rgba(144, 96, 240, 0.52))
+			drop-shadow(0 0 78px rgba(90, 31, 138, 0.28))
+			drop-shadow(0 0 2px rgba(255, 200, 80, 0.55));
+	}
+}
+
+.awsui-dark-mode #top-nav [class*="awsui_logo"] img {
+	filter:
+		drop-shadow(0 0 2px rgba(201, 162, 63, 0.85))
+		drop-shadow(0 0 4px rgba(155, 92, 244, 1))
+		drop-shadow(0 0 11px rgba(144, 96, 240, 0.75))
+		drop-shadow(0 0 26px rgba(144, 96, 240, 0.38))
+		drop-shadow(0 0 52px rgba(90, 31, 138, 0.18));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.awsui-dark-mode #top-nav [class*="awsui_logo"] img {
+		animation: cdn-logo-breathe 5s ease-in-out infinite;
+	}
+}
+
+/* Area light floor spill — light pooling on the surface beneath the sign */
+.awsui-dark-mode #top-nav [class*="awsui_identity"]::after {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: -18px;
+	transform: translateX(-50%);
+	width: 88px;
+	height: 22px;
+	background: radial-gradient(
+		ellipse at center,
+		rgba(144, 96, 240, 0.38) 0%,
+		rgba(201, 162, 63, 0.12) 45%,
+		transparent 72%
+	);
+	filter: blur(7px);
+	pointer-events: none;
+	z-index: 1100;
+	border-radius: 50%;
+}
+
+/* ── Light mode: warm amber area glow — sunlit carved-star effect ────────── */
+
+@keyframes cdn-logo-breathe-light {
+	0%,
+	100% {
+		filter:
+			drop-shadow(0 0 3px rgba(139, 90, 43, 0.72))
+			drop-shadow(0 0 9px rgba(201, 162, 63, 0.45))
+			drop-shadow(0 0 22px rgba(201, 162, 63, 0.2));
+	}
+	50% {
+		filter:
+			drop-shadow(0 0 5px rgba(139, 90, 43, 0.9))
+			drop-shadow(0 0 15px rgba(201, 162, 63, 0.62))
+			drop-shadow(0 0 34px rgba(201, 162, 63, 0.28))
+			drop-shadow(0 0 1px rgba(90, 31, 138, 0.38));
+	}
+}
+
+:root:not(.awsui-dark-mode) #top-nav [class*="awsui_logo"] img {
+	filter:
+		drop-shadow(0 0 3px rgba(139, 90, 43, 0.72))
+		drop-shadow(0 0 9px rgba(201, 162, 63, 0.45))
+		drop-shadow(0 0 22px rgba(201, 162, 63, 0.2));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	:root:not(.awsui-dark-mode) #top-nav [class*="awsui_logo"] img {
+		animation: cdn-logo-breathe-light 6s ease-in-out infinite;
+	}
 }
 
 /* Font smoothing scoped to app shell — improves warm-bg readability.
