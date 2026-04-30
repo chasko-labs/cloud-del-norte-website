@@ -46,52 +46,51 @@ function countryToFlag(code: string): string {
 		.join("");
 }
 
-// Common ISO codes → English country names. Subset only — falls back to the
-// raw country code if not in this map. Keeps bundle slim vs shipping a full
-// ISO 3166 dictionary for a sticky note.
+// Common ISO codes → display country names. Falls back to the raw country
+// code if not in this map. Keeps bundle slim vs shipping a full ISO 3166 dict.
 const COUNTRY_NAME: Record<string, string> = {
-	US: "neighbor",
-	MX: "vecino",
-	CA: "neighbor",
-	GB: "friend",
-	DE: "Freund",
-	FR: "ami",
-	ES: "amigo",
-	BR: "amigo",
-	JP: "tomodachi",
-	IN: "dost",
-	AU: "mate",
-	NZ: "mate",
-	IE: "cara",
-	IT: "amico",
-	NL: "vriend",
-	SE: "vän",
-	NO: "venn",
-	DK: "ven",
-	FI: "ystävä",
-	PL: "przyjaciel",
-	RU: "drug",
-	UA: "druh",
-	CN: "péngyǒu",
-	KR: "chingu",
-	TH: "phueuan",
-	VN: "ban",
-	ID: "teman",
-	PH: "kaibigan",
-	TR: "arkadaş",
-	GR: "fílos",
-	IL: "chaver",
-	SA: "sadeeq",
-	AE: "sadeeq",
-	EG: "sadeeq",
-	NG: "friend",
-	ZA: "friend",
-	KE: "rafiki",
-	AR: "amigo",
-	CL: "amigo",
-	CO: "amigo",
-	PE: "amigo",
-	VE: "amigo",
+	US: "USA",
+	MX: "Mexico",
+	CA: "Canada",
+	GB: "the UK",
+	DE: "Germany",
+	FR: "France",
+	ES: "Spain",
+	BR: "Brazil",
+	JP: "Japan",
+	IN: "India",
+	AU: "Australia",
+	NZ: "New Zealand",
+	IE: "Ireland",
+	IT: "Italy",
+	NL: "the Netherlands",
+	SE: "Sweden",
+	NO: "Norway",
+	DK: "Denmark",
+	FI: "Finland",
+	PL: "Poland",
+	RU: "Russia",
+	UA: "Ukraine",
+	CN: "China",
+	KR: "Korea",
+	TH: "Thailand",
+	VN: "Vietnam",
+	ID: "Indonesia",
+	PH: "the Philippines",
+	TR: "Turkey",
+	GR: "Greece",
+	IL: "Israel",
+	SA: "Saudi Arabia",
+	AE: "the UAE",
+	EG: "Egypt",
+	NG: "Nigeria",
+	ZA: "South Africa",
+	KE: "Kenya",
+	AR: "Argentina",
+	CL: "Chile",
+	CO: "Colombia",
+	PE: "Peru",
+	VE: "Venezuela",
 };
 
 interface VisitorInfo {
@@ -130,7 +129,7 @@ async function loadVisitorInfo(): Promise<VisitorInfo | null> {
 		const info: VisitorInfo = {
 			ip: data.ip,
 			country: code,
-			greeting: COUNTRY_NAME[code] ?? "friend",
+			greeting: COUNTRY_NAME[code] ?? code,
 			flag: countryToFlag(code),
 		};
 		try {
@@ -262,6 +261,28 @@ function LioraFrame() {
 					<span id="liora-device-info">{deviceInfo}</span>
 					<span id="liora-sys-status"> SYS:▓▓▓</span>
 				</div>
+				<div
+					className="liora-stickynote-2"
+					role="note"
+					aria-label={
+						visitor
+							? `Hello, ${visitor.greeting}.`
+							: "Hello"
+					}
+				>
+					<span className="liora-stickynote-2-line">
+						hello, {visitor?.greeting ?? "friend"}
+						{visitor?.flag ? (
+							<span className="liora-stickynote-2-flag" aria-hidden="true">
+								{" "}
+								{visitor.flag}
+							</span>
+						) : null}
+					</span>
+					{visitor?.ip ? (
+						<span className="liora-stickynote-2-ip">{visitor.ip}</span>
+					) : null}
+				</div>
 			</div>
 			<button
 				key={stickyKey}
@@ -290,28 +311,6 @@ function LioraFrame() {
 				</span>
 				<span className="liora-stickynote-sig">- ^.^</span>
 			</button>
-			<div
-				className="liora-stickynote-2"
-				role="note"
-				aria-label={
-					visitor
-						? `Hello, ${visitor.greeting}. Visiting from ${visitor.country}.`
-						: "Hello, friend"
-				}
-			>
-				<span className="liora-stickynote-2-line">
-					hello, {visitor?.greeting ?? "friend"}
-					{visitor?.flag ? (
-						<span className="liora-stickynote-2-flag" aria-hidden="true">
-							{" "}
-							{visitor.flag}
-						</span>
-					) : null}
-				</span>
-				{visitor?.ip ? (
-					<span className="liora-stickynote-2-ip">{visitor.ip}</span>
-				) : null}
-			</div>
 		</div>
 	);
 }
