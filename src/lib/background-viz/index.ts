@@ -24,8 +24,9 @@ export function mount(): () => void {
 	}
 
 	function onStop(): void {
-		// disconnect audio bridge but keep ambient loop running
-		destroyAudio();
+		// audio paused — analyser bins drop to silence naturally; ambient loop continues.
+		// do NOT destroy/close the AudioContext here: MediaElementSourceNode can only be
+		// created once per element, and destroyAudio() nulls the context, breaking reconnect.
 	}
 
 	// ambient loop runs immediately; audio reactivity added when a stream plays

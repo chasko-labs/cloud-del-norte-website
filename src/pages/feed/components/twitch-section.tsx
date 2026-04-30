@@ -64,11 +64,13 @@ function TwitchChannelEmbed({
 	label,
 	hostname,
 	fallbackVideoId,
+	onLiveChange,
 }: {
 	channelId: string;
 	label: string;
 	hostname: string;
 	fallbackVideoId: string;
+	onLiveChange?: (isLive: boolean) => void;
 }) {
 	const { t } = useTranslation();
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -94,13 +96,15 @@ function TwitchChannelEmbed({
 			embed.addEventListener(twitch.Player.OFFLINE, () => {
 				setOffline(true);
 				setLive(false);
+				onLiveChange?.(false);
 			});
 			embed.addEventListener(twitch.Player.ONLINE, () => {
 				setOffline(false);
 				setLive(true);
+				onLiveChange?.(true);
 			});
 		});
-	}, [channelId, hostname]);
+	}, [channelId, hostname, onLiveChange]);
 
 	return (
 		<div className="feed-twitch__channel">
@@ -128,8 +132,10 @@ function useHostname(): string | null {
 
 function TwitchChannelCard({
 	channel,
+	onLiveChange,
 }: {
 	channel: (typeof CHANNELS)[number];
+	onLiveChange?: (isLive: boolean) => void;
 }) {
 	const hostname = useHostname();
 	return (
@@ -140,6 +146,7 @@ function TwitchChannelCard({
 					label={channel.label}
 					hostname={hostname}
 					fallbackVideoId={channel.fallbackVideoId}
+					onLiveChange={onLiveChange}
 				/>
 			) : (
 				<p className="feed-twitch__fallback">
@@ -156,12 +163,24 @@ function TwitchChannelCard({
 	);
 }
 
-export function TwitchAws() {
-	return <TwitchChannelCard channel={CHANNELS[0]} />;
+export function TwitchAws({
+	onLiveChange,
+}: {
+	onLiveChange?: (isLive: boolean) => void;
+} = {}) {
+	return (
+		<TwitchChannelCard channel={CHANNELS[0]} onLiveChange={onLiveChange} />
+	);
 }
 
-export function TwitchAwsOnAir() {
-	return <TwitchChannelCard channel={CHANNELS[1]} />;
+export function TwitchAwsOnAir({
+	onLiveChange,
+}: {
+	onLiveChange?: (isLive: boolean) => void;
+} = {}) {
+	return (
+		<TwitchChannelCard channel={CHANNELS[1]} onLiveChange={onLiveChange} />
+	);
 }
 
 // backward-compat default kept in case old imports remain

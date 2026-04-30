@@ -8,8 +8,11 @@ import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
+import { useAndresLive } from "../../hooks/useAndresLive";
 import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
+import { clearPlayerState, savePlayerState } from "../../lib/player-persist";
+import { STREAMS, type StreamDef } from "../../lib/streams";
 import {
 	applyLocale,
 	initializeLocale,
@@ -22,9 +25,8 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../utils/theme";
-import { clearPlayerState, savePlayerState } from "../../lib/player-persist";
-import { type StreamDef, STREAMS } from "../../lib/streams";
 import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
+import AndresYoutubeLive from "./components/andres-youtube-live";
 import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
 import { FeedAndmore, FeedAwsml } from "./components/feed-section";
@@ -230,14 +232,19 @@ type SectionKey =
 	| "awsml"
 	| "arrowhead";
 
-const SECTIONS: Partial<Record<SectionKey, React.ReactNode>> = {
-	youtube: <YoutubeCarousel />,
-	twitchAws: <TwitchAws />,
-	twitchAwsOnAir: <TwitchAwsOnAir />,
-	andmore: <FeedAndmore />,
-	awsml: <FeedAwsml />,
-	arrowhead: <ArrowheadNews />,
-};
+// priority order for live hero — first live item wins the top slot
+const LIVE_PRIORITY = ["twitchAwsOnAir", "twitchAws", "andresYoutube"] as const;
+type LiveKey = (typeof LIVE_PRIORITY)[number];
+
+// stable shuffled order generated once per page load
+const SECTION_KEYS: SectionKey[] = [
+	"youtube",
+	"twitchAws",
+	"twitchAwsOnAir",
+	"andmore",
+	"awsml",
+	"arrowhead",
+];
 
 function shuffled<T>(arr: T[]): T[] {
 	const copy = [...arr];
@@ -263,11 +270,53 @@ function AppContent({
 }) {
 	const { t } = useTranslation();
 
-	// Shuffle order is stable for the lifetime of this page load
-	const order = useMemo(
-		() => shuffled(Object.keys(SECTIONS) as SectionKey[]),
-		[],
+	const [liveKeys, setLiveKeys] = useState<Set<string>>(new Set());
+
+	const markLive = useCallback((key: string, isLive: boolean) => {
+		setLiveKeys((prev) => {
+			// bail out if nothing changes — avoids remount loops when SDK re-fires
+			if (prev.has(key) === isLive) return prev;
+			const next = new Set(prev);
+			if (isLive) next.add(key);
+			else next.delete(key);
+			return next;
+		});
+	}, []);
+
+	const { live: andresLive, videoId: andresVideoId } = useAndresLive();
+
+	// sections wired with live callbacks — stable because markLive is stable
+	const sections = useMemo<Partial<Record<SectionKey, React.ReactNode>>>(
+		() => ({
+			youtube: <YoutubeCarousel />,
+			twitchAws: (
+				<TwitchAws onLiveChange={(live) => markLive("twitchAws", live)} />
+			),
+			twitchAwsOnAir: (
+				<TwitchAwsOnAir
+					onLiveChange={(live) => markLive("twitchAwsOnAir", live)}
+				/>
+			),
+			andmore: <FeedAndmore />,
+			awsml: <FeedAwsml />,
+			arrowhead: <ArrowheadNews />,
+		}),
+		[markLive],
 	);
+
+	// stable shuffle — recomputed only if sections reference changes (it won't)
+	// biome-ignore lint/correctness/useExhaustiveDependencies: SECTION_KEYS is module-level constant
+	const shuffledOrder = useMemo<SectionKey[]>(() => shuffled(SECTION_KEYS), []);
+
+	// union of twitch + andres live keys
+	const allLiveKeys = useMemo(() => {
+		const s = new Set(liveKeys);
+		if (andresLive) s.add("andresYoutube");
+		return s;
+	}, [liveKeys, andresLive]);
+
+	const liveToShow = LIVE_PRIORITY.filter((k) => allLiveKeys.has(k));
+	const gridOrder = shuffledOrder.filter((k) => !allLiveKeys.has(k));
 
 	return (
 		<ContentLayout
@@ -292,6 +341,23 @@ function AppContent({
 				</Header>
 			}
 		>
+			{liveToShow.length > 0 && (
+				<div className="feed-live-hero">
+					{liveToShow.map((key) => (
+						<div
+							key={key}
+							className="feed-grid__cell cdn-card feed-grid__cell--full feed-live-hero__card"
+						>
+							{key === "andresYoutube" ? (
+								<AndresYoutubeLive videoId={andresVideoId} />
+							) : (
+								sections[key as SectionKey]
+							)}
+						</div>
+					))}
+					<hr className="feed-section-divider" />
+				</div>
+			)}
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<NextMeetup />
 			</div>
@@ -301,9 +367,9 @@ function AppContent({
 			</div>
 			<hr className="feed-section-divider" />
 			<div className="feed-grid">
-				{order.map((key) => (
+				{gridOrder.map((key) => (
 					<div key={key} className="feed-grid__cell cdn-card">
-						{SECTIONS[key]}
+						{sections[key]}
 					</div>
 				))}
 			</div>

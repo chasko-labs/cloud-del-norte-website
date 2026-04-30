@@ -917,6 +917,41 @@
 	color: var(--cdn-violet, #9060f0);
 }
 
+/* ---------- Live hero — full-width above NextMeetup when a stream is live ---------- */
+
+.feed-live-hero {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
+.feed-live-hero__card {
+	border-radius: var(--cdn-radius-xl, 16px);
+	box-shadow:
+		0 0 0 1px rgba(233, 25, 22, 0.3),
+		0 0 28px rgba(233, 25, 22, 0.12);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-live-glow {
+		0%,
+		100% {
+			box-shadow:
+				0 0 0 1px rgba(233, 25, 22, 0.3),
+				0 0 28px rgba(233, 25, 22, 0.12);
+		}
+		50% {
+			box-shadow:
+				0 0 0 1px rgba(233, 25, 22, 0.5),
+				0 0 42px rgba(233, 25, 22, 0.24);
+		}
+	}
+
+	.feed-live-hero__card {
+		animation: feed-live-glow 2.8s ease-in-out infinite;
+	}
+}
+
 /* ---------- Next meetup card — stable height across loading/fallback/loaded ---------- */
 /* Reserve enough height for the loaded state (title + date + location + description)
    so the transition from loading does not shift the page layout. */
