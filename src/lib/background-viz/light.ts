@@ -62,16 +62,7 @@ export function renderLight(
 		ctx.fillRect(0, 0, w, h);
 	}
 
-	// constellation stars — warm amber dots, more visible than the static bake
-	ctx.save();
-	for (const star of starPositions) {
-		if (!star.constellation) continue;
-		ctx.beginPath();
-		ctx.arc(star.x, star.y, star.size * 0.9, 0, Math.PI * 2);
-		ctx.fillStyle = `rgba(139,90,43,${(star.opacity * 0.38).toFixed(3)})`;
-		ctx.fill();
-	}
-	ctx.restore();
+	// no constellation stars — light mode concept uses logo watermark in static layer
 
 	const bass = normBand(visualBins, 0, 10);
 	const mid = normBand(visualBins, 10, 100);

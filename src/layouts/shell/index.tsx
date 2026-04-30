@@ -96,6 +96,14 @@ function ShellContent({
 		[],
 	);
 
+	// logo lazy-load — start with text title, swap to logo image once loaded
+	const [logoReady, setLogoReady] = useState(false);
+	useEffect(() => {
+		const img = new Image();
+		img.onload = () => setLogoReady(true);
+		img.src = "/brand/logo.svg";
+	}, []);
+
 	// background-viz canvas — mounts once per page load, cleans up on unmount
 	useEffect(() => {
 		let cleanup: (() => void) | null = null;
@@ -150,11 +158,17 @@ function ShellContent({
 				data-cdn-animating-locale={animatingLocale || undefined}
 			>
 				<TopNavigation
-					identity={{
-						/*             logo: { src: '/logo.svg', alt: 'Cloud Del Norte Logo' }, */
-						title: t("shell.siteTitle"),
-						href: identityHref,
-					}}
+					identity={
+						logoReady
+							? {
+									logo: {
+										src: "/brand/logo.svg",
+										alt: "Cloud Del Norte",
+									},
+									href: identityHref,
+								}
+							: { title: t("shell.siteTitle"), href: identityHref }
+					}
 					utilities={[
 						{
 							type: "button",

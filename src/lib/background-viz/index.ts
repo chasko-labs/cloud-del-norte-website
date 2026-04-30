@@ -1,5 +1,6 @@
 import { createAudioBridge, resumeCtx } from "./audio.js";
-import { initCanvas } from "./canvas.js";
+import { initCanvas, rebuildStatic } from "./canvas.js";
+import { preloadLogo } from "./static.js";
 
 let mounted = false;
 
@@ -9,6 +10,9 @@ export function mount(): () => void {
 
 	const { canvas, ctx, startLoop, stopLoop, resize } = initCanvas();
 	const { initAudio, destroyAudio } = createAudioBridge(ctx);
+
+	// preload logo bitmap; rebuild static layers (with watermark) once ready
+	void preloadLogo().then(() => rebuildStatic());
 
 	function onPlay(e: Event): void {
 		const { element, stationKey } = (e as CustomEvent).detail as {

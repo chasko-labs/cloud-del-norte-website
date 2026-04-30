@@ -326,8 +326,7 @@ main[class*="awsui_layout"] {
    backgrounds. Overrides below set rgba backgrounds to expose the blur. */
 
 /* ContentLayout header band */
-.cdn-viz-active:not(.awsui-dark-mode)
-	[class*="awsui_has-header_"]
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_has-header_"]
 	> [class*="awsui_background_"],
 .cdn-viz-active:not(.awsui-dark-mode)
 	[class*="awsui_content-layout"]
@@ -489,6 +488,31 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 :root:not(.awsui-dark-mode) [class*="navigation__drawer"],
 :root:not(.awsui-dark-mode) nav[class*="awsui_navigation"] {
 	background: #ede5d4 !important; /* Cloudscape scoped CSS sets white on the nav element directly */
+}
+
+/* Tools panel (right side help drawer) — cream in light mode.
+   Cloudscape's tools panel has its own white background; override here to match page. */
+:root:not(.awsui-dark-mode) [class*="awsui_tools_"],
+:root:not(.awsui-dark-mode) [class*="awsui_tools-container"],
+:root:not(.awsui-dark-mode) [class*="awsui_tools_"] [class*="awsui_content"] {
+	background: #ede5d4 !important;
+	background-color: #ede5d4 !important;
+}
+
+/* Mobile AppLayout drawer/panel backgrounds — covers navigation + tools drawers on small screens */
+:root:not(.awsui-dark-mode) [class*="awsui_mobile-bar"],
+:root:not(.awsui-dark-mode) [class*="awsui_drawer"],
+:root:not(.awsui-dark-mode) [class*="awsui_panel-content"] {
+	background: #ede5d4 !important;
+	background-color: #ede5d4 !important;
+}
+
+/* Nav logo — size to fit top-nav bar height */
+#top-nav [class*="awsui_logo"] img,
+#top-nav [class*="awsui_logo"] {
+	height: 36px;
+	width: auto;
+	object-fit: contain;
 }
 
 /* Font smoothing scoped to app shell — improves warm-bg readability.
