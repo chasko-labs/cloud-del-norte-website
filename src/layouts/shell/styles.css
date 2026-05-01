@@ -552,16 +552,23 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 
 /* SVG is the always-visible base — never hidden, no JS dependency.
    At the small nav size (~60px) the SVG with CSS drop-shadow glow reads
-   better than a 3D scene; the 3D is overlaid only as enhancement. */
+   better than a 3D scene; the 3D is overlaid only as enhancement.
+
+   Sizing uses width/height 100% + object-fit: contain (NOT inset:0 + width:auto).
+   The auto-width trick collapses to 0 when the parent has
+   `container-type: inline-size` (added to .cdn-logo-hero for the 3D-reveal
+   container query) — size containment defers child intrinsic-size resolution,
+   and an absolute replaced element with width:auto can't recover. object-fit
+   on a 100%/100% box is robust to containment context. */
 .cdn-logo-hero img {
 	position: absolute;
 	inset: 0;
-	margin: auto;
+	width: 100%;
 	height: 100%;
-	width: auto;
+	object-fit: contain;
 	display: block;
 	z-index: 1;
-	transform-origin: left center;
+	transform-origin: center center;
 	transition:
 		transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
 		filter 0.35s ease;
