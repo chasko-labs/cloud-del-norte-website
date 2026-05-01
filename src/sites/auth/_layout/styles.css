@@ -1,0 +1,119 @@
+/* ==========================================================================
+   Auth subdomain — light-mode polish
+
+   Goal: bring the auth flow (login, signup, verify, forgot-password) in line
+   with the warm cream + amber + violet brand palette used across the rest of
+   the site. Without this stylesheet the auth bundles only loaded Cloudscape
+   global styles, falling back to stock blue/white chrome.
+
+   Pairs with tokens.css (global brand tokens) — both are now imported by
+   each auth main.tsx so the polish layer in shell/styles.css can resolve
+   its var(--cdn-*) refs.
+
+   Dark-mode rules in tokens.css and shell/styles.css are untouched — the
+   selectors below are scoped to :root:not(.awsui-dark-mode).
+   ========================================================================== */
+
+/* Center the auth form column and constrain width — Cloudscape ContentLayout
+   stretches to viewport, leaving form on a wide cream sea on desktop. */
+.cdn-auth-card {
+	max-width: 560px;
+	margin: 0 auto;
+}
+
+/* The ContentLayout renders children directly under awsui_layout — add a top
+   pad so the form clears the page-hero band cleanly */
+[class*="awsui_content-layout"] > .cdn-auth-card {
+	margin-top: 24px;
+	margin-bottom: 24px;
+}
+
+/* ── Light mode: brand-violet primary action button ────────────────────────
+   Cloudscape primary button defaults to its blue interactive token (~#0972d3).
+   Override to brand violet (--cdn-purple) with a deeper purple on hover. */
+
+:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_button"][class*="variant-primary"],
+:root:not(.awsui-dark-mode) .cdn-auth-card button[class*="variant-primary"] {
+	background: var(--cdn-violet) !important;
+	border-color: var(--cdn-violet) !important;
+	color: var(--cdn-white) !important;
+}
+
+:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_button"][class*="variant-primary"]:hover,
+:root:not(.awsui-dark-mode) .cdn-auth-card button[class*="variant-primary"]:hover {
+	background: var(--cdn-purple) !important;
+	border-color: var(--cdn-purple) !important;
+}
+
+/* ── Light mode: link colors in palette ────────────────────────────────────
+   "Forgot password", "Already have an account", "Show password" etc. default
+   to Cloudscape blue. Bring them into the violet/purple family. */
+
+:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_link"] {
+	color: var(--cdn-purple) !important;
+}
+
+:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_link"]:hover {
+	color: var(--cdn-violet) !important;
+}
+
+/* ── Wizard: violet step indicator + button alignment ──────────────────────
+   Wizard uses primary button for Next/Submit — already covered above.
+   The numbered step circles + connecting line use the Cloudscape interactive
+   blue. Override the active/completed step states to brand violet in light
+   mode. Targets Wizard's scoped class names. */
+
+:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_navigation-link"][class*="active"],
+:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_circle"][class*="active"] {
+	background: var(--cdn-violet) !important;
+	border-color: var(--cdn-violet) !important;
+	color: var(--cdn-white) !important;
+}
+
+:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_navigation-link-active"] {
+	color: var(--cdn-purple) !important;
+}
+
+/* ── Form input focus — amber ring matches the global focus rule ───────────
+   tokens.css already sets a global :focus-visible amber outline. Cloudscape
+   Input has its own scoped focus shadow that wins on the input itself —
+   reinforce here so form fields pick up the brand focus treatment. */
+
+:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_input"]:focus-within {
+	box-shadow: 0 0 0 2px var(--cdn-amber) !important;
+	border-color: var(--cdn-amber) !important;
+}
+
+/* ── Container chrome on auth page ─────────────────────────────────────────
+   The cdn-card class (from tokens.css) handles the warm cream gradient,
+   amber border, and shadow. Suppress the inner Cloudscape Container's own
+   white background so the cdn-card surface shows through. Mirrors the
+   pattern in shell/styles.css for cards across the rest of the site. */
+
+.cdn-auth-card [class*="awsui_root"],
+.cdn-auth-card [class*="awsui_content_"] {
+	background: transparent !important;
+	border: none !important;
+	box-shadow: none !important;
+}
+
+/* Container header inside auth-card — subtle amber bottom border, no top/side */
+.cdn-auth-card [class*="awsui_header_"] {
+	background: transparent !important;
+	box-shadow: none !important;
+	border-top: none !important;
+	border-left: none !important;
+	border-right: none !important;
+	border-bottom: 1px solid rgba(139, 90, 43, 0.14) !important;
+}
+
+/* Padding inside the cdn-card wrapper — Container alone is too tight against
+   the warm cream edge */
+.cdn-auth-card > [class*="awsui_root"] {
+	padding: 24px;
+}
+
+/* Wizard renders without a Container, so add equivalent padding when wrapped */
+.cdn-auth-card > [class*="awsui_wizard"] {
+	padding: 24px;
+}

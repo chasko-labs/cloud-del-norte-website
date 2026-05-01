@@ -19,6 +19,7 @@ import {
 	type Theme,
 } from "../../../utils/theme";
 import AuthNavigation from "./navigation";
+import "./styles.css";
 
 export default function AuthLayout({
 	children,
@@ -47,7 +48,9 @@ export default function AuthLayout({
 			contentType="form"
 			identityHref="https://clouddelnorte.org/feed/index.html"
 		>
-			<ContentLayout>{children}</ContentLayout>
+			<ContentLayout>
+				<div className="cdn-card cdn-auth-card">{children}</div>
+			</ContentLayout>
 		</Shell>
 	);
 }
