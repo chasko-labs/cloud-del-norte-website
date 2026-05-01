@@ -312,8 +312,32 @@
 	gap: var(--cdn-space-md);
 }
 
+/* ---------- Geometry isolation — slot-token min-heights per card class ----------
+   bryan's directive (2026-05-01): every card slot owns its geometry. content
+   fits the slot, never the other way around. tiered min-heights per
+   --cdn-slot-*-min-h (see src/styles/design-tokens.css) so intrinsic content
+   can never push a card taller / shorter than its tier reservation.
+
+   tier mapping:
+     standard (220px) — regular grid cards: arrowhead, andmore, awsml, twitch,
+                        youtube — slotted via .feed-grid__cell
+     wide     (320px) — full-row cards: NextMeetup, BuilderCenterCard —
+                        slotted via .feed-grid__cell--full
+     hero     (420px) — live video embeds: TwitchAws/OnAir/AndresYoutube —
+                        slotted via .feed-live-hero__card (overrides --full
+                        because it lives inside the live hero stack)
+
+   min-width:0 on every cell so grid tracks can hug their 1fr column without
+   inner content (long titles, wide tables) blowing the track wider. flex
+   column + overflow:hidden so content fits the slot — clamps via
+   text-overflow:ellipsis or -webkit-line-clamp on inner text where needed,
+   never word-break (lets natural wrapping run up to the clamp). */
 .feed-grid__cell {
 	min-width: 0; /* allow children to shrink inside the column track */
+	min-height: var(--cdn-slot-standard-min-h, 220px);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 
 /* glassmorphism — suppress Container chrome so the cdn-card glass surface shows.
@@ -361,6 +385,11 @@
 
 .feed-grid__cell--full {
 	grid-column: 1 / -1;
+	/* full-row cards (NextMeetup, BuilderCenterCard) get the wide tier —
+	   horizontal embeds + multi-column inner content need more reserved
+	   vertical space than the standard 220px tier. overrides the standard
+	   tier inherited from .feed-grid__cell. */
+	min-height: var(--cdn-slot-wide-min-h, 320px);
 }
 
 /* ---------- Builder center "top 4" mini-card grid (tumblr feel) ----------
@@ -1036,6 +1065,14 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0;
+	/* outer wrapper of the live hero stack. CdnCard primitive (slot=hero)
+	   already reserves --cdn-slot-hero-min-h via .cdn-card-slot--hero on
+	   .feed-live-hero--cdn, so this rule is the legacy fallback for any
+	   remaining .feed-live-hero usage that hasn't migrated to CdnCard.
+	   min-width:0 + overflow:hidden so the stack contains its inner cards
+	   even if a 16:9 iframe reports an oversized intrinsic ratio. */
+	min-width: 0;
+	overflow: hidden;
 }
 
 /* CdnCard-migrated hero (.feed-live-hero--cdn). slot is .cdn-card-slot--hero,
@@ -1055,6 +1092,17 @@
 	box-shadow:
 		0 0 0 1px rgba(233, 25, 22, 0.3),
 		0 0 28px rgba(233, 25, 22, 0.12);
+	/* live video embeds get the hero tier — 16:9 iframes at full grid width
+	   need ~420px to render the player UI + chat + safe-area without the
+	   slot growing under the video. overrides any cell-tier min-height
+	   inherited from .feed-grid__cell or .feed-grid__cell--full because
+	   .feed-live-hero__card always co-occurs with both classes (see
+	   app.tsx live hero render). */
+	min-height: var(--cdn-slot-hero-min-h, 420px);
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 
 @media (prefers-reduced-motion: no-preference) {
