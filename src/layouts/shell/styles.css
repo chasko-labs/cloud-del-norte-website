@@ -9,13 +9,6 @@
 	initial-value: 0;
 }
 
-/* Reserve scrollbar gutter so toggling overflow doesn't shift layout horizontally.
-   Without this, hover states that grow document height add the OS scrollbar,
-   shrinking body inner width by ~17px and shifting AppLayout's main column. */
-:root {
-	scrollbar-gutter: stable;
-}
-
 #top-nav {
 	position: sticky;
 	left: 0;
