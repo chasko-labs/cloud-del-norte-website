@@ -187,23 +187,27 @@ main[class*="awsui_layout"] {
    Honor prefers-reduced-motion: paint the layer but kill the drift animation. */
 :root:not(.awsui-dark-mode) main[class*="awsui_layout"],
 :root:not(.awsui-dark-mode) [class*="awsui_layout-main"] {
-	background: /* spotlight: warm amber ellipse drifting top-left → bottom-right */
+	background: /* spotlight: warm amber ellipse drifting top-left → bottom-right
+	   alpha 0.12 → 0.04: prior level was overpowering, tinting whole page amber
+	   instead of feeling like cream paper (Bryan: "amber radioactive zone") */
 			radial-gradient(
 				calc(60% + var(--cdn-bass) * 20%) 45% at 25% 15%,
-				rgba(201, 162, 63, 0.12) 0%,
+				rgba(201, 162, 63, 0.04) 0%,
 				rgba(201, 162, 63, 0) 70%
 			),
-			/* counter-spotlight: faint violet ellipse bottom-right */
+			/* counter-spotlight: faint violet ellipse bottom-right
+	   alpha 0.08 → 0.03: kept as a hint of depth, not a competing surface */
 			radial-gradient(
 				50% 40% at 80% 85%,
-				rgba(144, 96, 240, 0.08) 0%,
+				rgba(144, 96, 240, 0.03) 0%,
 				rgba(144, 96, 240, 0) 65%
 			),
-			/* paper grain: stacked diagonal stripes at low opacity */
+			/* paper grain: stacked diagonal stripes at low opacity
+	   spacing 5px → 8px: looser grain reads as linen weave, not corduroy */
 			repeating-linear-gradient(
 				135deg,
 				rgba(139, 90, 43, 0.018) 0 2px,
-				transparent 2px 5px
+				transparent 2px 8px
 			),
 			#ede5d4 !important;
 	background-attachment: fixed, fixed, fixed, scroll;
@@ -240,7 +244,8 @@ main[class*="awsui_layout"] {
 
 @media (prefers-reduced-motion: no-preference) {
 	:root:not(.awsui-dark-mode) main[class*="awsui_layout"] {
-		animation: cdn-ambient-drift 28s ease-in-out infinite;
+		/* 28s → 60s: slower drift reads as ambient breath, not active motion */
+		animation: cdn-ambient-drift 60s ease-in-out infinite;
 	}
 }
 

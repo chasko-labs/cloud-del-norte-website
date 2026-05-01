@@ -39,9 +39,11 @@ function drawLogoWatermark(
 	if (mode === "light") {
 		// cream bg makes near-white SVG fills invisible — add purple glow + amber shadow
 		// to define the star silhouette against the warm ground
+		// alpha 0.22 → 0.12, blur 22 → 12: faint signature, not a focal point
+		// competing with the dune wallpaper / page content
 		ctx.shadowColor = "rgba(90,31,138,0.55)";
-		ctx.shadowBlur = 22;
-		ctx.globalAlpha = 0.22;
+		ctx.shadowBlur = 12;
+		ctx.globalAlpha = 0.12;
 	} else {
 		ctx.globalAlpha = 0.08;
 	}
@@ -86,10 +88,11 @@ export function buildStaticLight(
 	ctx.fillRect(0, 0, w, h);
 
 	// diagonal paper grain via repeating thin lines
+	// spacing 5px → 8px: looser weave reads as expensive linen, not corduroy
 	ctx.save();
 	ctx.strokeStyle = "rgba(139,90,43,0.018)";
 	ctx.lineWidth = 2;
-	const diagSpacing = 5;
+	const diagSpacing = 8;
 	const angle = (8 * Math.PI) / 180;
 	const diagLen = Math.sqrt(w * w + h * h);
 	ctx.translate(w / 2, h / 2);
