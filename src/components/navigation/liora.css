@@ -2646,6 +2646,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	padding-right: 16px;
 }
 
 .liora-stickynote-2-flag {
@@ -2653,8 +2654,8 @@
 		"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
 	position: absolute;
 	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%) rotate(-2.8deg);
+	right: 4px;
+	transform: translateY(-50%) rotate(-2.8deg);
 	margin: 0;
 	padding: 0;
 	font-size: 1.1em;
@@ -2672,4 +2673,5 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	padding-right: 16px;
 }
