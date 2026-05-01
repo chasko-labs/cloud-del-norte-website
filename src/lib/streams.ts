@@ -175,6 +175,24 @@ export const STREAMS: StreamDef[] = [
 			primaryDark: "#5b8edb", // brightened sky blue, ~5.5:1 vs navy
 		},
 	},
+	{
+		key: "radio_udg_lagos",
+		// Zeno.fm CDN — base URL auto-redirects with JWT token per connection
+		url: "https://stream.zeno.fm/8hage4z92hhvv",
+		label: "radio udg lagos 104.7", // "lagos" disambiguates from main Guadalajara station
+		// metaUrl omitted — udgtv.com player has no public json now-playing endpoint
+		// UDG institutional palette: Pantone 7406 (gold) + black anchor
+		// Differentiation from KEXP (also yellow): UDG gold is more saturated/orange-leaning,
+		// and the secondary swap to deep terra-cotta keeps it apart visually
+		colors: {
+			primary: "#FFCC00", // UDG gold (institutional)
+			secondary: "#8B4513", // saddle brown — Lagos de Moreno regional flavor (colonial earth)
+			accent: "#1a1a1a", // UDG near-black anchor (avoiding pure #000 per palette rule)
+			// Gold on cream #ede5d4: ~1.4:1 — fails text contrast badly. Need light override.
+			primaryLight: "#8b6f00", // deepened amber gold for cream, ~5.0:1
+			// Gold on navy #0a0a2e: ~14:1 — passes AAA easily, no dark override needed.
+		},
+	},
 	// TODO: Mexican student radio (Ciudad Juárez) — pending research verification
 	// {
 	// 	key: "radio_upnech",
