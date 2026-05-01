@@ -115,6 +115,27 @@ export const STREAMS: StreamDef[] = [
 			// burnt orange on cream: ~5.1:1 — passes AA, no light override
 		},
 	},
+	{
+		key: "uam_radio",
+		// FOLLOWUP: verify CORS works in browser; alt URL: https://radios.yanapak.org/UAMRadio if primary fails
+		// non-standard port 1124 — icecast mp3; <audio crossOrigin="anonymous"> may need
+		// per-station opt-out if origin lacks Access-Control-Allow-Origin header
+		url: "https://stream5.mexiserver.com:1124/",
+		label: "uam radio 94.1",
+		// metaUrl omitted — uam radio site has no public json now-playing endpoint
+		// uam institutional brand — agent guess: red/black/white with yellow accent
+		// (azcapotzalco unidad color). FOLLOWUP: refine once official uam brand
+		// guidelines confirmed — five unidades each carry distinct accent colors
+		colors: {
+			primary: "#a72f2f", // uam university red — institutional
+			secondary: "#000000", // uam black
+			accent: "#e8c547", // warm yellow — azcapotzalco accent
+			// red too dark on navy bg — brighten for dark-mode AA contrast
+			primaryDark: "#d44f4f",
+			// red on cream borderline — deepen for light-mode AA contrast
+			primaryLight: "#7a1f1f",
+		},
+	},
 	// TODO: Mexican student radio (Ciudad Juárez) — pending research verification
 	// {
 	// 	key: "radio_upnech",
