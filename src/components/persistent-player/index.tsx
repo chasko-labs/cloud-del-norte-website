@@ -1,13 +1,14 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
 	clearPlayerState,
 	loadPlayerState,
 	type PersistedPlayerState,
 } from "../../lib/player-persist";
-import { STREAMS } from "../../lib/streams";
+import { hexToRgbTuple, STREAMS } from "../../lib/streams";
 import "./styles.css";
 
 const POLL_MS = 30_000;
@@ -68,8 +69,38 @@ function PersistentPlayerBar({
 		window.dispatchEvent(new CustomEvent("cdn:audio:stop"));
 	}, []);
 
+	// per-station theming — emit the active station's brand palette as CSS
+	// custom properties so the pill border / play+stop button glow + hover
+	// inherit the institution's colors (KEXP buttercup vs KRUX crimson).
+	// primaryLight / primaryDark contrast-tune for cream and navy bgs; the
+	// CSS resolves them inside :root vs .awsui-dark-mode blocks.
+	const stationStyle: React.CSSProperties | undefined = streamDef
+		? ({
+				"--station-primary": streamDef.colors.primary,
+				"--station-primary-rgb": hexToRgbTuple(streamDef.colors.primary),
+				"--station-secondary": streamDef.colors.secondary,
+				"--station-secondary-rgb": hexToRgbTuple(streamDef.colors.secondary),
+				"--station-accent": streamDef.colors.accent,
+				"--station-primary-light":
+					streamDef.colors.primaryLight ?? streamDef.colors.primary,
+				"--station-primary-light-rgb": hexToRgbTuple(
+					streamDef.colors.primaryLight ?? streamDef.colors.primary,
+				),
+				"--station-primary-dark":
+					streamDef.colors.primaryDark ?? streamDef.colors.primary,
+				"--station-primary-dark-rgb": hexToRgbTuple(
+					streamDef.colors.primaryDark ?? streamDef.colors.primary,
+				),
+			} as React.CSSProperties)
+		: undefined;
+
 	return (
-		<section className="cdn-pp" aria-label="now playing">
+		<section
+			className="cdn-pp"
+			aria-label="now playing"
+			data-station={state.stationKey}
+			style={stationStyle}
+		>
 			{/* biome-ignore lint/a11y/useMediaCaption: live radio stream — no caption track available */}
 			<audio
 				ref={audioRef}
