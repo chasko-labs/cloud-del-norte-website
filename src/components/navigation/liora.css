@@ -2651,11 +2651,16 @@
 .liora-stickynote-2-flag {
 	font-family:
 		"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-	display: block;
-	align-self: center;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(-2.8deg);
 	margin: 0;
-	padding: 0 4px;
+	padding: 0;
+	font-size: 1.1em;
 	line-height: 1;
+	pointer-events: none;
+	filter: drop-shadow(0 1px 1px #00000040);
 }
 
 .liora-stickynote-2-ip {
