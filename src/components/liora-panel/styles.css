@@ -147,17 +147,14 @@
 	width: 100%;
 	aspect-ratio: 4 / 3;
 	overflow: hidden;
-	/* brand-violet phosphor: deep navy base + violet inner-edge keeps CRT
-	   "powered-on dark display" identity while honoring cdn-violet (#6330c8)
-	   instead of the alien green that clashes with cream/tan bezel */
-	background: #0a0a26;
+	background: #050607;
 	border-radius: 6px;
 	box-shadow:
-		inset 0 0 0 2px rgba(144, 96, 240, 0.4),
-		inset 0 0 40px rgba(0, 0, 32, 0.88),
-		0 0 24px rgba(144, 96, 240, 0.38),
-		0 0 52px rgba(99, 48, 200, 0.18),
-		0 0 4px rgba(180, 140, 255, 0.6);
+		inset 0 0 0 2px rgba(0, 220, 70, 0.4),
+		inset 0 0 40px rgba(0, 0, 0, 0.88),
+		0 0 24px rgba(0, 210, 55, 0.38),
+		0 0 52px rgba(0, 180, 40, 0.18),
+		0 0 4px rgba(0, 230, 70, 0.65);
 	animation: crt-flicker 11s ease-in-out infinite;
 	transition: box-shadow 0.6s ease;
 }
@@ -169,14 +166,12 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	/* brand-violet shimmer: deep navy + cdn-violet sweep replaces the murky
-	   green/black gradient that clashed with cream/tan bezel */
 	background: linear-gradient(
 		135deg,
-		#080820 0%,
-		#1a0f3a 40%,
-		#0a0a26 60%,
-		#080820 100%
+		#060806 0%,
+		#0a180a 40%,
+		#060806 60%,
+		#050607 100%
 	);
 	background-size: 400% 400%;
 	animation: liora-shimmer 3s ease-in-out infinite;
@@ -189,10 +184,10 @@
 	font-size: clamp(11px, 4cqi, 16px);
 	letter-spacing: 0.18em;
 	text-transform: lowercase;
-	color: rgba(180, 140, 255, 0.78);
+	color: rgba(34, 197, 94, 0.7);
 	text-shadow:
-		0 0 4px rgba(144, 96, 240, 0.6),
-		0 0 12px rgba(144, 96, 240, 0.35);
+		0 0 4px rgba(34, 197, 94, 0.55),
+		0 0 12px rgba(34, 197, 94, 0.3);
 	animation: liora-loading-pulse 1.6s ease-in-out infinite alternate;
 	pointer-events: none;
 	user-select: none;
@@ -724,8 +719,8 @@
 }
 
 /* phosphor filter — grayscale + sepia desaturate slightly; saturate(1.8) retains
-   luminance separation between skin/hair/clothing; hue-rotate(238deg) tilts toward
-   brand cdn-violet phosphor (was 68deg green — clashed with cream/tan bezel) */
+   luminance separation between skin/hair/clothing; hue-rotate(68deg) tilts toward
+   classic phosphor green without destroying tonal detail */
 .liora-canvas {
 	position: absolute;
 	inset: 0;
@@ -735,7 +730,7 @@
 	transition:
 		opacity 0.8s ease,
 		filter 0.6s ease;
-	filter: grayscale(0.12) sepia(0.2) saturate(1.8) hue-rotate(238deg)
+	filter: grayscale(0.12) sepia(0.2) saturate(1.8) hue-rotate(68deg)
 		brightness(0.92) contrast(1.15);
 }
 
@@ -743,8 +738,7 @@
 	opacity: 1;
 }
 
-/* scanlines + rolling phosphor sweep — classic CRT horizontal scroll
-   (phosphor tint shifted from green to brand cdn-violet) */
+/* scanlines + rolling phosphor sweep — classic CRT horizontal scroll */
 .liora-panel-wrap::before {
 	content: "";
 	position: absolute;
@@ -755,17 +749,17 @@
 		linear-gradient(
 			to bottom,
 			transparent 0%,
-			rgba(144, 96, 240, 0.08) 35%,
-			rgba(180, 140, 255, 0.2) 50%,
-			rgba(144, 96, 240, 0.08) 65%,
+			rgba(0, 220, 80, 0.07) 35%,
+			rgba(0, 240, 90, 0.18) 50%,
+			rgba(0, 220, 80, 0.07) 65%,
 			transparent 100%
 		),
 		repeating-linear-gradient(
 			to bottom,
 			transparent 0px,
 			transparent 3px,
-			rgba(0, 0, 16, 0.22) 3px,
-			rgba(0, 0, 16, 0.22) 4px
+			rgba(0, 0, 0, 0.22) 3px,
+			rgba(0, 0, 0, 0.22) 4px
 		);
 	background-size:
 		100% 600px,
@@ -773,8 +767,7 @@
 	animation: crt-roll 8s linear infinite;
 }
 
-/* screen vignette + glare — deeper tunnel-vision edge, two glare hotspots
-   (glare tint shifted from green to brand cdn-violet) */
+/* screen vignette + glare — deeper tunnel-vision edge, two glare hotspots */
 .liora-panel-wrap::after {
 	content: "";
 	position: absolute;
@@ -784,18 +777,18 @@
 	background:
 		radial-gradient(
 			ellipse 60% 40% at 22% 8%,
-			rgba(180, 140, 255, 0.22) 0%,
+			rgba(0, 230, 90, 0.2) 0%,
 			transparent 65%
 		),
 		radial-gradient(
 			ellipse 30% 18% at 78% 92%,
-			rgba(144, 96, 240, 0.1) 0%,
+			rgba(0, 200, 80, 0.08) 0%,
 			transparent 60%
 		),
 		radial-gradient(
 			ellipse 75% 75% at 50% 50%,
 			transparent 28%,
-			rgba(0, 0, 24, 0.88) 100%
+			rgba(0, 0, 0, 0.88) 100%
 		);
 }
 
