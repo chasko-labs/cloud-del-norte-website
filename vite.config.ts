@@ -40,6 +40,10 @@ export default defineConfig({
 					"./src/pages/auth/callback/index.html",
 				),
 				admin: resolve(__dirname, "./src/pages/admin/index.html"),
+				"dune-test": resolve(
+					__dirname,
+					"./src/pages/dune-test/index.html",
+				),
 			},
 		},
 	},

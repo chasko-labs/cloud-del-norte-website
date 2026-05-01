@@ -25,6 +25,7 @@
 	},
 	"dependencies": {
 		"@babylonjs/core": "^9.4.1",
+		"@babylonjs/materials": "^9.5.0",
 		"@cloudscape-design/collection-hooks": "^1.0.85",
 		"@cloudscape-design/component-toolkit": "^1.0.0-beta.140",
 		"@cloudscape-design/components": "^3.0.1225",
