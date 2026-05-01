@@ -301,6 +301,29 @@
 	background-color: transparent !important;
 }
 
+/* ── scrolling-background_ + breadcrumbs_ — top-of-page opaque culprits ──
+   Playwright trace (2026-05-01): awsui_scrolling-background_ paints solid
+   rgb(237,229,212) at top:62 / 1440x157px, blocking dunes above NextMeetup.
+   awsui_breadcrumbs_ also shows solid cream at top:78. Both selectors exist
+   in the CSS-nesting block below (lines ~337-410) but CSS nesting does NOT
+   compose specificity the same way as a flat :root:not(.awsui-dark-mode) >
+   child selector — so Cloudscape's own !important rules win.
+
+   Fix: standalone flat selectors with :not(#\9) specificity hack, identical
+   pattern to awsui_drawers-container_ / awsui_main_ above. No nesting. */
+
+:root:not(.awsui-dark-mode) [class*="awsui_scrolling-background_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+.awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
 /* ── explicit opt-out ────────────────────────────────────────────────────── */
 /* Use on: .cdn-card, buttons, .liora-bezel/.liora-canvas/.liora-panel-wrap,
    #top-nav, .cdn-footer — any surface that must be fully opaque. */

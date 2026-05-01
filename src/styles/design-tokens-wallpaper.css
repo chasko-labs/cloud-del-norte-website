@@ -17,8 +17,8 @@
 :root {
 	/* Atmospheric layer alphas (panel/header/content tiers) — dark mode defaults.
 	   Dark mode: music-viz el-paso-nights has deep navy canvas with high-contrast
-	   violet/star rendering. Even at 0.94 panel alpha the nebula bleeds through. */
-	--cdn-wallpaper-alpha-panel: 0.94;
+	   violet/star rendering. Panel dropped to 0.65 for visible dune/star bleed. */
+	--cdn-wallpaper-alpha-panel: 0.65;
 	--cdn-wallpaper-alpha-header: 0.88;
 	--cdn-wallpaper-alpha-content: 0.75;
 
@@ -39,7 +39,7 @@
    Dark mode music-viz is high-contrast so 0.75/0.88/0.94 gives ample translucency.
    Light mode needs more aggressive transparency to let the dune texture actually read. */
 :root:not(.awsui-dark-mode) {
-	--cdn-wallpaper-alpha-panel: 0.88;
+	--cdn-wallpaper-alpha-panel: 0.65;
 	--cdn-wallpaper-alpha-header: 0.78;
 	--cdn-wallpaper-alpha-content: 0.62;
 }
