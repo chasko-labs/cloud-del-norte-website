@@ -104,6 +104,134 @@
 	}
 }
 
+/* ── Cloudscape selector wiring — atmospheric-panel/header/content tiers ─────
+   Maps the three alpha tiers onto the actual Cloudscape DOM selectors.
+   Scoped to .cdn-viz-active so rules only fire when the wallpaper canvas is
+   mounted. Requires !important to beat Cloudscape's :not(#\9) specificity hack.
+   Approach (a) per spec: self-contained in this file, not in shell/styles.css.
+
+   Replaces the stubs left in shell/styles.css lines 1059-1070. Those stubs
+   deferred to the existing cdn-viz-active frosted-glass rules in shell/styles.css,
+   but those rules fire at the same or lower specificity without the right selectors
+   for awsui_navigation_ / awsui_tools_ class patterns.
+
+   Light mode bg-rgb: 237, 229, 212 (cream #ede5d4)
+   Dark mode bg-rgb:  10, 12, 20    (deep navy #0a0c14)
+   Alpha values come from CSS custom properties (see design-tokens-wallpaper.css).
+   Light mode overrides those tokens to lower values for more wallpaper visibility. */
+
+@supports (backdrop-filter: blur(0)) {
+	/* ── Side panels: nav drawer + tools panel — panel tier ──────────────── */
+
+	/* Light mode */
+	.cdn-viz-active:not(.awsui-dark-mode)
+		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+	.cdn-viz-active:not(.awsui-dark-mode)
+		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]) {
+		background-color: rgba(
+			237,
+			229,
+			212,
+			var(--cdn-wallpaper-alpha-panel)
+		) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+	}
+
+	/* Dark mode */
+	.cdn-viz-active.awsui-dark-mode
+		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+	.cdn-viz-active.awsui-dark-mode
+		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]) {
+		background-color: rgba(
+			10,
+			12,
+			20,
+			var(--cdn-wallpaper-alpha-panel)
+		) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+	}
+
+	/* ── ContentLayout header strip — header tier ─────────────────────────── */
+
+	/* Light mode */
+	.cdn-viz-active:not(.awsui-dark-mode)
+		[class*="awsui_has-header_"]
+		> [class*="awsui_background_"],
+	.cdn-viz-active:not(.awsui-dark-mode)
+		[class*="awsui_content-layout"]
+		> [class*="awsui_background"],
+	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"] {
+		background-color: rgba(
+			237,
+			229,
+			212,
+			var(--cdn-wallpaper-alpha-header)
+		) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+	}
+
+	/* Dark mode */
+	.cdn-viz-active.awsui-dark-mode
+		[class*="awsui_has-header_"]
+		> [class*="awsui_background_"],
+	.cdn-viz-active.awsui-dark-mode
+		[class*="awsui_content-layout"]
+		> [class*="awsui_background"],
+	.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"] {
+		background-color: rgba(
+			10,
+			12,
+			20,
+			var(--cdn-wallpaper-alpha-header)
+		) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+	}
+
+	/* ── Main content area — content tier ────────────────────────────────── */
+
+	/* Light mode */
+	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"],
+	.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"] {
+		background-color: rgba(
+			237,
+			229,
+			212,
+			var(--cdn-wallpaper-alpha-content)
+		) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+	}
+
+	/* Dark mode */
+	.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"],
+	.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"] {
+		background-color: rgba(
+			10,
+			12,
+			20,
+			var(--cdn-wallpaper-alpha-content)
+		) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
+			saturate(var(--cdn-wallpaper-saturate)) !important;
+	}
+}
+
 /* ── explicit opt-out ────────────────────────────────────────────────────── */
 /* Use on: .cdn-card, buttons, .liora-bezel/.liora-canvas/.liora-panel-wrap,
    #top-nav, .cdn-footer — any surface that must be fully opaque. */

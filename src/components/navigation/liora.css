@@ -14,6 +14,7 @@
 	margin-inline: auto;
 	display: flex;
 	position: relative;
+	contain: layout style; /* no 'size' — frame has no explicit height; size containment would collapse it to 0 */
 }
 
 .liora-bezel {
@@ -2709,4 +2710,8 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	padding-right: 16px;
+	display: inline-block;
+	min-width: 13ch; /* pre-allocated slot for IPv4 — loading→"66.18.175.199" no longer changes sticky note width */
+	font-variant-numeric: tabular-nums; /* equal-width digits prevent sub-char drift between IPs */
+	text-align: left;
 }

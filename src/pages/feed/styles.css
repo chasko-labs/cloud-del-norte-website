@@ -385,11 +385,10 @@
 
 .feed-grid__cell--full {
 	grid-column: 1 / -1;
-	/* full-row cards (NextMeetup, BuilderCenterCard) get the wide tier —
-	   horizontal embeds + multi-column inner content need more reserved
-	   vertical space than the standard 220px tier. overrides the standard
-	   tier inherited from .feed-grid__cell. */
-	min-height: var(--cdn-slot-wide-min-h, 320px);
+	/* min-height: 0 — content is height-stable, slot floor was overshooting
+	   (~100-130px of whitespace per card). Bryan validated in DevTools.
+	   Standard-tier cards keep their floor since they cycle content. */
+	min-height: 0;
 }
 
 /* ---------- Builder center "top 4" mini-card grid (tumblr feel) ----------

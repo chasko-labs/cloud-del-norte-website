@@ -1,0 +1,90 @@
+---
+# woodpecker ci/cd — cloud-del-norte-website screenshot capture (parallel pipeline)
+# runs in parallel with deploy.yml; failures never block deploys
+# auth chain: same workload cert pattern as deploy.yml, but playwright image lacks
+# aws cli + aws_signing_helper by default — both are installed at runtime below
+# debug log uploaded unconditionally; check <sha>/capture.log to distinguish
+# script failures from auth failures
+
+when:
+  - event: [push, manual]
+    branch: [dev, main]
+
+steps:
+  - name: capture-dev
+    image: mcr.microsoft.com/playwright:v1.49.0-jammy
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: dev
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      # install awscli if not present (playwright image is debian-based; pip is faster than apt)
+      - which aws || pip install --quiet awscli
+      # install aws_signing_helper if not present — amd64 linux
+      - which aws_signing_helper || (curl -sL https://rolesanywhere.amazonaws.com/releases/1.7.0/X86_64/Linux/aws_signing_helper -o /usr/local/bin/aws_signing_helper && chmod +x /usr/local/bin/aws_signing_helper)
+      # confirm workload cert is mounted — fast fail with diagnostic if not
+      - test -f /workload.crt && test -f /workload.key
+      - aws sts get-caller-identity
+      # wait for parallel deploy pipeline + cloudfront propagation
+      - sleep 90
+      # capture with full stdout+stderr to log; tolerate script failure so log still uploads
+      - mkdir -p /tmp/shots
+      - npm ci --no-audit --no-fund --quiet
+      - node scripts/ci-screenshot.mjs https://dev.clouddelnorte.org /tmp/shots > /tmp/capture.log 2>&1 || true
+      - cat /tmp/capture.log
+      # upload screenshots (|| true — failure is informative but not fatal here)
+      - aws s3 sync /tmp/shots s3://dev.clouddelnorte.org/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable" || true
+      - aws s3 sync /tmp/shots s3://dev.clouddelnorte.org/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete || true
+      # upload log unconditionally — no || true; a failure here indicates auth problem
+      - aws s3 cp /tmp/capture.log s3://dev.clouddelnorte.org/_ci/screenshots/$CI_COMMIT_SHA/capture.log --content-type "text/plain; charset=utf-8" --cache-control "no-cache"
+      - aws s3 cp /tmp/capture.log s3://dev.clouddelnorte.org/_ci/screenshots/latest/capture.log --content-type "text/plain; charset=utf-8" --cache-control "no-cache"
+      - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/_ci/screenshots/latest/*"
+
+  - name: capture-prod
+    image: mcr.microsoft.com/playwright:v1.49.0-jammy
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: main
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      # install awscli if not present
+      - which aws || pip install --quiet awscli
+      # install aws_signing_helper if not present — amd64 linux
+      - which aws_signing_helper || (curl -sL https://rolesanywhere.amazonaws.com/releases/1.7.0/X86_64/Linux/aws_signing_helper -o /usr/local/bin/aws_signing_helper && chmod +x /usr/local/bin/aws_signing_helper)
+      # confirm workload cert is mounted — fast fail with diagnostic if not
+      - test -f /workload.crt && test -f /workload.key
+      - aws sts get-caller-identity
+      # wait for parallel deploy pipeline + cloudfront propagation
+      - sleep 90
+      # capture with full stdout+stderr to log; tolerate script failure so log still uploads
+      - mkdir -p /tmp/shots
+      - npm ci --no-audit --no-fund --quiet
+      - node scripts/ci-screenshot.mjs https://clouddelnorte.org /tmp/shots > /tmp/capture.log 2>&1 || true
+      - cat /tmp/capture.log
+      # upload screenshots (|| true — failure is informative but not fatal here)
+      - aws s3 sync /tmp/shots s3://awsaerospace.org/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable" || true
+      - aws s3 sync /tmp/shots s3://awsaerospace.org/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete || true
+      # upload log unconditionally — no || true; a failure here indicates auth problem
+      - aws s3 cp /tmp/capture.log s3://awsaerospace.org/_ci/screenshots/$CI_COMMIT_SHA/capture.log --content-type "text/plain; charset=utf-8" --cache-control "no-cache"
+      - aws s3 cp /tmp/capture.log s3://awsaerospace.org/_ci/screenshots/latest/capture.log --content-type "text/plain; charset=utf-8" --cache-control "no-cache"
+      - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/_ci/screenshots/latest/*"

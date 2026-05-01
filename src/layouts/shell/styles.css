@@ -965,29 +965,18 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    container elements, not on this grid track. Mobile (<688px) uses overlay
    navigation so this rule no longer reserves a column gutter — confirmed
    no responsive regression. */
+/* Cloudscape's default content gap was 24px — slightly tighter is the
+   right balance: enough breathing room between nav drawer and main column
+   without the original gap looking excessive. */
 [class*="awsui_layout_"][class*="awsui_has-content-gap-left_"]:not(#\9) {
-	--awsui-content-gap-left-6b9ypa: 0px !important;
+	--awsui-content-gap-left-6b9ypa: 16px !important;
 }
 
-/* ── Lock AppLayout grid tracks — kill periodic main-column jump ──────────
-   AppLayout's MAIN element (matched by `main[class*="awsui_layout"]`) is a
-   CSS grid: nav | gap-left | main | gap-right | tools-stub. Cloudscape
-   recomputes track sizes when inner state changes (live-hero ONLINE/OFFLINE
-   toggles, station carousel rotations, audio-reactive descendants, etc).
-   Each recalc shifts main horizontally by sub-pixel-to-multi-pixel amounts —
-   the visible "jumping" Bryan reported.
-
-   Override grid-template-columns to a stable form: nav and tools as
-   min-content (sized by their own intrinsic widths, which don't change
-   periodically), gaps zeroed (matches existing has-content-gap-left override
-   above), main as 1fr (absorbs all extra space, scales responsively without
-   a hard-coded width).
-
-   Scoped to ≥689px because <689px uses an overlay-drawer mobile layout with
-   tracks `0 20px 1fr 20px 0` — those 20px content gutters must stay. */
 @media (min-width: 689px) {
+	/* Zero the grid track gaps — main column flush with nav drawer at the
+	   grid level. The 16px breathing room comes from
+	   --awsui-content-gap-left-6b9ypa above, not from grid gaps. */
 	main[class*="awsui_layout_"] {
-		grid-template-columns: min-content 0 1fr 0 min-content !important;
 		gap: 0 !important;
 	}
 }
@@ -1104,6 +1093,22 @@ body {
 		backdrop-filter: none !important;
 		-webkit-backdrop-filter: none !important;
 	}
+}
+
+/* ── Nav drawer content-container — permanent scrollbar ───────────────────
+   Cloudscape's nav drawer has overflow-y: auto by default. When inner content
+   is tall enough to need scroll, the scrollbar appears and shrinks the inner
+   width by ~15px. When shorter, it disappears and width grows. Each toggle
+   fires a grid recalc — visible as open-sidebar skip.
+
+   Forcing overflow-y: scroll makes the scrollbar always present so the drawer
+   inner-width is constant regardless of content height.
+
+   Selector pattern: matches the content-container inside any awsui_navigation_
+   element, scoped to avoid catching non-nav surfaces. !important beats
+   Cloudscape's auto override at the same specificity tier. */
+[class*="awsui_navigation_"] [class*="awsui_content-container_"] {
+	overflow-y: scroll !important;
 }
 
 /* Top nav — opaque (the nav bar itself; header strip BELOW it is the
