@@ -944,3 +944,33 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 :root:not(.awsui-dark-mode) {
 	background-color: #ede5d4;
 }
+
+/* ── Wobble fix: keep document always taller than viewport ────────────────
+   Multiple timer-driven content changes can flip the document between
+   shorter-than-viewport and taller-than-viewport, which toggles the OS
+   scrollbar. Each toggle changes the body's effective width by the
+   scrollbar gutter (typically 15px on Linux/Windows OS scrollbars), and
+   the AppLayout main column re-flexes horizontally — visible as wobble.
+   Known timer-driven height togglers on /feed/:
+     - Twitch SDK ONLINE/OFFLINE events flip the .feed-live-hero on/off
+       (~300px tall iframe + glow). Heartbeat is internal to the SDK.
+     - useAndresLive polls YouTube oEmbed every 60s and may flip the same
+       hero in or out.
+     - 6s carousels (andres-medium, arrowhead-news, feed-section) re-key
+       items — content is height-clamped so they shouldn't shift, but
+       any unclamped descendant could push.
+   Fix: force the document body to always be at least viewport-tall. The
+   scrollbar then stays mounted constantly rather than appearing/disappearing,
+   so width never wobbles. Cheaper than `scrollbar-gutter: stable` (which
+   reserves 15px in body even on overlay-scrollbar browsers — produced the
+   permanent column gap reverted in 7e3e089f). 100vh is benign on every
+   browser: scrollbar is always shown when content actually exceeds it,
+   and on tall content this rule is a no-op.
+
+   Applied to body, not :root, because Cloudscape's AppLayout sets
+   block-size on its own viewport-fill chrome (overridden in the rule at
+   line ~176). body min-height is a static reservation that does not fight
+   AppLayout's internal sizing math. */
+body {
+	min-height: 100vh;
+}
