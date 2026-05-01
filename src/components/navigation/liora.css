@@ -650,10 +650,11 @@
 }
 
 .liora-status-bar {
-	/* tightened from letter-spacing:0.08em + gap:14px to fit longer device-info
-	   strings ("OS:MACOS 1920×1080  SYS:▓▓▓" was clipping ▓▓▓ at right edge of
-	   254px panel). preserves VT323 monospace + 14px size for readability */
-	letter-spacing: 0.04em;
+	/* container-query-sized so "OS:MACOS 1920×1080  SYS:▓▓▓" fits even when the
+	   bezel is narrow. clamp(10px → 4cqi → 13px) shrinks the text in lockstep
+	   with the bezel; gap + letter-spacing tightened from earlier 0.04em / 8px
+	   to handle the worst-case (longer mac/windows screen geometry) string */
+	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	pointer-events: none;
 	-webkit-user-select: none;
@@ -661,22 +662,23 @@
 	z-index: 22;
 	justify-content: center;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
 	font-family:
 		VT323,
 		Courier New,
 		Courier,
 		monospace;
-	font-size: 13px;
+	font-size: clamp(10px, 4cqi, 13px);
 	line-height: 1.5;
 	transition:
 		color 0.5s,
 		opacity 0.5s;
 	display: flex;
+	flex-wrap: nowrap;
 	position: absolute;
 	bottom: 30px;
-	left: 16px;
-	right: 16px;
+	left: 12px;
+	right: 12px;
 	overflow: hidden;
 }
 
@@ -684,8 +686,9 @@
 #liora-sys-status {
 	white-space: nowrap;
 	align-items: center;
-	gap: 6px;
+	gap: 4px;
 	display: inline-flex;
+	min-width: 0;
 }
 
 .liora-status-bar.liora-status--green {
