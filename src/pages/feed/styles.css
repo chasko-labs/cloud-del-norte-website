@@ -515,6 +515,14 @@
    button below. align-items:flex-start makes the "s" of "stream" left-edge align
    with the play button's left edge (the visual anchor bryan asked for). */
 
+/* per-station theming — the active station's brand palette is injected as
+   CSS custom properties on .feed-krux by app.tsx (KruxPlayer). The vars below
+   resolve --station-primary-mode (the contrast-tuned value for the current
+   light/dark mode) so all downstream rules read from a single source. Fallback
+   to brand violet if a station hasn't supplied colors.
+
+   --station-next-primary-mode mirrors the same shape for the queue lookahead
+   so the skip / next button can preview the upcoming station's identity. */
 .feed-krux {
 	display: flex;
 	flex-direction: column;
@@ -522,6 +530,59 @@
 	justify-content: center;
 	gap: 4px;
 	margin-inline-end: 6px;
+	/* light-mode default: use the station's primary-light if it provides one,
+	   else its primary, else the brand violet. */
+	--station-primary-mode: var(
+		--station-primary-light,
+		var(--station-primary, var(--cdn-violet, #9060f0))
+	);
+	--station-primary-mode-rgb: var(
+		--station-primary-light-rgb,
+		var(--station-primary-rgb, 144, 96, 240)
+	);
+	--station-next-primary-mode: var(
+		--station-next-primary-light,
+		var(--station-next-primary, var(--cdn-violet, #9060f0))
+	);
+	--station-next-primary-mode-rgb: var(
+		--station-next-primary-light-rgb,
+		var(--station-next-primary-rgb, 144, 96, 240)
+	);
+	/* subtle radial-gradient tint on the widget surface — uses the active
+	   station's primary at low opacity so KEXP and KRUX read as visually
+	   distinct cards without overpowering the cream / navy ground. */
+	background: radial-gradient(
+		circle at top right,
+		rgba(var(--station-primary-mode-rgb), 0.07) 0%,
+		transparent 70%
+	);
+	border-radius: 10px;
+	padding: 4px 8px;
+	transition: background 0.5s ease;
+}
+
+.awsui-dark-mode .feed-krux {
+	--station-primary-mode: var(
+		--station-primary-dark,
+		var(--station-primary, var(--cdn-violet, #9060f0))
+	);
+	--station-primary-mode-rgb: var(
+		--station-primary-dark-rgb,
+		var(--station-primary-rgb, 144, 96, 240)
+	);
+	--station-next-primary-mode: var(
+		--station-next-primary-dark,
+		var(--station-next-primary, var(--cdn-violet, #9060f0))
+	);
+	--station-next-primary-mode-rgb: var(
+		--station-next-primary-dark-rgb,
+		var(--station-next-primary-rgb, 144, 96, 240)
+	);
+	background: radial-gradient(
+		circle at top right,
+		rgba(var(--station-primary-mode-rgb), 0.1) 0%,
+		transparent 70%
+	);
 }
 
 /* top row: skip | label (secondary control) | round play button */
@@ -532,50 +593,51 @@
 	gap: 8px;
 }
 
-/* skip button — leftmost, gradient pill */
+/* skip button — leftmost, gradient pill (themed per active station) */
 .feed-krux__skip {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	background: linear-gradient(
 		135deg,
-		rgba(144, 96, 240, 0.12) 0%,
-		rgba(144, 96, 240, 0.06) 100%
+		rgba(var(--station-primary-mode-rgb), 0.12) 0%,
+		rgba(var(--station-primary-mode-rgb), 0.06) 100%
 	);
-	border: 1px solid rgba(144, 96, 240, 0.28);
+	border: 1px solid rgba(var(--station-primary-mode-rgb), 0.28);
 	border-radius: 7px;
 	padding: 3px 8px;
 	margin-inline-end: 2px;
 	cursor: pointer;
 	font-size: 0.85rem;
 	line-height: 1;
-	color: var(--cdn-violet, #9060f0);
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	box-shadow:
 		inset 0 1px 0 rgba(255, 255, 255, 0.15),
-		0 1px 3px rgba(144, 96, 240, 0.12);
+		0 1px 3px rgba(var(--station-primary-mode-rgb), 0.12);
 	transition:
 		background 0.18s ease,
 		border-color 0.18s ease,
 		transform 0.18s ease,
-		box-shadow 0.18s ease;
+		box-shadow 0.18s ease,
+		color 0.4s ease;
 }
 
 .feed-krux__skip:hover {
 	background: linear-gradient(
 		135deg,
-		rgba(144, 96, 240, 0.22) 0%,
-		rgba(144, 96, 240, 0.12) 100%
+		rgba(var(--station-primary-mode-rgb), 0.22) 0%,
+		rgba(var(--station-primary-mode-rgb), 0.12) 100%
 	);
-	border-color: rgba(144, 96, 240, 0.52);
+	border-color: rgba(var(--station-primary-mode-rgb), 0.52);
 	transform: scale(1.1);
 	box-shadow:
 		inset 0 1px 0 rgba(255, 255, 255, 0.2),
-		0 0 0 3px rgba(144, 96, 240, 0.15),
-		0 0 10px rgba(144, 96, 240, 0.2);
+		0 0 0 3px rgba(var(--station-primary-mode-rgb), 0.18),
+		0 0 10px rgba(var(--station-primary-mode-rgb), 0.22);
 }
 
 .feed-krux__skip:focus-visible {
-	outline: 2px solid var(--cdn-violet, #9060f0);
+	outline: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	outline-offset: 2px;
 	border-radius: 6px;
 }
@@ -601,30 +663,36 @@
 }
 
 .feed-krux__label:hover .feed-krux__station {
-	color: var(--cdn-violet, #9060f0);
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	background: none;
-	-webkit-text-fill-color: var(--cdn-violet, #9060f0);
+	-webkit-text-fill-color: var(
+		--station-primary-mode,
+		var(--cdn-violet, #9060f0)
+	);
 	animation: none;
 }
 
 .feed-krux__label--playing .feed-krux__station {
 	animation: none;
 	background: none;
-	-webkit-text-fill-color: var(--cdn-violet, #9060f0);
+	-webkit-text-fill-color: var(
+		--station-primary-mode,
+		var(--cdn-violet, #9060f0)
+	);
 }
 
-/* headphones emoji — ambient glow idle, stronger on play */
+/* headphones emoji — ambient glow idle, stronger on play (themed per station) */
 .feed-krux__headphones {
 	display: inline-block;
 	transition:
 		transform 0.2s ease,
 		filter 0.3s ease;
-	filter: drop-shadow(0 0 2px rgba(144, 96, 240, 0.25));
+	filter: drop-shadow(0 0 2px rgba(var(--station-primary-mode-rgb), 0.3));
 }
 
 .feed-krux__label:hover .feed-krux__headphones {
 	transform: scale(1.15);
-	filter: drop-shadow(0 0 5px rgba(144, 96, 240, 0.55));
+	filter: drop-shadow(0 0 5px rgba(var(--station-primary-mode-rgb), 0.6));
 }
 
 @keyframes krux-headphones-bob {
@@ -642,7 +710,7 @@
 
 .feed-krux__headphones--playing {
 	animation: krux-headphones-bob 2.4s ease-in-out infinite;
-	filter: drop-shadow(0 0 4px rgba(144, 96, 240, 0.6));
+	filter: drop-shadow(0 0 4px rgba(var(--station-primary-mode-rgb), 0.65));
 }
 
 /* station name — periodic shimmer sweep when idle (not playing, not hovering)
@@ -710,10 +778,12 @@
 	width: 32px;
 	height: 32px;
 	padding: 0;
-	border: 1px solid var(--cdn-color-border);
+	/* idle border carries a tint of the active station's primary so cards read
+	   as visually different even before any interaction */
+	border: 1px solid rgba(var(--station-primary-mode-rgb), 0.35);
 	border-radius: 50%;
 	background: var(--cdn-color-background-container, transparent);
-	color: var(--cdn-violet, #9060f0);
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	cursor: pointer;
 	font-size: 12px;
 	line-height: 1;
@@ -723,7 +793,8 @@
 		background 0.2s ease,
 		border-color 0.2s ease,
 		transform 0.15s ease,
-		box-shadow 0.2s ease;
+		box-shadow 0.2s ease,
+		color 0.4s ease;
 }
 
 /* glassmorphism rotating ring — conic gradient arc sweeps the button perimeter */
@@ -736,6 +807,8 @@
 	}
 }
 
+/* glassmorphism rotating ring — sweep blends station primary into station
+   secondary so each card has a distinct sweep gradient, not just a tint */
 .feed-krux__btn::before {
 	content: "";
 	position: absolute;
@@ -744,11 +817,11 @@
 	padding: 2px;
 	background: conic-gradient(
 		from 0deg,
-		rgba(144, 96, 240, 0) 0%,
-		rgba(144, 96, 240, 0.55) 25%,
-		rgba(255, 255, 255, 0.5) 50%,
-		rgba(144, 96, 240, 0.55) 75%,
-		rgba(144, 96, 240, 0) 100%
+		rgba(var(--station-primary-mode-rgb), 0) 0%,
+		rgba(var(--station-primary-mode-rgb), 0.6) 25%,
+		rgba(var(--station-secondary-rgb, 255, 255, 255), 0.55) 50%,
+		rgba(var(--station-primary-mode-rgb), 0.6) 75%,
+		rgba(var(--station-primary-mode-rgb), 0) 100%
 	);
 	-webkit-mask:
 		linear-gradient(#fff 0 0) content-box,
@@ -761,15 +834,15 @@
 }
 
 .feed-krux__btn:hover {
-	border-color: var(--cdn-violet, #9060f0);
+	border-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	box-shadow:
-		0 0 0 4px rgba(144, 96, 240, 0.2),
-		0 0 8px rgba(144, 96, 240, 0.18);
+		0 0 0 4px rgba(var(--station-primary-mode-rgb), 0.22),
+		0 0 8px rgba(var(--station-primary-mode-rgb), 0.2);
 	transform: scale(1.08);
 }
 
 .feed-krux__btn:focus-visible {
-	outline: 2px solid var(--cdn-violet, #9060f0);
+	outline: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	outline-offset: 3px;
 }
 
@@ -777,20 +850,23 @@
 	0%,
 	100% {
 		box-shadow:
-			0 0 0 3px rgba(144, 96, 240, 0.22),
-			0 0 8px rgba(144, 96, 240, 0.28);
+			0 0 0 3px rgba(var(--station-primary-mode-rgb), 0.24),
+			0 0 8px rgba(var(--station-primary-mode-rgb), 0.3);
 	}
 	50% {
 		box-shadow:
-			0 0 0 6px rgba(144, 96, 240, 0.34),
-			0 0 16px rgba(144, 96, 240, 0.44);
+			0 0 0 6px rgba(var(--station-primary-mode-rgb), 0.36),
+			0 0 16px rgba(var(--station-primary-mode-rgb), 0.46);
 	}
 }
 
+/* active/playing — themed border thickens + bg fills with station primary.
+   Text color uses the station's accent (KEXP near-black on yellow,
+   KRUX cream on crimson) so the play glyph stays readable on the tint. */
 .feed-krux__btn[data-state="playing"] {
-	background: var(--cdn-violet, #9060f0);
-	color: var(--cdn-white, #f0f0f0);
-	border-color: var(--cdn-violet, #9060f0);
+	background: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	color: var(--station-accent, var(--cdn-white, #f0f0f0));
+	border: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	animation: krux-playing-pulse 2s ease-in-out infinite;
 }
 

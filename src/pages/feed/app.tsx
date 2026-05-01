@@ -12,7 +12,7 @@ import { useAndresLive } from "../../hooks/useAndresLive";
 import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
 import { clearPlayerState, savePlayerState } from "../../lib/player-persist";
-import { STREAMS, type StreamDef } from "../../lib/streams";
+import { hexToRgbTuple, STREAMS, type StreamDef } from "../../lib/streams";
 import {
 	applyLocale,
 	initializeLocale,
@@ -50,6 +50,9 @@ function KruxPlayer() {
 	const resumeOnSkipRef = useRef(false);
 
 	const stream = STREAMS[idx];
+	// queue lookahead: which station the carousel / skip button advances to
+	// next. Same modulo arithmetic as skipStation + the carousel timer effect.
+	const nextStream = STREAMS[(idx + 1) % STREAMS.length];
 
 	const fetchMeta = useCallback((s: StreamDef) => {
 		fetch(s.metaUrl)
@@ -155,14 +158,60 @@ function KruxPlayer() {
 		}
 	}, []);
 
+	// per-station theming: emit CSS custom properties from the active station's
+	// brand palette so styles.css can render borders / glow / hover sweeps in
+	// the institution's colors without hardcoding violet. primaryLight /
+	// primaryDark override --station-primary inside their respective mode block
+	// (see styles.css), so contrast stays >= 4.5:1 on both cream and navy bgs.
+	//
+	// --station-next-* mirrors the same shape but for nextStream — the skip
+	// button uses these so its tint already previews the next station's
+	// identity before the user clicks.
+	const stationStyle = {
+		"--station-primary": stream.colors.primary,
+		"--station-primary-rgb": hexToRgbTuple(stream.colors.primary),
+		"--station-secondary": stream.colors.secondary,
+		"--station-secondary-rgb": hexToRgbTuple(stream.colors.secondary),
+		"--station-accent": stream.colors.accent,
+		"--station-primary-light":
+			stream.colors.primaryLight ?? stream.colors.primary,
+		"--station-primary-light-rgb": hexToRgbTuple(
+			stream.colors.primaryLight ?? stream.colors.primary,
+		),
+		"--station-primary-dark":
+			stream.colors.primaryDark ?? stream.colors.primary,
+		"--station-primary-dark-rgb": hexToRgbTuple(
+			stream.colors.primaryDark ?? stream.colors.primary,
+		),
+		"--station-next-primary": nextStream.colors.primary,
+		"--station-next-primary-rgb": hexToRgbTuple(nextStream.colors.primary),
+		"--station-next-secondary": nextStream.colors.secondary,
+		"--station-next-secondary-rgb": hexToRgbTuple(nextStream.colors.secondary),
+		"--station-next-primary-light":
+			nextStream.colors.primaryLight ?? nextStream.colors.primary,
+		"--station-next-primary-light-rgb": hexToRgbTuple(
+			nextStream.colors.primaryLight ?? nextStream.colors.primary,
+		),
+		"--station-next-primary-dark":
+			nextStream.colors.primaryDark ?? nextStream.colors.primary,
+		"--station-next-primary-dark-rgb": hexToRgbTuple(
+			nextStream.colors.primaryDark ?? nextStream.colors.primary,
+		),
+	} as React.CSSProperties;
+
 	return (
-		<div className="feed-krux">
+		<div
+			className="feed-krux"
+			data-station={stream.key}
+			data-next-station={nextStream.key}
+			style={stationStyle}
+		>
 			<div className="feed-krux__top">
 				<button
 					type="button"
 					className="feed-krux__skip"
 					onClick={skipStation}
-					aria-label={`next station: ${STREAMS[(idx + 1) % STREAMS.length].label}`}
+					aria-label={`next station: ${nextStream.label}`}
 				>
 					<span aria-hidden="true">⏭</span>
 				</button>
