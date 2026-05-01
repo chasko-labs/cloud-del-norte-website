@@ -23,41 +23,72 @@
   </filter>
 </defs>
 <style>
-  /* Bulb opacity stagger — preserved from prior pass */
-  @keyframes cdn-bulb-pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.45; }
+  /* cdn-bulb-blink — liora-LED rhythm (src/components/navigation/liora.css L2436-2468).
+     6-stop keyframe: bright plateau (0-28%) → cooling dim with hue drift (42%) →
+     cold floor (62%) → warming back (78%) → bright (100%). Filament metaphor:
+     desaturate + hue-rotate as it cools, NOT a flat opacity pulse.
+     Filter chains url(#cdn-bulb-glow) + drop-shadow halo + saturate + hue-rotate
+     so a single animation drives both opacity and color/glow simultaneously. */
+  @keyframes cdn-bulb-blink {
+    0% {
+      opacity: 1;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 3px #c8a0ff) saturate(1) hue-rotate(0deg);
+    }
+    28% {
+      opacity: 1;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 4px #d8b4ff) saturate(1) hue-rotate(0deg);
+    }
+    42% {
+      opacity: 0.55;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 2px #b6a0d8) saturate(0.65) hue-rotate(-12deg);
+    }
+    62% {
+      opacity: 0.22;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 1px #aea2c4) saturate(0.4) hue-rotate(-20deg);
+    }
+    78% {
+      opacity: 0.7;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 2px #c0a4e4) saturate(0.85) hue-rotate(-6deg);
+    }
+    100% {
+      opacity: 1;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 3px #c8a0ff) saturate(1) hue-rotate(0deg);
+    }
   }
-  /* Arm pulse counter-phase to bulbs: peak when bulbs dim, dim when bulbs peak.
-     Reads as call-and-response rhythm at any size — large arm fills carry pixels at 60px. */
-  @keyframes cdn-arm-pulse {
-    0%, 100% { opacity: 0.55; }
-    50% { opacity: 1; }
-  }
-  /* Bulb halo throb — chains an animated drop-shadow on top of the SVG filter glow.
-     At nav size the halo IS the bulb pixel, so pulsing radius reads as real twinkle. */
-  @keyframes cdn-bulb-halo {
-    0%, 100% { filter: url(#cdn-bulb-glow) drop-shadow(0 0 2px #c8a0ff); }
-    50%      { filter: url(#cdn-bulb-glow) drop-shadow(0 0 8px #d8b4ff); }
-  }
-  /* Arm hue tint — slow ±15° rotation around violet stays inside brand family.
-     Chains after url(#cdn-arm-glow) so the SVG filter output is the hue source. */
-  @keyframes cdn-arm-tint {
-    0%, 100% { filter: url(#cdn-arm-glow) hue-rotate(-12deg); }
-    50%      { filter: url(#cdn-arm-glow) hue-rotate(14deg); }
+  /* Arm rhythm — slower call-and-response below the bulbs. Same 6-stop liora
+     vocabulary but stretched (longer durations on the elements) and shallower
+     dim floor (arms are large fills, full dim looks like a flicker out). */
+  @keyframes cdn-arm-blink {
+    0%   { opacity: 0.85; filter: url(#cdn-arm-glow) saturate(1) hue-rotate(-4deg); }
+    28%  { opacity: 1;    filter: url(#cdn-arm-glow) saturate(1) hue-rotate(0deg); }
+    42%  { opacity: 0.7;  filter: url(#cdn-arm-glow) saturate(0.8) hue-rotate(8deg); }
+    62%  { opacity: 0.55; filter: url(#cdn-arm-glow) saturate(0.7) hue-rotate(14deg); }
+    78%  { opacity: 0.78; filter: url(#cdn-arm-glow) saturate(0.9) hue-rotate(4deg); }
+    100% { opacity: 0.85; filter: url(#cdn-arm-glow) saturate(1) hue-rotate(-4deg); }
   }
   .cdn-bulb { filter: url(#cdn-bulb-glow); }
   .cdn-arm  { filter: url(#cdn-arm-glow); }
   @media (prefers-reduced-motion: no-preference) {
-    .cdn-bulb {
-      animation:
-        cdn-bulb-pulse 3s ease-in-out infinite,
-        cdn-bulb-halo  3s ease-in-out infinite;
-    }
-    .cdn-arm  {
-      animation:
-        cdn-arm-pulse 3s ease-in-out infinite,
-        cdn-arm-tint  9s ease-in-out infinite;
+    /* Default duration; per-element style="animation-duration:Xs" overrides
+       (12 independent durations 1.5s-3.4s, mirrors liora .liora-led:nth-child rhythm). */
+    .cdn-bulb { animation: cdn-bulb-blink 2.4s linear infinite; }
+    .cdn-arm  { animation: cdn-arm-blink 5.5s linear infinite; }
+  }
+  /* Light-mode best-effort: SVG referenced via <img src> can't see host's
+     .awsui-dark-mode class, so :root selectors here are inert. prefers-color-scheme
+     is the only signal available to the embedded sheet. Mirrors liora light-mode
+     override (liora.css L1049-1055) — lower opacity floor, tighter halo. Limitation:
+     users on a dark OS with site light-mode toggle won't get this branch; full
+     parity would require inlining the SVG. */
+  @media (prefers-color-scheme: light) {
+    .cdn-bulb { opacity: 0.85; }
+    @keyframes cdn-bulb-blink {
+      0%   { opacity: 0.85; filter: url(#cdn-bulb-glow) drop-shadow(0 0 1.5px #c8a0ff) saturate(1) hue-rotate(0deg); }
+      28%  { opacity: 0.85; filter: url(#cdn-bulb-glow) drop-shadow(0 0 2px   #d8b4ff) saturate(1) hue-rotate(0deg); }
+      42%  { opacity: 0.5;  filter: url(#cdn-bulb-glow) drop-shadow(0 0 1px   #b6a0d8) saturate(0.65) hue-rotate(-12deg); }
+      62%  { opacity: 0.2;  filter: url(#cdn-bulb-glow) saturate(0.4) hue-rotate(-20deg); }
+      78%  { opacity: 0.6;  filter: url(#cdn-bulb-glow) drop-shadow(0 0 1px   #c0a4e4) saturate(0.85) hue-rotate(-6deg); }
+      100% { opacity: 0.85; filter: url(#cdn-bulb-glow) drop-shadow(0 0 1.5px #c8a0ff) saturate(1) hue-rotate(0deg); }
     }
   }
 </style>
@@ -67,12 +98,12 @@
 <path d="M0,0 L2,0 L11,17 L22,41 L30,57 L48,95 L60,119 L63,124 L171,115 L239,109 L243,109 L241,113 L204,150 L169,153 L123,156 L59,161 L34,162 L16,125 L1,92 L-12,64 L-20,48 L-19,41 L-7,17 Z " fill="#FCFCFD" transform="translate(554,279)"/>
 <path d="M0,0 L4,2 L21,14 L39,28 L52,37 L65,47 L83,60 L98,71 L113,82 L129,94 L127,103 L111,152 L98,189 L80,244 L76,248 L37,263 L36,260 L53,211 L67,171 L85,120 L90,108 L85,106 L71,95 L57,85 L40,72 L22,59 L4,46 L-15,32 L-33,19 L-33,16 L-12,6 Z " fill="#FBFAFA" transform="translate(258,490)"/>
 <path d="M0,0 L4,5 L9,14 L22,35 L23,40 L12,66 L-1,96 L-16,132 L-30,165 L-31,166 L-73,169 L-138,174 L-185,177 L-196,177 L-209,168 L-224,158 L-241,147 L-241,146 L-206,143 L-124,138 L-64,134 L-56,133 L-44,106 L-31,75 L-14,34 Z " fill="#FAFAFA" transform="translate(458,288)"/>
-<path d="M0,0 L3,3 L10,18 L23,47 L31,63 L37,75 L37,81 L26,106 L21,119 L13,135 L5,151 L4,153 L2,153 L-7,139 L-21,116 L-30,101 L-36,90 L-35,83 L-25,58 L-19,45 L-14,31 L-8,18 L-2,3 Z " fill="#9B5CF4" class="cdn-arm" style="animation-delay:0.0s" transform="translate(506,176)"/>
-<path d="M0,0 L26,0 L26,2 L12,13 L-1,24 L-15,35 L-28,46 L-33,50 L-35,50 L-35,52 L-49,63 L-59,72 L-63,75 L-71,74 L-95,67 L-116,60 L-120,57 L-79,16 L-73,9 L-71,9 L-69,5 L-32,2 Z " fill="#9B5DF5" class="cdn-arm" style="animation-delay:0.6s" transform="translate(899,382)"/>
+<path d="M0,0 L3,3 L10,18 L23,47 L31,63 L37,75 L37,81 L26,106 L21,119 L13,135 L5,151 L4,153 L2,153 L-7,139 L-21,116 L-30,101 L-36,90 L-35,83 L-25,58 L-19,45 L-14,31 L-8,18 L-2,3 Z " fill="#9B5CF4" class="cdn-arm" style="animation-delay:0.0s;animation-duration:4.8s" transform="translate(506,176)"/>
+<path d="M0,0 L26,0 L26,2 L12,13 L-1,24 L-15,35 L-28,46 L-33,50 L-35,50 L-35,52 L-49,63 L-59,72 L-63,75 L-71,74 L-95,67 L-116,60 L-120,57 L-79,16 L-73,9 L-71,9 L-69,5 L-32,2 Z " fill="#9B5DF5" class="cdn-arm" style="animation-delay:0.6s;animation-duration:6.2s" transform="translate(899,382)"/>
 <path d="M0,0 L16,8 L43,22 L62,31 L67,43 L73,58 L88,97 L95,116 L96,123 L88,119 L79,113 L61,103 L43,92 L32,85 L9,71 L7,66 L6,52 L3,33 L0,8 Z " fill="#9C5DF5" transform="translate(684,747)"/>
 <path d="M0,0 L5,2 L19,10 L39,22 L63,36 L85,49 L92,54 L96,70 L103,101 L103,103 L97,101 L75,87 L52,73 L33,61 L16,51 L0,41 L-22,28 L-20,27 L-20,25 L-13,25 L-19,20 L-20,14 L-17,9 L-13,6 L-6,5 L-1,5 Z " fill="#FBFAFA" transform="translate(568,697)"/>
 <path d="M0,0 L2,3 L9,21 L17,37 L27,53 L33,60 L38,64 L38,66 L33,71 L25,81 L15,98 L6,117 L0,132 L-2,130 L-10,110 L-22,87 L-33,73 L-39,68 L-33,61 L-23,47 L-9,20 L-1,1 Z " fill="#FAF9F9" transform="translate(504,470)"/>
-<path d="M0,0 L2,0 L-2,40 L-5,60 L-14,66 L-34,77 L-50,85 L-67,95 L-73,98 L-74,96 L-69,81 L-65,68 L-52,28 L-48,18 L-31,12 L-16,6 Z " fill="#9B5DF5" class="cdn-arm" style="animation-delay:1.2s" transform="translate(335,755)"/>
+<path d="M0,0 L2,0 L-2,40 L-5,60 L-14,66 L-34,77 L-50,85 L-67,95 L-73,98 L-74,96 L-69,81 L-65,68 L-52,28 L-48,18 L-31,12 L-16,6 Z " fill="#9B5DF5" class="cdn-arm" style="animation-delay:1.2s;animation-duration:5.4s" transform="translate(335,755)"/>
 <path d="M0,0 L13,0 L24,9 L43,21 L62,33 L62,35 L64,35 L64,37 L53,42 L36,50 L20,58 L14,59 L14,57 L9,55 L-4,45 L-15,37 L-34,23 L-46,14 L-58,6 L-58,4 L-56,3 Z " fill="#985AF2" transform="translate(181,439)"/>
 <path d="M0,0 L4,2 L21,14 L39,28 L52,37 L65,47 L71,51 L67,53 L65,49 L62,50 L63,59 L60,65 L55,69 L49,70 L48,73 L40,70 L37,70 L18,56 L1,44 L-16,31 L-33,19 L-33,16 L-12,6 Z " fill="#FAFAFA" transform="translate(258,490)"/>
 <path d="M0,0 L20,0 L17,3 L17,5 L21,6 L25,10 L26,13 L26,21 L22,27 L22,30 L20,30 L20,32 L33,32 L33,33 L-30,37 L-41,37 L-54,28 L-69,18 L-86,7 L-86,6 L-51,3 Z " fill="#FAFAFB" transform="translate(303,428)"/>
@@ -84,24 +115,24 @@
 <path d="M0,0 L11,6 L25,15 L29,31 L36,62 L36,64 L30,62 L8,48 L-13,35 L-12,33 L-7,32 L-10,31 L-2,31 L5,28 L8,21 L7,14 L2,9 L-3,7 L-2,2 Z " fill="#FAF9FA" transform="translate(635,736)"/>
 <path d="M0,0 L2,0 L0,9 L-5,23 L-7,30 L-14,38 L-23,45 L-25,47 L-22,50 L-30,53 L-35,58 L-38,64 L-40,65 L-44,56 L-51,51 L-54,50 L-54,48 L-46,45 L-42,39 L-39,29 L-36,31 L-34,31 L-32,26 L-22,10 L-2,1 Z " fill="#7F0ADE" transform="translate(441,624)"/>
 <path d="M0,0 L2,0 L3,6 L8,8 L13,11 L21,13 L25,17 L42,27 L46,31 L35,32 L4,32 L1,35 L-1,25 L-7,18 L-16,15 L-16,14 L-7,11 L-2,6 Z " fill="#7D14DD" transform="translate(370,495)"/>
-<path d="M0,0 L9,1 L15,5 L18,9 L19,18 L15,26 L9,30 L0,31 L-8,27 L-12,22 L-13,13 L-9,5 L-3,1 Z " fill="#A064FA" class="cdn-bulb" style="animation-delay:0.0s" transform="translate(574,351)"/>
+<path d="M0,0 L9,1 L15,5 L18,9 L19,18 L15,26 L9,30 L0,31 L-8,27 L-12,22 L-13,13 L-9,5 L-3,1 Z " fill="#A064FA" class="cdn-bulb" style="animation-delay:0.0s;animation-duration:2.3s" transform="translate(574,351)"/>
 <path d="M0,0 L1,0 L5,18 L11,26 L19,30 L25,32 L22,34 L13,38 L8,43 L4,50 L2,64 L0,64 L-1,52 L-6,43 L-13,37 L-23,33 L-20,31 L-10,27 L-4,20 L-1,12 Z " fill="#FBF9FB" transform="translate(507,229)"/>
 <path d="M0,0 L2,1 L-3,9 L-9,12 L-15,12 L-15,14 L-6,15 L-1,19 L2,26 L0,30 L-9,31 L-45,31 L-44,29 L-42,29 L-40,25 L-27,16 L-25,16 L-25,14 L-21,13 L-21,11 L-19,11 L-19,9 L-3,1 Z " fill="#7C0FDA" transform="translate(636,478)"/>
-<path d="M0,0 L8,1 L14,5 L17,9 L18,17 L15,24 L10,28 L5,30 L-3,29 L-9,25 L-12,21 L-13,13 L-10,6 L-5,2 Z " fill="#A064FA" class="cdn-bulb" style="animation-delay:0.75s" transform="translate(717,500)"/>
-<path d="M0,0 L8,1 L14,6 L16,11 L15,19 L10,25 L4,27 L-3,26 L-9,21 L-11,15 L-10,8 L-5,2 Z " fill="#A165F9" class="cdn-bulb" style="animation-delay:1.75s" transform="translate(689,681)"/>
-<path d="M0,0 L8,1 L14,6 L16,11 L15,18 L11,23 L4,26 L-4,25 L-10,20 L-12,15 L-11,8 L-7,3 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:1.0s" transform="translate(654,584)"/>
+<path d="M0,0 L8,1 L14,5 L17,9 L18,17 L15,24 L10,28 L5,30 L-3,29 L-9,25 L-12,21 L-13,13 L-10,6 L-5,2 Z " fill="#A064FA" class="cdn-bulb" style="animation-delay:0.75s;animation-duration:1.7s" transform="translate(717,500)"/>
+<path d="M0,0 L8,1 L14,6 L16,11 L15,19 L10,25 L4,27 L-3,26 L-9,21 L-11,15 L-10,8 L-5,2 Z " fill="#A165F9" class="cdn-bulb" style="animation-delay:1.75s;animation-duration:3.1s" transform="translate(689,681)"/>
+<path d="M0,0 L8,1 L14,6 L16,11 L15,18 L11,23 L4,26 L-4,25 L-10,20 L-12,15 L-11,8 L-7,3 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:1.0s;animation-duration:2.0s" transform="translate(654,584)"/>
 <path d="M0,0 L8,0 L13,3 L16,6 L17,9 L17,17 L13,23 L8,26 L0,26 L-6,22 L-9,17 L-9,9 L-5,3 Z " fill="#9F65F5" transform="translate(312,432)"/>
-<path d="M0,0 L8,1 L14,6 L16,11 L15,18 L11,23 L4,26 L-4,25 L-10,20 L-12,13 L-10,6 L-4,1 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:0.5s" transform="translate(717,400)"/>
+<path d="M0,0 L8,1 L14,6 L16,11 L15,18 L11,23 L4,26 L-4,25 L-10,20 L-12,13 L-10,6 L-4,1 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:0.5s;animation-duration:2.7s" transform="translate(717,400)"/>
 <path d="M0,0 L2,0 L9,16 L10,19 L10,28 L17,29 L13,31 L9,32 L6,47 L2,47 L0,37 L-5,32 L-11,30 L-7,27 L-8,17 Z " fill="#640FBD" transform="translate(502,610)"/>
-<path d="M0,0 L9,1 L15,6 L17,10 L16,17 L11,23 L5,25 L-3,24 L-9,19 L-11,14 L-10,8 L-5,2 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:1.25s" transform="translate(304,535)"/>
+<path d="M0,0 L9,1 L15,6 L17,10 L16,17 L11,23 L5,25 L-3,24 L-9,19 L-11,14 L-10,8 L-5,2 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:1.25s;animation-duration:1.5s" transform="translate(304,535)"/>
 <path d="M0,0 L1,0 L4,13 L9,19 L16,22 L23,24 L19,26 L9,31 L5,36 L3,41 L2,47 L0,47 L-2,38 L-7,31 L-12,28 L-21,26 L-21,24 L-11,21 L-5,16 L-2,11 Z " fill="#FAF7F8" transform="translate(837,396)"/>
 <path d="M0,0 L2,1 L5,12 L7,17 L12,19 L21,22 L21,24 L12,28 L7,32 L4,39 L3,45 L1,45 L-3,33 L-8,28 L-17,24 L-16,22 L-7,18 L-2,12 Z " fill="#F9F4F9" transform="translate(716,776)"/>
-<path d="M0,0 L9,2 L14,7 L15,13 L13,18 L7,23 L0,24 L-7,21 L-11,17 L-12,10 L-9,5 L-4,1 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:1.5s" transform="translate(345,641)"/>
-<path d="M0,0 L7,1 L12,6 L14,10 L13,18 L8,23 L3,25 L-4,24 L-9,19 L-11,14 L-10,7 L-5,2 Z " fill="#A166FA" class="cdn-bulb" style="animation-delay:2.5s" transform="translate(630,743)"/>
-<path d="M0,0 L8,1 L13,6 L15,10 L14,18 L9,23 L4,25 L-3,24 L-8,19 L-10,14 L-9,7 L-4,2 Z " fill="#A166FA" class="cdn-bulb" style="animation-delay:2.75s" transform="translate(399,736)"/>
-<path d="M0,0 L8,1 L13,4 L16,9 L15,17 L10,22 L5,24 L-2,23 L-7,20 L-10,14 L-9,7 L-4,2 Z " fill="#A166FA" class="cdn-bulb" style="animation-delay:2.0s" transform="translate(459,699)"/>
-<path d="M0,0 L8,1 L13,5 L15,9 L14,16 L10,21 L1,23 L-6,20 L-9,16 L-10,9 L-6,3 Z " fill="#A165F9" class="cdn-bulb" style="animation-delay:0.25s" transform="translate(431,379)"/>
-<path d="M0,0 L9,2 L14,8 L13,15 L7,20 L-1,21 L-7,18 L-10,15 L-11,9 L-8,4 L-4,1 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:2.25s" transform="translate(559,702)"/>
+<path d="M0,0 L9,2 L14,7 L15,13 L13,18 L7,23 L0,24 L-7,21 L-11,17 L-12,10 L-9,5 L-4,1 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:1.5s;animation-duration:3.4s" transform="translate(345,641)"/>
+<path d="M0,0 L7,1 L12,6 L14,10 L13,18 L8,23 L3,25 L-4,24 L-9,19 L-11,14 L-10,7 L-5,2 Z " fill="#A166FA" class="cdn-bulb" style="animation-delay:2.5s;animation-duration:1.9s" transform="translate(630,743)"/>
+<path d="M0,0 L8,1 L13,6 L15,10 L14,18 L9,23 L4,25 L-3,24 L-8,19 L-10,14 L-9,7 L-4,2 Z " fill="#A166FA" class="cdn-bulb" style="animation-delay:2.75s;animation-duration:2.5s" transform="translate(399,736)"/>
+<path d="M0,0 L8,1 L13,4 L16,9 L15,17 L10,22 L5,24 L-2,23 L-7,20 L-10,14 L-9,7 L-4,2 Z " fill="#A166FA" class="cdn-bulb" style="animation-delay:2.0s;animation-duration:1.8s" transform="translate(459,699)"/>
+<path d="M0,0 L8,1 L13,5 L15,9 L14,16 L10,21 L1,23 L-6,20 L-9,16 L-10,9 L-6,3 Z " fill="#A165F9" class="cdn-bulb" style="animation-delay:0.25s;animation-duration:2.9s" transform="translate(431,379)"/>
+<path d="M0,0 L9,2 L14,8 L13,15 L7,20 L-1,21 L-7,18 L-10,15 L-11,9 L-8,4 L-4,1 Z " fill="#A064F9" class="cdn-bulb" style="animation-delay:2.25s;animation-duration:2.1s" transform="translate(559,702)"/>
 <path d="M0,0 L1,0 L4,11 L10,18 L19,21 L17,23 L10,26 L5,32 L2,42 L1,42 L-2,31 L-6,26 L-18,22 L-18,21 L-9,18 L-4,14 L-1,6 Z " fill="#F9F9F5" transform="translate(194,447)"/>
 <path d="M0,0 L2,0 L6,11 L11,17 L18,20 L16,22 L7,27 L4,33 L3,38 L1,38 L-1,32 L-7,24 L-16,20 L-16,19 L-6,16 L-3,13 L-1,8 Z " fill="#F7F5F5" transform="translate(611,648)"/>
 <path d="M0,0 L2,0 L6,10 L11,16 L15,19 L6,27 L2,35 L0,35 L-6,25 L-12,20 L-12,18 L-6,13 L-1,4 Z " fill="#7508E6" transform="translate(503,517)"/>
