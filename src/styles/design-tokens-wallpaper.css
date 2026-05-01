@@ -15,7 +15,9 @@
    ========================================================================== */
 
 :root {
-	/* Atmospheric layer alphas (panel/header/content tiers) */
+	/* Atmospheric layer alphas (panel/header/content tiers) — dark mode defaults.
+	   Dark mode: music-viz el-paso-nights has deep navy canvas with high-contrast
+	   violet/star rendering. Even at 0.94 panel alpha the nebula bleeds through. */
 	--cdn-wallpaper-alpha-panel: 0.94;
 	--cdn-wallpaper-alpha-header: 0.88;
 	--cdn-wallpaper-alpha-content: 0.75;
@@ -30,4 +32,14 @@
 
 	/* Wallpaper canvas z-index — behind everything, above :root background-color */
 	--cdn-wallpaper-z-index: -3;
+}
+
+/* Light-mode alpha override — lower values = MORE translucency = MORE wallpaper visible.
+   Gypsum-sands is intrinsically low-contrast (warm dune tones against cream UI).
+   Dark mode music-viz is high-contrast so 0.75/0.88/0.94 gives ample translucency.
+   Light mode needs more aggressive transparency to let the dune texture actually read. */
+:root:not(.awsui-dark-mode) {
+	--cdn-wallpaper-alpha-panel: 0.88;
+	--cdn-wallpaper-alpha-header: 0.78;
+	--cdn-wallpaper-alpha-content: 0.62;
 }
