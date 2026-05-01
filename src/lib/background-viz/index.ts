@@ -54,6 +54,18 @@ function isSoftwareRendering(): boolean {
 	}
 }
 
+// Escape hatch for verification harnesses (CI screenshot pipeline + ad-hoc
+// capture scripts) running headless on rocm-aibox where ANGLE reports
+// SwiftShader ("ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)
+// (0x0000C0DE)), SwiftShader driver)"). Real users never append this param so
+// they keep the software-rendering protection. Harnesses opt in by appending
+// ?__cdn_force_wallpaper=1 to force the dune mount regardless of renderer.
+function shouldSkipDune(): boolean {
+	const params = new URLSearchParams(window.location.search);
+	if (params.get("__cdn_force_wallpaper") === "1") return false;
+	return isSoftwareRendering();
+}
+
 export function mount(): () => void {
 	if (mounted) return () => {};
 	mounted = true;
@@ -155,7 +167,7 @@ export function mount(): () => void {
 
 		if (duneFallback) return; // perf gate already tripped this session
 		if (reducedMotion()) return;
-		if (isSoftwareRendering()) {
+		if (shouldSkipDune()) {
 			// Software rasteriser detected — wallpaper would chug + perf-gate
 			// fallback path can race the canvas-opacity flip. Stay on cream;
 			// the fallback gradient div above already gives us cream/lavender
