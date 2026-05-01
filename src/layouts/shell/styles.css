@@ -973,43 +973,11 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 @media (min-width: 689px) {
-	/* AppLayout grid stability — kill open-sidebar snap, restore slide-left.
-	   Don't override grid-template-columns: Cloudscape's variable-driven
-	   grid handles open/closed transitions natively, and overriding it
-	   broke the slide-left collapse. The snap was caused by `transition: all`
-	   interacting with grid-template-columns (interpolation jitter) plus
-	   Liora children drifting min-content. Fix the cause:
-	   (1) transition: none on the grid container — even though Cloudscape
-	       controls the tracks, we don't want grid-template-columns to
-	       attempt animation. Browser interpolation of grid tracks is jittery.
-	   (2) will-change: grid-template-columns — composite the grid layer
-	       so track changes are handled fluidly. */
+	/* Zero the grid track gaps — main column flush with nav drawer at the
+	   grid level. The 16px breathing room comes from
+	   --awsui-content-gap-left-6b9ypa above, not from grid gaps. */
 	main[class*="awsui_layout_"] {
 		gap: 0 !important;
-		transition: none !important;
-		will-change: grid-template-columns;
-	}
-
-	/* Targeted navigation-container transition — width + transform only,
-	   not Cloudscape default `transition: all`. Keeps open/close animation
-	   smooth without cascading layout-affecting properties. */
-	[class*="awsui_navigation-container_"] {
-		/* DevTools-validated: any transition here triggers a layout-paint-
-		   composite cycle that interacts with the parent grid recalculation
-		   and the nav drawer's overflow-y scrollbar appearance. Even
-		   narrowed to width+transform, the cycle persists. transition: none
-		   breaks the loop entirely. */
-		transition: none !important;
-		will-change: width;
-	}
-	/* Constrain the open nav drawer's inner content so Liora panel children
-	   (audio-reactive canvas, LEDs, sticky notes, dynamic IP text) +
-	   expandable sections (resources/learning) cannot drift the drawer's
-	   intrinsic width. With `contain: layout style`, internal mutations
-	   stay internal — drawer's outer width is stable regardless of what
-	   Liora does inside. */
-	[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]) {
-		contain: layout style;
 	}
 }
 
