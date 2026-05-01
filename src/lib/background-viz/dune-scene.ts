@@ -133,26 +133,26 @@ uniform vec3 sunDir;
 uniform float fluxLevel;
 
 void main(void) {
-  // Pass 2 — drop the saturated gold mid-band. Production light mode uses
-  // gold (#c9a23f) only as a 12% radial-gradient spotlight wash over a cream
-  // (#ede5d4) base. Reproducing it as a full fragment-stop made the dune
-  // mid-heights read as urine-yellow at every blended height. Real white-sands
-  // gypsum is cream-on-cream-shadow; the gradient depth comes from Lambert,
-  // not from a saturated mid colour.
+  // Pass 4 — restore visible topology. Passes 2-3 chased the no-yellow and
+  // no-black guards so hard that every layer (sky horizon, body bg, peak,
+  // shadow) collapsed into the same cream band, plus a 0.62 Lambert floor
+  // smashed the lit/unlit range. Net result was a flat beige fog. This pass
+  // widens the value range while staying inside the brand palette and the
+  // prior failure-mode guards (no black, no saturated yellow, no dark green).
   //
-  // 2-stop blend: warm tan dune-shadow → warm cream dune-peak (page bg).
+  // 2-stop blend: deep-sand shadow → warm cream peak.
   float t = clamp(vHeight / 4.0, 0.0, 1.0);
-  vec3 shadow = vec3(0.831, 0.769, 0.659); // #d4c4a8 — warm tan dune shadow
+  vec3 shadow = vec3(0.722, 0.612, 0.471); // #b89c78 — deep sand (was #d4c4a8)
   vec3 peak   = vec3(0.980, 0.969, 0.941); // #faf7f0 — warm cream peak
   vec3 dune = mix(shadow, peak, t);
 
-  // Lambertian diffuse with high floor (0.62, was 0.55). Real gypsum has
-  // very low contrast even on the shadow side — the page bg under the scene
-  // is cream linen, the dunes need to read as a continuous warm field.
-  // Pass 3 — bumped 0.55 → 0.62 to ensure shadow side never trends toward
-  // dark/black even at extreme angles (jarring on white-mode page bg).
+  // Lambertian diffuse with floor at 0.48 (was 0.62). Even at 0.48 against
+  // the new #b89c78 shadow, the deepest fragment lands near (0.347, 0.294,
+  // 0.226) — a deep warm taupe, still visibly NOT black, still on-palette.
+  // The wider lit/unlit range is what lets the eye actually see the dune
+  // ridges as ridges rather than a uniform cream wash.
   float lambert = max(dot(normalize(vNormal), normalize(sunDir)), 0.0);
-  float lit = mix(0.62, 1.0, lambert);
+  float lit = mix(0.48, 1.0, lambert);
 
   // Subtle GPU-noise paper-grain to harmonise with the production
   // repeating-linear-gradient(#8b5a2b05) overlay on light mode.
@@ -205,12 +205,15 @@ void main(void) {
   // tan stop so even if the camera dips below ground, no black appears.
   float t = clamp(vDir.y * 0.5 + 0.5, 0.0, 1.0);
 
-  // Brand palette stops:
-  //   y=1.0 (zenith)   → lavender  #d7c7ee = (0.843, 0.780, 0.933)
-  //   y=0.0 (horizon)  → cream     #ede5d4 = (0.929, 0.898, 0.831)
-  //   y=-1.0 (nadir)   → warm tan  #d4c4a8 = (0.831, 0.769, 0.659)
+  // Brand palette stops (Pass 4 — horizon distinguished from body bg):
+  //   y=1.0 (zenith)   → lavender   #d7c7ee = (0.843, 0.780, 0.933)
+  //   y=0.0 (horizon)  → warm linen #e8dfca = (0.910, 0.875, 0.792)
+  //   y=-1.0 (nadir)   → warm tan   #d4c4a8 = (0.831, 0.769, 0.659)
+  // Horizon was #ede5d4 (identical to body bg) — dune outline disappeared into
+  // sky. Pulled 1-2 shades richer so the dune silhouette reads against a sky
+  // that isn't pixel-identical to the page bg.
   vec3 zenith  = vec3(0.843, 0.780, 0.933);
-  vec3 horizon = vec3(0.929, 0.898, 0.831);
+  vec3 horizon = vec3(0.910, 0.875, 0.792);
   vec3 nadir   = vec3(0.831, 0.769, 0.659);
 
   vec3 col;
