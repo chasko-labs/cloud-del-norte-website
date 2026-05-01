@@ -114,7 +114,11 @@ export default function CdnCard<T>(props: CdnCardProps<T>) {
 
 		// stickiness: if we already showed ready content and the new state is
 		// loading or error, do not swap — keep the prior frame on screen.
-		if (sticky && hasPriorReady && (state.kind === "loading" || state.kind === "error")) {
+		if (
+			sticky &&
+			hasPriorReady &&
+			(state.kind === "loading" || state.kind === "error")
+		) {
 			return;
 		}
 
@@ -153,8 +157,9 @@ export default function CdnCard<T>(props: CdnCardProps<T>) {
 			data-cdn-card-id={id}
 			data-cdn-card-state={state.kind}
 			style={
-				{ "--cdn-card-transition-ms": `${transitionMs}ms` } as React.CSSProperties &
-					Record<string, string>
+				{
+					"--cdn-card-transition-ms": `${transitionMs}ms`,
+				} as React.CSSProperties & Record<string, string>
 			}
 		>
 			{frames.map((f, i) => {

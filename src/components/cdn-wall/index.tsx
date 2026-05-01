@@ -45,7 +45,10 @@ export default function CdnWall({
 	if (gap) style["--cdn-wall-gap"] = gap;
 
 	return (
-		<div className={`cdn-wall${className ? ` ${className}` : ""}`} style={style}>
+		<div
+			className={`cdn-wall${className ? ` ${className}` : ""}`}
+			style={style}
+		>
 			{children}
 		</div>
 	);

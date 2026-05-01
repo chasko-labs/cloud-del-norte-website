@@ -12,9 +12,9 @@
 .cdn-wall {
 	display: grid;
 	grid-template-columns: repeat(
-		auto-fill,
-		minmax(var(--cdn-wall-col-min-w, 320px), 1fr)
-	);
+			auto-fill,
+			minmax(var(--cdn-wall-col-min-w, 320px), 1fr)
+		);
 	gap: var(--cdn-wall-gap, 16px);
 	width: 100%;
 	min-width: 0;

@@ -23,10 +23,10 @@
 	   loading / fallback / error / empty branches of a card cannot grow or
 	   shrink the slot. growth happens by adding new tiers, not by tweaking
 	   per-card heights. */
-	--cdn-slot-narrow-min-h: 120px;   /* compact rows: arrowhead-news, andres-medium, feed-section items */
+	--cdn-slot-narrow-min-h: 120px; /* compact rows: arrowhead-news, andres-medium, feed-section items */
 	--cdn-slot-standard-min-h: 220px; /* default content card with header + body */
-	--cdn-slot-wide-min-h: 320px;     /* horizontal embed cards: builder-center, youtube */
-	--cdn-slot-hero-min-h: 420px;     /* live video / 16:9 embeds: twitch, youtube-live */
+	--cdn-slot-wide-min-h: 320px; /* horizontal embed cards: builder-center, youtube */
+	--cdn-slot-hero-min-h: 420px; /* live video / 16:9 embeds: twitch, youtube-live */
 
 	/* ---------- wall column track sizing ----------
 	   used by cdn-wall as the auto-fill minmax floor. cards fill columns in
