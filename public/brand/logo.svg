@@ -23,16 +23,43 @@
   </filter>
 </defs>
 <style>
+  /* Bulb opacity stagger — preserved from prior pass */
   @keyframes cdn-bulb-pulse {
     0%, 100% { opacity: 1; }
     50% { opacity: 0.45; }
   }
-  @media (prefers-reduced-motion: no-preference) {
-    .cdn-bulb { animation: cdn-bulb-pulse 3s ease-in-out infinite; }
-    .cdn-arm  { animation: cdn-bulb-pulse 5s ease-in-out infinite; }
+  /* Arm pulse counter-phase to bulbs: peak when bulbs dim, dim when bulbs peak.
+     Reads as call-and-response rhythm at any size — large arm fills carry pixels at 60px. */
+  @keyframes cdn-arm-pulse {
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 1; }
+  }
+  /* Bulb halo throb — chains an animated drop-shadow on top of the SVG filter glow.
+     At nav size the halo IS the bulb pixel, so pulsing radius reads as real twinkle. */
+  @keyframes cdn-bulb-halo {
+    0%, 100% { filter: url(#cdn-bulb-glow) drop-shadow(0 0 2px #c8a0ff); }
+    50%      { filter: url(#cdn-bulb-glow) drop-shadow(0 0 8px #d8b4ff); }
+  }
+  /* Arm hue tint — slow ±15° rotation around violet stays inside brand family.
+     Chains after url(#cdn-arm-glow) so the SVG filter output is the hue source. */
+  @keyframes cdn-arm-tint {
+    0%, 100% { filter: url(#cdn-arm-glow) hue-rotate(-12deg); }
+    50%      { filter: url(#cdn-arm-glow) hue-rotate(14deg); }
   }
   .cdn-bulb { filter: url(#cdn-bulb-glow); }
   .cdn-arm  { filter: url(#cdn-arm-glow); }
+  @media (prefers-reduced-motion: no-preference) {
+    .cdn-bulb {
+      animation:
+        cdn-bulb-pulse 3s ease-in-out infinite,
+        cdn-bulb-halo  3s ease-in-out infinite;
+    }
+    .cdn-arm  {
+      animation:
+        cdn-arm-pulse 3s ease-in-out infinite,
+        cdn-arm-tint  9s ease-in-out infinite;
+    }
+  }
 </style>
 
 <path d="M0,0 L8,1 L43,13 L38,18 L28,26 L12,39 L-1,49 L-17,62 L-26,69 L-40,80 L-56,93 L-67,102 L-80,112 L-91,121 L-90,126 L-70,183 L-59,214 L-45,253 L-31,293 L-31,295 L-37,293 L-64,278 L-79,269 L-84,265 L-103,209 L-122,156 L-138,110 L-136,106 L-122,95 L-113,88 L-99,77 L-85,66 L-75,58 L-57,44 L-41,32 L-28,22 L-17,13 L-4,3 Z " fill="#FCFCFD" transform="translate(764,457)"/>
