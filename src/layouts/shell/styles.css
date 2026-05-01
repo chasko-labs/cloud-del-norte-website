@@ -965,45 +965,47 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    container elements, not on this grid track. Mobile (<688px) uses overlay
    navigation so this rule no longer reserves a column gutter — confirmed
    no responsive regression. */
+/* Cloudscape's default content gap was 24px — slightly tighter is the
+   right balance: enough breathing room between nav drawer and main column
+   without the original gap looking excessive. */
 [class*="awsui_layout_"][class*="awsui_has-content-gap-left_"]:not(#\9) {
-	--awsui-content-gap-left-6b9ypa: 0px !important;
+	--awsui-content-gap-left-6b9ypa: 16px !important;
 }
 
 @media (min-width: 689px) {
-	/* Lock AppLayout grid + kill open-sidebar snap.
-	   Three layered fixes:
-	   (1) Pin grid tracks to Cloudscape's canonical CSS variables. The nav
-	       track was previously min-content, which drifted whenever Liora
-	       panel children mutated (audio-reactive canvas, LED display,
-	       dynamic IP text, expandable section toggles).
-	   (2) transition: none on the grid container — pinned tracks don't
-	       need to animate, and grid-template-columns interpolation is
-	       browser-jittery (snap visible to user during transition phase).
-	   (3) will-change: grid-template-columns hints the browser to keep
-	       the grid on its own composited layer for fluid handling.
-	   Validated in DevTools: snap disappears with all three. */
+	/* AppLayout grid stability — kill open-sidebar snap, restore slide-left.
+	   Don't override grid-template-columns: Cloudscape's variable-driven
+	   grid handles open/closed transitions natively, and overriding it
+	   broke the slide-left collapse. The snap was caused by `transition: all`
+	   interacting with grid-template-columns (interpolation jitter) plus
+	   Liora children drifting min-content. Fix the cause:
+	   (1) transition: none on the grid container — even though Cloudscape
+	       controls the tracks, we don't want grid-template-columns to
+	       attempt animation. Browser interpolation of grid tracks is jittery.
+	   (2) will-change: grid-template-columns — composite the grid layer
+	       so track changes are handled fluidly. */
 	main[class*="awsui_layout_"] {
-		grid-template-columns:
-			var(--awsui-navigation-width-6b9ypa, 280px)
-			0
-			1fr
-			0
-			var(--awsui-tools-width-6b9ypa, min-content) !important;
 		gap: 0 !important;
 		transition: none !important;
 		will-change: grid-template-columns;
 	}
 
-	/* Targeted navigation-container transition.
-	   Cloudscape default is `transition: all` — that lets layout-affecting
-	   properties (width, padding, margins) interpolate alongside transform/
-	   opacity, which combined with the grid track snap was visible to the
-	   user. Restrict to width + transform; everything else jumps to the
-	   new value instantly (consistent with the grid container above which
-	   has no transition at all). */
+	/* Targeted navigation-container transition — width + transform only,
+	   not Cloudscape default `transition: all`. Keeps open/close animation
+	   smooth without cascading layout-affecting properties. */
 	[class*="awsui_navigation-container_"] {
 		transition: width 0.2s ease, transform 0.2s ease !important;
 		will-change: width;
+	}
+
+	/* Constrain the open nav drawer's inner content so Liora panel children
+	   (audio-reactive canvas, LEDs, sticky notes, dynamic IP text) +
+	   expandable sections (resources/learning) cannot drift the drawer's
+	   intrinsic width. With `contain: layout style`, internal mutations
+	   stay internal — drawer's outer width is stable regardless of what
+	   Liora does inside. */
+	[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]) {
+		contain: layout style;
 	}
 }
 
