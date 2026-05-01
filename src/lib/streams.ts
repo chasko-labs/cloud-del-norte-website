@@ -136,6 +136,27 @@ export const STREAMS: StreamDef[] = [
 			primaryLight: "#7a1f1f",
 		},
 	},
+	{
+		key: "ibero_909",
+		// FOLLOWUP: verify CORS works in browser; alt URL: https://noasrv.caster.fm:10182/live
+		// caster.fm icecast mp3 endpoint extracted from live player network sniff;
+		// HEAD validated: 200, audio/mpeg, Access-Control-Allow-Origin: *
+		url: "https://shaincast.caster.fm:20866/listen.mp3",
+		label: "ibero 90.9",
+		// metaUrl omitted — ibero909.fm player has no public json now-playing endpoint
+		// universidad iberoamericana institutional brand — agent guess: navy + red,
+		// gold accent for warmth. FOLLOWUP: refine once official ibero brand book
+		// confirmed (homepage css fetch did not surface inline color values)
+		colors: {
+			primary: "#1a3a72", // ibero navy blue — institutional
+			secondary: "#c8102e", // ibero red accent
+			accent: "#f4d35e", // warm gold — palette warmth
+			// navy too dark on navy bg — brighten for dark-mode AA contrast
+			primaryDark: "#3d5fa3",
+			// navy borderline on cream — deepen for light-mode AA contrast
+			primaryLight: "#0a2752",
+		},
+	},
 	// TODO: Mexican student radio (Ciudad Juárez) — pending research verification
 	// {
 	// 	key: "radio_upnech",
