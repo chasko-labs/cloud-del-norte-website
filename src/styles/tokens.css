@@ -4,6 +4,11 @@
    galaxy image with star-on-mountain logo).
    ========================================================================== */
 
+/* card-wall foundation tokens — slot tiers, wall column tracks, card transitions.
+   imported here so every page entry point picks them up via the existing
+   tokens.css import chain. see docs/design-system/card-wall.md. */
+@import "./design-tokens.css";
+
 /* --------------------------------------------------------------------------
    Audio-reactive custom properties — declared with @property so CSS can
    transition/animate them smoothly. Set per-frame from
