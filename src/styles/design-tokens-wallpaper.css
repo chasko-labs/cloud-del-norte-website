@@ -1,0 +1,33 @@
+/* ==========================================================================
+   CdnWallpaper Suite — atmospheric design tokens
+
+   These are starting values. Expect 1-2 tuning passes after visual review.
+   All tokens are custom properties so overrides are a single declaration.
+
+   Tier semantics:
+     panel   — side nav, tools drawer (largest opaque surface)
+     header  — ContentLayout header strip (medium transparency)
+     content — main content area (most transparent, most wallpaper visible)
+
+   z-index convention: wallpaper canvases mount at --cdn-wallpaper-z-index.
+   All page chrome (AppLayout, top-nav, cards) renders above 0 so the
+   negative z-index is safe regardless of stacking context.
+   ========================================================================== */
+
+:root {
+	/* Atmospheric layer alphas (panel/header/content tiers) */
+	--cdn-wallpaper-alpha-panel: 0.94;
+	--cdn-wallpaper-alpha-header: 0.88;
+	--cdn-wallpaper-alpha-content: 0.75;
+
+	/* Backdrop-filter blur radii */
+	--cdn-wallpaper-blur-panel: 6px;
+	--cdn-wallpaper-blur-header: 8px;
+	--cdn-wallpaper-blur-content: 10px;
+
+	/* Saturation boost across all atmospheric surfaces */
+	--cdn-wallpaper-saturate: 1.05;
+
+	/* Wallpaper canvas z-index — behind everything, above :root background-color */
+	--cdn-wallpaper-z-index: -3;
+}

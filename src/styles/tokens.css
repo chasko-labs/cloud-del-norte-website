@@ -9,6 +9,9 @@
    tokens.css import chain. see docs/design-system/card-wall.md. */
 @import "./design-tokens.css";
 
+/* CdnWallpaper Suite — atmospheric design tokens (alpha/blur/saturate tiers) */
+@import "./design-tokens-wallpaper.css";
+
 /* --------------------------------------------------------------------------
    Audio-reactive custom properties — declared with @property so CSS can
    transition/animate them smoothly. Set per-frame from
