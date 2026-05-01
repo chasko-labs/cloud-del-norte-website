@@ -994,10 +994,14 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	   not Cloudscape default `transition: all`. Keeps open/close animation
 	   smooth without cascading layout-affecting properties. */
 	[class*="awsui_navigation-container_"] {
-		transition: width 0.2s ease, transform 0.2s ease !important;
+		/* DevTools-validated: any transition here triggers a layout-paint-
+		   composite cycle that interacts with the parent grid recalculation
+		   and the nav drawer's overflow-y scrollbar appearance. Even
+		   narrowed to width+transform, the cycle persists. transition: none
+		   breaks the loop entirely. */
+		transition: none !important;
 		will-change: width;
 	}
-
 	/* Constrain the open nav drawer's inner content so Liora panel children
 	   (audio-reactive canvas, LEDs, sticky notes, dynamic IP text) +
 	   expandable sections (resources/learning) cannot drift the drawer's
