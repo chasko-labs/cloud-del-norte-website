@@ -5,7 +5,8 @@ export interface PersistedPlayerState {
 	stationKey: string;
 	stationUrl: string;
 	stationLabel: string;
-	metaUrl: string;
+	/** absent for stations with no now-playing endpoint */
+	metaUrl?: string;
 }
 
 const KEY = "cdn:player:v1";

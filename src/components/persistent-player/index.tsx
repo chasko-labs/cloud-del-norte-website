@@ -28,11 +28,14 @@ function PersistentPlayerBar({
 
 	const fetchMeta = useCallback(() => {
 		if (!streamDef) return;
+		// stations without a now-playing endpoint (kunm, kutx) just show label
+		if (!streamDef.metaUrl || !streamDef.parseMeta) return;
+		const parse = streamDef.parseMeta;
 		fetch(streamDef.metaUrl)
 			.then((r) => (r.ok ? r.json() : null))
 			.then((data: unknown) => {
 				if (!data) return;
-				const text = streamDef.parseMeta(data);
+				const text = parse(data);
 				if (text) setNowPlaying(text);
 			})
 			.catch(() => {});

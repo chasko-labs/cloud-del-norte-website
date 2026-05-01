@@ -25,9 +25,11 @@ export interface StreamDef {
 	readonly key: string;
 	readonly url: string;
 	readonly label: string;
-	readonly metaUrl: string;
+	/** json now-playing endpoint — omit when station has no public metadata feed */
+	readonly metaUrl?: string;
 	readonly colors: StationColors;
-	parseMeta(data: unknown): string | null;
+	/** parses metaUrl response into "song — artist" string. omit alongside metaUrl */
+	parseMeta?(data: unknown): string | null;
 }
 
 export const STREAMS: StreamDef[] = [
@@ -78,6 +80,39 @@ export const STREAMS: StreamDef[] = [
 			const { artist_name: artist, song } = play;
 			if (artist && song) return `${song} — ${artist}`;
 			return song ?? artist ?? null;
+		},
+	},
+	{
+		key: "kunm",
+		url: "https://playerservices.streamtheworld.com/api/livestream-redirect/KUNMFM_128.mp3",
+		label: "kunm 89.9",
+		// metaUrl omitted — npr composer endpoint format unclear; ship without now-playing
+		// unm brand book — cherry / turquoise / silver
+		colors: {
+			primary: "#ba0c2f", // cherry — unm iconic red
+			secondary: "#007a86", // turquoise
+			accent: "#a7a8aa", // silver
+			// cherry too dark on navy bg — brighten for dark-mode AA contrast
+			primaryDark: "#e23457",
+			// cherry on cream: ~6.5:1 — passes AAA, no light override
+		},
+	},
+	{
+		key: "kutx",
+		// FOLLOWUP: hls.js for HLS streams — canonical source is
+		// https://streams.kut.org/4428/playlist.m3u8 but the bare <audio> element
+		// only plays HLS natively on Safari. mp3 fallback works in all browsers.
+		url: "https://streams.kut.org/4428_192.mp3?aw_0_1st.playerid=kutx-free",
+		label: "kutx 98.9",
+		// metaUrl omitted — kutx uses brightspot custom player, no json endpoint
+		// ut austin brand — burnt orange / dark blue-gray
+		colors: {
+			primary: "#bf5700", // burnt orange — ut iconic
+			secondary: "#333f48", // dark blue-gray
+			accent: "#f8971f", // lighter orange
+			// burnt orange too dark on navy bg — brighten for dark-mode AA contrast
+			primaryDark: "#d97c2e",
+			// burnt orange on cream: ~5.1:1 — passes AA, no light override
 		},
 	},
 	// TODO: Mexican student radio (Ciudad Juárez) — pending research verification

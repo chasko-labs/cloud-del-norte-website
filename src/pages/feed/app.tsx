@@ -55,11 +55,14 @@ function KruxPlayer() {
 	const nextStream = STREAMS[(idx + 1) % STREAMS.length];
 
 	const fetchMeta = useCallback((s: StreamDef) => {
+		// stations without a now-playing endpoint (kunm, kutx) just show label
+		if (!s.metaUrl || !s.parseMeta) return;
+		const parse = s.parseMeta;
 		fetch(s.metaUrl)
 			.then((r) => (r.ok ? r.json() : null))
 			.then((data: unknown) => {
 				if (!data) return;
-				const text = s.parseMeta(data);
+				const text = parse(data);
 				if (text) setNowPlaying((prev) => ({ ...prev, [s.key]: text }));
 			})
 			.catch(() => {});
