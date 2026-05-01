@@ -1,6 +1,10 @@
 import { createAudioBridge, resumeCtx } from "./audio.js";
 import { initCanvas, rebuildStatic } from "./canvas.js";
-import { type DuneSceneHandle, mountDuneScene } from "./dune-scene.js";
+import {
+	type DuneSceneHandle,
+	ensureDuneFallback,
+	mountDuneScene,
+} from "./dune-scene.js";
 import { preloadLogo } from "./static.js";
 
 let mounted = false;
@@ -104,6 +108,7 @@ export function mount(): () => void {
 	let duneHandle: DuneSceneHandle | null = null;
 	let dunePerfTimer: number | null = null;
 	let duneFallback = false;
+	let removeDuneFallback: (() => void) | null = null;
 
 	function setStaticCanvasVisible(visible: boolean): void {
 		canvas.style.opacity = visible ? "1" : "0";
@@ -113,7 +118,7 @@ export function mount(): () => void {
 		duneHandle?.resize();
 	}
 
-	function disposeDune(): void {
+	function disposeDune(opts: { keepFallback?: boolean } = {}): void {
 		if (dunePerfTimer !== null) {
 			window.clearTimeout(dunePerfTimer);
 			dunePerfTimer = null;
@@ -123,17 +128,38 @@ export function mount(): () => void {
 			duneHandle = null;
 			window.removeEventListener("resize", onDuneResize);
 		}
+		// Pass 4: in dark mode or on full unmount, drop the fallback too —
+		// the static dark canvas takes over. When the dune scene's perf gate
+		// trips but we're still in light mode, we want to KEEP the fallback
+		// so the page stays cream/lavender instead of going to whatever the
+		// static canvas under it shows.
+		if (!opts.keepFallback && removeDuneFallback) {
+			removeDuneFallback();
+			removeDuneFallback = null;
+		}
 		setStaticCanvasVisible(true);
 	}
 
 	function tryMountDune(): void {
 		if (duneHandle) return;
-		if (duneFallback) return; // perf gate already tripped this session
 		if (isDarkMode()) return;
+
+		// Pass 4 (real black fix): inject the brand-palette fallback gradient
+		// FIRST and unconditionally for light mode, before any early-return
+		// gate. This guarantees a non-black backdrop regardless of whether
+		// the babylon scene mounts (software-render skip, reduced-motion skip,
+		// mount throw, perf-gate teardown). Idempotent.
+		if (!removeDuneFallback) {
+			removeDuneFallback = ensureDuneFallback(document.body);
+		}
+
+		if (duneFallback) return; // perf gate already tripped this session
 		if (reducedMotion()) return;
 		if (isSoftwareRendering()) {
 			// Software rasteriser detected — wallpaper would chug + perf-gate
-			// fallback path can race the canvas-opacity flip. Stay on cream.
+			// fallback path can race the canvas-opacity flip. Stay on cream;
+			// the fallback gradient div above already gives us cream/lavender
+			// instead of any black bleed-through.
 			duneFallback = true;
 			return;
 		}
@@ -163,7 +189,12 @@ export function mount(): () => void {
 					med.toFixed(2),
 				);
 				duneFallback = true;
-				disposeDune();
+				// Keep the cream/lavender gradient div — we're still in light
+				// mode, the perf gate just retired the babylon scene. Without
+				// keepFallback the page would briefly flash through whatever
+				// the body bg paints (currently cream via styles.css safety
+				// net, but layered defence).
+				disposeDune({ keepFallback: true });
 				return;
 			}
 			if (med === 0) {
@@ -181,7 +212,7 @@ export function mount(): () => void {
 						DUNE_PERF_GATE_DELAY_MS + DUNE_PERF_GATE_RETRY_DELAY_MS,
 					);
 					duneFallback = true;
-					disposeDune();
+					disposeDune({ keepFallback: true });
 				} else {
 					dunePerfTimer = window.setTimeout(
 						() => checkPerf(true),

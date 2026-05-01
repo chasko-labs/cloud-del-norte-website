@@ -927,3 +927,18 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 .help-panel-leader li {
 	font-size: var(--cdn-text-sm, 0.875rem);
 }
+
+/* ── Final safety net: explicit body bg in light mode ─────────────────────
+   The dune wallpaper canvas at z-index:-2 + fallback gradient at z-index:-3
+   are belt-and-suspenders against black; this is the third layer. If both
+   the canvas and fallback fail to mount (perf-gate teardown, software-WebGL
+   skip, mount throw, dark-mode toggle race), the body's own bg paints cream.
+   Without this, on certain Safari + Cloudscape compositor paths the html/body
+   computed bg is rgba(0,0,0,0) and whatever lives below (the page chrome's
+   dark canvas? extension overlays?) bled through as opaque black panels.
+
+   Scoped to light mode so dark mode keeps Cloudscape's deep-navy treatment. */
+:root:not(.awsui-dark-mode),
+:root:not(.awsui-dark-mode) body {
+	background-color: #ede5d4;
+}

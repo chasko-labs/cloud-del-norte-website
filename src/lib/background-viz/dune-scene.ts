@@ -18,7 +18,9 @@
 //     partial derivatives of the height field
 //   - Lambertian diffuse term in the fragment shader so ridges show real
 //     light/shadow contrast against the directional sun
-//   - SkyMaterial (Preetham) on a 1000u skybox
+//   - custom 3-stop vertical gradient skybox (5000u) — Preetham SkyMaterial
+//     was replaced 2026-04-30: it produced opaque black at oblique angles
+//     in light mode, no parameter tuning recovered it
 //   - directional sun + cool hemispheric fill
 //   - ArcRotateCamera locked (inputs.clear) — wallpaper, not interactive
 //   - slow camera-alpha drift (0.00004 rad/frame); zeroed under reduced motion
@@ -47,11 +49,11 @@ import { Color3, Color4 } from "@babylonjs/core/Maths/math.color";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 import { Scene } from "@babylonjs/core/scene";
-import { SkyMaterial } from "@babylonjs/materials/sky/skyMaterial";
 
 import { getBandBass, getBandMid } from "./audio.js";
 
 const SHADER_NAME = "duneDisplace";
+const SKY_SHADER_NAME = "cdnDuneSky";
 
 // Sun direction passed to the shader as a uniform. Must match the
 // DirectionalLight direction below (negated — light shines _toward_ that
@@ -165,10 +167,69 @@ void main(void) {
 }
 `;
 
+// Custom sky — replaces SkyMaterial (Preetham) which produced opaque black
+// bands at certain camera angles in light mode (visible on production: a
+// dead-black sky filling the upper half of the dune-scene viewport on dev,
+// 2026-04-30 Mac mini Safari). Preetham's mie/rayleigh terms can collapse
+// to ~0 at oblique horizon angles regardless of turbidity/rayleigh tuning.
+//
+// Replacement: deterministic 3-stop vertical gradient painted on the inside
+// face of a skybox. Lavender → cream → warm-tan, matching the brand palette
+// and the page bg. Pure linear interpolation — cannot produce black.
+//
+// vDir is the world-space direction from camera to vertex; we use its Y
+// component (height) to drive the gradient. Normalised so it works for any
+// skybox size. backFaceCulling disabled on the material so the inside paints.
+const SKY_VERTEX_SOURCE = `
+precision highp float;
+attribute vec3 position;
+uniform mat4 worldViewProjection;
+uniform mat4 world;
+varying vec3 vDir;
+
+void main(void) {
+  // World-space position of the skybox vertex; since the box is centred on
+  // origin, the position direction equals the view direction from origin.
+  vec4 wp = world * vec4(position, 1.0);
+  vDir = normalize(wp.xyz);
+  gl_Position = worldViewProjection * vec4(position, 1.0);
+}
+`;
+
+const SKY_FRAGMENT_SOURCE = `
+precision highp float;
+varying vec3 vDir;
+
+void main(void) {
+  // Map y from [-1, 1] to [0, 1]. Below-horizon (negative y) clamps to the
+  // tan stop so even if the camera dips below ground, no black appears.
+  float t = clamp(vDir.y * 0.5 + 0.5, 0.0, 1.0);
+
+  // Brand palette stops:
+  //   y=1.0 (zenith)   → lavender  #d7c7ee = (0.843, 0.780, 0.933)
+  //   y=0.0 (horizon)  → cream     #ede5d4 = (0.929, 0.898, 0.831)
+  //   y=-1.0 (nadir)   → warm tan  #d4c4a8 = (0.831, 0.769, 0.659)
+  vec3 zenith  = vec3(0.843, 0.780, 0.933);
+  vec3 horizon = vec3(0.929, 0.898, 0.831);
+  vec3 nadir   = vec3(0.831, 0.769, 0.659);
+
+  vec3 col;
+  if (t > 0.5) {
+    col = mix(horizon, zenith, (t - 0.5) * 2.0);
+  } else {
+    col = mix(nadir, horizon, t * 2.0);
+  }
+
+  gl_FragColor = vec4(col, 1.0);
+}
+`;
+
 // Register shader sources into Babylon's effect store under a stable name so
 // ShaderMaterial({ vertex: SHADER_NAME, fragment: SHADER_NAME }) resolves.
 Effect.ShadersStore[`${SHADER_NAME}VertexShader`] = VERTEX_SOURCE;
 Effect.ShadersStore[`${SHADER_NAME}FragmentShader`] = FRAGMENT_SOURCE;
+Effect.ShadersStore[`${SKY_SHADER_NAME}VertexShader`] = SKY_VERTEX_SOURCE;
+Effect.ShadersStore[`${SKY_SHADER_NAME}FragmentShader`] = SKY_FRAGMENT_SOURCE;
 
 /** Test-page handle — exposes engine/scene + richer perf accessors. */
 export interface DuneSceneCanvasHandle {
@@ -217,10 +278,14 @@ export function mountDuneSceneOnCanvas(
 		alpha: true,
 	});
 	const scene = new Scene(engine);
-	// Transparent clear so the page's cream linen bg (#ede5d4) shows through any
-	// pixel the dune ground/skybox doesn't cover. Without this, Babylon's
-	// default dark-navy clear bleeds into the page edges in light mode.
-	scene.clearColor = new Color4(0, 0, 0, 0);
+	// Pass 4 (black-section fix, real this time): OPAQUE cream clearColor.
+	// Prior passes used transparent (0,0,0,0); on Mac mini Safari that read
+	// as opaque black under certain compositor paths, and even where it
+	// honoured the alpha, the SkyMaterial drew opaque black above the dune
+	// horizon. Cream clear means: any pixel the skybox/ground doesn't paint
+	// shows brand cream, never black. The page bg under the canvas is also
+	// cream (#ede5d4) so there's no seam if the canvas is removed.
+	scene.clearColor = new Color4(0.929, 0.898, 0.831, 1.0); // #ede5d4
 
 	// Camera — wallpaper, not user-controlled.
 	const camera = new ArcRotateCamera(
@@ -252,26 +317,27 @@ export function mountDuneSceneOnCanvas(
 	fill.diffuse = new Color3(0.86, 0.88, 0.92); // pale washed sky (was cool 0.72/0.82/0.9)
 	fill.groundColor = new Color3(0.97, 0.94, 0.88); // pass 2 — lighter cream bounce (was 0.93/0.90/0.83) to push dunes further into linen tones
 
-	// Sky — Preetham analytical model. Tuned for desaturated daytime desert
-	// haze: more dust, less rayleigh blue, broader sun glow. Result reads as
-	// pale cream/cyan gradient rather than saturated cold blue.
+	// Sky — custom 3-stop vertical gradient shader. Replaces Preetham
+	// SkyMaterial which produced opaque-black bands at oblique angles in
+	// light mode (root cause for the persistent "black behind dunes" report
+	// 2026-04-30; passes 1-3 tweaked Preetham params and added a fallback
+	// div, neither cured the actual canvas pixels reading as black).
 	//
-	// Pass 3 (black-section fix): turbidity 16 → 12 and rayleigh 0.4 → 0.6.
-	// At turbidity 16 + rayleigh 0.4 the Preetham mie/rayleigh terms produce
-	// near-black bands in oblique angles near horizon — visible as jarring
-	// black wedges in light mode. Lower turbidity = less haze but more
-	// reliable colour across angles; higher rayleigh = more saturated blue
-	// at zenith, less near-black risk at grazing angles.
-	const skybox = MeshBuilder.CreateBox("dune-skybox", { size: 1000 }, scene);
-	const skyMat = new SkyMaterial("dune-sky-mat", scene);
+	// Skybox size 5000u (was 1000u): comfortably outside the camera frustum
+	// at fov 0.6 + radius 45 + arbitrary alpha drift, so the box edges/corners
+	// can never enter view and reveal the canvas clear. backFaceCulling off
+	// so the inside face paints the gradient.
+	const skybox = MeshBuilder.CreateBox("dune-skybox", { size: 5000 }, scene);
+	const skyMat = new ShaderMaterial(
+		"dune-sky-mat",
+		scene,
+		{ vertex: SKY_SHADER_NAME, fragment: SKY_SHADER_NAME },
+		{
+			attributes: ["position"],
+			uniforms: ["worldViewProjection", "world"],
+		},
+	);
 	skyMat.backFaceCulling = false;
-	skyMat.luminance = 1.7; // pass 2 — was 1.5 — brighter daytime, harmonises with cream dunes
-	skyMat.turbidity = 12; // pass 3 — was 16 — fewer dark bands at oblique angles
-	skyMat.rayleigh = 0.6; // pass 3 — was 0.4 — more saturated blue at zenith, no near-black at horizon
-	skyMat.mieCoefficient = 0.01;
-	skyMat.mieDirectionalG = 0.78; // was 0.82 — broader sun glow
-	skyMat.inclination = 0.42;
-	skyMat.azimuth = 0.22;
 	skybox.material = skyMat;
 
 	// Dune ground — subdivided enough for noise to read as topology.
@@ -430,21 +496,21 @@ export function mountDuneSceneOnCanvas(
 }
 
 /**
- * Mount the dune scene as a full-viewport wallpaper. Creates its own canvas
- * inside `container` at z-index: -2 (behind the existing 2D background-viz
- * canvas at z-index: -1). The handle's destroy() removes the canvas.
+ * Inject the brand-palette fallback gradient div without mounting the
+ * babylon scene. Idempotent — checks for an existing element first. Used
+ * by tryMountDune() so the fallback exists EVEN when software rendering
+ * or reduced motion would otherwise skip the dune mount entirely.
+ *
+ * Returns a disposer for the element. Caller decides when to remove it
+ * (e.g. on dark-mode toggle or shell unmount).
  */
-export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
-	// Pass 3 (black-section fix): brand-palette fallback gradient sits at
-	// z-index -3, beneath the dune canvas at z-index -2. The dune canvas
-	// uses a transparent clearColor — on some GPUs that reads as opaque
-	// black, and even when transparent it exposes whatever the page bg is
-	// (which can render dark in some regions on white mode). The fallback
-	// guarantees brand colours show through any unrendered pixel.
-	//
-	// Palette: lavender (#d7c7ee — sky band) → cream (#ede5d4 — horizon)
-	// → warm tan (#d4c4a8 — foreground). All from the cdn brand palette,
-	// no literal #000 anywhere in the visible stack.
+export function ensureDuneFallback(container: HTMLElement): () => void {
+	const existing = container.querySelector<HTMLElement>(
+		"[data-cdn-dune-fallback]",
+	);
+	if (existing) {
+		return () => existing.remove();
+	}
 	const fallback = document.createElement("div");
 	fallback.style.cssText =
 		"position:fixed;inset:0;z-index:-3;pointer-events:none;" +
@@ -452,6 +518,23 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 	fallback.setAttribute("aria-hidden", "true");
 	fallback.dataset.cdnDuneFallback = "1";
 	container.appendChild(fallback);
+	return () => fallback.remove();
+}
+
+/**
+ * Mount the dune scene as a full-viewport wallpaper. Creates its own canvas
+ * inside `container` at z-index: -2 (behind the existing 2D background-viz
+ * canvas at z-index: -1). The handle's destroy() removes the canvas.
+ *
+ * Pass 4 (real black fix): the fallback div is now created via
+ * ensureDuneFallback() and NOT torn down when this handle disposes. The
+ * caller (background-viz/index.ts) owns the fallback lifetime — we want the
+ * cream/lavender gradient to outlive the babylon scene if the perf gate
+ * tears the canvas down.
+ */
+export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
+	// Always ensure the fallback exists — independent of canvas mount success.
+	ensureDuneFallback(container);
 
 	const canvas = document.createElement("canvas");
 	canvas.style.cssText =
@@ -469,7 +552,7 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 		destroy() {
 			inner.dispose();
 			canvas.remove();
-			fallback.remove();
+			// NOTE: fallback NOT removed here — caller owns its lifetime.
 		},
 		resize() {
 			inner.resize();
