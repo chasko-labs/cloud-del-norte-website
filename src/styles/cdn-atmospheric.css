@@ -1,0 +1,121 @@
+/* ==========================================================================
+   CdnWallpaper Suite — atmospheric utility classes
+
+   Apply these classes to surfaces that should show through to the wallpaper
+   via backdrop-filter blur. Three tiers match the panel/header/content token
+   hierarchy in design-tokens-wallpaper.css.
+
+   Light mode bg-rgb: 237, 229, 212  (cream #ede5d4)
+   Dark mode bg-rgb:  10, 12, 20     (deep navy #0a0c14 — matches existing
+                                      dark mode layout bg in shell/styles.css)
+
+   Progressive enhancement:
+   - @supports(backdrop-filter) gates blur so unsupported browsers get a
+     solid semi-transparent bg instead of no styling at all.
+   - prefers-reduced-transparency: reduce collapses to fully opaque bg.
+     (limited browser support as of 2026 — still worth shipping as future-proof)
+
+   Explicit opt-out:
+   - .cdn-atmospheric-opaque forces fully opaque bg + no blur. Use for any
+     surface that must not expose the wallpaper (cards, buttons, liora, nav, footer).
+   ========================================================================== */
+
+/* Shared base — isolation context so backdrop-filter applies to the element's
+   own background, not a parent stacking context. */
+.cdn-atmospheric-panel,
+.cdn-atmospheric-header,
+.cdn-atmospheric-content {
+	isolation: isolate;
+}
+
+/* ── backdrop-filter tier (browsers that support it) ─────────────────────── */
+
+@supports (backdrop-filter: blur(0)) {
+	/* Light mode */
+	:root:not(.awsui-dark-mode) .cdn-atmospheric-panel {
+		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel));
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
+			saturate(var(--cdn-wallpaper-saturate));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
+			saturate(var(--cdn-wallpaper-saturate));
+	}
+
+	:root:not(.awsui-dark-mode) .cdn-atmospheric-header {
+		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-header));
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
+			saturate(var(--cdn-wallpaper-saturate));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
+			saturate(var(--cdn-wallpaper-saturate));
+	}
+
+	:root:not(.awsui-dark-mode) .cdn-atmospheric-content {
+		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-content));
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
+			saturate(var(--cdn-wallpaper-saturate));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
+			saturate(var(--cdn-wallpaper-saturate));
+	}
+
+	/* Dark mode */
+	.awsui-dark-mode .cdn-atmospheric-panel {
+		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-panel));
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
+			saturate(var(--cdn-wallpaper-saturate));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
+			saturate(var(--cdn-wallpaper-saturate));
+	}
+
+	.awsui-dark-mode .cdn-atmospheric-header {
+		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-header));
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
+			saturate(var(--cdn-wallpaper-saturate));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
+			saturate(var(--cdn-wallpaper-saturate));
+	}
+
+	.awsui-dark-mode .cdn-atmospheric-content {
+		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-content));
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
+			saturate(var(--cdn-wallpaper-saturate));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
+			saturate(var(--cdn-wallpaper-saturate));
+	}
+}
+
+/* ── prefers-reduced-transparency fallback ──────────────────────────────── */
+/* Progressive enhancement — limited browser support as of 2026 but correct
+   and harmless on unsupporting browsers (the @media block simply doesn't match) */
+
+@media (prefers-reduced-transparency: reduce) {
+	:root:not(.awsui-dark-mode) .cdn-atmospheric-panel,
+	:root:not(.awsui-dark-mode) .cdn-atmospheric-header,
+	:root:not(.awsui-dark-mode) .cdn-atmospheric-content {
+		background-color: rgb(237, 229, 212);
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+
+	.awsui-dark-mode .cdn-atmospheric-panel,
+	.awsui-dark-mode .cdn-atmospheric-header,
+	.awsui-dark-mode .cdn-atmospheric-content {
+		background-color: rgb(10, 12, 20);
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
+}
+
+/* ── explicit opt-out ────────────────────────────────────────────────────── */
+/* Use on: .cdn-card, buttons, .liora-bezel/.liora-canvas/.liora-panel-wrap,
+   #top-nav, .cdn-footer — any surface that must be fully opaque. */
+
+:root:not(.awsui-dark-mode) .cdn-atmospheric-opaque {
+	background-color: rgb(237, 229, 212) !important;
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+}
+
+.awsui-dark-mode .cdn-atmospheric-opaque {
+	background-color: rgb(10, 12, 20) !important;
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
+}

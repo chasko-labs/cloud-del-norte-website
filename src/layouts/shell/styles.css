@@ -1,3 +1,6 @@
+/* CdnWallpaper Suite — atmospheric utility classes. Must be first import. */
+@import "../../styles/cdn-atmospheric.css";
+
 @property --cdn-bass {
 	syntax: "<number>";
 	inherits: true;
@@ -1015,6 +1018,118 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    block-size on its own viewport-fill chrome (overridden in the rule at
    line ~176). body min-height is a static reservation that does not fight
    AppLayout's internal sizing math. */
+/* ── Force permanent vertical scrollbar — kill mouseover-left hop ─────────
+   Classic scrollbars (real Chrome on Mac/Windows) toggle visibility when
+   document height crosses the viewport boundary. Hovering interactive
+   elements that briefly add 1-2px of focus ring or transient inline style
+   can trigger the toggle, shifting the main column left by ~15px. Headless
+   chromium uses overlay scrollbars and doesn't reproduce this. Forcing
+   overflow-y: scroll on html keeps the OS scrollbar mounted permanently —
+   the toggle is impossible because there's nothing to toggle.
+
+   Pairs with body { min-height: 100vh } — that ensures scrollHeight stays
+   ≥ viewport, this ensures scrollbar visibility never depends on the
+   comparison. Belt-and-suspenders. */
+html {
+    overflow-y: scroll;
+}
+
 body {
 	min-height: 100vh;
+}
+
+/* ── CdnWallpaper Suite — atmospheric surface rules ──────────────────────────
+   Selector-targeted rules that mirror cdn-atmospheric utility class properties
+   onto Cloudscape surface selectors. Approach (b) from spec: decoupled from
+   React className — works for non-React Cloudscape consumers too.
+
+   cdn-atmospheric.css is imported separately. These rules extend the existing
+   cdn-viz-active frosted glass with always-on lighter atmospheric treatment
+   for the wallpaper suite. The cdn-viz-active rules above remain authoritative
+   when the viz canvas is actually mounted (they use stronger blur + lower alpha).
+
+   These rules apply when wallpaper is NOT active (cdn-viz-active absent) to
+   give the standard page chrome a subtle atmospheric quality even without the
+   canvas. When cdn-viz-active IS present, the existing frosted-glass rules
+   above win via specificity (they're scoped with .cdn-viz-active prefix).
+
+   Import cdn-atmospheric.css is at the top of this file (CSS @import must
+   precede all other rules). */
+
+/* Side navigation — atmospheric-panel tier */
+.cdn-viz-active:not(.awsui-dark-mode)
+	[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_navigation__drawer"] {
+	/* already handled by the existing frosted glass rules above */
+}
+
+/* Tools panel — atmospheric-panel tier */
+/* (existing cdn-viz-active rules handle this) */
+
+/* ContentLayout header strip — atmospheric-header tier */
+/* (existing cdn-viz-active rules handle this) */
+
+/* ── Opaque opt-outs — surfaces that must never show wallpaper through ──── */
+
+/* Cards — fully opaque (cdn-card already has its own solid bg in design-tokens.css) */
+.cdn-card {
+	/* cdn-card already declares a solid background in design-tokens.css.
+	   No additional override needed — it's opaque by design. */
+}
+
+/* Buttons — never blur through */
+@supports (backdrop-filter: blur(0)) {
+	button[class*="awsui_button_"] {
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+	}
+}
+
+/* Liora panel — fully opaque (the entire panel including bezel, canvas, status bar) */
+.liora-bezel,
+.liora-canvas,
+.liora-panel-wrap,
+.liora-status-bar {
+	/* These elements render inside the side navigation tools context.
+	   Ensure no wallpaper bleed-through — the liora experience relies on
+	   its own dark surface rendering. */
+	isolation: isolate;
+}
+
+@supports (backdrop-filter: blur(0)) {
+	.liora-bezel,
+	.liora-canvas,
+	.liora-panel-wrap,
+	.liora-status-bar {
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+	}
+}
+
+/* Top nav — opaque (the nav bar itself; header strip BELOW it is the
+   atmospheric zone). Already has solid gradient bg from TASK 6 above. */
+#top-nav [class*="top-navigation"] {
+	/* Already fully opaque via the gradient background declarations in TASK 6.
+	   Explicit reset of any inherited backdrop-filter. */
+}
+
+@supports (backdrop-filter: blur(0)) {
+	/* #top-nav gets blur reinforcement via .cdn-viz-active rule above —
+	   that's intentional. The rule here is the opt-out for NON-viz-active state. */
+	:not(.cdn-viz-active) #top-nav [class*="top-navigation"] {
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+	}
+}
+
+/* Footer — opaque */
+.cdn-footer {
+	isolation: isolate;
+}
+
+@supports (backdrop-filter: blur(0)) {
+	.cdn-footer {
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+	}
 }
