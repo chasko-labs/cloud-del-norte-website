@@ -102,7 +102,9 @@
 
 .liora-panel-wrap {
 	aspect-ratio: 4 / 3;
-	background: #050607;
+	/* brand-violet phosphor: deep navy + cdn-violet inner edge replaces alien
+	   green that clashed with cream/tan bezel. cdn-violet = #6330c8 */
+	background: #0a0a26;
 	border-radius: 6px;
 	width: 100%;
 	transition: box-shadow 0.6s;
@@ -110,16 +112,17 @@
 	position: relative;
 	overflow: hidden;
 	box-shadow:
-		inset 0 0 0 2px #00dc4666,
-		inset 0 0 40px #000000e0,
-		0 0 24px #00d23761,
-		0 0 52px #00b4282e,
-		0 0 4px #00e646a6;
+		inset 0 0 0 2px #9060f066,
+		inset 0 0 40px #00002ae0,
+		0 0 24px #9060f061,
+		0 0 52px #6330c82e,
+		0 0 4px #b48cffa6;
 }
 
 .liora-placeholder {
+	/* brand-violet shimmer replaces dark-green murky gradient */
 	background:
-		linear-gradient(135deg, #060806 0%, #0a180a 40%, #060806 60%, #050607 100%)
+		linear-gradient(135deg, #080820 0%, #1a0f3a 40%, #0a0a26 60%, #080820 100%)
 		0 0 / 400% 400%;
 	justify-content: center;
 	align-items: center;
@@ -132,10 +135,10 @@
 .liora-placeholder-label {
 	letter-spacing: 0.18em;
 	text-transform: lowercase;
-	color: #22c55eb3;
+	color: #b48cffc7;
 	text-shadow:
-		0 0 4px #22c55e8c,
-		0 0 12px #22c55e4d;
+		0 0 4px #9060f099,
+		0 0 12px #9060f059;
 	pointer-events: none;
 	-webkit-user-select: none;
 	user-select: none;
@@ -577,7 +580,9 @@
 
 .liora-canvas {
 	opacity: 0;
-	filter: grayscale(0.12) sepia(0.2) saturate(1.8) hue-rotate(68deg)
+	/* hue-rotate(238deg) tilts canvas toward brand cdn-violet phosphor; was
+	   68deg green which clashed with cream/tan bezel */
+	filter: grayscale(0.12) sepia(0.2) saturate(1.8) hue-rotate(238deg)
 		brightness(0.92) contrast(1.15);
 	width: 100%;
 	height: 100%;
@@ -615,16 +620,17 @@
 	content: "";
 	z-index: 3;
 	pointer-events: none;
+	/* phosphor sweep retinted from green to brand cdn-violet */
 	background:
 		linear-gradient(
 			#0000 0%,
-			#00dc5012 35%,
-			#00f05a2e 50%,
-			#00dc5012 65%,
+			#9060f014 35%,
+			#b48cff33 50%,
+			#9060f014 65%,
 			#0000 100%
 		)
 		0 0 / 100% 600px,
-		repeating-linear-gradient(#0000 0 3px, #00000038 3px 4px) 0 0 / 100% 4px;
+		repeating-linear-gradient(#0000 0 3px, #00001838 3px 4px) 0 0 / 100% 4px;
 	animation: 8s linear infinite crt-roll;
 	position: absolute;
 	inset: 0;
@@ -634,10 +640,11 @@
 	content: "";
 	pointer-events: none;
 	z-index: 4;
+	/* glare hotspots retinted from green to brand cdn-violet */
 	background:
-		radial-gradient(60% 40% at 22% 8%, #00e65a33 0%, #0000 65%),
-		radial-gradient(30% 18% at 78% 92%, #00c85014 0%, #0000 60%),
-		radial-gradient(75% 75%, #0000 28%, #000000e0 100%);
+		radial-gradient(60% 40% at 22% 8%, #b48cff38 0%, #0000 65%),
+		radial-gradient(30% 18% at 78% 92%, #9060f01c 0%, #0000 60%),
+		radial-gradient(75% 75%, #0000 28%, #000018e0 100%);
 	position: absolute;
 	inset: 0;
 }
