@@ -6,6 +6,7 @@ import AppLayout, {
 } from "@cloudscape-design/components/app-layout";
 import TopNavigation from "@cloudscape-design/components/top-navigation";
 import { useCallback, useEffect, useState } from "react";
+import { CdnWallpaper } from "../../components/cdn-wallpaper";
 import Footer from "../../components/footer";
 import LogoSvg from "../../components/logo-svg";
 import PersistentPlayer from "../../components/persistent-player";
@@ -98,66 +99,8 @@ function ShellContent({
 	);
 
 
-	// background-viz canvas — mounts once per page load, cleans up on unmount.
-	// Decorative — defer to requestIdleCallback so it never preempts critical paint.
-	// Fallback: setTimeout(200ms) on browsers without rIC (Safari pre-16.4, older WebViews)
-	useEffect(() => {
-		let cleanup: (() => void) | null = null;
-		let cancelled = false;
-		const idleTask = () => {
-			if (cancelled) return;
-			void import("../../lib/background-viz/index").then((mod) => {
-				if (cancelled) return;
-				cleanup = mod.mount();
-			});
-		};
-		const w = window as unknown as {
-			requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-			cancelIdleCallback?: (h: number) => void;
-			setTimeout: (cb: () => void, ms: number) => number;
-			clearTimeout: (h: number) => void;
-		};
-		const usingIdle = typeof w.requestIdleCallback === "function";
-		const handle: number = usingIdle
-			? (w.requestIdleCallback as (cb: () => void, opts?: { timeout: number }) => number)(
-					idleTask,
-					{ timeout: 2000 },
-				)
-			: w.setTimeout(idleTask, 200);
-		return () => {
-			cancelled = true;
-			if (usingIdle && typeof w.cancelIdleCallback === "function") {
-				w.cancelIdleCallback(handle);
-			} else {
-				w.clearTimeout(handle);
-			}
-			cleanup?.();
-		};
-	}, []);
-
-	// 3D star logo — registers <cdn-star-logo> custom element. The 197KB Babylon-derived
-	// chunk only loads when a <cdn-star-logo> element is observed in the DOM. The shell
-	// renders one inside .cdn-logo-hero, but a container-query (min-width: 200px) gates
-	// its display:block, so on nav-only pages (currently every page; nav is 60-80px) the
-	// element exists but isn't visible. We still trigger the import on observation — the
-	// inlined SVG is the primary mark, the 3D layer is enhancement when it lands. Future
-	// nav-only routes that drop <cdn-star-logo> entirely skip the chunk.
-	useEffect(() => {
-		let imported = false;
-		const tryImport = () => {
-			if (imported) return;
-			if (!document.querySelector("cdn-star-logo")) return;
-			imported = true;
-			void import("../../lib/cdn-star-logo/index").catch(() => {
-				// fallback: inline SVG stays visible — no action needed
-			});
-		};
-		tryImport(); // immediate check on mount
-		if (imported) return;
-		const obs = new MutationObserver(tryImport);
-		obs.observe(document.body, { childList: true, subtree: true });
-		return () => obs.disconnect();
-	}, []);
+	// Wallpaper + cdn-star-logo lifecycle now owned by <CdnWallpaper />.
+	// See src/components/cdn-wallpaper/index.tsx.
 
 	// Add resize listener to handle viewport changes
 	useEffect(() => {
@@ -196,6 +139,7 @@ function ShellContent({
 
 	return (
 		<>
+			<CdnWallpaper />
 			<div
 				id="top-nav"
 				data-cdn-animating={animating || undefined}
