@@ -1095,6 +1095,22 @@ body {
 	}
 }
 
+/* ── Nav drawer content-container — permanent scrollbar ───────────────────
+   Cloudscape's nav drawer has overflow-y: auto by default. When inner content
+   is tall enough to need scroll, the scrollbar appears and shrinks the inner
+   width by ~15px. When shorter, it disappears and width grows. Each toggle
+   fires a grid recalc — visible as open-sidebar skip.
+
+   Forcing overflow-y: scroll makes the scrollbar always present so the drawer
+   inner-width is constant regardless of content height.
+
+   Selector pattern: matches the content-container inside any awsui_navigation_
+   element, scoped to avoid catching non-nav surfaces. !important beats
+   Cloudscape's auto override at the same specificity tier. */
+[class*="awsui_navigation_"] [class*="awsui_content-container_"] {
+	overflow-y: scroll !important;
+}
+
 /* Top nav — opaque (the nav bar itself; header strip BELOW it is the
    atmospheric zone). Already has solid gradient bg from TASK 6 above. */
 #top-nav [class*="top-navigation"] {
