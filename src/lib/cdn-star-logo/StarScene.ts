@@ -13,6 +13,12 @@
 // (bright → dim with hue drift → cold floor → warm back up), per-bulb
 // phase offsets baked per category index, independent cycles per category.
 
+// Side-effect: patches Scene.prototype.beginAnimation. Required because in
+// some bundling/load-order scenarios this prototype method may not be patched
+// by other chunks (e.g., StarScene loads before background-viz dune scene
+// in dark-mode startup, reduced-motion, or software-rendering paths).
+import "@babylonjs/core/Animations/animatable.js";
+
 import { Engine } from "@babylonjs/core/Engines/engine";
 import { Scene } from "@babylonjs/core/scene";
 import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
