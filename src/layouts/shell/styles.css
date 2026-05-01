@@ -546,6 +546,8 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	/* square wrapper — gives the 3D canvas concrete dimensions and matches img aspect */
 	width: clamp(48px, 8vw, 80px);
 	height: clamp(48px, 8vw, 80px);
+	/* containment context for the 3D reveal container query below */
+	container-type: inline-size;
 }
 
 /* SVG is the always-visible base — never hidden, no JS dependency.
@@ -578,8 +580,14 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	pointer-events: none;
 }
 
-.cdn-logo-hero cdn-star-logo:defined {
-	display: block;
+/* Container query gates the 3D reveal: the SVG is the visible logo at
+   nav size (60-80px). 3D only paints when its container is >=200px wide
+   (hero/about-page contexts). Pairs with container-type: inline-size on
+   .cdn-logo-hero above. */
+@container (min-width: 200px) {
+	.cdn-logo-hero cdn-star-logo:defined {
+		display: block;
+	}
 }
 
 .cdn-logo-hero:hover img {
