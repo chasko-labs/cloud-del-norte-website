@@ -516,11 +516,15 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    Absolutely positioned over #top-nav so Cloudscape cannot constrain its size.
    Cloudscape identity gets href only (no logo prop) so the identity link area
    is empty and our hero sits flush left in its place.
-   overflow: visible on top-nav + header so the star spills above/below the bar. */
+   overflow: visible on top-nav + header so the star spills above/below the bar.
 
-#top-nav {
-	position: relative;
-}
+   NOTE: do NOT add `position: relative` to #top-nav here — line 12 sets
+   `position: sticky` which is what AppLayout's headerSelector relies on to
+   anchor its internal header bar (breadcrumbs / nav toggle / tools toggle)
+   correctly during scroll. A `position: relative` override breaks stickiness
+   on mobile and the AppLayout header floats awkwardly mid-page. Sticky
+   elements still establish a containing block for absolute children, so
+   .cdn-logo-hero anchors correctly off the sticky parent. */
 
 #top-nav [class*="awsui_header"] {
 	overflow: visible !important;
