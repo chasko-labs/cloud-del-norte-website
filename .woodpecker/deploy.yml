@@ -141,3 +141,59 @@ steps:
       - aws s3 sync s3://awsaerospace.org/liora-embed/ s3://dev.clouddelnorte.org/liora-embed/ --exact-timestamps
       - aws s3 sync s3://awsaerospace.org/liora/ s3://dev.clouddelnorte.org/liora/ --exact-timestamps
       - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/*"
+
+  - name: screenshot-dev
+    image: mcr.microsoft.com/playwright:v1.49.0-jammy
+    depends_on: [deploy-dev]
+    when:
+      - event: [push, manual]
+        branch: dev
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sts get-caller-identity
+      # wait for cloudfront propagation before capturing
+      - sleep 60
+      - npm ci --no-audit --no-fund
+      - mkdir -p /tmp/shots
+      - node scripts/ci-screenshot.mjs https://dev.clouddelnorte.org /tmp/shots
+      # upload versioned (immutable) + latest pointer (no-cache)
+      - aws s3 sync /tmp/shots s3://dev.clouddelnorte.org/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable"
+      - aws s3 sync /tmp/shots s3://dev.clouddelnorte.org/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete
+      - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/_ci/screenshots/latest/*"
+
+  - name: screenshot-prod
+    image: mcr.microsoft.com/playwright:v1.49.0-jammy
+    depends_on: [deploy]
+    when:
+      - event: [push, manual]
+        branch: main
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sts get-caller-identity
+      # wait for cloudfront propagation before capturing
+      - sleep 60
+      - npm ci --no-audit --no-fund
+      - mkdir -p /tmp/shots
+      - node scripts/ci-screenshot.mjs https://clouddelnorte.org /tmp/shots
+      # upload versioned (immutable) + latest pointer (no-cache)
+      - aws s3 sync /tmp/shots s3://awsaerospace.org/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable"
+      - aws s3 sync /tmp/shots s3://awsaerospace.org/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete
+      - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/_ci/screenshots/latest/*"
