@@ -11,6 +11,16 @@ Parameters:
     Description: >
       E.164 phone number for SMS subscription. AWS sends a one-time
       confirmation SMS; recipient must reply Y to activate.
+      NOTE: SMS is gated on AWS-side origination provisioning (10DLC
+      registration, 1-3 weeks). SMS subscription is kept here for when
+      origination is approved; email is the active channel today.
+  OperatorEmail:
+    Type: String
+    Default: 'bryanj+clouddelnorte-version-alerts@abstractspacecraft.com'
+    Description: >
+      Email subscription for deploy alerts. Plus-addressing lets the
+      operator filter alerts in their email client. AWS sends a one-time
+      confirmation email; click the link to activate.
   CiDeployRoleName:
     Type: String
     Default: heraldstack-ci-deploy
@@ -60,6 +70,17 @@ Resources:
       TopicArn: !Ref DeployAlertsTopic
       Protocol: sms
       Endpoint: !Ref OperatorPhone
+
+  # ---------------------------------------------------------------------------
+  # Email subscription — operator email with plus-addressing for filtering
+  # AWS sends a one-time confirmation email; click the link to activate.
+  # ---------------------------------------------------------------------------
+  DeployAlertsEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref DeployAlertsTopic
+      Protocol: email
+      Endpoint: !Ref OperatorEmail
 
   # ---------------------------------------------------------------------------
   # sns:Publish permission on the ci-deploy role
