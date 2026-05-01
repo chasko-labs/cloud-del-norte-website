@@ -1,8 +1,23 @@
 import { createAudioBridge, resumeCtx } from "./audio.js";
 import { initCanvas, rebuildStatic } from "./canvas.js";
+import { type DuneSceneHandle, mountDuneScene } from "./dune-scene.js";
 import { preloadLogo } from "./static.js";
 
 let mounted = false;
+
+// Wallpaper perf budget — more lenient than the 8ms test-page gate since the
+// scene is behind content. After 2s warmup, if median > 16ms we tear it down
+// and revert to the 2D cream layer.
+const DUNE_PERF_BUDGET_MS = 16;
+const DUNE_PERF_GATE_DELAY_MS = 2000;
+
+function isDarkMode(): boolean {
+	return document.documentElement.classList.contains("awsui-dark-mode");
+}
+
+function reducedMotion(): boolean {
+	return matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
 
 export function mount(): () => void {
 	if (mounted) return () => {};
@@ -43,10 +58,104 @@ export function mount(): () => void {
 		resumeCtx();
 	});
 
+	// ── Dune wallpaper (light mode only, non-reduced-motion) ────────────────
+	//
+	// Layering: dune scene canvas at z-index:-2; the 2D background-viz canvas
+	// at z-index:-1 is hidden via opacity:0 while dune is active so the cream
+	// fill + watermark don't paint over the babylon scene. Approach (a) from
+	// tarn's spec — ship simple, the audio-reactive bloom/motes overlay
+	// (approach (b)) is a known cleanup item for a future PR.
+	//
+	// Theme toggle: MutationObserver on <html> watches for awsui-dark-mode
+	// class changes. Destroy on dark, re-mount on light. Destroy is simpler
+	// than pause and avoids leaking the babylon engine when the user spends
+	// most of their session in dark mode.
+	let duneHandle: DuneSceneHandle | null = null;
+	let dunePerfTimer: number | null = null;
+	let duneFallback = false;
+
+	function setStaticCanvasVisible(visible: boolean): void {
+		canvas.style.opacity = visible ? "1" : "0";
+	}
+
+	function onDuneResize(): void {
+		duneHandle?.resize();
+	}
+
+	function disposeDune(): void {
+		if (dunePerfTimer !== null) {
+			window.clearTimeout(dunePerfTimer);
+			dunePerfTimer = null;
+		}
+		if (duneHandle) {
+			duneHandle.destroy();
+			duneHandle = null;
+			window.removeEventListener("resize", onDuneResize);
+		}
+		setStaticCanvasVisible(true);
+	}
+
+	function tryMountDune(): void {
+		if (duneHandle) return;
+		if (duneFallback) return; // perf gate already tripped this session
+		if (isDarkMode()) return;
+		if (reducedMotion()) return;
+
+		try {
+			duneHandle = mountDuneScene(document.body);
+		} catch (err) {
+			console.warn(
+				"[bg-viz] dune scene mount failed; staying on static cream",
+				err,
+			);
+			return;
+		}
+
+		setStaticCanvasVisible(false);
+		window.addEventListener("resize", onDuneResize);
+
+		// Perf gate — sample after warmup.
+		dunePerfTimer = window.setTimeout(() => {
+			dunePerfTimer = null;
+			if (!duneHandle) return;
+			const med = duneHandle.getPerfMedian();
+			// med === 0 means the perf window hasn't filled yet (< 60 frames in
+			// 2s ≈ < 30fps). Treat that as already-failing and fall back.
+			if (med === 0 || med > DUNE_PERF_BUDGET_MS) {
+				console.warn(
+					"[bg-viz] dune scene perf below threshold; fallback to static cream",
+				);
+				duneFallback = true;
+				disposeDune();
+			}
+		}, DUNE_PERF_GATE_DELAY_MS);
+	}
+
+	tryMountDune();
+
+	// React to runtime theme toggles. Cloudscape adds/removes
+	// awsui-dark-mode on <html> when the theme picker fires.
+	const themeObserver = new MutationObserver((records) => {
+		for (const r of records) {
+			if (r.type !== "attributes" || r.attributeName !== "class") continue;
+			if (isDarkMode()) {
+				disposeDune();
+			} else {
+				tryMountDune();
+			}
+		}
+	});
+	themeObserver.observe(document.documentElement, {
+		attributes: true,
+		attributeFilter: ["class"],
+	});
+
 	return function destroy(): void {
 		mounted = false;
 		stopLoop();
 		destroyAudio();
+		themeObserver.disconnect();
+		disposeDune();
 		window.removeEventListener("cdn:audio:play", onPlay);
 		window.removeEventListener("cdn:audio:stop", onStop);
 		window.removeEventListener("resize", resize);
