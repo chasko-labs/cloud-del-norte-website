@@ -97,23 +97,76 @@ function ShellContent({
 	);
 
 
-	// background-viz canvas — mounts once per page load, cleans up on unmount
+	// background-viz canvas — mounts once per page load, cleans up on unmount.
+	// Decorative — defer to requestIdleCallback so it never preempts critical paint.
+	// Fallback: setTimeout(200ms) on browsers without rIC (Safari pre-16.4, older WebViews)
 	useEffect(() => {
 		let cleanup: (() => void) | null = null;
-		void import("../../lib/background-viz/index").then((mod) => {
-			cleanup = mod.mount();
-		});
+		let cancelled = false;
+		const idleTask = () => {
+			if (cancelled) return;
+			void import("../../lib/background-viz/index").then((mod) => {
+				if (cancelled) return;
+				cleanup = mod.mount();
+			});
+		};
+		const w = window as unknown as {
+			requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+			cancelIdleCallback?: (h: number) => void;
+			setTimeout: (cb: () => void, ms: number) => number;
+			clearTimeout: (h: number) => void;
+		};
+		const usingIdle = typeof w.requestIdleCallback === "function";
+		const handle: number = usingIdle
+			? (w.requestIdleCallback as (cb: () => void, opts?: { timeout: number }) => number)(
+					idleTask,
+					{ timeout: 2000 },
+				)
+			: w.setTimeout(idleTask, 200);
 		return () => {
+			cancelled = true;
+			if (usingIdle && typeof w.cancelIdleCallback === "function") {
+				w.cancelIdleCallback(handle);
+			} else {
+				w.clearTimeout(handle);
+			}
 			cleanup?.();
 		};
 	}, []);
 
 	// 3D star logo — registers <cdn-star-logo> custom element. SVG <img> renders
-	// while this is loading; CSS :defined swaps to canvas once the element registers
+	// while this is loading; CSS :defined swaps to canvas once the element registers.
+	// Decorative — defer to idle so the 197KB Babylon-derived chunk doesn't sit on
+	// the critical path. <img> fallback covers the gap.
 	useEffect(() => {
-		void import("../../lib/cdn-star-logo/index").catch(() => {
-			// fallback: <img> stays visible — no action needed
-		});
+		let cancelled = false;
+		const idleTask = () => {
+			if (cancelled) return;
+			void import("../../lib/cdn-star-logo/index").catch(() => {
+				// fallback: <img> stays visible — no action needed
+			});
+		};
+		const w = window as unknown as {
+			requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+			cancelIdleCallback?: (h: number) => void;
+			setTimeout: (cb: () => void, ms: number) => number;
+			clearTimeout: (h: number) => void;
+		};
+		const usingIdle = typeof w.requestIdleCallback === "function";
+		const handle: number = usingIdle
+			? (w.requestIdleCallback as (cb: () => void, opts?: { timeout: number }) => number)(
+					idleTask,
+					{ timeout: 2000 },
+				)
+			: w.setTimeout(idleTask, 200);
+		return () => {
+			cancelled = true;
+			if (usingIdle && typeof w.cancelIdleCallback === "function") {
+				w.cancelIdleCallback(handle);
+			} else {
+				w.clearTimeout(handle);
+			}
+		};
 	}, []);
 
 	// Add resize listener to handle viewport changes
@@ -164,7 +217,13 @@ function ShellContent({
 				<a href={identityHref} className="cdn-logo-hero" aria-label="Cloud Del Norte — home">
 					{/* @ts-ignore — custom element from /lib/cdn-star-logo */}
 					<cdn-star-logo transparent="" no-rotate=""></cdn-star-logo>
-					<img src="/brand/logo.svg" alt="" aria-hidden="true" />
+					<img
+						src="/brand/logo.svg"
+						alt=""
+						aria-hidden="true"
+						fetchPriority="high"
+						decoding="async"
+					/>
 				</a>
 				<TopNavigation
 					identity={{ href: identityHref }}

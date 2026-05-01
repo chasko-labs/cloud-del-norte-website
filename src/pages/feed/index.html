@@ -7,6 +7,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <title>AWS UG Cloud Del Norte</title>
+    <!-- Preconnect to radio stream hosts — saves ~100-300ms TLS+DNS per first-play.
+         Persistent player + KruxPlayer hit these origins on user click; warming
+         the connection lets audio start sooner. crossorigin set because <audio
+         crossOrigin="anonymous"> uses anonymous CORS mode. mexiserver omitted —
+         non-standard port 1124, preconnect benefit unclear. -->
+    <link rel="preconnect" href="https://playerservices.streamtheworld.com" crossorigin />
+    <link rel="preconnect" href="https://streams.kut.org" crossorigin />
+    <link rel="preconnect" href="https://kruxstream.nmsu.edu" crossorigin />
+    <link rel="preconnect" href="https://kexp.streamguys1.com" crossorigin />
+    <link rel="preconnect" href="https://shaincast.caster.fm" crossorigin />
+    <link rel="preconnect" href="https://sp2.servidorrprivado.com" crossorigin />
+    <link rel="preconnect" href="https://stream.zeno.fm" crossorigin />
+    <!-- Now-playing JSON endpoints — DNS-prefetch (cheaper than full preconnect)
+         since metadata fetch happens after first paint, not on the critical path. -->
+    <link rel="dns-prefetch" href="https://api.kexp.org" />
   </head>
   <body>
     <div id="root"></div>
