@@ -78,3 +78,31 @@ audio signal levels are published as CSS custom properties on `:root` so other s
 these properties update on each animation frame when audio is active. consumers can read them in CSS via `var(--cdn-audio-bass)` or in JS via `getComputedStyle(document.documentElement).getPropertyValue('--cdn-audio-bass')`.
 
 when no audio source is active, properties hold at `0.0`.
+
+---
+
+## verification harness override
+
+headless chromium on rocm-aibox reports its WebGL renderer as:
+
+```
+ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero) (0x0000C0DE)), SwiftShader driver)
+```
+
+the `shouldSkipDune()` check in `src/lib/background-viz/index.ts` sees `SwiftShader` in that string and skips the BabylonJS dune mount, falling back to the gradient div. this is correct behavior for real users on software-only hardware — the dune scene would chug and the perf gate would race the canvas-opacity flip.
+
+for verification harnesses that need to capture the actual wallpaper (not the fallback), append `?__cdn_force_wallpaper=1` to any page URL:
+
+- the CI screenshot pipeline (`scripts/ci-screenshot.mjs`) always appends this param
+- ad-hoc capture scripts on linux dev hosts should do the same
+
+### what each audience gets
+
+| audience | renderer | param | result |
+| --- | --- | --- | --- |
+| real user, hardware GPU | native | absent | dune scene |
+| real user, software GPU | SwiftShader / llvmpipe | absent | fallback gradient |
+| CI screenshot pipeline | SwiftShader (headless) | `__cdn_force_wallpaper=1` | dune scene (forced) |
+| ad-hoc capture, linux | SwiftShader (headless) | `__cdn_force_wallpaper=1` | dune scene (forced) |
+
+the param is internal — underscore-prefix marks it a harness concern, not a user-facing feature. it does not appear in any nav or documentation surface visible to end users.
