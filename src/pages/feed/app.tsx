@@ -7,6 +7,7 @@ import Link from "@cloudscape-design/components/link";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
+import CdnCard from "../../components/cdn-card";
 import Navigation from "../../components/navigation";
 import { useAndresLive } from "../../hooks/useAndresLive";
 import { useTranslation } from "../../hooks/useTranslation";
@@ -424,28 +425,42 @@ function AppContent({
 				</Header>
 			}
 		>
-			{/* Stable hero slot — wrapper renders always so cards appearing /
-			    disappearing don't unmount a parent and reflow content below.
-			    Pair with sticky-poll on data sources gating `liveToShow` so
-			    transient API failures don't flap the inner cards either. See
-			    docs/design-system/stable-state.md. */}
-			<div className="feed-live-hero cdn-stable-slot">
-				{liveToShow.map((key) => (
-					<div
-						key={key}
-						className="feed-grid__cell cdn-card feed-grid__cell--full feed-live-hero__card"
-					>
-						{key === "andresYoutube" ? (
-							<AndresYoutubeLive videoId={andresVideoId} />
-						) : (
-							sections[key as SectionKey]
-						)}
+			{/* Live hero — migrated to CdnCard primitive (slot=hero).
+			    Slot reserves a fixed min-height regardless of liveToShow.length,
+			    so live cards mounting / unmounting cannot reflow the content
+			    below. Sticky lifecycle suppresses transient API flaps on the
+			    upstream sources (twitch SDK + useAndresLive); a real offline
+			    transition (state → empty) cleanly swaps the slot to empty.
+			    See docs/design-system/card-wall.md. */}
+			<CdnCard
+				id="feed-live-hero"
+				slot="hero"
+				className="feed-live-hero feed-live-hero--cdn"
+				state={
+					liveToShow.length > 0
+						? { kind: "ready", data: liveToShow }
+						: { kind: "empty" }
+				}
+				render={(keys) => (
+					<div className="feed-live-hero__stack">
+						{keys.map((key) => (
+							<div
+								key={key}
+								className="feed-grid__cell cdn-card feed-grid__cell--full feed-live-hero__card"
+							>
+								{key === "andresYoutube" ? (
+									<AndresYoutubeLive videoId={andresVideoId} />
+								) : (
+									sections[key as SectionKey]
+								)}
+							</div>
+						))}
+						<hr className="feed-section-divider" />
 					</div>
-				))}
-				{liveToShow.length > 0 && (
-					<hr className="feed-section-divider" />
 				)}
-			</div>
+				fallback={null}
+				errorState={null}
+			/>
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<NextMeetup />
 			</div>
