@@ -619,7 +619,37 @@ main[class*="awsui_layout"] > [class*="content-container"] {
      3. mid violet halo (direct illumination cone)
      4. wide violet ambient (room spill)
      5. deep purple bloom (far field)
-   Breathing animation = plasma/filament intensity variation */
+   Breathing animation = plasma/filament intensity variation.
+
+   Brand-family hue cycle: a SECOND, much slower animation drifts the entire
+   rendered logo through brand-adjacent hues via filter: hue-rotate on the
+   parent <img>. Stays in family (violet → indigo → purple → back), no
+   rainbow risk. Operates at filter level so it survives the 60-80px nav
+   render where path-level effects would be sub-pixel. 36s cycle is long
+   enough to feel ambient rather than oscillating.
+
+   Coupling: cdn-logo-breathe runs 5s = 2× the hero-tip 2.5s cycle, so the
+   outer breathe peak approximately co-occurs with hero-tip bright phase
+   (CSS animation timelines start independently and drift, so this is
+   approximate, not frame-locked — visually adequate at this cadence). */
+
+/* Hue drift applied to the .cdn-logo-hero parent — NOT the <img>. The img
+   already owns the multi-layer drop-shadow filter chain; CSS `filter` is
+   atomic so a second filter animation on the same element would fight it.
+   Parent-level filter creates an independent filter context that wraps
+   the rendered child including its drop-shadows. */
+@keyframes cdn-logo-hue-drift {
+	0%, 100% { filter: hue-rotate(0deg); }
+	33%      { filter: hue-rotate(-14deg); } /* toward indigo #5b6ea3 family */
+	66%      { filter: hue-rotate(8deg); }   /* toward deeper purple #5a1f8a family */
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.awsui-dark-mode .cdn-logo-hero,
+	:root:not(.awsui-dark-mode) .cdn-logo-hero {
+		animation: cdn-logo-hue-drift 36s linear infinite;
+	}
+}
 
 @keyframes cdn-logo-breathe {
 	0%,

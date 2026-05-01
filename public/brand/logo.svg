@@ -68,11 +68,53 @@
   }
   .cdn-bulb { filter: url(#cdn-bulb-glow); }
   .cdn-arm  { filter: url(#cdn-arm-glow); }
+  /* cdn-bulb-tip-hero — asymmetric focal point on the topmost tip (574,351).
+     Same blink cadence as siblings but a brighter, wider drop-shadow extends
+     its halo a few px beyond peer bulbs at nav size (60-80px). Halo IS the
+     visible element here — bulb path itself is ~2px, the glow reads as
+     a localized pinpoint of intensity. Picks one tip as a natural focal
+     point rather than 5 equal stars. */
+  @keyframes cdn-bulb-blink-hero {
+    0% {
+      opacity: 1;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 5px #e0c0ff) drop-shadow(0 0 9px #b894ff) saturate(1.1) hue-rotate(0deg);
+    }
+    28% {
+      opacity: 1;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 7px #f0d4ff) drop-shadow(0 0 12px #c8a8ff) saturate(1.15) hue-rotate(0deg);
+    }
+    42% {
+      opacity: 0.65;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 4px #c8b4e8) saturate(0.7) hue-rotate(-12deg);
+    }
+    62% {
+      opacity: 0.32;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 2px #b8a8d0) saturate(0.45) hue-rotate(-20deg);
+    }
+    78% {
+      opacity: 0.8;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 4px #d0b4f0) saturate(0.9) hue-rotate(-6deg);
+    }
+    100% {
+      opacity: 1;
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 5px #e0c0ff) drop-shadow(0 0 9px #b894ff) saturate(1.1) hue-rotate(0deg);
+    }
+  }
+  .cdn-bulb-tip-hero { filter: url(#cdn-bulb-glow); }
   @media (prefers-reduced-motion: no-preference) {
     /* Default duration; per-element style="animation-duration:Xs" overrides
        (12 independent durations 1.5s-3.4s, mirrors liora .liora-led:nth-child rhythm). */
     .cdn-bulb { animation: cdn-bulb-blink 2.4s linear infinite; }
     .cdn-arm  { animation: cdn-arm-blink 5.5s linear infinite; }
+    /* Hero tip rides the same 2.5s cycle so it lands on the breathe-peak
+       coupling (cdn-logo-breathe 5s = 2× this). */
+    .cdn-bulb-tip-hero { animation: cdn-bulb-blink-hero 2.5s linear infinite; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    /* Hero tip falls back to a static brighter halo, no animation. */
+    .cdn-bulb-tip-hero {
+      filter: url(#cdn-bulb-glow) drop-shadow(0 0 5px #e0c0ff) drop-shadow(0 0 9px #b894ff);
+    }
   }
   /* Light-mode best-effort: SVG referenced via <img src> can't see host's
      .awsui-dark-mode class, so :root selectors here are inert. prefers-color-scheme
@@ -115,7 +157,7 @@
 <path d="M0,0 L11,6 L25,15 L29,31 L36,62 L36,64 L30,62 L8,48 L-13,35 L-12,33 L-7,32 L-10,31 L-2,31 L5,28 L8,21 L7,14 L2,9 L-3,7 L-2,2 Z " fill="#FAF9FA" transform="translate(635,736)"/>
 <path d="M0,0 L2,0 L0,9 L-5,23 L-7,30 L-14,38 L-23,45 L-25,47 L-22,50 L-30,53 L-35,58 L-38,64 L-40,65 L-44,56 L-51,51 L-54,50 L-54,48 L-46,45 L-42,39 L-39,29 L-36,31 L-34,31 L-32,26 L-22,10 L-2,1 Z " fill="#7F0ADE" transform="translate(441,624)"/>
 <path d="M0,0 L2,0 L3,6 L8,8 L13,11 L21,13 L25,17 L42,27 L46,31 L35,32 L4,32 L1,35 L-1,25 L-7,18 L-16,15 L-16,14 L-7,11 L-2,6 Z " fill="#7D14DD" transform="translate(370,495)"/>
-<path d="M0,0 L9,1 L15,5 L18,9 L19,18 L15,26 L9,30 L0,31 L-8,27 L-12,22 L-13,13 L-9,5 L-3,1 Z " fill="#A064FA" class="cdn-bulb" style="animation-delay:0.0s;animation-duration:2.3s" transform="translate(574,351)"/>
+<path d="M0,0 L9,1 L15,5 L18,9 L19,18 L15,26 L9,30 L0,31 L-8,27 L-12,22 L-13,13 L-9,5 L-3,1 Z " fill="#A064FA" class="cdn-bulb-tip-hero" style="animation-delay:0s" transform="translate(574,351)"/>
 <path d="M0,0 L1,0 L5,18 L11,26 L19,30 L25,32 L22,34 L13,38 L8,43 L4,50 L2,64 L0,64 L-1,52 L-6,43 L-13,37 L-23,33 L-20,31 L-10,27 L-4,20 L-1,12 Z " fill="#FBF9FB" transform="translate(507,229)"/>
 <path d="M0,0 L2,1 L-3,9 L-9,12 L-15,12 L-15,14 L-6,15 L-1,19 L2,26 L0,30 L-9,31 L-45,31 L-44,29 L-42,29 L-40,25 L-27,16 L-25,16 L-25,14 L-21,13 L-21,11 L-19,11 L-19,9 L-3,1 Z " fill="#7C0FDA" transform="translate(636,478)"/>
 <path d="M0,0 L8,1 L14,5 L17,9 L18,17 L15,24 L10,28 L5,30 L-3,29 L-9,25 L-12,21 L-13,13 L-10,6 L-5,2 Z " fill="#A064FA" class="cdn-bulb" style="animation-delay:0.75s;animation-duration:1.7s" transform="translate(717,500)"/>
