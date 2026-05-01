@@ -1,4 +1,11 @@
-import { getBeatData, getStationKey, getVisualData } from "./audio.js";
+import {
+	getBandBass,
+	getBandMid,
+	getBandTreble,
+	getBeatData,
+	getStationKey,
+	getVisualData,
+} from "./audio.js";
 import { detectBeat } from "./beat.js";
 import { isDark, render } from "./renderer.js";
 import {
@@ -23,13 +30,40 @@ let lastMode: boolean | null = null; // null = unset
 
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function normBand(bins: Uint8Array, lo: number, hi: number): number {
-	const end = Math.min(hi, bins.length);
-	const start = Math.min(lo, end);
-	if (start >= end) return 0;
-	let sum = 0;
-	for (let i = start; i < end; i++) sum += bins[i];
-	return Math.min(1, sum / ((end - start) * 255));
+// Spectral centroid — frequency-weighted mean of the magnitude spectrum.
+// Low value (~0.05) = bass-heavy, high (~0.5+) = treble/transient-rich.
+// Returned normalized to 0..1 over the active bin range.
+function spectralCentroid(bins: Uint8Array): number {
+	let weighted = 0;
+	let total = 0;
+	for (let i = 0; i < bins.length; i++) {
+		weighted += i * bins[i];
+		total += bins[i];
+	}
+	if (total === 0) return 0;
+	return Math.min(1, weighted / (total * bins.length));
+}
+
+// Spectral flux — sum of positive bin-to-bin changes since last frame, normalized.
+// Onset / transient detector. detectBeat() consumes raw flux internally; this
+// produces a 0..1 signal suitable for CSS animation coupling.
+const FLUX_MAX_DECAY = 0.995;
+let prevFluxBins: Uint8Array | null = null;
+let fluxMax = 1;
+function spectralFlux(bins: Uint8Array): number {
+	if (!prevFluxBins || prevFluxBins.length !== bins.length) {
+		prevFluxBins = new Uint8Array(bins);
+		return 0;
+	}
+	let flux = 0;
+	for (let i = 0; i < bins.length; i++) {
+		flux += Math.max(0, bins[i] - prevFluxBins[i]);
+	}
+	prevFluxBins.set(bins);
+	// Adaptive max so quiet streams still produce a usable 0..1 signal.
+	// Decay slowly so the normalisation doesn't track every momentary peak.
+	fluxMax = Math.max(fluxMax * FLUX_MAX_DECAY, flux, 1);
+	return Math.min(1, flux / fluxMax);
 }
 
 function rebuildStaticLayers(w: number, h: number): void {
@@ -102,11 +136,21 @@ function frame(ts: number): void {
 	const w = window.innerWidth;
 	const h = window.innerHeight;
 
-	const bass = normBand(visualBins, 0, 10);
-	const mid = normBand(visualBins, 10, 100);
+	// Filter-bank band amplitudes — cleaner separation than slicing FFT bins.
+	// Bins-bleed at decade boundaries was visible as bass leaking into the mid
+	// CSS prop on bass-heavy stations.
+	const bass = getBandBass();
+	const mid = getBandMid();
+	const treble = getBandTreble();
+	const centroid = spectralCentroid(visualBins);
+	const flux = spectralFlux(visualBins);
 
-	document.documentElement.style.setProperty("--cdn-bass", bass.toFixed(3));
-	document.documentElement.style.setProperty("--cdn-mid", mid.toFixed(3));
+	const root = document.documentElement.style;
+	root.setProperty("--cdn-bass", bass.toFixed(3));
+	root.setProperty("--cdn-mid", mid.toFixed(3));
+	root.setProperty("--cdn-treble", treble.toFixed(3));
+	root.setProperty("--cdn-centroid", centroid.toFixed(3));
+	root.setProperty("--cdn-flux", flux.toFixed(3));
 
 	const drawStart = performance.now();
 

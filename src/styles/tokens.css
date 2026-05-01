@@ -5,6 +5,37 @@
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
+   Audio-reactive custom properties — declared with @property so CSS can
+   transition/animate them smoothly. Set per-frame from
+   src/lib/background-viz/canvas.ts via the Web Audio filter-bank in
+   src/lib/background-viz/audio.ts.
+
+   --cdn-bass / --cdn-mid / --cdn-treble : 0..1 amplitudes from BiquadFilter
+                                            band-pass chain (lowpass 250Hz,
+                                            bandpass 1500Hz, highpass 4000Hz)
+   --cdn-centroid : 0..1 spectral centroid — "where the energy lives"
+   --cdn-flux     : 0..1 spectral flux — onset / transient signal
+   --cdn-bass and --cdn-mid are also redeclared in src/layouts/shell/styles.css
+   for legacy reasons; the duplicate @property is harmless (last declaration
+   wins, both are identical).
+   -------------------------------------------------------------------------- */
+@property --cdn-treble {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+@property --cdn-centroid {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+@property --cdn-flux {
+	syntax: "<number>";
+	inherits: true;
+	initial-value: 0;
+}
+
+/* --------------------------------------------------------------------------
    Global font smoothing
    -------------------------------------------------------------------------- */
 :root {
