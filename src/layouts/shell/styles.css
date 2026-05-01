@@ -529,12 +529,27 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	z-index: 1200;
 	display: block;
 	line-height: 0;
-	/* push Cloudscape nav content right so hero doesn't underlap hamburger */
+	/* square wrapper — gives the 3D canvas concrete dimensions and matches img aspect */
+	width: clamp(48px, 8vw, 80px);
+	height: clamp(48px, 8vw, 80px);
 }
 
+/* 3D scene — hidden until <cdn-star-logo> registers (custom element :defined) */
+.cdn-logo-hero cdn-star-logo {
+	display: none;
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.cdn-logo-hero cdn-star-logo:defined {
+	display: block;
+}
+
+/* SVG fallback — visible until the 3D scene takes over */
 .cdn-logo-hero img {
-	/* responsive: ~44px mobile → 80px desktop, scales with viewport */
-	height: clamp(44px, 8vw, 80px);
+	height: 100%;
 	width: auto;
 	display: block;
 	transform-origin: left center;
@@ -543,14 +558,20 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 		filter 0.35s ease;
 }
 
+.cdn-logo-hero cdn-star-logo:defined ~ img {
+	display: none;
+}
+
 .cdn-logo-hero:hover img {
 	transform: scale(1.08);
 }
 
-/* Nav bar breathing — minimal 1px padding above/below the star */
+/* Nav bar breathing — minimal padding + 48px floor so star never shrinks below
+   hamburger size on narrow viewports (clamp min on logo is also 48px) */
 #top-nav [class*="awsui_top-navigation"] {
 	padding-top: 1px !important;
 	padding-bottom: 1px !important;
+	min-height: 48px !important;
 	/* left padding clears the logo: 14px offset + max logo width (~80px) + 16px gap */
 	padding-left: clamp(70px, 12vw, 110px) !important;
 	box-sizing: border-box;

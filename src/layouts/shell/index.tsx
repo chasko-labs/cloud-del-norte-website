@@ -108,6 +108,14 @@ function ShellContent({
 		};
 	}, []);
 
+	// 3D star logo — registers <cdn-star-logo> custom element. SVG <img> renders
+	// while this is loading; CSS :defined swaps to canvas once the element registers
+	useEffect(() => {
+		void import("../../lib/cdn-star-logo/index").catch(() => {
+			// fallback: <img> stays visible — no action needed
+		});
+	}, []);
+
 	// Add resize listener to handle viewport changes
 	useEffect(() => {
 		function handleResize() {
@@ -150,8 +158,12 @@ function ShellContent({
 				data-cdn-animating={animating || undefined}
 				data-cdn-animating-locale={animatingLocale || undefined}
 			>
-				{/* Custom logo — absolutely positioned so it's free of Cloudscape's identity sizing constraints */}
+				{/* Custom logo — absolutely positioned so it's free of Cloudscape's identity sizing constraints.
+				    <cdn-star-logo> is the 3D version (kicks in once the custom element registers via :defined CSS).
+				    <img> is the always-rendered fallback for SSR / no-JS / WebGL failure. */}
 				<a href={identityHref} className="cdn-logo-hero" aria-label="Cloud Del Norte — home">
+					{/* @ts-ignore — custom element from /lib/cdn-star-logo */}
+					<cdn-star-logo transparent="" no-rotate=""></cdn-star-logo>
 					<img src="/brand/logo.svg" alt="" aria-hidden="true" />
 				</a>
 				<TopNavigation
