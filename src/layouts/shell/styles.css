@@ -272,12 +272,12 @@ main[class*="awsui_layout"] {
 	background:
 		radial-gradient(
 			60% 45% at 25% 15%,
-			rgba(144, 96, 240, 0.12) 0%,
+			rgba(144, 96, 240, 0.22) 0%,
 			rgba(144, 96, 240, 0) 70%
 		),
 		radial-gradient(
 			50% 40% at 80% 85%,
-			rgba(48, 0, 106, calc(0.22 + var(--cdn-bass) * 0.08)) 0%,
+			rgba(48, 0, 106, calc(0.32 + var(--cdn-bass) * 0.10)) 0%,
 			rgba(48, 0, 106, 0) 65%
 		),
 		transparent !important;
@@ -293,12 +293,12 @@ main[class*="awsui_layout"] {
 	background:
 		radial-gradient(
 			60% 45% at 25% 15%,
-			rgba(201, 162, 63, 0.1) 0%,
+			rgba(201, 162, 63, 0.22) 0%,
 			rgba(201, 162, 63, 0) 70%
 		),
 		radial-gradient(
 			50% 40% at 80% 85%,
-			rgba(144, 96, 240, 0.06) 0%,
+			rgba(144, 96, 240, 0.16) 0%,
 			rgba(144, 96, 240, 0) 65%
 		),
 		transparent !important;
