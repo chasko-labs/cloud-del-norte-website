@@ -30,21 +30,6 @@
 // handle adds .dune-perf-degraded to the canvas after warmup; the wallpaper
 // integration polls getPerfMedian() at 2s and falls back to the static cream
 // canvas if median exceeds its (more lenient) 16ms budget.
-//
-// Liveness pass (2026-05-01): static dunes felt dead on load. Three additive
-// moves give the scene a slow, breathing quality without breaking the
-// wallpaper-not-screensaver budget:
-//   - 90s timeOfDay color cycle (uniform 0..1) shifts sky horizon, dune
-//     shadow tint, and sun color across warm-midday → late-afternoon → dusk
-//     → early-morning. Strictly inside the brand palette: lavender / cream /
-//     warm-tan / dusk-violet / amber sun. NEVER black, NEVER yellow-saturated.
-//   - sun direction wobbles ±0.05 in xz at 0.05 Hz so ridge highlights drift
-//     across ~30s. Imperceptible per-frame, alive-feeling over time.
-//   - canvas opacity entrance fade 0→1 over 2s on mount; the cream/lavender
-//     fallback gradient stays underneath so the cross-fade reads as natural.
-// All three respect prefers-reduced-motion: timeOfDay frozen at 0 (warm
-// midday), sun direction stays at SUN_DIR_WORLD, canvas opacity is set to 1
-// immediately with no transition.
 
 // Side-effect: patches Scene.prototype.beginAnimation. Required because in
 // the production bundle, dune-scene's chunk may load before any other module
@@ -144,7 +129,6 @@ varying vec2 vUV;
 varying float vHeight;
 varying vec3 vNormal;
 uniform float time;
-uniform float timeOfDay;
 uniform vec3 sunDir;
 uniform float fluxLevel;
 
@@ -157,37 +141,9 @@ void main(void) {
   // prior failure-mode guards (no black, no saturated yellow, no dark green).
   //
   // 2-stop blend: deep-sand shadow → warm cream peak.
-  // Liveness pass: shadow + peak both modulated by timeOfDay (0..1, 90s loop)
-  // across four phases — warm-midday → late-afternoon → dusk → early-morning.
-  // Each stop stays inside the brand palette (no black, no yellow saturation,
-  // no green). Phase weights use smoothstep over a 4-quadrant fold so the
-  // transitions are continuous and a full loop returns to the start.
-  float td = clamp(timeOfDay, 0.0, 1.0);
-  // Quadrant weights — sum to 1 at all td. Each peaks at its quadrant centre.
-  float wMidday   = max(0.0, 1.0 - abs(td - 0.000) * 4.0) + max(0.0, 1.0 - abs(td - 1.000) * 4.0);
-  float wLateAft  = max(0.0, 1.0 - abs(td - 0.250) * 4.0);
-  float wDusk     = max(0.0, 1.0 - abs(td - 0.500) * 4.0);
-  float wMorning  = max(0.0, 1.0 - abs(td - 0.750) * 4.0);
-  float wSum = wMidday + wLateAft + wDusk + wMorning;
-  wMidday  /= wSum; wLateAft /= wSum; wDusk /= wSum; wMorning /= wSum;
-
-  // Per-phase shadow stops — all on the warm-tan / dusk-violet axis, never black.
-  vec3 shadowMidday  = vec3(0.722, 0.612, 0.471); // #b89c78 — deep sand (current default)
-  vec3 shadowLateAft = vec3(0.690, 0.604, 0.510); // #b09a82 — cooler sand
-  vec3 shadowDusk    = vec3(0.659, 0.580, 0.612); // #a8949c — dusk-violet warm-taupe
-  vec3 shadowMorning = vec3(0.737, 0.624, 0.494); // #bca07e — warm cream-sand
-  vec3 shadow = shadowMidday * wMidday + shadowLateAft * wLateAft
-              + shadowDusk * wDusk + shadowMorning * wMorning;
-
-  // Per-phase peak stops — all warm/cool cream variants, never bright yellow.
-  vec3 peakMidday  = vec3(0.980, 0.969, 0.941); // #faf7f0 — warm cream
-  vec3 peakLateAft = vec3(0.961, 0.953, 0.941); // #f5f3f0 — cooler cream
-  vec3 peakDusk    = vec3(0.949, 0.929, 0.961); // #f2edf5 — lavender-cream
-  vec3 peakMorning = vec3(0.973, 0.957, 0.929); // #f8f4ed — warm-cream returning
-  vec3 peak = peakMidday * wMidday + peakLateAft * wLateAft
-            + peakDusk * wDusk + peakMorning * wMorning;
-
   float t = clamp(vHeight / 4.0, 0.0, 1.0);
+  vec3 shadow = vec3(0.722, 0.612, 0.471); // #b89c78 — deep sand (was #d4c4a8)
+  vec3 peak   = vec3(0.980, 0.969, 0.941); // #faf7f0 — warm cream peak
   vec3 dune = mix(shadow, peak, t);
 
   // Lambertian diffuse with floor at 0.48 (was 0.62). Even at 0.48 against
@@ -198,18 +154,6 @@ void main(void) {
   float lambert = max(dot(normalize(vNormal), normalize(sunDir)), 0.0);
   float lit = mix(0.48, 1.0, lambert);
 
-  // Sun tint — tungsten at midday, pale cool late-afternoon, amber at dusk,
-  // warm-tungsten in the morning. Multiplied into the lit range only (so the
-  // shadow side keeps the cool ambient bounce, doesn't get pulled into amber).
-  vec3 sunTintMidday  = vec3(1.000, 0.970, 0.880); // tungsten warm
-  vec3 sunTintLateAft = vec3(0.965, 0.965, 0.985); // pale cool
-  vec3 sunTintDusk    = vec3(1.000, 0.870, 0.760); // amber (NOT yellow — pulled toward red)
-  vec3 sunTintMorning = vec3(1.000, 0.945, 0.870); // warm-tungsten morning
-  vec3 sunTint = sunTintMidday * wMidday + sunTintLateAft * wLateAft
-               + sunTintDusk * wDusk + sunTintMorning * wMorning;
-  // Apply tint scaled by lambert so peaks pick up the sun colour, shadows don't.
-  vec3 lighting = mix(vec3(1.0), sunTint, lambert) * lit;
-
   // Subtle GPU-noise paper-grain to harmonise with the production
   // repeating-linear-gradient(#8b5a2b05) overlay on light mode.
   float grain = (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.012;
@@ -219,7 +163,7 @@ void main(void) {
   // reads as a flash, not a sustained lift.
   float fluxPop = 1.0 + clamp(fluxLevel, 0.0, 1.0) * 0.08;
 
-  gl_FragColor = vec4((dune * lighting + vec3(grain)) * fluxPop, 1.0);
+  gl_FragColor = vec4((dune * lit + vec3(grain)) * fluxPop, 1.0);
 }
 `;
 
@@ -255,7 +199,6 @@ void main(void) {
 const SKY_FRAGMENT_SOURCE = `
 precision highp float;
 varying vec3 vDir;
-uniform float timeOfDay;
 
 void main(void) {
   // Map y from [-1, 1] to [0, 1]. Below-horizon (negative y) clamps to the
@@ -269,28 +212,9 @@ void main(void) {
   // Horizon was #ede5d4 (identical to body bg) — dune outline disappeared into
   // sky. Pulled 1-2 shades richer so the dune silhouette reads against a sky
   // that isn't pixel-identical to the page bg.
-  //
-  // Liveness pass: the horizon stop modulates with timeOfDay so the sky
-  // visibly tracks the same 90s phase the dune surface does. Zenith stays
-  // lavender-ish (it's where the page lavender accents live). Nadir stays
-  // warm-tan (below-horizon clamp; camera doesn't dip there in practice).
-  float td = clamp(timeOfDay, 0.0, 1.0);
-  float wMidday  = max(0.0, 1.0 - abs(td - 0.000) * 4.0) + max(0.0, 1.0 - abs(td - 1.000) * 4.0);
-  float wLateAft = max(0.0, 1.0 - abs(td - 0.250) * 4.0);
-  float wDusk    = max(0.0, 1.0 - abs(td - 0.500) * 4.0);
-  float wMorning = max(0.0, 1.0 - abs(td - 0.750) * 4.0);
-  float wSum = wMidday + wLateAft + wDusk + wMorning;
-  wMidday /= wSum; wLateAft /= wSum; wDusk /= wSum; wMorning /= wSum;
-
-  vec3 horizonMidday  = vec3(0.910, 0.875, 0.792); // #e8dfca warm linen
-  vec3 horizonLateAft = vec3(0.890, 0.875, 0.835); // #e3dfd5 cooler linen
-  vec3 horizonDusk    = vec3(0.910, 0.855, 0.890); // #e8dae3 lavender-cream wash
-  vec3 horizonMorning = vec3(0.925, 0.890, 0.820); // #ece3d1 warm linen returning
-  vec3 horizon = horizonMidday * wMidday + horizonLateAft * wLateAft
-               + horizonDusk * wDusk + horizonMorning * wMorning;
-
-  vec3 zenith = vec3(0.843, 0.780, 0.933);
-  vec3 nadir  = vec3(0.831, 0.769, 0.659);
+  vec3 zenith  = vec3(0.843, 0.780, 0.933);
+  vec3 horizon = vec3(0.910, 0.875, 0.792);
+  vec3 nadir   = vec3(0.831, 0.769, 0.659);
 
   vec3 col;
   if (t > 0.5) {
@@ -413,13 +337,10 @@ export function mountDuneSceneOnCanvas(
 		{ vertex: SKY_SHADER_NAME, fragment: SKY_SHADER_NAME },
 		{
 			attributes: ["position"],
-			// timeOfDay: 0..1 over a 90s loop; modulates the horizon stop so
-			// the sky tracks the same phase the dune surface does.
-			uniforms: ["worldViewProjection", "world", "timeOfDay"],
+			uniforms: ["worldViewProjection", "world"],
 		},
 	);
 	skyMat.backFaceCulling = false;
-	skyMat.setFloat("timeOfDay", 0);
 	skybox.material = skyMat;
 
 	// Dune ground — subdivided enough for noise to read as topology.
@@ -437,7 +358,6 @@ export function mountDuneSceneOnCanvas(
 			uniforms: [
 				"worldViewProjection",
 				"time",
-				"timeOfDay",
 				"sunDir",
 				"bassLevel",
 				"midLevel",
@@ -451,9 +371,6 @@ export function mountDuneSceneOnCanvas(
 	duneMat.setFloat("bassLevel", 0);
 	duneMat.setFloat("midLevel", 0);
 	duneMat.setFloat("fluxLevel", 0);
-	// timeOfDay starts at 0 (warm midday). Reduced-motion users stay here
-	// forever; everyone else cycles 0→1 over 90s in registerBeforeRender.
-	duneMat.setFloat("timeOfDay", 0);
 	ground.material = duneMat;
 
 	// Animation: respect reduced-motion preference.
@@ -475,24 +392,9 @@ export function mountDuneSceneOnCanvas(
 	let timeSeconds = 0;
 	let lastFrameMs = performance.now();
 
-	// Liveness pass: 90s timeOfDay loop period (in seconds). Long enough that
-	// the cycle reads as ambient mood rather than animation.
-	const TIME_OF_DAY_PERIOD_S = 90;
-	// Sun-direction wobble — 0.05 Hz (20s period) at 0.05 amplitude in xz.
-	// Ridge highlights drift across ~30s window. Imperceptible per-frame.
-	const SUN_WOBBLE_HZ = 0.05;
-	const SUN_WOBBLE_AMP = 0.05;
-	// Scratch vector reused each frame to avoid per-frame allocation pressure.
-	const sunScratch = new Vector3(0, 0, 0);
-
 	scene.registerBeforeRender(() => {
 		if (reducedMotion) {
 			duneMat.setFloat("time", 0);
-			// timeOfDay frozen at 0 (warm midday) — no surprise color drift
-			// for users who explicitly opted out of motion. sunDir stays at
-			// the constant SUN_DIR_WORLD set during init; we don't touch it.
-			duneMat.setFloat("timeOfDay", 0);
-			skyMat.setFloat("timeOfDay", 0);
 			// Reduced-motion users get zero audio reactivity too — the whole
 			// point of the preference is no surprise movement, and audio
 			// reactivity is exactly that.
@@ -507,28 +409,6 @@ export function mountDuneSceneOnCanvas(
 		timeSeconds += delta;
 		duneMat.setFloat("time", timeSeconds);
 		camera.alpha += 0.00004;
-
-		// timeOfDay — 0..1 over a 90s loop. Same phase pushed to both the
-		// dune material and the sky material so the surface and the horizon
-		// shift in lockstep (no temporal mismatch between sky and ground).
-		const timeOfDay = (timeSeconds / TIME_OF_DAY_PERIOD_S) % 1;
-		duneMat.setFloat("timeOfDay", timeOfDay);
-		skyMat.setFloat("timeOfDay", timeOfDay);
-
-		// Sun-direction wobble — gently oscillate xz around SUN_DIR_WORLD
-		// then renormalise. 0.05 amplitude on 0.05 Hz: ridge highlights shift
-		// over 20s without ever obviously moving. Result fed back into the
-		// dune material's sunDir uniform; the DirectionalLight stays fixed
-		// (Lambert in the shader is what the eye actually reads).
-		const wobble = Math.sin(timeSeconds * SUN_WOBBLE_HZ * Math.PI * 2);
-		const wobbleQuad = Math.cos(timeSeconds * SUN_WOBBLE_HZ * Math.PI * 2);
-		sunScratch.set(
-			SUN_DIR_WORLD.x + wobble * SUN_WOBBLE_AMP,
-			SUN_DIR_WORLD.y,
-			SUN_DIR_WORLD.z + wobbleQuad * SUN_WOBBLE_AMP,
-		);
-		sunScratch.normalize();
-		duneMat.setVector3("sunDir", sunScratch);
 
 		// Audio uniforms — getBandBass/Mid return 0 when the audio graph isn't
 		// built yet (silent / pre-play), so no guard needed here.
@@ -665,22 +545,6 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 	canvas.setAttribute("aria-hidden", "true");
 	canvas.dataset.cdnDuneCanvas = "1";
 	container.appendChild(canvas);
-
-	// Liveness pass: cross-fade the canvas in over 2s on mount. The fallback
-	// gradient (cream/lavender) sits underneath at z-index:-3 so the eye sees
-	// a smooth gradient → dunes transition rather than a hard pop, even if
-	// babylon's first frame takes a beat. Reduced-motion skips the fade and
-	// shows the canvas immediately. Guarded against SSR — only runs in browser.
-	const reducedMotionOnMount =
-		typeof window !== "undefined" &&
-		window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
-	if (!reducedMotionOnMount && typeof requestAnimationFrame === "function") {
-		canvas.style.opacity = "0";
-		requestAnimationFrame(() => {
-			canvas.style.transition = "opacity 2s ease-out";
-			canvas.style.opacity = "1";
-		});
-	}
 
 	const inner = mountDuneSceneOnCanvas(canvas);
 
