@@ -141,3 +141,37 @@ steps:
       - aws s3 sync s3://awsaerospace.org/liora-embed/ s3://dev.clouddelnorte.org/liora-embed/ --exact-timestamps
       - aws s3 sync s3://awsaerospace.org/liora/ s3://dev.clouddelnorte.org/liora/ --exact-timestamps
       - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/*"
+
+  - name: notify-dev
+    image: alpine:3.20
+    depends_on: [deploy-dev]
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: dev
+    commands:
+      - apk add --no-cache curl
+      - |
+        curl -s \
+          -H "Title: [CDN dev] deploy: $${CI_COMMIT_SHA:0:7}" \
+          -H "Tags: rocket,green_heart" \
+          -H "Click: https://dev.clouddelnorte.org/" \
+          -d "$${CI_COMMIT_MESSAGE}" \
+          https://ntfy.sh/cdn-deploy-74697e0f
+
+  - name: notify-prod
+    image: alpine:3.20
+    depends_on: [deploy, deploy-auth, deploy-awsug]
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: main
+    commands:
+      - apk add --no-cache curl
+      - |
+        curl -s \
+          -H "Title: [CDN prod] deploy: $${CI_COMMIT_SHA:0:7}" \
+          -H "Tags: rocket,green_heart" \
+          -H "Click: https://clouddelnorte.org/" \
+          -d "$${CI_COMMIT_MESSAGE}" \
+          https://ntfy.sh/cdn-deploy-74697e0f
