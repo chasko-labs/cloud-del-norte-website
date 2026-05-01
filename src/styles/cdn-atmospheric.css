@@ -232,6 +232,75 @@
 	}
 }
 
+/* ── ContentLayout header strip — always transparent (wallpaper through) ─────
+   These selectors were NOT covered by b8014898 and defaulted to solid cream/navy.
+   Shell/styles.css previously painted #ede5d4 solid here (non-viz-active) and
+   rgba(0.55) frosted glass (viz-active). Both are now replaced by full transparency
+   so the wallpaper canvas at z-index:-2 is always visible through the feed top strip.
+
+   Light mode: applies unconditionally (no cdn-viz-active scope needed — if wallpaper
+   is absent the transparent bg falls through to the :root background-color cream).
+   Dark mode: same unconditional approach. */
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"],
+:root:not(.awsui-dark-mode)
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"],
+:root:not(.awsui-dark-mode) [class*="awsui_header-background"] {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+.awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"],
+.awsui-dark-mode
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"],
+.awsui-dark-mode [class*="awsui_header-background"] {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+/* When cdn-viz-active: header strip stays fully transparent — cdn-atmospheric
+   backdrop-filter from the block above (lines ~163-200) provides the blur layer
+   via background-color. Explicit transparent override ensures shell/styles.css
+   frosted-glass rules (which imported this file before their own declarations)
+   cannot reinstate a solid bg. */
+.cdn-viz-active:not(.awsui-dark-mode)
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"],
+.cdn-viz-active:not(.awsui-dark-mode)
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"],
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"],
+.cdn-viz-active.awsui-dark-mode
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"],
+.cdn-viz-active.awsui-dark-mode
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"],
+.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"] {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+/* ── Drawers container + main outer wrapper — transparent outer ───────────
+   awsui_drawers-container_ wraps both nav + tools drawers at the outermost
+   layer. awsui_main_ wraps the full content column. Both should be transparent
+   so the wallpaper canvas at z-index:-2 shows through without any opaque shell. */
+:root:not(.awsui-dark-mode) [class*="awsui_drawers-container_"],
+:root:not(.awsui-dark-mode) [class*="awsui_main_"] {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+.awsui-dark-mode [class*="awsui_drawers-container_"],
+.awsui-dark-mode [class*="awsui_main_"] {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
 /* ── explicit opt-out ────────────────────────────────────────────────────── */
 /* Use on: .cdn-card, buttons, .liora-bezel/.liora-canvas/.liora-panel-wrap,
    #top-nav, .cdn-footer — any surface that must be fully opaque. */
