@@ -43,7 +43,7 @@ import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
 import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 import { Effect } from "@babylonjs/core/Materials/effect";
 import { ShaderMaterial } from "@babylonjs/core/Materials/shaderMaterial";
-import { Color3 } from "@babylonjs/core/Maths/math.color";
+import { Color3, Color4 } from "@babylonjs/core/Maths/math.color";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 import { Scene } from "@babylonjs/core/scene";
@@ -118,11 +118,21 @@ uniform vec3 sunDir;
 
 void main(void) {
   float t = clamp(vHeight / 4.0, 0.0, 1.0);
-  vec3 dune = mix(vec3(0.78, 0.69, 0.48), vec3(0.97, 0.96, 0.93), t);
+  // Theme-aligned dune palette: shadow-side amber (#8b5a2b) blends through
+  // sun-touched gold (#c9a23f) into cream peaks (#ede5d4 — page bg). Three-stop
+  // blend so the mid-band catches the brand gold and the whole scene reads as
+  // warm linen rather than generic ochre→white.
+  vec3 amber  = vec3(0.545, 0.353, 0.169); // #8b5a2b
+  vec3 gold   = vec3(0.788, 0.635, 0.247); // #c9a23f
+  vec3 cream  = vec3(0.929, 0.898, 0.831); // #ede5d4
+  vec3 dune = t < 0.5
+    ? mix(amber, gold, t * 2.0)
+    : mix(gold, cream, (t - 0.5) * 2.0);
 
-  // Lambertian diffuse against the world-space sun direction. Floor at 0.2
-  // so deep-shadow ridges still read as gypsum, not pure black.
-  float lambert = max(dot(normalize(vNormal), normalize(sunDir)), 0.2);
+  // Lambertian diffuse against the world-space sun direction. Floor at 0.45
+  // (was 0.2) so shadow-side dunes stay in the warm cream/amber range and never
+  // crush to near-black — the page bg under the scene is light cream linen.
+  float lambert = max(dot(normalize(vNormal), normalize(sunDir)), 0.45);
 
   gl_FragColor = vec4(dune * lambert, 1.0);
 }
@@ -177,8 +187,13 @@ export function mountDuneSceneOnCanvas(
 	const engine = new Engine(canvas, true, {
 		preserveDrawingBuffer: true,
 		stencil: true,
+		alpha: true,
 	});
 	const scene = new Scene(engine);
+	// Transparent clear so the page's cream linen bg (#ede5d4) shows through any
+	// pixel the dune ground/skybox doesn't cover. Without this, Babylon's
+	// default dark-navy clear bleeds into the page edges in light mode.
+	scene.clearColor = new Color4(0, 0, 0, 0);
 
 	// Camera — wallpaper, not user-controlled.
 	const camera = new ArcRotateCamera(
@@ -199,25 +214,28 @@ export function mountDuneSceneOnCanvas(
 		new Vector3(-0.6, -0.35, 0.7),
 		scene,
 	);
-	sun.intensity = 1.1;
+	sun.intensity = 1.4; // was 1.1 — lift shadow side so it reads cream/amber, not black
 	sun.diffuse = new Color3(1.0, 0.97, 0.88);
 	sun.specular = new Color3(0, 0, 0);
 
-	// Cool sky-bounce fill from above, warm ground-bounce from below.
+	// Warmer pale sky-bounce fill from above, cream ground-bounce from below —
+	// the underside of dunes picks up warm sand reflection instead of dim gray.
 	const fill = new HemisphericLight("dune-fill", new Vector3(0, 1, 0), scene);
 	fill.intensity = 0.45;
-	fill.diffuse = new Color3(0.72, 0.82, 0.9);
-	fill.groundColor = new Color3(0.85, 0.82, 0.72);
+	fill.diffuse = new Color3(0.86, 0.88, 0.92); // pale washed sky (was cool 0.72/0.82/0.9)
+	fill.groundColor = new Color3(0.93, 0.9, 0.83); // warm cream sand bounce (was 0.85/0.82/0.72)
 
-	// Sky — Preetham analytical model.
+	// Sky — Preetham analytical model. Tuned for desaturated daytime desert
+	// haze: more dust, less rayleigh blue, broader sun glow. Result reads as
+	// pale cream/cyan gradient rather than saturated cold blue.
 	const skybox = MeshBuilder.CreateBox("dune-skybox", { size: 1000 }, scene);
 	const skyMat = new SkyMaterial("dune-sky-mat", scene);
 	skyMat.backFaceCulling = false;
-	skyMat.luminance = 1.2;
-	skyMat.turbidity = 12;
-	skyMat.rayleigh = 1.0;
+	skyMat.luminance = 1.5; // was 1.2 — brighter daytime
+	skyMat.turbidity = 14; // was 12 — more dust haze, paler
+	skyMat.rayleigh = 0.6; // was 1.0 — less saturated blue
 	skyMat.mieCoefficient = 0.01;
-	skyMat.mieDirectionalG = 0.82;
+	skyMat.mieDirectionalG = 0.78; // was 0.82 — broader sun glow
 	skyMat.inclination = 0.42;
 	skyMat.azimuth = 0.22;
 	skybox.material = skyMat;
