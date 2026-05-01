@@ -46,12 +46,30 @@ for (const v of VIEWPORTS) {
             });
             const page = await ctx.newPage();
             try {
-                await page.goto(`${baseUrl}${p.path}`, { waitUntil: "domcontentloaded", timeout: 60000 });
+                // force wallpaper mount even when ANGLE reports SwiftShader —
+                // see src/lib/background-viz/index.ts:shouldSkipDune
+                const url = `${baseUrl}${p.path}${p.path.includes("?") ? "&" : "?"}__cdn_force_wallpaper=1`;
+                await page.goto(url, { waitUntil: "domcontentloaded", timeout: 60000 });
                 await page.evaluate((mode) => {
                     if (mode === "dark") document.documentElement.classList.add("awsui-dark-mode");
                     else document.documentElement.classList.remove("awsui-dark-mode");
                 }, t);
-                await new Promise(r => setTimeout(r, SETTLE_MS));
+                // wait for at least one canvas to be visible — signals the dune scene's
+                // 2s opacity entrance fade has completed and the BabylonJS render loop
+                // is producing frames. falls back to timeout if no canvas appears (dark
+                // mode, reduced-motion, or genuine failure — all fine, screenshot still taken).
+                await page.waitForFunction(() => {
+                    const cs = document.querySelectorAll("canvas");
+                    if (!cs.length) return false;
+                    for (const c of cs) {
+                        const o = parseFloat(getComputedStyle(c).opacity);
+                        if (c.width > 100 && o > 0.5) return true;
+                    }
+                    return false;
+                }, { timeout: 30000, polling: 500 });
+                // extra settle: shader compile + first frames + perf-gate retry window
+                // (DUNE_PERF_GATE_DELAY_MS=2000 + DUNE_PERF_GATE_RETRY_DELAY_MS=4000 + buffer)
+                await new Promise(r => setTimeout(r, 8000));
                 const file = path.join(outDir, `${p.name}-${v.name}-${t}.png`);
                 await page.screenshot({ path: file });
                 console.log(`captured ${file}`);
