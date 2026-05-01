@@ -46,13 +46,40 @@ function PersistentPlayerBar({
 		const audio = audioRef.current;
 		if (!audio) return;
 		audio.play().catch(() => setBlocked(true));
+
+		// SSE branch: Zeno.fm mounts push metadata as text/event-stream. open
+		// an EventSource for the lifetime of the bar and parse each message.
+		// no polling interval needed — server pushes on track change
+		if (
+			streamDef?.metaUrl &&
+			streamDef.parseMeta &&
+			streamDef.metaFormat === "sse"
+		) {
+			const parse = streamDef.parseMeta;
+			const es = new EventSource(streamDef.metaUrl);
+			es.addEventListener("message", (ev) => {
+				try {
+					const data = JSON.parse(ev.data);
+					const text = parse(data);
+					if (text) setNowPlaying(text);
+				} catch {
+					// malformed event — ignore, next push will retry
+				}
+			});
+			return () => {
+				es.close();
+				audio.pause();
+			};
+		}
+
+		// JSON polling branch (default)
 		fetchMeta();
 		const id = setInterval(fetchMeta, POLL_MS);
 		return () => {
 			clearInterval(id);
 			audio.pause();
 		};
-	}, [fetchMeta]);
+	}, [fetchMeta, streamDef]);
 
 	const resume = useCallback(() => {
 		audioRef.current?.play().catch(() => {});

@@ -58,6 +58,9 @@ function KruxPlayer() {
 	const fetchMeta = useCallback((s: StreamDef) => {
 		// stations without a now-playing endpoint (kunm, kutx) just show label
 		if (!s.metaUrl || !s.parseMeta) return;
+		// SSE stations are wired through the EventSource effect below — skip
+		// JSON fetch path for them
+		if (s.metaFormat === "sse") return;
 		const parse = s.parseMeta;
 		fetch(s.metaUrl)
 			.then((r) => (r.ok ? r.json() : null))
@@ -69,10 +72,35 @@ function KruxPlayer() {
 			.catch(() => {});
 	}, []);
 
-	// fetch both stations on mount for initial now-playing display
+	// fetch JSON stations once on mount for initial now-playing display
 	useEffect(() => {
 		STREAMS.forEach((s) => fetchMeta(s));
 	}, [fetchMeta]);
+
+	// SSE stations: open EventSource for the lifetime of KruxPlayer so the
+	// carousel preview shows now-playing for SSE stations even when not active.
+	// server pushes on track change — no polling needed
+	useEffect(() => {
+		const sources: EventSource[] = [];
+		for (const s of STREAMS) {
+			if (s.metaFormat !== "sse" || !s.metaUrl || !s.parseMeta) continue;
+			const parse = s.parseMeta;
+			const es = new EventSource(s.metaUrl);
+			es.addEventListener("message", (ev) => {
+				try {
+					const data = JSON.parse(ev.data);
+					const text = parse(data);
+					if (text) setNowPlaying((prev) => ({ ...prev, [s.key]: text }));
+				} catch {
+					// malformed event — ignore, next push will retry
+				}
+			});
+			sources.push(es);
+		}
+		return () => {
+			for (const es of sources) es.close();
+		};
+	}, []);
 
 	// carousel: fade out → swap station → fade in, every 10s while not playing
 	// biome-ignore lint/correctness/useExhaustiveDependencies: carouselVersion is a reset trigger, not a value read inside the effect
@@ -93,9 +121,11 @@ function KruxPlayer() {
 		};
 	}, [playing, carouselVersion]);
 
-	// poll now-playing every 30s while playing
+	// poll now-playing every 30s while playing — skipped for SSE stations
+	// (their EventSource is already open from the mount-time effect above)
 	useEffect(() => {
 		if (!playing) return;
+		if (stream.metaFormat === "sse") return;
 		fetchMeta(stream);
 		const id = setInterval(() => fetchMeta(stream), POLL_MS);
 		return () => clearInterval(id);

@@ -25,8 +25,15 @@ export interface StreamDef {
 	readonly key: string;
 	readonly url: string;
 	readonly label: string;
-	/** json now-playing endpoint — omit when station has no public metadata feed */
+	/** now-playing endpoint — omit when station has no public metadata feed */
 	readonly metaUrl?: string;
+	/**
+	 * how to consume metaUrl. defaults to "json" (fetch + poll on POLL_MS).
+	 * "sse" opens an EventSource and listens for push events — used for
+	 * Zeno.fm mounts which expose text/event-stream at
+	 * api.zeno.fm/mounts/metadata/subscribe/<mount>
+	 */
+	readonly metaFormat?: "json" | "sse";
 	readonly colors: StationColors;
 	/** parses metaUrl response into "song — artist" string. omit alongside metaUrl */
 	parseMeta?(data: unknown): string | null;
@@ -214,7 +221,13 @@ export const STREAMS: StreamDef[] = [
 		// Zeno.fm CDN — base URL auto-redirects with JWT token per connection
 		url: "https://stream.zeno.fm/8hage4z92hhvv",
 		label: "radio udg lagos 104.7", // "lagos" disambiguates from main Guadalajara station
-		// metaUrl omitted — udgtv.com player has no public json now-playing endpoint
+		// Zeno.fm exposes track metadata as Server-Sent Events (text/event-stream),
+		// not JSON polling. CORS open. Each event payload: {mount, streamTitle}.
+		// streamTitle may be " - " (placeholder) when a live show without inline
+		// metadata is on air — parseMeta returns null in that case so the player
+		// falls back to the station label
+		metaUrl: "https://api.zeno.fm/mounts/metadata/subscribe/8hage4z92hhvv",
+		metaFormat: "sse",
 		// UDG institutional palette: Pantone 7406 (gold) + black anchor
 		// Differentiation from KEXP (also yellow): UDG gold is more saturated/orange-leaning,
 		// and the secondary swap to deep terra-cotta keeps it apart visually
@@ -225,6 +238,15 @@ export const STREAMS: StreamDef[] = [
 			// Gold on cream #ede5d4: ~1.4:1 — fails text contrast badly. Need light override.
 			primaryLight: "#8b6f00", // deepened amber gold for cream, ~5.0:1
 			// Gold on navy #0a0a2e: ~14:1 — passes AAA easily, no dark override needed.
+		},
+		parseMeta(data) {
+			// Zeno.fm SSE event payload: {mount, streamTitle}.
+			// streamTitle commonly arrives as " - " when no inline track metadata is
+			// available (live DJ feed); trim and treat empty / dash-only as null
+			const r = data as { mount?: string; streamTitle?: string };
+			const t = r.streamTitle?.trim();
+			if (!t || t === "-") return null;
+			return t;
 		},
 	},
 	// TODO: Mexican student radio (Ciudad Juárez) — pending research verification
