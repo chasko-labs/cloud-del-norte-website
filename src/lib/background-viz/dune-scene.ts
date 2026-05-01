@@ -130,11 +130,13 @@ void main(void) {
   vec3 peak   = vec3(0.980, 0.969, 0.941); // #faf7f0 — warm cream peak
   vec3 dune = mix(shadow, peak, t);
 
-  // Lambertian diffuse with high floor (0.55, was 0.45). Real gypsum has
+  // Lambertian diffuse with high floor (0.62, was 0.55). Real gypsum has
   // very low contrast even on the shadow side — the page bg under the scene
   // is cream linen, the dunes need to read as a continuous warm field.
+  // Pass 3 — bumped 0.55 → 0.62 to ensure shadow side never trends toward
+  // dark/black even at extreme angles (jarring on white-mode page bg).
   float lambert = max(dot(normalize(vNormal), normalize(sunDir)), 0.0);
-  float lit = mix(0.55, 1.0, lambert);
+  float lit = mix(0.62, 1.0, lambert);
 
   // Subtle GPU-noise paper-grain to harmonise with the production
   // repeating-linear-gradient(#8b5a2b05) overlay on light mode.
@@ -234,12 +236,19 @@ export function mountDuneSceneOnCanvas(
 	// Sky — Preetham analytical model. Tuned for desaturated daytime desert
 	// haze: more dust, less rayleigh blue, broader sun glow. Result reads as
 	// pale cream/cyan gradient rather than saturated cold blue.
+	//
+	// Pass 3 (black-section fix): turbidity 16 → 12 and rayleigh 0.4 → 0.6.
+	// At turbidity 16 + rayleigh 0.4 the Preetham mie/rayleigh terms produce
+	// near-black bands in oblique angles near horizon — visible as jarring
+	// black wedges in light mode. Lower turbidity = less haze but more
+	// reliable colour across angles; higher rayleigh = more saturated blue
+	// at zenith, less near-black risk at grazing angles.
 	const skybox = MeshBuilder.CreateBox("dune-skybox", { size: 1000 }, scene);
 	const skyMat = new SkyMaterial("dune-sky-mat", scene);
 	skyMat.backFaceCulling = false;
 	skyMat.luminance = 1.7; // pass 2 — was 1.5 — brighter daytime, harmonises with cream dunes
-	skyMat.turbidity = 16; // pass 2 — was 14 — more dust haze, paler still
-	skyMat.rayleigh = 0.4; // pass 2 — was 0.6 — even less saturated blue, sky reads as warm-pale
+	skyMat.turbidity = 12; // pass 3 — was 16 — fewer dark bands at oblique angles
+	skyMat.rayleigh = 0.6; // pass 3 — was 0.4 — more saturated blue at zenith, no near-black at horizon
 	skyMat.mieCoefficient = 0.01;
 	skyMat.mieDirectionalG = 0.78; // was 0.82 — broader sun glow
 	skyMat.inclination = 0.42;
@@ -369,6 +378,24 @@ export function mountDuneSceneOnCanvas(
  * canvas at z-index: -1). The handle's destroy() removes the canvas.
  */
 export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
+	// Pass 3 (black-section fix): brand-palette fallback gradient sits at
+	// z-index -3, beneath the dune canvas at z-index -2. The dune canvas
+	// uses a transparent clearColor — on some GPUs that reads as opaque
+	// black, and even when transparent it exposes whatever the page bg is
+	// (which can render dark in some regions on white mode). The fallback
+	// guarantees brand colours show through any unrendered pixel.
+	//
+	// Palette: lavender (#d7c7ee — sky band) → cream (#ede5d4 — horizon)
+	// → warm tan (#d4c4a8 — foreground). All from the cdn brand palette,
+	// no literal #000 anywhere in the visible stack.
+	const fallback = document.createElement("div");
+	fallback.style.cssText =
+		"position:fixed;inset:0;z-index:-3;pointer-events:none;" +
+		"background:linear-gradient(180deg,#d7c7ee 0%,#ede5d4 50%,#d4c4a8 100%)";
+	fallback.setAttribute("aria-hidden", "true");
+	fallback.dataset.cdnDuneFallback = "1";
+	container.appendChild(fallback);
+
 	const canvas = document.createElement("canvas");
 	canvas.style.cssText =
 		"position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none";
@@ -385,6 +412,7 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 		destroy() {
 			inner.dispose();
 			canvas.remove();
+			fallback.remove();
 		},
 		resize() {
 			inner.resize();
