@@ -1015,6 +1015,22 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    block-size on its own viewport-fill chrome (overridden in the rule at
    line ~176). body min-height is a static reservation that does not fight
    AppLayout's internal sizing math. */
+/* ── Force permanent vertical scrollbar — kill mouseover-left hop ─────────
+   Classic scrollbars (real Chrome on Mac/Windows) toggle visibility when
+   document height crosses the viewport boundary. Hovering interactive
+   elements that briefly add 1-2px of focus ring or transient inline style
+   can trigger the toggle, shifting the main column left by ~15px. Headless
+   chromium uses overlay scrollbars and doesn't reproduce this. Forcing
+   overflow-y: scroll on html keeps the OS scrollbar mounted permanently —
+   the toggle is impossible because there's nothing to toggle.
+
+   Pairs with body { min-height: 100vh } — that ensures scrollHeight stays
+   ≥ viewport, this ensures scrollbar visibility never depends on the
+   comparison. Belt-and-suspenders. */
+html {
+    overflow-y: scroll;
+}
+
 body {
 	min-height: 100vh;
 }
