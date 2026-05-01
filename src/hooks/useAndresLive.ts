@@ -26,15 +26,26 @@ export function useAndresLive(): { live: boolean; videoId: string | null } {
 				const r = await fetch(OEMBED_URL);
 				if (cancelled) return;
 				if (!r.ok) {
-					setResult({ live: false, videoId: null });
+					// Transient API failure — KEEP PREVIOUS STATE instead of toggling
+					// to offline. YouTube's oEmbed endpoint 404s on offline channels
+					// AND on transient errors; without stickiness, the hero block
+					// toggles every 60s creating layout jumps. Only flip to offline
+					// on a confirmed-success-but-empty response (handled below).
 					return;
 				}
 				const data = (await r.json()) as { html?: string };
 				if (cancelled) return;
-				const videoId = data.html ? parseVideoId(data.html) : null;
+				if (!data.html) {
+					// Confirmed offline (200 with no embed html — channel is up but
+					// not live). Safe to flip to offline.
+					setResult({ live: false, videoId: null });
+					return;
+				}
+				const videoId = parseVideoId(data.html);
 				setResult({ live: true, videoId });
 			} catch {
-				if (!cancelled) setResult({ live: false, videoId: null });
+				// Network/parse error — same stickiness rationale as !r.ok above.
+				// Preserve previous state. The next poll in 60s will retry.
 			}
 		}
 
