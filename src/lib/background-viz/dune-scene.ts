@@ -49,6 +49,8 @@ import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 import { Scene } from "@babylonjs/core/scene";
 import { SkyMaterial } from "@babylonjs/materials/sky/skyMaterial";
 
+import { getBandBass, getBandMid } from "./audio.js";
+
 const SHADER_NAME = "duneDisplace";
 
 // Sun direction passed to the shader as a uniform. Must match the
@@ -63,6 +65,8 @@ attribute vec3 normal;
 attribute vec2 uv;
 uniform mat4 worldViewProjection;
 uniform float time;
+uniform float bassLevel;
+uniform float midLevel;
 varying vec2 vUV;
 varying float vHeight;
 varying vec3 vNormal;
@@ -85,7 +89,10 @@ float duneHeight(vec2 p, float drift) {
 
 void main(void) {
   vec2 p = position.xz;
-  float drift = time * 0.012;
+  // mid → drift speed multiplier. Baseline 0.012, up to 0.024 at full mid.
+  // Sand drift accelerates with vocal/instrument mid energy. Restrained 2x
+  // ceiling so the dunes never appear to gallop — wallpaper, not screensaver.
+  float drift = time * (0.012 + midLevel * 0.012);
 
   float h  = duneHeight(p, drift);
 
@@ -101,8 +108,14 @@ void main(void) {
   // cross(dpdz, dpdx) yields an upward-facing normal for the (x, h, z) frame.
   vNormal = normalize(cross(dpdz, dpdx));
 
-  vec3 displaced = vec3(position.x, h, position.z);
-  vHeight = h;
+  // bass → vertex amplitude bonus. Up to 18% extra on full bass. Boosts both
+  // the displaced Y and the height passed to fragment shading so brighter
+  // peaks/deeper valleys read as a coherent swell rather than a phase shift.
+  float bassBonus = clamp(bassLevel, 0.0, 1.0) * 0.18;
+  float hOut = h * (1.0 + bassBonus);
+
+  vec3 displaced = vec3(position.x, hOut, position.z);
+  vHeight = hOut;
   vUV = uv;
   gl_Position = worldViewProjection * vec4(displaced, 1.0);
 }
@@ -115,6 +128,7 @@ varying float vHeight;
 varying vec3 vNormal;
 uniform float time;
 uniform vec3 sunDir;
+uniform float fluxLevel;
 
 void main(void) {
   // Pass 2 — drop the saturated gold mid-band. Production light mode uses
@@ -142,7 +156,12 @@ void main(void) {
   // repeating-linear-gradient(#8b5a2b05) overlay on light mode.
   float grain = (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.012;
 
-  gl_FragColor = vec4(dune * lit + vec3(grain), 1.0);
+  // flux → transient brightness pop on snares/onsets. Up to 8% boost at
+  // peak flux; spectralFlux already decays fast in canvas.ts so the bump
+  // reads as a flash, not a sustained lift.
+  float fluxPop = 1.0 + clamp(fluxLevel, 0.0, 1.0) * 0.08;
+
+  gl_FragColor = vec4((dune * lit + vec3(grain)) * fluxPop, 1.0);
 }
 `;
 
@@ -267,10 +286,22 @@ export function mountDuneSceneOnCanvas(
 		{ vertex: SHADER_NAME, fragment: SHADER_NAME },
 		{
 			attributes: ["position", "normal", "uv"],
-			uniforms: ["worldViewProjection", "time", "sunDir"],
+			uniforms: [
+				"worldViewProjection",
+				"time",
+				"sunDir",
+				"bassLevel",
+				"midLevel",
+				"fluxLevel",
+			],
 		},
 	);
 	duneMat.setVector3("sunDir", SUN_DIR_WORLD);
+	// Initialise audio uniforms to 0 — silent / pre-play frames render exactly
+	// the same as the pre-audio scene. No flicker on first sample arrival.
+	duneMat.setFloat("bassLevel", 0);
+	duneMat.setFloat("midLevel", 0);
+	duneMat.setFloat("fluxLevel", 0);
 	ground.material = duneMat;
 
 	// Animation: respect reduced-motion preference.
@@ -278,12 +309,29 @@ export function mountDuneSceneOnCanvas(
 		typeof window !== "undefined" &&
 		window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
 
+	// Flux is published only as the --cdn-flux CSS custom property by the
+	// background-viz canvas loop (canvas.ts owns the spectralFlux state — it
+	// needs the previous frame's bins for the diff). audio.ts exposes bass +
+	// mid as JS exports but not flux. Caching the CSSStyleDeclaration ref
+	// avoids the full-style recompute on every frame; only getPropertyValue
+	// runs in the hot path. Skipped entirely under reduced-motion.
+	const rootStyle =
+		typeof document !== "undefined" && !reducedMotion
+			? getComputedStyle(document.documentElement)
+			: null;
+
 	let timeSeconds = 0;
 	let lastFrameMs = performance.now();
 
 	scene.registerBeforeRender(() => {
 		if (reducedMotion) {
 			duneMat.setFloat("time", 0);
+			// Reduced-motion users get zero audio reactivity too — the whole
+			// point of the preference is no surprise movement, and audio
+			// reactivity is exactly that.
+			duneMat.setFloat("bassLevel", 0);
+			duneMat.setFloat("midLevel", 0);
+			duneMat.setFloat("fluxLevel", 0);
 			return;
 		}
 		const now = performance.now();
@@ -292,6 +340,15 @@ export function mountDuneSceneOnCanvas(
 		timeSeconds += delta;
 		duneMat.setFloat("time", timeSeconds);
 		camera.alpha += 0.00004;
+
+		// Audio uniforms — getBandBass/Mid return 0 when the audio graph isn't
+		// built yet (silent / pre-play), so no guard needed here.
+		duneMat.setFloat("bassLevel", getBandBass());
+		duneMat.setFloat("midLevel", getBandMid());
+		const flux = rootStyle
+			? parseFloat(rootStyle.getPropertyValue("--cdn-flux")) || 0
+			: 0;
+		duneMat.setFloat("fluxLevel", flux);
 	});
 
 	// Perf instrumentation — wraps scene.render() so the sample reflects
