@@ -6,10 +6,19 @@ import { preloadLogo } from "./static.js";
 let mounted = false;
 
 // Wallpaper perf budget — more lenient than the 8ms test-page gate since the
-// scene is behind content. After 2s warmup, if median > 16ms we tear it down
+// scene is behind content. After warmup, if median > 16ms we tear it down
 // and revert to the 2D cream layer.
+//
+// Two-stage gate: first sample at 2s (cheap escape hatch for already-bad
+// hardware that's hitting the budget). If the median hasn't computed yet
+// (med === 0 — engine still compiling shaders / uploading textures / first
+// 60 frames not collected), reschedule a final check at 6s. This avoids the
+// pathological "killed before babylon was even ready" fallback that hit on
+// safari + retina + cold cache, where shader compile alone consumed >1.5s
+// and the perf window never closed before the gate fired.
 const DUNE_PERF_BUDGET_MS = 16;
 const DUNE_PERF_GATE_DELAY_MS = 2000;
+const DUNE_PERF_GATE_RETRY_DELAY_MS = 4000;
 
 function isDarkMode(): boolean {
 	return document.documentElement.classList.contains("awsui-dark-mode");
@@ -142,21 +151,50 @@ export function mount(): () => void {
 		setStaticCanvasVisible(false);
 		window.addEventListener("resize", onDuneResize);
 
-		// Perf gate — sample after warmup.
-		dunePerfTimer = window.setTimeout(() => {
+		// Perf gate — sample after warmup. Two-stage: 2s first check, 6s retry
+		// if the median window hadn't closed yet on the first check.
+		const checkPerf = (isFinal: boolean): void => {
 			dunePerfTimer = null;
 			if (!duneHandle) return;
 			const med = duneHandle.getPerfMedian();
-			// med === 0 means the perf window hasn't filled yet (< 60 frames in
-			// 2s ≈ < 30fps). Treat that as already-failing and fall back.
-			if (med === 0 || med > DUNE_PERF_BUDGET_MS) {
+			if (med > DUNE_PERF_BUDGET_MS) {
 				console.warn(
-					"[bg-viz] dune scene perf below threshold; fallback to static cream",
+					"[bg-viz] dune scene perf below threshold (median %sms); fallback to static cream",
+					med.toFixed(2),
 				);
 				duneFallback = true;
 				disposeDune();
+				return;
 			}
-		}, DUNE_PERF_GATE_DELAY_MS);
+			if (med === 0) {
+				// Perf window hasn't closed yet (< 60 frames collected). On the
+				// first check this is normal — shader compile + texture upload +
+				// first frame stalls eat into the 2s budget. Retry once. On the
+				// final check, no median means babylon is genuinely stuck (no
+				// frames at all in 6s) — fall back. If the engine is producing
+				// frames but slowly, lastFrameMs / individual sample push would
+				// have populated something; med === 0 means the render loop
+				// hasn't ticked even once past frame 60.
+				if (isFinal) {
+					console.warn(
+						"[bg-viz] dune scene never produced a perf sample in %sms; fallback to static cream",
+						DUNE_PERF_GATE_DELAY_MS + DUNE_PERF_GATE_RETRY_DELAY_MS,
+					);
+					duneFallback = true;
+					disposeDune();
+				} else {
+					dunePerfTimer = window.setTimeout(
+						() => checkPerf(true),
+						DUNE_PERF_GATE_RETRY_DELAY_MS,
+					);
+				}
+			}
+			// med > 0 && med <= budget — keep the scene running. No further checks.
+		};
+		dunePerfTimer = window.setTimeout(
+			() => checkPerf(false),
+			DUNE_PERF_GATE_DELAY_MS,
+		);
 	}
 
 	tryMountDune();

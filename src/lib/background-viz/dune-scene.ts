@@ -280,8 +280,15 @@ export function mountDuneSceneOnCanvas(
 		if (samples.length > PERF_WINDOW) samples.shift();
 		frameCount += 1;
 
-		// Recompute median once per window-fill (60 frames).
-		if (frameCount % PERF_WINDOW === 0) {
+		// Recompute median once the window is full (60 frames), then refresh
+		// every 30 frames after that. Previously we only recomputed at exact
+		// 60-frame multiples — meant getPerfMedian() returned 0 for the whole
+		// first 60 frames, then was stale up to 59 frames between updates.
+		// The wallpaper integration's perf gate fires at 2s, so a slow first
+		// shader-compile that delayed the first window-fill past 2s caused
+		// the gate to read 0 and tear down the scene before it ever produced
+		// a real sample (#3 follow-up — observed on safari + cold cache).
+		if (samples.length >= PERF_WINDOW && frameCount % 30 === 0) {
 			currentMedian = median(samples);
 		}
 
