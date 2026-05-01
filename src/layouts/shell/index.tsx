@@ -222,6 +222,7 @@ function ShellContent({
 			/>
 			<Footer />
 			<PersistentPlayer />
+			<div className="cdn-version">0.0.0001</div>
 		</>
 	);
 }
