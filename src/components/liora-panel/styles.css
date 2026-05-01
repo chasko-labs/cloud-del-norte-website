@@ -1,8 +1,11 @@
 /* Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. */
 /* SPDX-License-Identifier: MIT-0 */
 
-/* vt323 — pixel-art CRT terminal font */
-@import url("https://fonts.googleapis.com/css2?family=VT323&family=Caveat:wght@600&display=swap");
+/* TODO(operator): self-host these fonts. currently @import'd from google fonts;
+   replace with @font-face + woff2 in /public/fonts/ before next prod cut.
+   - JetBrains Mono: console + credits, replaces retro-pixel VT323 (off-brand)
+   - Caveat: sticky note handwriting (unchanged) */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap");
 
 /* ── CRT phosphor terminal — glassmorphism bezel + green phosphor screen ────
    outer bezel: cdn-card glassmorphism variant (liora-bezel)
@@ -182,7 +185,7 @@
 /* loading-state label — fades when the canvas turns visible
    (Jake Smeester principle: hosts take a few seconds to load — communicate it) */
 .liora-placeholder-label {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(11px, 4cqi, 16px);
 	letter-spacing: 0.18em;
 	text-transform: lowercase;
@@ -853,7 +856,7 @@
 	bottom: 30px;
 	left: 12px;
 	right: 12px;
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	/* container-query sized so "OS:MACOS 1920×1080  SYS:▓▓▓" fits at narrow
 	   bezel widths. clamp(10 → 4cqi → 13) shrinks with the bezel; gap +
 	   letter-spacing tightened to handle worst-case device-info strings */
@@ -1077,7 +1080,7 @@
 }
 
 .liora-reconnect-label {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 18px;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
@@ -1086,7 +1089,7 @@
 }
 
 .liora-reconnect-btn {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 16px;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
@@ -1118,7 +1121,7 @@
 	bottom: 36px;
 	left: 14px;
 	right: 14px;
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 14px;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
@@ -1746,7 +1749,7 @@
 }
 
 .liora-credits-title {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(32px, 20cqi, 56px);
 	letter-spacing: 0.35em;
 	text-transform: uppercase;
@@ -1769,7 +1772,7 @@
 
 .liora-credits-subtitle {
 	position: relative;
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 15px;
 	letter-spacing: 0.09em;
 	text-transform: uppercase;
@@ -1970,7 +1973,7 @@
 }
 
 .liora-credits-name {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 18px;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
@@ -2008,7 +2011,7 @@
 
 .liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn {
 	pointer-events: auto;
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 13px;
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
@@ -2225,7 +2228,7 @@
 .liora-name-flyout {
 	position: fixed;
 	z-index: 9999;
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 54px;
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
@@ -2456,7 +2459,7 @@
 }
 
 .liora-reconnect-label--inline {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: inherit;
 	letter-spacing: 0.12em;
 	color: var(--cdn-violet, #9060f0);
@@ -2691,7 +2694,7 @@
 }
 
 .liora-credits-prompt-q {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(15px, 5cqi, 19px);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
@@ -2708,7 +2711,7 @@
 }
 
 .liora-credits-prompt-btn {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 14px;
 	letter-spacing: 0.22em;
 	text-transform: uppercase;

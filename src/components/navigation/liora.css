@@ -1,4 +1,11 @@
 /* liora styles extracted from prod theme bundle */
+
+/* TODO(operator): self-host these fonts. currently @import'd from google fonts;
+   replace with @font-face + woff2 in /public/fonts/ before next prod cut.
+   - JetBrains Mono: console + credits, replaces retro-pixel VT323
+   - Caveat: sticky note handwriting (unchanged) */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap");
+
 .liora-frame {
 	flex-direction: column;
 	align-items: center;
@@ -143,8 +150,8 @@
 	-webkit-user-select: none;
 	user-select: none;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: clamp(11px, 4cqi, 16px);
@@ -664,8 +671,8 @@
 	align-items: center;
 	gap: 6px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: clamp(10px, 4cqi, 13px);
@@ -857,8 +864,8 @@
 	text-transform: uppercase;
 	color: #fff5ff;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 18px;
@@ -876,8 +883,8 @@
 	border-radius: 3px;
 	padding: 5px 16px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 16px;
@@ -906,8 +913,8 @@
 	text-align: center;
 	z-index: 20;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 14px;
@@ -1354,8 +1361,8 @@
 		0 0 180px #6818ff40;
 	margin-bottom: 2px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	/* restored toward original scale — 18cqi at 254px = 45.7px, close to
@@ -1383,8 +1390,8 @@
 	/* lift subtitle off names grid below — was 5px */
 	margin-bottom: 12px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 15px;
@@ -1569,8 +1576,8 @@
 	/* 0.5px stroke: letterform definition at small sizes without bloating glyph */
 	-webkit-text-stroke: 0.5px #d296ff80;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 18px;
@@ -1620,8 +1627,8 @@
 	border-radius: 1px;
 	padding: 1px 14px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 13px;
@@ -1797,8 +1804,8 @@
 	white-space: nowrap;
 	transform-origin: bottom;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 54px;
@@ -1911,8 +1918,8 @@
 
 .liora-reconnect-label--inline {
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: inherit;
@@ -2127,8 +2134,8 @@
 		0 0 12px #ff99008c;
 	white-space: nowrap;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: clamp(15px, 5cqi, 19px);
@@ -2155,8 +2162,8 @@
 	min-width: 64px;
 	padding: 4px 18px 3px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 14px;
@@ -2700,7 +2707,7 @@
 }
 
 .liora-stickynote-2-ip {
-	font-family: VT323, "Courier New", monospace;
+	font-family: "JetBrains Mono", "Courier New", monospace;
 	font-size: 0.85em;
 	font-weight: var(--cdn-weight-semibold, 600);
 	letter-spacing: 0.02em;
