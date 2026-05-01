@@ -23,10 +23,45 @@
         outline: none;
         touch-action: none;
       }
+      /* Visual tell when perf gate trips — soft red vignette via outline. */
+      #dune-canvas.dune-perf-degraded {
+        outline: 2px solid rgba(200, 60, 60, 0.6);
+        outline-offset: -2px;
+      }
+      #dune-perf {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        padding: 8px 10px;
+        background: rgba(0, 0, 0, 0.55);
+        color: #f0ede6;
+        font: 11px/1.35 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+        border-radius: 4px;
+        pointer-events: none;
+        user-select: none;
+        min-width: 130px;
+      }
+      #dune-perf .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+      #dune-perf .row span:last-child {
+        font-variant-numeric: tabular-nums;
+      }
+      #dune-perf.degraded {
+        color: #ffb4b4;
+        background: rgba(80, 0, 0, 0.7);
+      }
     </style>
   </head>
   <body>
     <canvas id="dune-canvas"></canvas>
+    <div id="dune-perf" aria-hidden="true">
+      <div class="row"><span>fps</span><span id="dune-perf-fps">—</span></div>
+      <div class="row"><span>median</span><span id="dune-perf-med">—</span></div>
+      <div class="row"><span>last</span><span id="dune-perf-last">—</span></div>
+    </div>
     <script type="module" src="/dune-test/main.ts"></script>
   </body>
 </html>
