@@ -209,7 +209,9 @@ auth chain: workload x509 cert → IAM RolesAnywhere → `heraldstack-ci-deploy`
 | `main` | `s3://awsaerospace.org`      | `ECC3LP1BL2CZS`         |
 | `dev`  | `s3://dev.clouddelnorte.org` | woodpecker secret       |
 
-pipeline steps: `install` → `build` → `deploy` (main) or `deploy-dev` (dev)
+pipeline steps: `install` → `build` → `deploy` (main) or `deploy-dev` (dev) → `screenshot-prod` / `screenshot-dev`
+
+post-deploy screenshot captures run automatically and are available at predictable URLs — see [docs/ops/ci-screenshots.md](docs/ops/ci-screenshots.md) for the URL pattern and capture matrix.
 
 ### Manual deploy
 
