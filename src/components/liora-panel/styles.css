@@ -2503,74 +2503,69 @@
 }
 
 /* AMAZON SUMERIAN words inside "AMAZON SUMERIAN TEAM" — the entity-name pop:
-   aws-orange foreground, outside-only black outline via 8-direction text-shadow
-   stack (renders behind the glyph fill so the warm orange stays unobscured —
-   see 75761f87 for white-stroke removal, f3a3b431 for discontinued inside-stroke).
-   text-stroke paints on the glyph edge half-inside half-outside and is removed;
-   text-shadow at 0.5px cardinal + 0.35px diagonal gives a subtle outside-only ring.
-   layered purple backglow + drop-shadow for 3D depth, shimmer animation pulses
-   while the team line is on-screen. inline-block needed for transforms */
+   aws-orange foreground on a fully opaque deep-navy chip-shadow so the glyphs
+   read as a billboard plate instead of fighting the violet phosphor + scanlines.
+   thick black outline (1.2px cardinal / 0.85px diagonal) seals every glyph edge.
+   warm gold halo dialled down so contrast wins; violet backglow removed —
+   it was tinting the orange purple at the edges. inline-block enables transforms.
+   history: 75761f87 white-stroke removed; f3a3b431 inside-stroke discontinued;
+   db4c8813 added 8-dir 0.5px outline (insufficient — this commit thickens). */
 .liora-credits-amzn {
 	display: inline-block;
 	color: var(--cdn-aws-orange, #ff9900);
-	/* outside-only black outline via 8-direction text-shadow stack (0.5px) —
-	   renders behind the glyph, no inside bleed. outline first in list = top layer */
+	font-weight: 400;
+	/* slightly larger + tighter than surrounding subtitle to read as a marquee */
+	font-size: 1.18em;
+	letter-spacing: 0.06em;
+	/* thick 8-direction black outline (1.2px cardinal, 0.85px diagonal) seals
+	   the glyph edges. warm gold halo + dark drop-shadow only — no violet
+	   backglow (it was bleeding into the orange and reducing contrast) */
 	text-shadow:
-		0.5px 0 0 #000,
-		-0.5px 0 0 #000,
-		0 0.5px 0 #000,
-		0 -0.5px 0 #000,
-		0.35px 0.35px 0 #000,
-		-0.35px 0.35px 0 #000,
-		0.35px -0.35px 0 #000,
-		-0.35px -0.35px 0 #000,
-		/* warm glow + depth shadows below */
-		0 0 3px rgba(255, 200, 80, 0.9),
-		0 0 8px rgba(255, 153, 0, 0.7),
-		0 0 14px rgba(144, 96, 240, 0.85),
-		0 0 28px rgba(144, 96, 240, 0.55),
-		0 2px 0 rgba(40, 20, 60, 0.55);
+		1.2px 0 0 #000,
+		-1.2px 0 0 #000,
+		0 1.2px 0 #000,
+		0 -1.2px 0 #000,
+		0.85px 0.85px 0 #000,
+		-0.85px 0.85px 0 #000,
+		0.85px -0.85px 0 #000,
+		-0.85px -0.85px 0 #000,
+		/* warm gold halo, no violet — purple was tinting the orange edge */
+		0 0 4px rgba(255, 220, 110, 0.7),
+		0 0 10px rgba(255, 153, 0, 0.55),
+		0 2px 0 rgba(0, 0, 24, 0.7);
 	animation: liora-amzn-shimmer 1.4s ease-in-out infinite alternate;
 }
 
 @keyframes liora-amzn-shimmer {
 	0% {
-		/* outside-only black outline — held constant through shimmer cycle */
 		text-shadow:
-			0.5px 0 0 #000,
-			-0.5px 0 0 #000,
-			0 0.5px 0 #000,
-			0 -0.5px 0 #000,
-			0.35px 0.35px 0 #000,
-			-0.35px 0.35px 0 #000,
-			0.35px -0.35px 0 #000,
-			-0.35px -0.35px 0 #000,
-			/* warm glow dim phase */
-			0 0 3px rgba(255, 200, 80, 0.85),
-			0 0 8px rgba(255, 153, 0, 0.7),
-			0 0 14px rgba(144, 96, 240, 0.7),
-			0 0 28px rgba(144, 96, 240, 0.45),
-			0 2px 0 rgba(40, 20, 60, 0.5);
+			1.2px 0 0 #000,
+			-1.2px 0 0 #000,
+			0 1.2px 0 #000,
+			0 -1.2px 0 #000,
+			0.85px 0.85px 0 #000,
+			-0.85px 0.85px 0 #000,
+			0.85px -0.85px 0 #000,
+			-0.85px -0.85px 0 #000,
+			0 0 4px rgba(255, 220, 110, 0.65),
+			0 0 10px rgba(255, 153, 0, 0.5),
+			0 2px 0 rgba(0, 0, 24, 0.7);
 		filter: brightness(1) saturate(1);
 	}
 	100% {
-		/* outside-only black outline — held constant through shimmer cycle */
 		text-shadow:
-			0.5px 0 0 #000,
-			-0.5px 0 0 #000,
-			0 0.5px 0 #000,
-			0 -0.5px 0 #000,
-			0.35px 0.35px 0 #000,
-			-0.35px 0.35px 0 #000,
-			0.35px -0.35px 0 #000,
-			-0.35px -0.35px 0 #000,
-			/* warm glow bright phase */
-			0 0 5px rgba(255, 220, 110, 1),
-			0 0 12px rgba(255, 175, 50, 0.95),
-			0 0 22px rgba(180, 120, 255, 1),
-			0 0 44px rgba(144, 96, 240, 0.7),
-			0 2px 0 rgba(40, 20, 60, 0.6);
-		filter: brightness(1.18) saturate(1.15);
+			1.2px 0 0 #000,
+			-1.2px 0 0 #000,
+			0 1.2px 0 #000,
+			0 -1.2px 0 #000,
+			0.85px 0.85px 0 #000,
+			-0.85px 0.85px 0 #000,
+			0.85px -0.85px 0 #000,
+			-0.85px -0.85px 0 #000,
+			0 0 6px rgba(255, 230, 130, 0.85),
+			0 0 14px rgba(255, 175, 50, 0.7),
+			0 2px 0 rgba(0, 0, 24, 0.75);
+		filter: brightness(1.12) saturate(1.1);
 	}
 }
 
