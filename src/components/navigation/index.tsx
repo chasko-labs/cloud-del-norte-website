@@ -300,13 +300,12 @@ function LioraFrame() {
 				>
 					<span className="liora-stickynote-2-line">
 						welcome, {visitor?.greeting ?? ""}
-						{visitor?.flag ? (
-							<span className="liora-stickynote-2-flag" aria-hidden="true">
-								{" "}
-								{visitor.flag}
-							</span>
-						) : null}
 					</span>
+					{visitor?.flag ? (
+						<span className="liora-stickynote-2-flag" aria-hidden="true">
+							{visitor.flag}
+						</span>
+					) : null}
 					{visitor?.ip ? (
 						<span className="liora-stickynote-2-ip">{visitor.ip}</span>
 					) : null}
