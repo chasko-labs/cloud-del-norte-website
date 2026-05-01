@@ -125,9 +125,9 @@
 
 	/* Light mode */
 	.cdn-viz-active:not(.awsui-dark-mode)
-		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode)
-		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]) {
+		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
 		background-color: rgba(
 			237,
 			229,
@@ -142,9 +142,9 @@
 
 	/* Dark mode */
 	.cdn-viz-active.awsui-dark-mode
-		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
 	.cdn-viz-active.awsui-dark-mode
-		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]) {
+		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
 		background-color: rgba(
 			10,
 			12,
@@ -162,11 +162,11 @@
 	/* Light mode */
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_has-header_"]
-		> [class*="awsui_background_"],
+		> [class*="awsui_background_"]:not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_content-layout"]
-		> [class*="awsui_background"],
-	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"] {
+		> [class*="awsui_background"]:not(#\9),
+	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
 		background-color: rgba(
 			237,
 			229,
@@ -182,11 +182,11 @@
 	/* Dark mode */
 	.cdn-viz-active.awsui-dark-mode
 		[class*="awsui_has-header_"]
-		> [class*="awsui_background_"],
+		> [class*="awsui_background_"]:not(#\9),
 	.cdn-viz-active.awsui-dark-mode
 		[class*="awsui_content-layout"]
-		> [class*="awsui_background"],
-	.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"] {
+		> [class*="awsui_background"]:not(#\9),
+	.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
 		background-color: rgba(
 			10,
 			12,
@@ -202,8 +202,8 @@
 	/* ── Main content area — content tier ────────────────────────────────── */
 
 	/* Light mode */
-	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"],
-	.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"] {
+	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9),
+	.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"]:not(#\9) {
 		background-color: rgba(
 			237,
 			229,
@@ -217,8 +217,8 @@
 	}
 
 	/* Dark mode */
-	.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"],
-	.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"] {
+	.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"]:not(#\9),
+	.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"]:not(#\9) {
 		background-color: rgba(
 			10,
 			12,
@@ -244,20 +244,20 @@
 
 :root:not(.awsui-dark-mode)
 	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"],
+	> [class*="awsui_background_"]:not(#\9),
 :root:not(.awsui-dark-mode)
 	[class*="awsui_content-layout"]
-	> [class*="awsui_background"],
-:root:not(.awsui-dark-mode) [class*="awsui_header-background"] {
+	> [class*="awsui_background"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
 
-.awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"],
+.awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"]:not(#\9),
 .awsui-dark-mode
 	[class*="awsui_content-layout"]
-	> [class*="awsui_background"],
-.awsui-dark-mode [class*="awsui_header-background"] {
+	> [class*="awsui_background"]:not(#\9),
+.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
@@ -269,18 +269,18 @@
    cannot reinstate a solid bg. */
 .cdn-viz-active:not(.awsui-dark-mode)
 	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"],
+	> [class*="awsui_background_"]:not(#\9),
 .cdn-viz-active:not(.awsui-dark-mode)
 	[class*="awsui_content-layout"]
-	> [class*="awsui_background"],
-.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"],
+	> [class*="awsui_background"]:not(#\9),
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9),
 .cdn-viz-active.awsui-dark-mode
 	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"],
+	> [class*="awsui_background_"]:not(#\9),
 .cdn-viz-active.awsui-dark-mode
 	[class*="awsui_content-layout"]
-	> [class*="awsui_background"],
-.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"] {
+	> [class*="awsui_background"]:not(#\9),
+.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
@@ -289,14 +289,14 @@
    awsui_drawers-container_ wraps both nav + tools drawers at the outermost
    layer. awsui_main_ wraps the full content column. Both should be transparent
    so the wallpaper canvas at z-index:-2 shows through without any opaque shell. */
-:root:not(.awsui-dark-mode) [class*="awsui_drawers-container_"],
-:root:not(.awsui-dark-mode) [class*="awsui_main_"] {
+:root:not(.awsui-dark-mode) [class*="awsui_drawers-container_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_main_"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
 
-.awsui-dark-mode [class*="awsui_drawers-container_"],
-.awsui-dark-mode [class*="awsui_main_"] {
+.awsui-dark-mode [class*="awsui_drawers-container_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_main_"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
@@ -336,27 +336,27 @@
 /* Light mode */
 :root:not(.awsui-dark-mode) {
 	/* Outer containers — fully transparent */
-	main[class*="awsui_layout_"],
-	main[class*="awsui_layout_"] > [class*="navigation-container"],
-	main[class*="awsui_layout_"] > [class*="tools-container"],
-	[class*="awsui_navigation-container_"],
-	[class*="awsui_tools-container_"],
-	[class*="awsui_breadcrumbs_"],
-	[class*="awsui_scrolling-background_"],
-	[class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]) {
+	main[class*="awsui_layout_"]:not(#\9),
+	main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
+	main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
+	[class*="awsui_navigation-container_"]:not(#\9),
+	[class*="awsui_tools-container_"]:not(#\9),
+	[class*="awsui_breadcrumbs_"]:not(#\9),
+	[class*="awsui_scrolling-background_"]:not(#\9),
+	[class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
 		background: transparent !important;
 		background-color: transparent !important;
 	}
 
 	/* Inner nav drawer — atmospheric panel tier (0.88 cream + blur 6px) */
-	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]) {
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9) {
 		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
 	}
 
 	/* Inner tools panel — atmospheric panel tier */
-	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]) {
+	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
 		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
@@ -374,27 +374,27 @@
 /* Dark mode — same selectors, dark navy bg color */
 .awsui-dark-mode {
 	/* Outer containers — fully transparent */
-	main[class*="awsui_layout_"],
-	main[class*="awsui_layout_"] > [class*="navigation-container"],
-	main[class*="awsui_layout_"] > [class*="tools-container"],
-	[class*="awsui_navigation-container_"],
-	[class*="awsui_tools-container_"],
-	[class*="awsui_breadcrumbs_"],
-	[class*="awsui_scrolling-background_"],
-	[class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]) {
+	main[class*="awsui_layout_"]:not(#\9),
+	main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
+	main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
+	[class*="awsui_navigation-container_"]:not(#\9),
+	[class*="awsui_tools-container_"]:not(#\9),
+	[class*="awsui_breadcrumbs_"]:not(#\9),
+	[class*="awsui_scrolling-background_"]:not(#\9),
+	[class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
 		background: transparent !important;
 		background-color: transparent !important;
 	}
 
 	/* Inner nav drawer — atmospheric panel tier (dark navy) */
-	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]) {
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9) {
 		background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
 	}
 
 	/* Inner tools panel — atmospheric panel tier */
-	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]) {
+	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
 		background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));

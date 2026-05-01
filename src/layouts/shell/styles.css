@@ -38,18 +38,18 @@
    blur when cdn-viz-active is present. */
 :root:not(.awsui-dark-mode)
 	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"],
+	> [class*="awsui_background_"]:not(#\9),
 :root:not(.awsui-dark-mode)
 	[class*="awsui_content-layout"]
-	> [class*="awsui_background"],
-:root:not(.awsui-dark-mode) [class*="awsui_header-background"] {
+	> [class*="awsui_background"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
 
-.awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"],
-.awsui-dark-mode [class*="awsui_content-layout"] > [class*="awsui_background"],
-.awsui-dark-mode [class*="awsui_header-background"] {
+.awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_content-layout"] > [class*="awsui_background"]:not(#\9),
+.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
@@ -306,8 +306,8 @@ main[class*="awsui_layout"] {
 	animation: none !important;
 }
 
-.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_scrolling-background"],
-.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"] {
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_scrolling-background"]:not(#\9),
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
@@ -321,11 +321,11 @@ main[class*="awsui_layout"] {
    rules provide atmospheric blur at the background-color level when canvas is active;
    those are now the sole authority for header strip atmospheric treatment. */
 .cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_has-header_"]
-	> [class*="awsui_background_"],
+	> [class*="awsui_background_"]:not(#\9),
 .cdn-viz-active:not(.awsui-dark-mode)
 	[class*="awsui_content-layout"]
-	> [class*="awsui_background"],
-.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"] {
+	> [class*="awsui_background"]:not(#\9),
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 	backdrop-filter: none;
@@ -334,11 +334,11 @@ main[class*="awsui_layout"] {
 
 .cdn-viz-active.awsui-dark-mode
 	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"],
+	> [class*="awsui_background_"]:not(#\9),
 .cdn-viz-active.awsui-dark-mode
 	[class*="awsui_content-layout"]
-	> [class*="awsui_background"],
-.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"] {
+	> [class*="awsui_background"]:not(#\9),
+.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 	backdrop-filter: none;
@@ -444,8 +444,8 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    NOT overriding [has-default-background] — that selector matches every
    Container on the page and fights Cloudscape's hover animation, causing
    the builder center section to flash on mouseover. */
-:root:not(.awsui-dark-mode) [class*="awsui_scrolling-background"],
-:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"] {
+:root:not(.awsui-dark-mode) [class*="awsui_scrolling-background"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"]:not(#\9) {
 	background: #ede5d4 !important;
 	background-color: #ede5d4 !important;
 }
