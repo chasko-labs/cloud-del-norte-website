@@ -945,6 +945,27 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	background-color: #ede5d4;
 }
 
+/* ── Tighten Cloudscape AppLayout's nav→main gap ──────────────────────────
+   AppLayout's MAIN renders a CSS grid:
+     min-content | minmax(--awsui-content-gap-left, 1fr) | content | ...
+   At ≥689px the .awsui_has-content-gap-left class on the MAIN element sets
+     --awsui-content-gap-left-6b9ypa: var(--space-layout-content-horizontal, 24px)
+   creating a 24px column between the nav drawer's right edge (281px) and the
+   content column's left edge (305px). Bryan wants the main column flush.
+
+   Override: zero the custom property on the same MAIN element. We target the
+   has-content-gap-left class so this only affects the LEFT gap — content-gap-right
+   still gets its 24px (preserves right toggles gutter spacing). Cloudscape's
+   rule uses :not(#\9) for +1 ID specificity; we match it here.
+
+   Internal main-column padding is unaffected — that lives on descendant
+   container elements, not on this grid track. Mobile (<688px) uses overlay
+   navigation so this rule no longer reserves a column gutter — confirmed
+   no responsive regression. */
+[class*="awsui_layout_"][class*="awsui_has-content-gap-left_"]:not(#\9) {
+	--awsui-content-gap-left-6b9ypa: 0px !important;
+}
+
 /* ── Wobble fix: keep document always taller than viewport ────────────────
    Multiple timer-driven content changes can flip the document between
    shorter-than-viewport and taller-than-viewport, which toggles the OS
