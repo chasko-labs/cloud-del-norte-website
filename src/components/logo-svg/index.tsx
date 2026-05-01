@@ -55,17 +55,32 @@ const STYLES = `
   }
   /* Arm rhythm — slower call-and-response below the bulbs. Same 6-stop liora
      vocabulary but stretched (longer durations on the elements) and shallower
-     dim floor (arms are large fills, full dim looks like a flicker out). */
+     dim floor (arms are large fills, full dim looks like a flicker out).
+     Opacity removed from this keyframe — .cdn-arm opacity is now driven by
+     --cdn-mid (audio reactive). Filter transitions retained. */
   @keyframes cdn-arm-blink {
-    0%   { opacity: 0.85; filter: url(#cdn-arm-glow) saturate(1) hue-rotate(-4deg); }
-    28%  { opacity: 1;    filter: url(#cdn-arm-glow) saturate(1) hue-rotate(0deg); }
-    42%  { opacity: 0.7;  filter: url(#cdn-arm-glow) saturate(0.8) hue-rotate(8deg); }
-    62%  { opacity: 0.55; filter: url(#cdn-arm-glow) saturate(0.7) hue-rotate(14deg); }
-    78%  { opacity: 0.78; filter: url(#cdn-arm-glow) saturate(0.9) hue-rotate(4deg); }
-    100% { opacity: 0.85; filter: url(#cdn-arm-glow) saturate(1) hue-rotate(-4deg); }
+    0%   { filter: url(#cdn-arm-glow) saturate(1) hue-rotate(-4deg); }
+    28%  { filter: url(#cdn-arm-glow) saturate(1) hue-rotate(0deg); }
+    42%  { filter: url(#cdn-arm-glow) saturate(0.8) hue-rotate(8deg); }
+    62%  { filter: url(#cdn-arm-glow) saturate(0.7) hue-rotate(14deg); }
+    78%  { filter: url(#cdn-arm-glow) saturate(0.9) hue-rotate(4deg); }
+    100% { filter: url(#cdn-arm-glow) saturate(1) hue-rotate(-4deg); }
   }
-  .cdn-bulb { filter: url(#cdn-bulb-glow); }
-  .cdn-arm  { filter: url(#cdn-arm-glow); }
+  /* Audio-reactive couplings — :root cascade exposes --cdn-bass / --cdn-mid /
+     --cdn-flux from src/lib/background-viz/audio.ts. Defaults to 0 when silent
+     (per @property initial-value), so silent = identical to pre-reactive state. */
+  .cdn-bulb {
+    filter: url(#cdn-bulb-glow);
+    transform: scale(calc(1 + var(--cdn-bass, 0) * 0.18));
+    transform-origin: center;
+    transform-box: fill-box;
+  }
+  /* Mid-band breathes the arm fill silhouette — instruments/vocals make the
+     arms "fill in" from a 0.7 floor up to 1.0 at full mid. */
+  .cdn-arm  {
+    filter: url(#cdn-arm-glow);
+    opacity: calc(0.7 + var(--cdn-mid, 0) * 0.3);
+  }
   /* cdn-bulb-tip-hero — asymmetric focal point on the topmost tip (574,351).
      Same blink cadence as siblings but a brighter, wider drop-shadow extends
      its halo a few px beyond peer bulbs at nav size (60-80px). Halo IS the
@@ -98,7 +113,14 @@ const STYLES = `
       filter: url(#cdn-bulb-glow) drop-shadow(0 0 5px #e0c0ff) drop-shadow(0 0 9px #b894ff) saturate(1.1) hue-rotate(0deg);
     }
   }
-  .cdn-bulb-tip-hero { filter: url(#cdn-bulb-glow); }
+  /* Hero tip — focal point of the mark. Flux (spectral onset / transients)
+     ignites a halo: 6px at rest, up to 20px on snare/vocal attacks. The
+     keyframe (cdn-bulb-blink-hero, prefers-reduced-motion: no-preference)
+     overrides this filter while animating; under reduced-motion this rule
+     stands and flux drives the halo directly. */
+  .cdn-bulb-tip-hero {
+    filter: drop-shadow(0 0 calc(6px + var(--cdn-flux, 0) * 14px) rgba(155, 92, 244, 0.85));
+  }
   @media (prefers-reduced-motion: no-preference) {
     /* Default duration; per-element style="animation-duration:Xs" overrides
        (12 independent durations 1.5s-3.4s, mirrors liora .liora-led:nth-child rhythm). */
@@ -109,10 +131,10 @@ const STYLES = `
     .cdn-bulb-tip-hero { animation: cdn-bulb-blink-hero 2.5s linear infinite; }
   }
   @media (prefers-reduced-motion: reduce) {
-    /* Hero tip falls back to a static brighter halo, no animation. */
-    .cdn-bulb-tip-hero {
-      filter: url(#cdn-bulb-glow) drop-shadow(0 0 5px #e0c0ff) drop-shadow(0 0 9px #b894ff);
-    }
+    /* Freeze audio-reactive transforms — bulbs sit at scale 1.0 regardless
+       of bass amplitude. Filter halos still respond (no motion involved).
+       Arm opacity still rides --cdn-mid (also no motion). */
+    .cdn-bulb { transform: scale(1); }
   }
   /* Light-mode override — SVG is inlined so :root:not(.awsui-dark-mode) selectors
      resolve against host theme class (not OS prefers-color-scheme). Mirrors liora
