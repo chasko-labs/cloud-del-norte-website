@@ -514,3 +514,26 @@
 	outline-offset: 3px;
 	box-shadow: 0 0 0 4px rgba(144, 96, 240, 0.2);
 }
+
+/* ==========================================================================
+   Stable slot — visual layer of the sticky-state pattern.
+
+   Pairs with src/hooks/useStickyPoll.ts (data-layer fix). Apply this class
+   to a wrapper that conditionally renders dynamic-visibility children (live
+   hero blocks, status-gated cards). The wrapper is rendered ALWAYS so that
+   children appearing / disappearing don't unmount a parent and reflow the
+   page below.
+
+   The class deliberately reserves no min-height: when empty it collapses to
+   0. That trade is intentional — pairing this with a sticky data hook means
+   transient API failures cannot flap the children, so the only remaining
+   visibility transition is a real state change (genuinely going live), and
+   forcing dead-space reservation for that case is worse UX than the one-
+   time real shift.
+
+   See docs/design-system/stable-state.md for the full rationale.
+   ========================================================================== */
+.cdn-stable-slot {
+	/* explicit no-op — kept as a hook for future dynamic-visibility wrappers
+	   so the className becomes a documentation anchor for the pattern */
+}
