@@ -1,3 +1,6 @@
+/* CdnWallpaper Suite — atmospheric utility classes. Must be first import. */
+@import "../../styles/cdn-atmospheric.css";
+
 @property --cdn-bass {
 	syntax: "<number>";
 	inherits: true;
@@ -1050,8 +1053,8 @@ body {
    canvas. When cdn-viz-active IS present, the existing frosted-glass rules
    above win via specificity (they're scoped with .cdn-viz-active prefix).
 
-   Import cdn-atmospheric.css from this file so it's bundled with the shell. */
-@import "../../styles/cdn-atmospheric.css";
+   Import cdn-atmospheric.css is at the top of this file (CSS @import must
+   precede all other rules). */
 
 /* Side navigation — atmospheric-panel tier */
 .cdn-viz-active:not(.awsui-dark-mode)
