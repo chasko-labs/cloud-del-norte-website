@@ -560,7 +560,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    container query) — size containment defers child intrinsic-size resolution,
    and an absolute replaced element with width:auto can't recover. object-fit
    on a 100%/100% box is robust to containment context. */
-.cdn-logo-hero img {
+.cdn-logo-hero .cdn-logo-img {
 	position: absolute;
 	inset: 0;
 	width: 100%;
@@ -597,7 +597,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	}
 }
 
-.cdn-logo-hero:hover img {
+.cdn-logo-hero:hover .cdn-logo-img {
 	transform: scale(1.08);
 }
 
@@ -672,7 +672,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	}
 }
 
-.awsui-dark-mode .cdn-logo-hero img {
+.awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
 	filter:
 		drop-shadow(0 0 2px rgba(201, 162, 63, 0.85))
 		drop-shadow(0 0 4px rgba(155, 92, 244, 1))
@@ -682,7 +682,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	.awsui-dark-mode .cdn-logo-hero img {
+	.awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
 		animation: cdn-logo-breathe 5s ease-in-out infinite;
 	}
 }
@@ -726,7 +726,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	}
 }
 
-:root:not(.awsui-dark-mode) .cdn-logo-hero img {
+:root:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img {
 	filter:
 		drop-shadow(0 0 3px rgba(139, 90, 43, 0.72))
 		drop-shadow(0 0 9px rgba(201, 162, 63, 0.45))
@@ -734,7 +734,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	:root:not(.awsui-dark-mode) .cdn-logo-hero img {
+	:root:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img {
 		animation: cdn-logo-breathe-light 6s ease-in-out infinite;
 	}
 }

@@ -7,6 +7,7 @@ import AppLayout, {
 import TopNavigation from "@cloudscape-design/components/top-navigation";
 import { useCallback, useEffect, useState } from "react";
 import Footer from "../../components/footer";
+import LogoSvg from "../../components/logo-svg";
 import PersistentPlayer from "../../components/persistent-player";
 import { AuthProvider } from "../../contexts/auth-context";
 import { LocaleProvider } from "../../contexts/locale-context";
@@ -134,39 +135,28 @@ function ShellContent({
 		};
 	}, []);
 
-	// 3D star logo — registers <cdn-star-logo> custom element. SVG <img> renders
-	// while this is loading; CSS :defined swaps to canvas once the element registers.
-	// Decorative — defer to idle so the 197KB Babylon-derived chunk doesn't sit on
-	// the critical path. <img> fallback covers the gap.
+	// 3D star logo — registers <cdn-star-logo> custom element. The 197KB Babylon-derived
+	// chunk only loads when a <cdn-star-logo> element is observed in the DOM. The shell
+	// renders one inside .cdn-logo-hero, but a container-query (min-width: 200px) gates
+	// its display:block, so on nav-only pages (currently every page; nav is 60-80px) the
+	// element exists but isn't visible. We still trigger the import on observation — the
+	// inlined SVG is the primary mark, the 3D layer is enhancement when it lands. Future
+	// nav-only routes that drop <cdn-star-logo> entirely skip the chunk.
 	useEffect(() => {
-		let cancelled = false;
-		const idleTask = () => {
-			if (cancelled) return;
+		let imported = false;
+		const tryImport = () => {
+			if (imported) return;
+			if (!document.querySelector("cdn-star-logo")) return;
+			imported = true;
 			void import("../../lib/cdn-star-logo/index").catch(() => {
-				// fallback: <img> stays visible — no action needed
+				// fallback: inline SVG stays visible — no action needed
 			});
 		};
-		const w = window as unknown as {
-			requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-			cancelIdleCallback?: (h: number) => void;
-			setTimeout: (cb: () => void, ms: number) => number;
-			clearTimeout: (h: number) => void;
-		};
-		const usingIdle = typeof w.requestIdleCallback === "function";
-		const handle: number = usingIdle
-			? (w.requestIdleCallback as (cb: () => void, opts?: { timeout: number }) => number)(
-					idleTask,
-					{ timeout: 2000 },
-				)
-			: w.setTimeout(idleTask, 200);
-		return () => {
-			cancelled = true;
-			if (usingIdle && typeof w.cancelIdleCallback === "function") {
-				w.cancelIdleCallback(handle);
-			} else {
-				w.clearTimeout(handle);
-			}
-		};
+		tryImport(); // immediate check on mount
+		if (imported) return;
+		const obs = new MutationObserver(tryImport);
+		obs.observe(document.body, { childList: true, subtree: true });
+		return () => obs.disconnect();
 	}, []);
 
 	// Add resize listener to handle viewport changes
@@ -217,13 +207,7 @@ function ShellContent({
 				<a href={identityHref} className="cdn-logo-hero" aria-label="Cloud Del Norte — home">
 					{/* @ts-ignore — custom element from /lib/cdn-star-logo */}
 					<cdn-star-logo transparent="" no-rotate=""></cdn-star-logo>
-					<img
-						src="/brand/logo.svg"
-						alt=""
-						aria-hidden="true"
-						fetchPriority="high"
-						decoding="async"
-					/>
+					<LogoSvg className="cdn-logo-img" aria-hidden="true" />
 				</a>
 				<TopNavigation
 					identity={{ href: identityHref }}

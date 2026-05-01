@@ -22,7 +22,7 @@
     </feMerge>
   </filter>
 </defs>
-<style>
+<style><![CDATA[
   /* cdn-bulb-blink — liora-LED rhythm (src/components/navigation/liora.css L2436-2468).
      6-stop keyframe: bright plateau (0-28%) → cooling dim with hue drift (42%) →
      cold floor (62%) → warming back (78%) → bright (100%). Filament metaphor:
@@ -133,7 +133,7 @@
       100% { opacity: 0.85; filter: url(#cdn-bulb-glow) drop-shadow(0 0 1.5px #c8a0ff) saturate(1) hue-rotate(0deg); }
     }
   }
-</style>
+]]></style>
 
 <path d="M0,0 L8,1 L43,13 L38,18 L28,26 L12,39 L-1,49 L-17,62 L-26,69 L-40,80 L-56,93 L-67,102 L-80,112 L-91,121 L-90,126 L-70,183 L-59,214 L-45,253 L-31,293 L-31,295 L-37,293 L-64,278 L-79,269 L-84,265 L-103,209 L-122,156 L-138,110 L-136,106 L-122,95 L-113,88 L-99,77 L-85,66 L-75,58 L-57,44 L-41,32 L-28,22 L-17,13 L-4,3 Z " fill="#FCFCFD" transform="translate(764,457)"/>
 <path d="M0,0 L5,1 L25,13 L53,30 L69,39 L84,48 L99,57 L123,71 L145,84 L152,89 L156,105 L163,136 L163,138 L157,136 L135,122 L112,108 L93,96 L76,86 L60,76 L35,61 L8,45 L5,43 L0,44 L-11,51 L-32,64 L-55,78 L-74,90 L-100,106 L-121,119 L-139,130 L-154,139 L-157,139 L-151,100 L-150,95 L-132,84 L-109,69 L-89,57 L-75,48 L-64,41 L-40,26 L-15,10 Z " fill="#FBFBFC" transform="translate(508,662)"/>
