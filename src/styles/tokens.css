@@ -155,6 +155,12 @@
 	--cdn-gradient-nav-mid: #4a2010;
 	--cdn-gradient-nav-end: #3d1a08;
 
+	/* ---------- Shimmer highlight tint — harmonizes with surface ---------- */
+	/* light mode: faint amber-tinted cream for sweeps over warm-brown nav surface
+	   and brighter cream for text-clip shimmers over dark text */
+	--cdn-shimmer-color: rgba(201, 162, 63, 0.18); /* amber tint, surface sweeps */
+	--cdn-shimmer-text-color: rgba(250, 247, 240, 0.7); /* warm cream highlight, text-clip */
+
 	/* ---------- Table header visual weight — light mode ---------- */
 	--color-background-table-header-hdjxos: #ede8db; /* warm amber — matches container header */
 }
@@ -226,6 +232,11 @@
 	--cdn-gradient-nav-start: #00002a;
 	--cdn-gradient-nav-mid: #200050;
 	--cdn-gradient-nav-end: #30006a;
+
+	/* ---------- Shimmer highlight tint — dark mode ---------- */
+	/* faint violet for surface sweeps; brighter lavender for text-clip shimmers */
+	--cdn-shimmer-color: rgba(144, 96, 240, 0.18); /* violet tint, surface sweeps */
+	--cdn-shimmer-text-color: rgba(199, 184, 232, 0.85); /* lavender highlight, text-clip */
 }
 
 /* ==========================================================================

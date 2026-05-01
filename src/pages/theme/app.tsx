@@ -96,13 +96,13 @@ const animationDemos = [
 	{
 		key: "nav-shimmer",
 		label: "cdn-shimmer",
-		description: "nav shimmer — 4s linear sweep",
+		description: "nav shimmer — 10s sweep, 9s idle pause, brand-tinted",
 		demo: "shimmer-bar",
 	},
 	{
 		key: "station-shimmer",
 		label: "krux-station-shimmer",
-		description: "station text — 3s periodic sweep",
+		description: "station text — 8s cycle, ~7.4s idle pause, brand-tinted",
 		demo: "station-text",
 	},
 	{
@@ -419,7 +419,7 @@ function InteractiveStatesDemo() {
 					</span>
 				</div>
 				<span className="theme-interactive-label">
-					top nav shimmer — cdn-shimmer 4s linear
+					top nav shimmer — cdn-shimmer 10s linear
 				</span>
 			</div>
 

@@ -74,13 +74,17 @@
 }
 
 /* ENHANCEMENT 5 — Top nav shimmer via ::after pseudo-element
-   Very subtle moving gradient — opacity ≤ 0.04 so it doesn't distract. */
+   Slow, infrequent sweep tinted to harmonize with the nav surface.
+   10s cycle: highlight sweeps in first ~10% (1s), then offscreen for 9s. */
 
 @keyframes cdn-shimmer {
-	from {
+	0% {
 		background-position: 200% center;
 	}
-	to {
+	10% {
+		background-position: -200% center;
+	}
+	100% {
 		background-position: -200% center;
 	}
 }
@@ -90,11 +94,12 @@
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
-	/* Opacity capped at 0.04 — barely perceptible shimmer */
+	/* Highlight tint pulled from --cdn-shimmer-color so light/dark modes harmonize
+	   with the warm-brown / navy-violet nav surface respectively. */
 	background: linear-gradient(
 		90deg,
 		transparent 0%,
-		rgba(255, 255, 255, 0.04) 50%,
+		var(--cdn-shimmer-color, rgba(255, 255, 255, 0.04)) 50%,
 		transparent 100%
 	);
 	background-size: 200% 100%;
@@ -103,7 +108,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
 	#top-nav::after {
-		animation: cdn-shimmer 4s linear infinite;
+		animation: cdn-shimmer 10s linear infinite;
 		will-change: background-position;
 	}
 }

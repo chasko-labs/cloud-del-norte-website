@@ -646,14 +646,16 @@
 }
 
 /* station name — periodic shimmer sweep when idle (not playing, not hovering)
-   3s cycle: shimmer sweeps in first ~0.4s, static for the rest.
+   8s cycle: shimmer sweeps in first ~0.65s (8% of cycle), static for the
+   remaining ~7.35s (92%). Highlight tint comes from --cdn-shimmer-text-color
+   so light mode reads as warm cream, dark mode as soft lavender.
    Playing + hover states cancel the animation via animation: none overrides above. */
 
 @keyframes krux-station-shimmer {
 	0% {
 		background-position: 200% center;
 	}
-	14% {
+	8% {
 		background-position: -200% center;
 	}
 	100% {
@@ -666,7 +668,7 @@
 		90deg,
 		var(--cdn-color-text-secondary, #6b5b7a) 0%,
 		var(--cdn-color-text-secondary, #6b5b7a) 25%,
-		rgba(255, 255, 255, 0.85) 50%,
+		var(--cdn-shimmer-text-color, rgba(255, 255, 255, 0.85)) 50%,
 		var(--cdn-color-text-secondary, #6b5b7a) 75%,
 		var(--cdn-color-text-secondary, #6b5b7a) 100%
 	);
@@ -676,7 +678,7 @@
 	-webkit-text-fill-color: transparent;
 	color: var(--cdn-color-text-secondary);
 	transition: opacity 0.5s ease;
-	animation: krux-station-shimmer 3s ease-in-out infinite;
+	animation: krux-station-shimmer 8s ease-in-out infinite;
 	display: inline-block;
 	min-width: 62px;
 	white-space: nowrap;
