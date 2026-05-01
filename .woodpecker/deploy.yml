@@ -159,6 +159,26 @@ steps:
           -d "$${CI_COMMIT_MESSAGE}" \
           https://ntfy.sh/cdn-deploy-74697e0f
 
+  - name: notify-sns-dev
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [deploy-dev]
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: dev
+    environment:
+      AWS_DEFAULT_REGION: us-west-2
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "[CDN dev] $${CI_COMMIT_SHA:0:7} live https://dev.clouddelnorte.org/"
+
   - name: notify-prod
     image: alpine:3.20
     depends_on: [deploy, deploy-auth, deploy-awsug]
@@ -175,3 +195,23 @@ steps:
           -H "Click: https://clouddelnorte.org/" \
           -d "$${CI_COMMIT_MESSAGE}" \
           https://ntfy.sh/cdn-deploy-74697e0f
+
+  - name: notify-sns-prod
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [deploy, deploy-auth, deploy-awsug]
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: main
+    environment:
+      AWS_DEFAULT_REGION: us-west-2
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "[CDN prod] $${CI_COMMIT_SHA:0:7} live https://clouddelnorte.org/"
