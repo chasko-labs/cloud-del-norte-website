@@ -12,7 +12,8 @@ import { useAndresLive } from "../../hooks/useAndresLive";
 import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
 import { clearPlayerState, savePlayerState } from "../../lib/player-persist";
-import { hexToRgbTuple, STREAMS, type StreamDef } from "../../lib/streams";
+import { hexToRgbTuple, type StreamDef } from "../../lib/streams";
+import { STREAMS } from "../../lib/streams-order";
 import {
 	applyLocale,
 	initializeLocale,

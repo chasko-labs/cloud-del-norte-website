@@ -8,7 +8,8 @@ import {
 	loadPlayerState,
 	type PersistedPlayerState,
 } from "../../lib/player-persist";
-import { hexToRgbTuple, STREAMS } from "../../lib/streams";
+import { hexToRgbTuple } from "../../lib/streams";
+import { STREAMS } from "../../lib/streams-order";
 import "./styles.css";
 
 const POLL_MS = 30_000;
