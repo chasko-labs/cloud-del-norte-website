@@ -852,15 +852,24 @@
 	outline-offset: 3px;
 }
 
+/* outer ripple animates between two ring radii; inset bevel stack
+   (top-light + bottom-dark) is constant on every keyframe so the glass
+   depth survives the pulse. Both ring layers read --station-primary-mode-rgb
+   so KEXP ripples buttercup, KRUX ripples crimson, KUNM ripples cherry,
+   KUTX ripples burnt orange — never hardcoded violet. */
 @keyframes krux-playing-pulse {
 	0%,
 	100% {
 		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.18),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.18),
 			0 0 0 3px rgba(var(--station-primary-mode-rgb), 0.24),
 			0 0 8px rgba(var(--station-primary-mode-rgb), 0.3);
 	}
 	50% {
 		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.18),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.18),
 			0 0 0 6px rgba(var(--station-primary-mode-rgb), 0.36),
 			0 0 16px rgba(var(--station-primary-mode-rgb), 0.46);
 	}
@@ -868,9 +877,29 @@
 
 /* active/playing — themed border thickens + bg fills with station primary.
    Text color uses the station's accent (KEXP near-black on yellow,
-   KRUX cream on crimson) so the play glyph stays readable on the tint. */
+   KRUX cream on crimson) so the play glyph stays readable on the tint.
+
+   glass-button depth: layer a subtle 135deg overlay gradient on top of the
+   station-primary fill. Mix runs from a faint top-light highlight (8%) into
+   transparency and ends in a darker bottom-shade (16%). The dark-leaning
+   stack survives KEXP's pale buttercup in dark mode (where a white overlay
+   would wash the fill out) while still reading as a beveled surface on
+   deeper hues like KRUX crimson + KUNM cherry. Inset shadows seal the rim
+   for a glassy edge; an outer glow tinted to station-primary anchors the
+   button visually without re-coloring the fill.
+
+   the keyframe pulse animation overrides outer box-shadow on the same
+   element — we keep both the ripple (animated outer) and the static inset
+   bevel by using only inset shadows here; the keyframe owns the outer ring. */
 .feed-krux__btn[data-state="playing"] {
-	background: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	background:
+		linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.08) 0%,
+			rgba(255, 255, 255, 0) 45%,
+			rgba(0, 0, 0, 0.16) 100%
+		),
+		var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	color: var(--station-accent, var(--cdn-white, #f0f0f0));
 	border: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	animation: krux-playing-pulse 2s ease-in-out infinite;

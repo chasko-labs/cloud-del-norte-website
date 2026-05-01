@@ -116,28 +116,57 @@
 
 /* stop variant — actively-playing state. Fill with the station primary so
    the icon reads as "live, locked in". Glyph color flips to the station's
-   accent (high-contrast neutral) so the square stays legible on the tint. */
+   accent (high-contrast neutral) so the square stays legible on the tint.
+
+   glass-button depth: 135deg overlay over the station-primary fill — faint
+   top-light highlight into transparency into a darker bottom shade. The
+   dark-leaning blend keeps KEXP buttercup readable in dark mode (where a
+   white overlay would wash out the pale yellow) while still bevelling
+   deeper hues like KRUX crimson. The cdn-pp pill is always navy chrome so
+   --station-primary-mode resolves to *-dark variants here. The pulse
+   keyframe layers an inset bevel + outer ring; both stay station-tinted. */
 .cdn-pp__btn--stop {
-	background: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	background:
+		linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.08) 0%,
+			rgba(255, 255, 255, 0) 45%,
+			rgba(0, 0, 0, 0.16) 100%
+		),
+		var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	color: var(--station-accent, rgba(240, 240, 240, 0.95));
 	border-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	animation: cdn-pp-pulse 2s ease-in-out infinite;
 }
 
 .cdn-pp__btn--stop:hover {
-	background: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	background:
+		linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.12) 0%,
+			rgba(255, 255, 255, 0) 45%,
+			rgba(0, 0, 0, 0.18) 100%
+		),
+		var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	color: var(--station-accent, rgba(240, 240, 240, 0.95));
 }
 
+/* outer ripple uses --station-primary-mode-rgb so the pulse matches
+   active station hue; inset bevel stack stays constant across both
+   keyframes so the glass depth survives the breathing animation */
 @keyframes cdn-pp-pulse {
 	0%,
 	100% {
 		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.18),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.18),
 			0 0 0 2px rgba(var(--station-primary-mode-rgb), 0.22),
 			0 0 6px rgba(var(--station-primary-mode-rgb), 0.28);
 	}
 	50% {
 		box-shadow:
+			inset 0 1px 0 rgba(255, 255, 255, 0.18),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.18),
 			0 0 0 5px rgba(var(--station-primary-mode-rgb), 0.34),
 			0 0 14px rgba(var(--station-primary-mode-rgb), 0.44);
 	}
