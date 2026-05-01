@@ -157,6 +157,24 @@ export const STREAMS: StreamDef[] = [
 			primaryLight: "#0a2752",
 		},
 	},
+	{
+		key: "concepto_radial",
+		// FOLLOWUP: AAC+ stream — verify <audio> handles aacp natively (it does in
+		// Chrome/Safari/FF; may need fallback for older browsers)
+		url: "https://sp2.servidorrprivado.com:8196/stream",
+		label: "concepto radial",
+		// metaUrl omitted — no public json now-playing endpoint
+		// tec de monterrey institutional brand — deep blue + lime green accent
+		// (CEDETEC building, mexico city campus; student-programmed)
+		colors: {
+			primary: "#003876", // tec blue — institutional
+			secondary: "#94C11F", // tec lime — energy accent
+			accent: "#000000", // tec dark anchor
+			// tec blue on cream ~10:1 — passes AAA, no light override
+			// tec blue on navy ~1.4:1 — fails badly, brighten heavily for dark
+			primaryDark: "#5b8edb", // brightened sky blue, ~5.5:1 vs navy
+		},
+	},
 	// TODO: Mexican student radio (Ciudad Juárez) — pending research verification
 	// {
 	// 	key: "radio_upnech",
