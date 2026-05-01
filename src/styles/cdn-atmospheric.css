@@ -247,3 +247,95 @@
 	backdrop-filter: none !important;
 	-webkit-backdrop-filter: none !important;
 }
+
+/* ==========================================================================
+   Wallpaper-through-chrome — transparent outer + atmospheric inner
+
+   Bryan DevTools-validated layering approach: Cloudscape's outer containers
+   were painting opaque cream above the wallpaper canvas (z-index:-2),
+   blocking it from showing through the page chrome and especially the
+   gap between nav drawer and main column.
+
+   Outer containers → transparent (wallpaper shows through).
+   Inner nav drawer + tools panel → atmospheric panel-tier (0.88 alpha + blur).
+   Border lines on nav/tools removed — kills visible vertical gap lines.
+
+   Exclusion: .liora-frame [class*="awsui_content-container_"] stays untouched.
+   Cards, buttons, Liora, top-nav, footer untouched per existing opaque rules.
+   ========================================================================== */
+
+/* Light mode */
+:root:not(.awsui-dark-mode) {
+	/* Outer containers — fully transparent */
+	main[class*="awsui_layout_"],
+	main[class*="awsui_layout_"] > [class*="navigation-container"],
+	main[class*="awsui_layout_"] > [class*="tools-container"],
+	[class*="awsui_navigation-container_"],
+	[class*="awsui_tools-container_"],
+	[class*="awsui_breadcrumbs_"],
+	[class*="awsui_scrolling-background_"],
+	[class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]) {
+		background: transparent !important;
+		background-color: transparent !important;
+	}
+
+	/* Inner nav drawer — atmospheric panel tier (0.88 cream + blur 6px) */
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]) {
+		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
+	}
+
+	/* Inner tools panel — atmospheric panel tier */
+	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]) {
+		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
+	}
+
+	/* Remove border lines that create visible gaps */
+	[class*="awsui_navigation-container_"],
+	nav[class*="awsui_navigation_"],
+	[class*="awsui_tools-container_"] {
+		border-left: none !important;
+		border-right: none !important;
+	}
+}
+
+/* Dark mode — same selectors, dark navy bg color */
+.awsui-dark-mode {
+	/* Outer containers — fully transparent */
+	main[class*="awsui_layout_"],
+	main[class*="awsui_layout_"] > [class*="navigation-container"],
+	main[class*="awsui_layout_"] > [class*="tools-container"],
+	[class*="awsui_navigation-container_"],
+	[class*="awsui_tools-container_"],
+	[class*="awsui_breadcrumbs_"],
+	[class*="awsui_scrolling-background_"],
+	[class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]) {
+		background: transparent !important;
+		background-color: transparent !important;
+	}
+
+	/* Inner nav drawer — atmospheric panel tier (dark navy) */
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]) {
+		background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
+	}
+
+	/* Inner tools panel — atmospheric panel tier */
+	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]) {
+		background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
+		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
+		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
+	}
+
+	/* Remove border lines that create visible gaps */
+	[class*="awsui_navigation-container_"],
+	nav[class*="awsui_navigation_"],
+	[class*="awsui_tools-container_"] {
+		border-left: none !important;
+		border-right: none !important;
+	}
+}
