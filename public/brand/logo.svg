@@ -116,7 +116,7 @@
       filter: url(#cdn-bulb-glow) drop-shadow(0 0 5px #e0c0ff) drop-shadow(0 0 9px #b894ff);
     }
   }
-  /* Light-mode best-effort: SVG referenced via <img src> can't see host's
+  /* Light-mode best-effort: SVG referenced via an img element can't see host's
      .awsui-dark-mode class, so :root selectors here are inert. prefers-color-scheme
      is the only signal available to the embedded sheet. Mirrors liora light-mode
      override (liora.css L1049-1055) — lower opacity floor, tighter halo. Limitation:
