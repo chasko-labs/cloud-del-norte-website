@@ -18,8 +18,6 @@ const TEMPLATE_STYLE = `
 	display: block;
 	width: 100%;
 	height: 100%;
-	min-width: 64px;
-	min-height: 64px;
 	contain: strict;
 }
 canvas {
