@@ -117,24 +117,30 @@ uniform float time;
 uniform vec3 sunDir;
 
 void main(void) {
+  // Pass 2 — drop the saturated gold mid-band. Production light mode uses
+  // gold (#c9a23f) only as a 12% radial-gradient spotlight wash over a cream
+  // (#ede5d4) base. Reproducing it as a full fragment-stop made the dune
+  // mid-heights read as urine-yellow at every blended height. Real white-sands
+  // gypsum is cream-on-cream-shadow; the gradient depth comes from Lambert,
+  // not from a saturated mid colour.
+  //
+  // 2-stop blend: warm tan dune-shadow → warm cream dune-peak (page bg).
   float t = clamp(vHeight / 4.0, 0.0, 1.0);
-  // Theme-aligned dune palette: shadow-side amber (#8b5a2b) blends through
-  // sun-touched gold (#c9a23f) into cream peaks (#ede5d4 — page bg). Three-stop
-  // blend so the mid-band catches the brand gold and the whole scene reads as
-  // warm linen rather than generic ochre→white.
-  vec3 amber  = vec3(0.545, 0.353, 0.169); // #8b5a2b
-  vec3 gold   = vec3(0.788, 0.635, 0.247); // #c9a23f
-  vec3 cream  = vec3(0.929, 0.898, 0.831); // #ede5d4
-  vec3 dune = t < 0.5
-    ? mix(amber, gold, t * 2.0)
-    : mix(gold, cream, (t - 0.5) * 2.0);
+  vec3 shadow = vec3(0.831, 0.769, 0.659); // #d4c4a8 — warm tan dune shadow
+  vec3 peak   = vec3(0.980, 0.969, 0.941); // #faf7f0 — warm cream peak
+  vec3 dune = mix(shadow, peak, t);
 
-  // Lambertian diffuse against the world-space sun direction. Floor at 0.45
-  // (was 0.2) so shadow-side dunes stay in the warm cream/amber range and never
-  // crush to near-black — the page bg under the scene is light cream linen.
-  float lambert = max(dot(normalize(vNormal), normalize(sunDir)), 0.45);
+  // Lambertian diffuse with high floor (0.55, was 0.45). Real gypsum has
+  // very low contrast even on the shadow side — the page bg under the scene
+  // is cream linen, the dunes need to read as a continuous warm field.
+  float lambert = max(dot(normalize(vNormal), normalize(sunDir)), 0.0);
+  float lit = mix(0.55, 1.0, lambert);
 
-  gl_FragColor = vec4(dune * lambert, 1.0);
+  // Subtle GPU-noise paper-grain to harmonise with the production
+  // repeating-linear-gradient(#8b5a2b05) overlay on light mode.
+  float grain = (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.012;
+
+  gl_FragColor = vec4(dune * lit + vec3(grain), 1.0);
 }
 `;
 
@@ -223,7 +229,7 @@ export function mountDuneSceneOnCanvas(
 	const fill = new HemisphericLight("dune-fill", new Vector3(0, 1, 0), scene);
 	fill.intensity = 0.45;
 	fill.diffuse = new Color3(0.86, 0.88, 0.92); // pale washed sky (was cool 0.72/0.82/0.9)
-	fill.groundColor = new Color3(0.93, 0.9, 0.83); // warm cream sand bounce (was 0.85/0.82/0.72)
+	fill.groundColor = new Color3(0.97, 0.94, 0.88); // pass 2 — lighter cream bounce (was 0.93/0.90/0.83) to push dunes further into linen tones
 
 	// Sky — Preetham analytical model. Tuned for desaturated daytime desert
 	// haze: more dust, less rayleigh blue, broader sun glow. Result reads as
@@ -231,9 +237,9 @@ export function mountDuneSceneOnCanvas(
 	const skybox = MeshBuilder.CreateBox("dune-skybox", { size: 1000 }, scene);
 	const skyMat = new SkyMaterial("dune-sky-mat", scene);
 	skyMat.backFaceCulling = false;
-	skyMat.luminance = 1.5; // was 1.2 — brighter daytime
-	skyMat.turbidity = 14; // was 12 — more dust haze, paler
-	skyMat.rayleigh = 0.6; // was 1.0 — less saturated blue
+	skyMat.luminance = 1.7; // pass 2 — was 1.5 — brighter daytime, harmonises with cream dunes
+	skyMat.turbidity = 16; // pass 2 — was 14 — more dust haze, paler still
+	skyMat.rayleigh = 0.4; // pass 2 — was 0.6 — even less saturated blue, sky reads as warm-pale
 	skyMat.mieCoefficient = 0.01;
 	skyMat.mieDirectionalG = 0.78; // was 0.82 — broader sun glow
 	skyMat.inclination = 0.42;
