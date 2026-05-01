@@ -1075,18 +1075,6 @@
 	overflow: hidden;
 }
 
-/* CdnCard-migrated hero (.feed-live-hero--cdn). slot is .cdn-card-slot--hero,
-   inner stack lives inside an absolute frame and lays out the live cards.
-   the divider sits at the bottom of the stack so when no live, the empty
-   state collapses to the slot's reserved min-height with no visible content. */
-.feed-live-hero--cdn .feed-live-hero__stack {
-	display: flex;
-	flex-direction: column;
-	gap: 0;
-	width: 100%;
-	height: 100%;
-}
-
 .feed-live-hero__card {
 	border-radius: var(--cdn-radius-xl, 16px);
 	box-shadow:
