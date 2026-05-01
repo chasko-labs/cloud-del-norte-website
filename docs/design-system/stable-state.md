@@ -80,3 +80,67 @@ the wrapper itself is always present; only its children flip on real state. when
 - carousels rotating local static data (no remote dependency, no failure mode) — `arrowhead-news`, `andres-medium`, `feed-section.PostCarousel`
 - now-playing text inside a station card (text content, not gating layout) — fetch failure already swallowed via `.catch(() => {})`, no card visibility flip
 - sdk event sources that already debounce upstream (twitch `ONLINE` / `OFFLINE`) — adding stickiness on top would suppress real transitions
+
+## geometry isolation — every card has a fixed slot, content fits the slot
+
+dispatched 2026-05-01 as a tactical sweep on top of the existing card classes, ahead of the formal `CdnCard` primitive migration. directive from operator: "all containers should have set height / width min to avoid the potential as well; if we fit the content to the containers instead of vise versa we wouldnt have this issue"
+
+translation — every card slot owns its geometry. content fits the slot, never the other way around. no card's intrinsic content can grow / shrink to push its container size. layout-shift becomes geometrically impossible
+
+### the four slot tiers
+
+defined in `src/styles/design-tokens.css`. these are an enum, not freeform pixel values — need a new geometry, add a tier; never override min-height per card
+
+| token                         | value | use                                                                       |
+| ----------------------------- | ----- | ------------------------------------------------------------------------- |
+| `--cdn-slot-narrow-min-h`     | 120px | compact single-row carousels: arrowhead-news inner item (already 120px)   |
+| `--cdn-slot-standard-min-h`   | 220px | regular grid cards: andmore, awsml, twitch, youtube, arrowhead container  |
+| `--cdn-slot-wide-min-h`       | 320px | full-row content: NextMeetup, BuilderCenterCard                           |
+| `--cdn-slot-hero-min-h`       | 420px | live video embeds: TwitchAws, TwitchAwsOnAir, AndresYoutubeLive           |
+
+### card-class to tier mapping (legacy classes, sweep applied directly)
+
+| class                       | tier     | applied via                                                              |
+| --------------------------- | -------- | ------------------------------------------------------------------------ |
+| `.feed-grid__cell`          | standard | `min-height: var(--cdn-slot-standard-min-h)` in feed/styles.css          |
+| `.feed-grid__cell--full`    | wide     | overrides standard with `var(--cdn-slot-wide-min-h)` in feed/styles.css  |
+| `.feed-live-hero__card`     | hero     | overrides wide with `var(--cdn-slot-hero-min-h)` in feed/styles.css      |
+| `.cdn-card-slot--hero`      | hero     | CdnCard primitive — `var(--cdn-slot-hero-min-h)` in cdn-card/styles.css  |
+| `.cdn-card-slot--wide`      | wide     | CdnCard primitive — `var(--cdn-slot-wide-min-h)`                         |
+| `.cdn-card-slot--standard`  | standard | CdnCard primitive — `var(--cdn-slot-standard-min-h)`                     |
+| `.cdn-card-slot--narrow`    | narrow   | CdnCard primitive — `var(--cdn-slot-narrow-min-h)`                       |
+
+### why content overflow over geometry expansion
+
+| approach                                                  | failure mode                                                                                              |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| container hugs intrinsic content — no min-height          | every poll tick / mount / unmount can resize the slot, reflowing siblings below                            |
+| container has min-height; content can still overflow it   | impossible — no slot ever expands past its tier reservation                                                |
+| container has min-height; inner content clipped via `overflow:hidden` + `text-overflow:ellipsis` | content fits the slot. long titles ellipse, long lists scroll inside, iframes letterbox. zero shift. |
+
+### universal rules applied to every card class on /feed/
+
+every card class also gets, regardless of tier:
+
+- `min-width: 0` — prevents intrinsic content min-content from forcing the grid track wider than 1fr (root cause of grid blowout on long titles, wide tables)
+- `display: flex; flex-direction: column` — inner content can shrink / grow within the bounded box without escaping it
+- `overflow: hidden` — content cannot bleed out past the slot edge
+
+text clamping on long-text elements happens at the inner-content level: `text-overflow: ellipsis; white-space: nowrap` for single-line, `display: -webkit-box; -webkit-line-clamp: N` for multi-line. never `word-break` — natural wrapping runs up to the clamp
+
+### how to add a new card
+
+1. pick a tier from the table above. start with `standard`. only escalate to `wide` / `hero` if the loaded state genuinely needs the height
+2. for new cards built on the formal CdnCard primitive — pass `slot="<tier>"` per the recipe in `card-wall.md`
+3. for cards still on legacy classes pre-migration — give them `class="feed-grid__cell cdn-card"` for standard, add `--full` for wide, add `feed-live-hero__card` for hero. min-height is inherited from the class; do not override
+
+### migration plan — current status
+
+every legacy card class on /feed/ now uses the token-based min-heights. the formal CdnCard primitive lands per-card per the table in `card-wall.md` § migration plan; until each card migrates, the tactical sweep above provides geometry isolation today
+
+| layer        | status                                                                          |
+| ------------ | ------------------------------------------------------------------------------- |
+| tokens       | shipped — `src/styles/design-tokens.css` defines all four tiers                 |
+| sweep        | shipped — `.feed-grid__cell` / `--full` / `.feed-live-hero__card` carry tiers   |
+| primitive    | shipped — `<CdnCard>` available, used for `feed-live-hero` (proof of concept)   |
+| per-card pr  | in-flight — see `card-wall.md` migration table                                  |
