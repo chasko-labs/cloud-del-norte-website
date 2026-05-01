@@ -19,6 +19,28 @@ function reducedMotion(): boolean {
 	return matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
+// Detect software-rendered WebGL (SwiftShader / llvmpipe / Mesa software
+// rasteriser). On these GPUs the dune scene will never hit the 16ms budget,
+// and the perf gate's tear-down can race with the static-canvas opacity flip
+// in ways that surprise the user. Skip the dune mount entirely instead.
+function isSoftwareRendering(): boolean {
+	try {
+		const probe = document.createElement("canvas");
+		const gl = (probe.getContext("webgl2") ||
+			probe.getContext("webgl")) as WebGLRenderingContext | null;
+		if (!gl) return false;
+		const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
+		const renderer = debugInfo
+			? String(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL))
+			: "";
+		return /SwiftShader|llvmpipe|Software|Microsoft Basic Render/i.test(
+			renderer,
+		);
+	} catch {
+		return false;
+	}
+}
+
 export function mount(): () => void {
 	if (mounted) return () => {};
 	mounted = true;
@@ -100,6 +122,12 @@ export function mount(): () => void {
 		if (duneFallback) return; // perf gate already tripped this session
 		if (isDarkMode()) return;
 		if (reducedMotion()) return;
+		if (isSoftwareRendering()) {
+			// Software rasteriser detected — wallpaper would chug + perf-gate
+			// fallback path can race the canvas-opacity flip. Stay on cream.
+			duneFallback = true;
+			return;
+		}
 
 		try {
 			duneHandle = mountDuneScene(document.body);

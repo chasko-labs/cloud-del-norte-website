@@ -29,6 +29,14 @@
 // integration polls getPerfMedian() at 2s and falls back to the static cream
 // canvas if median exceeds its (more lenient) 16ms budget.
 
+// Side-effect: patches Scene.prototype.beginAnimation. Required because in
+// the production bundle, dune-scene's chunk may load before any other module
+// that pulls this in, and beginAnimation is not on Scene by default.
+// Vite chunk-splits dune-scene and StarScene separately; without this the
+// nav 3D logo's `this.scene.beginAnimation(...)` throws "not a function"
+// when the wallpaper mounts first (validated 2026-04-30 against built bundle).
+import "@babylonjs/core/Animations/animatable.js";
+
 import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
 import { Engine } from "@babylonjs/core/Engines/engine";
 import { DirectionalLight } from "@babylonjs/core/Lights/directionalLight";
