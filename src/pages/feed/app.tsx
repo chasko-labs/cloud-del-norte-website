@@ -424,23 +424,28 @@ function AppContent({
 				</Header>
 			}
 		>
-			{liveToShow.length > 0 && (
-				<div className="feed-live-hero">
-					{liveToShow.map((key) => (
-						<div
-							key={key}
-							className="feed-grid__cell cdn-card feed-grid__cell--full feed-live-hero__card"
-						>
-							{key === "andresYoutube" ? (
-								<AndresYoutubeLive videoId={andresVideoId} />
-							) : (
-								sections[key as SectionKey]
-							)}
-						</div>
-					))}
+			{/* Stable hero slot — wrapper renders always so cards appearing /
+			    disappearing don't unmount a parent and reflow content below.
+			    Pair with sticky-poll on data sources gating `liveToShow` so
+			    transient API failures don't flap the inner cards either. See
+			    docs/design-system/stable-state.md. */}
+			<div className="feed-live-hero cdn-stable-slot">
+				{liveToShow.map((key) => (
+					<div
+						key={key}
+						className="feed-grid__cell cdn-card feed-grid__cell--full feed-live-hero__card"
+					>
+						{key === "andresYoutube" ? (
+							<AndresYoutubeLive videoId={andresVideoId} />
+						) : (
+							sections[key as SectionKey]
+						)}
+					</div>
+				))}
+				{liveToShow.length > 0 && (
 					<hr className="feed-section-divider" />
-				</div>
-			)}
+				)}
+			</div>
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<NextMeetup />
 			</div>

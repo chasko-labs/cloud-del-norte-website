@@ -928,17 +928,93 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	font-size: var(--cdn-text-sm, 0.875rem);
 }
 
-/* ── Final safety net: explicit body bg in light mode ─────────────────────
-   The dune wallpaper canvas at z-index:-2 + fallback gradient at z-index:-3
-   are belt-and-suspenders against black; this is the third layer. If both
-   the canvas and fallback fail to mount (perf-gate teardown, software-WebGL
-   skip, mount throw, dark-mode toggle race), the body's own bg paints cream.
-   Without this, on certain Safari + Cloudscape compositor paths the html/body
-   computed bg is rgba(0,0,0,0) and whatever lives below (the page chrome's
-   dark canvas? extension overlays?) bled through as opaque black panels.
+/* ── Final safety net: :root bg-color in light mode ───────────────────────
+   :root background-color paints at the canvas level (CSS stacking step 1),
+   which sits BEHIND negative-z stacking contexts (step 2). The dune canvas
+   lives at z-index:-2 — it paints in step 2, so :root cream is always
+   underneath it, never over it. This is the correct layer for the safety net.
 
-   Scoped to light mode so dark mode keeps Cloudscape's deep-navy treatment. */
-:root:not(.awsui-dark-mode),
-:root:not(.awsui-dark-mode) body {
+   body must NOT carry background-color here. body's bg paints in CSS stacking
+   step 3 (block-level descendants), which executes AFTER negative-z contexts
+   in step 2. A body background-color would paint OVER the dune canvas at
+   z-index:-2 and hide the dunes entirely — the regression fixed in this commit
+   (ref: 777c7743 introduced the body selector; removed here).
+
+   Scoped to light mode — dark mode keeps Cloudscape's deep-navy treatment. */
+:root:not(.awsui-dark-mode) {
 	background-color: #ede5d4;
+}
+
+/* ── Tighten Cloudscape AppLayout's nav→main gap ──────────────────────────
+   AppLayout's MAIN renders a CSS grid:
+     min-content | minmax(--awsui-content-gap-left, 1fr) | content | ...
+   At ≥689px the .awsui_has-content-gap-left class on the MAIN element sets
+     --awsui-content-gap-left-6b9ypa: var(--space-layout-content-horizontal, 24px)
+   creating a 24px column between the nav drawer's right edge (281px) and the
+   content column's left edge (305px). Bryan wants the main column flush.
+
+   Override: zero the custom property on the same MAIN element. We target the
+   has-content-gap-left class so this only affects the LEFT gap — content-gap-right
+   still gets its 24px (preserves right toggles gutter spacing). Cloudscape's
+   rule uses :not(#\9) for +1 ID specificity; we match it here.
+
+   Internal main-column padding is unaffected — that lives on descendant
+   container elements, not on this grid track. Mobile (<688px) uses overlay
+   navigation so this rule no longer reserves a column gutter — confirmed
+   no responsive regression. */
+[class*="awsui_layout_"][class*="awsui_has-content-gap-left_"]:not(#\9) {
+	--awsui-content-gap-left-6b9ypa: 0px !important;
+}
+
+/* ── Lock AppLayout grid tracks — kill periodic main-column jump ──────────
+   AppLayout's MAIN element (matched by `main[class*="awsui_layout"]`) is a
+   CSS grid: nav | gap-left | main | gap-right | tools-stub. Cloudscape
+   recomputes track sizes when inner state changes (live-hero ONLINE/OFFLINE
+   toggles, station carousel rotations, audio-reactive descendants, etc).
+   Each recalc shifts main horizontally by sub-pixel-to-multi-pixel amounts —
+   the visible "jumping" Bryan reported.
+
+   Override grid-template-columns to a stable form: nav and tools as
+   min-content (sized by their own intrinsic widths, which don't change
+   periodically), gaps zeroed (matches existing has-content-gap-left override
+   above), main as 1fr (absorbs all extra space, scales responsively without
+   a hard-coded width).
+
+   Scoped to ≥689px because <689px uses an overlay-drawer mobile layout with
+   tracks `0 20px 1fr 20px 0` — those 20px content gutters must stay. */
+@media (min-width: 689px) {
+	main[class*="awsui_layout_"] {
+		grid-template-columns: min-content 0 1fr 0 min-content !important;
+		gap: 0 !important;
+	}
+}
+
+/* ── Wobble fix: keep document always taller than viewport ────────────────
+   Multiple timer-driven content changes can flip the document between
+   shorter-than-viewport and taller-than-viewport, which toggles the OS
+   scrollbar. Each toggle changes the body's effective width by the
+   scrollbar gutter (typically 15px on Linux/Windows OS scrollbars), and
+   the AppLayout main column re-flexes horizontally — visible as wobble.
+   Known timer-driven height togglers on /feed/:
+     - Twitch SDK ONLINE/OFFLINE events flip the .feed-live-hero on/off
+       (~300px tall iframe + glow). Heartbeat is internal to the SDK.
+     - useAndresLive polls YouTube oEmbed every 60s and may flip the same
+       hero in or out.
+     - 6s carousels (andres-medium, arrowhead-news, feed-section) re-key
+       items — content is height-clamped so they shouldn't shift, but
+       any unclamped descendant could push.
+   Fix: force the document body to always be at least viewport-tall. The
+   scrollbar then stays mounted constantly rather than appearing/disappearing,
+   so width never wobbles. Cheaper than `scrollbar-gutter: stable` (which
+   reserves 15px in body even on overlay-scrollbar browsers — produced the
+   permanent column gap reverted in 7e3e089f). 100vh is benign on every
+   browser: scrollbar is always shown when content actually exceeds it,
+   and on tall content this rule is a no-op.
+
+   Applied to body, not :root, because Cloudscape's AppLayout sets
+   block-size on its own viewport-fill chrome (overridden in the rule at
+   line ~176). body min-height is a static reservation that does not fight
+   AppLayout's internal sizing math. */
+body {
+	min-height: 100vh;
 }

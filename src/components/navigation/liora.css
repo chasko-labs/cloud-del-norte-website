@@ -1,4 +1,11 @@
 /* liora styles extracted from prod theme bundle */
+
+/* TODO(operator): self-host these fonts. currently @import'd from google fonts;
+   replace with @font-face + woff2 in /public/fonts/ before next prod cut.
+   - JetBrains Mono: console + credits, replaces retro-pixel VT323
+   - Caveat: sticky note handwriting (unchanged) */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap");
+
 .liora-frame {
 	flex-direction: column;
 	align-items: center;
@@ -140,8 +147,8 @@
 	-webkit-user-select: none;
 	user-select: none;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: clamp(11px, 4cqi, 16px);
@@ -643,10 +650,11 @@
 }
 
 .liora-status-bar {
-	/* tightened from letter-spacing:0.08em + gap:14px to fit longer device-info
-	   strings ("OS:MACOS 1920×1080  SYS:▓▓▓" was clipping ▓▓▓ at right edge of
-	   254px panel). preserves VT323 monospace + 14px size for readability */
-	letter-spacing: 0.04em;
+	/* container-query-sized so "OS:MACOS 1920×1080  SYS:▓▓▓" fits even when the
+	   bezel is narrow. clamp(10px → 4cqi → 13px) shrinks the text in lockstep
+	   with the bezel; gap + letter-spacing tightened from earlier 0.04em / 8px
+	   to handle the worst-case (longer mac/windows screen geometry) string */
+	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	pointer-events: none;
 	-webkit-user-select: none;
@@ -654,22 +662,23 @@
 	z-index: 22;
 	justify-content: center;
 	align-items: center;
-	gap: 8px;
+	gap: 6px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
-	font-size: 13px;
+	font-size: clamp(10px, 4cqi, 13px);
 	line-height: 1.5;
 	transition:
 		color 0.5s,
 		opacity 0.5s;
 	display: flex;
+	flex-wrap: nowrap;
 	position: absolute;
 	bottom: 30px;
-	left: 16px;
-	right: 16px;
+	left: 12px;
+	right: 12px;
 	overflow: hidden;
 }
 
@@ -677,8 +686,9 @@
 #liora-sys-status {
 	white-space: nowrap;
 	align-items: center;
-	gap: 6px;
+	gap: 4px;
 	display: inline-flex;
+	min-width: 0;
 }
 
 .liora-status-bar.liora-status--green {
@@ -847,8 +857,8 @@
 	text-transform: uppercase;
 	color: #fff5ff;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 18px;
@@ -866,8 +876,8 @@
 	border-radius: 3px;
 	padding: 5px 16px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 16px;
@@ -896,8 +906,8 @@
 	text-align: center;
 	z-index: 20;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 14px;
@@ -1344,8 +1354,8 @@
 		0 0 180px #6818ff40;
 	margin-bottom: 2px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	/* restored toward original scale — 18cqi at 254px = 45.7px, close to
@@ -1373,8 +1383,8 @@
 	/* lift subtitle off names grid below — was 5px */
 	margin-bottom: 12px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 15px;
@@ -1559,8 +1569,8 @@
 	/* 0.5px stroke: letterform definition at small sizes without bloating glyph */
 	-webkit-text-stroke: 0.5px #d296ff80;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 18px;
@@ -1610,8 +1620,8 @@
 	border-radius: 1px;
 	padding: 1px 14px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 13px;
@@ -1787,8 +1797,8 @@
 	white-space: nowrap;
 	transform-origin: bottom;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 54px;
@@ -1901,8 +1911,8 @@
 
 .liora-reconnect-label--inline {
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: inherit;
@@ -1948,24 +1958,26 @@
 .liora-credits-amzn {
 	color: var(--cdn-aws-orange, #f90);
 	letter-spacing: 0.06em;
-	/* layered: white hot core → orange mid → red outer → purple bloom
-	   gives the "luminous neon amazon orange" tube feel vs flat text */
+	font-size: 1.18em;
+	/* thick 8-direction black outline (1.2px cardinal, 0.85px diagonal) seals
+	   the glyph edges. warm gold halo only — purple bloom + red outer dropped
+	   because they were tinting the orange + reducing legibility against the
+	   violet phosphor backdrop. compare prior layered neon stack: history at
+	   db4c8813 (added 0.5px outline) → f3a3b431 (inside-stroke) — both
+	   insufficient against the bezel. this commit thickens to 1.2px + drops
+	   the violet bloom. */
 	text-shadow:
-		0.5px 0 #000,
-		-0.5px 0 #000,
-		0 0.5px #000,
-		0 -0.5px #000,
-		0.35px 0.35px #000,
-		-0.35px 0.35px #000,
-		0.35px -0.35px #000,
-		-0.35px -0.35px #000,
-		0 0 2px #fff8f0f2,
-		0 0 4px #ffdc6ef2,
-		0 0 8px #ffaf32e6,
-		0 0 16px #ff9900cc,
-		0 0 28px #cc5500a6,
-		0 0 44px #9060f08c,
-		0 2px #28143c8c;
+		1.2px 0 #000,
+		-1.2px 0 #000,
+		0 1.2px #000,
+		0 -1.2px #000,
+		0.85px 0.85px #000,
+		-0.85px 0.85px #000,
+		0.85px -0.85px #000,
+		-0.85px -0.85px #000,
+		0 0 4px #ffdc6eb3,
+		0 0 10px #ff990099,
+		0 2px #00001899;
 	animation: 1.4s ease-in-out infinite alternate liora-amzn-shimmer;
 	display: inline-block;
 	transition: letter-spacing 0.4s ease;
@@ -1978,41 +1990,33 @@
 @keyframes liora-amzn-shimmer {
 	0% {
 		text-shadow:
-			0.5px 0 #000,
-			-0.5px 0 #000,
-			0 0.5px #000,
-			0 -0.5px #000,
-			0.35px 0.35px #000,
-			-0.35px 0.35px #000,
-			0.35px -0.35px #000,
-			-0.35px -0.35px #000,
-			0 0 2px #fff8f0e6,
-			0 0 5px #ffdc6ee6,
-			0 0 10px #ffaf32cc,
-			0 0 20px #ff990099,
-			0 0 32px #cc550073,
-			0 0 48px #9060f066,
-			0 2px #28143c80;
+			1.2px 0 #000,
+			-1.2px 0 #000,
+			0 1.2px #000,
+			0 -1.2px #000,
+			0.85px 0.85px #000,
+			-0.85px 0.85px #000,
+			0.85px -0.85px #000,
+			-0.85px -0.85px #000,
+			0 0 4px #ffdc6ea6,
+			0 0 10px #ff990080,
+			0 2px #00001899;
 		filter: brightness(1) saturate(1);
 	}
 	to {
 		text-shadow:
-			0.5px 0 #000,
-			-0.5px 0 #000,
-			0 0.5px #000,
-			0 -0.5px #000,
-			0.35px 0.35px #000,
-			-0.35px 0.35px #000,
-			0.35px -0.35px #000,
-			-0.35px -0.35px #000,
-			0 0 3px #fff,
-			0 0 7px #ffdc6e,
-			0 0 14px #ffaf32f2,
-			0 0 26px #ff9900d9,
-			0 0 42px #cc5500a6,
-			0 0 64px #9060f0b3,
-			0 2px #28143c99;
-		filter: brightness(1.22) saturate(1.2);
+			1.2px 0 #000,
+			-1.2px 0 #000,
+			0 1.2px #000,
+			0 -1.2px #000,
+			0.85px 0.85px #000,
+			-0.85px 0.85px #000,
+			0.85px -0.85px #000,
+			-0.85px -0.85px #000,
+			0 0 6px #ffe682d9,
+			0 0 14px #ffaf32b3,
+			0 2px #000018b3;
+		filter: brightness(1.12) saturate(1.1);
 	}
 }
 
@@ -2123,8 +2127,8 @@
 		0 0 12px #ff99008c;
 	white-space: nowrap;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: clamp(15px, 5cqi, 19px);
@@ -2151,8 +2155,8 @@
 	min-width: 64px;
 	padding: 4px 18px 3px;
 	font-family:
-		VT323,
-		Courier New,
+		"JetBrains Mono",
+		"Courier New",
 		Courier,
 		monospace;
 	font-size: 14px;
@@ -2696,7 +2700,7 @@
 }
 
 .liora-stickynote-2-ip {
-	font-family: VT323, "Courier New", monospace;
+	font-family: "JetBrains Mono", "Courier New", monospace;
 	font-size: 0.85em;
 	font-weight: var(--cdn-weight-semibold, 600);
 	letter-spacing: 0.02em;

@@ -132,5 +132,12 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib/ s3://dev.clouddelnorte.org/ --delete --exact-timestamps
+      # liora/* and liora-embed/* are managed out-of-band on prod (see main deploy
+      # exclude). dev would otherwise wipe them via --delete and headless verifiers
+      # see SPA-fallback HTML for liora-embed.js (text/html MIME, module import fail).
+      # exclude from build sync, then mirror liora assets from prod bucket so dev
+      # serves the same liora-embed bundle.
+      - aws s3 sync lib/ s3://dev.clouddelnorte.org/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*"
+      - aws s3 sync s3://awsaerospace.org/liora-embed/ s3://dev.clouddelnorte.org/liora-embed/ --exact-timestamps
+      - aws s3 sync s3://awsaerospace.org/liora/ s3://dev.clouddelnorte.org/liora/ --exact-timestamps
       - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/*"

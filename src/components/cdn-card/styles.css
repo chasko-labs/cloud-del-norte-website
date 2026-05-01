@@ -1,0 +1,72 @@
+/* ==========================================================================
+   cdn-card — primitive slot styles
+
+   geometry contract:
+     - slot is `position: relative` and reserves min-height per tier
+     - frames are `position: absolute; inset: 0` so content cannot push siblings
+     - `contain: layout` confines child layout work to this slot
+     - frame transitions touch only opacity (compositor-only); never height /
+       margin / padding / border-width
+
+   pairs with src/styles/design-tokens.css (slot tier tokens) and
+   src/components/cdn-wall/ (grid + breakpoints).
+   ========================================================================== */
+
+.cdn-card-slot {
+	position: relative;
+	width: 100%;
+	min-width: 0;
+	/* layout containment — child mutations cannot trigger ancestor reflow. paint
+	   containment is intentionally omitted so dropdowns / tooltips overflowing the
+	   card are not clipped by the slot. */
+	contain: layout;
+}
+
+.cdn-card-slot--narrow {
+	min-height: var(--cdn-slot-narrow-min-h, 120px);
+}
+
+.cdn-card-slot--standard {
+	min-height: var(--cdn-slot-standard-min-h, 220px);
+}
+
+.cdn-card-slot--wide {
+	min-height: var(--cdn-slot-wide-min-h, 320px);
+}
+
+.cdn-card-slot--hero {
+	min-height: var(--cdn-slot-hero-min-h, 420px);
+}
+
+/* ---------- frame stack ----------
+   the slot may hold up to two frames during a cross-fade: the leaving (prior)
+   and the current (entering). after `--cdn-card-transition-ms` the leaving
+   frame is removed by the component; while present its pointer-events are
+   off so it cannot intercept clicks meant for the new content. */
+
+.cdn-card-frame {
+	position: absolute;
+	inset: 0;
+	transition: opacity var(--cdn-card-transition-ms, 300ms) ease;
+	opacity: 0;
+	pointer-events: none;
+	/* scrollable inner content (e.g. live caption, ticker) stays inside the
+	   slot bounds. cards that need overflow should manage it on the inner
+	   render, not on the slot. */
+}
+
+.cdn-card-frame--current {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.cdn-card-frame--leaving {
+	opacity: 0;
+	pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-card-frame {
+		transition: none;
+	}
+}

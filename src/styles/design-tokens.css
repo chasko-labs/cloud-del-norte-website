@@ -1,0 +1,52 @@
+/* ==========================================================================
+   cloud del norte — card-wall design tokens
+
+   foundation for the tumblr-style scaling card wall. all card geometry,
+   transitions, and breakpoints live here so growth happens by adding tokens,
+   not by inventing per-card css.
+
+   naming convention: --cdn-<scope>-<property>
+     scope = wall | slot-<tier> | card
+     property = min-h | min-w | gap | transition | …
+
+   pairs with:
+     src/components/cdn-card/    — primitive (one slot per card)
+     src/components/cdn-wall/    — grid layout + contain:layout per slot
+     src/hooks/useStickyPoll.ts  — data-layer flap suppression (compose, not couple)
+
+   see docs/design-system/card-wall.md for the full architecture rationale.
+   ========================================================================== */
+
+:root {
+	/* ---------- slot tier min-heights ----------
+	   each tier reserves enough vertical space for its loaded state, so the
+	   loading / fallback / error / empty branches of a card cannot grow or
+	   shrink the slot. growth happens by adding new tiers, not by tweaking
+	   per-card heights. */
+	--cdn-slot-narrow-min-h: 120px; /* compact rows: arrowhead-news, andres-medium, feed-section items */
+	--cdn-slot-standard-min-h: 220px; /* default content card with header + body */
+	--cdn-slot-wide-min-h: 320px; /* horizontal embed cards: builder-center, youtube */
+	--cdn-slot-hero-min-h: 420px; /* live video / 16:9 embeds: twitch, youtube-live */
+
+	/* ---------- wall column track sizing ----------
+	   used by cdn-wall as the auto-fill minmax floor. cards fill columns in
+	   document order; the grid expands columns as viewport widens. */
+	--cdn-wall-col-min-w: 320px;
+	--cdn-wall-gap: var(--cdn-space-md, 16px);
+
+	/* ---------- card transition tokens ----------
+	   cross-fade only — never layout-affecting. transform-and-opacity keep the
+	   transition on the compositor thread; height / margin / padding never
+	   appear in card transitions. */
+	--cdn-card-transition-ms: 300ms;
+	--cdn-card-transition: opacity 300ms ease, transform 300ms ease;
+
+	/* ---------- responsive breakpoints (reference) ----------
+	   document the breakpoints that downstream cdn-wall queries rely on so
+	   future contributors can match them when slot tokens evolve. these values
+	   match existing feed-grid behavior (single-col below 680px). */
+	--cdn-bp-mobile: 480px;
+	--cdn-bp-tablet: 680px;
+	--cdn-bp-desktop: 1024px;
+	--cdn-bp-widescreen: 1440px;
+}

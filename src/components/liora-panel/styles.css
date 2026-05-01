@@ -1,8 +1,11 @@
 /* Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved. */
 /* SPDX-License-Identifier: MIT-0 */
 
-/* vt323 — pixel-art CRT terminal font */
-@import url("https://fonts.googleapis.com/css2?family=VT323&family=Caveat:wght@600&display=swap");
+/* TODO(operator): self-host these fonts. currently @import'd from google fonts;
+   replace with @font-face + woff2 in /public/fonts/ before next prod cut.
+   - JetBrains Mono: console + credits, replaces retro-pixel VT323 (off-brand)
+   - Caveat: sticky note handwriting (unchanged) */
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap");
 
 /* ── CRT phosphor terminal — glassmorphism bezel + green phosphor screen ────
    outer bezel: cdn-card glassmorphism variant (liora-bezel)
@@ -177,7 +180,7 @@
 /* loading-state label — fades when the canvas turns visible
    (Jake Smeester principle: hosts take a few seconds to load — communicate it) */
 .liora-placeholder-label {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(11px, 4cqi, 16px);
 	letter-spacing: 0.18em;
 	text-transform: lowercase;
@@ -844,20 +847,24 @@
 .liora-status-bar {
 	position: absolute;
 	bottom: 30px;
-	left: 16px;
-	right: 16px;
-	font-family: "VT323", "Courier New", Courier, monospace;
-	font-size: 14px;
-	letter-spacing: 0.08em;
+	left: 12px;
+	right: 12px;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+	/* container-query sized so "OS:MACOS 1920×1080  SYS:▓▓▓" fits at narrow
+	   bezel widths. clamp(10 → 4cqi → 13) shrinks with the bezel; gap +
+	   letter-spacing tightened to handle worst-case device-info strings */
+	font-size: clamp(10px, 4cqi, 13px);
+	letter-spacing: 0.02em;
 	text-transform: uppercase;
 	line-height: 1.5;
 	overflow: hidden;
 	pointer-events: none;
 	user-select: none;
 	display: flex;
+	flex-wrap: nowrap;
 	align-items: center;
 	justify-content: center;
-	gap: 14px;
+	gap: 6px;
 	z-index: 22;
 	transition:
 		color 0.5s ease,
@@ -868,8 +875,9 @@
 #liora-sys-status {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: 4px;
 	white-space: nowrap;
+	min-width: 0;
 }
 
 /* tap 0: phosphor terminal green */
@@ -1065,7 +1073,7 @@
 }
 
 .liora-reconnect-label {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 18px;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
@@ -1074,7 +1082,7 @@
 }
 
 .liora-reconnect-btn {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 16px;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
@@ -1106,7 +1114,7 @@
 	bottom: 36px;
 	left: 14px;
 	right: 14px;
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 14px;
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
@@ -1734,7 +1742,7 @@
 }
 
 .liora-credits-title {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(32px, 20cqi, 56px);
 	letter-spacing: 0.35em;
 	text-transform: uppercase;
@@ -1757,7 +1765,7 @@
 
 .liora-credits-subtitle {
 	position: relative;
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 15px;
 	letter-spacing: 0.09em;
 	text-transform: uppercase;
@@ -1958,7 +1966,7 @@
 }
 
 .liora-credits-name {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 18px;
 	letter-spacing: 0.1em;
 	text-transform: uppercase;
@@ -1996,7 +2004,7 @@
 
 .liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn {
 	pointer-events: auto;
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 13px;
 	letter-spacing: 0.22em;
 	text-transform: uppercase;
@@ -2213,7 +2221,7 @@
 .liora-name-flyout {
 	position: fixed;
 	z-index: 9999;
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 54px;
 	letter-spacing: 0.15em;
 	text-transform: uppercase;
@@ -2444,7 +2452,7 @@
 }
 
 .liora-reconnect-label--inline {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: inherit;
 	letter-spacing: 0.12em;
 	color: var(--cdn-violet, #9060f0);
@@ -2491,74 +2499,69 @@
 }
 
 /* AMAZON SUMERIAN words inside "AMAZON SUMERIAN TEAM" — the entity-name pop:
-   aws-orange foreground, outside-only black outline via 8-direction text-shadow
-   stack (renders behind the glyph fill so the warm orange stays unobscured —
-   see 75761f87 for white-stroke removal, f3a3b431 for discontinued inside-stroke).
-   text-stroke paints on the glyph edge half-inside half-outside and is removed;
-   text-shadow at 0.5px cardinal + 0.35px diagonal gives a subtle outside-only ring.
-   layered purple backglow + drop-shadow for 3D depth, shimmer animation pulses
-   while the team line is on-screen. inline-block needed for transforms */
+   aws-orange foreground on a fully opaque deep-navy chip-shadow so the glyphs
+   read as a billboard plate instead of fighting the violet phosphor + scanlines.
+   thick black outline (1.2px cardinal / 0.85px diagonal) seals every glyph edge.
+   warm gold halo dialled down so contrast wins; violet backglow removed —
+   it was tinting the orange purple at the edges. inline-block enables transforms.
+   history: 75761f87 white-stroke removed; f3a3b431 inside-stroke discontinued;
+   db4c8813 added 8-dir 0.5px outline (insufficient — this commit thickens). */
 .liora-credits-amzn {
 	display: inline-block;
 	color: var(--cdn-aws-orange, #ff9900);
-	/* outside-only black outline via 8-direction text-shadow stack (0.5px) —
-	   renders behind the glyph, no inside bleed. outline first in list = top layer */
+	font-weight: 400;
+	/* slightly larger + tighter than surrounding subtitle to read as a marquee */
+	font-size: 1.18em;
+	letter-spacing: 0.06em;
+	/* thick 8-direction black outline (1.2px cardinal, 0.85px diagonal) seals
+	   the glyph edges. warm gold halo + dark drop-shadow only — no violet
+	   backglow (it was bleeding into the orange and reducing contrast) */
 	text-shadow:
-		0.5px 0 0 #000,
-		-0.5px 0 0 #000,
-		0 0.5px 0 #000,
-		0 -0.5px 0 #000,
-		0.35px 0.35px 0 #000,
-		-0.35px 0.35px 0 #000,
-		0.35px -0.35px 0 #000,
-		-0.35px -0.35px 0 #000,
-		/* warm glow + depth shadows below */
-		0 0 3px rgba(255, 200, 80, 0.9),
-		0 0 8px rgba(255, 153, 0, 0.7),
-		0 0 14px rgba(144, 96, 240, 0.85),
-		0 0 28px rgba(144, 96, 240, 0.55),
-		0 2px 0 rgba(40, 20, 60, 0.55);
+		1.2px 0 0 #000,
+		-1.2px 0 0 #000,
+		0 1.2px 0 #000,
+		0 -1.2px 0 #000,
+		0.85px 0.85px 0 #000,
+		-0.85px 0.85px 0 #000,
+		0.85px -0.85px 0 #000,
+		-0.85px -0.85px 0 #000,
+		/* warm gold halo, no violet — purple was tinting the orange edge */
+		0 0 4px rgba(255, 220, 110, 0.7),
+		0 0 10px rgba(255, 153, 0, 0.55),
+		0 2px 0 rgba(0, 0, 24, 0.7);
 	animation: liora-amzn-shimmer 1.4s ease-in-out infinite alternate;
 }
 
 @keyframes liora-amzn-shimmer {
 	0% {
-		/* outside-only black outline — held constant through shimmer cycle */
 		text-shadow:
-			0.5px 0 0 #000,
-			-0.5px 0 0 #000,
-			0 0.5px 0 #000,
-			0 -0.5px 0 #000,
-			0.35px 0.35px 0 #000,
-			-0.35px 0.35px 0 #000,
-			0.35px -0.35px 0 #000,
-			-0.35px -0.35px 0 #000,
-			/* warm glow dim phase */
-			0 0 3px rgba(255, 200, 80, 0.85),
-			0 0 8px rgba(255, 153, 0, 0.7),
-			0 0 14px rgba(144, 96, 240, 0.7),
-			0 0 28px rgba(144, 96, 240, 0.45),
-			0 2px 0 rgba(40, 20, 60, 0.5);
+			1.2px 0 0 #000,
+			-1.2px 0 0 #000,
+			0 1.2px 0 #000,
+			0 -1.2px 0 #000,
+			0.85px 0.85px 0 #000,
+			-0.85px 0.85px 0 #000,
+			0.85px -0.85px 0 #000,
+			-0.85px -0.85px 0 #000,
+			0 0 4px rgba(255, 220, 110, 0.65),
+			0 0 10px rgba(255, 153, 0, 0.5),
+			0 2px 0 rgba(0, 0, 24, 0.7);
 		filter: brightness(1) saturate(1);
 	}
 	100% {
-		/* outside-only black outline — held constant through shimmer cycle */
 		text-shadow:
-			0.5px 0 0 #000,
-			-0.5px 0 0 #000,
-			0 0.5px 0 #000,
-			0 -0.5px 0 #000,
-			0.35px 0.35px 0 #000,
-			-0.35px 0.35px 0 #000,
-			0.35px -0.35px 0 #000,
-			-0.35px -0.35px 0 #000,
-			/* warm glow bright phase */
-			0 0 5px rgba(255, 220, 110, 1),
-			0 0 12px rgba(255, 175, 50, 0.95),
-			0 0 22px rgba(180, 120, 255, 1),
-			0 0 44px rgba(144, 96, 240, 0.7),
-			0 2px 0 rgba(40, 20, 60, 0.6);
-		filter: brightness(1.18) saturate(1.15);
+			1.2px 0 0 #000,
+			-1.2px 0 0 #000,
+			0 1.2px 0 #000,
+			0 -1.2px 0 #000,
+			0.85px 0.85px 0 #000,
+			-0.85px 0.85px 0 #000,
+			0.85px -0.85px 0 #000,
+			-0.85px -0.85px 0 #000,
+			0 0 6px rgba(255, 230, 130, 0.85),
+			0 0 14px rgba(255, 175, 50, 0.7),
+			0 2px 0 rgba(0, 0, 24, 0.75);
+		filter: brightness(1.12) saturate(1.1);
 	}
 }
 
@@ -2684,7 +2687,7 @@
 }
 
 .liora-credits-prompt-q {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(15px, 5cqi, 19px);
 	letter-spacing: 0.18em;
 	text-transform: uppercase;
@@ -2701,7 +2704,7 @@
 }
 
 .liora-credits-prompt-btn {
-	font-family: "VT323", "Courier New", Courier, monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 14px;
 	letter-spacing: 0.22em;
 	text-transform: uppercase;

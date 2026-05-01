@@ -1,0 +1,48 @@
+/* ==========================================================================
+   cdn-wall — tumblr-style scaling card layout
+
+   contract:
+     - auto-fill grid with token-driven column min-width
+     - gap and column-min from design-tokens.css unless overridden via inline
+       style by the wall instance
+     - add / remove never animates grid tracks; opacity only on the slot
+     - rows (cdn-wall-row) span all columns for hero blocks above the grid
+   ========================================================================== */
+
+.cdn-wall {
+	display: grid;
+	grid-template-columns: repeat(
+			auto-fill,
+			minmax(var(--cdn-wall-col-min-w, 320px), 1fr)
+		);
+	gap: var(--cdn-wall-gap, 16px);
+	width: 100%;
+	min-width: 0;
+}
+
+/* cdn-wall-row — full-width band above the auto-fill grid. used for live
+   hero, builder-center pinned cards, and any block that must not be squeezed
+   into a single column track. parent must be a flex / block container above
+   the wall, not the wall itself, since rows live outside the grid scope. */
+.cdn-wall-row {
+	width: 100%;
+	min-width: 0;
+}
+
+/* ---------- responsive breakpoints ----------
+   the auto-fill grid handles most resize cases via column count alone. these
+   queries narrow the column min-width on small viewports so cards do not get
+   crushed below readable widths. */
+
+@media (max-width: 480px) {
+	.cdn-wall {
+		--cdn-wall-col-min-w: 100%;
+		--cdn-wall-gap: var(--cdn-space-sm, 8px);
+	}
+}
+
+@media (min-width: 481px) and (max-width: 680px) {
+	.cdn-wall {
+		--cdn-wall-col-min-w: 280px;
+	}
+}
