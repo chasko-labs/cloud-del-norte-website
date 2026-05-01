@@ -75,13 +75,13 @@
 
 /* ENHANCEMENT 5 — Top nav shimmer via ::after pseudo-element
    Slow, infrequent sweep tinted to harmonize with the nav surface.
-   10s cycle: highlight sweeps in first ~10% (1s), then offscreen for 9s. */
+   24s cycle: highlight sweeps in first ~18% (~4.3s), then offscreen for ~19.7s. */
 
 @keyframes cdn-shimmer {
 	0% {
 		background-position: 200% center;
 	}
-	10% {
+	18% {
 		background-position: -200% center;
 	}
 	100% {
@@ -108,7 +108,7 @@
 
 @media (prefers-reduced-motion: no-preference) {
 	#top-nav::after {
-		animation: cdn-shimmer 10s linear infinite;
+		animation: cdn-shimmer 24s ease-in-out infinite;
 		will-change: background-position;
 	}
 }
