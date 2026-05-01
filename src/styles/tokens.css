@@ -542,3 +542,45 @@
 	/* explicit no-op — kept as a hook for future dynamic-visibility wrappers
 	   so the className becomes a documentation anchor for the pattern */
 }
+
+/* ==========================================================================
+   Geometry isolation — universal slot-token sweep.
+
+   bryan's directive (2026-05-01): "all containers shold have set height /
+   weidth min to avoid the potential as well, if we fit the content to the
+   containers instead of vise versa we wouldnt have this issue".
+
+   translation: every card slot owns its geometry. content fits the slot,
+   never the other way around. layout-shift becomes geometrically impossible
+   because intrinsic content cannot push or shrink its container.
+
+   tactical layer on top of the existing cdn-card classes — applies the
+   architecture agent's --cdn-slot-*-min-h tokens (see design-tokens.css)
+   directly to every existing card class on /feed/, ahead of the formal
+   CdnCard primitive migration. classes get tier-specific min-heights via
+   per-page rules in src/pages/feed/styles.css; the universal rules below
+   handle min-width:0, flex column, and overflow on every card surface.
+
+   why min-width:0 — without it, a grid item's content min-content (long
+   title, wide table) forces the track wider than 1fr, breaking the grid.
+   why display:flex column — lets inner content shrink/grow within the
+   bounded box without pushing geometry; pairs with overflow:hidden.
+
+   the four slot tiers, from design-tokens.css:
+     --cdn-slot-narrow-min-h    120px  arrowhead, andmore, awsml, twitch carousels
+     --cdn-slot-standard-min-h  220px  default content card with header + body
+     --cdn-slot-wide-min-h      320px  NextMeetup, BuilderCenterCard, full-width
+     --cdn-slot-hero-min-h      420px  feed-live-hero__card, live video embeds
+
+   see docs/design-system/stable-state.md for tier mapping and rationale.
+   ========================================================================== */
+
+/* every cdn-card surface: flex column inside a bounded box. min-width:0 lets
+   the card shrink inside its grid track regardless of inner content
+   min-content. .cdn-card already declares overflow:hidden + position:relative
+   above; this rule adds layout containment without redeclaring those. */
+.cdn-card {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
