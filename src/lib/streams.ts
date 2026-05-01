@@ -72,12 +72,16 @@ export const STREAMS: StreamDef[] = [
 			primaryLight: "#a06e0c",
 		},
 		parseMeta(data) {
+			// KEXP v2 plays returns `artist` (not `artist_name`) plus `play_type`.
+			// Filter to trackplay so airbreak / nontrackplay rows do not surface a
+			// stale title from a prior song
 			const d = data as {
-				results?: Array<{ artist_name?: string; song?: string }>;
+				results?: Array<{ artist?: string; song?: string; play_type?: string }>;
 			};
 			const play = d?.results?.[0];
 			if (!play) return null;
-			const { artist_name: artist, song } = play;
+			if (play.play_type && play.play_type !== "trackplay") return null;
+			const { artist, song } = play;
 			if (artist && song) return `${song} — ${artist}`;
 			return song ?? artist ?? null;
 		},
@@ -104,7 +108,10 @@ export const STREAMS: StreamDef[] = [
 		// only plays HLS natively on Safari. mp3 fallback works in all browsers.
 		url: "https://streams.kut.org/4428_192.mp3?aw_0_1st.playerid=kutx-free",
 		label: "kutx 98.9",
-		// metaUrl omitted — kutx uses brightspot custom player, no json endpoint
+		// NPR Composer widget id 50ef24ebe1c8a1369593d032 sniffed from kutx.org
+		// homepage; CORS open (Access-Control-Allow-Origin: *)
+		metaUrl:
+			"https://api.composer.nprstations.org/v1/widget/50ef24ebe1c8a1369593d032/now?format=json",
 		// ut austin brand — burnt orange / dark blue-gray
 		colors: {
 			primary: "#bf5700", // burnt orange — ut iconic
@@ -113,6 +120,20 @@ export const STREAMS: StreamDef[] = [
 			// burnt orange too dark on navy bg — brighten for dark-mode AA contrast
 			primaryDark: "#d97c2e",
 			// burnt orange on cream: ~5.1:1 — passes AA, no light override
+		},
+		parseMeta(data) {
+			// nprstations widget shape: onNow.song.{trackName, artistName}.
+			// onNow is null between programs; song is null on talk shows
+			const d = data as {
+				onNow?: {
+					song?: { trackName?: string; artistName?: string };
+				} | null;
+			};
+			const song = d?.onNow?.song;
+			if (!song) return null;
+			const { trackName: track, artistName: artist } = song;
+			if (track && artist) return `${track} — ${artist}`;
+			return track ?? artist ?? null;
 		},
 	},
 	{
@@ -143,7 +164,10 @@ export const STREAMS: StreamDef[] = [
 		// HEAD validated: 200, audio/mpeg, Access-Control-Allow-Origin: *
 		url: "https://shaincast.caster.fm:20866/listen.mp3",
 		label: "ibero 90.9",
-		// metaUrl omitted — ibero909.fm player has no public json now-playing endpoint
+		// caster.fm icecast standard status endpoint; CORS open. source.title is
+		// often absent (DJ feed without inline metadata); parseMeta returns null
+		// gracefully and the player just shows the station label
+		metaUrl: "https://shaincast.caster.fm:20866/status-json.xsl",
 		// universidad iberoamericana institutional brand — agent guess: navy + red,
 		// gold accent for warmth. FOLLOWUP: refine once official ibero brand book
 		// confirmed (homepage css fetch did not surface inline color values)
@@ -155,6 +179,16 @@ export const STREAMS: StreamDef[] = [
 			primaryDark: "#3d5fa3",
 			// navy borderline on cream — deepen for light-mode AA contrast
 			primaryLight: "#0a2752",
+		},
+		parseMeta(data) {
+			// icecast status-json.xsl: source can be a single object or array
+			// when the server hosts multiple mounts. mirror krux parser
+			const d = data as {
+				icestats?: { source?: { title?: string } | Array<{ title?: string }> };
+			};
+			const src = d?.icestats?.source;
+			const s = Array.isArray(src) ? src[0] : src;
+			return s?.title ?? null;
 		},
 	},
 	{
