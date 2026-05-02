@@ -25,6 +25,191 @@ import {
 
 import "./styles.css";
 
+/* ── Custom celestial + flag SVGs for top-nav utility toggles ────────────────
+   Replaces stock emoji 🇲🇽 🇺🇸 ☀️ 🌙 with hand-drawn inline SVG so the
+   icons can carry brand glow, breathing animations, and hover amplification.
+   Each component renders a 22×22 viewbox — sized to match emoji optical weight
+   in the Cloudscape utility button. Animations live in styles.css and are
+   keyed off classes the parent <span> sets. */
+
+function SunSvg() {
+	return (
+		<svg
+			className="cdn-svg-sun"
+			width="22"
+			height="22"
+			viewBox="0 0 22 22"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			role="img"
+		>
+			{/* eight rays — group rotates as a unit */}
+			<g className="cdn-svg-sun__rays">
+				<line x1="11" y1="1.5" x2="11" y2="4.5" />
+				<line x1="11" y1="17.5" x2="11" y2="20.5" />
+				<line x1="1.5" y1="11" x2="4.5" y2="11" />
+				<line x1="17.5" y1="11" x2="20.5" y2="11" />
+				<line x1="3.9" y1="3.9" x2="6.0" y2="6.0" />
+				<line x1="16.0" y1="16.0" x2="18.1" y2="18.1" />
+				<line x1="3.9" y1="18.1" x2="6.0" y2="16.0" />
+				<line x1="16.0" y1="6.0" x2="18.1" y2="3.9" />
+			</g>
+			{/* warm gold core — pulses via CSS */}
+			<circle className="cdn-svg-sun__core" cx="11" cy="11" r="4.4" />
+		</svg>
+	);
+}
+
+function MoonSvg() {
+	return (
+		<svg
+			className="cdn-svg-moon"
+			width="22"
+			height="22"
+			viewBox="0 0 22 22"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			role="img"
+		>
+			{/* crescent — even-odd fill: outer disc minus offset disc */}
+			<path
+				className="cdn-svg-moon__crescent"
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M14.6 17.5a7.5 7.5 0 1 1 0-13.0 5.6 5.6 0 0 0 0 13.0z"
+			/>
+			{/* faint craters — cluster on the lit edge */}
+			<circle className="cdn-svg-moon__crater cdn-svg-moon__crater--a" cx="9.4" cy="8.0" r="0.7" />
+			<circle className="cdn-svg-moon__crater cdn-svg-moon__crater--b" cx="11.2" cy="13.4" r="0.55" />
+			<circle className="cdn-svg-moon__crater cdn-svg-moon__crater--c" cx="8.0" cy="12.0" r="0.4" />
+			{/* twinkling sidekick star — 4-point sparkle */}
+			<path
+				className="cdn-svg-moon__star"
+				d="M17.5 5.5 L18.0 7.0 L19.5 7.5 L18.0 8.0 L17.5 9.5 L17.0 8.0 L15.5 7.5 L17.0 7.0 Z"
+			/>
+		</svg>
+	);
+}
+
+function MxFlagSvg() {
+	return (
+		<svg
+			className="cdn-svg-flag cdn-svg-flag--mx"
+			width="26"
+			height="18"
+			viewBox="0 0 26 18"
+			xmlns="http://www.w3.org/2000/svg"
+			role="img"
+		>
+			{/* clip rounds the corners */}
+			<defs>
+				<clipPath id="cdn-flag-mx-clip">
+					<rect x="0.5" y="0.5" width="25" height="17" rx="2.5" ry="2.5" />
+				</clipPath>
+			</defs>
+			<g clipPath="url(#cdn-flag-mx-clip)">
+				{/* three vertical stripes — each in its own group for independent wave */}
+				<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--a">
+					<rect x="0" y="0" width="8.67" height="18" fill="#006847" />
+				</g>
+				<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--b">
+					<rect x="8.67" y="0" width="8.66" height="18" fill="#f5f5f5" />
+				</g>
+				<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--c">
+					<rect x="17.33" y="0" width="8.67" height="18" fill="#ce1126" />
+				</g>
+				{/* eagle silhouette — abstracted spread-wing shape, brand-amber tint */}
+				<g className="cdn-svg-flag__emblem">
+					<ellipse cx="13" cy="9" rx="2.6" ry="1.3" fill="#8b5a2b" opacity="0.78" />
+					<path
+						d="M13 7.7 L13 10.3 M11.0 9 Q12 8.2 13 9 Q14 8.2 15.0 9 M11.4 10.0 Q12.2 10.7 13 10.3 Q13.8 10.7 14.6 10.0"
+						stroke="#5a1f8a"
+						strokeWidth="0.45"
+						fill="none"
+						strokeLinecap="round"
+					/>
+					<circle cx="13" cy="8.5" r="0.5" fill="#5a1f8a" />
+				</g>
+			</g>
+			{/* outer hairline frame for definition on light + dark nav */}
+			<rect
+				x="0.5"
+				y="0.5"
+				width="25"
+				height="17"
+				rx="2.5"
+				ry="2.5"
+				fill="none"
+				stroke="rgba(0,0,0,0.35)"
+				strokeWidth="1"
+			/>
+		</svg>
+	);
+}
+
+function UsFlagSvg() {
+	return (
+		<svg
+			className="cdn-svg-flag cdn-svg-flag--us"
+			width="26"
+			height="18"
+			viewBox="0 0 26 18"
+			xmlns="http://www.w3.org/2000/svg"
+			role="img"
+		>
+			<defs>
+				<clipPath id="cdn-flag-us-clip">
+					<rect x="0.5" y="0.5" width="25" height="17" rx="2.5" ry="2.5" />
+				</clipPath>
+			</defs>
+			<g clipPath="url(#cdn-flag-us-clip)">
+				{/* 13 horizontal stripes (red/white alternating). Wave applied
+				   per-stripe via nth-child phase offset in CSS. */}
+				<g className="cdn-svg-flag__stripes-h">
+					<rect x="0" y="0" width="26" height="1.385" fill="#b22234" />
+					<rect x="0" y="1.385" width="26" height="1.385" fill="#ffffff" />
+					<rect x="0" y="2.77" width="26" height="1.385" fill="#b22234" />
+					<rect x="0" y="4.155" width="26" height="1.385" fill="#ffffff" />
+					<rect x="0" y="5.54" width="26" height="1.385" fill="#b22234" />
+					<rect x="0" y="6.925" width="26" height="1.385" fill="#ffffff" />
+					<rect x="0" y="8.31" width="26" height="1.385" fill="#b22234" />
+					<rect x="0" y="9.695" width="26" height="1.385" fill="#ffffff" />
+					<rect x="0" y="11.08" width="26" height="1.385" fill="#b22234" />
+					<rect x="0" y="12.465" width="26" height="1.385" fill="#ffffff" />
+					<rect x="0" y="13.85" width="26" height="1.385" fill="#b22234" />
+					<rect x="0" y="15.235" width="26" height="1.385" fill="#ffffff" />
+					<rect x="0" y="16.62" width="26" height="1.385" fill="#b22234" />
+				</g>
+				{/* canton */}
+				<rect x="0" y="0" width="11" height="9.7" fill="#3c3b6e" />
+				{/* simplified star grid — 9 stars in 3×3 abstraction (legible at 26px) */}
+				<g className="cdn-svg-flag__stars">
+					<circle cx="2.0" cy="2.0" r="0.55" fill="#ffffff" />
+					<circle cx="5.5" cy="2.0" r="0.55" fill="#ffffff" />
+					<circle cx="9.0" cy="2.0" r="0.55" fill="#ffffff" />
+					<circle cx="2.0" cy="4.85" r="0.55" fill="#ffffff" />
+					<circle cx="5.5" cy="4.85" r="0.55" fill="#ffffff" />
+					<circle cx="9.0" cy="4.85" r="0.55" fill="#ffffff" />
+					<circle cx="2.0" cy="7.7" r="0.55" fill="#ffffff" />
+					<circle cx="5.5" cy="7.7" r="0.55" fill="#ffffff" />
+					<circle cx="9.0" cy="7.7" r="0.55" fill="#ffffff" />
+				</g>
+			</g>
+			<rect
+				x="0.5"
+				y="0.5"
+				width="25"
+				height="17"
+				rx="2.5"
+				ry="2.5"
+				fill="none"
+				stroke="rgba(0,0,0,0.35)"
+				strokeWidth="1"
+			/>
+		</svg>
+	);
+}
+
 export interface ShellProps {
 	breadcrumbs?: AppLayoutProps["breadcrumbs"];
 	contentType?: Extract<
@@ -167,20 +352,59 @@ function ShellContent({
 					<cdn-star-logo transparent="" no-rotate=""></cdn-star-logo>
 					<LogoSvg className="cdn-logo-img" aria-hidden="true" />
 				</a>
+				{/* AWS USER GROUP tagline — sits to the right of the star logo.
+				    "AWS" in aws-orange, "USER GROUP" in brand violet. Lit-sign
+				    treatment matching the star (text-shadow glow + slow pulse). */}
+				<div className="cdn-ugtag" aria-hidden="true">
+					<span className="cdn-ugtag-aws">AWS</span>
+					<span className="cdn-ugtag-ug">USER GROUP</span>
+				</div>
 				<TopNavigation
 					identity={{ href: identityHref }}
 					utilities={[
 						{
 							type: "button",
-							text: locale === "mx" ? "🇺🇸" : "🇲🇽",
+							// Custom inline SVG flag — replaces stock emoji.
+							// Wrapped in a span so the Cloudscape utility-button click target
+							// still receives clicks; pointer-events: none on the SVG below.
+							// Title carries the existing i18n string so the existing
+							// :has([title*="Spanish"]) / [title*="Inglés"] CSS hooks
+							// still match for click-flip animation. ariaLabel must be set
+							// explicitly because Cloudscape derives it from `text` by default
+							// — passing a ReactNode in `text` would yield a non-string label.
+							text: (
+								<span
+									className={`cdn-flag-toggle cdn-flag-toggle--${locale === "mx" ? "us" : "mx"}`}
+									aria-hidden="true"
+								>
+									{locale === "mx" ? <UsFlagSvg /> : <MxFlagSvg />}
+								</span>
+							) as unknown as string,
 							title:
+								locale === "mx" ? t("shell.switchToUs") : t("shell.switchToMx"),
+							ariaLabel:
 								locale === "mx" ? t("shell.switchToUs") : t("shell.switchToMx"),
 							onClick: handleToggleLocale,
 						},
 						{
 							type: "button",
-							text: theme === "dark" ? "☀️" : "🌙",
+							// Custom inline SVG sun/moon — replaces stock emoji.
+							// Same wrapper-span pattern. cdn-celestial-toggle--sun shows
+							// rays + warm core; cdn-celestial-toggle--moon shows crescent
+							// + crater + twinkling star sidekick.
+							text: (
+								<span
+									className={`cdn-celestial-toggle cdn-celestial-toggle--${theme === "dark" ? "sun" : "moon"}`}
+									aria-hidden="true"
+								>
+									{theme === "dark" ? <SunSvg /> : <MoonSvg />}
+								</span>
+							) as unknown as string,
 							title:
+								theme === "dark"
+									? t("shell.switchToLightMode")
+									: t("shell.switchToDarkMode"),
+							ariaLabel:
 								theme === "dark"
 									? t("shell.switchToLightMode")
 									: t("shell.switchToDarkMode"),

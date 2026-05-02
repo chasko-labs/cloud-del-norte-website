@@ -669,6 +669,27 @@
 }
 
 /* ==========================================================================
+   Hide page-title h1 + Info button on pages with breadcrumbs
+
+   Reasoning (Bryan, v0.0.0034): the breadcrumb h1 already shows
+   "CLOUD DEL NORTE > [page name]" — printing the same page name again
+   in the ContentLayout header below is redundant. Hide (display:none) so
+   we keep the DOM intact in case we want to repurpose that real estate
+   later (a hero band, a status row, a search bar). The `awsui_header-wrapper_`
+   only renders when a page passes `<Header>` via ContentLayout — and every
+   Shell page that passes breadcrumbs also passes a Header, so the rule
+   gates on the breadcrumbs being present via :has().
+
+   To bring this back on a specific page, remove `breadcrumbs={...}` on that
+   page's app.tsx OR add a more-specific selector with display:revert.
+   ========================================================================== */
+[class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
+	[class*="awsui_has-header_"]
+	> [class*="awsui_header-wrapper_"]:not(#\9):not(#\10) {
+	display: none !important;
+}
+
+/* ==========================================================================
    Mobile scroll — left nav + right tools panel
 
    Bryan ask: when API menu is expanded on mobile the left nav cuts off; the
@@ -723,5 +744,189 @@
 	.awsui-dark-mode nav[class*="awsui_navigation_"]:not(#\9),
 	.awsui-dark-mode [class*="awsui_tools_"]:not(#\9) {
 		scrollbar-color: rgba(144, 96, 240, 0.4) transparent;
+	}
+}
+
+/* ==========================================================================
+   tools-toggle (info "i" button) — branded affordance for the help panel
+
+   Cloudscape paints the round trigger button at the right edge of the
+   AppLayout in flat slate grey (#424650). Replace with the same dark
+   mahogany / navy gradient as #top-nav so the button reads as part of the
+   chrome family. Amber border (light) / violet border (dark) mirrors the
+   top-nav border-bottom accent. Icon inverts to cream / lavender for the
+   white-on-dark pattern.
+
+   Selector targets the test-class hook awsui_tools-toggle_ which Cloudscape
+   only emits on this specific button — won't collide with the left-side
+   navigation-toggle, breadcrumb buttons, or other circular triggers.
+   Higher specificity (:not(#\9):not(#\10)) needed to beat Cloudscape's
+   visual-refresh trigger-button-styles rule.
+
+   Animation: slow ambient breathe pulse draws gaze to the help affordance,
+   hover punches scale 1.08 + glow, active settles back inset. Transitions
+   200ms cubic-bezier; reduced motion disables pulse + scale.
+   ========================================================================== */
+
+/* Light mode — dark mahogany gradient + amber border + cream icon */
+:root:not(.awsui-dark-mode)
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-gradient-nav-start) 0%,
+		var(--cdn-gradient-nav-mid) 55%,
+		var(--cdn-gradient-nav-end) 100%
+	) !important;
+	border: 1.5px solid rgba(139, 90, 43, 0.55) !important;
+	color: var(--cdn-cream, #ede5d4) !important;
+	box-shadow:
+		0 2px 12px rgba(44, 18, 6, 0.32),
+		0 0 0 1px rgba(255, 153, 0, 0.08),
+		inset 0 1px 0 rgba(255, 153, 0, 0.18) !important;
+	transition:
+		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	animation: cdn-tools-toggle-breathe 6s ease-in-out infinite;
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-gradient-nav-mid) 0%,
+		var(--cdn-gradient-nav-end) 55%,
+		var(--cdn-gradient-nav-start) 100%
+	) !important;
+	border-color: var(--cdn-amber, #8b5a2b) !important;
+	transform: scale(1.08);
+	box-shadow:
+		0 6px 22px rgba(44, 18, 6, 0.42),
+		0 0 14px rgba(255, 153, 0, 0.45),
+		0 0 0 2px rgba(255, 153, 0, 0.22),
+		inset 0 1px 0 rgba(255, 153, 0, 0.32) !important;
+	filter: drop-shadow(0 0 6px rgba(255, 153, 0, 0.35));
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10):active {
+	transform: scale(1);
+	box-shadow:
+		inset 0 2px 6px rgba(0, 0, 0, 0.45),
+		0 1px 4px rgba(44, 18, 6, 0.28) !important;
+	filter: none;
+}
+
+/* Light mode — cream icon glyph against the dark gradient. SVG fill override
+   covers icons that hardcode their fill attribute instead of inheriting. */
+:root:not(.awsui-dark-mode)
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg,
+:root:not(.awsui-dark-mode)
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) [class*="awsui_icon"] {
+	color: var(--cdn-cream, #ede5d4) !important;
+	fill: var(--cdn-cream, #ede5d4) !important;
+}
+
+/* Dark mode — deep navy gradient + violet border + lavender icon */
+.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-gradient-nav-start) 0%,
+		var(--cdn-gradient-nav-mid) 50%,
+		var(--cdn-gradient-nav-end) 100%
+	) !important;
+	border: 1.5px solid rgba(144, 96, 240, 0.5) !important;
+	color: var(--cdn-lavender, #d7c7ee) !important;
+	box-shadow:
+		0 4px 18px -2px rgba(0, 0, 0, 0.55),
+		0 0 0 1px rgba(144, 96, 240, 0.12),
+		inset 0 1px 0 rgba(144, 96, 240, 0.28) !important;
+	transition:
+		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+	animation: cdn-tools-toggle-breathe-dark 6s ease-in-out infinite;
+}
+
+.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-gradient-nav-mid) 0%,
+		var(--cdn-gradient-nav-end) 50%,
+		var(--cdn-gradient-nav-start) 100%
+	) !important;
+	border-color: var(--cdn-violet, #9060f0) !important;
+	transform: scale(1.08);
+	box-shadow:
+		0 8px 28px -4px rgba(0, 0, 0, 0.6),
+		0 0 18px rgba(144, 96, 240, 0.55),
+		0 0 0 2px rgba(144, 96, 240, 0.28),
+		inset 0 1px 0 rgba(215, 199, 238, 0.4) !important;
+	filter: drop-shadow(0 0 8px rgba(144, 96, 240, 0.5));
+}
+
+.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):active {
+	transform: scale(1);
+	box-shadow:
+		inset 0 2px 6px rgba(0, 0, 0, 0.6),
+		0 1px 4px rgba(0, 0, 0, 0.4) !important;
+	filter: none;
+}
+
+.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg,
+.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) [class*="awsui_icon"] {
+	color: var(--cdn-lavender, #d7c7ee) !important;
+	fill: var(--cdn-lavender, #d7c7ee) !important;
+}
+
+/* Ambient breathe — slow pulsing glow ring, 6s cycle. Light mode amber halo;
+   dark mode violet halo. Box-shadow only (no transform) so it never fights
+   the hover scale or layout. */
+@keyframes cdn-tools-toggle-breathe {
+	0%, 100% {
+		box-shadow:
+			0 2px 12px rgba(44, 18, 6, 0.32),
+			0 0 0 1px rgba(255, 153, 0, 0.08),
+			inset 0 1px 0 rgba(255, 153, 0, 0.18);
+	}
+	50% {
+		box-shadow:
+			0 3px 16px rgba(44, 18, 6, 0.38),
+			0 0 12px rgba(255, 153, 0, 0.22),
+			0 0 0 2px rgba(255, 153, 0, 0.16),
+			inset 0 1px 0 rgba(255, 153, 0, 0.28);
+	}
+}
+
+@keyframes cdn-tools-toggle-breathe-dark {
+	0%, 100% {
+		box-shadow:
+			0 4px 18px -2px rgba(0, 0, 0, 0.55),
+			0 0 0 1px rgba(144, 96, 240, 0.12),
+			inset 0 1px 0 rgba(144, 96, 240, 0.28);
+	}
+	50% {
+		box-shadow:
+			0 5px 22px -2px rgba(0, 0, 0, 0.6),
+			0 0 16px rgba(144, 96, 240, 0.35),
+			0 0 0 2px rgba(144, 96, 240, 0.22),
+			inset 0 1px 0 rgba(144, 96, 240, 0.4);
+	}
+}
+
+/* Pause breathe + drop transitions when motion-reduced */
+@media (prefers-reduced-motion: reduce) {
+	:root:not(.awsui-dark-mode)
+		[class*="awsui_tools-toggle_"]:not(#\9):not(#\10),
+	.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+		animation: none !important;
+		transition: none !important;
+	}
+	:root:not(.awsui-dark-mode)
+		[class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover,
+	.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
+		transform: none;
 	}
 }
