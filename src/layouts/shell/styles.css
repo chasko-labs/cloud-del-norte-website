@@ -345,17 +345,18 @@ main[class*="awsui_layout"] {
 	-webkit-backdrop-filter: none;
 }
 
-/* Card headers */
+/* Card headers — opaque cream/navy, NO blur.
+   Cards are opaque containers. The blur was applied to a child of an opaque
+   element (.cdn-card has its own solid bg) — the filter saw flat cream and
+   produced flat cream output, AND triggered Safari text-rendering issue
+   where text inside became "heavily blurred" (sub-pixel sampling under
+   stacked backdrop-filter layers). No useful effect, real cost. Drop it. */
 .cdn-viz-active:not(.awsui-dark-mode) .cdn-card [class*="awsui_header_"] {
-	background: rgba(237, 229, 212, 0.45) !important;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
+	background: rgb(237, 229, 212) !important;
 }
 
 .cdn-viz-active.awsui-dark-mode .cdn-card [class*="awsui_header_"] {
-	background: rgba(10, 12, 20, 0.45) !important;
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
+	background: rgb(10, 12, 20) !important;
 }
 
 /* Side nav */

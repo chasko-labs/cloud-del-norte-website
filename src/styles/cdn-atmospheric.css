@@ -376,15 +376,18 @@
 	background-color: transparent !important;
 }
 
-/* Light mode — inner nav drawer + tools panel atmospheric.
-   Order matters: rolldown's CSS minifier dedupes adjacent prefixed/unprefixed
-   pairs and keeps the LAST. Modern Chrome only honors the unprefixed form,
-   so unprefixed MUST be last. */
+/* Light mode — inner nav drawer + tools panel: OPAQUE cream.
+   Earlier passes set these translucent + blur to "let the dunes show through".
+   That broke text legibility (Safari rendered text via stacked backdrop-filter
+   layers as "heavily blurred"; Chrome rendered cream-on-cream-on-cream as flat
+   cream). Audit conclusion: panels are CONTENT-BEARING — text comes first.
+   The dunes are revealed through the OUTER chrome surfaces (nav-container,
+   tools-container, AppLayout main, breadcrumbs) which have no text. */
 :root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
-	background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
-	-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
-	backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
+	background-color: rgb(237, 229, 212) !important;
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
 }
 
 /* Light mode — borders */
@@ -408,13 +411,14 @@
 	background-color: transparent !important;
 }
 
-/* Dark mode — inner nav drawer + tools panel atmospheric (navy).
-   Same prefix-order trick: unprefixed backdrop-filter declared LAST. */
+/* Dark mode — inner nav drawer + tools panel: OPAQUE navy.
+   Same audit conclusion as light: panels hold text, text reads on solid bg.
+   Stars/music-viz revealed through outer chrome, not through panel content. */
 .awsui-dark-mode nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
 .awsui-dark-mode [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
-	background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
-	-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
-	backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
+	background-color: rgb(10, 12, 32) !important;
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
 }
 
 /* Dark mode — borders */
