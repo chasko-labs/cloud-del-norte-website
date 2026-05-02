@@ -34,6 +34,7 @@ import "./styles.css";
 
 function SunSvg() {
 	return (
+		// biome-ignore lint/a11y/noSvgWithoutTitle: decorative; aria-hidden inside button which carries ariaLabel
 		<svg
 			className="cdn-svg-sun"
 			width="22"
@@ -62,6 +63,7 @@ function SunSvg() {
 
 function MoonSvg() {
 	return (
+		// biome-ignore lint/a11y/noSvgWithoutTitle: decorative; aria-hidden inside button which carries ariaLabel
 		<svg
 			className="cdn-svg-moon"
 			width="22"
@@ -79,9 +81,24 @@ function MoonSvg() {
 				d="M14.6 17.5a7.5 7.5 0 1 1 0-13.0 5.6 5.6 0 0 0 0 13.0z"
 			/>
 			{/* faint craters — cluster on the lit edge */}
-			<circle className="cdn-svg-moon__crater cdn-svg-moon__crater--a" cx="9.4" cy="8.0" r="0.7" />
-			<circle className="cdn-svg-moon__crater cdn-svg-moon__crater--b" cx="11.2" cy="13.4" r="0.55" />
-			<circle className="cdn-svg-moon__crater cdn-svg-moon__crater--c" cx="8.0" cy="12.0" r="0.4" />
+			<circle
+				className="cdn-svg-moon__crater cdn-svg-moon__crater--a"
+				cx="9.4"
+				cy="8.0"
+				r="0.7"
+			/>
+			<circle
+				className="cdn-svg-moon__crater cdn-svg-moon__crater--b"
+				cx="11.2"
+				cy="13.4"
+				r="0.55"
+			/>
+			<circle
+				className="cdn-svg-moon__crater cdn-svg-moon__crater--c"
+				cx="8.0"
+				cy="12.0"
+				r="0.4"
+			/>
 			{/* twinkling sidekick star — 4-point sparkle */}
 			<path
 				className="cdn-svg-moon__star"
@@ -104,6 +121,7 @@ function MoonSvg() {
    border-radius on the SVG element. */
 function MxFlagSvg() {
 	return (
+		// biome-ignore lint/a11y/noSvgWithoutTitle: decorative; aria-hidden inside button which carries ariaLabel
 		<svg
 			className="cdn-svg-flag cdn-svg-flag--mx"
 			width="26"
@@ -162,10 +180,7 @@ function MxFlagSvg() {
 					fill="#d4a017"
 				/>
 				{/* eagle beak tip */}
-				<path
-					d="M 11.3 8.85 L 10.95 8.95 L 11.3 9.05 Z"
-					fill="#3a1a05"
-				/>
+				<path d="M 11.3 8.85 L 10.95 8.95 L 11.3 9.05 Z" fill="#3a1a05" />
 				{/* serpent — dark curve from beak */}
 				<path
 					d="M 10.95 8.95 Q 10.5 9.15 10.7 9.5 Q 10.95 9.7 11.25 9.55"
@@ -214,6 +229,7 @@ function UsFlagSvg() {
 		for (const cx of xs) stars.push({ cx, cy: ys[row] });
 	}
 	return (
+		// biome-ignore lint/a11y/noSvgWithoutTitle: decorative; aria-hidden inside button which carries ariaLabel
 		<svg
 			className="cdn-svg-flag cdn-svg-flag--us"
 			width="26"
@@ -225,19 +241,19 @@ function UsFlagSvg() {
 			{/* 13 horizontal stripes (red/white alternating). Wave applied
 			   per-stripe via nth-child phase offset in CSS. */}
 			<g className="cdn-svg-flag__stripes-h">
-				<rect x="0" y="0"      width="26" height="1.385" fill="#b22234" />
-				<rect x="0" y="1.385"  width="26" height="1.385" fill="#ffffff" />
-				<rect x="0" y="2.77"   width="26" height="1.385" fill="#b22234" />
-				<rect x="0" y="4.155"  width="26" height="1.385" fill="#ffffff" />
-				<rect x="0" y="5.54"   width="26" height="1.385" fill="#b22234" />
-				<rect x="0" y="6.925"  width="26" height="1.385" fill="#ffffff" />
-				<rect x="0" y="8.31"   width="26" height="1.385" fill="#b22234" />
-				<rect x="0" y="9.695"  width="26" height="1.385" fill="#ffffff" />
-				<rect x="0" y="11.08"  width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="0" width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="1.385" width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="2.77" width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="4.155" width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="5.54" width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="6.925" width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="8.31" width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="9.695" width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="11.08" width="26" height="1.385" fill="#b22234" />
 				<rect x="0" y="12.465" width="26" height="1.385" fill="#ffffff" />
-				<rect x="0" y="13.85"  width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="13.85" width="26" height="1.385" fill="#b22234" />
 				<rect x="0" y="15.235" width="26" height="1.385" fill="#ffffff" />
-				<rect x="0" y="16.62"  width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="16.62" width="26" height="1.385" fill="#b22234" />
 			</g>
 			{/* canton — covers stripes 1–7 (height 9.695), width 40% of fly */}
 			<rect x="0" y="0" width="10.4" height="9.695" fill="#3c3b6e" />
@@ -353,7 +369,6 @@ function ShellContent({
 		[],
 	);
 
-
 	// Wallpaper + cdn-star-logo lifecycle now owned by <CdnWallpaper />.
 	// See src/components/cdn-wallpaper/index.tsx.
 
@@ -403,7 +418,11 @@ function ShellContent({
 				{/* Custom logo — absolutely positioned so it's free of Cloudscape's identity sizing constraints.
 				    <cdn-star-logo> is the 3D version (kicks in once the custom element registers via :defined CSS).
 				    <img> is the always-rendered fallback for SSR / no-JS / WebGL failure. */}
-				<a href={identityHref} className="cdn-logo-hero" aria-label="Cloud Del Norte — home">
+				<a
+					href={identityHref}
+					className="cdn-logo-hero"
+					aria-label="Cloud Del Norte — home"
+				>
 					{/* @ts-ignore — custom element from /lib/cdn-star-logo */}
 					<cdn-star-logo transparent="" no-rotate=""></cdn-star-logo>
 					<LogoSvg className="cdn-logo-img" aria-hidden="true" />
@@ -417,74 +436,80 @@ function ShellContent({
 				</div>
 				<TopNavigation
 					identity={{ href: identityHref }}
-					utilities={[
-						{
-							type: "button",
-							// Cloudscape's button-utility supports `iconSvg` for inline SVG —
-							// previously we passed JSX through `text` (cast as unknown as string)
-							// but Cloudscape applied visibility:hidden to the text span when
-							// the value didn't stringify cleanly. iconSvg accepts ReactNode
-							// directly without that gate. Locale-state class on the SVG
-							// itself drives the per-flag CSS treatment (was on a wrapper span).
-							iconSvg: (
-								<span
-									className={`cdn-flag-toggle cdn-flag-toggle--${locale === "mx" ? "us" : "mx"}`}
-									aria-hidden="true"
-								>
-									{locale === "mx" ? <UsFlagSvg /> : <MxFlagSvg />}
-								</span>
-							),
-							ariaLabel:
-								locale === "mx" ? t("shell.switchToUs") : t("shell.switchToMx"),
-							title:
-								locale === "mx" ? t("shell.switchToUs") : t("shell.switchToMx"),
-							onClick: handleToggleLocale,
-						},
-						{
-							type: "button",
-							iconSvg: (
-								<span
-									className={`cdn-celestial-toggle cdn-celestial-toggle--${theme === "dark" ? "sun" : "moon"}`}
-									aria-hidden="true"
-								>
-									{theme === "dark" ? <SunSvg /> : <MoonSvg />}
-								</span>
-							),
-							ariaLabel:
-								theme === "dark"
-									? t("shell.switchToLightMode")
-									: t("shell.switchToDarkMode"),
-							title:
-								theme === "dark"
-									? t("shell.switchToLightMode")
-									: t("shell.switchToDarkMode"),
-							onClick: handleToggleTheme,
-						},
-						...(auth.isAuthenticated
-							? [
-									{
-										type: "menu-dropdown" as const,
-										text: auth.email ?? auth.name ?? "account",
-										description: auth.isModerator ? "moderator" : undefined,
-										iconName: "user-profile",
-										items: [{ id: "signout", text: "sign out" }],
-										onItemClick: (e: { detail: { id: string } }) => {
-											if (e.detail.id === "signout") auth.signOut();
-										},
-									},
-								]
-							: hideSignInUtility
-								? []
-								: [
+					utilities={
+						[
+							{
+								type: "button",
+								// Cloudscape's button-utility supports `iconSvg` for inline SVG —
+								// previously we passed JSX through `text` (cast as unknown as string)
+								// but Cloudscape applied visibility:hidden to the text span when
+								// the value didn't stringify cleanly. iconSvg accepts ReactNode
+								// directly without that gate. Locale-state class on the SVG
+								// itself drives the per-flag CSS treatment (was on a wrapper span).
+								iconSvg: (
+									<span
+										className={`cdn-flag-toggle cdn-flag-toggle--${locale === "mx" ? "us" : "mx"}`}
+										aria-hidden="true"
+									>
+										{locale === "mx" ? <UsFlagSvg /> : <MxFlagSvg />}
+									</span>
+								),
+								ariaLabel:
+									locale === "mx"
+										? t("shell.switchToUs")
+										: t("shell.switchToMx"),
+								title:
+									locale === "mx"
+										? t("shell.switchToUs")
+										: t("shell.switchToMx"),
+								onClick: handleToggleLocale,
+							},
+							{
+								type: "button",
+								iconSvg: (
+									<span
+										className={`cdn-celestial-toggle cdn-celestial-toggle--${theme === "dark" ? "sun" : "moon"}`}
+										aria-hidden="true"
+									>
+										{theme === "dark" ? <SunSvg /> : <MoonSvg />}
+									</span>
+								),
+								ariaLabel:
+									theme === "dark"
+										? t("shell.switchToLightMode")
+										: t("shell.switchToDarkMode"),
+								title:
+									theme === "dark"
+										? t("shell.switchToLightMode")
+										: t("shell.switchToDarkMode"),
+								onClick: handleToggleTheme,
+							},
+							...(auth.isAuthenticated
+								? [
 										{
-											type: "button" as const,
-											text: "sign in",
-											onClick: () => {
-												window.location.assign(AUTH_LOGIN_URL);
+											type: "menu-dropdown" as const,
+											text: auth.email ?? auth.name ?? "account",
+											description: auth.isModerator ? "moderator" : undefined,
+											iconName: "user-profile",
+											items: [{ id: "signout", text: "sign out" }],
+											onItemClick: (e: { detail: { id: string } }) => {
+												if (e.detail.id === "signout") auth.signOut();
 											},
 										},
-									]),
-					] as TopNavigationProps.Utility[]}
+									]
+								: hideSignInUtility
+									? []
+									: [
+											{
+												type: "button" as const,
+												text: "sign in",
+												onClick: () => {
+													window.location.assign(AUTH_LOGIN_URL);
+												},
+											},
+										]),
+						] as TopNavigationProps.Utility[]
+					}
 					i18nStrings={{
 						overflowMenuTriggerText: t("shell.more"),
 						overflowMenuTitleText: t("shell.all"),
@@ -527,9 +552,7 @@ function ShellContent({
 					type="button"
 					className="cdn-volunteer-btn"
 					aria-label={t("shell.openHelpPanel")}
-					onClick={() =>
-						handleToolsChange({ detail: { open: !toolsOpen } })
-					}
+					onClick={() => handleToolsChange({ detail: { open: !toolsOpen } })}
 				>
 					Volunteer
 				</button>

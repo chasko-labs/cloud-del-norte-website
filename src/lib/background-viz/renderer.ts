@@ -1,6 +1,6 @@
 import { renderDark, resetDarkState } from "./dark.js";
 import { renderLight, resetLightState } from "./light.js";
-import { type StarPoint } from "./static.js";
+import type { StarPoint } from "./static.js";
 
 export function isDark(): boolean {
 	return document.documentElement.classList.contains("awsui-dark-mode");

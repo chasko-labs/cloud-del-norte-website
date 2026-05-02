@@ -197,8 +197,18 @@
 	/* ---------- Shimmer highlight tint — harmonizes with surface ---------- */
 	/* light mode: faint amber-tinted cream for sweeps over warm-brown nav surface
 	   and brighter cream for text-clip shimmers over dark text */
-	--cdn-shimmer-color: rgba(201, 162, 63, 0.18); /* amber tint, surface sweeps */
-	--cdn-shimmer-text-color: rgba(250, 247, 240, 0.7); /* warm cream highlight, text-clip */
+	--cdn-shimmer-color: rgba(
+		201,
+		162,
+		63,
+		0.18
+	); /* amber tint, surface sweeps */
+	--cdn-shimmer-text-color: rgba(
+		250,
+		247,
+		240,
+		0.7
+	); /* warm cream highlight, text-clip */
 
 	/* ---------- Table header visual weight — light mode ---------- */
 	--color-background-table-header-hdjxos: #ede8db; /* warm amber — matches container header */
@@ -247,7 +257,9 @@
 	--cdn-status-success: #4ade80; /* green-400 */
 	--cdn-status-error: #f87171; /* red-400 */
 	--cdn-status-warning: #fbbf24; /* amber-400 */
-	--cdn-status-info: var(--cdn-violet-soft); /* #a080e8 — lighter violet for dark bg */
+	--cdn-status-info: var(
+		--cdn-violet-soft
+	); /* #a080e8 — lighter violet for dark bg */
 
 	--cdn-color-primary: var(
 		--cdn-violet
@@ -274,8 +286,18 @@
 
 	/* ---------- Shimmer highlight tint — dark mode ---------- */
 	/* faint violet for surface sweeps; brighter lavender for text-clip shimmers */
-	--cdn-shimmer-color: rgba(144, 96, 240, 0.18); /* violet tint, surface sweeps */
-	--cdn-shimmer-text-color: rgba(199, 184, 232, 0.85); /* lavender highlight, text-clip */
+	--cdn-shimmer-color: rgba(
+		144,
+		96,
+		240,
+		0.18
+	); /* violet tint, surface sweeps */
+	--cdn-shimmer-text-color: rgba(
+		199,
+		184,
+		232,
+		0.85
+	); /* lavender highlight, text-clip */
 }
 
 /* ==========================================================================

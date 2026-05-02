@@ -182,15 +182,21 @@
    Cloudscape primary button defaults to its blue interactive token (~#0972d3).
    Override to brand violet (--cdn-purple) with a deeper purple on hover. */
 
-:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_button"][class*="variant-primary"],
+:root:not(.awsui-dark-mode)
+	.cdn-auth-card
+	[class*="awsui_button"][class*="variant-primary"],
 :root:not(.awsui-dark-mode) .cdn-auth-card button[class*="variant-primary"] {
 	background: var(--cdn-violet) !important;
 	border-color: var(--cdn-violet) !important;
 	color: var(--cdn-white) !important;
 }
 
-:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_button"][class*="variant-primary"]:hover,
-:root:not(.awsui-dark-mode) .cdn-auth-card button[class*="variant-primary"]:hover {
+:root:not(.awsui-dark-mode)
+	.cdn-auth-card
+	[class*="awsui_button"][class*="variant-primary"]:hover,
+:root:not(.awsui-dark-mode)
+	.cdn-auth-card
+	button[class*="variant-primary"]:hover {
 	background: var(--cdn-purple) !important;
 	border-color: var(--cdn-purple) !important;
 }
@@ -213,14 +219,20 @@
    blue. Override the active/completed step states to brand violet in light
    mode. Targets Wizard's scoped class names. */
 
-:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_navigation-link"][class*="active"],
-:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_circle"][class*="active"] {
+:root:not(.awsui-dark-mode)
+	.cdn-auth-card
+	[class*="awsui_navigation-link"][class*="active"],
+:root:not(.awsui-dark-mode)
+	.cdn-auth-card
+	[class*="awsui_circle"][class*="active"] {
 	background: var(--cdn-violet) !important;
 	border-color: var(--cdn-violet) !important;
 	color: var(--cdn-white) !important;
 }
 
-:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_navigation-link-active"] {
+:root:not(.awsui-dark-mode)
+	.cdn-auth-card
+	[class*="awsui_navigation-link-active"] {
 	color: var(--cdn-purple) !important;
 }
 
@@ -300,11 +312,22 @@
 }
 
 @keyframes cdn-auth-shake {
-	0%, 100% { transform: translateX(0); }
-	20% { transform: translateX(-6px); }
-	40% { transform: translateX(5px); }
-	60% { transform: translateX(-4px); }
-	80% { transform: translateX(3px); }
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	20% {
+		transform: translateX(-6px);
+	}
+	40% {
+		transform: translateX(5px);
+	}
+	60% {
+		transform: translateX(-4px);
+	}
+	80% {
+		transform: translateX(3px);
+	}
 }
 
 @keyframes cdn-auth-success-flash {
@@ -323,7 +346,8 @@
    !important needed to beat the existing variant-primary background override
    that lives at the top of this file. */
 .cdn-auth-submit-state.verifying button[class*="variant-primary"],
-.cdn-auth-submit-state.verifying [class*="awsui_button"][class*="variant-primary"] {
+.cdn-auth-submit-state.verifying
+	[class*="awsui_button"][class*="variant-primary"] {
 	background: linear-gradient(
 		90deg,
 		var(--cdn-amber) 0%,
@@ -339,23 +363,27 @@
 
 @media (prefers-reduced-motion: no-preference) {
 	.cdn-auth-submit-state.verifying button[class*="variant-primary"],
-	.cdn-auth-submit-state.verifying [class*="awsui_button"][class*="variant-primary"] {
+	.cdn-auth-submit-state.verifying
+		[class*="awsui_button"][class*="variant-primary"] {
 		animation: cdn-auth-verifying-shimmer 1.4s linear infinite;
 	}
 
 	.cdn-auth-submit-state.failed button[class*="variant-primary"],
-	.cdn-auth-submit-state.failed [class*="awsui_button"][class*="variant-primary"] {
+	.cdn-auth-submit-state.failed
+		[class*="awsui_button"][class*="variant-primary"] {
 		animation: cdn-auth-shake 350ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
 	}
 
 	.cdn-auth-submit-state.success button[class*="variant-primary"],
-	.cdn-auth-submit-state.success [class*="awsui_button"][class*="variant-primary"] {
+	.cdn-auth-submit-state.success
+		[class*="awsui_button"][class*="variant-primary"] {
 		animation: cdn-auth-success-flash 600ms ease-out both;
 	}
 }
 
 .cdn-auth-submit-state.success button[class*="variant-primary"],
-.cdn-auth-submit-state.success [class*="awsui_button"][class*="variant-primary"] {
+.cdn-auth-submit-state.success
+	[class*="awsui_button"][class*="variant-primary"] {
 	background: var(--cdn-violet) !important;
 	border-color: var(--cdn-violet) !important;
 	color: var(--cdn-white) !important;
@@ -383,11 +411,14 @@
 
 @media (prefers-reduced-motion: reduce) {
 	.cdn-auth-submit-state.verifying button[class*="variant-primary"],
-	.cdn-auth-submit-state.verifying [class*="awsui_button"][class*="variant-primary"],
+	.cdn-auth-submit-state.verifying
+		[class*="awsui_button"][class*="variant-primary"],
 	.cdn-auth-submit-state.failed button[class*="variant-primary"],
-	.cdn-auth-submit-state.failed [class*="awsui_button"][class*="variant-primary"],
+	.cdn-auth-submit-state.failed
+		[class*="awsui_button"][class*="variant-primary"],
 	.cdn-auth-submit-state.success button[class*="variant-primary"],
-	.cdn-auth-submit-state.success [class*="awsui_button"][class*="variant-primary"],
+	.cdn-auth-submit-state.success
+		[class*="awsui_button"][class*="variant-primary"],
 	.cdn-auth-success-check {
 		animation: none !important;
 	}

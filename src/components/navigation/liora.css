@@ -147,11 +147,7 @@
 	pointer-events: none;
 	-webkit-user-select: none;
 	user-select: none;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(11px, 4cqi, 16px);
 	animation: 1.6s ease-in-out infinite alternate liora-loading-pulse;
 }
@@ -664,11 +660,7 @@
 	justify-content: center;
 	align-items: center;
 	gap: 6px;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(10px, 4cqi, 13px);
 	line-height: 1.5;
 	transition:
@@ -857,11 +849,7 @@
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: #fff5ff;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 18px;
 	animation: 1.6s ease-in-out infinite alternate liora-text-shimmer;
 }
@@ -876,11 +864,7 @@
 	border: 1px solid #f0c8ffe6;
 	border-radius: 3px;
 	padding: 5px 16px;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 16px;
 	transition:
 		background 0.2s,
@@ -906,11 +890,7 @@
 	color: #9060f0;
 	text-align: center;
 	z-index: 20;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 14px;
 	text-decoration: none;
 	animation:
@@ -1354,11 +1334,7 @@
 		0 0 120px #8c3cff73,
 		0 0 180px #6818ff40;
 	margin-bottom: 2px;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	/* restored toward original scale — 18cqi at 254px = 45.7px, close to
 	   original 50.8px. clamped at 56px for wider panels. 34px floor keeps
 	   it legible at minimum panel widths */
@@ -1383,11 +1359,7 @@
 	min-height: 1.4em;
 	/* lift subtitle off names grid below — was 5px */
 	margin-bottom: 12px;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 15px;
 	line-height: 1.35;
 	animation: 0.6s 2.2s forwards liora-reconnect-fadein;
@@ -1569,11 +1541,7 @@
 		0 0 40px #a569ff66;
 	/* 0.5px stroke: letterform definition at small sizes without bloating glyph */
 	-webkit-text-stroke: 0.5px #d296ff80;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 18px;
 	line-height: 1.25;
 	animation: 0.65s forwards name-flash;
@@ -1620,11 +1588,7 @@
 	background-clip: border-box;
 	border-radius: 1px;
 	padding: 1px 14px;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 13px;
 	transition:
 		transform 0.18s cubic-bezier(0.2, 0.85, 0.4, 1.1),
@@ -1797,11 +1761,7 @@
 	pointer-events: none;
 	white-space: nowrap;
 	transform-origin: bottom;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 54px;
 	transition: opacity 0.2s;
 	animation: 0.25s forwards name-flyout-enter;
@@ -1911,11 +1871,7 @@
 }
 
 .liora-reconnect-label--inline {
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: inherit;
 	letter-spacing: 0.12em;
 	color: var(--cdn-violet, #9060f0);
@@ -2127,11 +2083,7 @@
 		0 0 4px #ff9900d9,
 		0 0 12px #ff99008c;
 	white-space: nowrap;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(15px, 5cqi, 19px);
 }
 
@@ -2155,11 +2107,7 @@
 	border-radius: 1px;
 	min-width: 64px;
 	padding: 4px 18px 3px;
-	font-family:
-		"JetBrains Mono",
-		"Courier New",
-		Courier,
-		monospace;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 14px;
 	transition:
 		transform 0.18s,

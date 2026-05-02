@@ -21,11 +21,11 @@
 // should import background-viz/index.ts for wallpaper lifecycle purposes.
 
 import { useEffect } from "react";
-import { useWallpaperTheme } from "../../hooks/useWallpaperTheme";
-import { ElPasoNightsLayer } from "./layers/el-paso-nights";
 // GypsumSandsLayer is rendered via the el-paso-nights mount (background-viz/index.ts
 // owns the dune-scene lifecycle internally). Import here for future explicit use.
 import type { WallpaperTheme } from "../../hooks/useWallpaperTheme";
+import { useWallpaperTheme } from "../../hooks/useWallpaperTheme";
+import { ElPasoNightsLayer } from "./layers/el-paso-nights";
 
 export type { WallpaperTheme };
 

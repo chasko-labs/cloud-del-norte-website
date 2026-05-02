@@ -96,7 +96,8 @@ const animationDemos = [
 	{
 		key: "nav-shimmer",
 		label: "cdn-shimmer",
-		description: "nav shimmer — 24s cycle, ~4.3s sweep, ~19.7s idle pause, brand-tinted",
+		description:
+			"nav shimmer — 24s cycle, ~4.3s sweep, ~19.7s idle pause, brand-tinted",
 		demo: "shimmer-bar",
 	},
 	{
@@ -687,22 +688,21 @@ function AppContent({
 						/>
 						<div className="theme-logo-meta">
 							<p>
-								<strong>asset:</strong>{" "}
-								<code>/brand/logo.svg</code>
+								<strong>asset:</strong> <code>/brand/logo.svg</code>
 							</p>
 							<p>
 								<strong>viewBox:</strong> 1024×1024 — square, transparent
 							</p>
 							<p>
-								<strong>structure:</strong> 3 large purple star-arm paths +
-								12 small circular bulb dots in a ring + near-white inner
-								geometric structure (vtracer polygon trace)
+								<strong>structure:</strong> 3 large purple star-arm paths + 12
+								small circular bulb dots in a ring + near-white inner geometric
+								structure (vtracer polygon trace)
 							</p>
 							<p>
 								<strong>filters:</strong> SVG <code>&lt;defs&gt;</code> with{" "}
-								<code>cdn-bulb-glow</code> (dual feGaussianBlur core+bloom)
-								and <code>cdn-arm-glow</code>; bulbs animate independently
-								with staggered <code>animation-delay</code> 0–2.75s
+								<code>cdn-bulb-glow</code> (dual feGaussianBlur core+bloom) and{" "}
+								<code>cdn-arm-glow</code>; bulbs animate independently with
+								staggered <code>animation-delay</code> 0–2.75s
 							</p>
 						</div>
 					</div>

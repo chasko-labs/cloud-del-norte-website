@@ -78,7 +78,10 @@ export default function CodeInput({
 		refs.current[focusTarget]?.focus();
 	}
 
-	function handleKeyDown(idx: number, e: React.KeyboardEvent<HTMLInputElement>) {
+	function handleKeyDown(
+		idx: number,
+		e: React.KeyboardEvent<HTMLInputElement>,
+	) {
 		if (e.key === "Backspace" && cells[idx] === "" && idx > 0) {
 			// auto-tab back on backspace from empty cell
 			refs.current[idx - 1]?.focus();
@@ -107,11 +110,7 @@ export default function CodeInput({
 	}
 
 	return (
-		<div
-			className="cdn-auth-code-row"
-			role="group"
-			aria-label={ariaLabel}
-		>
+		<div className="cdn-auth-code-row" role="group" aria-label={ariaLabel}>
 			{cells.map((ch, i) => (
 				<input
 					// biome-ignore lint/suspicious/noArrayIndexKey: fixed-length 6-cell row

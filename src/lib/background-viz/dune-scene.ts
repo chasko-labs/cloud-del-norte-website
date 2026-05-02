@@ -616,7 +616,7 @@ export function mountDuneSceneOnCanvas(
 	// horizonTint init — the warm-linen midday horizon stop. Updated each
 	// frame from JS to match whatever the sky shader computes for the current
 	// timeOfDay. Reduced-motion users keep the midday stop forever.
-	duneMat.setColor3("horizonTint", new Color3(0.910, 0.875, 0.792));
+	duneMat.setColor3("horizonTint", new Color3(0.91, 0.875, 0.792));
 	ground.material = duneMat;
 
 	// Animation: respect reduced-motion preference.
@@ -650,7 +650,7 @@ export function mountDuneSceneOnCanvas(
 	// horizonTint scratch — reused each frame to avoid per-frame Color3 alloc.
 	// Stops mirror the sky shader's per-phase horizon stops exactly so the
 	// dune's aerial haze and the sky's horizon band stay locked together.
-	const horizonScratch = new Color3(0.910, 0.875, 0.792);
+	const horizonScratch = new Color3(0.91, 0.875, 0.792);
 
 	scene.registerBeforeRender(() => {
 		if (reducedMotion) {

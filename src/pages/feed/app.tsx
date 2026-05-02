@@ -442,9 +442,7 @@ function AppContent({
 						)}
 					</div>
 				))}
-				{liveToShow.length > 0 && (
-					<hr className="feed-section-divider" />
-				)}
+				{liveToShow.length > 0 && <hr className="feed-section-divider" />}
 			</div>
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<NextMeetup />

@@ -20,9 +20,9 @@
 	   against deep navy. Same low alpha values as light mode so the starfield
 	   bleeds through the panel-tier surfaces (left nav drawer, right tools)
 	   identical to how sand-dunes bleed through cream in light mode. */
-	--cdn-wallpaper-alpha-panel: 0.20;
-	--cdn-wallpaper-alpha-header: 0.40;
-	--cdn-wallpaper-alpha-content: 0.30;
+	--cdn-wallpaper-alpha-panel: 0.2;
+	--cdn-wallpaper-alpha-header: 0.4;
+	--cdn-wallpaper-alpha-content: 0.3;
 
 	/* Backdrop-filter blur radii — ZERO across all tiers in both modes.
 	   Safari has a sub-pixel rendering bug where text inside a backdrop-filtered

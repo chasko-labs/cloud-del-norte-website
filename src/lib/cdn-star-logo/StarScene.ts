@@ -20,26 +20,26 @@
 // in dark-mode startup, reduced-motion, or software-rendering paths).
 import "@babylonjs/core/Animations/animatable.js";
 
-import { Engine } from "@babylonjs/core/Engines/engine";
-import { Scene } from "@babylonjs/core/scene";
+import { Animation } from "@babylonjs/core/Animations/animation";
+import { EasingFunction, SineEase } from "@babylonjs/core/Animations/easing";
 import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
+import { Engine } from "@babylonjs/core/Engines/engine";
+import { GlowLayer } from "@babylonjs/core/Layers/glowLayer";
 import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 import { PointLight } from "@babylonjs/core/Lights/pointLight";
-import { Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { Color3, Color4 } from "@babylonjs/core/Maths/math.color";
-import { Mesh } from "@babylonjs/core/Meshes/mesh";
-import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
-import { VertexData } from "@babylonjs/core/Meshes/mesh.vertexData";
 import { PBRMaterial } from "@babylonjs/core/Materials/PBR/pbrMaterial";
-import { GlowLayer } from "@babylonjs/core/Layers/glowLayer";
-import { Animation } from "@babylonjs/core/Animations/animation";
-import { SineEase, EasingFunction } from "@babylonjs/core/Animations/easing";
+import { Color3, Color4 } from "@babylonjs/core/Maths/math.color";
+import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { Mesh } from "@babylonjs/core/Meshes/mesh";
+import { VertexData } from "@babylonjs/core/Meshes/mesh.vertexData";
+import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
+import { Scene } from "@babylonjs/core/scene";
 
 // ── Brand palette (nav-surface — always dark) ─────────────────────────────────
 
 const VIOLET = new Color3(0.628, 0.392, 0.956); // #A064F4 — bulbs + glow
 const PURPLE = new Color3(0.353, 0.122, 0.541); // #5A1F8A — star body
-const NAVY   = new Color4(0.0, 0.0, 0.165, 1.0); // #00002A — scene clear
+const NAVY = new Color4(0.0, 0.0, 0.165, 1.0); // #00002A — scene clear
 // WHITE_VIOLET removed with diagonal bulbs
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -63,14 +63,14 @@ const CATEGORY_RHYTHM: Record<
 	{ cycleFrames: number; minEmissive: number; maxEmissive: number }
 > = {
 	// Tip: primary visual anchors — slow heartbeat, dimmer max so glow never blows out silhouette
-	tip:    { cycleFrames: 140, minEmissive: 0.3, maxEmissive: 1.6 },
+	tip: { cycleFrames: 140, minEmissive: 0.3, maxEmissive: 1.6 },
 	// Center: steady — min == max, no pulse
 	center: { cycleFrames: 100, minEmissive: 1.0, maxEmissive: 1.0 },
 };
 
 // Per-category phase offsets as fractions of cycle (mirrors liora nth-child delays)
 const PHASE_OFFSETS: Record<BulbCategory, number[]> = {
-	tip:    [0.0, 0.18, 0.4, 0.6, 0.8],
+	tip: [0.0, 0.18, 0.4, 0.6, 0.8],
 	center: [0.0],
 };
 
@@ -247,7 +247,7 @@ export class StarScene {
 		const bulbs: Mesh[] = [];
 
 		// One shared material per category — minimizes draw-call overhead
-		const tipMat    = this.makeBulbMat("tipMat",    VIOLET, 1.6, 0.0, 0.35);
+		const tipMat = this.makeBulbMat("tipMat", VIOLET, 1.6, 0.0, 0.35);
 		const centerMat = this.makeBulbMat("centerMat", VIOLET, 1.0, 0.0, 0.4);
 		// armMat + diagMat removed with arm/diagonal bulb loops
 
@@ -349,12 +349,12 @@ export class StarScene {
 			);
 
 			anim.setKeys([
-				{ frame: 0,                                  value: maxEmissive },
-				{ frame: Math.round(cycleFrames * 0.28),     value: maxEmissive * 0.95 },
-				{ frame: Math.round(cycleFrames * 0.42),     value: maxEmissive * 0.55 },
-				{ frame: Math.round(cycleFrames * 0.62),     value: minEmissive },
-				{ frame: Math.round(cycleFrames * 0.78),     value: maxEmissive * 0.7 },
-				{ frame: cycleFrames,                        value: maxEmissive },
+				{ frame: 0, value: maxEmissive },
+				{ frame: Math.round(cycleFrames * 0.28), value: maxEmissive * 0.95 },
+				{ frame: Math.round(cycleFrames * 0.42), value: maxEmissive * 0.55 },
+				{ frame: Math.round(cycleFrames * 0.62), value: minEmissive },
+				{ frame: Math.round(cycleFrames * 0.78), value: maxEmissive * 0.7 },
+				{ frame: cycleFrames, value: maxEmissive },
 			]);
 			anim.setEasingFunction(ease);
 

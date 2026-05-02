@@ -1,4 +1,4 @@
-import { type StarPoint } from "./static.js";
+import type { StarPoint } from "./static.js";
 
 interface Ring {
 	x: number;

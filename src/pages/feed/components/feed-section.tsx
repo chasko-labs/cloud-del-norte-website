@@ -75,7 +75,10 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
 		queueMicrotask(() => tabsRef.current[next]?.focus());
 	}
 
-	function handleTabKeyDown(e: React.KeyboardEvent<HTMLButtonElement>, i: number) {
+	function handleTabKeyDown(
+		e: React.KeyboardEvent<HTMLButtonElement>,
+		i: number,
+	) {
 		if (e.key === "ArrowRight") {
 			e.preventDefault();
 			focusTab((i + 1) % posts.length);
