@@ -78,9 +78,15 @@
 
 	/* ── glass plate tokens — light mode defaults ─────────────────────────────
 	   rgb(237, 229, 212) = #ede5d4 (cream sandstone) — matches --cdn-color-bg.
-	   Lower alphas (0.55 / 0.7) keep the dunes visible through every plate. */
+	   Card-tier alphas (plate-bg / -strong) for small text-bearing surfaces.
+	   Surface-tier alphas (panel / header / content / breadcrumbs / scroll)
+	   for big chrome backings — much lower alpha so dunes still bleed through. */
 	--cdn-glass-bg: rgba(237, 229, 212, 0.55);
 	--cdn-glass-bg-strong: rgba(237, 229, 212, 0.7);
+	--cdn-glass-bg-breadcrumbs: rgba(237, 229, 212, 0.18);
+	--cdn-glass-bg-scroll: rgba(237, 229, 212, 0.2);
+	--cdn-glass-bg-ctl-header: rgba(237, 229, 212, 0.32);
+	--cdn-glass-bg-content: rgba(237, 229, 212, 0.18);
 	--cdn-glass-border: rgba(139, 90, 43, 0.28);
 	--cdn-glass-shadow:
 		0 4px 24px rgba(139, 90, 43, 0.18),
@@ -103,10 +109,15 @@
 }
 
 /* dark-mode overrides for tokens that switch palette.
-   Lower alphas (0.55 / 0.72) so the starfield + music-viz still bleeds through. */
+   Card-tier alphas slightly higher than light mode (text-on-dark needs more
+   surface contrast), surface-tier alphas low so starfield bleeds through. */
 .awsui-dark-mode {
 	--cdn-glass-bg: rgba(28, 34, 48, 0.55);
 	--cdn-glass-bg-strong: rgba(28, 34, 48, 0.72);
+	--cdn-glass-bg-breadcrumbs: rgba(10, 12, 32, 0.22);
+	--cdn-glass-bg-scroll: rgba(10, 12, 32, 0.25);
+	--cdn-glass-bg-ctl-header: rgba(10, 12, 32, 0.38);
+	--cdn-glass-bg-content: rgba(10, 12, 32, 0.22);
 	--cdn-glass-border: rgba(144, 96, 240, 0.32);
 	--cdn-glass-shadow:
 		0 4px 24px rgba(144, 96, 240, 0.32),
@@ -333,25 +344,100 @@
 /* Inner breadcrumbs container only — Cloudscape nests
    awsui_breadcrumbs_ > awsui_breadcrumb_ items. Target the container.
    Double :not(#\9) increases selector specificity past cdn-atmospheric.css
-   transparent override (which uses single :not(#\9)). */
+   transparent override (which uses single :not(#\9)).
+   Alpha pulled from --cdn-glass-bg-breadcrumbs (~0.18) — barely there,
+   shadow softened to match: a faint hairline above + below, no card-style halo. */
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg) !important;
-	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
+	background-color: var(--cdn-glass-bg-breadcrumbs) !important;
+	-webkit-backdrop-filter: blur(6px) saturate(1.05) !important;
+	backdrop-filter: blur(6px) saturate(1.05) !important;
 	box-shadow:
-		0 1px 0 rgba(139, 90, 43, 0.18) inset,
-		var(--cdn-glass-shadow) !important;
+		0 1px 0 rgba(139, 90, 43, 0.14) inset,
+		0 -1px 0 rgba(139, 90, 43, 0.1) inset !important;
 	position: relative;
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg) !important;
-	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
+	background-color: var(--cdn-glass-bg-breadcrumbs) !important;
+	-webkit-backdrop-filter: blur(6px) saturate(1.05) !important;
+	backdrop-filter: blur(6px) saturate(1.05) !important;
 	box-shadow:
-		0 1px 0 rgba(144, 96, 240, 0.22) inset,
-		var(--cdn-glass-shadow) !important;
+		0 1px 0 rgba(144, 96, 240, 0.18) inset,
+		0 -1px 0 rgba(144, 96, 240, 0.14) inset !important;
 	position: relative;
+}
+
+/* ==========================================================================
+   big surface tiers — header strip / scrolling-background / content area
+
+   Restores the Cloudscape structural backings Bryan asked for, tinted at
+   low alpha so the dunes / starfield still bleed through. Higher selector
+   specificity (:not(#\9):not(#\10)) beats the legacy transparent overrides
+   in cdn-atmospheric.css.
+
+   Tier hierarchy from lowest → highest visibility:
+     content  0.18  main feed area, behind cards
+     scroll   0.20  thin band wrapping breadcrumbs+ContentLayout header
+     ctl-header 0.32  ContentLayout's hero strip with page title (most visible)
+   ========================================================================== */
+
+/* awsui_scrolling-background_ — the band above the content, behind the
+   breadcrumbs strip + ContentLayout header. Cloudscape paints this so it
+   visually wraps the page header sandwich. */
+:root:not(.awsui-dark-mode)
+	[class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-scroll) !important;
+	-webkit-backdrop-filter: blur(8px) saturate(1.05) !important;
+	backdrop-filter: blur(8px) saturate(1.05) !important;
+}
+
+.awsui-dark-mode
+	[class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-scroll) !important;
+	-webkit-backdrop-filter: blur(8px) saturate(1.05) !important;
+	backdrop-filter: blur(8px) saturate(1.05) !important;
+}
+
+/* ContentLayout hero strip — wraps the page title ("Feed", "Meetings", etc.).
+   Most visible of the surface tiers; serves as a structural shoulder under
+   the page header. */
+:root:not(.awsui-dark-mode)
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10),
+:root:not(.awsui-dark-mode)
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"]:not(#\9):not(#\10),
+:root:not(.awsui-dark-mode)
+	[class*="awsui_header-background"]:not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-ctl-header) !important;
+	-webkit-backdrop-filter: blur(10px) saturate(1.05) !important;
+	backdrop-filter: blur(10px) saturate(1.05) !important;
+}
+
+.awsui-dark-mode
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10),
+.awsui-dark-mode
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"]:not(#\9):not(#\10),
+.awsui-dark-mode [class*="awsui_header-background"]:not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-ctl-header) !important;
+	-webkit-backdrop-filter: blur(10px) saturate(1.05) !important;
+	backdrop-filter: blur(10px) saturate(1.05) !important;
+}
+
+/* main content area — backing behind the feed cards. Subtle so cards
+   still pop visually but the vertical column has shape. */
+:root:not(.awsui-dark-mode)
+	main[class*="awsui_layout_"]:not(#\9):not(#\10),
+:root:not(.awsui-dark-mode)
+	[class*="awsui_layout-main"]:not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-content) !important;
+}
+
+.awsui-dark-mode main[class*="awsui_layout_"]:not(#\9):not(#\10),
+.awsui-dark-mode [class*="awsui_layout-main"]:not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-content) !important;
 }
 
 /* Bottom streak — sits beneath the breadcrumbs strip as a horizon line */
