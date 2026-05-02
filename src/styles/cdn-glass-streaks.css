@@ -388,8 +388,7 @@
    Bryan eyes-on theme/index v0.0.0052: showed "CLOUD DEL NORTE > * >
    Design System" with `*` being the awsui_ellipsis_ list item. */
 [class*="awsui_breadcrumbs_"] [class*="awsui_ellipsis_"]:not(#\9):not(#\10),
-[class*="awsui_breadcrumbs_"]
-	[class*="awsui_ghost-item_"]:not(#\9):not(#\10),
+[class*="awsui_breadcrumbs_"] [class*="awsui_ghost-item_"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"]
 	[class*="awsui_ghost-breadcrumb_"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"]
@@ -406,7 +405,10 @@
 [class*="awsui_container_"]:not([class*="awsui_container-trigger_"]):not(
 		[class*="awsui_split-panel"]
 	):not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.92)) !important;
+	background-color: var(
+		--cdn-glass-bg-strong,
+		rgba(237, 229, 212, 0.92)
+	) !important;
 }
 
 /* On narrow viewports stack the home (CLOUD DEL NORTE) + page-name on
