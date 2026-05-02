@@ -4,7 +4,9 @@
 import AppLayout, {
 	type AppLayoutProps,
 } from "@cloudscape-design/components/app-layout";
-import TopNavigation from "@cloudscape-design/components/top-navigation";
+import TopNavigation, {
+	type TopNavigationProps,
+} from "@cloudscape-design/components/top-navigation";
 import { useCallback, useEffect, useState } from "react";
 import { CdnWallpaper } from "../../components/cdn-wallpaper";
 import Footer from "../../components/footer";
@@ -45,6 +47,15 @@ export interface ShellProps {
 	pageTitle?: string;
 	/** Override the identity link href — use absolute URL when Shell renders on a subdomain */
 	identityHref?: string;
+	/** Hide the side-nav drawer + its toggle entirely. Used on the auth subdomain
+	 *  where the standard meetings/roadmap nav is irrelevant + would just be noise. */
+	navigationHide?: boolean;
+	/** Hide the tools drawer + its toggle entirely. Used on the auth subdomain
+	 *  so the create-meeting help panel can't leak into login/signup. */
+	toolsHide?: boolean;
+	/** Hide the "sign in" button in the top-nav utilities. Used on the auth subdomain
+	 *  itself so the button isn't recursive (clicking it from /login goes to /login). */
+	hideSignInUtility?: boolean;
 }
 
 function ShellContent({
@@ -62,6 +73,9 @@ function ShellContent({
 	onLocaleChange,
 	pageTitle,
 	identityHref = "/feed/index.html",
+	navigationHide,
+	toolsHide,
+	hideSignInUtility,
 }: ShellProps) {
 	const { t } = useTranslation();
 	const auth = useAuth();
@@ -172,25 +186,31 @@ function ShellContent({
 									: t("shell.switchToDarkMode"),
 							onClick: handleToggleTheme,
 						},
-						auth.isAuthenticated
-							? {
-									type: "menu-dropdown",
-									text: auth.email ?? auth.name ?? "account",
-									description: auth.isModerator ? "moderator" : undefined,
-									iconName: "user-profile",
-									items: [{ id: "signout", text: "sign out" }],
-									onItemClick: (e: { detail: { id: string } }) => {
-										if (e.detail.id === "signout") auth.signOut();
+						...(auth.isAuthenticated
+							? [
+									{
+										type: "menu-dropdown" as const,
+										text: auth.email ?? auth.name ?? "account",
+										description: auth.isModerator ? "moderator" : undefined,
+										iconName: "user-profile",
+										items: [{ id: "signout", text: "sign out" }],
+										onItemClick: (e: { detail: { id: string } }) => {
+											if (e.detail.id === "signout") auth.signOut();
+										},
 									},
-								}
-							: {
-									type: "button",
-									text: "sign in",
-									onClick: () => {
-										window.location.assign(AUTH_LOGIN_URL);
-									},
-								},
-					]}
+								]
+							: hideSignInUtility
+								? []
+								: [
+										{
+											type: "button" as const,
+											text: "sign in",
+											onClick: () => {
+												window.location.assign(AUTH_LOGIN_URL);
+											},
+										},
+									]),
+					] as TopNavigationProps.Utility[]}
 					i18nStrings={{
 						overflowMenuTriggerText: t("shell.more"),
 						overflowMenuTitleText: t("shell.all"),
@@ -200,12 +220,14 @@ function ShellContent({
 			<AppLayout
 				contentType={contentType}
 				navigation={navigation}
+				navigationHide={navigationHide}
 				navigationOpen={navOpen}
 				onNavigationChange={handleNavigationChange}
 				breadcrumbs={breadcrumbs}
 				notifications={notifications}
 				stickyNotifications={true}
 				tools={tools}
+				toolsHide={toolsHide}
 				toolsOpen={toolsOpen}
 				onToolsChange={handleToolsChange}
 				content={children}

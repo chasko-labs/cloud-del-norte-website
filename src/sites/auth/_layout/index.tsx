@@ -5,7 +5,6 @@ import ContentLayout from "@cloudscape-design/components/content-layout";
 import type React from "react";
 import { useState } from "react";
 import Shell from "../../../layouts/shell";
-import { HelpPanelHome } from "../../../pages/create-meeting/components/help-panel-home";
 import {
 	applyLocale,
 	initializeLocale,
@@ -18,7 +17,6 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../../utils/theme";
-import AuthNavigation from "./navigation";
 import "./styles.css";
 
 export default function AuthLayout({
@@ -43,8 +41,9 @@ export default function AuthLayout({
 				applyLocale(l);
 				setStoredLocale(l);
 			}}
-			navigation={<AuthNavigation />}
-			tools={<HelpPanelHome />}
+			navigationHide={true}
+			toolsHide={true}
+			hideSignInUtility={true}
 			contentType="form"
 			identityHref="https://clouddelnorte.org/feed/index.html"
 		>
