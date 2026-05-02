@@ -377,16 +377,13 @@
 	display: list-item !important;
 }
 
-/* Breadcrumb `>` separator vertical alignment — Bryan v0.0.0060 saw the
-   separator sitting near the cap-height TOP of the Cinzel "CLOUD DEL
-   NORTE" h1 instead of vertically centered between it and the small
-   "Feed" text below. The icon-span inherits the line-box of the Cinzel
-   surrounding text (38px). Nudge it down with translateY so it lands
-   visually mid-row. */
+/* Breadcrumb `>` separator vertical alignment — v0.0.0061 over-nudged
+   downward (translateY(0.55em) pushed it under the font baseline).
+   Reverted to vertical-align: middle only, no transform. The Cinzel
+   line-height drives the natural inline alignment; middle is the right
+   default for the small icon. */
 [class*="awsui_breadcrumbs_"] li [class*="awsui_icon_"]:not(#\9):not(#\10) {
 	vertical-align: middle !important;
-	align-self: center !important;
-	transform: translateY(0.55em);
 }
 
 /* Hide the ellipsis "..." dropdown trigger + ghost-measurement items
@@ -817,27 +814,12 @@
    page passes as info prop) — tested live: pages here pass <Link>
    info="..."` </Link>, the inner text shows "Info" by default.
    ========================================================================== */
-/* Bryan v0.0.0060: position the Volunteer pill DIRECTLY under the
-   breadcrumb's "Feed" word (right side of breadcrumbs strip) instead
-   of sitting at the left edge inside awsui_title_.
-
-   Cloudscape's awsui_main_main_ has display:flex justify-between with
-   awsui_title_ on the left and awsui_actions_ on the right. The info
-   popover lives inside awsui_title_ — left-anchored. We absolute-position
-   the info element and target the right side of the row so it visually
-   aligns under "Feed" rather than under "CLOUD DEL NORTE".
-
-   left:50% gives a sensible default; per-page tweaks possible if needed. */
-[class*="awsui_header-wrapper_"] [class*="awsui_info_"]:not(#\9):not(#\10) {
-	position: absolute !important;
-	left: 50% !important;
-	top: -32px !important;
-	z-index: 10;
-}
-
-[class*="awsui_header-wrapper_"] [class*="awsui_title_"]:not(#\9):not(#\10) {
-	position: relative;
-}
+/* Volunteer pill positioning — v0.0.0061 absolute positioning at left:50%
+   broke the pill's flex layout because the inner link has font-size:0.
+   Reverted to natural flow inside awsui_title_; the pill sits inline
+   next to the (hidden) page-title h1. The "directly under Feed" target
+   would require querying the breadcrumbs DOM at runtime to align — out
+   of scope for a CSS-only fix. */
 
 [class*="awsui_header-wrapper_"]
 	[class*="awsui_info_"]
