@@ -38,6 +38,9 @@ function ForgotPasswordForm() {
 	const [passwordError, setPasswordError] = useState("");
 	const [formError, setFormError] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [submitState, setSubmitState] = useState<
+		"idle" | "verifying" | "success" | "failed"
+	>("idle");
 
 	async function handleRequestCode(e: React.FormEvent) {
 		e.preventDefault();
@@ -50,12 +53,21 @@ function ForgotPasswordForm() {
 			return;
 		}
 		setLoading(true);
+		setSubmitState("verifying");
 		try {
 			await forgotPassword(email);
-			setPhase("reset");
+			setSubmitState("success");
+			window.setTimeout(() => {
+				setPhase("reset");
+				setSubmitState("idle");
+			}, 500);
 		} catch {
-			// don't reveal whether email exists
-			setPhase("reset");
+			// don't reveal whether email exists — still flash success then advance
+			setSubmitState("success");
+			window.setTimeout(() => {
+				setPhase("reset");
+				setSubmitState("idle");
+			}, 500);
 		} finally {
 			setLoading(false);
 		}
@@ -83,9 +95,11 @@ function ForgotPasswordForm() {
 		}
 		if (!valid) return;
 		setLoading(true);
+		setSubmitState("verifying");
 		try {
 			await confirmForgotPassword(email, code.trim(), newPassword);
-			setPhase("done");
+			setSubmitState("success");
+			window.setTimeout(() => setPhase("done"), 500);
 		} catch (err) {
 			if (err instanceof AuthError) {
 				if (err.code === "CodeMismatchException") {
@@ -100,7 +114,9 @@ function ForgotPasswordForm() {
 			} else {
 				setFormError(t("auth.forgotPassword.genericError"));
 			}
+			setSubmitState("failed");
 			setLoading(false);
+			window.setTimeout(() => setSubmitState("idle"), 400);
 		}
 	}
 
@@ -132,9 +148,18 @@ function ForgotPasswordForm() {
 				>
 					<Form
 						actions={
-							<Button formAction="submit" variant="primary" loading={loading}>
-								{t("auth.forgotPassword.resetButton")}
-							</Button>
+							<span className={`cdn-auth-submit-state ${submitState}`}>
+								<Button formAction="submit" variant="primary" loading={loading}>
+									{submitState === "verifying"
+										? "Verifying with Cognito"
+										: t("auth.forgotPassword.resetButton")}
+								</Button>
+								{submitState === "success" && (
+									<span className="cdn-auth-success-check" aria-hidden="true">
+										✓
+									</span>
+								)}
+							</span>
 						}
 						errorText={formError || undefined}
 					>
@@ -190,9 +215,18 @@ function ForgotPasswordForm() {
 			>
 				<Form
 					actions={
-						<Button formAction="submit" variant="primary" loading={loading}>
-							{t("auth.forgotPassword.sendCodeButton")}
-						</Button>
+						<span className={`cdn-auth-submit-state ${submitState}`}>
+							<Button formAction="submit" variant="primary" loading={loading}>
+								{submitState === "verifying"
+									? "Sending reset code"
+									: t("auth.forgotPassword.sendCodeButton")}
+							</Button>
+							{submitState === "success" && (
+								<span className="cdn-auth-success-check" aria-hidden="true">
+									✓
+								</span>
+							)}
+						</span>
 					}
 					errorText={formError || undefined}
 				>
@@ -224,7 +258,7 @@ function ForgotPasswordForm() {
 
 export default function App() {
 	return (
-		<AuthLayout>
+		<AuthLayout pageContext="Reset your password">
 			<ForgotPasswordForm />
 		</AuthLayout>
 	);

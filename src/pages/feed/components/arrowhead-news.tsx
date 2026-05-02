@@ -6,7 +6,7 @@ import Box from "@cloudscape-design/components/box";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import articles from "../../../data/arrowhead-news.json";
 import { useTranslation } from "../../../hooks/useTranslation";
 
@@ -15,6 +15,9 @@ export default function ArrowheadNews() {
 	const total = articles.length;
 	const [index, setIndex] = useState(0);
 	const [paused, setPaused] = useState(false);
+	const panelIdBase = useId();
+	const panelId = `${panelIdBase}-panel`;
+	const tabsRef = useRef<Array<HTMLButtonElement | null>>([]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: total is derived from a static JSON import — never changes at runtime
 	useEffect(() => {
@@ -25,6 +28,31 @@ export default function ArrowheadNews() {
 
 	const article = articles[index];
 
+	function focusTab(next: number) {
+		setIndex(next);
+		setPaused(true);
+		queueMicrotask(() => tabsRef.current[next]?.focus());
+	}
+
+	function handleTabKeyDown(
+		e: React.KeyboardEvent<HTMLButtonElement>,
+		i: number,
+	) {
+		if (e.key === "ArrowRight") {
+			e.preventDefault();
+			focusTab((i + 1) % total);
+		} else if (e.key === "ArrowLeft") {
+			e.preventDefault();
+			focusTab((i - 1 + total) % total);
+		} else if (e.key === "Home") {
+			e.preventDefault();
+			focusTab(0);
+		} else if (e.key === "End") {
+			e.preventDefault();
+			focusTab(total - 1);
+		}
+	}
+
 	return (
 		<Container
 			header={
@@ -34,13 +62,24 @@ export default function ArrowheadNews() {
 				</Header>
 			}
 		>
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: mouse-only hover-to-pause; keyboard users reach article links directly */}
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: hover/focus pause is a progressive enhancement; keyboard users reach article links directly */}
 			<div
 				className="feed-article-carousel"
 				onMouseEnter={() => setPaused(true)}
 				onMouseLeave={() => setPaused(false)}
+				onFocusCapture={() => setPaused(true)}
+				onBlurCapture={(e) => {
+					if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+						setPaused(false);
+					}
+				}}
 			>
-				<div key={index} className="feed-article-carousel__item">
+				<div
+					key={index}
+					id={panelId}
+					role="tabpanel"
+					className="feed-article-carousel__item"
+				>
 					<Box>
 						<Badge color="blue">{article.source}</Badge>{" "}
 						<Box
@@ -73,15 +112,22 @@ export default function ArrowheadNews() {
 				>
 					{(articles as { id: string }[]).map((a, i) => (
 						<button
+							type="button"
 							key={a.id}
+							ref={(el) => {
+								tabsRef.current[i] = el;
+							}}
 							role="tab"
 							aria-selected={i === index}
+							aria-controls={panelId}
 							aria-label={`article ${i + 1} of ${total}`}
+							tabIndex={i === index ? 0 : -1}
 							className={`feed-article-carousel__dot${i === index ? " feed-article-carousel__dot--active" : ""}`}
 							onClick={() => {
 								setIndex(i);
 								setPaused(true);
 							}}
+							onKeyDown={(e) => handleTabKeyDown(e, i)}
 						/>
 					))}
 				</div>

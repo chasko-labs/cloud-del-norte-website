@@ -51,11 +51,17 @@ export default function AndresMedium() {
 				</Header>
 			}
 		>
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: mouse-only hover-to-pause; keyboard users reach the link directly */}
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: hover/focus pause is a progressive enhancement; keyboard users reach the link directly */}
 			<div
 				className="feed-article-carousel"
 				onMouseEnter={() => setPaused(true)}
 				onMouseLeave={() => setPaused(false)}
+				onFocusCapture={() => setPaused(true)}
+				onBlurCapture={(e) => {
+					if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+						setPaused(false);
+					}
+				}}
 			>
 				<div key={index} className="feed-article-carousel__item">
 					<div className="feed-posts__title">
