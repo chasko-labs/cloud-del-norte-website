@@ -320,7 +320,10 @@ function PersistentPlayerBar({
 					</span>
 				) : showRetryingUI ? (
 					<span className="cdn-pp__track" role="status" aria-live="polite">
-						<span className="cdn-pp__eyebrow cdn-pp__eyebrow--warn" aria-hidden="true">
+						<span
+							className="cdn-pp__eyebrow cdn-pp__eyebrow--warn"
+							aria-hidden="true"
+						>
 							{t("persistentPlayer.streamErrorRetrying")}
 						</span>
 					</span>
