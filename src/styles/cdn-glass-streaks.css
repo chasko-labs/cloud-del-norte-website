@@ -129,8 +129,8 @@
 	border: 1.5px solid var(--cdn-glass-border);
 	border-radius: var(--cdn-radius-md);
 	box-shadow: var(--cdn-glass-shadow);
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	transition: var(--cdn-transition-smooth);
 	overflow: hidden;
 	isolation: isolate;
@@ -328,21 +328,23 @@
    ========================================================================== */
 
 /* Inner breadcrumbs container only — Cloudscape nests
-   awsui_breadcrumbs_ > awsui_breadcrumb_ items. Target the container. */
-:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9) {
+   awsui_breadcrumbs_ > awsui_breadcrumb_ items. Target the container.
+   Double :not(#\9) increases selector specificity past cdn-atmospheric.css
+   transparent override (which uses single :not(#\9)). */
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg) !important;
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
 	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
 	box-shadow:
 		0 1px 0 rgba(139, 90, 43, 0.18) inset,
 		var(--cdn-glass-shadow) !important;
 	position: relative;
 }
 
-.awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9) {
+.awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg) !important;
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
 	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
 	box-shadow:
 		0 1px 0 rgba(144, 96, 240, 0.22) inset,
 		var(--cdn-glass-shadow) !important;
@@ -383,8 +385,8 @@
 	border: 1.5px solid var(--cdn-glass-border);
 	background-color: var(--cdn-glass-bg-strong);
 	box-shadow: var(--cdn-glass-shadow);
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	overflow: hidden;
 	isolation: isolate;
 }

@@ -82,8 +82,8 @@
 	position: relative;
 	overflow: hidden;
 	box-shadow: var(--cdn-glass-shadow);
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	transition: var(--cdn-transition-smooth);
 	isolation: isolate;
 }
@@ -250,8 +250,8 @@
 	background-color: var(--cdn-glass-bg);
 	padding: var(--cdn-space-sm) var(--cdn-space-md);
 	box-shadow: var(--cdn-glass-shadow);
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	transition: var(--cdn-transition-smooth);
 	overflow: hidden;
 	isolation: isolate;
