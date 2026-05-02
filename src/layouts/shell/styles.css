@@ -437,38 +437,35 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	max-height: calc(100vh - 56px);
 }
 
-/* Light mode: cream overrides for Cloudscape layout chrome.
-   Two internal elements emit hardcoded white backgrounds that are visible
-   as white stripes against the #ede5d4 page ground:
-   - awsui_scrolling-background: the full-width header band below top nav
-   - awsui_breadcrumbs: the breadcrumb bar div
-   NOT overriding [has-default-background] — that selector matches every
-   Container on the page and fights Cloudscape's hover animation, causing
-   the builder center section to flash on mouseover. */
+/* Light mode chrome — defanged from opaque-cream to TRANSPARENT.
+   Earlier this set a hard #ede5d4 to mask Cloudscape's default white. Now
+   that wallpaper-through-chrome is the design, these surfaces must reveal
+   the sand-dunes canvas. The cdn-atmospheric.css translucent rules apply
+   the panel-tier alpha tint where appropriate (inner nav drawer); the rules
+   below set the OUTER chrome to fully transparent so the canvas shows.
+   These rules previously won source-order against cdn-atmospheric.css's
+   transparent rules at same specificity → kept the cream, blocked dunes. */
 :root:not(.awsui-dark-mode) [class*="awsui_scrolling-background"]:not(#\9),
-:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"]:not(#\9) {
-	background: #ede5d4 !important;
-	background-color: #ede5d4 !important;
-}
-
-/* Light mode side nav — warm cream to match page.
-   No --color-background-layout-side token exists in @cloudscape-design/design-tokens,
-   so CSS selector fallback is used, scoped to light mode via :root:not(.awsui-dark-mode).
-   Applied to both the navigation elements AND the container for full-height background. */
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="navigation-container"],
 :root:not(.awsui-dark-mode) [class*="side-navigation"],
 :root:not(.awsui-dark-mode) [class*="navigation__drawer"],
-:root:not(.awsui-dark-mode) nav[class*="awsui_navigation"] {
-	background: #ede5d4 !important; /* Cloudscape scoped CSS sets white on the nav element directly */
+:root:not(.awsui-dark-mode) [class*="awsui_tools-container"] {
+	background: transparent !important;
+	background-color: transparent !important;
 }
 
-/* Tools panel (right side help drawer) — cream in light mode.
-   Cloudscape's tools panel has its own white background; override here to match page. */
-:root:not(.awsui-dark-mode) [class*="awsui_tools_"],
-:root:not(.awsui-dark-mode) [class*="awsui_tools-container"],
-:root:not(.awsui-dark-mode) [class*="awsui_tools_"] [class*="awsui_content"] {
-	background: #ede5d4 !important;
-	background-color: #ede5d4 !important;
+/* ContentLayout refresh-style header — Cloudscape's newer ContentLayout
+   variant uses awsui_refresh_* class on the header band. Older selectors
+   (awsui_has-header_, awsui_header-background_) miss it. Probe found this
+   element painting opaque cream at the top of /feed/ above NextMeetup. */
+:root:not(.awsui-dark-mode) [class*="awsui_refresh_"][class*="awsui_header_"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+.awsui-dark-mode [class*="awsui_refresh_"][class*="awsui_header_"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
 }
 
 /* Mobile AppLayout drawer/panel backgrounds — covers navigation + tools drawers on small screens */
