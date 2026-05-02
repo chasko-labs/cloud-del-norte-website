@@ -1210,18 +1210,20 @@
    "CLOUD DEL NORTE" breadcrumb h1 above. Light: warm cream backing +
    amber border. Dark: deep navy backing + violet border.
    ========================================================================== */
-/* Hide the Cloudscape tools-toggle — the Volunteer button replaces it.
-   Two help-panel openers were rendering side by side in v0.0.0042. */
-[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-	display: none !important;
-}
+/* Tools-toggle (right-side "i" circle) is RESTORED in v0.0.0046 — Bryan
+   eyes-on: the right-menu icon was the wrong target. Volunteer now sits
+   inline next to the (hidden) page-title h1 area, where the Cloudscape
+   `[Info]` popover used to render under "Feed". The tools-toggle keeps
+   its own styling rules below. */
 
 .cdn-volunteer-btn {
 	position: fixed;
-	/* Sits where the Cloudscape tools-toggle used to live — top-right of the
-	   AppLayout content, just under the top-nav. */
-	top: 78px;
-	right: 12px;
+	/* Inline with the page-title row — sits where Cloudscape Header's
+	   `[Info]` popover used to render, after the (hidden) "Feed" h1.
+	   left:300 ≈ nav drawer width (280px) + ~20px gutter. Mobile drops
+	   below to a flex-friendly position via the @media block below. */
+	top: 116px;
+	left: 300px;
 	z-index: 850;
 	display: inline-flex;
 	align-items: center;
@@ -1306,10 +1308,16 @@
 	outline-color: var(--cdn-violet, #9060f0);
 }
 
+@media (max-width: 1080px) {
+	.cdn-volunteer-btn {
+		left: 16px;
+	}
+}
+
 @media (max-width: 600px) {
 	.cdn-volunteer-btn {
-		top: 92px;
-		right: 12px;
+		top: 110px;
+		left: 16px;
 		padding: 5px 12px;
 		font-size: 10px;
 	}
