@@ -399,6 +399,56 @@ function ShellContent({
 		};
 	}, [toolsOpen]);
 
+	// s6 — Volunteer pill horizontal alignment under the breadcrumb's last
+	// item ("Feed" on /feed, "Roadmap" on /roadmap, etc.). The pill is the
+	// Cloudscape awsui_info_ link, restyled in cdn-glass-streaks.css. Its
+	// natural inline position sits right of the (hidden) page-title h1; we
+	// shift it via CSS custom property so the pill horizontally lines up
+	// with the active page name in the breadcrumb above. ResizeObserver
+	// catches viewport reflow + nav-drawer open/close.
+	useEffect(() => {
+		if (typeof document === "undefined") return;
+
+		const root = document.documentElement;
+		const computeShift = () => {
+			const last = document.querySelector<HTMLElement>(
+				'[class*="awsui_breadcrumbs_"] li:last-child',
+			);
+			const info = document.querySelector<HTMLElement>(
+				'[class*="awsui_header-wrapper_"] [class*="awsui_info_"]',
+			);
+			if (!last || !info) {
+				root.style.removeProperty("--cdn-volunteer-shift-x");
+				return;
+			}
+			const targetX = last.getBoundingClientRect().left;
+			const currentX = info.getBoundingClientRect().left;
+			const shift = Math.round(targetX - currentX);
+			// clamp — never shift further than 60% of viewport so the pill
+			// stays in-bounds on quirky breadcrumb wrappings
+			const clamped = Math.max(
+				-200,
+				Math.min(shift, Math.floor(window.innerWidth * 0.6)),
+			);
+			root.style.setProperty("--cdn-volunteer-shift-x", `${clamped}px`);
+		};
+
+		// initial pass after Cloudscape paint settles
+		const initialId = window.setTimeout(computeShift, 80);
+
+		const ro = new ResizeObserver(computeShift);
+		ro.observe(document.body);
+
+		window.addEventListener("resize", computeShift);
+
+		return () => {
+			window.clearTimeout(initialId);
+			ro.disconnect();
+			window.removeEventListener("resize", computeShift);
+			root.style.removeProperty("--cdn-volunteer-shift-x");
+		};
+	}, []);
+
 	useEffect(() => {
 		document.documentElement.lang = locale === "mx" ? "es" : "en";
 		if (pageTitle) {
