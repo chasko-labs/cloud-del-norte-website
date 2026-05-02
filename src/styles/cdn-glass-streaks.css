@@ -368,7 +368,8 @@
    "CLOUD DEL NORTE" + the active page name BOTH always render.
    Stack vertically below 600px so they fit. */
 [class*="awsui_breadcrumbs_"] ol[class*="awsui_breadcrumbs"]:not(#\9):not(#\10),
-[class*="awsui_breadcrumbs_"] [class*="awsui_breadcrumb-group_"]:not(#\9):not(#\10) {
+[class*="awsui_breadcrumbs_"]
+	[class*="awsui_breadcrumb-group_"]:not(#\9):not(#\10) {
 	flex-wrap: wrap !important;
 }
 
@@ -378,8 +379,10 @@
 
 /* Hide the ellipsis "..." dropdown trigger Cloudscape inserts when items
    would overflow. We always show all items, no need for a collapse. */
-[class*="awsui_breadcrumbs_"] [class*="awsui_ghost-breadcrumb_"]:not(#\9):not(#\10),
-[class*="awsui_breadcrumbs_"] [class*="awsui_breadcrumb-ellipsis_"]:not(#\9):not(#\10) {
+[class*="awsui_breadcrumbs_"]
+	[class*="awsui_ghost-breadcrumb_"]:not(#\9):not(#\10),
+[class*="awsui_breadcrumbs_"]
+	[class*="awsui_breadcrumb-ellipsis_"]:not(#\9):not(#\10) {
 	display: none !important;
 }
 
@@ -748,9 +751,6 @@
 	h1:not(#\9):not(#\10),
 [class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
 	[class*="awsui_header-wrapper_"]
-	[class*="awsui_info_"]:not(#\9):not(#\10),
-[class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
-	[class*="awsui_header-wrapper_"]
 	[class*="awsui_main-main_"]
 	> [class*="awsui_title_"]:not(#\9):not(#\10) {
 	visibility: hidden !important;
@@ -760,6 +760,141 @@
 	margin: 0 !important;
 	padding: 0 !important;
 	pointer-events: none;
+}
+
+/* ==========================================================================
+   Cloudscape Header `[Info]` popover anchor → "Volunteer" pill
+
+   Bryan ask v0.0.0046+: the Info popover that sits next to the (hidden)
+   page title h1 should read "Volunteer" instead of "Info" and visually
+   anchor under the page-name in the breadcrumb. We DON'T hide the Info
+   popover — we restyle it. font-size:0 collapses the original "Info"
+   text; ::after paints "Volunteer" with the brand-pill treatment.
+
+   Cloudscape's Info anchor is a Link with text "Info" (or whatever the
+   page passes as info prop) — tested live: pages here pass <Link>
+   info="..."` </Link>, the inner text shows "Info" by default.
+   ========================================================================== */
+[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10) {
+	font-size: 0 !important;
+	color: transparent !important;
+	text-decoration: none !important;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 16px;
+	border-radius: 999px;
+	font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont,
+		sans-serif;
+	letter-spacing: 0.06em;
+	cursor: pointer;
+	user-select: none;
+	transition:
+		transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
+}
+
+[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10)::after {
+	content: "♥ VOLUNTEER";
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10) {
+	background: linear-gradient(
+		135deg,
+		rgba(250, 247, 240, 0.92) 0%,
+		rgba(245, 235, 215, 0.88) 100%
+	);
+	border: 1.5px solid rgba(255, 153, 0, 0.55);
+	box-shadow:
+		0 2px 8px rgba(139, 90, 43, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10)::after {
+	color: var(--cdn-amber, #8b5a2b);
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10):hover {
+	transform: scale(1.05);
+	border-color: var(--cdn-aws-orange, #ff9900);
+	box-shadow:
+		0 4px 14px rgba(139, 90, 43, 0.3),
+		0 0 14px rgba(255, 153, 0, 0.32),
+		inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10):hover::after {
+	color: var(--cdn-aws-orange, #ff9900);
+}
+
+.awsui-dark-mode
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10) {
+	background: linear-gradient(
+		135deg,
+		rgba(28, 34, 48, 0.92) 0%,
+		rgba(20, 16, 48, 0.88) 100%
+	);
+	border: 1.5px solid rgba(144, 96, 240, 0.6);
+	box-shadow:
+		0 2px 8px rgba(0, 0, 0, 0.45),
+		inset 0 1px 0 rgba(144, 96, 240, 0.3);
+}
+
+.awsui-dark-mode
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10)::after {
+	color: var(--cdn-lavender, #d7c7ee);
+}
+
+.awsui-dark-mode
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10):hover {
+	transform: scale(1.05);
+	border-color: var(--cdn-violet, #9060f0);
+	box-shadow:
+		0 4px 14px rgba(0, 0, 0, 0.55),
+		0 0 14px rgba(144, 96, 240, 0.45),
+		inset 0 1px 0 rgba(144, 96, 240, 0.45);
+}
+
+.awsui-dark-mode
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10):hover::after {
+	color: var(--cdn-violet, #9060f0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[class*="awsui_header-wrapper_"]
+		[class*="awsui_info_"]
+		[class*="awsui_link"]:not(#\9):not(#\10) {
+		transition: none;
+	}
 }
 
 /* ContentLayout hero-strip background — collapse on pages with breadcrumbs.
