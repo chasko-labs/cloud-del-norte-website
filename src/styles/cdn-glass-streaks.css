@@ -617,12 +617,14 @@
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 	color: transparent;
+	/* 1px contrasting outline — paints outside the gradient text-fill so the
+	   shape gets a defining stroke. Light mode: deep mahogany; dark mode:
+	   deep navy. Brings the lit-sign feel up to match AWS USER GROUP. */
+	-webkit-text-stroke: 1px rgba(44, 18, 6, 0.92);
 	display: inline-block;
 	padding: 0 6px;
 	/* Layered drop-shadow brings the Cinzel up to par with the lit AWS USER
-	   GROUP tagline — warm amber halo light mode, violet halo dark mode.
-	   filter affects the resulting text bitmap so the gradient text-fill
-	   keeps its intended color while the glow paints around it. */
+	   GROUP tagline — warm amber halo light mode, violet halo dark mode. */
 	filter:
 		drop-shadow(0 1px 2px rgba(74, 40, 24, 0.35))
 		drop-shadow(0 0 8px rgba(255, 153, 0, 0.32))
@@ -632,6 +634,10 @@
 		filter 0.3s ease;
 	animation: cdn-breadcrumb-shimmer 12s ease-in-out infinite;
 	vertical-align: middle;
+}
+
+.awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
+	-webkit-text-stroke: 1px rgba(0, 0, 0, 0.85);
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
@@ -683,24 +689,42 @@
 }
 
 /* ==========================================================================
-   Hide page-title h1 + Info button on pages with breadcrumbs
+   Hide page-title h1 + Info button on pages with breadcrumbs — but PRESERVE
+   the actions area (where the persistent music player lives)
 
-   Reasoning (Bryan, v0.0.0034): the breadcrumb h1 already shows
+   Reasoning (Bryan, v0.0.0034 / 0037): the breadcrumb h1 already shows
    "CLOUD DEL NORTE > [page name]" — printing the same page name again
-   in the ContentLayout header below is redundant. Hide (display:none) so
-   we keep the DOM intact in case we want to repurpose that real estate
-   later (a hero band, a status row, a search bar). The `awsui_header-wrapper_`
-   only renders when a page passes `<Header>` via ContentLayout — and every
-   Shell page that passes breadcrumbs also passes a Header, so the rule
-   gates on the breadcrumbs being present via :has().
+   in the ContentLayout header is redundant. BUT the header-wrapper also
+   houses the page actions slot — that's where the radio station info
+   + play/skip buttons render (KruxPlayer on the right side of "Feed").
+   Hiding the entire wrapper killed the music player (Bryan v0.0.0037).
 
-   To bring this back on a specific page, remove `breadcrumbs={...}` on that
-   page's app.tsx OR add a more-specific selector with display:revert.
+   Cloudscape's Header renders:
+     awsui_header-wrapper_
+       > awsui_main_       ← title + actions LEFT side (inc. h1, Info)
+         > awsui_root_     ← title heading group
+           > awsui_main_main_  ← h1 + Info icon
+         > awsui_actions_  ← page actions (radio player lives here)
+       > (sometimes a spacer / right group depending on Header variant)
+
+   We hide ONLY the title-heading group, not its actions sibling. The
+   wrapper + actions area (radio player) keeps rendering, restoring the
+   music affordance Bryan expected.
+
+   To bring the title back on a specific page, override with a more-specific
+   selector + display:revert.
    ========================================================================== */
 [class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
 	[class*="awsui_has-header_"]
-	> [class*="awsui_header-wrapper_"]:not(#\9):not(#\10) {
-	display: none !important;
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_root_"]:not([class*="awsui_actions_"]):not(#\9):not(#\10) {
+	visibility: hidden !important;
+	height: 0 !important;
+	min-height: 0 !important;
+	max-height: 0 !important;
+	overflow: hidden !important;
+	margin: 0 !important;
+	padding: 0 !important;
 }
 
 /* ==========================================================================
@@ -832,14 +856,24 @@
 	filter: none;
 }
 
-/* Light mode — cream icon glyph against the dark gradient. SVG fill override
-   covers icons that hardcode their fill attribute instead of inheriting. */
+/* Light mode — cream icon glyph against the dark gradient.
+   Cloudscape's info icon is `<circle r="7"> <path d="...">` — both meant to
+   render as STROKE outlines, not solid fills. Setting fill: cream solid-
+   filled the ring and buried the "i" inside it. Now: only set color so
+   currentColor flows + paint the shapes via stroke. */
 :root:not(.awsui-dark-mode)
-	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg,
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	color: var(--cdn-color-bg, #ede5d4);
+}
+
 :root:not(.awsui-dark-mode)
-	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) [class*="awsui_icon"] {
-	color: var(--cdn-cream, #ede5d4) !important;
-	fill: var(--cdn-cream, #ede5d4) !important;
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg circle,
+:root:not(.awsui-dark-mode)
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg path {
+	fill: none !important;
+	stroke: currentColor !important;
+	stroke-width: 1.5 !important;
+	stroke-linecap: round !important;
 }
 
 /* Dark mode — deep navy gradient + violet border + lavender icon */
@@ -889,10 +923,12 @@
 	filter: none;
 }
 
-.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg,
-.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) [class*="awsui_icon"] {
-	color: var(--cdn-lavender, #d7c7ee) !important;
-	fill: var(--cdn-lavender, #d7c7ee) !important;
+.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg circle,
+.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg path {
+	fill: none !important;
+	stroke: currentColor !important;
+	stroke-width: 1.5 !important;
+	stroke-linecap: round !important;
 }
 
 /* Ambient breathe — slow pulsing glow ring, 6s cycle. Light mode amber halo;
@@ -1068,25 +1104,34 @@
    Brand link color — replace Cloudscape default royal blue (#0073e6 / similar)
    with our brand violet (#6330c8 light / lavender-violet dark).
 
-   Cloudscape's Link primitive uses a hash-suffixed token internally
-   (--color-text-link-default-…). Override globally via the awsui_link class
-   and the inline links inside .cdn-card / .feed-section content.
+   Scoped to body-content links only — exclude awsui_variant-top-navigation_
+   (sign-in button needs its chrome cream/lavender to read on the dark nav)
+   and exclude .cdn-footer-community where the Meetup link is rendered with
+   its own variant-primary treatment.
    ========================================================================== */
-:root:not(.awsui-dark-mode) [class*="awsui_link_"]:not(#\9),
-:root:not(.awsui-dark-mode) [class*="awsui_text_"] [class*="awsui_link_"]:not(#\9) {
+:root:not(.awsui-dark-mode)
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9),
+:root:not(.awsui-dark-mode)
+	[class*="awsui_text_"]
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9) {
 	color: var(--cdn-status-info, #6330c8) !important;
 }
 
-:root:not(.awsui-dark-mode) [class*="awsui_link_"]:not(#\9):hover {
+:root:not(.awsui-dark-mode)
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9):hover {
 	color: #4a1f9c !important;
 }
 
-.awsui-dark-mode [class*="awsui_link_"]:not(#\9),
-.awsui-dark-mode [class*="awsui_text_"] [class*="awsui_link_"]:not(#\9) {
+.awsui-dark-mode
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9),
+.awsui-dark-mode
+	[class*="awsui_text_"]
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9) {
 	color: var(--cdn-lavender, #d7c7ee) !important;
 }
 
-.awsui-dark-mode [class*="awsui_link_"]:not(#\9):hover {
+.awsui-dark-mode
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9):hover {
 	color: var(--cdn-violet, #9060f0) !important;
 }
 

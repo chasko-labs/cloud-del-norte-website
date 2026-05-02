@@ -1489,6 +1489,7 @@ body {
 	font-size: clamp(15px, 1.8vw, 20px);
 	/* Slight transparency tones the orange down without dulling the brand */
 	color: rgba(255, 153, 0, 0.88);
+	-webkit-text-stroke: 0.5px rgba(44, 18, 6, 0.85);
 	text-shadow:
 		0 0 3px rgba(255, 153, 0, 0.5),
 		0 0 8px rgba(255, 153, 0, 0.32),
@@ -1501,6 +1502,7 @@ body {
 	font-size: clamp(10px, 1.2vw, 13px);
 	margin-top: 2px;
 	color: #9060f0;
+	-webkit-text-stroke: 0.4px rgba(28, 4, 64, 0.75);
 	text-shadow:
 		0 0 3px rgba(144, 96, 240, 0.75),
 		0 0 8px rgba(144, 96, 240, 0.55),
