@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap");
+
 /* ==========================================================================
    CdnWallpaper Suite — glass plates + streak system
 
@@ -570,4 +572,85 @@
 	background: var(--cdn-glass-streak) !important;
 	border-radius: 1px;
 	opacity: 0.6;
+}
+
+/* ==========================================================================
+   Branded breadcrumb home link — "Cloud Del Norte" elevated to a display heading.
+
+   Cloudscape renders BreadcrumbGroup as <ol class="awsui_breadcrumb-group_">
+   with each item as <li>; the first item's <a> holds "Cloud Del Norte" via
+   the t("breadcrumbs.home") translation in src/components/breadcrumbs/index.tsx.
+
+   Treatment:
+   - Cinzel display serif (Roman/carved-stone character, fits geographic name).
+   - Font-size 1.75rem — comfortably larger than the page-title h1 (~1.5rem).
+   - Gradient text fill: streak-band tokens (amber→aws-orange light /
+     violet→cyan dark), animated via background-position shift.
+   - No underline (Cloudscape's default removed).
+   - Slow 12s shimmer cycle so the gradient drifts across the letters.
+   - Hover: scale 1.04 + drop-shadow glow.
+   - prefers-reduced-motion: animation off, gradient stays at 0% position.
+
+   Layout: breadcrumb strip stops constraining min-height so the larger font
+   can breathe. The other breadcrumb segments (separator + "Feed") keep
+   Cloudscape default sizing — only li:first-child a is upgraded.
+   ========================================================================== */
+
+[class*="awsui_breadcrumbs_"] li:first-child a {
+	font-family: "Cinzel", Georgia, serif !important;
+	font-weight: 700 !important;
+	font-size: 1.75rem !important;
+	letter-spacing: 0.04em !important;
+	line-height: 1.1 !important;
+	text-decoration: none !important;
+	background-image: var(--cdn-streak-band-light);
+	background-size: 200% 100%;
+	background-position: 0% 50%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+	display: inline-block;
+	padding: 0 4px;
+	transition:
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.3s ease;
+	animation: cdn-breadcrumb-shimmer 12s ease-in-out infinite;
+	vertical-align: middle;
+}
+
+.awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
+	background-image: var(--cdn-streak-band-dark);
+}
+
+[class*="awsui_breadcrumbs_"] li:first-child a:hover {
+	transform: scale(1.04);
+	filter: drop-shadow(0 0 8px rgba(255, 153, 0, 0.45));
+	text-decoration: none !important;
+}
+
+.awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a:hover {
+	filter: drop-shadow(0 0 12px rgba(144, 96, 240, 0.55));
+}
+
+@keyframes cdn-breadcrumb-shimmer {
+	0%,
+	100% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[class*="awsui_breadcrumbs_"] li:first-child a {
+		animation: none;
+		background-position: 0% 50%;
+	}
+}
+
+/* Allow breadcrumbs strip to grow vertically for the bigger first item */
+[class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
+	min-height: auto !important;
 }
