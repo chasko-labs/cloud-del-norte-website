@@ -1487,12 +1487,13 @@ body {
 
 .cdn-ugtag-aws {
 	font-size: clamp(15px, 1.8vw, 20px);
-	color: #ff9900;
+	/* Slight transparency tones the orange down without dulling the brand */
+	color: rgba(255, 153, 0, 0.88);
 	text-shadow:
-		0 0 4px rgba(255, 153, 0, 0.75),
-		0 0 12px rgba(255, 153, 0, 0.55),
-		0 0 24px rgba(255, 153, 0, 0.32),
-		0 1px 2px rgba(0, 0, 0, 0.65);
+		0 0 3px rgba(255, 153, 0, 0.5),
+		0 0 8px rgba(255, 153, 0, 0.32),
+		0 0 18px rgba(255, 153, 0, 0.18),
+		0 1px 2px rgba(0, 0, 0, 0.55);
 	animation: cdn-ugtag-pulse 6s ease-in-out infinite;
 }
 

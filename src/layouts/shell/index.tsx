@@ -364,47 +364,41 @@ function ShellContent({
 					utilities={[
 						{
 							type: "button",
-							// Custom inline SVG flag — replaces stock emoji.
-							// Wrapped in a span so the Cloudscape utility-button click target
-							// still receives clicks; pointer-events: none on the SVG below.
-							// Title carries the existing i18n string so the existing
-							// :has([title*="Spanish"]) / [title*="Inglés"] CSS hooks
-							// still match for click-flip animation. ariaLabel must be set
-							// explicitly because Cloudscape derives it from `text` by default
-							// — passing a ReactNode in `text` would yield a non-string label.
-							text: (
+							// Cloudscape's button-utility supports `iconSvg` for inline SVG —
+							// previously we passed JSX through `text` (cast as unknown as string)
+							// but Cloudscape applied visibility:hidden to the text span when
+							// the value didn't stringify cleanly. iconSvg accepts ReactNode
+							// directly without that gate. Locale-state class on the SVG
+							// itself drives the per-flag CSS treatment (was on a wrapper span).
+							iconSvg: (
 								<span
 									className={`cdn-flag-toggle cdn-flag-toggle--${locale === "mx" ? "us" : "mx"}`}
 									aria-hidden="true"
 								>
 									{locale === "mx" ? <UsFlagSvg /> : <MxFlagSvg />}
 								</span>
-							) as unknown as string,
-							title:
-								locale === "mx" ? t("shell.switchToUs") : t("shell.switchToMx"),
+							),
 							ariaLabel:
+								locale === "mx" ? t("shell.switchToUs") : t("shell.switchToMx"),
+							title:
 								locale === "mx" ? t("shell.switchToUs") : t("shell.switchToMx"),
 							onClick: handleToggleLocale,
 						},
 						{
 							type: "button",
-							// Custom inline SVG sun/moon — replaces stock emoji.
-							// Same wrapper-span pattern. cdn-celestial-toggle--sun shows
-							// rays + warm core; cdn-celestial-toggle--moon shows crescent
-							// + crater + twinkling star sidekick.
-							text: (
+							iconSvg: (
 								<span
 									className={`cdn-celestial-toggle cdn-celestial-toggle--${theme === "dark" ? "sun" : "moon"}`}
 									aria-hidden="true"
 								>
 									{theme === "dark" ? <SunSvg /> : <MoonSvg />}
 								</span>
-							) as unknown as string,
-							title:
+							),
+							ariaLabel:
 								theme === "dark"
 									? t("shell.switchToLightMode")
 									: t("shell.switchToDarkMode"),
-							ariaLabel:
+							title:
 								theme === "dark"
 									? t("shell.switchToLightMode")
 									: t("shell.switchToDarkMode"),
