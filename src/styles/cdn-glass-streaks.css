@@ -360,6 +360,37 @@
 	box-shadow: none !important;
 }
 
+/* Force all breadcrumb items visible — never collapse behind a ▼ dropdown.
+   Bryan eyes-on (mobile, v0.0.0046): "CLOUD DEL NORTE doesn't appear in
+   the breadcrumb unless you click a submenu — should always show".
+   Cloudscape collapses items into an ellipsis trigger on narrow viewports;
+   we override with list-item display + auto-wrap so the breadcrumb h1
+   "CLOUD DEL NORTE" + the active page name BOTH always render.
+   Stack vertically below 600px so they fit. */
+[class*="awsui_breadcrumbs_"] ol[class*="awsui_breadcrumbs"]:not(#\9):not(#\10),
+[class*="awsui_breadcrumbs_"] [class*="awsui_breadcrumb-group_"]:not(#\9):not(#\10) {
+	flex-wrap: wrap !important;
+}
+
+[class*="awsui_breadcrumbs_"] li:not(#\9):not(#\10) {
+	display: list-item !important;
+}
+
+/* Hide the ellipsis "..." dropdown trigger Cloudscape inserts when items
+   would overflow. We always show all items, no need for a collapse. */
+[class*="awsui_breadcrumbs_"] [class*="awsui_ghost-breadcrumb_"]:not(#\9):not(#\10),
+[class*="awsui_breadcrumbs_"] [class*="awsui_breadcrumb-ellipsis_"]:not(#\9):not(#\10) {
+	display: none !important;
+}
+
+/* On narrow viewports stack the home (CLOUD DEL NORTE) + page-name on
+   separate lines so the Cinzel display heading still reads at full size. */
+@media (max-width: 600px) {
+	[class*="awsui_breadcrumbs_"] li:not(#\9):not(#\10) {
+		width: 100%;
+	}
+}
+
 /* ==========================================================================
    big surface tiers — header strip / scrolling-background / content area
 

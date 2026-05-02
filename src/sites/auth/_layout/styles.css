@@ -21,6 +21,49 @@
 @import "../../../styles/tokens.css";
 @import "../../../styles/cdn-glass-streaks.css";
 
+/* ── Cloudscape design-token nuke — royal blue → brand violet/amber ────────
+   Bryan eyes-on (v0.0.0047): "another awful blue" was leaking into the auth
+   subdomain via Cloudscape's hardcoded token fallbacks (#006ce0). Class-level
+   overrides in this file lost specificity to Cloudscape's own
+   `.awsui_link_*.awsui_variant-primary_*:not(#\9)` (id-pseudo trick gives it
+   specificity 1,2,0). Cleaner fix: set the design tokens themselves at the
+   body.cdn-auth-subdomain scope — Cloudscape's `var(--token, #006ce0)` reads
+   our value, no specificity battle, no !important.
+
+   Scoped to the auth subdomain only so the awsug + main sites are unaffected.
+   tokens covered: Link default/secondary/info, Input focus border + ring,
+   Wizard step active circle/title, secondary Button normal-default chrome.
+   ========================================================================== */
+:root:not(.awsui-dark-mode) body.cdn-auth-subdomain {
+	--color-text-link-default-hude44: var(--cdn-purple);
+	--color-text-link-hover-2hfec2: var(--cdn-violet);
+	--color-text-link-secondary-default-4p0gj8: var(--cdn-purple);
+	--color-text-link-secondary-hover-0kzmc4: var(--cdn-violet);
+	--color-text-link-info-default-mrmt1i: var(--cdn-purple);
+	--color-text-link-info-hover-mu3ega: var(--cdn-violet);
+	--color-border-input-focused-4z0pgn: var(--cdn-amber);
+	--color-border-item-focused-uk47pl: var(--cdn-amber);
+	--color-background-control-checked-ka7kc2: var(--cdn-violet);
+	--color-background-button-primary-default-vdt0fu: var(--cdn-violet);
+	--color-text-button-normal-default-nzalii: var(--cdn-purple);
+	--color-border-button-normal-default-glqfp1: var(--cdn-purple);
+}
+
+:root.awsui-dark-mode body.cdn-auth-subdomain {
+	--color-text-link-default-hude44: var(--cdn-lavender);
+	--color-text-link-hover-2hfec2: var(--cdn-violet);
+	--color-text-link-secondary-default-4p0gj8: var(--cdn-lavender);
+	--color-text-link-secondary-hover-0kzmc4: var(--cdn-violet);
+	--color-text-link-info-default-mrmt1i: var(--cdn-lavender);
+	--color-text-link-info-hover-mu3ega: var(--cdn-violet);
+	--color-border-input-focused-4z0pgn: var(--cdn-violet);
+	--color-border-item-focused-uk47pl: var(--cdn-violet);
+	--color-background-control-checked-ka7kc2: var(--cdn-violet);
+	--color-background-button-primary-default-vdt0fu: var(--cdn-violet);
+	--color-text-button-normal-default-nzalii: var(--cdn-lavender);
+	--color-border-button-normal-default-glqfp1: var(--cdn-violet);
+}
+
 /* Constrain the auth form column. ContentLayout w/ contentType="form" already
    centers its content column — no explicit margin: 0 auto needed (would
    double-center, fighting Cloudscape's max-width logic). 480px is the tighter
@@ -34,10 +77,12 @@
 }
 
 /* The ContentLayout renders children directly under awsui_layout — add a top
-   pad so the form clears the page-hero band cleanly */
+   pad so the form clears the page-hero band cleanly. v0.0.0047: tightened to
+   12px so the card sits closer under the page-context band, reading as a
+   single composition rather than two stacked plates. */
 [class*="awsui_content-layout"] > .cdn-auth-card {
-	margin-top: 24px;
-	margin-bottom: 24px;
+	margin-top: 12px;
+	margin-bottom: 32px;
 }
 
 /* ── Page header band — Cinzel wordmark + per-page context ───────────────────
@@ -84,10 +129,15 @@
 	);
 }
 
+/* v0.0.0047: Cinzel italic + tighter tracking lifts the per-page context line
+   ("Sign in to Cloud Del Norte" / "Create your account") from a plain caption
+   to a typeset stage direction. */
 .cdn-auth-context {
-	font-size: 0.95rem;
-	font-weight: 500;
-	letter-spacing: 0.01em;
+	font-family: "Cinzel", Georgia, serif;
+	font-style: italic;
+	font-size: 1rem;
+	font-weight: 600;
+	letter-spacing: 0.05em;
 	margin-top: 4px;
 	color: rgba(74, 40, 24, 0.78);
 	position: relative;
@@ -178,80 +228,78 @@
 	}
 }
 
-/* ── Light mode: brand-violet primary action button ────────────────────────
-   Cloudscape primary button defaults to its blue interactive token (~#0972d3).
-   Override to brand violet (--cdn-purple) with a deeper purple on hover. */
+/* ── Brand-violet primary button — explicit chrome on the rendered button ──
+   Cloudscape's primary button reads --color-background-button-primary-default-vdt0fu
+   (now overridden above to violet) for its bg, but the border + text-color
+   tokens are separate. Reinforce here so the button reads as a single solid
+   violet pill. White text needed because the button text token defaults to
+   container-content cream which would disappear on the violet bg.
 
-:root:not(.awsui-dark-mode)
-	.cdn-auth-card
-	[class*="awsui_button"][class*="variant-primary"],
-:root:not(.awsui-dark-mode) .cdn-auth-card button[class*="variant-primary"] {
+   Hover: deeper purple (--cdn-purple) with a soft violet glow ring for
+   tactile feedback. variant-primary descendant selector is intentionally
+   broad so the rule covers Form action buttons + Wizard primary submit. */
+
+.cdn-auth-card [class*="awsui_button"][class*="variant-primary"],
+.cdn-auth-card button[class*="variant-primary"] {
 	background: var(--cdn-violet) !important;
 	border-color: var(--cdn-violet) !important;
 	color: var(--cdn-white) !important;
 }
 
-:root:not(.awsui-dark-mode)
-	.cdn-auth-card
-	[class*="awsui_button"][class*="variant-primary"]:hover,
-:root:not(.awsui-dark-mode)
-	.cdn-auth-card
-	button[class*="variant-primary"]:hover {
+.cdn-auth-card [class*="awsui_button"][class*="variant-primary"]:hover,
+.cdn-auth-card button[class*="variant-primary"]:hover {
 	background: var(--cdn-purple) !important;
 	border-color: var(--cdn-purple) !important;
+	box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.22) !important;
 }
 
-/* ── Light mode: link colors in palette ────────────────────────────────────
-   "Forgot password", "Already have an account", "Show password" etc. default
-   to Cloudscape blue. Bring them into the violet/purple family. */
+/* ── Secondary button (Cancel/Previous) — recede behind the primary ────────
+   Cloudscape's normal-variant button defaults to blue chrome (token override
+   above already swings the text/border toward violet). Push the visual
+   weight further down: transparent backing, lighter border, smaller letter
+   weight so the eye lands on the primary submit instead. */
 
-:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_link"] {
-	color: var(--cdn-purple) !important;
+.cdn-auth-card [class*="awsui_button"][class*="variant-normal"],
+.cdn-auth-card button[class*="variant-normal"] {
+	background: transparent !important;
+	border-color: rgba(139, 90, 43, 0.32) !important;
+	color: var(--cdn-color-text-secondary, #5a3a1e) !important;
 }
 
-:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_link"]:hover {
-	color: var(--cdn-violet) !important;
-}
-
-/* ── Wizard: violet step indicator + button alignment ──────────────────────
-   Wizard uses primary button for Next/Submit — already covered above.
-   The numbered step circles + connecting line use the Cloudscape interactive
-   blue. Override the active/completed step states to brand violet in light
-   mode. Targets Wizard's scoped class names. */
-
-:root:not(.awsui-dark-mode)
+.awsui-dark-mode
 	.cdn-auth-card
-	[class*="awsui_navigation-link"][class*="active"],
-:root:not(.awsui-dark-mode)
+	[class*="awsui_button"][class*="variant-normal"],
+.awsui-dark-mode .cdn-auth-card button[class*="variant-normal"] {
+	border-color: rgba(144, 96, 240, 0.32) !important;
+	color: var(--cdn-lavender) !important;
+}
+
+.cdn-auth-card [class*="awsui_button"][class*="variant-normal"]:hover,
+.cdn-auth-card button[class*="variant-normal"]:hover {
+	background: rgba(139, 90, 43, 0.06) !important;
+	border-color: rgba(139, 90, 43, 0.55) !important;
+}
+
+.awsui-dark-mode
 	.cdn-auth-card
-	[class*="awsui_circle"][class*="active"] {
-	background: var(--cdn-violet) !important;
-	border-color: var(--cdn-violet) !important;
-	color: var(--cdn-white) !important;
+	[class*="awsui_button"][class*="variant-normal"]:hover,
+.awsui-dark-mode .cdn-auth-card button[class*="variant-normal"]:hover {
+	background: rgba(144, 96, 240, 0.1) !important;
+	border-color: rgba(144, 96, 240, 0.55) !important;
 }
 
-:root:not(.awsui-dark-mode)
-	.cdn-auth-card
-	[class*="awsui_navigation-link-active"] {
-	color: var(--cdn-purple) !important;
+/* ── Form input focus — amber/violet ring belt ─────────────────────────────
+   The token nuke at the top of this file replaces the blue focus ring
+   default with brand colors via Cloudscape's own var() fallback. This rule
+   adds a visible halo glow on top — softer than the global :focus-visible
+   amber outline (which would clip past the rounded input border). */
+
+.cdn-auth-card [class*="awsui_input"]:focus-within {
+	box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.22) !important;
 }
 
-/* ── Form input focus — amber ring matches the global focus rule ───────────
-   tokens.css already sets a global :focus-visible amber outline. Cloudscape
-   Input has its own scoped focus shadow that wins on the input itself —
-   reinforce here so form fields pick up the brand focus treatment. */
-
-:root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_input"]:focus-within {
-	box-shadow: 0 0 0 2px var(--cdn-amber) !important;
-	border-color: var(--cdn-amber) !important;
-}
-
-/* Dark mode: violet focus ring — matches the dark-mode interactive token
-   palette. Without this rule the input falls back to Cloudscape's default
-   blue focus ring, breaking parity with the light-mode amber treatment. */
-:root.awsui-dark-mode .cdn-auth-card [class*="awsui_input"]:focus-within {
-	box-shadow: 0 0 0 2px var(--cdn-violet) !important;
-	border-color: var(--cdn-violet) !important;
+.awsui-dark-mode .cdn-auth-card [class*="awsui_input"]:focus-within {
+	box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.28) !important;
 }
 
 /* ── Container chrome on auth page ─────────────────────────────────────────
@@ -516,4 +564,139 @@ body.cdn-auth-subdomain [data-cdn-dune-canvas="1"],
 body.cdn-auth-subdomain [data-cdn-dune-fallback] {
 	opacity: 0.6;
 	transition: opacity 600ms ease-out;
+}
+
+/* ==========================================================================
+   Form chrome polish — labels, hints, errors, alerts
+
+   v0.0.0047: Bryan eyes-on the auth flow read "kinda fucked" — Cloudscape
+   default Form/FormField chrome (white panel sub-borders, blue underlines on
+   helper text, default-weight labels) clashes with the warm cream cdn-card
+   plate. The rules below tune typography + alert chrome so labels read
+   confidently and constraints/errors land in palette.
+   ========================================================================== */
+
+/* FormField label — bump weight + warm-brown tint so it reads as a clear
+   form-control caption rather than fading into the cream plate. Cloudscape
+   labels default to grey-700 which loses contrast against our backdrop. */
+.cdn-auth-card [class*="awsui_label_"] {
+	font-weight: 600 !important;
+	color: var(--cdn-color-text, #2c1a0e) !important;
+	letter-spacing: 0.01em;
+}
+
+.awsui-dark-mode .cdn-auth-card [class*="awsui_label_"] {
+	color: var(--cdn-color-text-high) !important;
+}
+
+/* FormField description (the "Hint" line under the label) — softer warm
+   brown, smaller weight. Constraint text (char-counter at the bottom of
+   inputs) gets the same treatment so they read as an ambient pair. */
+.cdn-auth-card [class*="awsui_description_"],
+.cdn-auth-card [class*="awsui_constraint_"] {
+	color: rgba(74, 40, 24, 0.7) !important;
+	font-size: 0.8125rem;
+}
+
+.awsui-dark-mode .cdn-auth-card [class*="awsui_description_"],
+.awsui-dark-mode .cdn-auth-card [class*="awsui_constraint_"] {
+	color: rgba(215, 199, 238, 0.65) !important;
+}
+
+/* Field-level error text — keep the red but use a warmer brand-adjacent red
+   instead of Cloudscape's flat #d91515. Slight font-weight bump so the
+   error reads with intent. */
+.cdn-auth-card [class*="awsui_error__message"],
+.cdn-auth-card [class*="awsui_error_"] {
+	color: #c53030 !important;
+	font-weight: 500;
+}
+
+.awsui-dark-mode .cdn-auth-card [class*="awsui_error__message"],
+.awsui-dark-mode .cdn-auth-card [class*="awsui_error_"] {
+	color: #f87171 !important;
+}
+
+/* Form-level errorText (under the actions row) — same red family as the
+   field errors above, plus an amber-warmth left-rule to anchor it visually
+   instead of floating loose against the card. */
+.cdn-auth-card form [class*="awsui_root_"] > [class*="awsui_error_"],
+.cdn-auth-card [class*="awsui_form-component-error"] {
+	color: #c53030 !important;
+	font-weight: 500;
+	padding-left: 12px;
+	border-left: 3px solid rgba(197, 48, 48, 0.55);
+	margin-top: 8px;
+}
+
+.awsui-dark-mode
+	.cdn-auth-card
+	form
+	[class*="awsui_root_"]
+	> [class*="awsui_error_"],
+.awsui-dark-mode .cdn-auth-card [class*="awsui_form-component-error"] {
+	color: #f87171 !important;
+	border-left-color: rgba(248, 113, 113, 0.55);
+}
+
+/* Cloudscape Alert (used for signup step3/4 + verify done state) — paint
+   the surface with a warm amber tint instead of Cloudscape's flat blue/white.
+   Success alerts stay green; error alerts use the brand red above. The
+   warning + info variants pick up amber + violet from the token nuke. */
+.cdn-auth-card [class*="awsui_alert"][class*="type-success"] {
+	background-color: rgba(22, 163, 74, 0.08) !important;
+	border-color: rgba(22, 163, 74, 0.32) !important;
+}
+
+.cdn-auth-card [class*="awsui_alert"][class*="type-error"] {
+	background-color: rgba(197, 48, 48, 0.08) !important;
+	border-color: rgba(197, 48, 48, 0.32) !important;
+}
+
+/* ==========================================================================
+   Wizard step navigator polish
+
+   The Wizard step strip (Account → Profile → Interests → Verify) has its
+   own chrome that sits above the form content. The token nuke handles the
+   active circle + title color (now violet). These rules tune the connecting
+   line + typography so the strip reads as a coherent brand element.
+   ========================================================================== */
+
+/* Connector line between step circles — Cloudscape paints it as a flat
+   grey hr. Replace with a soft amber gradient so the journey through the
+   wizard reads as a warm path rather than a grey rail. */
+.cdn-auth-card [class*="awsui_navigation_"] > ul > li > hr {
+	border: none !important;
+	background: linear-gradient(
+		90deg,
+		rgba(139, 90, 43, 0.18) 0%,
+		rgba(139, 90, 43, 0.32) 50%,
+		rgba(139, 90, 43, 0.18) 100%
+	) !important;
+	height: 2px !important;
+}
+
+.awsui-dark-mode .cdn-auth-card [class*="awsui_navigation_"] > ul > li > hr {
+	background: linear-gradient(
+		90deg,
+		rgba(144, 96, 240, 0.18) 0%,
+		rgba(144, 96, 240, 0.32) 50%,
+		rgba(144, 96, 240, 0.18) 100%
+	) !important;
+}
+
+/* Step number label ("Step 1") — let-spacing + warm tint */
+.cdn-auth-card [class*="awsui_navigation_"] [class*="awsui_number_"] {
+	color: rgba(74, 40, 24, 0.7) !important;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	font-size: 0.6875rem;
+}
+
+.awsui-dark-mode
+	.cdn-auth-card
+	[class*="awsui_navigation_"]
+	[class*="awsui_number_"] {
+	color: rgba(215, 199, 238, 0.65) !important;
 }

@@ -440,12 +440,11 @@ function ShellContent({
 						[
 							{
 								type: "button",
-								// Cloudscape's button-utility supports `iconSvg` for inline SVG —
-								// previously we passed JSX through `text` (cast as unknown as string)
-								// but Cloudscape applied visibility:hidden to the text span when
-								// the value didn't stringify cleanly. iconSvg accepts ReactNode
-								// directly without that gate. Locale-state class on the SVG
-								// itself drives the per-flag CSS treatment (was on a wrapper span).
+								// disableUtilityCollapse: keep flag + theme + sign-in always
+								// visible on the top-nav row. Default Cloudscape collapses
+								// utilities into a "More" dropdown on narrow viewports —
+								// hides our locale + theme toggles behind a click on phones.
+								disableUtilityCollapse: true,
 								iconSvg: (
 									<span
 										className={`cdn-flag-toggle cdn-flag-toggle--${locale === "mx" ? "us" : "mx"}`}
@@ -466,6 +465,7 @@ function ShellContent({
 							},
 							{
 								type: "button",
+								disableUtilityCollapse: true,
 								iconSvg: (
 									<span
 										className={`cdn-celestial-toggle cdn-celestial-toggle--${theme === "dark" ? "sun" : "moon"}`}

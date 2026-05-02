@@ -1658,8 +1658,20 @@ body {
 	}
 }
 
+/* Mobile: shrink the tagline so AWS USER GROUP still appears next to the
+   star (was display:none, hiding the brand entirely on phones). Stack
+   stays vertical; smaller font + tighter spacing keeps it on the row
+   even at 360px viewport. */
 @media (max-width: 480px) {
 	.cdn-ugtag {
-		display: none;
+		left: 56px; /* logo (~44px) + 12px gutter */
+		letter-spacing: 0.05em;
+	}
+	.cdn-ugtag-aws {
+		font-size: 12px;
+	}
+	.cdn-ugtag-ug {
+		font-size: 8px;
+		margin-top: 1px;
 	}
 }
