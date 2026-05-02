@@ -198,8 +198,17 @@ function LioraFrame() {
 	const countryCode = visitor?.country ?? "";
 	const greetingPrefix =
 		locale === "mx"
-			? withFallback(t("liora.welcomeGreeting"), "liora.welcomeGreeting", locale === "mx" ? "qué onda" : "welcome")
-			: (GREETING_BY_COUNTRY[countryCode] ?? withFallback(t("liora.welcomeGreeting"), "liora.welcomeGreeting", locale === "mx" ? "qué onda" : "welcome"));
+			? withFallback(
+					t("liora.welcomeGreeting"),
+					"liora.welcomeGreeting",
+					"qué onda",
+				)
+			: (GREETING_BY_COUNTRY[countryCode] ??
+				withFallback(
+					t("liora.welcomeGreeting"),
+					"liora.welcomeGreeting",
+					"welcome",
+				));
 
 	useEffect(() => {
 		let cancelled = false;
@@ -379,8 +388,7 @@ export default function Navigation() {
 
 	const currentPath = location.pathname;
 	const isOnPlans =
-		currentPath.startsWith("/roadmap") ||
-		currentPath.startsWith("/theme");
+		currentPath.startsWith("/roadmap") || currentPath.startsWith("/theme");
 	const isOnReferences =
 		currentPath.startsWith("/learning") ||
 		currentPath.startsWith("/maintenance-calendar");

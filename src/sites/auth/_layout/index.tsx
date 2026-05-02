@@ -71,7 +71,7 @@ export default function AuthLayout({
 			identityHref="https://clouddelnorte.org/feed/index.html"
 		>
 			<ContentLayout>
-				<header className="cdn-auth-page-header" aria-label="Cloud Del Norte">
+				<header className="cdn-auth-page-header">
 					<div className="cdn-auth-wordmark">Cloud Del Norte</div>
 					<div className="cdn-auth-context">{contextLine}</div>
 				</header>

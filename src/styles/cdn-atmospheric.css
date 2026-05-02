@@ -125,7 +125,9 @@
 
 	/* Light mode */
 	.cdn-viz-active:not(.awsui-dark-mode)
-		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
+	[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
+		#\9
+	),
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
 		background-color: rgba(
@@ -142,7 +144,9 @@
 
 	/* Dark mode */
 	.cdn-viz-active.awsui-dark-mode
-		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
+	[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
+		#\9
+	),
 	.cdn-viz-active.awsui-dark-mode
 		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
 		background-color: rgba(
@@ -160,13 +164,13 @@
 	/* ── ContentLayout header strip — header tier ─────────────────────────── */
 
 	/* Light mode */
-	.cdn-viz-active:not(.awsui-dark-mode)
-		[class*="awsui_has-header_"]
+	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_has-header_"]
 		> [class*="awsui_background_"]:not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_content-layout"]
 		> [class*="awsui_background"]:not(#\9),
-	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
+	.cdn-viz-active:not(.awsui-dark-mode)
+		[class*="awsui_header-background"]:not(#\9) {
 		background-color: rgba(
 			237,
 			229,
@@ -180,8 +184,7 @@
 	}
 
 	/* Dark mode */
-	.cdn-viz-active.awsui-dark-mode
-		[class*="awsui_has-header_"]
+	.cdn-viz-active.awsui-dark-mode [class*="awsui_has-header_"]
 		> [class*="awsui_background_"]:not(#\9),
 	.cdn-viz-active.awsui-dark-mode
 		[class*="awsui_content-layout"]
@@ -253,7 +256,9 @@
 	background-color: transparent !important;
 }
 
-.awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"]:not(#\9),
+.awsui-dark-mode
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9),
 .awsui-dark-mode
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9),
@@ -267,13 +272,13 @@
    via background-color. Explicit transparent override ensures shell/styles.css
    frosted-glass rules (which imported this file before their own declarations)
    cannot reinstate a solid bg. */
-.cdn-viz-active:not(.awsui-dark-mode)
-	[class*="awsui_has-header_"]
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_has-header_"]
 	> [class*="awsui_background_"]:not(#\9),
 .cdn-viz-active:not(.awsui-dark-mode)
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9),
-.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9),
+.cdn-viz-active:not(.awsui-dark-mode)
+	[class*="awsui_header-background"]:not(#\9),
 .cdn-viz-active.awsui-dark-mode
 	[class*="awsui_has-header_"]
 	> [class*="awsui_background_"]:not(#\9),
@@ -365,13 +370,20 @@
 
 /* Light mode — outer containers transparent */
 :root:not(.awsui-dark-mode) main[class*="awsui_layout_"]:not(#\9),
-:root:not(.awsui-dark-mode) main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
-:root:not(.awsui-dark-mode) main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
+:root:not(.awsui-dark-mode)
+	main[class*="awsui_layout_"]
+	> [class*="navigation-container"]:not(#\9),
+:root:not(.awsui-dark-mode)
+	main[class*="awsui_layout_"]
+	> [class*="tools-container"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_navigation-container_"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_tools-container_"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_scrolling-background_"]:not(#\9),
-:root:not(.awsui-dark-mode) [class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
+:root:not(.awsui-dark-mode)
+	[class*="awsui_content-container_"]:not(
+		.liora-frame [class*="awsui_content-container_"]
+	):not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
@@ -380,8 +392,16 @@
    Operator confirmed at v0.0.0016 that 0.20 alpha showed dunes through the
    left nav as desired. Restored here. NO backdrop-filter blur — the blur
    was triggering Safari sub-pixel text rendering bug on nav links. */
-:root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9) {
-	background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.20)) !important;
+:root:not(.awsui-dark-mode)
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
+		#\9
+	) {
+	background-color: rgba(
+		237,
+		229,
+		212,
+		var(--cdn-wallpaper-alpha-panel, 0.2)
+	) !important;
 	-webkit-backdrop-filter: none !important;
 	backdrop-filter: none !important;
 }
@@ -390,8 +410,16 @@
    Operator wants sand-dunes through right panel too. Same alpha as left,
    no blur (Safari text-blur bug). The opaque rules in shell/styles.css
    that previously fought this rule have been defanged to transparent. */
-:root:not(.awsui-dark-mode) [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
-	background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.20)) !important;
+:root:not(.awsui-dark-mode)
+	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(
+		[class*="awsui_tools-container_"]
+	):not(#\9) {
+	background-color: rgba(
+		237,
+		229,
+		212,
+		var(--cdn-wallpaper-alpha-panel, 0.2)
+	) !important;
 	-webkit-backdrop-filter: none !important;
 	backdrop-filter: none !important;
 }
@@ -406,27 +434,50 @@
 
 /* Dark mode — outer containers transparent */
 .awsui-dark-mode main[class*="awsui_layout_"]:not(#\9),
-.awsui-dark-mode main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
-.awsui-dark-mode main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
+.awsui-dark-mode
+	main[class*="awsui_layout_"]
+	> [class*="navigation-container"]:not(#\9),
+.awsui-dark-mode
+	main[class*="awsui_layout_"]
+	> [class*="tools-container"]:not(#\9),
 .awsui-dark-mode [class*="awsui_navigation-container_"]:not(#\9),
 .awsui-dark-mode [class*="awsui_tools-container_"]:not(#\9),
 .awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9),
 .awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9),
-.awsui-dark-mode [class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
+.awsui-dark-mode
+	[class*="awsui_content-container_"]:not(
+		.liora-frame [class*="awsui_content-container_"]
+	):not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
 
 /* Dark mode — left nav drawer: TRANSLUCENT (stars/music-viz bleed through). */
-.awsui-dark-mode nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9) {
-	background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.20)) !important;
+.awsui-dark-mode
+nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
+	#\9
+) {
+	background-color: rgba(
+		10,
+		12,
+		32,
+		var(--cdn-wallpaper-alpha-panel, 0.2)
+	) !important;
 	-webkit-backdrop-filter: none !important;
 	backdrop-filter: none !important;
 }
 
 /* Dark mode — right tools panel: TRANSLUCENT navy. Stars/music-viz through. */
-.awsui-dark-mode [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
-	background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.20)) !important;
+.awsui-dark-mode
+[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(
+	[class*="awsui_tools-container_"]
+):not(#\9) {
+	background-color: rgba(
+		10,
+		12,
+		32,
+		var(--cdn-wallpaper-alpha-panel, 0.2)
+	) !important;
 	-webkit-backdrop-filter: none !important;
 	backdrop-filter: none !important;
 }

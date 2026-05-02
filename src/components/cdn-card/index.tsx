@@ -108,6 +108,7 @@ export default function CdnCard<T>(props: CdnCardProps<T>) {
 	// loading / error transitions; real ready→ready content swaps still cross-fade.
 	const lastReadyRef = useRef<boolean>(state.kind === "ready");
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: candidate is derived from state every render; using state.kind + ready data identity to drive swaps avoids re-running on referential churn of the rendered jsx
 	useEffect(() => {
 		const isReady = state.kind === "ready";
 		const hasPriorReady = lastReadyRef.current;
@@ -136,7 +137,6 @@ export default function CdnCard<T>(props: CdnCardProps<T>) {
 		});
 
 		if (isReady) lastReadyRef.current = true;
-		// biome-ignore lint/correctness/useExhaustiveDependencies: candidate is derived from state every render; using state.kind + ready data identity to drive swaps avoids re-running on referential churn of the rendered jsx
 	}, [state.kind, state.kind === "ready" ? state.data : null, sticky]);
 
 	// after transitionMs, drop the trailing (faded-out) frame so the dom does

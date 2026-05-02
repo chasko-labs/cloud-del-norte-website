@@ -91,23 +91,19 @@
 	--cdn-glass-bg-content: rgba(237, 229, 212, 0.25);
 	--cdn-glass-border: rgba(139, 90, 43, 0.28);
 	--cdn-glass-shadow:
-		0 4px 24px rgba(139, 90, 43, 0.18),
-		0 1px 3px rgba(0, 0, 0, 0.08),
+		0 4px 24px rgba(139, 90, 43, 0.18), 0 1px 3px rgba(0, 0, 0, 0.08),
 		0 0 1px rgba(139, 90, 43, 0.12);
 	--cdn-glass-shadow-hover:
-		0 8px 32px rgba(139, 90, 43, 0.28),
-		0 2px 6px rgba(0, 0, 0, 0.1),
+		0 8px 32px rgba(139, 90, 43, 0.28), 0 2px 6px rgba(0, 0, 0, 0.1),
 		0 0 2px rgba(139, 90, 43, 0.18);
 	--cdn-glass-blur: 10px;
 	--cdn-glass-streak: var(--cdn-streak-h-light);
 
 	/* ── text-shadow tokens ─────────────────────────────────────────────────── */
 	--cdn-text-shadow-light:
-		0 1px 2px rgba(74, 40, 24, 0.18),
-		0 0 6px rgba(237, 229, 212, 0.7);
+		0 1px 2px rgba(74, 40, 24, 0.18), 0 0 6px rgba(237, 229, 212, 0.7);
 	--cdn-text-shadow-dark:
-		0 1px 2px rgba(0, 0, 0, 0.65),
-		0 0 8px rgba(0, 0, 0, 0.45);
+		0 1px 2px rgba(0, 0, 0, 0.65), 0 0 8px rgba(0, 0, 0, 0.45);
 }
 
 /* dark-mode overrides for tokens that switch palette.
@@ -122,12 +118,10 @@
 	--cdn-glass-bg-content: rgba(10, 12, 32, 0.28);
 	--cdn-glass-border: rgba(144, 96, 240, 0.32);
 	--cdn-glass-shadow:
-		0 4px 24px rgba(144, 96, 240, 0.32),
-		0 1px 4px rgba(0, 0, 0, 0.5),
+		0 4px 24px rgba(144, 96, 240, 0.32), 0 1px 4px rgba(0, 0, 0, 0.5),
 		0 0 1px rgba(144, 96, 240, 0.18);
 	--cdn-glass-shadow-hover:
-		0 8px 32px rgba(144, 96, 240, 0.5),
-		0 2px 8px rgba(0, 0, 0, 0.55),
+		0 8px 32px rgba(144, 96, 240, 0.5), 0 2px 8px rgba(0, 0, 0, 0.55),
 		0 0 2px rgba(144, 96, 240, 0.28);
 	--cdn-glass-streak: var(--cdn-streak-h-dark);
 }
@@ -244,9 +238,13 @@
 /* Right-edge vertical streak — fades into the canvas. Sits on the inner
    nav drawer, not the outer container, so the streak hugs the panel edge. */
 :root:not(.awsui-dark-mode)
-	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::after,
+	nav[class*="awsui_navigation_"]:not(
+		[class*="awsui_navigation-toggle_"]
+	)::after,
 .awsui-dark-mode
-	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::after {
+	nav[class*="awsui_navigation_"]:not(
+		[class*="awsui_navigation-toggle_"]
+	)::after {
 	content: "";
 	position: absolute;
 	top: 8%;
@@ -258,12 +256,16 @@
 }
 
 :root:not(.awsui-dark-mode)
-	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::after {
+	nav[class*="awsui_navigation_"]:not(
+		[class*="awsui_navigation-toggle_"]
+	)::after {
 	background: var(--cdn-streak-v-light);
 }
 
 .awsui-dark-mode
-	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::after {
+	nav[class*="awsui_navigation_"]:not(
+		[class*="awsui_navigation-toggle_"]
+	)::after {
 	background: var(--cdn-streak-v-dark);
 }
 
@@ -279,7 +281,9 @@
 /* Section header (e.g. "plans", "references") — bigger streak underline.
    Cloudscape uses awsui_section_ container with an awsui_section-header_ child;
    target the header element and add a gradient strip below it. */
-:root:not(.awsui-dark-mode) [class*="side-navigation"] [class*="section-header"],
+:root:not(.awsui-dark-mode)
+	[class*="side-navigation"]
+	[class*="section-header"],
 .awsui-dark-mode [class*="side-navigation"] [class*="section-header"] {
 	position: relative;
 }
@@ -287,9 +291,7 @@
 :root:not(.awsui-dark-mode)
 	[class*="side-navigation"]
 	[class*="section-header"]::after,
-.awsui-dark-mode
-	[class*="side-navigation"]
-	[class*="section-header"]::after {
+.awsui-dark-mode [class*="side-navigation"] [class*="section-header"]::after {
 	content: "";
 	position: absolute;
 	left: var(--cdn-space-md, 16px);
@@ -307,15 +309,15 @@
 	background: var(--cdn-streak-h-light);
 }
 
-.awsui-dark-mode
-	[class*="side-navigation"]
-	[class*="section-header"]::after {
+.awsui-dark-mode [class*="side-navigation"] [class*="section-header"]::after {
 	background: var(--cdn-streak-h-dark);
 }
 
 /* Cloudscape Divider rendered between sections — replace bare hairline with
    a full-saturation streak. */
-:root:not(.awsui-dark-mode) [class*="side-navigation"] [class*="divider"]:not(#\9),
+:root:not(.awsui-dark-mode)
+	[class*="side-navigation"]
+	[class*="divider"]:not(#\9),
 .awsui-dark-mode [class*="side-navigation"] [class*="divider"]:not(#\9) {
 	border: none !important;
 	height: 2px !important;
@@ -382,8 +384,7 @@
 	backdrop-filter: blur(8px) saturate(1.05) !important;
 }
 
-.awsui-dark-mode
-	[class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
+.awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-scroll) !important;
 	-webkit-backdrop-filter: blur(8px) saturate(1.05) !important;
 	backdrop-filter: blur(8px) saturate(1.05) !important;
@@ -428,10 +429,8 @@
 
    The image stack is fixed (background-attachment: fixed) so it tracks the
    viewport rather than scrolling with content. */
-:root:not(.awsui-dark-mode)
-	main[class*="awsui_layout_"]:not(#\9):not(#\10),
-:root:not(.awsui-dark-mode)
-	[class*="awsui_layout-main"]:not(#\9):not(#\10) {
+:root:not(.awsui-dark-mode) main[class*="awsui_layout_"]:not(#\9):not(#\10),
+:root:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-content) !important;
 	background-image:
 		radial-gradient(
@@ -508,7 +507,8 @@
 }
 
 /* Lift the page-title sibling above the bg's backdrop-filter stacking context */
-[class*="awsui_has-header_"] > [class*="awsui_header-wrapper_"]:not(#\9):not(#\10) {
+[class*="awsui_has-header_"]
+	> [class*="awsui_header-wrapper_"]:not(#\9):not(#\10) {
 	position: relative !important;
 	z-index: 1 !important;
 }
@@ -626,8 +626,7 @@
 	   deep mahogany outline + warm amber halo. */
 	/* Asymmetric stroke — right + bottom edges only (single drop-shadow
 	   offset) reads as a soft drop-shadow rather than a full outline. */
-	filter:
-		drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
+	filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
 		drop-shadow(1px 0 0 rgba(44, 18, 6, 0.22))
 		drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22))
 		drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
@@ -640,8 +639,7 @@
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
-	filter:
-		drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.3))
+	filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.3))
 		drop-shadow(1px 0 0 rgba(0, 0, 0, 0.22))
 		drop-shadow(0 1px 0 rgba(0, 0, 0, 0.22))
 		drop-shadow(0 0 8px rgba(144, 96, 240, 0.55))
@@ -649,8 +647,7 @@
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
-	filter:
-		drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
 		drop-shadow(0 0 8px rgba(144, 96, 240, 0.5))
 		drop-shadow(0 0 22px rgba(144, 96, 240, 0.25));
 }
@@ -768,8 +765,12 @@
    desktop layout is untouched. Shared rules across modes.
    ========================================================================== */
 @media (max-width: 1080px) {
-	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
-	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
+			#\9
+		),
+	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(
+			[class*="awsui_tools-container_"]
+		):not(#\9) {
 		overflow-y: auto !important;
 		-webkit-overflow-scrolling: touch !important;
 		max-height: 100vh !important;
@@ -792,8 +793,7 @@
 	}
 	.awsui-dark-mode
 		nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar-thumb,
-	.awsui-dark-mode
-		[class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
+	.awsui-dark-mode [class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
 		background: rgba(144, 96, 240, 0.4);
 		border-radius: 3px;
 	}
@@ -833,8 +833,7 @@
    ========================================================================== */
 
 /* Light mode — dark mahogany gradient + amber border + cream icon */
-:root:not(.awsui-dark-mode)
-	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+:root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
 	background: linear-gradient(
 		135deg,
 		var(--cdn-gradient-nav-start) 0%,
@@ -887,15 +886,18 @@
    render as STROKE outlines, not solid fills. Setting fill: cream solid-
    filled the ring and buried the "i" inside it. Now: only set color so
    currentColor flows + paint the shapes via stroke. */
-:root:not(.awsui-dark-mode)
-	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+:root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
 	color: var(--cdn-color-bg, #ede5d4);
 }
 
 :root:not(.awsui-dark-mode)
-	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg circle,
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)
+	svg
+	circle,
 :root:not(.awsui-dark-mode)
-	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg path {
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)
+	svg
+	path {
 	fill: none !important;
 	stroke: currentColor !important;
 	stroke-width: 1.5 !important;
@@ -961,7 +963,8 @@
    dark mode violet halo. Box-shadow only (no transform) so it never fights
    the hover scale or layout. */
 @keyframes cdn-tools-toggle-breathe {
-	0%, 100% {
+	0%,
+	100% {
 		box-shadow:
 			0 2px 12px rgba(44, 18, 6, 0.32),
 			0 0 0 1px rgba(255, 153, 0, 0.08),
@@ -977,7 +980,8 @@
 }
 
 @keyframes cdn-tools-toggle-breathe-dark {
-	0%, 100% {
+	0%,
+	100% {
 		box-shadow:
 			0 4px 18px -2px rgba(0, 0, 0, 0.55),
 			0 0 0 1px rgba(144, 96, 240, 0.12),
@@ -994,8 +998,7 @@
 
 /* Pause breathe + drop transitions when motion-reduced */
 @media (prefers-reduced-motion: reduce) {
-	:root:not(.awsui-dark-mode)
-		[class*="awsui_tools-toggle_"]:not(#\9):not(#\10),
+	:root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10),
 	.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
 		animation: none !important;
 		transition: none !important;
@@ -1015,7 +1018,8 @@
    border + hover scale as the tools-toggle so both ends of the top-nav
    match. Subtle — this is a utility control, not the show stealer.
    ========================================================================== */
-:root:not(.awsui-dark-mode) [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
+:root:not(.awsui-dark-mode)
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
 	background: linear-gradient(
 		135deg,
 		var(--cdn-gradient-nav-start) 0%,
@@ -1027,8 +1031,10 @@
 	box-shadow:
 		0 1px 4px rgba(44, 18, 6, 0.32),
 		inset 0 1px 0 rgba(255, 153, 0, 0.18) !important;
-	transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-		box-shadow 0.2s ease, border-color 0.2s ease !important;
+	transition:
+		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.2s ease,
+		border-color 0.2s ease !important;
 }
 
 .awsui-dark-mode [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
@@ -1043,15 +1049,18 @@
 	box-shadow:
 		0 1px 4px rgba(0, 0, 0, 0.5),
 		inset 0 1px 0 rgba(144, 96, 240, 0.3) !important;
-	transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-		box-shadow 0.2s ease, border-color 0.2s ease !important;
+	transition:
+		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.2s ease,
+		border-color 0.2s ease !important;
 }
 
 [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
 	transform: scale(1.06);
 }
 
-:root:not(.awsui-dark-mode) [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
+:root:not(.awsui-dark-mode)
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
 	border-color: rgba(255, 153, 0, 0.55) !important;
 	box-shadow:
 		0 2px 8px rgba(44, 18, 6, 0.42),
@@ -1092,9 +1101,7 @@
 	opacity: 0.75;
 }
 
-.awsui-dark-mode
-	[class*="awsui_breadcrumbs_"]
-	[class*="awsui_separator_"] {
+.awsui-dark-mode [class*="awsui_breadcrumbs_"] [class*="awsui_separator_"] {
 	color: rgba(144, 96, 240, 0.72) !important;
 	opacity: 0.8;
 }
@@ -1172,15 +1179,13 @@
    ========================================================================== */
 @media (max-width: 600px) {
 	.awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
-		filter:
-			drop-shadow(0 0 2px rgba(201, 162, 63, 0.7))
+		filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.7))
 			drop-shadow(0 0 3px rgba(155, 92, 244, 0.65))
 			drop-shadow(0 0 8px rgba(144, 96, 240, 0.45))
 			drop-shadow(0 0 18px rgba(144, 96, 240, 0.22)) !important;
 	}
 	:root:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img {
-		filter:
-			drop-shadow(0 0 2px rgba(139, 90, 43, 0.6))
+		filter: drop-shadow(0 0 2px rgba(139, 90, 43, 0.6))
 			drop-shadow(0 0 6px rgba(201, 162, 63, 0.36))
 			drop-shadow(0 0 14px rgba(201, 162, 63, 0.16)) !important;
 	}

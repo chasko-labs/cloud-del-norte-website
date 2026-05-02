@@ -111,10 +111,7 @@ function LoginForm() {
 										: t("auth.login.signInButton")}
 								</Button>
 								{submitState === "success" && (
-									<span
-										className="cdn-auth-success-check"
-										aria-hidden="true"
-									>
+									<span className="cdn-auth-success-check" aria-hidden="true">
 										✓
 									</span>
 								)}

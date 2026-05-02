@@ -49,8 +49,12 @@
 	background-color: transparent !important;
 }
 
-.awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"]:not(#\9),
-.awsui-dark-mode [class*="awsui_content-layout"] > [class*="awsui_background"]:not(#\9),
+.awsui-dark-mode
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9),
+.awsui-dark-mode
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"]:not(#\9),
 .awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
@@ -279,7 +283,7 @@ main[class*="awsui_layout"] {
 		),
 		radial-gradient(
 			50% 40% at 80% 85%,
-			rgba(48, 0, 106, calc(0.32 + var(--cdn-bass) * 0.10)) 0%,
+			rgba(48, 0, 106, calc(0.32 + var(--cdn-bass) * 0.1)) 0%,
 			rgba(48, 0, 106, 0) 65%
 		),
 		transparent !important;
@@ -308,7 +312,8 @@ main[class*="awsui_layout"] {
 	animation: none !important;
 }
 
-.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_scrolling-background"]:not(#\9),
+.cdn-viz-active:not(.awsui-dark-mode)
+	[class*="awsui_scrolling-background"]:not(#\9),
 .cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
@@ -327,7 +332,8 @@ main[class*="awsui_layout"] {
 .cdn-viz-active:not(.awsui-dark-mode)
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9),
-.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
+.cdn-viz-active:not(.awsui-dark-mode)
+	[class*="awsui_header-background"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 	backdrop-filter: none;
@@ -468,7 +474,8 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    variant uses awsui_refresh_* class on the header band. Older selectors
    (awsui_has-header_, awsui_header-background_) miss it. Probe found this
    element painting opaque cream at the top of /feed/ above NextMeetup. */
-:root:not(.awsui-dark-mode) [class*="awsui_refresh_"][class*="awsui_header_"]:not(#\9) {
+:root:not(.awsui-dark-mode)
+	[class*="awsui_refresh_"][class*="awsui_header_"]:not(#\9) {
 	background: transparent !important;
 	background-color: transparent !important;
 }
@@ -607,9 +614,16 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    Parent-level filter creates an independent filter context that wraps
    the rendered child including its drop-shadows. */
 @keyframes cdn-logo-hue-drift {
-	0%, 100% { filter: hue-rotate(0deg); }
-	33%      { filter: hue-rotate(-14deg); } /* toward indigo #5b6ea3 family */
-	66%      { filter: hue-rotate(8deg); }   /* toward deeper purple #5a1f8a family */
+	0%,
+	100% {
+		filter: hue-rotate(0deg);
+	}
+	33% {
+		filter: hue-rotate(-14deg);
+	} /* toward indigo #5b6ea3 family */
+	66% {
+		filter: hue-rotate(8deg);
+	} /* toward deeper purple #5a1f8a family */
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -622,16 +636,14 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 @keyframes cdn-logo-breathe {
 	0%,
 	100% {
-		filter:
-			drop-shadow(0 0 2px rgba(201, 162, 63, 0.85))
+		filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.85))
 			drop-shadow(0 0 4px rgba(155, 92, 244, 1))
 			drop-shadow(0 0 11px rgba(144, 96, 240, 0.75))
 			drop-shadow(0 0 26px rgba(144, 96, 240, 0.38))
 			drop-shadow(0 0 52px rgba(90, 31, 138, 0.18));
 	}
 	50% {
-		filter:
-			drop-shadow(0 0 3px rgba(201, 162, 63, 0.7))
+		filter: drop-shadow(0 0 3px rgba(201, 162, 63, 0.7))
 			drop-shadow(0 0 7px rgba(155, 92, 244, 1))
 			drop-shadow(0 0 18px rgba(144, 96, 240, 0.88))
 			drop-shadow(0 0 44px rgba(144, 96, 240, 0.52))
@@ -641,8 +653,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 .awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
-	filter:
-		drop-shadow(0 0 2px rgba(201, 162, 63, 0.85))
+	filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.85))
 		drop-shadow(0 0 4px rgba(155, 92, 244, 1))
 		drop-shadow(0 0 11px rgba(144, 96, 240, 0.75))
 		drop-shadow(0 0 26px rgba(144, 96, 240, 0.38))
@@ -680,14 +691,12 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 @keyframes cdn-logo-breathe-light {
 	0%,
 	100% {
-		filter:
-			drop-shadow(0 0 3px rgba(139, 90, 43, 0.72))
+		filter: drop-shadow(0 0 3px rgba(139, 90, 43, 0.72))
 			drop-shadow(0 0 9px rgba(201, 162, 63, 0.45))
 			drop-shadow(0 0 22px rgba(201, 162, 63, 0.2));
 	}
 	50% {
-		filter:
-			drop-shadow(0 0 5px rgba(139, 90, 43, 0.9))
+		filter: drop-shadow(0 0 5px rgba(139, 90, 43, 0.9))
 			drop-shadow(0 0 15px rgba(201, 162, 63, 0.62))
 			drop-shadow(0 0 34px rgba(201, 162, 63, 0.28))
 			drop-shadow(0 0 1px rgba(90, 31, 138, 0.38));
@@ -695,8 +704,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 :root:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img {
-	filter:
-		drop-shadow(0 0 3px rgba(139, 90, 43, 0.72))
+	filter: drop-shadow(0 0 3px rgba(139, 90, 43, 0.72))
 		drop-shadow(0 0 9px rgba(201, 162, 63, 0.45))
 		drop-shadow(0 0 22px rgba(201, 162, 63, 0.2));
 }
@@ -867,7 +875,8 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 
 /* The wrapping <a> from Cloudscape has the existing 50% glow halo via
    the rules at line 749-764. Make the SVG sit centered within it. */
-[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle),
+[class*="utility-wrapper"]
+	a[class*="top-navigation"]:has(.cdn-celestial-toggle),
 [class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle) {
 	/* Slightly tighter padding so the SVG dominates the halo */
 	padding: 4px 6px !important;
@@ -886,8 +895,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 
 .cdn-svg-sun {
 	overflow: visible; /* let the drop-shadow paint outside the 22×22 box */
-	filter:
-		drop-shadow(0 0 2px rgba(255, 200, 80, 0.85))
+	filter: drop-shadow(0 0 2px rgba(255, 200, 80, 0.85))
 		drop-shadow(0 0 6px rgba(255, 153, 0, 0.55))
 		drop-shadow(0 0 14px rgba(255, 153, 0, 0.28));
 	transition: filter 0.3s ease;
@@ -912,12 +920,17 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 @keyframes cdn-sun-spin {
-	from { transform: rotate(0deg); }
-	to   { transform: rotate(360deg); }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 @keyframes cdn-sun-pulse {
-	0%, 100% {
+	0%,
+	100% {
 		transform: scale(1);
 		fill: #ffcd55;
 	}
@@ -937,18 +950,23 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 /* Hover: amplify */
-[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--sun):hover .cdn-svg-sun {
-	filter:
-		drop-shadow(0 0 3px rgba(255, 220, 120, 1))
+[class*="utility-wrapper"]
+	a[class*="top-navigation"]:has(.cdn-celestial-toggle--sun):hover
+	.cdn-svg-sun {
+	filter: drop-shadow(0 0 3px rgba(255, 220, 120, 1))
 		drop-shadow(0 0 9px rgba(255, 153, 0, 0.85))
 		drop-shadow(0 0 22px rgba(255, 153, 0, 0.5));
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--sun):hover .cdn-svg-sun__rays {
+	[class*="utility-wrapper"]
+		a[class*="top-navigation"]:has(.cdn-celestial-toggle--sun):hover
+		.cdn-svg-sun__rays {
 		animation-duration: 4s; /* spin faster on hover */
 	}
-	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--sun):hover .cdn-svg-sun__core {
+	[class*="utility-wrapper"]
+		a[class*="top-navigation"]:has(.cdn-celestial-toggle--sun):hover
+		.cdn-svg-sun__core {
 		animation-duration: 1.6s; /* pulse faster */
 	}
 }
@@ -959,8 +977,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 
 .cdn-svg-moon {
 	overflow: visible;
-	filter:
-		drop-shadow(0 0 2px rgba(215, 199, 238, 0.7))
+	filter: drop-shadow(0 0 2px rgba(215, 199, 238, 0.7))
 		drop-shadow(0 0 6px rgba(144, 96, 240, 0.45))
 		drop-shadow(0 0 14px rgba(144, 96, 240, 0.22));
 	transition: filter 0.3s ease;
@@ -980,12 +997,18 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 @keyframes cdn-moon-breathe {
-	0%, 100% { fill: #ede5d4; }
-	50%      { fill: #f5edd9; }
+	0%,
+	100% {
+		fill: #ede5d4;
+	}
+	50% {
+		fill: #f5edd9;
+	}
 }
 
 @keyframes cdn-moon-twinkle {
-	0%, 100% {
+	0%,
+	100% {
 		opacity: 0.85;
 		transform: scale(1) rotate(0deg);
 	}
@@ -1008,15 +1031,18 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	}
 }
 
-[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--moon):hover .cdn-svg-moon {
-	filter:
-		drop-shadow(0 0 3px rgba(215, 199, 238, 1))
+[class*="utility-wrapper"]
+	a[class*="top-navigation"]:has(.cdn-celestial-toggle--moon):hover
+	.cdn-svg-moon {
+	filter: drop-shadow(0 0 3px rgba(215, 199, 238, 1))
 		drop-shadow(0 0 10px rgba(144, 96, 240, 0.85))
 		drop-shadow(0 0 22px rgba(144, 96, 240, 0.5));
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--moon):hover .cdn-svg-moon__star {
+	[class*="utility-wrapper"]
+		a[class*="top-navigation"]:has(.cdn-celestial-toggle--moon):hover
+		.cdn-svg-moon__star {
 		animation-duration: 1.4s; /* twinkle faster */
 	}
 }
@@ -1029,16 +1055,18 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 .cdn-svg-flag {
 	overflow: visible;
 	border-radius: 3px;
-	filter:
-		drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45))
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45))
 		drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
-	transition: filter 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+	transition:
+		filter 0.3s ease,
+		transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .cdn-flag-toggle:hover .cdn-svg-flag,
-[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle):hover .cdn-svg-flag {
-	filter:
-		drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55))
+[class*="utility-wrapper"]
+	a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
+	.cdn-svg-flag {
+	filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55))
 		drop-shadow(0 0 8px rgba(255, 255, 255, 0.18));
 }
 
@@ -1053,17 +1081,35 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 @keyframes cdn-flag-wave-v {
-	0%, 100% { transform: translateY(0)    skewY(0deg); }
-	25%      { transform: translateY(-0.4px) skewY(0.6deg); }
-	50%      { transform: translateY(0.3px)  skewY(-0.4deg); }
-	75%      { transform: translateY(-0.2px) skewY(0.3deg); }
+	0%,
+	100% {
+		transform: translateY(0) skewY(0deg);
+	}
+	25% {
+		transform: translateY(-0.4px) skewY(0.6deg);
+	}
+	50% {
+		transform: translateY(0.3px) skewY(-0.4deg);
+	}
+	75% {
+		transform: translateY(-0.2px) skewY(0.3deg);
+	}
 }
 
 @keyframes cdn-flag-wave-h {
-	0%, 100% { transform: translateX(0)    skewX(0deg); }
-	25%      { transform: translateX(-0.4px) skewX(0.6deg); }
-	50%      { transform: translateX(0.3px)  skewX(-0.4deg); }
-	75%      { transform: translateX(-0.2px) skewX(0.3deg); }
+	0%,
+	100% {
+		transform: translateX(0) skewX(0deg);
+	}
+	25% {
+		transform: translateX(-0.4px) skewX(0.6deg);
+	}
+	50% {
+		transform: translateX(0.3px) skewX(-0.4deg);
+	}
+	75% {
+		transform: translateX(-0.2px) skewX(0.3deg);
+	}
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1093,19 +1139,45 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect {
 		animation: cdn-flag-wave-h 3.6s ease-in-out infinite;
 	}
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(1)  { animation-delay: 0.00s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(2)  { animation-delay: 0.08s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(3)  { animation-delay: 0.16s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(4)  { animation-delay: 0.24s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(5)  { animation-delay: 0.32s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(6)  { animation-delay: 0.40s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(7)  { animation-delay: 0.48s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(8)  { animation-delay: 0.56s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(9)  { animation-delay: 0.64s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(10) { animation-delay: 0.72s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(11) { animation-delay: 0.80s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(12) { animation-delay: 0.88s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(13) { animation-delay: 0.96s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(1) {
+		animation-delay: 0s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(2) {
+		animation-delay: 0.08s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(3) {
+		animation-delay: 0.16s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(4) {
+		animation-delay: 0.24s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(5) {
+		animation-delay: 0.32s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(6) {
+		animation-delay: 0.4s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(7) {
+		animation-delay: 0.48s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(8) {
+		animation-delay: 0.56s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(9) {
+		animation-delay: 0.64s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(10) {
+		animation-delay: 0.72s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(11) {
+		animation-delay: 0.8s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(12) {
+		animation-delay: 0.88s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(13) {
+		animation-delay: 0.96s;
+	}
 
 	/* US — 50 stars get a subtle staggered sparkle. With 50 instances we
 	   can't write a unique delay per child without bloat; use nth-child
@@ -1116,27 +1188,52 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 		transform-origin: center;
 		animation: cdn-star-sparkle 4.2s ease-in-out infinite;
 	}
-	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n+1) { animation-delay: 0.0s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n+2) { animation-delay: 0.2s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n+3) { animation-delay: 0.4s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n+4) { animation-delay: 0.6s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n+5) { animation-delay: 0.8s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n+6) { animation-delay: 1.0s; }
-	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n+7) { animation-delay: 1.2s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n + 1) {
+		animation-delay: 0s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n + 2) {
+		animation-delay: 0.2s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n + 3) {
+		animation-delay: 0.4s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n + 4) {
+		animation-delay: 0.6s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n + 5) {
+		animation-delay: 0.8s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n + 6) {
+		animation-delay: 1s;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7n + 7) {
+		animation-delay: 1.2s;
+	}
 }
 
 @keyframes cdn-star-sparkle {
-	0%, 100% { opacity: 1;    transform: scale(1); }
-	50%      { opacity: 0.72; transform: scale(0.85); }
+	0%,
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.72;
+		transform: scale(0.85);
+	}
 }
 
 /* Hover: speed up the wave so cloth reads as catching wind */
 @media (prefers-reduced-motion: no-preference) {
-	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
+	[class*="utility-wrapper"]
+		a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
 		.cdn-svg-flag__stripe,
-	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
-		.cdn-svg-flag__stripes-h rect,
-	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
+	[class*="utility-wrapper"]
+		a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
+		.cdn-svg-flag__stripes-h
+		rect,
+	[class*="utility-wrapper"]
+		a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
 		.cdn-svg-flag__emblem {
 		animation-duration: 1.4s;
 	}
@@ -1319,7 +1416,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    ≥ viewport, this ensures scrollbar visibility never depends on the
    comparison. Belt-and-suspenders. */
 html {
-    overflow-y: scroll;
+	overflow-y: scroll;
 }
 
 body {
@@ -1346,7 +1443,7 @@ body {
 
 /* Side navigation — atmospheric-panel tier */
 .cdn-viz-active:not(.awsui-dark-mode)
-	[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 .cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_navigation__drawer"] {
 	/* already handled by the existing frosted glass rules above */
 }
@@ -1485,8 +1582,9 @@ body {
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 0;
-	font-family: "Amazon Ember", "Amazon Ember Display", -apple-system,
-		BlinkMacSystemFont, "Helvetica Neue", Roboto, Arial, sans-serif;
+	font-family:
+		"Amazon Ember", "Amazon Ember Display", -apple-system, BlinkMacSystemFont,
+		"Helvetica Neue", Roboto, Arial, sans-serif;
 	font-weight: 800;
 	letter-spacing: 0.09em;
 	pointer-events: none;
