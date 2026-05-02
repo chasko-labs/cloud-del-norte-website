@@ -203,8 +203,9 @@
 		filter 0.55s;
 	animation: 0.6s 1.4s forwards liora-stickynote-fadein;
 	display: flex;
-	position: relative;
-	margin-left: 18px;
+	position: absolute;
+	top: 0;
+	left: 18px;
 	transform: rotate(-4.5deg);
 	box-shadow:
 		1px 2px 4px #00000047,
@@ -2660,13 +2661,15 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .liora-led,
 }
 
 /* === notes row: holds sticky note 1 (left) and sticky note 2 (right) side by side
-   so both are visible without adding vertical height below the bezel. */
+   so both are visible without adding vertical height below the bezel.
+   STATE-INDEPENDENCE FIX (Bryan 2026-05-02): each sticky is `position: absolute`
+   pinned to its own corner so any state change on one (zoom / fall / sway /
+   ripfall / fadein) cannot push or shift the sibling. The row reserves a
+   fixed min-height so the layout below it doesn't jump when both fly out. */
 .liora-notes-row {
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	align-items: flex-start;
+	position: relative;
 	width: 100%;
+	min-height: 56px;
 	margin-top: 6px;
 }
 
@@ -2683,8 +2686,9 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .liora-led,
 	font: inherit;
 	text-align: inherit;
 
-	position: relative;
-	margin-right: 18px;
+	position: absolute;
+	top: 0;
+	right: 18px;
 	padding: 3px 6px 4px;
 	max-width: clamp(72px, 22cqi, 110px);
 	width: fit-content;

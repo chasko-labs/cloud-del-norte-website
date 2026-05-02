@@ -56,6 +56,8 @@ export interface DuneSceneCanvasHandle {
 	getPerfMedian(): number;
 	getLastFrameMs(): number;
 	isPerfDegraded(): boolean;
+	/** Re-read --station-primary-rgb and tint scene fog. Call on station change, NOT per frame. */
+	refreshStationTint(): void;
 }
 
 /** Wallpaper handle. */
@@ -63,6 +65,8 @@ export interface DuneSceneHandle {
 	destroy(): void;
 	resize(): void;
 	getPerfMedian(): number;
+	/** Re-read --station-primary-rgb and tint scene fog. Call on station change, NOT per frame. */
+	refreshStationTint(): void;
 }
 
 /**
@@ -140,6 +144,7 @@ export function mountDuneSceneOnCanvas(
 
 		skybox.update(animState);
 		ground.update({ animation: animState, audio: audioLevels });
+		atmosphere.update(animState);
 	});
 
 	// Perf instrumentation — wraps scene.render() so the sample reflects
@@ -211,6 +216,9 @@ export function mountDuneSceneOnCanvas(
 		isPerfDegraded() {
 			return degraded;
 		},
+		refreshStationTint() {
+			atmosphere.refreshStationTint();
+		},
 	};
 }
 
@@ -262,6 +270,9 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 			getPerfMedian() {
 				return 0;
 			},
+			refreshStationTint() {
+				/* no-op: no babylon scene to tint */
+			},
 		};
 	}
 
@@ -294,6 +305,9 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 		},
 		getPerfMedian() {
 			return inner.getPerfMedian();
+		},
+		refreshStationTint() {
+			inner.refreshStationTint();
 		},
 	};
 }

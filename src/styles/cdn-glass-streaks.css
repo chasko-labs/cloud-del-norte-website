@@ -1328,6 +1328,84 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 }
 
 /* ==========================================================================
+   Audio-reactive trigger rings — volunteer + tools-toggle + navigation-toggle
+   adopt station-primary coloring AND a band-driven expansion ring while a
+   stream plays. Bryan v0.0.0066 ask: "have the volunteer animation coloring
+   match the play button coloring, same with the info button & hamburger put
+   the same ring animation / coloring as the play button & wire the hamburger
+   in with one audio stream api & the info in with the other so they they are
+   'dancing' to different ranges". Band split per his bass/treble call:
+     hamburger → bass    info → treble    volunteer → mid (centered CTA)
+
+   Pattern mirrors persistent-player .cdn-pp__btn--stop ring: outer 2px ring
+   + 6px glow expanding to 6px ring + 14px glow with --cdn-band amplitude.
+   Falls back to existing brand chrome when body lacks .cdn-stream-playing.
+   ========================================================================== */
+body.cdn-stream-playing .cdn-volunteer-btn {
+	--cdn-band: var(--cdn-mid, 0);
+}
+body.cdn-stream-playing [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
+	--cdn-band: var(--cdn-bass, 0);
+	animation: none !important;
+}
+body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	--cdn-band: var(--cdn-treble, 0);
+	/* freeze the ambient breathe — band amplitude is now the sole signal */
+	animation: none !important;
+}
+
+/* Light-mode ring — station-primary fallbacks to aws-orange when no
+   --station-primary-rgb is set (no station active). */
+:root:not(.awsui-dark-mode) body.cdn-stream-playing .cdn-volunteer-btn,
+:root:not(.awsui-dark-mode)
+	body.cdn-stream-playing
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
+:root:not(.awsui-dark-mode)
+	body.cdn-stream-playing
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	border-color: rgba(
+		var(--station-primary-rgb, 255, 153, 0),
+		calc(0.45 + var(--cdn-band, 0) * 0.4)
+	) !important;
+	box-shadow:
+		0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.22),
+		0 0 calc(6px + var(--cdn-band, 0) * 10px)
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.32),
+		inset 0 1px 0 rgba(255, 153, 0, 0.18) !important;
+}
+
+/* Dark-mode ring — same pattern, secondary tint as fallback. The dark-mode
+   class is set on <html> so :root.awsui-dark-mode wins. */
+:root.awsui-dark-mode body.cdn-stream-playing .cdn-volunteer-btn,
+:root.awsui-dark-mode
+	body.cdn-stream-playing
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
+:root.awsui-dark-mode
+	body.cdn-stream-playing
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	border-color: rgba(
+		var(--station-primary-rgb, 144, 96, 240),
+		calc(0.5 + var(--cdn-band, 0) * 0.4)
+	) !important;
+	box-shadow:
+		0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
+		rgba(var(--station-primary-rgb, 144, 96, 240), 0.28),
+		0 0 calc(6px + var(--cdn-band, 0) * 10px)
+		rgba(var(--station-primary-rgb, 144, 96, 240), 0.4),
+		inset 0 1px 0 rgba(144, 96, 240, 0.32) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body.cdn-stream-playing .cdn-volunteer-btn,
+	body.cdn-stream-playing
+		[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
+	body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+		--cdn-band: 0;
+	}
+}
+
+/* ==========================================================================
    Breadcrumb separator + non-first-item — subtle brand-accent polish
 
    Cloudscape renders the breadcrumb separator as an SVG icon and the

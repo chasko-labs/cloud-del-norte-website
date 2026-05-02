@@ -1,0 +1,43 @@
+/* ==========================================================================
+   meetings page — responsive table wrapper
+   keeps cloudscape table desktop layout intact; on narrow viewports the
+   wrapper takes over horizontal scroll so the wide table never breaks
+   the page layout. tokens from src/styles/tokens.css.
+   ========================================================================== */
+
+.cdn-meetings-table-wrap {
+	width: 100%;
+}
+
+/* tablet + phone: allow horizontal scroll on the table container so the
+   wide cloudscape table (sum of column minWidths > 800px) does not push
+   the rest of the shell off the right edge. -webkit-overflow-scrolling
+   keeps momentum scrolling on ios. */
+@media (max-width: 720px) {
+	.cdn-meetings-table-wrap {
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
+		/* hint to the user that the region scrolls horizontally */
+		scrollbar-color: var(--cdn-color-primary, #5a1f8a)
+			var(--cdn-color-surface, #ede5d4);
+	}
+
+	.cdn-meetings-table-wrap::-webkit-scrollbar {
+		height: 6px;
+	}
+
+	.cdn-meetings-table-wrap::-webkit-scrollbar-thumb {
+		background: var(--cdn-color-primary, #5a1f8a);
+		border-radius: var(--cdn-radius-sm, 4px);
+	}
+}
+
+/* phone: tighten cloudscape padding so each row uses every available
+   pixel before the user has to scroll. cloudscape exposes internal
+   spacing via its own tokens; the safest scoped lever is to pull the
+   header padding inward. */
+@media (max-width: 480px) {
+	.cdn-meetings-table-wrap {
+		font-size: var(--cdn-text-sm, 0.75rem);
+	}
+}

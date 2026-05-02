@@ -160,95 +160,102 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 
 	return (
 		<>
-			<Table<meeting>
-				{...collectionProps}
-				enableKeyboardNavigation={false}
-				items={items}
-				columnDefinitions={columnDefinitions(t, setActiveRoom)}
-				stickyHeader={true}
-				resizableColumns={true}
-				variant="full-page"
-				//selectionType="single"
-				ariaLabels={{
-					selectionGroupLabel: t("meetings.aria.selectionGroup"),
-					itemSelectionLabel: ({ selectedItems }, item) => {
-						const isItemSelected = selectedItems.filter(
-							(i) => i.name === item.name,
-						).length;
-						return `${item.name} is ${isItemSelected ? "" : "not "}selected`;
-					},
-					tableLabel: t("meetings.aria.tableLabel"),
-				}}
-				header={
-					<Header
-						variant="awsui-h1-sticky"
-						counter={getHeaderCounterText(
-							meetings,
-							collectionProps.selectedItems,
-						)}
-						actions={
-							<SpaceBetween size="xs" direction="horizontal">
-								{auth.isModerator && (
+			{/* Wrapper enables horizontal scroll under 720px so the wide
+			    cloudscape table does not push the shell off the viewport on
+			    phones. Desktop is untouched — wrapper is width:100%. */}
+			<div className="cdn-meetings-table-wrap">
+				<Table<meeting>
+					{...collectionProps}
+					enableKeyboardNavigation={false}
+					items={items}
+					columnDefinitions={columnDefinitions(t, setActiveRoom)}
+					stickyHeader={true}
+					resizableColumns={true}
+					variant="full-page"
+					//selectionType="single"
+					ariaLabels={{
+						selectionGroupLabel: t("meetings.aria.selectionGroup"),
+						itemSelectionLabel: ({ selectedItems }, item) => {
+							const isItemSelected = selectedItems.filter(
+								(i) => i.name === item.name,
+							).length;
+							return `${item.name} is ${isItemSelected ? "" : "not "}selected`;
+						},
+						tableLabel: t("meetings.aria.tableLabel"),
+					}}
+					header={
+						<Header
+							variant="awsui-h1-sticky"
+							counter={getHeaderCounterText(
+								meetings,
+								collectionProps.selectedItems,
+							)}
+							actions={
+								<SpaceBetween size="xs" direction="horizontal">
+									{auth.isModerator && (
+										<Button
+											variant="primary"
+											onClick={() => {
+												const roomName = generateInstantRoomName();
+												setActiveRoom({
+													name: "instant meeting (ask participants to join)",
+													presenters: "",
+													happened: "false",
+													ondemand: "no",
+													eventlink: "",
+													roomName,
+												});
+											}}
+										>
+											instant meet
+										</Button>
+									)}
 									<Button
-										variant="primary"
-										onClick={() => {
-											const roomName = generateInstantRoomName();
-											setActiveRoom({
-												name: "instant meeting (ask participants to join)",
-												presenters: "",
-												happened: "false",
-												ondemand: "no",
-												eventlink: "",
-												roomName,
-											});
-										}}
+										disabled={collectionProps.selectedItems?.length === 0}
 									>
-										instant meet
+										{t("meetings.editButton")}
 									</Button>
-								)}
-								<Button disabled={collectionProps.selectedItems?.length === 0}>
-									{t("meetings.editButton")}
-								</Button>
-								<Button
-									disabled={collectionProps.selectedItems?.length === 0}
-									href="/create-meeting/index.html"
-									variant="primary"
-								>
-									{t("meetings.createButton")}
-								</Button>
-							</SpaceBetween>
-						}
-					>
-						{t("meetings.header")}
-					</Header>
-				}
-				pagination={<Pagination {...paginationProps} />}
-				filter={
-					<TextFilter
-						{...filterProps}
-						filteringPlaceholder={t("meetings.findPlaceholder")}
-						countText={getFilterCounterText(filteredItemsCount, t)}
-					/>
-				}
-				preferences={
-					<CollectionPreferences
-						preferences={preferences}
-						pageSizePreference={{
-							title: t("meetings.preferences.pageSize"),
-							options: [
-								{ value: 10, label: t("meetings.preferences.resources10") },
-								{ value: 20, label: t("meetings.preferences.resources20") },
-								{ value: 50, label: t("meetings.preferences.resources50") },
-								{ value: 100, label: t("meetings.preferences.resources100") },
-							],
-						}}
-						onConfirm={({ detail }) => setPreferences(detail)}
-						title={t("meetings.preferences.title")}
-						confirmLabel={t("meetings.preferences.confirm")}
-						cancelLabel={t("meetings.preferences.cancel")}
-					/>
-				}
-			/>
+									<Button
+										disabled={collectionProps.selectedItems?.length === 0}
+										href="/create-meeting/index.html"
+										variant="primary"
+									>
+										{t("meetings.createButton")}
+									</Button>
+								</SpaceBetween>
+							}
+						>
+							{t("meetings.header")}
+						</Header>
+					}
+					pagination={<Pagination {...paginationProps} />}
+					filter={
+						<TextFilter
+							{...filterProps}
+							filteringPlaceholder={t("meetings.findPlaceholder")}
+							countText={getFilterCounterText(filteredItemsCount, t)}
+						/>
+					}
+					preferences={
+						<CollectionPreferences
+							preferences={preferences}
+							pageSizePreference={{
+								title: t("meetings.preferences.pageSize"),
+								options: [
+									{ value: 10, label: t("meetings.preferences.resources10") },
+									{ value: 20, label: t("meetings.preferences.resources20") },
+									{ value: 50, label: t("meetings.preferences.resources50") },
+									{ value: 100, label: t("meetings.preferences.resources100") },
+								],
+							}}
+							onConfirm={({ detail }) => setPreferences(detail)}
+							title={t("meetings.preferences.title")}
+							confirmLabel={t("meetings.preferences.confirm")}
+							cancelLabel={t("meetings.preferences.cancel")}
+						/>
+					}
+				/>
+			</div>
 			<Modal
 				visible={!!activeRoom}
 				onDismiss={() => setActiveRoom(null)}
