@@ -92,6 +92,11 @@ function MoonSvg() {
 }
 
 function MxFlagSvg() {
+	// No clipPath — Cloudscape iconSvg clones the SVG to multiple DOM
+	// positions (desktop + mobile dropdown + offscreen). Duplicate
+	// `id="cdn-flag-mx-clip"` made the visible instance's clip resolve to a
+	// hidden node, blanking the render. Rounded corners come from CSS
+	// border-radius on the SVG element instead.
 	return (
 		<svg
 			className="cdn-svg-flag cdn-svg-flag--mx"
@@ -101,44 +106,31 @@ function MxFlagSvg() {
 			xmlns="http://www.w3.org/2000/svg"
 			role="img"
 		>
-			{/* clip rounds the corners */}
-			<defs>
-				<clipPath id="cdn-flag-mx-clip">
-					<rect x="0.5" y="0.5" width="25" height="17" rx="2.5" ry="2.5" />
-				</clipPath>
-			</defs>
-			<g clipPath="url(#cdn-flag-mx-clip)">
-				{/* three vertical stripes — each in its own group for independent wave */}
-				<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--a">
-					<rect x="0" y="0" width="8.67" height="18" fill="#006847" />
-				</g>
-				<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--b">
-					<rect x="8.67" y="0" width="8.66" height="18" fill="#f5f5f5" />
-				</g>
-				<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--c">
-					<rect x="17.33" y="0" width="8.67" height="18" fill="#ce1126" />
-				</g>
-				{/* eagle silhouette — abstracted spread-wing shape, brand-amber tint */}
-				<g className="cdn-svg-flag__emblem">
-					<ellipse cx="13" cy="9" rx="2.6" ry="1.3" fill="#8b5a2b" opacity="0.78" />
-					<path
-						d="M13 7.7 L13 10.3 M11.0 9 Q12 8.2 13 9 Q14 8.2 15.0 9 M11.4 10.0 Q12.2 10.7 13 10.3 Q13.8 10.7 14.6 10.0"
-						stroke="#5a1f8a"
-						strokeWidth="0.45"
-						fill="none"
-						strokeLinecap="round"
-					/>
-					<circle cx="13" cy="8.5" r="0.5" fill="#5a1f8a" />
-				</g>
+			<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--a">
+				<rect x="0" y="0" width="8.67" height="18" fill="#006847" />
 			</g>
-			{/* outer hairline frame for definition on light + dark nav */}
+			<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--b">
+				<rect x="8.67" y="0" width="8.66" height="18" fill="#f5f5f5" />
+			</g>
+			<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--c">
+				<rect x="17.33" y="0" width="8.67" height="18" fill="#ce1126" />
+			</g>
+			<g className="cdn-svg-flag__emblem">
+				<ellipse cx="13" cy="9" rx="2.6" ry="1.3" fill="#8b5a2b" opacity="0.78" />
+				<path
+					d="M13 7.7 L13 10.3 M11.0 9 Q12 8.2 13 9 Q14 8.2 15.0 9 M11.4 10.0 Q12.2 10.7 13 10.3 Q13.8 10.7 14.6 10.0"
+					stroke="#5a1f8a"
+					strokeWidth="0.45"
+					fill="none"
+					strokeLinecap="round"
+				/>
+				<circle cx="13" cy="8.5" r="0.5" fill="#5a1f8a" />
+			</g>
 			<rect
 				x="0.5"
 				y="0.5"
 				width="25"
 				height="17"
-				rx="2.5"
-				ry="2.5"
 				fill="none"
 				stroke="rgba(0,0,0,0.35)"
 				strokeWidth="1"
