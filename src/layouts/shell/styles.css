@@ -1,5 +1,7 @@
 /* CdnWallpaper Suite — atmospheric utility classes. Must be first import. */
 @import "../../styles/cdn-atmospheric.css";
+/* Glass plates + streak system — text-bearing surface treatment. */
+@import "../../styles/cdn-glass-streaks.css";
 
 @property --cdn-bass {
 	syntax: "<number>";

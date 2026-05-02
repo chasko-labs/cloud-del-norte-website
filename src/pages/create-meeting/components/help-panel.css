@@ -51,6 +51,13 @@
 }
 
 /* --------------------------------------------------------------------------
+   Padding helper for .cdn-glass-wrapped help-panel paragraphs
+   -------------------------------------------------------------------------- */
+.hp-glass-body {
+	padding: var(--cdn-space-md);
+}
+
+/* --------------------------------------------------------------------------
    Body text
    -------------------------------------------------------------------------- */
 .hp-body {
@@ -69,16 +76,16 @@
    -------------------------------------------------------------------------- */
 .hp-leader {
 	border-radius: var(--cdn-radius-md);
-	border: 1.5px solid rgba(139, 90, 43, 0.2);
-	background: linear-gradient(
-		135deg,
-		rgba(250, 247, 240, 0.9) 0%,
-		rgba(245, 240, 228, 0.8) 100%
-	);
+	border: 1.5px solid var(--cdn-glass-border);
+	background-color: var(--cdn-glass-bg-strong);
 	padding: var(--cdn-space-md);
 	position: relative;
 	overflow: hidden;
+	box-shadow: var(--cdn-glass-shadow);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	transition: var(--cdn-transition-smooth);
+	isolation: isolate;
 }
 
 /* amber top accent line */
@@ -100,18 +107,13 @@
 }
 
 .hp-leader:hover {
-	border-color: rgba(139, 90, 43, 0.35);
-	box-shadow: var(--cdn-shadow-card-hover-light);
+	border-color: rgba(139, 90, 43, 0.45);
+	box-shadow: var(--cdn-glass-shadow-hover);
 	transform: translateY(-1px);
 }
 
 .awsui-dark-mode .hp-leader {
-	border-color: rgba(144, 96, 240, 0.2);
-	background: linear-gradient(
-		135deg,
-		rgba(28, 34, 48, 0.9) 0%,
-		rgba(30, 26, 48, 0.8) 100%
-	);
+	/* tokens already swap palette; nothing to override here */
 }
 
 .awsui-dark-mode .hp-leader::before {
@@ -125,8 +127,8 @@
 }
 
 .awsui-dark-mode .hp-leader:hover {
-	border-color: rgba(144, 96, 240, 0.4);
-	box-shadow: var(--cdn-shadow-md);
+	border-color: rgba(144, 96, 240, 0.55);
+	box-shadow: var(--cdn-glass-shadow-hover);
 }
 
 /* --------------------------------------------------------------------------
@@ -238,29 +240,42 @@
 }
 
 /* --------------------------------------------------------------------------
-   Role cards (volunteers wanted) — slimmer than leader cards
+   Role cards (volunteers wanted) — glass plate, slimmer than leader cards.
+   Inherits .cdn-glass treatment via shared tokens; padding is the only delta.
    -------------------------------------------------------------------------- */
 .hp-role-card {
+	position: relative;
 	border-radius: var(--cdn-radius-md);
-	border: 1px solid rgba(139, 90, 43, 0.18);
-	background: rgba(250, 247, 240, 0.7);
+	border: 1.5px solid var(--cdn-glass-border);
+	background-color: var(--cdn-glass-bg);
 	padding: var(--cdn-space-sm) var(--cdn-space-md);
+	box-shadow: var(--cdn-glass-shadow);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	transition: var(--cdn-transition-smooth);
+	overflow: hidden;
+	isolation: isolate;
+}
+
+.hp-role-card::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: var(--cdn-glass-streak);
+	opacity: 0.8;
+	pointer-events: none;
 }
 
 .hp-role-card:hover {
-	border-color: rgba(139, 90, 43, 0.32);
-	background: rgba(250, 247, 240, 0.85);
-}
-
-.awsui-dark-mode .hp-role-card {
-	border-color: rgba(144, 96, 240, 0.18);
-	background: rgba(28, 34, 48, 0.6);
+	box-shadow: var(--cdn-glass-shadow-hover);
+	border-color: rgba(139, 90, 43, 0.42);
 }
 
 .awsui-dark-mode .hp-role-card:hover {
-	border-color: rgba(144, 96, 240, 0.35);
-	background: rgba(28, 34, 48, 0.8);
+	border-color: rgba(144, 96, 240, 0.5);
 }
 
 .hp-role-card-name {

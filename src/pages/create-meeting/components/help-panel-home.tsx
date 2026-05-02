@@ -13,8 +13,8 @@ export const HelpPanelHome = () => {
 	return (
 		<HelpPanel header={<h2>{t("helpPanel.userGroupTitle")}</h2>}>
 			<SpaceBetween size="l">
-				{/* Community description */}
-				<div>
+				{/* Community description — glass plate so prose anchors over wallpaper */}
+				<div className="cdn-glass hp-glass-body">
 					<p className="hp-body">{t("helpPanel.communityDescription")}</p>
 				</div>
 
@@ -150,8 +150,8 @@ export const HelpPanelHome = () => {
 
 				<hr className="hp-divider" />
 
-				{/* Global community */}
-				<div>
+				{/* Global community — glass plate */}
+				<div className="cdn-glass hp-glass-body">
 					<h4 className="hp-sub-heading">
 						{t("helpPanel.globalCommunityHeader")}
 					</h4>

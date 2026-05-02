@@ -1,0 +1,411 @@
+/* ==========================================================================
+   CdnWallpaper Suite — glass plates + streak system
+
+   Two visual primitives that work together to anchor text-bearing surfaces
+   over the wallpaper without painting opaque bands:
+
+     .cdn-glass        — translucent plate with backdrop-filter blur, warm
+                         border, themed shadow, gradient streak ::before.
+                         Backdrop-filter lives on the wrapper; descendant
+                         text inherits no filter (Safari sub-pixel bypass).
+
+     .cdn-streak-h     — 2-3px horizontal gradient line. Drop-in replacement
+                         for hr / divider / underline accents.
+
+     .cdn-streak-v     — vertical version. Use for panel right-edge glow.
+
+     .cdn-streak-band  — saturated full-width band (top-bar shoulder).
+
+     .cdn-text-shadow  — legibility utility for uncontained text against the
+                         dunes / starfield canvas.
+
+   Light mode rgb base: 250, 247, 240 → cream
+   Dark mode rgb base:  28, 34, 48    → deep navy
+   ========================================================================== */
+
+:root {
+	/* ── streak gradients — light mode (amber → aws-orange) ─────────────────── */
+	--cdn-streak-h-light: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(139, 90, 43, 0.55) 25%,
+		rgba(255, 153, 0, 0.7) 50%,
+		rgba(139, 90, 43, 0.55) 75%,
+		transparent 100%
+	);
+	--cdn-streak-v-light: linear-gradient(
+		180deg,
+		transparent 0%,
+		rgba(139, 90, 43, 0.45) 25%,
+		rgba(255, 153, 0, 0.6) 50%,
+		rgba(139, 90, 43, 0.45) 75%,
+		transparent 100%
+	);
+	--cdn-streak-band-light: linear-gradient(
+		90deg,
+		rgba(237, 229, 212, 0.5) 0%,
+		rgba(255, 153, 0, 0.85) 30%,
+		rgba(139, 90, 43, 0.95) 50%,
+		rgba(255, 153, 0, 0.85) 70%,
+		rgba(237, 229, 212, 0.5) 100%
+	);
+
+	/* ── streak gradients — dark mode (violet → cyan) ───────────────────────── */
+	--cdn-streak-h-dark: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(144, 96, 240, 0.55) 25%,
+		rgba(0, 212, 255, 0.7) 50%,
+		rgba(144, 96, 240, 0.55) 75%,
+		transparent 100%
+	);
+	--cdn-streak-v-dark: linear-gradient(
+		180deg,
+		transparent 0%,
+		rgba(144, 96, 240, 0.45) 25%,
+		rgba(0, 212, 255, 0.6) 50%,
+		rgba(144, 96, 240, 0.45) 75%,
+		transparent 100%
+	);
+	--cdn-streak-band-dark: linear-gradient(
+		90deg,
+		rgba(10, 12, 32, 0.6) 0%,
+		rgba(48, 0, 106, 0.92) 30%,
+		rgba(144, 96, 240, 0.95) 50%,
+		rgba(48, 0, 106, 0.92) 70%,
+		rgba(10, 12, 32, 0.6) 100%
+	);
+
+	/* ── glass plate tokens — light mode defaults ───────────────────────────── */
+	--cdn-glass-bg: rgba(250, 247, 240, 0.85);
+	--cdn-glass-bg-strong: rgba(250, 247, 240, 0.92);
+	--cdn-glass-border: rgba(139, 90, 43, 0.28);
+	--cdn-glass-shadow:
+		0 4px 24px rgba(139, 90, 43, 0.18),
+		0 1px 3px rgba(0, 0, 0, 0.08),
+		0 0 1px rgba(139, 90, 43, 0.12);
+	--cdn-glass-shadow-hover:
+		0 8px 32px rgba(139, 90, 43, 0.28),
+		0 2px 6px rgba(0, 0, 0, 0.1),
+		0 0 2px rgba(139, 90, 43, 0.18);
+	--cdn-glass-blur: 8px;
+	--cdn-glass-streak: var(--cdn-streak-h-light);
+
+	/* ── text-shadow tokens ─────────────────────────────────────────────────── */
+	--cdn-text-shadow-light:
+		0 1px 2px rgba(74, 40, 24, 0.18),
+		0 0 6px rgba(237, 229, 212, 0.7);
+	--cdn-text-shadow-dark:
+		0 1px 2px rgba(0, 0, 0, 0.65),
+		0 0 8px rgba(0, 0, 0, 0.45);
+}
+
+/* dark-mode overrides for tokens that switch palette */
+.awsui-dark-mode {
+	--cdn-glass-bg: rgba(28, 34, 48, 0.85);
+	--cdn-glass-bg-strong: rgba(28, 34, 48, 0.92);
+	--cdn-glass-border: rgba(144, 96, 240, 0.32);
+	--cdn-glass-shadow:
+		0 4px 24px rgba(144, 96, 240, 0.32),
+		0 1px 4px rgba(0, 0, 0, 0.5),
+		0 0 1px rgba(144, 96, 240, 0.18);
+	--cdn-glass-shadow-hover:
+		0 8px 32px rgba(144, 96, 240, 0.5),
+		0 2px 8px rgba(0, 0, 0, 0.55),
+		0 0 2px rgba(144, 96, 240, 0.28);
+	--cdn-glass-streak: var(--cdn-streak-h-dark);
+}
+
+/* ==========================================================================
+   .cdn-glass — primary plate primitive
+
+   Use directly on a wrapping element. The streak ::before sits at the top
+   edge. Box-shadow + backdrop-filter blur + warm border give the plate
+   physical presence over the dunes / starfield without obscuring them.
+   ========================================================================== */
+.cdn-glass {
+	position: relative;
+	background-color: var(--cdn-glass-bg);
+	border: 1.5px solid var(--cdn-glass-border);
+	border-radius: var(--cdn-radius-md);
+	box-shadow: var(--cdn-glass-shadow);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	transition: var(--cdn-transition-smooth);
+	overflow: hidden;
+	isolation: isolate;
+}
+
+.cdn-glass::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: var(--cdn-glass-streak);
+	opacity: 0.85;
+	pointer-events: none;
+}
+
+.cdn-glass:hover {
+	box-shadow: var(--cdn-glass-shadow-hover);
+	border-color: rgba(139, 90, 43, 0.42);
+}
+
+.awsui-dark-mode .cdn-glass:hover {
+	border-color: rgba(144, 96, 240, 0.5);
+}
+
+.cdn-glass--strong {
+	background-color: var(--cdn-glass-bg-strong);
+}
+
+/* ==========================================================================
+   .cdn-streak-h / .cdn-streak-v / .cdn-streak-band
+
+   Drop-in decorative gradient lines. Use as <hr class="cdn-streak-h"> or
+   apply to a 2-3px element. The vertical variant is for panel right-edges.
+   ========================================================================== */
+:root:not(.awsui-dark-mode) .cdn-streak-h {
+	height: 2px;
+	border: none;
+	background: var(--cdn-streak-h-light);
+	border-radius: 1px;
+	margin: 0;
+}
+
+.awsui-dark-mode .cdn-streak-h {
+	height: 2px;
+	border: none;
+	background: var(--cdn-streak-h-dark);
+	border-radius: 1px;
+	margin: 0;
+}
+
+:root:not(.awsui-dark-mode) .cdn-streak-v {
+	width: 2px;
+	background: var(--cdn-streak-v-light);
+	border-radius: 1px;
+}
+
+.awsui-dark-mode .cdn-streak-v {
+	width: 2px;
+	background: var(--cdn-streak-v-dark);
+	border-radius: 1px;
+}
+
+:root:not(.awsui-dark-mode) .cdn-streak-band-h {
+	background: var(--cdn-streak-band-light);
+}
+
+.awsui-dark-mode .cdn-streak-band-h {
+	background: var(--cdn-streak-band-dark);
+}
+
+/* ==========================================================================
+   .cdn-text-shadow — legibility for uncontained text over wallpaper
+
+   Apply to text NOT wrapped in .cdn-glass. Pairs with translucent panels
+   where text sits directly against the dunes / starfield.
+   ========================================================================== */
+:root:not(.awsui-dark-mode) .cdn-text-shadow {
+	text-shadow: var(--cdn-text-shadow-light);
+}
+
+.awsui-dark-mode .cdn-text-shadow {
+	text-shadow: var(--cdn-text-shadow-dark);
+}
+
+/* ==========================================================================
+   left nav — streaked plate treatment
+
+   Right-edge vertical streak (glow into the dunes), text-shadow on every
+   nav anchor for legibility, gradient strip on the active item's left edge.
+   Section header dividers use the streak gradient instead of bare borders.
+   ========================================================================== */
+
+/* Right-edge vertical streak — fades into the canvas. Sits on the inner
+   nav drawer, not the outer container, so the streak hugs the panel edge. */
+:root:not(.awsui-dark-mode)
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::after,
+.awsui-dark-mode
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::after {
+	content: "";
+	position: absolute;
+	top: 8%;
+	bottom: 8%;
+	right: 0;
+	width: 2px;
+	pointer-events: none;
+	border-radius: 1px;
+}
+
+:root:not(.awsui-dark-mode)
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::after {
+	background: var(--cdn-streak-v-light);
+}
+
+.awsui-dark-mode
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::after {
+	background: var(--cdn-streak-v-dark);
+}
+
+/* Anchor text-shadow — legibility against the dune / star bleed-through */
+:root:not(.awsui-dark-mode) [class*="side-navigation"] a {
+	text-shadow: var(--cdn-text-shadow-light);
+}
+
+.awsui-dark-mode [class*="side-navigation"] a {
+	text-shadow: var(--cdn-text-shadow-dark);
+}
+
+/* Section header (e.g. "plans", "references") — bigger streak underline.
+   Cloudscape uses awsui_section_ container with an awsui_section-header_ child;
+   target the header element and add a gradient strip below it. */
+:root:not(.awsui-dark-mode) [class*="side-navigation"] [class*="section-header"],
+.awsui-dark-mode [class*="side-navigation"] [class*="section-header"] {
+	position: relative;
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="side-navigation"]
+	[class*="section-header"]::after,
+.awsui-dark-mode
+	[class*="side-navigation"]
+	[class*="section-header"]::after {
+	content: "";
+	position: absolute;
+	left: var(--cdn-space-md, 16px);
+	right: var(--cdn-space-md, 16px);
+	bottom: 0;
+	height: 2px;
+	border-radius: 1px;
+	pointer-events: none;
+	opacity: 0.7;
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="side-navigation"]
+	[class*="section-header"]::after {
+	background: var(--cdn-streak-h-light);
+}
+
+.awsui-dark-mode
+	[class*="side-navigation"]
+	[class*="section-header"]::after {
+	background: var(--cdn-streak-h-dark);
+}
+
+/* Cloudscape Divider rendered between sections — replace bare hairline with
+   a full-saturation streak. */
+:root:not(.awsui-dark-mode) [class*="side-navigation"] [class*="divider"]:not(#\9),
+.awsui-dark-mode [class*="side-navigation"] [class*="divider"]:not(#\9) {
+	border: none !important;
+	height: 2px !important;
+	border-radius: 1px;
+	margin-block: var(--cdn-space-sm, 8px) !important;
+	opacity: 0.6;
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="side-navigation"]
+	[class*="divider"]:not(#\9) {
+	background: var(--cdn-streak-h-light) !important;
+}
+
+.awsui-dark-mode [class*="side-navigation"] [class*="divider"]:not(#\9) {
+	background: var(--cdn-streak-h-dark) !important;
+}
+
+/* ==========================================================================
+   breadcrumbs strip — glass plate + bottom streak
+
+   Restores the structural shoulder we dropped in v0.0.0019 when going fully
+   transparent. Applies a translucent glass background only to the inner
+   breadcrumbs container; outer awsui_scrolling-background_ stays transparent
+   so the dunes still bleed through to the gap above the strip.
+   ========================================================================== */
+
+/* Inner breadcrumbs container only — Cloudscape nests
+   awsui_breadcrumbs_ > awsui_breadcrumb_ items. Target the container. */
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9) {
+	background-color: var(--cdn-glass-bg) !important;
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
+	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
+	box-shadow:
+		0 1px 0 rgba(139, 90, 43, 0.18) inset,
+		var(--cdn-glass-shadow) !important;
+	position: relative;
+}
+
+.awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9) {
+	background-color: var(--cdn-glass-bg) !important;
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
+	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05) !important;
+	box-shadow:
+		0 1px 0 rgba(144, 96, 240, 0.22) inset,
+		var(--cdn-glass-shadow) !important;
+	position: relative;
+}
+
+/* Bottom streak — sits beneath the breadcrumbs strip as a horizon line */
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]::after,
+.awsui-dark-mode [class*="awsui_breadcrumbs_"]::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2px;
+	border-radius: 1px;
+	pointer-events: none;
+	opacity: 0.65;
+}
+
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]::after {
+	background: var(--cdn-streak-h-light);
+}
+
+.awsui-dark-mode [class*="awsui_breadcrumbs_"]::after {
+	background: var(--cdn-streak-h-dark);
+}
+
+/* ==========================================================================
+   feed — Next Meetup glass plate
+
+   .feed-next-meetup wraps the meetup card. Promote it to a full glass plate
+   so it stands out from the wallpaper exactly as in the live screenshot.
+   ========================================================================== */
+.feed-next-meetup {
+	position: relative;
+	border-radius: var(--cdn-radius-md);
+	border: 1.5px solid var(--cdn-glass-border);
+	background-color: var(--cdn-glass-bg-strong);
+	box-shadow: var(--cdn-glass-shadow);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	overflow: hidden;
+	isolation: isolate;
+}
+
+.feed-next-meetup::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: var(--cdn-glass-streak);
+	opacity: 0.85;
+	pointer-events: none;
+}
+
+/* feed-section-divider — replace hairline with streak gradient */
+.feed-section-divider {
+	border: none !important;
+	height: 2px !important;
+	background: var(--cdn-glass-streak) !important;
+	border-radius: 1px;
+	opacity: 0.6;
+}
