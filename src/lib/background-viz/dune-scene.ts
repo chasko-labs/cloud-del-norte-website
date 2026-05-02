@@ -45,6 +45,20 @@
 // All three respect prefers-reduced-motion: timeOfDay frozen at 0 (warm
 // midday), sun direction stays at SUN_DIR_WORLD, canvas opacity is set to 1
 // immediately with no transition.
+//
+// Atmosphere pass (2026-05-02) — researcher recs #1, #4, #5:
+//   - aerial-perspective haze: exponential fog blends distant dune fragments
+//     toward the live horizon palette tint based on view-space depth (vDepth
+//     varying). Reuses the same 4-quadrant timeOfDay weighting JS-side so the
+//     haze tint tracks the sky's horizon stop exactly.
+//   - sun-disc + soft halo in the skybox via dot(vDir, sunDir) + smoothstep,
+//     tinted from a sunTint palette computed in the sky shader using the
+//     same phase weights as the dune. Sun position passed as sunDir uniform
+//     and updated alongside the dune sunDir each frame so wobble carries.
+//   - audio-reactive heat shimmer: midLevel-scaled per-fragment UV warp via
+//     low-amplitude noise on the sparkle + wind-streak sample coordinates.
+//     Amplitude ≤0.008, multiplied by midLevel so silent frames have zero
+//     warp (and reduced-motion forces midLevel = 0 already).
 
 // Side-effect: patches Scene.prototype.beginAnimation. Required because in
 // the production bundle, dune-scene's chunk may load before any other module
@@ -81,12 +95,19 @@ attribute vec3 position;
 attribute vec3 normal;
 attribute vec2 uv;
 uniform mat4 worldViewProjection;
+uniform mat4 world;
+uniform mat4 view;
 uniform float time;
 uniform float bassLevel;
 uniform float midLevel;
 varying vec2 vUV;
 varying float vHeight;
 varying vec3 vNormal;
+// View-space depth (positive, growing with distance from camera). Drives
+// aerial-perspective haze in the fragment shader. Computed from the displaced
+// world position through the view matrix so fog responds to the actual ridge
+// silhouette, not the flat ground plane.
+varying float vDepth;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float vnoise(vec2 p) {
@@ -134,6 +155,11 @@ void main(void) {
   vec3 displaced = vec3(position.x, hOut, position.z);
   vHeight = hOut;
   vUV = uv;
+  // View-space z (negative in front of camera in right-handed convention).
+  // Negate so vDepth is a positive distance growing with range — FS uses it
+  // directly in a clamp((vDepth - near) / span) fog ramp.
+  vec4 viewPos = view * world * vec4(displaced, 1.0);
+  vDepth = -viewPos.z;
   gl_Position = worldViewProjection * vec4(displaced, 1.0);
 }
 `;
@@ -143,10 +169,17 @@ precision highp float;
 varying vec2 vUV;
 varying float vHeight;
 varying vec3 vNormal;
+varying float vDepth;
 uniform float time;
 uniform float timeOfDay;
 uniform vec3 sunDir;
 uniform float fluxLevel;
+uniform float midLevel;
+// horizonTint — RGB matching the sky shader's horizon stop for the current
+// timeOfDay. Computed JS-side using identical 4-quadrant phase weights so
+// the aerial haze that distant dunes recede into is the same tint the sky
+// paints at the horizon line. No mismatch between sky band and dune fade.
+uniform vec3 horizonTint;
 
 // 2D value-noise for cloud-shadow drift. Same hash used in vertex shader.
 float fragHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -199,12 +232,21 @@ void main(void) {
   float t = clamp(vHeight / 4.0, 0.0, 1.0);
   vec3 dune = mix(shadow, peak, t);
 
+  // Atmosphere pass — heat shimmer (researcher rec #5). Mid-band audio drives
+  // a tiny per-fragment UV warp. Amplitude is multiplied by midLevel so silent
+  // frames have zero warp (and reduced-motion forces midLevel = 0). Cap is
+  // 0.008 UV units, well below the wavelength of the sparkle and wind-streak
+  // textures so the warp reads as shimmer, not slosh. Applied to the UV used
+  // by the sparkle hash + wind-streak noise sampling below.
+  float shimmerNoise = fragNoise(vUV * 80.0 + vec2(time * 0.4, time * 0.3));
+  vec2 warpedUV = vUV + (shimmerNoise - 0.5) * midLevel * 0.008;
+
   // Liveness pass 3 (2026-05-02) — wind-streak ripples (researcher rec #2).
   // High-frequency anisotropic noise scrolling along a wind vector. Adds
   // combed-sand microtexture only on the lit side. Amplitude 0.018 so it's
   // imperceptible per-frame; reads as the surface "breathing" over seconds.
   vec2 windDir = vec2(0.85, 0.32);
-  float streak = fragNoise(vUV * vec2(220.0, 60.0) + windDir * time * 0.6);
+  float streak = fragNoise(warpedUV * vec2(220.0, 60.0) + windDir * time * 0.6);
   streak = smoothstep(0.45, 0.65, streak);
   // Crest-weighted lambert at this stage isn't computed yet — apply after
   // lambert in the lighting block instead. Stash for use below.
@@ -269,7 +311,8 @@ void main(void) {
   // sunlit ridge tops. Cream-to-lavender tint introduces a subtle violet
   // brand color into the scene without ever overpowering. floor(time*2.0)
   // ticks the sparkle field at 2Hz so glints flicker rather than crawl.
-  float sparkleHash = fragHash(floor(vUV * 800.0) + floor(time * 2.0));
+  // Sampled on warpedUV so audio shimmer subtly jitters which fragments win.
+  float sparkleHash = fragHash(floor(warpedUV * 800.0) + floor(time * 2.0));
   float sparkle = step(0.985, sparkleHash) * pow(ridgeFlatness, 8.0) * lambert;
   vec3 sparkleTint = mix(vec3(1.0, 0.96, 0.86), vec3(0.92, 0.86, 1.0), 0.3);
   lighting += sparkleTint * sparkle * 0.35;
@@ -283,7 +326,18 @@ void main(void) {
   // reads as a flash, not a sustained lift.
   float fluxPop = 1.0 + clamp(fluxLevel, 0.0, 1.0) * 0.08;
 
-  gl_FragColor = vec4((dune * lighting + vec3(grain)) * fluxPop, 1.0);
+  vec3 surface = (dune * lighting + vec3(grain)) * fluxPop;
+
+  // Atmosphere pass — aerial-perspective haze (researcher rec #1). Distant
+  // fragments fade toward horizonTint (the sky's horizon stop for the current
+  // timeOfDay). Camera radius is 45u; ridges start ~18u from camera and the
+  // far edge of the 60×40 ground reaches ~50u in view-space, so the ramp
+  // [18, 46] gives a perceptible recede without fogging the foreground. Cap
+  // mix at 0.55 so distant peaks still read as dunes — fade, not erase.
+  float fogT = clamp((vDepth - 18.0) / 28.0, 0.0, 1.0);
+  surface = mix(surface, horizonTint, fogT * 0.55);
+
+  gl_FragColor = vec4(surface, 1.0);
 }
 `;
 
@@ -320,6 +374,10 @@ const SKY_FRAGMENT_SOURCE = `
 precision highp float;
 varying vec3 vDir;
 uniform float timeOfDay;
+// Sun world-space direction (matches dune material's sunDir uniform — both
+// updated each frame with the same wobbled vector so sun-disc tracks the
+// same light source the dune is lit by).
+uniform vec3 sunDir;
 
 void main(void) {
   // Map y from [-1, 1] to [0, 1]. Below-horizon (negative y) clamps to the
@@ -362,6 +420,29 @@ void main(void) {
   } else {
     col = mix(nadir, horizon, t * 2.0);
   }
+
+  // Atmosphere pass — sun-disc + soft halo (researcher rec #4).
+  // sunTint computed inside the sky shader using the same 4-quadrant phase
+  // weights as the dune so the sun-in-sky and sun-on-sand pick up the same
+  // colour. tungsten / pale-cool / amber / warm-tungsten — never bright
+  // yellow; dusk amber is pulled toward red, not toward saturated yellow.
+  vec3 sunTintMidday  = vec3(1.000, 0.970, 0.880);
+  vec3 sunTintLateAft = vec3(0.965, 0.965, 0.985);
+  vec3 sunTintDusk    = vec3(1.000, 0.870, 0.760);
+  vec3 sunTintMorning = vec3(1.000, 0.945, 0.870);
+  vec3 sunTint = sunTintMidday * wMidday + sunTintLateAft * wLateAft
+               + sunTintDusk * wDusk + sunTintMorning * wMorning;
+
+  // Tight inner disc + soft outer halo. Both driven by dot(view-dir, sun-dir);
+  // smoothstep(0.997, 1.0) makes the disc small (~4-5° angular radius), the
+  // 0.96 halo gives the bloom-lite glow tapering into the surrounding sky.
+  // Halo factor 0.18 keeps the additive bloom subtle so the surrounding
+  // horizon palette still reads — no white-out around the sun.
+  float sunFactor = max(dot(normalize(vDir), normalize(sunDir)), 0.0);
+  float sunDisc = smoothstep(0.997, 1.0, sunFactor);
+  float sunHalo = smoothstep(0.96, 1.0, sunFactor);
+  col = mix(col, sunTint * 1.4, sunDisc);
+  col += sunTint * sunHalo * 0.18;
 
   gl_FragColor = vec4(col, 1.0);
 }
@@ -483,11 +564,15 @@ export function mountDuneSceneOnCanvas(
 			attributes: ["position"],
 			// timeOfDay: 0..1 over a 90s loop; modulates the horizon stop so
 			// the sky tracks the same phase the dune surface does.
-			uniforms: ["worldViewProjection", "world", "timeOfDay"],
+			// sunDir: world-space direction toward the sun, updated each frame
+			// alongside the dune material's sunDir so the sky-disc and the
+			// dune lighting agree on where the sun is (and inherit the wobble).
+			uniforms: ["worldViewProjection", "world", "timeOfDay", "sunDir"],
 		},
 	);
 	skyMat.backFaceCulling = false;
 	skyMat.setFloat("timeOfDay", 0);
+	skyMat.setVector3("sunDir", SUN_DIR_WORLD);
 	skybox.material = skyMat;
 
 	// Dune ground — subdivided enough for noise to read as topology.
@@ -502,14 +587,20 @@ export function mountDuneSceneOnCanvas(
 		{ vertex: SHADER_NAME, fragment: SHADER_NAME },
 		{
 			attributes: ["position", "normal", "uv"],
+			// world + view: needed for view-space depth (vDepth varying) used by
+			// the aerial-perspective haze. horizonTint: matches the live sky
+			// horizon stop so the haze fade and the sky band agree on colour.
 			uniforms: [
 				"worldViewProjection",
+				"world",
+				"view",
 				"time",
 				"timeOfDay",
 				"sunDir",
 				"bassLevel",
 				"midLevel",
 				"fluxLevel",
+				"horizonTint",
 			],
 		},
 	);
@@ -522,6 +613,10 @@ export function mountDuneSceneOnCanvas(
 	// timeOfDay starts at 0 (warm midday). Reduced-motion users stay here
 	// forever; everyone else cycles 0→1 over 90s in registerBeforeRender.
 	duneMat.setFloat("timeOfDay", 0);
+	// horizonTint init — the warm-linen midday horizon stop. Updated each
+	// frame from JS to match whatever the sky shader computes for the current
+	// timeOfDay. Reduced-motion users keep the midday stop forever.
+	duneMat.setColor3("horizonTint", new Color3(0.910, 0.875, 0.792));
 	ground.material = duneMat;
 
 	// Animation: respect reduced-motion preference.
@@ -552,6 +647,10 @@ export function mountDuneSceneOnCanvas(
 	const SUN_WOBBLE_AMP = 0.05;
 	// Scratch vector reused each frame to avoid per-frame allocation pressure.
 	const sunScratch = new Vector3(0, 0, 0);
+	// horizonTint scratch — reused each frame to avoid per-frame Color3 alloc.
+	// Stops mirror the sky shader's per-phase horizon stops exactly so the
+	// dune's aerial haze and the sky's horizon band stay locked together.
+	const horizonScratch = new Color3(0.910, 0.875, 0.792);
 
 	scene.registerBeforeRender(() => {
 		if (reducedMotion) {
@@ -587,7 +686,8 @@ export function mountDuneSceneOnCanvas(
 		// then renormalise. 0.05 amplitude on 0.05 Hz: ridge highlights shift
 		// over 20s without ever obviously moving. Result fed back into the
 		// dune material's sunDir uniform; the DirectionalLight stays fixed
-		// (Lambert in the shader is what the eye actually reads).
+		// (Lambert in the shader is what the eye actually reads). Same vector
+		// pushed to the sky material so the sun-disc tracks the wobble too.
 		const wobble = Math.sin(timeSeconds * SUN_WOBBLE_HZ * Math.PI * 2);
 		const wobbleQuad = Math.cos(timeSeconds * SUN_WOBBLE_HZ * Math.PI * 2);
 		sunScratch.set(
@@ -597,6 +697,32 @@ export function mountDuneSceneOnCanvas(
 		);
 		sunScratch.normalize();
 		duneMat.setVector3("sunDir", sunScratch);
+		skyMat.setVector3("sunDir", sunScratch);
+
+		// horizonTint — recompute from the same 4-quadrant phase weights the
+		// shaders use, then push to the dune material so the aerial-perspective
+		// haze fade matches whatever the sky shader is painting at the horizon
+		// for this frame. Cheap: 4 weight terms + 4 mixes, far under 0.01ms.
+		const tdNorm = timeOfDay; // 0..1
+		let wMidday =
+			Math.max(0, 1 - Math.abs(tdNorm - 0.0) * 4) +
+			Math.max(0, 1 - Math.abs(tdNorm - 1.0) * 4);
+		let wLateAft = Math.max(0, 1 - Math.abs(tdNorm - 0.25) * 4);
+		let wDusk = Math.max(0, 1 - Math.abs(tdNorm - 0.5) * 4);
+		let wMorning = Math.max(0, 1 - Math.abs(tdNorm - 0.75) * 4);
+		const wSum = wMidday + wLateAft + wDusk + wMorning;
+		wMidday /= wSum;
+		wLateAft /= wSum;
+		wDusk /= wSum;
+		wMorning /= wSum;
+		// Per-phase horizon stops — mirror the sky shader's values exactly.
+		horizonScratch.r =
+			0.91 * wMidday + 0.89 * wLateAft + 0.91 * wDusk + 0.925 * wMorning;
+		horizonScratch.g =
+			0.875 * wMidday + 0.875 * wLateAft + 0.855 * wDusk + 0.89 * wMorning;
+		horizonScratch.b =
+			0.792 * wMidday + 0.835 * wLateAft + 0.89 * wDusk + 0.82 * wMorning;
+		duneMat.setColor3("horizonTint", horizonScratch);
 
 		// Audio uniforms — getBandBass/Mid return 0 when the audio graph isn't
 		// built yet (silent / pre-play), so no guard needed here.
