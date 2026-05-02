@@ -1,7 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
@@ -101,7 +100,6 @@ function LoginForm() {
 					errorText={formError || undefined}
 				>
 					<SpaceBetween size="m">
-						{formError && <Alert type="error">{formError}</Alert>}
 						<FormField
 							label={t("auth.login.emailLabel")}
 							errorText={emailError || undefined}

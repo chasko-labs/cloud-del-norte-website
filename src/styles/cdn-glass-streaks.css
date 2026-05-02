@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap");
+
 /* ==========================================================================
    CdnWallpaper Suite — glass plates + streak system
 
@@ -570,4 +572,156 @@
 	background: var(--cdn-glass-streak) !important;
 	border-radius: 1px;
 	opacity: 0.6;
+}
+
+/* ==========================================================================
+   Branded breadcrumb home link — "Cloud Del Norte" elevated to a display heading.
+
+   Cloudscape renders BreadcrumbGroup as <ol class="awsui_breadcrumb-group_">
+   with each item as <li>; the first item's <a> holds "Cloud Del Norte" via
+   the t("breadcrumbs.home") translation in src/components/breadcrumbs/index.tsx.
+
+   Treatment:
+   - Cinzel display serif (Roman/carved-stone character, fits geographic name).
+   - Font-size 1.75rem — comfortably larger than the page-title h1 (~1.5rem).
+   - Gradient text fill: streak-band tokens (amber→aws-orange light /
+     violet→cyan dark), animated via background-position shift.
+   - No underline (Cloudscape's default removed).
+   - Slow 12s shimmer cycle so the gradient drifts across the letters.
+   - Hover: scale 1.04 + drop-shadow glow.
+   - prefers-reduced-motion: animation off, gradient stays at 0% position.
+
+   Layout: breadcrumb strip stops constraining min-height so the larger font
+   can breathe. The other breadcrumb segments (separator + "Feed") keep
+   Cloudscape default sizing — only li:first-child a is upgraded.
+   ========================================================================== */
+
+[class*="awsui_breadcrumbs_"] li:first-child a {
+	font-family: "Cinzel", Georgia, serif !important;
+	font-weight: 700 !important;
+	font-size: 1.75rem !important;
+	letter-spacing: 0.04em !important;
+	line-height: 1.1 !important;
+	text-decoration: none !important;
+	/* Dedicated edge-to-edge gradient for text-fill — solid endpoints so
+	   "CLOUD" and "NORTE" don't fade into the page bg. The streak-band
+	   tokens have transparent edges, intended for full-width band fills. */
+	background-image: linear-gradient(
+		90deg,
+		#8b5a2b 0%,
+		#ff9900 50%,
+		#8b5a2b 100%
+	);
+	background-size: 200% 100%;
+	background-position: 0% 50%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+	display: inline-block;
+	padding: 0 4px;
+	transition:
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.3s ease;
+	animation: cdn-breadcrumb-shimmer 12s ease-in-out infinite;
+	vertical-align: middle;
+}
+
+.awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
+	background-image: linear-gradient(
+		90deg,
+		#9060f0 0%,
+		#d7c7ee 50%,
+		#9060f0 100%
+	);
+}
+
+[class*="awsui_breadcrumbs_"] li:first-child a:hover {
+	transform: scale(1.04);
+	filter: drop-shadow(0 0 8px rgba(255, 153, 0, 0.45));
+	text-decoration: none !important;
+}
+
+.awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a:hover {
+	filter: drop-shadow(0 0 12px rgba(144, 96, 240, 0.55));
+}
+
+@keyframes cdn-breadcrumb-shimmer {
+	0%,
+	100% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[class*="awsui_breadcrumbs_"] li:first-child a {
+		animation: none;
+		background-position: 0% 50%;
+	}
+}
+
+/* Allow breadcrumbs strip to grow vertically for the bigger first item */
+[class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
+	min-height: auto !important;
+}
+
+/* ==========================================================================
+   Mobile scroll — left nav + right tools panel
+
+   Bryan ask: when API menu is expanded on mobile the left nav cuts off; the
+   last section of the right tools panel can't be reached on scroll-down.
+
+   Cloudscape sets inline block-size on nav drawer + tools-container that
+   matches viewport height MINUS top-nav, but doesn't enable internal scroll.
+   Force overflow-y:auto on the inner panels with a thin-styled scrollbar
+   so long content is reachable at any viewport size.
+
+   Scoped to mobile breakpoint (688px is Cloudscape's compact threshold) so
+   desktop layout is untouched. Shared rules across modes.
+   ========================================================================== */
+@media (max-width: 1080px) {
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
+	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
+		overflow-y: auto !important;
+		-webkit-overflow-scrolling: touch !important;
+		max-height: 100vh !important;
+		/* leave room at the bottom so the last section isn't cropped by the
+		   browser chrome (mobile address bar) when scrolled to end */
+		padding-bottom: 96px !important;
+	}
+
+	/* Thin branded scrollbar — light + dark mode tints */
+	nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar,
+	[class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar {
+		width: 6px;
+	}
+	:root:not(.awsui-dark-mode)
+		nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar-thumb,
+	:root:not(.awsui-dark-mode)
+		[class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
+		background: rgba(139, 90, 43, 0.4);
+		border-radius: 3px;
+	}
+	.awsui-dark-mode
+		nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar-thumb,
+	.awsui-dark-mode
+		[class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
+		background: rgba(144, 96, 240, 0.4);
+		border-radius: 3px;
+	}
+	nav[class*="awsui_navigation_"]:not(#\9),
+	[class*="awsui_tools_"]:not(#\9) {
+		scrollbar-width: thin;
+	}
+	:root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"]:not(#\9),
+	:root:not(.awsui-dark-mode) [class*="awsui_tools_"]:not(#\9) {
+		scrollbar-color: rgba(139, 90, 43, 0.4) transparent;
+	}
+	.awsui-dark-mode nav[class*="awsui_navigation_"]:not(#\9),
+	.awsui-dark-mode [class*="awsui_tools_"]:not(#\9) {
+		scrollbar-color: rgba(144, 96, 240, 0.4) transparent;
+	}
 }

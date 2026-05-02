@@ -14,24 +14,18 @@
 .cdn-footer {
 	position: relative;
 	padding: var(--cdn-space-xl) var(--cdn-space-lg) var(--cdn-space-lg);
-	/* Warm cream gradient with subtle amber warmth */
+	/* Sandwich pattern — footer mirrors the top-nav's dark mahogany gradient
+	   in light mode so both shoulders frame the cream center. Was a near-white
+	   Cloudscape default that read as a flat seam against the page. */
 	background: linear-gradient(
-		180deg,
-		var(--color-background-layout-main-5ilwcb) 0%,
-		color-mix(
-				in srgb,
-				var(--color-background-layout-main-5ilwcb) 95%,
-				var(--cdn-amber) 5%
-			)
-			40%,
-		color-mix(
-				in srgb,
-				var(--color-background-layout-main-5ilwcb) 90%,
-				var(--cdn-amber) 10%
-			)
-			100%
+		135deg,
+		var(--cdn-gradient-nav-start) 0%,
+		var(--cdn-gradient-nav-mid) 55%,
+		var(--cdn-gradient-nav-end) 100%
 	);
-	/* No plain border-top — gradient accent ::after handles it */
+	box-shadow:
+		0 -2px 16px rgba(44, 18, 6, 0.22),
+		inset 0 1px 0 rgba(139, 90, 43, 0.4);
 	border-top: none;
 }
 
@@ -63,6 +57,10 @@
 		var(--cdn-gradient-nav-mid) 50%,
 		var(--cdn-gradient-nav-end) 100%
 	);
+	box-shadow:
+		0 -4px 20px -4px rgba(0, 0, 0, 0.5),
+		0 -2px 8px -2px rgba(144, 96, 240, 0.2),
+		inset 0 1px 0 rgba(144, 96, 240, 0.3);
 }
 
 .awsui-dark-mode .cdn-footer::after {
@@ -394,7 +392,10 @@
 	);
 }
 
-/* Community text — prominent, readable, centered */
+/* Community text — prominent, readable, centered.
+   Both modes now use light tones — light mode footer paints the dark
+   mahogany sandwich, dark mode paints navy/violet. Same light-on-dark
+   text treatment. */
 .cdn-footer-community {
 	max-width: 800px;
 	margin: 0 auto;
@@ -402,7 +403,7 @@
 	font-size: var(--cdn-text-lg);
 	line-height: var(--cdn-leading-relaxed);
 	letter-spacing: var(--cdn-letter-spacing-body);
-	color: var(--cdn-color-text);
+	color: rgba(245, 233, 208, 0.92);
 	padding: var(--cdn-space-sm) 0;
 }
 

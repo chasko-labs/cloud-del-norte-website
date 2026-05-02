@@ -6,19 +6,22 @@
    the site. Without this stylesheet the auth bundles only loaded Cloudscape
    global styles, falling back to stock blue/white chrome.
 
-   Pairs with tokens.css (global brand tokens) — both are now imported by
-   each auth main.tsx so the polish layer in shell/styles.css can resolve
-   its var(--cdn-*) refs.
+   tokens.css (global brand tokens) is imported here, not from each auth
+   main.tsx — keeps the four entry points lean, single source of truth for
+   the dependency, and any new auth route pulls it for free via AuthLayout.
 
    Dark-mode rules in tokens.css and shell/styles.css are untouched — the
    selectors below are scoped to :root:not(.awsui-dark-mode).
    ========================================================================== */
 
-/* Center the auth form column and constrain width — Cloudscape ContentLayout
-   stretches to viewport, leaving form on a wide cream sea on desktop. */
+@import "../../../styles/tokens.css";
+
+/* Constrain the auth form column. ContentLayout w/ contentType="form" already
+   centers its content column — no explicit margin: 0 auto needed (would
+   double-center, fighting Cloudscape's max-width logic). 480px is the tighter
+   form width target — single-column login/signup reads better narrow. */
 .cdn-auth-card {
-	max-width: 560px;
-	margin: 0 auto;
+	max-width: 480px;
 }
 
 /* The ContentLayout renders children directly under awsui_layout — add a top
@@ -82,6 +85,14 @@
 :root:not(.awsui-dark-mode) .cdn-auth-card [class*="awsui_input"]:focus-within {
 	box-shadow: 0 0 0 2px var(--cdn-amber) !important;
 	border-color: var(--cdn-amber) !important;
+}
+
+/* Dark mode: violet focus ring — matches the dark-mode interactive token
+   palette. Without this rule the input falls back to Cloudscape's default
+   blue focus ring, breaking parity with the light-mode amber treatment. */
+:root.awsui-dark-mode .cdn-auth-card [class*="awsui_input"]:focus-within {
+	box-shadow: 0 0 0 2px var(--cdn-violet) !important;
+	border-color: var(--cdn-violet) !important;
 }
 
 /* ── Container chrome on auth page ─────────────────────────────────────────
