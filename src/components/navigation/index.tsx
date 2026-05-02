@@ -9,6 +9,13 @@ import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
 import "./liora.css";
 
+// Translation fallback — useTranslation's t() returns the key string itself
+// when a key is missing from the locale JSON. Wrap calls so a default text
+// is shown instead of the literal "liora.welcomeGreeting" leaking to the UI.
+function withFallback(value: string, key: string, fallback: string): string {
+	return value === key ? fallback : value;
+}
+
 function detectDeviceInfo(): string {
 	if (typeof navigator === "undefined") return "";
 	const ua = navigator.userAgent;
@@ -191,8 +198,8 @@ function LioraFrame() {
 	const countryCode = visitor?.country ?? "";
 	const greetingPrefix =
 		locale === "mx"
-			? t("liora.welcomeGreeting")
-			: (GREETING_BY_COUNTRY[countryCode] ?? t("liora.welcomeGreeting"));
+			? withFallback(t("liora.welcomeGreeting"), "liora.welcomeGreeting", locale === "mx" ? "qué onda" : "welcome")
+			: (GREETING_BY_COUNTRY[countryCode] ?? withFallback(t("liora.welcomeGreeting"), "liora.welcomeGreeting", locale === "mx" ? "qué onda" : "welcome"));
 
 	useEffect(() => {
 		let cancelled = false;
@@ -326,10 +333,18 @@ function LioraFrame() {
 					}
 				>
 					<span className="liora-stickynote-line liora-stickynote-line-1">
-						{t("liora.stickynoteLine1")}
+						{withFallback(
+							t("liora.stickynoteLine1"),
+							"liora.stickynoteLine1",
+							locale === "mx" ? "no aguanta" : "non load",
+						)}
 					</span>
 					<span className="liora-stickynote-line liora-stickynote-line-2">
-						{t("liora.stickynoteLine2")}
+						{withFallback(
+							t("liora.stickynoteLine2"),
+							"liora.stickynoteLine2",
+							locale === "mx" ? "nada" : "bearing",
+						)}
 					</span>
 					<span className="liora-stickynote-sig">- ^.^</span>
 				</button>
