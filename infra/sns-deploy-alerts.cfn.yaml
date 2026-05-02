@@ -1,0 +1,115 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >
+  cdn-deploy-alerts — SNS topic + SMS subscription for Cloud Del Norte deploy
+  notifications. ci-deploy role gets sns:Publish on the topic so Woodpecker
+  can fire an SMS after each successful deploy.
+
+Parameters:
+  OperatorPhone:
+    Type: String
+    Default: '+15756393994'
+    Description: >
+      E.164 phone number for SMS subscription. AWS sends a one-time
+      confirmation SMS; recipient must reply Y to activate.
+      NOTE: SMS is gated on AWS-side origination provisioning (10DLC
+      registration, 1-3 weeks). SMS subscription is kept here for when
+      origination is approved; email is the active channel today.
+  OperatorEmail:
+    Type: String
+    Default: 'bryanj+clouddelnorte-version-alerts@abstractspacecraft.com'
+    Description: >
+      Email subscription for deploy alerts. Plus-addressing lets the
+      operator filter alerts in their email client. AWS sends a one-time
+      confirmation email; click the link to activate.
+  CiDeployRoleName:
+    Type: String
+    Default: heraldstack-ci-deploy
+    Description: >
+      existing (uncodified) ci deploy role. cfn attaches an inline policy
+      to grant sns:Publish on the new topic — same pattern as ci-bryanchasko-role.yaml.
+  Env:
+    Type: String
+    Default: prod
+    AllowedValues: [prod, dev]
+  Owner:
+    Type: String
+    Default: bryanchasko
+  CostCenter:
+    Type: String
+    Default: heraldstack
+  Project:
+    Type: String
+    Default: cloud-del-norte
+
+Resources:
+  # ---------------------------------------------------------------------------
+  # SNS topic — receives publish calls from Woodpecker after each deploy
+  # ---------------------------------------------------------------------------
+  DeployAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: cdn-deploy-alerts
+      DisplayName: CDN Deploys
+      Tags:
+        - Key: project
+          Value: !Ref Project
+        - Key: env
+          Value: !Ref Env
+        - Key: owner
+          Value: !Ref Owner
+        - Key: cost-center
+          Value: !Ref CostCenter
+
+  # ---------------------------------------------------------------------------
+  # SMS subscription — operator phone in E.164 format
+  # AWS sends a one-time confirmation SMS. Reply Y to activate.
+  # ---------------------------------------------------------------------------
+  DeployAlertsSmsSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref DeployAlertsTopic
+      Protocol: sms
+      Endpoint: !Ref OperatorPhone
+
+  # ---------------------------------------------------------------------------
+  # Email subscription — operator email with plus-addressing for filtering
+  # AWS sends a one-time confirmation email; click the link to activate.
+  # ---------------------------------------------------------------------------
+  DeployAlertsEmailSubscription:
+    Type: AWS::SNS::Subscription
+    Properties:
+      TopicArn: !Ref DeployAlertsTopic
+      Protocol: email
+      Endpoint: !Ref OperatorEmail
+
+  # ---------------------------------------------------------------------------
+  # sns:Publish permission on the ci-deploy role
+  # Attaches an inline policy to the existing uncodified heraldstack-ci-deploy
+  # role — same pattern as ci-bryanchasko-role.yaml.
+  # ---------------------------------------------------------------------------
+  CiDeploySnsPublishPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: cdn-deploy-alerts-publish
+      Roles:
+        - !Ref CiDeployRoleName
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: SnsPublishDeployAlerts
+            Effect: Allow
+            Action:
+              - sns:Publish
+            Resource: !Ref DeployAlertsTopic
+
+Outputs:
+  TopicArn:
+    Description: ARN of the cdn-deploy-alerts SNS topic — use in Woodpecker aws sns publish --topic-arn
+    Value: !Ref DeployAlertsTopic
+    Export:
+      Name: !Sub '${AWS::StackName}-TopicArn'
+  TopicName:
+    Description: SNS topic name
+    Value: cdn-deploy-alerts
+    Export:
+      Name: !Sub '${AWS::StackName}-TopicName'

@@ -68,8 +68,12 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      # liora/* and liora-embed/* are managed separately — exclude from --delete
-      - aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*"
+      # liora/* and liora-embed/* are managed separately — exclude from --delete.
+      # Two-pass sync: HTML/non-asset files get no-cache (browsers refetch every
+      # visit, so version bumps land immediately); hashed /assets/ get long
+      # immutable cache (filename hash invalidates them on change).
+      - aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*" --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib/assets/ s3://awsaerospace.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
       - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/*"
 
   - name: deploy-auth
@@ -90,7 +94,8 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib-auth/ s3://auth.clouddelnorte.org/ --delete --exact-timestamps
+      - aws s3 sync lib-auth/ s3://auth.clouddelnorte.org/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib-auth/assets/ s3://auth.clouddelnorte.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
       - aws cloudfront create-invalidation --distribution-id ECQ44FO9MBTCY --paths "/*"
 
   - name: deploy-awsug
@@ -111,7 +116,8 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib-awsug/ s3://awsug.clouddelnorte.org/ --delete --exact-timestamps
+      - aws s3 sync lib-awsug/ s3://awsug.clouddelnorte.org/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib-awsug/assets/ s3://awsug.clouddelnorte.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
       - aws cloudfront create-invalidation --distribution-id E2QLAWFVIT1AR8 --paths "/*"
 
   - name: deploy-dev
@@ -137,7 +143,87 @@ steps:
       # see SPA-fallback HTML for liora-embed.js (text/html MIME, module import fail).
       # exclude from build sync, then mirror liora assets from prod bucket so dev
       # serves the same liora-embed bundle.
-      - aws s3 sync lib/ s3://dev.clouddelnorte.org/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*"
+      # Two-pass sync: HTML/non-asset gets no-cache, /assets/ gets long immutable.
+      - aws s3 sync lib/ s3://dev.clouddelnorte.org/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*" --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib/assets/ s3://dev.clouddelnorte.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
       - aws s3 sync s3://awsaerospace.org/liora-embed/ s3://dev.clouddelnorte.org/liora-embed/ --exact-timestamps
       - aws s3 sync s3://awsaerospace.org/liora/ s3://dev.clouddelnorte.org/liora/ --exact-timestamps
       - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/*"
+
+  - name: notify-dev
+    image: alpine:3.20
+    depends_on: [deploy-dev]
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: dev
+    commands:
+      - apk add --no-cache curl
+      - |
+        curl -s \
+          -H "Title: [CDN dev] deploy: $${CI_COMMIT_SHA:0:7}" \
+          -H "Tags: rocket,green_heart" \
+          -H "Click: https://dev.clouddelnorte.org/" \
+          -d "$${CI_COMMIT_MESSAGE}" \
+          https://ntfy.sh/cdn-deploy-74697e0f
+
+  - name: notify-sns-dev
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [deploy-dev]
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: dev
+    environment:
+      AWS_DEFAULT_REGION: us-west-2
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - |
+        MSG=$$(printf '[CDN dev] %s\nlive: https://dev.clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
+        aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"
+
+  - name: notify-prod
+    image: alpine:3.20
+    depends_on: [deploy, deploy-auth, deploy-awsug]
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: main
+    commands:
+      - apk add --no-cache curl
+      - |
+        curl -s \
+          -H "Title: [CDN prod] deploy: $${CI_COMMIT_SHA:0:7}" \
+          -H "Tags: rocket,green_heart" \
+          -H "Click: https://clouddelnorte.org/" \
+          -d "$${CI_COMMIT_MESSAGE}" \
+          https://ntfy.sh/cdn-deploy-74697e0f
+
+  - name: notify-sns-prod
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [deploy, deploy-auth, deploy-awsug]
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: main
+    environment:
+      AWS_DEFAULT_REGION: us-west-2
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - |
+        MSG=$$(printf '[CDN prod] %s\nlive: https://clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
+        aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"

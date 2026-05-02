@@ -148,6 +148,15 @@ uniform float timeOfDay;
 uniform vec3 sunDir;
 uniform float fluxLevel;
 
+// 2D value-noise for cloud-shadow drift. Same hash used in vertex shader.
+float fragHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float fragNoise(vec2 p) {
+  vec2 i = floor(p); vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(fragHash(i), fragHash(i+vec2(1.0,0.0)), u.x),
+             mix(fragHash(i+vec2(0.0,1.0)), fragHash(i+vec2(1.0,1.0)), u.x), u.y);
+}
+
 void main(void) {
   // Pass 4 — restore visible topology. Passes 2-3 chased the no-yellow and
   // no-black guards so hard that every layer (sky horizon, body bg, peak,
@@ -209,6 +218,34 @@ void main(void) {
                + sunTintDusk * wDusk + sunTintMorning * wMorning;
   // Apply tint scaled by lambert so peaks pick up the sun colour, shadows don't.
   vec3 lighting = mix(vec3(1.0), sunTint, lambert) * lit;
+
+  // Liveness pass 2 (2026-05-02) — cloud-shadow drift + crest specular.
+  //
+  // Cloud shadows: 2-octave value noise sampled in world UV, scrolling slowly
+  // across the dunes. Output is a [0..1] mask where lower values = under a
+  // cloud. Multiplies into lighting to gently darken (max ~12% reduction).
+  // Drift speed 0.008 plane-units/sec matches the ambient breath we want —
+  // perceptible over ~10s, never frenetic. Two octaves keep edges soft.
+  vec2 cloudUV = vUV * vec2(60.0, 40.0); // back to plane coordinates
+  float cloudDriftX = time * 0.008;
+  float cloudDriftZ = time * 0.005;
+  float cloud = fragNoise(cloudUV * 0.07 + vec2(cloudDriftX, cloudDriftZ));
+  cloud += fragNoise(cloudUV * 0.16 + vec2(cloudDriftX * 1.3, cloudDriftZ * 0.9)) * 0.5;
+  cloud /= 1.5;
+  // Soft mask: only the darker half darkens the surface, peaks are unaffected.
+  float cloudShadow = smoothstep(0.35, 0.75, cloud);
+  lighting *= mix(0.88, 1.0, cloudShadow);
+
+  // Crest specular: tight glint where sun direction aligns with surface normal
+  // AND surface is near-horizontal (ridge top). Blinn-style halfway approx
+  // skipped (no view dir uniform) — instead use lambert ^ N as a sharp
+  // power curve, gated by ridge-flatness via normal.y. Result: only the
+  // sunlit crests gain a small warm highlight, leaving valleys/sides intact.
+  float ridgeFlatness = max(normalize(vNormal).y, 0.0);
+  float crestGlint = pow(lambert, 24.0) * pow(ridgeFlatness, 6.0);
+  // Warm gypsum-crystal tint — pale gold, never pure white.
+  vec3 crestTint = vec3(1.0, 0.96, 0.86);
+  lighting += crestTint * crestGlint * 0.22;
 
   // Subtle GPU-noise paper-grain to harmonise with the production
   // repeating-linear-gradient(#8b5a2b05) overlay on light mode.
@@ -331,7 +368,11 @@ export interface DuneSceneHandle {
 	getPerfMedian(): number;
 }
 
-const PERF_WINDOW = 60;
+// Reduced from 60 → 30 so the perf median computes after fewer frames.
+// Browsers throttled by background-tab / low-power mode / cold shader compile
+// were taking >6s to fill a 60-frame window, tripping the gate's "no sample
+// in 6000ms" fallback. 30 frames at even 10fps fills in 3s.
+const PERF_WINDOW = 30;
 const PERF_WARMUP_FRAMES = 120;
 const PERF_BUDGET_MS = 8;
 
@@ -646,8 +687,20 @@ export function ensureDuneFallback(container: HTMLElement): () => void {
 
 /**
  * Mount the dune scene as a full-viewport wallpaper. Creates its own canvas
- * inside `container` at z-index: -2 (behind the existing 2D background-viz
- * canvas at z-index: -1). The handle's destroy() removes the canvas.
+ * inside `container` at z-index: -1 (in front of the static cream-fallback
+ * 2D background-viz canvas at z-index: -2; both still behind body content
+ * at z:0+). The handle's destroy() removes the canvas.
+ *
+ * Stacking order (back to front):
+ *   z:-3  fallback gradient div (cream/lavender)
+ *   z:-2  static cream bg-viz canvas (watermark layer; opacity 0 when dune mounts)
+ *   z:-1  dune scene canvas (BabylonJS, this one)
+ *   z:0+  body content (cards, UI chrome)
+ *
+ * Pass 5 (z-index swap): dune was previously at z:-2 with static at z:-1.
+ * Even with opacity:0 on the static canvas after dune mounts, stacking-context
+ * quirks were burying the dune visually. Putting dune in front of static
+ * means dune ALWAYS wins and the static canvas's opacity state doesn't matter.
  *
  * Pass 4 (real black fix): the fallback div is now created via
  * ensureDuneFallback() and NOT torn down when this handle disposes. The
@@ -661,7 +714,7 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 
 	const canvas = document.createElement("canvas");
 	canvas.style.cssText =
-		"position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none";
+		"position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none";
 	canvas.setAttribute("aria-hidden", "true");
 	canvas.dataset.cdnDuneCanvas = "1";
 	container.appendChild(canvas);

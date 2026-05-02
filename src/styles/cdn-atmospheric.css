@@ -125,9 +125,9 @@
 
 	/* Light mode */
 	.cdn-viz-active:not(.awsui-dark-mode)
-		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode)
-		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]) {
+		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
 		background-color: rgba(
 			237,
 			229,
@@ -142,9 +142,9 @@
 
 	/* Dark mode */
 	.cdn-viz-active.awsui-dark-mode
-		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+		[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
 	.cdn-viz-active.awsui-dark-mode
-		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]) {
+		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
 		background-color: rgba(
 			10,
 			12,
@@ -162,11 +162,11 @@
 	/* Light mode */
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_has-header_"]
-		> [class*="awsui_background_"],
+		> [class*="awsui_background_"]:not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_content-layout"]
-		> [class*="awsui_background"],
-	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"] {
+		> [class*="awsui_background"]:not(#\9),
+	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
 		background-color: rgba(
 			237,
 			229,
@@ -182,11 +182,11 @@
 	/* Dark mode */
 	.cdn-viz-active.awsui-dark-mode
 		[class*="awsui_has-header_"]
-		> [class*="awsui_background_"],
+		> [class*="awsui_background_"]:not(#\9),
 	.cdn-viz-active.awsui-dark-mode
 		[class*="awsui_content-layout"]
-		> [class*="awsui_background"],
-	.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"] {
+		> [class*="awsui_background"]:not(#\9),
+	.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
 		background-color: rgba(
 			10,
 			12,
@@ -202,8 +202,8 @@
 	/* ── Main content area — content tier ────────────────────────────────── */
 
 	/* Light mode */
-	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"],
-	.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"] {
+	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9),
+	.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"]:not(#\9) {
 		background-color: rgba(
 			237,
 			229,
@@ -217,8 +217,8 @@
 	}
 
 	/* Dark mode */
-	.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"],
-	.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"] {
+	.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"]:not(#\9),
+	.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"]:not(#\9) {
 		background-color: rgba(
 			10,
 			12,
@@ -230,6 +230,98 @@
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
 			saturate(var(--cdn-wallpaper-saturate)) !important;
 	}
+}
+
+/* ── ContentLayout header strip — always transparent (wallpaper through) ─────
+   These selectors were NOT covered by b8014898 and defaulted to solid cream/navy.
+   Shell/styles.css previously painted #ede5d4 solid here (non-viz-active) and
+   rgba(0.55) frosted glass (viz-active). Both are now replaced by full transparency
+   so the wallpaper canvas at z-index:-2 is always visible through the feed top strip.
+
+   Light mode: applies unconditionally (no cdn-viz-active scope needed — if wallpaper
+   is absent the transparent bg falls through to the :root background-color cream).
+   Dark mode: same unconditional approach. */
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9),
+:root:not(.awsui-dark-mode)
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+.awsui-dark-mode [class*="awsui_has-header_"] > [class*="awsui_background_"]:not(#\9),
+.awsui-dark-mode
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"]:not(#\9),
+.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+/* When cdn-viz-active: header strip stays fully transparent — cdn-atmospheric
+   backdrop-filter from the block above (lines ~163-200) provides the blur layer
+   via background-color. Explicit transparent override ensures shell/styles.css
+   frosted-glass rules (which imported this file before their own declarations)
+   cannot reinstate a solid bg. */
+.cdn-viz-active:not(.awsui-dark-mode)
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9),
+.cdn-viz-active:not(.awsui-dark-mode)
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"]:not(#\9),
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9),
+.cdn-viz-active.awsui-dark-mode
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9),
+.cdn-viz-active.awsui-dark-mode
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"]:not(#\9),
+.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+/* ── Drawers container + main outer wrapper — transparent outer ───────────
+   awsui_drawers-container_ wraps both nav + tools drawers at the outermost
+   layer. awsui_main_ wraps the full content column. Both should be transparent
+   so the wallpaper canvas at z-index:-2 shows through without any opaque shell. */
+:root:not(.awsui-dark-mode) [class*="awsui_drawers-container_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_main_"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+.awsui-dark-mode [class*="awsui_drawers-container_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_main_"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+/* ── scrolling-background_ + breadcrumbs_ — top-of-page opaque culprits ──
+   Playwright trace (2026-05-01): awsui_scrolling-background_ paints solid
+   rgb(237,229,212) at top:62 / 1440x157px, blocking dunes above NextMeetup.
+   awsui_breadcrumbs_ also shows solid cream at top:78. Both selectors exist
+   in the CSS-nesting block below (lines ~337-410) but CSS nesting does NOT
+   compose specificity the same way as a flat :root:not(.awsui-dark-mode) >
+   child selector — so Cloudscape's own !important rules win.
+
+   Fix: standalone flat selectors with :not(#\9) specificity hack, identical
+   pattern to awsui_drawers-container_ / awsui_main_ above. No nesting. */
+
+:root:not(.awsui-dark-mode) [class*="awsui_scrolling-background_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+.awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
 }
 
 /* ── explicit opt-out ────────────────────────────────────────────────────── */
@@ -246,4 +338,103 @@
 	background-color: rgb(10, 12, 20) !important;
 	backdrop-filter: none !important;
 	-webkit-backdrop-filter: none !important;
+}
+
+/* ==========================================================================
+   Wallpaper-through-chrome — transparent outer + atmospheric inner
+
+   Bryan DevTools-validated layering approach: Cloudscape's outer containers
+   were painting opaque cream above the wallpaper canvas (z-index:-2),
+   blocking it from showing through the page chrome and especially the
+   gap between nav drawer and main column.
+
+   Outer containers → transparent (wallpaper shows through).
+   Inner nav drawer + tools panel → atmospheric panel-tier (0.88 alpha + blur).
+   Border lines on nav/tools removed — kills visible vertical gap lines.
+
+   Exclusion: .liora-frame [class*="awsui_content-container_"] stays untouched.
+   Cards, buttons, Liora, top-nav, footer untouched per existing opaque rules.
+   ========================================================================== */
+
+/* Wallpaper-through-chrome rules — FLAT (un-nested) so the rolldown CSS
+   minifier can't drop declarations during build. Earlier these lived inside
+   :root:not(.awsui-dark-mode) { ... } CSS-nesting blocks; the minifier was
+   shipping only -webkit-backdrop-filter and dropping the unprefixed form,
+   which modern Chrome ignores → computed backdrop-filter: none → no blur.
+   Both forms now have explicit !important and are top-level rules. */
+
+/* Light mode — outer containers transparent */
+:root:not(.awsui-dark-mode) main[class*="awsui_layout_"]:not(#\9),
+:root:not(.awsui-dark-mode) main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
+:root:not(.awsui-dark-mode) main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_navigation-container_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_tools-container_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_scrolling-background_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+/* Light mode — left nav drawer: TRANSLUCENT (dunes bleed through).
+   Operator confirmed at v0.0.0016 that 0.20 alpha showed dunes through the
+   left nav as desired. Restored here. NO backdrop-filter blur — the blur
+   was triggering Safari sub-pixel text rendering bug on nav links. */
+:root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9) {
+	background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.20)) !important;
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
+}
+
+/* Light mode — right tools panel: TRANSLUCENT (matches left nav now).
+   Operator wants sand-dunes through right panel too. Same alpha as left,
+   no blur (Safari text-blur bug). The opaque rules in shell/styles.css
+   that previously fought this rule have been defanged to transparent. */
+:root:not(.awsui-dark-mode) [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
+	background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.20)) !important;
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
+}
+
+/* Light mode — borders */
+:root:not(.awsui-dark-mode) [class*="awsui_navigation-container_"],
+:root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"],
+:root:not(.awsui-dark-mode) [class*="awsui_tools-container_"] {
+	border-left: none !important;
+	border-right: none !important;
+}
+
+/* Dark mode — outer containers transparent */
+.awsui-dark-mode main[class*="awsui_layout_"]:not(#\9),
+.awsui-dark-mode main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
+.awsui-dark-mode main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
+.awsui-dark-mode [class*="awsui_navigation-container_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_tools-container_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
+
+/* Dark mode — left nav drawer: TRANSLUCENT (stars/music-viz bleed through). */
+.awsui-dark-mode nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9) {
+	background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.20)) !important;
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
+}
+
+/* Dark mode — right tools panel: TRANSLUCENT navy. Stars/music-viz through. */
+.awsui-dark-mode [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
+	background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.20)) !important;
+	-webkit-backdrop-filter: none !important;
+	backdrop-filter: none !important;
+}
+
+/* Dark mode — borders */
+.awsui-dark-mode [class*="awsui_navigation-container_"],
+.awsui-dark-mode nav[class*="awsui_navigation_"],
+.awsui-dark-mode [class*="awsui_tools-container_"] {
+	border-left: none !important;
+	border-right: none !important;
 }
