@@ -356,78 +356,67 @@
    Cards, buttons, Liora, top-nav, footer untouched per existing opaque rules.
    ========================================================================== */
 
-/* Light mode */
-:root:not(.awsui-dark-mode) {
-	/* Outer containers — fully transparent */
-	main[class*="awsui_layout_"]:not(#\9),
-	main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
-	main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
-	[class*="awsui_navigation-container_"]:not(#\9),
-	[class*="awsui_tools-container_"]:not(#\9),
-	[class*="awsui_breadcrumbs_"]:not(#\9),
-	[class*="awsui_scrolling-background_"]:not(#\9),
-	[class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
-		background: transparent !important;
-		background-color: transparent !important;
-	}
+/* Wallpaper-through-chrome rules — FLAT (un-nested) so the rolldown CSS
+   minifier can't drop declarations during build. Earlier these lived inside
+   :root:not(.awsui-dark-mode) { ... } CSS-nesting blocks; the minifier was
+   shipping only -webkit-backdrop-filter and dropping the unprefixed form,
+   which modern Chrome ignores → computed backdrop-filter: none → no blur.
+   Both forms now have explicit !important and are top-level rules. */
 
-	/* Inner nav drawer — atmospheric panel tier (0.88 cream + blur 6px) */
-	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9) {
-		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
-	}
-
-	/* Inner tools panel — atmospheric panel tier */
-	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
-		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
-	}
-
-	/* Remove border lines that create visible gaps */
-	[class*="awsui_navigation-container_"],
-	nav[class*="awsui_navigation_"],
-	[class*="awsui_tools-container_"] {
-		border-left: none !important;
-		border-right: none !important;
-	}
+/* Light mode — outer containers transparent */
+:root:not(.awsui-dark-mode) main[class*="awsui_layout_"]:not(#\9),
+:root:not(.awsui-dark-mode) main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
+:root:not(.awsui-dark-mode) main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_navigation-container_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_tools-container_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_scrolling-background_"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
 }
 
-/* Dark mode — same selectors, dark navy bg color */
-.awsui-dark-mode {
-	/* Outer containers — fully transparent */
-	main[class*="awsui_layout_"]:not(#\9),
-	main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
-	main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
-	[class*="awsui_navigation-container_"]:not(#\9),
-	[class*="awsui_tools-container_"]:not(#\9),
-	[class*="awsui_breadcrumbs_"]:not(#\9),
-	[class*="awsui_scrolling-background_"]:not(#\9),
-	[class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
-		background: transparent !important;
-		background-color: transparent !important;
-	}
+/* Light mode — inner nav drawer + tools panel atmospheric */
+:root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
+	background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
+	backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
+	-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
+}
 
-	/* Inner nav drawer — atmospheric panel tier (dark navy) */
-	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9) {
-		background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
-	}
+/* Light mode — borders */
+:root:not(.awsui-dark-mode) [class*="awsui_navigation-container_"],
+:root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"],
+:root:not(.awsui-dark-mode) [class*="awsui_tools-container_"] {
+	border-left: none !important;
+	border-right: none !important;
+}
 
-	/* Inner tools panel — atmospheric panel tier */
-	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
-		background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05));
-	}
+/* Dark mode — outer containers transparent */
+.awsui-dark-mode main[class*="awsui_layout_"]:not(#\9),
+.awsui-dark-mode main[class*="awsui_layout_"] > [class*="navigation-container"]:not(#\9),
+.awsui-dark-mode main[class*="awsui_layout_"] > [class*="tools-container"]:not(#\9),
+.awsui-dark-mode [class*="awsui_navigation-container_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_tools-container_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9),
+.awsui-dark-mode [class*="awsui_content-container_"]:not(.liora-frame [class*="awsui_content-container_"]):not(#\9) {
+	background: transparent !important;
+	background-color: transparent !important;
+}
 
-	/* Remove border lines that create visible gaps */
-	[class*="awsui_navigation-container_"],
-	nav[class*="awsui_navigation_"],
-	[class*="awsui_tools-container_"] {
-		border-left: none !important;
-		border-right: none !important;
-	}
+/* Dark mode — inner nav drawer + tools panel atmospheric (navy) */
+.awsui-dark-mode nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
+.awsui-dark-mode [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
+	background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
+	backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
+	-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
+}
+
+/* Dark mode — borders */
+.awsui-dark-mode [class*="awsui_navigation-container_"],
+.awsui-dark-mode nav[class*="awsui_navigation_"],
+.awsui-dark-mode [class*="awsui_tools-container_"] {
+	border-left: none !important;
+	border-right: none !important;
 }
