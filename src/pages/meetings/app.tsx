@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
-import { RequireAuth } from "../../components/require-auth";
 import { useTranslation } from "../../hooks/useTranslation";
 import ShellLayout from "../../layouts/shell";
 import {
@@ -59,9 +58,9 @@ export default function App() {
 			navigation={<Navigation />}
 			tools={<HelpPanelHome />}
 		>
-			<RequireAuth>
-				<VariationsTable meetings={variationsData} />
-			</RequireAuth>
+			{/* Guests can browse meetings; the join action inside VariationsTable
+			    gates on auth — guests see the list, must sign in to RSVP. */}
+			<VariationsTable meetings={variationsData} />
 		</ShellLayout>
 	);
 }

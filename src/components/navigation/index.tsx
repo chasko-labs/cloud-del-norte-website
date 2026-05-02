@@ -371,63 +371,66 @@ export default function Navigation() {
 				{
 					type: "link",
 					text: t("navigation.techDebtCountdowns"),
-					href: "/maintenance-calendar/",
+					// Trailing-slash routes hit the S3+CloudFront default fallback
+					// and serve the feed bundle instead of the page. Always link
+					// to /…/index.html explicitly (matches /meetings/index.html).
+					href: "/maintenance-calendar/index.html",
 				},
 				{
 					type: "expandable-link-group",
 					text: t("navigation.apiGuide"),
-					href: "/learning/api/",
+					href: "/learning/api/index.html",
 					defaultExpanded: currentPath.startsWith("/learning"),
 					items: [
 						{
 							type: "link",
 							text: t("navigation.restOverview"),
-							href: "/learning/api/#overview",
+							href: "/learning/api/index.html#overview",
 						},
 						{
 							type: "link",
 							text: t("navigation.uniformInterface"),
-							href: "/learning/api/#uniform-interface",
+							href: "/learning/api/index.html#uniform-interface",
 						},
 						{
 							type: "link",
 							text: t("navigation.clientServer"),
-							href: "/learning/api/#client-server",
+							href: "/learning/api/index.html#client-server",
 						},
 						{
 							type: "link",
 							text: t("navigation.stateless"),
-							href: "/learning/api/#stateless",
+							href: "/learning/api/index.html#stateless",
 						},
 						{
 							type: "link",
 							text: t("navigation.cacheable"),
-							href: "/learning/api/#cacheable",
+							href: "/learning/api/index.html#cacheable",
 						},
 						{
 							type: "link",
 							text: t("navigation.layeredSystem"),
-							href: "/learning/api/#layered-system",
+							href: "/learning/api/index.html#layered-system",
 						},
 						{
 							type: "link",
 							text: t("navigation.codeOnDemand"),
-							href: "/learning/api/#code-on-demand",
+							href: "/learning/api/index.html#code-on-demand",
 						},
 						{
 							type: "link",
 							text: t("navigation.cheatSheet"),
-							href: "/learning/api/#cheat-sheet",
+							href: "/learning/api/index.html#cheat-sheet",
 						},
 						{
 							type: "link",
 							text: t("navigation.howItWorks"),
-							href: "/learning/api/#how-it-works",
+							href: "/learning/api/index.html#how-it-works",
 						},
 						{
 							type: "link",
 							text: t("navigation.projectResources"),
-							href: "/learning/api/#resources",
+							href: "/learning/api/index.html#resources",
 						},
 					],
 				},
