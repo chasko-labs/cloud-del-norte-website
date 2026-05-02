@@ -108,8 +108,8 @@ export const paletteGroups: PaletteGroup[] = [
 			{
 				name: "Info",
 				token: "--cdn-status-info",
-				hex: "#2563eb",
-				role: "neutral information (light: blue-600)",
+				hex: "#6330c8",
+				role: "neutral information (brand violet — replaces generic blue)",
 			},
 		],
 	},
