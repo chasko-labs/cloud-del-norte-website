@@ -21,7 +21,7 @@ export default function Footer() {
 					<strong className="cdn-footer-emphasis">{t("footer.goBuild")}</strong>
 					.
 				</p>
-				<span className="cdn-version">0.0.0062</span>
+				<span className="cdn-version">0.0.0063</span>
 			</div>
 		</footer>
 	);
