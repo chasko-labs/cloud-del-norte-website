@@ -78,7 +78,9 @@ export const HelpPanelHome = () => {
 							</p>
 							<div className="hp-social">
 								<Link href="https://andmore.dev" external>
-									<span className="hp-social-pill">andmore.dev</span>
+									<span className="hp-social-pill hp-social-pill--brand">
+										andmore.dev
+									</span>
 								</Link>
 								<Link href="https://x.com/andmoredev" external>
 									<span className="hp-social-pill">X @andmoredev</span>
@@ -97,10 +99,14 @@ export const HelpPanelHome = () => {
 									href="https://aws.amazon.com/developer/community/heroes/bryan-chasko/"
 									external
 								>
-									<span className="hp-social-pill">AWS Hero</span>
+									<span className="hp-social-pill hp-social-pill--brand">
+										AWS Hero
+									</span>
 								</Link>
 								<Link href="https://bryanchasko.com" external>
-									<span className="hp-social-pill">bryanchasko.com</span>
+									<span className="hp-social-pill hp-social-pill--brand">
+										bryanchasko.com
+									</span>
 								</Link>
 								<Link href="https://github.com/BryanChasko" external>
 									<span className="hp-social-pill">GitHub</span>
@@ -128,7 +134,7 @@ export const HelpPanelHome = () => {
 					<h3 className="hp-section-heading">
 						{t("helpPanel.hallOfFameHeader")}
 					</h3>
-					<div className="hp-leader">
+					<div className="hp-leader hp-leader--memorial">
 						<p className="hp-leader-name">Wayne Savage</p>
 						<p className="hp-leader-role">{t("helpPanel.wayneSavageRole")}</p>
 						<p className="hp-leader-bio">
@@ -150,8 +156,9 @@ export const HelpPanelHome = () => {
 
 				<hr className="hp-divider" />
 
-				{/* Global community — glass plate */}
-				<div className="cdn-glass hp-glass-body">
+				{/* Global community — glass plate with cool sapphire echo
+				    of Liora's stickynote-2 visitor flag */}
+				<div className="cdn-glass hp-glass-body hp-glass-body--global">
 					<h4 className="hp-sub-heading">
 						{t("helpPanel.globalCommunityHeader")}
 					</h4>

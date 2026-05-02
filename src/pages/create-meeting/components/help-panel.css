@@ -1,18 +1,69 @@
 /* ==========================================================================
    Cloud Del Norte — Help Panel (right sidebar) styles
    Applies the CDN design token system inside Cloudscape's HelpPanel chrome.
+
+   v0.0.0032 — typography + hierarchy pass
+     - Section headings promoted to Cinzel display serif at --cdn-text-xl,
+       with a full-width fading streak underline (was a stubby 40px line).
+     - Leader cards differentiated from role cards: taller padding, name at
+       --cdn-text-lg, role label sm-caps treatment. Roles compact list-tile
+       (left-edge streak instead of top, no hover lift, less padding).
+     - Hall of Fame leader card gets a distinct cool-lavender memorial tint
+       so it reads as a separate tier from active organizers.
+     - Pill row: bigger hit area, hover lift transform, brand-tier variant
+       (.hp-social-pill--brand) lit with aws-orange / violet for personal
+       sites and AWS Hero; default pill stays amber/lavender.
+     - Divider hairline removed in favor of section margin breathing room
+       (heading + space carries the chapter break, no competing line).
+     - Global community plate echoes Liora stickynote-2's cool sapphire
+       inset (visitor-flag accent) tying back to user-location signal.
+     - Panel header h2 ("volunteers wanted") gets Cinzel + streak underline
+       to mirror breadcrumb-home hero treatment.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
-   Section heading — amber underline accent, matches footer heading pattern
+   Panel header h2 — "volunteers wanted" / page title.
+   Cloudscape renders <h2> inside the help-panel header slot. Promote it to
+   Cinzel display serif with a streak underline to mirror the breadcrumb
+   hero treatment so the panel reads as its own chapter, not a sub-element.
+   -------------------------------------------------------------------------- */
+[class*="awsui_help-panel"] h2,
+[class*="awsui_header_"] h2 {
+	font-family: "Cinzel", Georgia, serif;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	position: relative;
+	padding-bottom: var(--cdn-space-sm);
+}
+
+[class*="awsui_help-panel"] h2::after,
+[class*="awsui_header_"] h2::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2px;
+	border-radius: 1px;
+	background: var(--cdn-glass-streak);
+	opacity: 0.85;
+	pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Section heading — Cinzel display serif, full-width fading streak below.
+   Was: 16px sans-serif with a stubby 40px amber underline.
+   Now: 20px Cinzel with a panel-wide gradient line that fades at both ends,
+   matching the side-nav section-header treatment for visual continuity.
    -------------------------------------------------------------------------- */
 .hp-section-heading {
-	font-size: var(--cdn-text-lg);
+	font-family: "Cinzel", Georgia, serif;
+	font-size: var(--cdn-text-xl);
 	font-weight: var(--cdn-weight-bold);
-	letter-spacing: 0.02em;
+	letter-spacing: 0.05em;
 	color: var(--cdn-color-text-high);
 	margin: 0 0 var(--cdn-space-md);
-	padding-bottom: var(--cdn-space-xs);
+	padding-bottom: var(--cdn-space-sm);
 	position: relative;
 }
 
@@ -21,29 +72,28 @@
 	position: absolute;
 	bottom: 0;
 	left: 0;
-	width: 40px;
+	right: 0;
 	height: 2px;
 	border-radius: 1px;
-	background: linear-gradient(90deg, var(--cdn-amber), var(--cdn-aws-orange));
+	background: var(--cdn-glass-streak);
+	opacity: 0.85;
 }
 
 .awsui-dark-mode .hp-section-heading {
 	color: var(--cdn-lavender);
 }
 
-.awsui-dark-mode .hp-section-heading::after {
-	background: linear-gradient(90deg, var(--cdn-violet), #00d4ff);
-}
-
 /* --------------------------------------------------------------------------
-   Sub-heading — lighter weight, no accent
+   Sub-heading — used inside the global community plate. Light Cinzel touch,
+   no underline (it's nested inside a glass plate that already frames it).
    -------------------------------------------------------------------------- */
 .hp-sub-heading {
-	font-size: var(--cdn-text-base);
+	font-family: "Cinzel", Georgia, serif;
+	font-size: var(--cdn-text-lg);
 	font-weight: var(--cdn-weight-semibold);
+	letter-spacing: 0.04em;
 	color: var(--cdn-color-text-medium);
 	margin: 0 0 var(--cdn-space-sm);
-	letter-spacing: 0.01em;
 }
 
 .awsui-dark-mode .hp-sub-heading {
@@ -51,10 +101,11 @@
 }
 
 /* --------------------------------------------------------------------------
-   Padding helper for .cdn-glass-wrapped help-panel paragraphs
+   Padding helper for .cdn-glass-wrapped help-panel paragraphs.
+   Bumped from md to lg vertical so prose plates breathe.
    -------------------------------------------------------------------------- */
 .hp-glass-body {
-	padding: var(--cdn-space-md);
+	padding: var(--cdn-space-lg) var(--cdn-space-md);
 }
 
 /* --------------------------------------------------------------------------
@@ -72,13 +123,16 @@
 }
 
 /* --------------------------------------------------------------------------
-   Leader card — mini glassmorphism card for each organizer
+   Leader card — TALLER, more vertical air than the role tile. Name promoted
+   to --cdn-text-lg, role label gets uppercase tracking. Top streak retained
+   as the "card-tier" identifier, hover lift kept (organizers are the focal
+   point of this section).
    -------------------------------------------------------------------------- */
 .hp-leader {
 	border-radius: var(--cdn-radius-md);
 	border: 1.5px solid var(--cdn-glass-border);
 	background-color: var(--cdn-glass-bg-strong);
-	padding: var(--cdn-space-md);
+	padding: var(--cdn-space-md) var(--cdn-space-md) var(--cdn-space-md);
 	position: relative;
 	overflow: hidden;
 	box-shadow: var(--cdn-glass-shadow);
@@ -88,7 +142,7 @@
 	isolation: isolate;
 }
 
-/* amber top accent line */
+/* amber top accent line — same streak token as the cdn-glass family */
 .hp-leader::before {
 	content: "";
 	position: absolute;
@@ -96,14 +150,9 @@
 	left: 0;
 	right: 0;
 	height: 2px;
-	background: linear-gradient(
-		90deg,
-		transparent 0%,
-		var(--cdn-amber) 30%,
-		var(--cdn-aws-orange) 70%,
-		transparent 100%
-	);
-	opacity: 0.7;
+	background: var(--cdn-glass-streak);
+	opacity: 0.85;
+	pointer-events: none;
 }
 
 .hp-leader:hover {
@@ -112,33 +161,64 @@
 	transform: translateY(-1px);
 }
 
-.awsui-dark-mode .hp-leader {
-	/* tokens already swap palette; nothing to override here */
-}
-
-.awsui-dark-mode .hp-leader::before {
-	background: linear-gradient(
-		90deg,
-		transparent 0%,
-		var(--cdn-violet) 30%,
-		#00d4ff 70%,
-		transparent 100%
-	);
-}
-
 .awsui-dark-mode .hp-leader:hover {
 	border-color: rgba(144, 96, 240, 0.55);
 	box-shadow: var(--cdn-glass-shadow-hover);
 }
 
 /* --------------------------------------------------------------------------
+   Hall of Fame variant — distinct memorial tier. Cooler lavender border,
+   slight desaturation, dimmer streak. Reads as "honored, past" vs. the
+   warm amber "active organizer" tier above.
+   -------------------------------------------------------------------------- */
+.hp-leader--memorial {
+	border-color: rgba(144, 96, 240, 0.32);
+	background-color: var(--cdn-glass-bg);
+}
+
+.hp-leader--memorial::before {
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(144, 96, 240, 0.55) 30%,
+		rgba(215, 199, 238, 0.7) 50%,
+		rgba(144, 96, 240, 0.55) 70%,
+		transparent 100%
+	);
+	opacity: 0.7;
+}
+
+.hp-leader--memorial:hover {
+	border-color: rgba(144, 96, 240, 0.5);
+}
+
+.awsui-dark-mode .hp-leader--memorial {
+	border-color: rgba(215, 199, 238, 0.32);
+}
+
+.awsui-dark-mode .hp-leader--memorial::before {
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(215, 199, 238, 0.5) 30%,
+		rgba(0, 212, 255, 0.65) 50%,
+		rgba(215, 199, 238, 0.5) 70%,
+		transparent 100%
+	);
+}
+
+/* --------------------------------------------------------------------------
    Leader name + role
+   Name promoted to --cdn-text-lg (16px) — was --cdn-text-base (14px).
+   Role label gets uppercase + wider tracking to read as a "title rank"
+   instead of competing with the name.
    -------------------------------------------------------------------------- */
 .hp-leader-name {
-	font-size: var(--cdn-text-base);
+	font-size: var(--cdn-text-lg);
 	font-weight: var(--cdn-weight-bold);
 	color: var(--cdn-color-text-high);
 	margin: 0 0 2px;
+	letter-spacing: 0.01em;
 }
 
 .awsui-dark-mode .hp-leader-name {
@@ -146,11 +226,12 @@
 }
 
 .hp-leader-role {
-	font-size: var(--cdn-text-sm);
-	color: var(--cdn-color-text-medium);
+	font-size: var(--cdn-text-xs);
+	color: var(--cdn-amber);
 	margin: 0 0 var(--cdn-space-sm);
-	font-weight: var(--cdn-weight-medium);
-	letter-spacing: 0.02em;
+	font-weight: var(--cdn-weight-semibold);
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
 }
 
 .awsui-dark-mode .hp-leader-role {
@@ -159,96 +240,136 @@
 
 .hp-leader-bio {
 	font-size: var(--cdn-text-sm);
-	line-height: var(--cdn-leading-normal);
+	line-height: var(--cdn-leading-relaxed);
 	color: var(--cdn-color-text-muted);
 	margin: 0 0 var(--cdn-space-sm);
 }
 
 .awsui-dark-mode .hp-leader-bio {
-	color: rgba(215, 199, 238, 0.75);
+	color: rgba(215, 199, 238, 0.78);
 }
 
 /* --------------------------------------------------------------------------
-   Social links — pill row
+   Social links — pill row, redesigned.
+   - Larger hit area (4px vs 2px vertical, 10px vs 8px horizontal)
+   - Hover lift transform + shadow (was: just bg color)
+   - Gap bumped from xs (4px) to sm (8px) — pills no longer crammed
+   - .hp-social-pill--brand variant: aws-orange tint for AWS Hero, personal
+     sites, etc. Default pill remains amber subtle.
    -------------------------------------------------------------------------- */
 .hp-social {
 	display: flex;
 	flex-wrap: wrap;
-	gap: var(--cdn-space-xs);
-	margin-top: var(--cdn-space-xs);
+	gap: var(--cdn-space-sm);
+	margin-top: var(--cdn-space-sm);
 }
 
 .hp-social-pill {
 	display: inline-flex;
 	align-items: center;
 	font-size: var(--cdn-text-sm);
-	padding: 2px var(--cdn-space-sm);
-	border-radius: 12px;
-	border: 1px solid rgba(139, 90, 43, 0.2);
-	background: rgba(250, 247, 240, 0.6);
+	font-weight: var(--cdn-weight-semibold);
+	padding: 4px 10px;
+	border-radius: 999px;
+	border: 1px solid rgba(139, 90, 43, 0.25);
+	background: rgba(250, 247, 240, 0.7);
 	color: var(--cdn-amber);
 	text-decoration: none;
+	letter-spacing: 0.01em;
 	transition:
 		background-color 0.15s ease,
-		border-color 0.15s ease;
+		border-color 0.15s ease,
+		transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.18s ease;
 	cursor: pointer;
 }
 
 .hp-social-pill:hover {
-	background: rgba(139, 90, 43, 0.08);
-	border-color: var(--cdn-amber);
+	background: rgba(255, 153, 0, 0.12);
+	border-color: var(--cdn-aws-orange);
+	color: var(--cdn-amber);
+	transform: translateY(-1px);
+	box-shadow: 0 3px 10px rgba(139, 90, 43, 0.18);
+}
+
+/* Brand-tier pill — saturated aws-orange fill for marquee links
+   (AWS Hero, andmore.dev, bryanchasko.com — personal/branded sites). */
+.hp-social-pill--brand {
+	background: linear-gradient(
+		135deg,
+		rgba(255, 153, 0, 0.22) 0%,
+		rgba(139, 90, 43, 0.18) 100%
+	);
+	border-color: rgba(255, 153, 0, 0.45);
+	color: var(--cdn-amber);
+}
+
+.hp-social-pill--brand:hover {
+	background: linear-gradient(
+		135deg,
+		rgba(255, 153, 0, 0.32) 0%,
+		rgba(139, 90, 43, 0.25) 100%
+	);
+	border-color: var(--cdn-aws-orange);
 }
 
 .awsui-dark-mode .hp-social-pill {
-	border-color: rgba(144, 96, 240, 0.25);
-	background: rgba(28, 34, 48, 0.5);
+	border-color: rgba(144, 96, 240, 0.32);
+	background: rgba(28, 34, 48, 0.55);
 	color: var(--cdn-lavender);
 }
 
 .awsui-dark-mode .hp-social-pill:hover {
-	background: rgba(144, 96, 240, 0.1);
+	background: rgba(144, 96, 240, 0.18);
 	border-color: var(--cdn-violet);
-	color: var(--cdn-violet);
+	color: var(--cdn-white);
+	box-shadow: 0 3px 12px rgba(144, 96, 240, 0.32);
+}
+
+.awsui-dark-mode .hp-social-pill--brand {
+	background: linear-gradient(
+		135deg,
+		rgba(144, 96, 240, 0.28) 0%,
+		rgba(48, 0, 106, 0.32) 100%
+	);
+	border-color: rgba(144, 96, 240, 0.55);
+	color: var(--cdn-white);
+}
+
+.awsui-dark-mode .hp-social-pill--brand:hover {
+	background: linear-gradient(
+		135deg,
+		rgba(144, 96, 240, 0.42) 0%,
+		rgba(48, 0, 106, 0.5) 100%
+	);
+	border-color: var(--cdn-violet);
 }
 
 /* --------------------------------------------------------------------------
-   Section divider
+   Section divider — retained as a subtle streak but lower-opacity. Margin
+   does most of the chapter-separation work; the streak is now a whisper.
    -------------------------------------------------------------------------- */
 .hp-divider {
-	height: 1px;
+	height: 2px;
 	border: none;
-	background: linear-gradient(
-		90deg,
-		transparent 0%,
-		rgba(139, 90, 43, 0.2) 30%,
-		rgba(139, 90, 43, 0.25) 50%,
-		rgba(139, 90, 43, 0.2) 70%,
-		transparent 100%
-	);
-	margin: var(--cdn-space-lg) 0;
-}
-
-.awsui-dark-mode .hp-divider {
-	background: linear-gradient(
-		90deg,
-		transparent 0%,
-		rgba(144, 96, 240, 0.18) 30%,
-		rgba(144, 96, 240, 0.25) 50%,
-		rgba(144, 96, 240, 0.18) 70%,
-		transparent 100%
-	);
+	border-radius: 1px;
+	background: var(--cdn-glass-streak);
+	opacity: 0.35;
+	margin: var(--cdn-space-xl) 0 var(--cdn-space-lg);
 }
 
 /* --------------------------------------------------------------------------
-   Role cards (volunteers wanted) — glass plate, slimmer than leader cards.
-   Inherits .cdn-glass treatment via shared tokens; padding is the only delta.
+   Role tiles (volunteers wanted) — compact list-tile, NOT a card peer.
+   Differentiated from .hp-leader: smaller padding, LEFT-edge streak (not
+   top), no hover lift. Reads as scannable list-row, not a featured card.
    -------------------------------------------------------------------------- */
 .hp-role-card {
 	position: relative;
-	border-radius: var(--cdn-radius-md);
-	border: 1.5px solid var(--cdn-glass-border);
+	border-radius: var(--cdn-radius-sm);
+	border: 1px solid var(--cdn-glass-border);
 	background-color: var(--cdn-glass-bg);
-	padding: var(--cdn-space-sm) var(--cdn-space-md);
+	padding: var(--cdn-space-sm) var(--cdn-space-md) var(--cdn-space-sm)
+		calc(var(--cdn-space-md) + 4px);
 	box-shadow: var(--cdn-glass-shadow);
 	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
@@ -257,16 +378,37 @@
 	isolation: isolate;
 }
 
+/* Left-edge accent strip — vertical streak (was: top horizontal streak).
+   Visually distinguishes role tiles from leader cards at a glance. */
 .hp-role-card::before {
 	content: "";
 	position: absolute;
-	top: 0;
+	top: 8px;
+	bottom: 8px;
 	left: 0;
-	right: 0;
-	height: 2px;
-	background: var(--cdn-glass-streak);
-	opacity: 0.8;
+	width: 3px;
+	border-radius: 0 2px 2px 0;
+	background: linear-gradient(
+		180deg,
+		transparent 0%,
+		var(--cdn-amber) 25%,
+		var(--cdn-aws-orange) 50%,
+		var(--cdn-amber) 75%,
+		transparent 100%
+	);
+	opacity: 0.85;
 	pointer-events: none;
+}
+
+.awsui-dark-mode .hp-role-card::before {
+	background: linear-gradient(
+		180deg,
+		transparent 0%,
+		var(--cdn-violet) 25%,
+		#00d4ff 50%,
+		var(--cdn-violet) 75%,
+		transparent 100%
+	);
 }
 
 .hp-role-card:hover {
@@ -302,10 +444,34 @@
 }
 
 /* --------------------------------------------------------------------------
+   Global community plate — echoes Liora stickynote-2's cool sapphire inset
+   (the visitor-flag color signal). Ties the panel's bottom CTA back to the
+   "you are here" stickynote up top via a shared cool accent.
+   -------------------------------------------------------------------------- */
+.hp-glass-body--global {
+	border-color: rgba(30, 96, 144, 0.32);
+	box-shadow:
+		var(--cdn-glass-shadow),
+		inset 0 -2px 3px rgba(30, 96, 144, 0.18);
+}
+
+.awsui-dark-mode .hp-glass-body--global {
+	border-color: rgba(0, 212, 255, 0.32);
+	box-shadow:
+		var(--cdn-glass-shadow),
+		inset 0 -2px 3px rgba(0, 212, 255, 0.22);
+}
+
+/* --------------------------------------------------------------------------
    Reduced motion
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-	.hp-leader {
+	.hp-leader,
+	.hp-social-pill {
 		transition: none;
+	}
+	.hp-leader:hover,
+	.hp-social-pill:hover {
+		transform: none;
 	}
 }
