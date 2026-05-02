@@ -331,7 +331,11 @@ export interface DuneSceneHandle {
 	getPerfMedian(): number;
 }
 
-const PERF_WINDOW = 60;
+// Reduced from 60 → 30 so the perf median computes after fewer frames.
+// Browsers throttled by background-tab / low-power mode / cold shader compile
+// were taking >6s to fill a 60-frame window, tripping the gate's "no sample
+// in 6000ms" fallback. 30 frames at even 10fps fills in 3s.
+const PERF_WINDOW = 30;
 const PERF_WARMUP_FRAMES = 120;
 const PERF_BUDGET_MS = 8;
 

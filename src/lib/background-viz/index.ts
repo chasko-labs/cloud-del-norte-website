@@ -22,7 +22,12 @@ let mounted = false;
 // and the perf window never closed before the gate fired.
 const DUNE_PERF_BUDGET_MS = 16;
 const DUNE_PERF_GATE_DELAY_MS = 2000;
-const DUNE_PERF_GATE_RETRY_DELAY_MS = 4000;
+// Bumped 4000 → 12000 (total gate timeout 14s instead of 6s). Browsers under
+// background-tab throttle / low-power mode / first-paint shader compile were
+// failing the 6s budget even though the scene would render fine given more
+// time. 14s is forgiving without being indefinite — at <2fps for 14s the
+// browser is genuinely stuck and the static-cream fallback is the right call.
+const DUNE_PERF_GATE_RETRY_DELAY_MS = 12000;
 
 function isDarkMode(): boolean {
 	return document.documentElement.classList.contains("awsui-dark-mode");
