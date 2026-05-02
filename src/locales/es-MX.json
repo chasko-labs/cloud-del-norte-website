@@ -678,5 +678,11 @@
 		"stickynoteLine1": "no aguanta",
 		"stickynoteLine2": "nada",
 		"welcomeGreeting": "qué onda"
+	},
+	"persistentPlayer": {
+		"streamingFallback": "transmitiendo en clouddelnorte.org",
+		"streamErrorRetrying": "se trabó tantito — reintentando",
+		"streamErrorPersistent": "esta estación anda fallando — dale otra vez o pícale a otra estación",
+		"streamErrorRetryButton": "dale otra vez"
 	}
 }

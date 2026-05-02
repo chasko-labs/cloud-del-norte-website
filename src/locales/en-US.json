@@ -678,5 +678,11 @@
 		"stickynoteLine1": "non load",
 		"stickynoteLine2": "bearing",
 		"welcomeGreeting": "welcome"
+	},
+	"persistentPlayer": {
+		"streamingFallback": "streaming on clouddelnorte.org",
+		"streamErrorRetrying": "stream hiccup — retrying",
+		"streamErrorPersistent": "this station's stream is having a moment — try again or skip to another station",
+		"streamErrorRetryButton": "try again"
 	}
 }

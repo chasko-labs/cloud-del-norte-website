@@ -121,6 +121,61 @@
 	font-size: 0.72rem;
 }
 
+/* eyebrow warn variant — orange-tinted micro-label used during the
+   "retrying" stream-health state so the stall surfaces visually
+   without screaming red. Same scale + weight as default eyebrow */
+.cdn-pp__eyebrow--warn {
+	color: rgba(255, 153, 0, 0.85);
+}
+
+/* error message — replaces the track row when stream-health = "failed"
+   (auto-retry exhausted). Single line, ellipsis on overflow; the full
+   string is in the title attr so hover surfaces it. Soft red-orange
+   keeps it inside the brand palette (no harsh #f00) */
+.cdn-pp__error {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	min-width: 0;
+	max-width: 100%;
+	overflow: hidden;
+	line-height: 1.15;
+}
+
+.cdn-pp__error-text {
+	color: rgba(255, 138, 102, 0.92);
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+	font-size: 0.72rem;
+	font-weight: 600;
+}
+
+/* widen the pill when failed so the friendly Norte-voice error string
+   fits without aggressive truncation. Same cap as has-track:hover */
+.cdn-pp--failed,
+.cdn-pp--failed:hover {
+	max-width: min(560px, calc(100vw - 220px));
+}
+
+/* retry button — circular, station-secondary palette so it reads as
+   a recovery affordance distinct from the stop/skip primary actions.
+   Reuses the .cdn-pp__btn base; only border/bg/color differ */
+.cdn-pp__btn--retry {
+	border-color: rgba(255, 153, 0, 0.55);
+	background: rgba(255, 153, 0, 0.18);
+	color: rgba(255, 195, 130, 0.95);
+}
+
+.cdn-pp__btn--retry:hover {
+	background: rgba(255, 153, 0, 0.32);
+	border-color: rgba(255, 195, 130, 0.95);
+	box-shadow:
+		0 0 0 3px rgba(255, 153, 0, 0.22),
+		0 0 10px rgba(255, 153, 0, 0.3);
+}
+
 /* play / stop button — themed from the active station's primary so the icon,
    border, and hover ring all reflect the institution's identity. The "playing"
    stop variant fills with primary at full saturation; the "blocked" resume

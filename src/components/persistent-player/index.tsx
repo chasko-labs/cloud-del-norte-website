@@ -3,6 +3,7 @@
 
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslation } from "../../hooks/useTranslation";
 import { clearMediaSession, setMediaSession } from "../../lib/media-session";
 import {
 	clearPlayerState,
@@ -15,6 +16,19 @@ import { STREAMS } from "../../lib/streams-order";
 import "./styles.css";
 
 const POLL_MS = 30_000;
+/** how long an audio error/stall must persist before we surface UI to the user */
+const STREAM_ERROR_THRESHOLD_MS = 5_000;
+/** auto-retry delay after the first error trip — one shot, then surface to user */
+const STREAM_AUTO_RETRY_MS = 3_000;
+
+/**
+ * Stream error UI states. "ok" = healthy (or transient blip below threshold),
+ * "retrying" = first error trip surfaced + auto-retry in flight, "failed" =
+ * auto-retry exhausted, user must intervene. uam_radio (mexiserver:1124) is
+ * the chronic offender — 503s, SSL hiccups, mid-stream stalls — but the
+ * machinery here is station-agnostic so any flaky icecast endpoint benefits
+ */
+type StreamHealth = "ok" | "retrying" | "failed";
 
 function PersistentPlayerBar({
 	state,
@@ -25,9 +39,16 @@ function PersistentPlayerBar({
 	onStop: () => void;
 	onSkipStation: (direction: 1 | -1) => void;
 }) {
+	const { t } = useTranslation();
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const [blocked, setBlocked] = useState(false);
 	const [nowPlaying, setNowPlaying] = useState<string | null>(null);
+	const [streamHealth, setStreamHealth] = useState<StreamHealth>("ok");
+	// debounce + retry timers — refs so cleanup can clear them across renders
+	// without accidentally triggering re-renders or stale captures
+	const errorTimerRef = useRef<number | null>(null);
+	const retryTimerRef = useRef<number | null>(null);
+	const retriedRef = useRef<boolean>(false);
 
 	const streamDef = STREAMS.find((s) => s.key === state.stationKey) ?? null;
 
@@ -47,12 +68,105 @@ function PersistentPlayerBar({
 			.catch(() => {});
 	}, [streamDef]);
 
-	// reset nowPlaying when station changes — otherwise the previous station's
-	// track briefly leaks into the new station's lockscreen notification
+	// reset nowPlaying + stream health when station changes — otherwise the
+	// previous station's track briefly leaks into the new station's lockscreen
+	// notification, and a "failed" badge from a flaky uam_radio session would
+	// stick around when the user skips to a healthy station
 	// biome-ignore lint/correctness/useExhaustiveDependencies: state.stationKey is the reset trigger; effect body intentionally only resets state
 	useEffect(() => {
 		setNowPlaying(null);
+		setStreamHealth("ok");
+		retriedRef.current = false;
+		if (errorTimerRef.current !== null) {
+			window.clearTimeout(errorTimerRef.current);
+			errorTimerRef.current = null;
+		}
+		if (retryTimerRef.current !== null) {
+			window.clearTimeout(retryTimerRef.current);
+			retryTimerRef.current = null;
+		}
 	}, [state.stationKey]);
+
+	// stream health monitor — listens for error / stalled / abort on the audio
+	// element. Brief network blips fire and clear quickly, so we only surface
+	// UI when an error condition persists past STREAM_ERROR_THRESHOLD_MS. Once
+	// surfaced, we auto-retry once after STREAM_AUTO_RETRY_MS (reload the
+	// audio src — re-establishes the icecast connection) before falling back
+	// to user-facing failure UI. Healthy events (playing / canplay) reset the
+	// debounce timer so a transient stall that recovers on its own is silent.
+	//
+	// uam_radio at sp2.servidorrprivado.com:1124 / mexiserver:1124 is the
+	// motivating case: 503s + SSL hiccups are routine. Logic is station-agnostic
+	// so any flaky icecast endpoint benefits without per-station branching
+	useEffect(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+
+		const tripError = () => {
+			if (errorTimerRef.current !== null) return; // already counting down
+			errorTimerRef.current = window.setTimeout(() => {
+				errorTimerRef.current = null;
+				if (retriedRef.current) {
+					setStreamHealth("failed");
+					return;
+				}
+				// first trip — surface "retrying" + reload audio src after a brief delay
+				setStreamHealth("retrying");
+				retriedRef.current = true;
+				retryTimerRef.current = window.setTimeout(() => {
+					retryTimerRef.current = null;
+					try {
+						audio.load();
+						audio.play().catch(() => {
+							// retry attempt blocked / failed — surface failure UI immediately,
+							// don't wait for another threshold cycle
+							setStreamHealth("failed");
+						});
+					} catch {
+						setStreamHealth("failed");
+					}
+				}, STREAM_AUTO_RETRY_MS);
+			}, STREAM_ERROR_THRESHOLD_MS);
+		};
+
+		const clearError = () => {
+			if (errorTimerRef.current !== null) {
+				window.clearTimeout(errorTimerRef.current);
+				errorTimerRef.current = null;
+			}
+			// don't clear retryTimerRef — let the in-flight retry complete
+			setStreamHealth("ok");
+		};
+
+		audio.addEventListener("error", tripError);
+		audio.addEventListener("stalled", tripError);
+		audio.addEventListener("abort", tripError);
+		audio.addEventListener("playing", clearError);
+		audio.addEventListener("canplay", clearError);
+
+		return () => {
+			audio.removeEventListener("error", tripError);
+			audio.removeEventListener("stalled", tripError);
+			audio.removeEventListener("abort", tripError);
+			audio.removeEventListener("playing", clearError);
+			audio.removeEventListener("canplay", clearError);
+		};
+	}, []);
+
+	// manual retry — user-triggered escape hatch when auto-retry didn't recover.
+	// Resets the retried flag so a fresh failure cycle gets one more auto-retry
+	const manualRetry = useCallback(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+		retriedRef.current = false;
+		setStreamHealth("ok");
+		try {
+			audio.load();
+			audio.play().catch(() => setBlocked(true));
+		} catch {
+			setStreamHealth("failed");
+		}
+	}, []);
 
 	useEffect(() => {
 		const audio = audioRef.current;
@@ -161,9 +275,20 @@ function PersistentPlayerBar({
 			} as React.CSSProperties)
 		: undefined;
 
+	// surface state derivations — keeps JSX readable and centralizes the
+	// "what gets shown in the eyebrow / track row" decision tree:
+	//   1. failed   → red error message + retry button (auto-retry exhausted)
+	//   2. retrying → soft "retrying" hint, no retry button (auto-retry in flight)
+	//   3. track    → "now playing" eyebrow + nowPlaying string
+	//   4. neither  → "streaming on clouddelnorte.org" fallback eyebrow
+	//                 (matches the lockscreen artist line set in media-session.ts)
+	const showFailedUI = streamHealth === "failed";
+	const showRetryingUI = streamHealth === "retrying";
+	const fallbackSubtitle = t("persistentPlayer.streamingFallback");
+
 	return (
 		<section
-			className={`cdn-pp${nowPlaying ? " cdn-pp--has-track" : ""}`}
+			className={`cdn-pp${nowPlaying ? " cdn-pp--has-track" : ""}${showFailedUI ? " cdn-pp--failed" : ""}${showRetryingUI ? " cdn-pp--retrying" : ""}`}
 			aria-label="now playing"
 			data-station={state.stationKey}
 			style={stationStyle}
@@ -182,15 +307,47 @@ function PersistentPlayerBar({
 			</span>
 			<span className="cdn-pp__meta">
 				<span className="cdn-pp__label">{state.stationLabel}</span>
-				{nowPlaying && (
+				{showFailedUI ? (
+					<span
+						className="cdn-pp__error"
+						role="status"
+						aria-live="polite"
+						title={t("persistentPlayer.streamErrorPersistent")}
+					>
+						<span className="cdn-pp__error-text">
+							{t("persistentPlayer.streamErrorPersistent")}
+						</span>
+					</span>
+				) : showRetryingUI ? (
+					<span className="cdn-pp__track" role="status" aria-live="polite">
+						<span className="cdn-pp__eyebrow cdn-pp__eyebrow--warn" aria-hidden="true">
+							{t("persistentPlayer.streamErrorRetrying")}
+						</span>
+					</span>
+				) : nowPlaying ? (
 					<span className="cdn-pp__track" aria-live="polite" title={nowPlaying}>
 						<span className="cdn-pp__eyebrow" aria-hidden="true">
 							now playing
 						</span>
 						<span className="cdn-pp__track-text">{nowPlaying}</span>
 					</span>
+				) : (
+					<span className="cdn-pp__track" aria-hidden="true">
+						<span className="cdn-pp__eyebrow">{fallbackSubtitle}</span>
+					</span>
 				)}
 			</span>
+			{showFailedUI && (
+				<button
+					type="button"
+					className="cdn-pp__btn cdn-pp__btn--retry"
+					onClick={manualRetry}
+					aria-label={t("persistentPlayer.streamErrorRetryButton")}
+					title={t("persistentPlayer.streamErrorRetryButton")}
+				>
+					<span aria-hidden="true">↻</span>
+				</button>
+			)}
 			<button
 				type="button"
 				className="cdn-pp__btn cdn-pp__btn--skip"

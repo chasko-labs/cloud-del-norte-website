@@ -132,6 +132,15 @@ ati = render(180)
 ati_path = f"{PUBLIC}/apple-touch-icon.png"
 ati.save(ati_path, format="PNG", optimize=True)
 print(f"wrote {ati_path}")
+
+# apple-touch-icon-512: 512x512 png — high-res variant fed into MediaSession
+# artwork[] for Android lockscreen full-screen art + iOS 16+ tap-to-expand.
+# Same star/halo geometry, just a larger raster so the OS has source data
+# above the 180px lockscreen-thumbnail tier
+ati512 = render(512)
+ati512_path = f"{PUBLIC}/apple-touch-icon-512.png"
+ati512.save(ati512_path, format="PNG", optimize=True)
+print(f"wrote {ati512_path}")
 PY
 
 echo "favicon raster build complete"
