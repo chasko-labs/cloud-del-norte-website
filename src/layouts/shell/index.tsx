@@ -541,22 +541,10 @@ function ShellContent({
 					toolsToggle: t("shell.openHelpPanel"),
 				}}
 			/>
-			{/* Volunteer button — replaces the redundant ContentLayout Info
-			    popover (was inline next to the page-title h1 we hide). Renders
-			    only when a help panel is configured. Positioned in the
-			    breadcrumbs strip area via CSS, right-aligned under "Feed"/
-			    page-name. Click opens the tools drawer via the existing
-			    handler. */}
-			{tools && !toolsHide ? (
-				<button
-					type="button"
-					className="cdn-volunteer-btn"
-					aria-label={t("shell.openHelpPanel")}
-					onClick={() => handleToolsChange({ detail: { open: !toolsOpen } })}
-				>
-					Volunteer
-				</button>
-			) : null}
+			{/* Cloudscape's awsui_info_ popover anchor ("Info" pill next to the
+			    page title) is repurposed as the Volunteer link via CSS — see
+			    cdn-glass-streaks.css. No floating React button: Bryan eyes-on
+			    v0.0.0046 found the floating pill landed in "no-mansland". */}
 			<Footer />
 			<PersistentPlayer />
 		</>
