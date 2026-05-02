@@ -483,46 +483,33 @@
 	background-attachment: fixed, fixed, fixed !important;
 }
 
-/* ContentLayout header strip — horizon streak at bottom edge.
-   Saturated amber/violet gradient line gives the page header band a
-   visual shoulder separating it from the feed cards below.
-   Targets the same selector hierarchy as the bg rule above. */
+/* ContentLayout header strip — horizon streak via border-image.
+   DO NOT override position on awsui_background_ — Cloudscape sets it to
+   absolute so the band paints BEHIND its sibling .awsui_header_ holding
+   the page title. Setting position: relative pushes the band into the flow
+   and shoves the title off-screen.
+
+   border-image lets a gradient render as a bottom border without changing
+   the box-model height or stacking context. The 0 0 2px 0 slice paints
+   only the bottom edge. */
 :root:not(.awsui-dark-mode)
 	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"]:not(#\9):not(#\10),
+	> [class*="awsui_background_"]:not(#\9):not(#\10) {
+	border-bottom: 2px solid transparent !important;
+	border-image-source: var(--cdn-streak-h-light) !important;
+	border-image-slice: 0 0 1 0 !important;
+	border-image-width: 0 0 2px 0 !important;
+	border-image-repeat: stretch !important;
+}
+
 .awsui-dark-mode
 	[class*="awsui_has-header_"]
 	> [class*="awsui_background_"]:not(#\9):not(#\10) {
-	position: relative;
-}
-
-:root:not(.awsui-dark-mode)
-	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"]:not(#\9):not(#\10)::after,
-.awsui-dark-mode
-	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"]:not(#\9):not(#\10)::after {
-	content: "";
-	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 0;
-	height: 2px;
-	border-radius: 1px;
-	pointer-events: none;
-	opacity: 0.7;
-}
-
-:root:not(.awsui-dark-mode)
-	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"]:not(#\9):not(#\10)::after {
-	background: var(--cdn-streak-h-light);
-}
-
-.awsui-dark-mode
-	[class*="awsui_has-header_"]
-	> [class*="awsui_background_"]:not(#\9):not(#\10)::after {
-	background: var(--cdn-streak-h-dark);
+	border-bottom: 2px solid transparent !important;
+	border-image-source: var(--cdn-streak-h-dark) !important;
+	border-image-slice: 0 0 1 0 !important;
+	border-image-width: 0 0 2px 0 !important;
+	border-image-repeat: stretch !important;
 }
 
 /* Bottom streak — sits beneath the breadcrumbs strip as a horizon line */
