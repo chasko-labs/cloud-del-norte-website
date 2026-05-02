@@ -36,13 +36,17 @@
 
 /* Light-mode alpha override — lower values = MORE translucency = MORE wallpaper visible.
    Gypsum-sands is intrinsically low-contrast (warm dune tones against cream UI),
-   so even 0.35 cream tint + blur made dunes visually disappear (eye reads as
-   uniform cream-behind-cream). Drop further AND remove blur on panels —
-   dune texture survives only when ridges aren't blurred away.
-   --cdn-wallpaper-blur-panel: 0 here disables the blur via the var fallback. */
+   so atmospheric panels need aggressive transparency for the dunes to read.
+   Blur is ZERO across all tiers — Safari has a sub-pixel rendering bug where
+   text inside a backdrop-filtered element renders "heavily blurred"
+   (operator-reported on feed h1, info link, KruxPlayer station name + skip
+   button at version 0.0.0017). Eliminate the blur entirely; rely on alpha
+   tint alone for the atmospheric panel feel. */
 :root:not(.awsui-dark-mode) {
 	--cdn-wallpaper-alpha-panel: 0.20;
 	--cdn-wallpaper-alpha-header: 0.40;
 	--cdn-wallpaper-alpha-content: 0.30;
 	--cdn-wallpaper-blur-panel: 0px;
+	--cdn-wallpaper-blur-header: 0px;
+	--cdn-wallpaper-blur-content: 0px;
 }
