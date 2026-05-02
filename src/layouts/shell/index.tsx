@@ -388,6 +388,17 @@ function ShellContent({
 		return () => window.removeEventListener("resize", handleResize);
 	}, []);
 
+	// Tools-panel open/close → body class so the Volunteer pill (the
+	// repurposed Cloudscape Info popover anchor) can fade out when the
+	// help drawer is open and fade back in when it's closed.
+	useEffect(() => {
+		if (typeof document === "undefined") return;
+		document.body.classList.toggle("cdn-tools-open", !!toolsOpen);
+		return () => {
+			document.body.classList.remove("cdn-tools-open");
+		};
+	}, [toolsOpen]);
+
 	useEffect(() => {
 		document.documentElement.lang = locale === "mx" ? "es" : "en";
 		if (pageTitle) {

@@ -921,6 +921,38 @@
 	}
 }
 
+/* Volunteer pill fades out when the tools (help) panel is open — Bryan
+   v0.0.0056: clicking the pill opens the panel; let the pill recede so it
+   doesn't compete for attention with the open drawer. Fade back in when
+   the drawer closes (handled by body class toggling in shell/index.tsx). */
+body.cdn-tools-open
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]:not(#\9):not(#\10) {
+	opacity: 0;
+	pointer-events: none;
+	transform: scale(0.96);
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]:not(#\9):not(#\10) {
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Mobile: hide the Volunteer pill entirely so it doesn't crowd the music
+   player on narrow viewports. The right tools-toggle (i) icon stays
+   accessible at the right edge as the help-panel entry point on mobile. */
+@media (max-width: 600px) {
+	[class*="awsui_header-wrapper_"]
+		[class*="awsui_info_"]:not(#\9):not(#\10) {
+		display: none !important;
+	}
+}
+
 /* ContentLayout hero-strip background — collapse on pages with breadcrumbs.
    Bryan eyes-on (roadmap, v0.0.0039): the cream-tinted ctl-header band sits
    above page content and reads as "a style element on top of content"
