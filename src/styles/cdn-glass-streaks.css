@@ -345,26 +345,15 @@
    awsui_breadcrumbs_ > awsui_breadcrumb_ items. Target the container.
    Double :not(#\9) increases selector specificity past cdn-atmospheric.css
    transparent override (which uses single :not(#\9)).
-   Alpha pulled from --cdn-glass-bg-breadcrumbs (~0.18) — barely there,
-   shadow softened to match: a faint hairline above + below, no card-style halo. */
-:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg-breadcrumbs) !important;
-	-webkit-backdrop-filter: blur(6px) saturate(1.05) !important;
-	backdrop-filter: blur(6px) saturate(1.05) !important;
-	box-shadow:
-		0 1px 0 rgba(139, 90, 43, 0.14) inset,
-		0 -1px 0 rgba(139, 90, 43, 0.1) inset !important;
-	position: relative;
-}
-
+   Bryan eyes-on (v0.0.0028): the inset hairline shadows above + below read
+   as visual "flairs" against the now-correct page header. Stripped — just
+   the low-alpha bg + faint blur, no decoration. */
+:root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-breadcrumbs) !important;
 	-webkit-backdrop-filter: blur(6px) saturate(1.05) !important;
 	backdrop-filter: blur(6px) saturate(1.05) !important;
-	box-shadow:
-		0 1px 0 rgba(144, 96, 240, 0.18) inset,
-		0 -1px 0 rgba(144, 96, 240, 0.14) inset !important;
-	position: relative;
+	box-shadow: none !important;
 }
 
 /* ==========================================================================

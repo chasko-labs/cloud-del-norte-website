@@ -148,6 +148,15 @@ uniform float timeOfDay;
 uniform vec3 sunDir;
 uniform float fluxLevel;
 
+// 2D value-noise for cloud-shadow drift. Same hash used in vertex shader.
+float fragHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float fragNoise(vec2 p) {
+  vec2 i = floor(p); vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(fragHash(i), fragHash(i+vec2(1.0,0.0)), u.x),
+             mix(fragHash(i+vec2(0.0,1.0)), fragHash(i+vec2(1.0,1.0)), u.x), u.y);
+}
+
 void main(void) {
   // Pass 4 — restore visible topology. Passes 2-3 chased the no-yellow and
   // no-black guards so hard that every layer (sky horizon, body bg, peak,
@@ -209,6 +218,34 @@ void main(void) {
                + sunTintDusk * wDusk + sunTintMorning * wMorning;
   // Apply tint scaled by lambert so peaks pick up the sun colour, shadows don't.
   vec3 lighting = mix(vec3(1.0), sunTint, lambert) * lit;
+
+  // Liveness pass 2 (2026-05-02) — cloud-shadow drift + crest specular.
+  //
+  // Cloud shadows: 2-octave value noise sampled in world UV, scrolling slowly
+  // across the dunes. Output is a [0..1] mask where lower values = under a
+  // cloud. Multiplies into lighting to gently darken (max ~12% reduction).
+  // Drift speed 0.008 plane-units/sec matches the ambient breath we want —
+  // perceptible over ~10s, never frenetic. Two octaves keep edges soft.
+  vec2 cloudUV = vUV * vec2(60.0, 40.0); // back to plane coordinates
+  float cloudDriftX = time * 0.008;
+  float cloudDriftZ = time * 0.005;
+  float cloud = fragNoise(cloudUV * 0.07 + vec2(cloudDriftX, cloudDriftZ));
+  cloud += fragNoise(cloudUV * 0.16 + vec2(cloudDriftX * 1.3, cloudDriftZ * 0.9)) * 0.5;
+  cloud /= 1.5;
+  // Soft mask: only the darker half darkens the surface, peaks are unaffected.
+  float cloudShadow = smoothstep(0.35, 0.75, cloud);
+  lighting *= mix(0.88, 1.0, cloudShadow);
+
+  // Crest specular: tight glint where sun direction aligns with surface normal
+  // AND surface is near-horizontal (ridge top). Blinn-style halfway approx
+  // skipped (no view dir uniform) — instead use lambert ^ N as a sharp
+  // power curve, gated by ridge-flatness via normal.y. Result: only the
+  // sunlit crests gain a small warm highlight, leaving valleys/sides intact.
+  float ridgeFlatness = max(normalize(vNormal).y, 0.0);
+  float crestGlint = pow(lambert, 24.0) * pow(ridgeFlatness, 6.0);
+  // Warm gypsum-crystal tint — pale gold, never pure white.
+  vec3 crestTint = vec3(1.0, 0.96, 0.86);
+  lighting += crestTint * crestGlint * 0.22;
 
   // Subtle GPU-noise paper-grain to harmonise with the production
   // repeating-linear-gradient(#8b5a2b05) overlay on light mode.
