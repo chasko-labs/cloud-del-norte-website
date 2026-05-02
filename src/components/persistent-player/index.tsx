@@ -153,6 +153,30 @@ function PersistentPlayerBar({
 		};
 	}, []);
 
+	// stream-playing body class — gates audio-reactive UI (liora head sway,
+	// LED bands, dark-mode bursts) so the visualizers freeze when the user
+	// stops the stream. --cdn-bass / --cdn-mid / --cdn-treble naturally drop
+	// to silence on pause but the keyframes still tick; a body-class toggle
+	// flips animation-play-state to paused for a clean stop
+	useEffect(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+		const onPlay = () => document.body.classList.add("cdn-stream-playing");
+		const onStopEvt = () =>
+			document.body.classList.remove("cdn-stream-playing");
+		audio.addEventListener("playing", onPlay);
+		audio.addEventListener("pause", onStopEvt);
+		audio.addEventListener("ended", onStopEvt);
+		audio.addEventListener("emptied", onStopEvt);
+		return () => {
+			audio.removeEventListener("playing", onPlay);
+			audio.removeEventListener("pause", onStopEvt);
+			audio.removeEventListener("ended", onStopEvt);
+			audio.removeEventListener("emptied", onStopEvt);
+			document.body.classList.remove("cdn-stream-playing");
+		};
+	}, []);
+
 	// manual retry — user-triggered escape hatch when auto-retry didn't recover.
 	// Resets the retried flag so a fresh failure cycle gets one more auto-retry
 	const manualRetry = useCallback(() => {
