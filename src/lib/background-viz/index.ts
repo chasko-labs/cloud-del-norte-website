@@ -92,6 +92,11 @@ export function mount(): () => void {
 			// CORS or AudioContext failure — loop still starts, bins will be zeros
 		}
 		startLoop();
+		// Re-tint dune scene fog from the new station's primary colour. The
+		// CSS custom prop --station-primary-rgb is set by the persistent-
+		// player on station change and is live by the time this event fires
+		// (player sets style before dispatch). One-shot read, NOT per frame.
+		duneHandle?.refreshStationTint();
 	}
 
 	function onStop(): void {
@@ -190,6 +195,12 @@ export function mount(): () => void {
 			);
 			return;
 		}
+
+		// Pick up the currently-active station primary colour for fog tint
+		// on first paint. The Atmosphere constructor already does this once
+		// internally, but remount-after-theme-toggle paths benefit from the
+		// explicit call here too.
+		duneHandle.refreshStationTint();
 
 		setStaticCanvasVisible(false);
 		window.addEventListener("resize", onDuneResize);

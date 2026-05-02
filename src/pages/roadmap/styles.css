@@ -73,7 +73,11 @@
 }
 
 .cdn-roadmap-column[data-column="todo"] .cdn-roadmap-column-header {
-	background: linear-gradient(135deg, #1a4a8a 0%, #2a90d0 100%);
+	/* deep teal → turquoise — was royal blue (#1a4a8a → #2a90d0), Bryan
+	   v0.0.0050 design QA flagged the blue as an off-brand leak. KSFR/KUNM
+	   institutional turquoise (#007a86) reads in palette and stays distinct
+	   from idea (amber), inProgress (orange), inReview (violet), done (green). */
+	background: linear-gradient(135deg, #003e44 0%, #007a86 100%);
 }
 
 .cdn-roadmap-column[data-column="inProgress"] .cdn-roadmap-column-header {
