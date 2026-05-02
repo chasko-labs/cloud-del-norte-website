@@ -437,20 +437,27 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	max-height: calc(100vh - 56px);
 }
 
-/* Light mode chrome — defanged from opaque-cream to TRANSPARENT.
-   Earlier this set a hard #ede5d4 to mask Cloudscape's default white. Now
-   that wallpaper-through-chrome is the design, these surfaces must reveal
-   the sand-dunes canvas. The cdn-atmospheric.css translucent rules apply
-   the panel-tier alpha tint where appropriate (inner nav drawer); the rules
-   below set the OUTER chrome to fully transparent so the canvas shows.
+/* Outer Cloudscape chrome — defanged from opaque to TRANSPARENT in both modes.
+   Light: was #ede5d4 to mask Cloudscape's default white.
+   Dark:  Cloudscape applies its own dark layout-bg by default; we want the
+          el-paso-nights starfield + music-viz canvas to show through here.
    These rules previously won source-order against cdn-atmospheric.css's
-   transparent rules at same specificity → kept the cream, blocked dunes. */
+   transparent rules at same specificity → kept the chrome opaque, blocked
+   wallpaper. Both modes flipped to transparent. The cdn-atmospheric.css
+   translucent rules apply panel-tier alpha tint where appropriate (inner
+   nav drawer + right tools panel) so text stays legible. */
 :root:not(.awsui-dark-mode) [class*="awsui_scrolling-background"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="navigation-container"],
 :root:not(.awsui-dark-mode) [class*="side-navigation"],
 :root:not(.awsui-dark-mode) [class*="navigation__drawer"],
-:root:not(.awsui-dark-mode) [class*="awsui_tools-container"] {
+:root:not(.awsui-dark-mode) [class*="awsui_tools-container"],
+.awsui-dark-mode [class*="awsui_scrolling-background"]:not(#\9),
+.awsui-dark-mode [class*="awsui_breadcrumbs"]:not(#\9),
+.awsui-dark-mode [class*="navigation-container"],
+.awsui-dark-mode [class*="side-navigation"],
+.awsui-dark-mode [class*="navigation__drawer"],
+.awsui-dark-mode [class*="awsui_tools-container"] {
 	background: transparent !important;
 	background-color: transparent !important;
 }
