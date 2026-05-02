@@ -582,10 +582,12 @@ const RiftRewindDashboard: React.FC = () => {
 				}
 			>
 				<SpaceBetween direction="vertical" size="m">
+					{/* anchor for left-nav `#overview` link */}
+					<div id="overview" />
 					<Box variant="p">{t("learning.api.restDescription")}</Box>
 
 					<ColumnLayout columns={2} variant="text-grid">
-						<Container variant="stacked">
+						<Container variant="stacked" id="uniform-interface">
 							<Header variant="h3">
 								{t("learning.api.uniformInterfaceTitle")}
 							</Header>
@@ -605,31 +607,31 @@ const RiftRewindDashboard: React.FC = () => {
 							</Box>
 						</Container>
 
-						<Container variant="stacked">
+						<Container variant="stacked" id="client-server">
 							<Header variant="h3">
 								{t("learning.api.clientServerTitle")}
 							</Header>
 							<Box variant="p">{t("learning.api.clientServerDesc")}</Box>
 						</Container>
 
-						<Container variant="stacked">
+						<Container variant="stacked" id="stateless">
 							<Header variant="h3">{t("learning.api.statelessTitle")}</Header>
 							<Box variant="p">{t("learning.api.statelessDesc")}</Box>
 						</Container>
 
-						<Container variant="stacked">
+						<Container variant="stacked" id="cacheable">
 							<Header variant="h3">{t("learning.api.cacheableTitle")}</Header>
 							<Box variant="p">{t("learning.api.cacheableDesc")}</Box>
 						</Container>
 
-						<Container variant="stacked">
+						<Container variant="stacked" id="layered-system">
 							<Header variant="h3">
 								{t("learning.api.layeredSystemTitle")}
 							</Header>
 							<Box variant="p">{t("learning.api.layeredSystemDesc")}</Box>
 						</Container>
 
-						<Container variant="stacked">
+						<Container variant="stacked" id="code-on-demand">
 							<Header variant="h3">
 								{t("learning.api.codeOnDemandTitle")}
 							</Header>

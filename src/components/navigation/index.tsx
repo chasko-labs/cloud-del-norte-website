@@ -91,6 +91,38 @@ const COUNTRY_NAME: Record<string, string> = {
 	CO: "Colombia",
 	PE: "Peru",
 	VE: "Venezuela",
+	PK: "Pakistan",
+};
+
+// Native-language welcome by visitor country. Missing entries fall back to
+// the locale-default greeting ("welcome" for us, "qué onda" for mx).
+const GREETING_BY_COUNTRY: Record<string, string> = {
+	MX: "bienvenido",
+	ES: "bienvenido",
+	AR: "bienvenido",
+	CL: "bienvenido",
+	CO: "bienvenido",
+	PE: "bienvenido",
+	VE: "bienvenido",
+	BR: "olá",
+	FR: "bonjour",
+	DE: "hallo",
+	IT: "ciao",
+	NL: "hallo",
+	RU: "privyet",
+	UA: "pryvit",
+	TR: "merhaba",
+	IL: "shalom",
+	JP: "konnichiwa",
+	KR: "annyeong",
+	CN: "ni hao",
+	TH: "sawasdee",
+	IN: "namaste",
+	PK: "salaam",
+	SA: "salaam",
+	AE: "salaam",
+	EG: "salaam",
+	GR: "yassas",
 };
 
 interface VisitorInfo {
@@ -147,11 +179,20 @@ async function loadVisitorInfo(): Promise<VisitorInfo | null> {
 }
 
 function LioraFrame() {
+	const { t, locale } = useTranslation();
 	const deviceInfo = useMemo(() => detectDeviceInfo(), []);
 	const [stickyZoomed, setStickyZoomed] = useState(false);
 	const [stickyKey, setStickyKey] = useState(0);
 	const [sticky2Fallen, setSticky2Fallen] = useState(false);
 	const [visitor, setVisitor] = useState<VisitorInfo | null>(null);
+
+	// Locale=mx forces Norte greeting regardless of detected country.
+	// Otherwise pick a country-native greeting; missing entries → "welcome".
+	const countryCode = visitor?.country ?? "";
+	const greetingPrefix =
+		locale === "mx"
+			? t("liora.welcomeGreeting")
+			: (GREETING_BY_COUNTRY[countryCode] ?? t("liora.welcomeGreeting"));
 
 	useEffect(() => {
 		let cancelled = false;
@@ -279,27 +320,29 @@ function LioraFrame() {
 						setStickyZoomed((v) => !v);
 						setStickyKey((k) => k + 1);
 					}}
+					aria-expanded={stickyZoomed}
 					aria-label={
 						stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
 					}
 				>
 					<span className="liora-stickynote-line liora-stickynote-line-1">
-						non load
+						{t("liora.stickynoteLine1")}
 					</span>
 					<span className="liora-stickynote-line liora-stickynote-line-2">
-						bearing
+						{t("liora.stickynoteLine2")}
 					</span>
 					<span className="liora-stickynote-sig">- ^.^</span>
 				</button>
-				{/* biome-ignore lint/a11y/useKeyWithClickEvents: decorative note, not keyboard-navigable */}
-				<div
+				<button
+					type="button"
 					className={`liora-stickynote-2${sticky2Fallen ? " liora-stickynote-2--fallen" : ""}`}
-					role="note"
-					aria-label={visitor ? `Welcome, ${visitor.greeting}.` : "Welcome"}
+					aria-label={
+						visitor ? `${greetingPrefix}, ${visitor.greeting}.` : greetingPrefix
+					}
 					onClick={() => setSticky2Fallen(true)}
 				>
 					<span className="liora-stickynote-2-line">
-						welcome, {visitor?.greeting ?? ""}
+						{greetingPrefix}, {visitor?.greeting ?? ""}
 					</span>
 					{visitor?.flag ? (
 						<span className="liora-stickynote-2-flag" aria-hidden="true">
@@ -309,7 +352,7 @@ function LioraFrame() {
 					{visitor?.ip ? (
 						<span className="liora-stickynote-2-ip">{visitor.ip}</span>
 					) : null}
-				</div>
+				</button>
 			</div>
 		</div>
 	);
@@ -382,11 +425,11 @@ export default function Navigation() {
 					href: "/learning/api/index.html",
 					defaultExpanded: currentPath.startsWith("/learning"),
 					items: [
-						{
-							type: "link",
-							text: t("navigation.restOverview"),
-							href: "/learning/api/index.html#overview",
-						},
+						// Submenu hashes match Container id="" anchors in
+						// src/pages/learning/api/RiftRewindDashboard.tsx.
+						// Removed nav links to #rest-overview / #cheat-sheet /
+						// #how-it-works / #resources — no Container on the page
+						// to scroll to. Re-add when content lands.
 						{
 							type: "link",
 							text: t("navigation.uniformInterface"),
@@ -416,21 +459,6 @@ export default function Navigation() {
 							type: "link",
 							text: t("navigation.codeOnDemand"),
 							href: "/learning/api/index.html#code-on-demand",
-						},
-						{
-							type: "link",
-							text: t("navigation.cheatSheet"),
-							href: "/learning/api/index.html#cheat-sheet",
-						},
-						{
-							type: "link",
-							text: t("navigation.howItWorks"),
-							href: "/learning/api/index.html#how-it-works",
-						},
-						{
-							type: "link",
-							text: t("navigation.projectResources"),
-							href: "/learning/api/index.html#resources",
 						},
 					],
 				},

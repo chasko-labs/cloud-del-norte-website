@@ -7,7 +7,6 @@ import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
 import Form from "@cloudscape-design/components/form";
 import FormField from "@cloudscape-design/components/form-field";
-import Input from "@cloudscape-design/components/input";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import type React from "react";
@@ -20,6 +19,7 @@ import {
 	resendConfirmationCode,
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
+import CodeInput from "../_layout/CodeInput";
 
 /* 120s gives users time to switch to authenticator/email apps and back
    without missing the resend window — was 30s, too short for app-switch UX */
@@ -36,6 +36,9 @@ function VerifyForm() {
 	const [codeError, setCodeError] = useState("");
 	const [formError, setFormError] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [submitState, setSubmitState] = useState<
+		"idle" | "verifying" | "success" | "failed"
+	>("idle");
 	const [done, setDone] = useState(false);
 	const [cooldown, setCooldown] = useState(0);
 	const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -71,9 +74,11 @@ function VerifyForm() {
 			return;
 		}
 		setLoading(true);
+		setSubmitState("verifying");
 		try {
 			await confirmSignUp(email, code.trim());
-			setDone(true);
+			setSubmitState("success");
+			window.setTimeout(() => setDone(true), 500);
 		} catch (err) {
 			if (err instanceof AuthError) {
 				if (err.code === "CodeMismatchException") {
@@ -88,7 +93,9 @@ function VerifyForm() {
 			} else {
 				setFormError(t("auth.verify.genericError"));
 			}
+			setSubmitState("failed");
 			setLoading(false);
+			window.setTimeout(() => setSubmitState("idle"), 400);
 		}
 	}
 
@@ -125,9 +132,23 @@ function VerifyForm() {
 			>
 				<Form
 					actions={
-						<Button formAction="submit" variant="primary" loading={loading}>
-							{t("auth.verify.confirmButton")}
-						</Button>
+						<span className={`cdn-auth-submit-state ${submitState}`}>
+							<Button
+								formAction="submit"
+								variant="primary"
+								loading={loading}
+								disabled={code.replace(/\D/g, "").length < 6}
+							>
+								{submitState === "verifying"
+									? "Verifying with Cognito"
+									: t("auth.verify.confirmButton")}
+							</Button>
+							{submitState === "success" && (
+								<span className="cdn-auth-success-check" aria-hidden="true">
+									✓
+								</span>
+							)}
+						</span>
 					}
 					errorText={formError || undefined}
 				>
@@ -141,13 +162,7 @@ function VerifyForm() {
 							label={t("auth.verify.codeLabel")}
 							errorText={codeError || undefined}
 						>
-							<Input
-								value={code}
-								onChange={({ detail }) => setCode(detail.value)}
-								placeholder={t("auth.verify.codePlaceholder")}
-								inputMode="numeric"
-								autoFocus
-							/>
+							<CodeInput value={code} onChange={setCode} autoFocus />
 						</FormField>
 						<Link
 							onFollow={() => {
@@ -171,7 +186,7 @@ function VerifyForm() {
 
 export default function App() {
 	return (
-		<AuthLayout>
+		<AuthLayout pageContext="Verify your email">
 			<VerifyForm />
 		</AuthLayout>
 	);

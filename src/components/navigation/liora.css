@@ -2626,6 +2626,14 @@
    sticky note 1's position on the left. both notes live in .liora-notes-row
    (flex row) so they appear side by side without stacking vertically. */
 .liora-stickynote-2 {
+	/* button reset — element promoted from div to <button> for keyboard
+	   activation; strip default button chrome so the sticky-note look stays
+	   identical (background gradient + handwritten text + tilt). */
+	appearance: none;
+	border: 0;
+	font: inherit;
+	text-align: inherit;
+
 	position: relative;
 	margin-right: 18px;
 	padding: 3px 6px 4px;

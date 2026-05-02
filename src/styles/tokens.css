@@ -371,7 +371,8 @@
 	}
 }
 
-.cdn-card:hover::before {
+.cdn-card:hover::before,
+.cdn-card:focus-within::before {
 	opacity: 1;
 	background: linear-gradient(
 		90deg,
@@ -388,15 +389,17 @@
    TASK 5 — Hover lift + glow, reduced-motion safety
    ========================================================================== */
 
-.cdn-card:hover {
+.cdn-card:hover,
+.cdn-card:focus-within {
 	border-color: rgba(144, 96, 240, 0.28);
 	box-shadow: var(--cdn-shadow-glow);
 	transform: translateY(-3px);
 	filter: brightness(1.02);
 }
 
-/* Light mode hover — warm amber lift instead of purple glow */
-:root:not(.awsui-dark-mode) .cdn-card:hover {
+/* Light mode hover/focus — warm amber lift instead of purple glow */
+:root:not(.awsui-dark-mode) .cdn-card:hover,
+:root:not(.awsui-dark-mode) .cdn-card:focus-within {
 	border-color: rgba(139, 90, 43, 0.32);
 	box-shadow: var(--cdn-shadow-card-hover-light);
 }

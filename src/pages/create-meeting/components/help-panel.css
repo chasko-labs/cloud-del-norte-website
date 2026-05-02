@@ -284,7 +284,8 @@
 	cursor: pointer;
 }
 
-.hp-social-pill:hover {
+.hp-social-pill:hover,
+a:focus-visible > .hp-social-pill {
 	background: rgba(255, 153, 0, 0.12);
 	border-color: var(--cdn-aws-orange);
 	color: var(--cdn-amber);
@@ -304,7 +305,8 @@
 	color: var(--cdn-amber);
 }
 
-.hp-social-pill--brand:hover {
+.hp-social-pill--brand:hover,
+a:focus-visible > .hp-social-pill--brand {
 	background: linear-gradient(
 		135deg,
 		rgba(255, 153, 0, 0.32) 0%,
@@ -319,7 +321,8 @@
 	color: var(--cdn-lavender);
 }
 
-.awsui-dark-mode .hp-social-pill:hover {
+.awsui-dark-mode .hp-social-pill:hover,
+.awsui-dark-mode a:focus-visible > .hp-social-pill {
 	background: rgba(144, 96, 240, 0.18);
 	border-color: var(--cdn-violet);
 	color: var(--cdn-white);
@@ -336,7 +339,8 @@
 	color: var(--cdn-white);
 }
 
-.awsui-dark-mode .hp-social-pill--brand:hover {
+.awsui-dark-mode .hp-social-pill--brand:hover,
+.awsui-dark-mode a:focus-visible > .hp-social-pill--brand {
 	background: linear-gradient(
 		135deg,
 		rgba(144, 96, 240, 0.42) 0%,

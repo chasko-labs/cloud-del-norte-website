@@ -10,16 +10,25 @@
    main.tsx — keeps the four entry points lean, single source of truth for
    the dependency, and any new auth route pulls it for free via AuthLayout.
 
+   cdn-glass-streaks.css ships the .cdn-glass plate primitive used on the
+   auth card (composed in index.tsx) plus streak gradient tokens reused by
+   the page-header underline animation.
+
    Dark-mode rules in tokens.css and shell/styles.css are untouched — the
    selectors below are scoped to :root:not(.awsui-dark-mode).
    ========================================================================== */
 
 @import "../../../styles/tokens.css";
+@import "../../../styles/cdn-glass-streaks.css";
 
 /* Constrain the auth form column. ContentLayout w/ contentType="form" already
    centers its content column — no explicit margin: 0 auto needed (would
    double-center, fighting Cloudscape's max-width logic). 480px is the tighter
-   form width target — single-column login/signup reads better narrow. */
+   form width target — single-column login/signup reads better narrow.
+
+   .cdn-glass treatment composed in index.tsx — picks up 0.55-alpha cream bg,
+   1.5px warm border, layered shadow, top-edge gradient streak, backdrop blur.
+   Hover lift inherited from .cdn-glass. */
 .cdn-auth-card {
 	max-width: 480px;
 }
@@ -29,6 +38,144 @@
 [class*="awsui_content-layout"] > .cdn-auth-card {
 	margin-top: 24px;
 	margin-bottom: 24px;
+}
+
+/* ── Page header band — Cinzel wordmark + per-page context ───────────────────
+   Rendered above .cdn-auth-card. Wordmark sits smaller than the breadcrumb h1
+   (~1.4rem clamp) so it reads as a host signature rather than competing with
+   the form heading inside the card. Context line below it is the per-page
+   "what are you doing here" cue — set in the component via pageContext prop. */
+.cdn-auth-page-header {
+	max-width: 480px;
+	margin: 0 auto 16px;
+	padding: 24px 8px 12px;
+	text-align: center;
+	position: relative;
+}
+
+.cdn-auth-wordmark {
+	font-family: "Cinzel", Georgia, serif;
+	font-weight: 700;
+	font-size: clamp(1.25rem, 1.8vw, 1.45rem);
+	letter-spacing: 0.08em;
+	line-height: 1.15;
+	text-transform: uppercase;
+	background-image: linear-gradient(
+		90deg,
+		#8b5a2b 0%,
+		#ff9900 50%,
+		#8b5a2b 100%
+	);
+	background-size: 200% 100%;
+	background-position: 0% 50%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+	display: inline-block;
+}
+
+.awsui-dark-mode .cdn-auth-wordmark {
+	background-image: linear-gradient(
+		90deg,
+		#9060f0 0%,
+		#d7c7ee 50%,
+		#9060f0 100%
+	);
+}
+
+.cdn-auth-context {
+	font-size: 0.95rem;
+	font-weight: 500;
+	letter-spacing: 0.01em;
+	margin-top: 4px;
+	color: rgba(74, 40, 24, 0.78);
+	position: relative;
+	display: inline-block;
+	padding-bottom: 6px;
+}
+
+.awsui-dark-mode .cdn-auth-context {
+	color: rgba(215, 199, 238, 0.85);
+}
+
+/* Amber underline that animates from 0 → 60% width on entrance.
+   Flexbox would clip; absolute lets it draw under the centered text. */
+.cdn-auth-context::after {
+	content: "";
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	height: 2px;
+	width: 0;
+	border-radius: 1px;
+	background: var(--cdn-streak-h-light);
+	transform: translateX(-50%);
+}
+
+.awsui-dark-mode .cdn-auth-context::after {
+	background: var(--cdn-streak-h-dark);
+}
+
+/* ── Entrance choreography ───────────────────────────────────────────────────
+   Header fades up + amber underline grows; card glass-slides in 80ms later
+   with springy cubic-bezier bounce. Both gated on prefers-reduced-motion. */
+@keyframes cdn-auth-header-in {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes cdn-auth-underline-grow {
+	from {
+		width: 0;
+	}
+	to {
+		width: 60%;
+	}
+}
+
+@keyframes cdn-auth-card-in {
+	from {
+		opacity: 0;
+		transform: scale(0.97) translateY(6px);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.cdn-auth-page-header {
+		animation: cdn-auth-header-in 400ms ease-out both;
+	}
+	.cdn-auth-context::after {
+		animation: cdn-auth-underline-grow 600ms ease-out 200ms both;
+	}
+	/* Override the generic cdn-card-in keyframe (tokens.css) on the auth card
+	   so we get the springy cubic-bezier scale-in instead of the slide. 80ms
+	   delay so the header settles first, then the card pops in behind it. */
+	.cdn-auth-card {
+		animation: cdn-auth-card-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms
+			both !important;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-auth-page-header,
+	.cdn-auth-context::after,
+	.cdn-auth-card {
+		animation: none !important;
+	}
+	.cdn-auth-context::after {
+		width: 60%;
+	}
 }
 
 /* ── Light mode: brand-violet primary action button ────────────────────────
@@ -127,4 +274,215 @@
 /* Wizard renders without a Container, so add equivalent padding when wrapped */
 .cdn-auth-card > [class*="awsui_wizard"] {
 	padding: 24px;
+}
+
+/* ==========================================================================
+   Branded submit microinteraction — verifying shimmer / success / shake
+
+   Paired with .cdn-auth-submit-* state classes set on the form button wrapper
+   from each app.tsx. The Cloudscape Button itself stays mounted (so existing
+   form-submit + loading state don't break); we layer visual treatment on the
+   button's rendered <button> element via descendant selector.
+
+   States:
+     .verifying  amber → violet shimmer sweep, 1.4s loop
+     .success    flash violet fill + ✓ overlay, 600ms
+     .failed     4-jitter horizontal shake, 350ms
+   ========================================================================== */
+
+@keyframes cdn-auth-verifying-shimmer {
+	0% {
+		background-position: 0% 50%;
+	}
+	100% {
+		background-position: 200% 50%;
+	}
+}
+
+@keyframes cdn-auth-shake {
+	0%, 100% { transform: translateX(0); }
+	20% { transform: translateX(-6px); }
+	40% { transform: translateX(5px); }
+	60% { transform: translateX(-4px); }
+	80% { transform: translateX(3px); }
+}
+
+@keyframes cdn-auth-success-flash {
+	0% {
+		background-color: var(--cdn-violet);
+		filter: brightness(1.15);
+	}
+	100% {
+		background-color: var(--cdn-violet);
+		filter: brightness(1);
+	}
+}
+
+/* Wrapper sits on the SpaceBetween button wrapper inside each Form; descend
+   into the rendered cloudscape button to paint the shimmer / shake / success.
+   !important needed to beat the existing variant-primary background override
+   that lives at the top of this file. */
+.cdn-auth-submit-state.verifying button[class*="variant-primary"],
+.cdn-auth-submit-state.verifying [class*="awsui_button"][class*="variant-primary"] {
+	background: linear-gradient(
+		90deg,
+		var(--cdn-amber) 0%,
+		var(--cdn-aws-orange) 25%,
+		var(--cdn-violet) 50%,
+		var(--cdn-aws-orange) 75%,
+		var(--cdn-amber) 100%
+	) !important;
+	background-size: 200% 100% !important;
+	border-color: transparent !important;
+	color: var(--cdn-white) !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.cdn-auth-submit-state.verifying button[class*="variant-primary"],
+	.cdn-auth-submit-state.verifying [class*="awsui_button"][class*="variant-primary"] {
+		animation: cdn-auth-verifying-shimmer 1.4s linear infinite;
+	}
+
+	.cdn-auth-submit-state.failed button[class*="variant-primary"],
+	.cdn-auth-submit-state.failed [class*="awsui_button"][class*="variant-primary"] {
+		animation: cdn-auth-shake 350ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+	}
+
+	.cdn-auth-submit-state.success button[class*="variant-primary"],
+	.cdn-auth-submit-state.success [class*="awsui_button"][class*="variant-primary"] {
+		animation: cdn-auth-success-flash 600ms ease-out both;
+	}
+}
+
+.cdn-auth-submit-state.success button[class*="variant-primary"],
+.cdn-auth-submit-state.success [class*="awsui_button"][class*="variant-primary"] {
+	background: var(--cdn-violet) !important;
+	border-color: var(--cdn-violet) !important;
+	color: var(--cdn-white) !important;
+}
+
+/* Tiny ✓ marker — rendered as a sibling span by app.tsx when state=success.
+   Sits absolutely beside the button via the wrapper's relative positioning. */
+.cdn-auth-submit-state {
+	position: relative;
+	display: inline-block;
+}
+
+.cdn-auth-success-check {
+	display: inline-block;
+	margin-left: 8px;
+	color: var(--cdn-violet);
+	font-weight: 700;
+	font-size: 1.1rem;
+	animation: cdn-auth-header-in 250ms ease-out both;
+}
+
+.awsui-dark-mode .cdn-auth-success-check {
+	color: var(--cdn-lavender);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-auth-submit-state.verifying button[class*="variant-primary"],
+	.cdn-auth-submit-state.verifying [class*="awsui_button"][class*="variant-primary"],
+	.cdn-auth-submit-state.failed button[class*="variant-primary"],
+	.cdn-auth-submit-state.failed [class*="awsui_button"][class*="variant-primary"],
+	.cdn-auth-submit-state.success button[class*="variant-primary"],
+	.cdn-auth-submit-state.success [class*="awsui_button"][class*="variant-primary"],
+	.cdn-auth-success-check {
+		animation: none !important;
+	}
+}
+
+/* ==========================================================================
+   Six-cell verification code input
+
+   Replaces the single text input on verify/app.tsx + signup step 4. Uses
+   plain HTML <input> elements (Cloudscape has no code-input primitive); each
+   cell is one digit, auto-tabs forward on entry, back on backspace from
+   empty, paste distributes across cells. Cell flashes amber on entry.
+   ========================================================================== */
+
+.cdn-auth-code-row {
+	display: flex;
+	gap: 8px;
+	justify-content: center;
+	margin: 8px 0;
+}
+
+.cdn-auth-code-cell {
+	width: 44px;
+	height: 56px;
+	font-family: "Cinzel", Georgia, serif;
+	font-size: 1.4rem;
+	font-weight: 700;
+	text-align: center;
+	border-radius: var(--cdn-radius-sm, 6px);
+	border: 1.5px solid var(--cdn-glass-border);
+	background-color: rgba(237, 229, 212, 0.55);
+	color: var(--cdn-text-primary, #2a1810);
+	transition:
+		border-color 150ms ease,
+		box-shadow 150ms ease,
+		transform 50ms ease;
+	-webkit-appearance: none;
+	appearance: none;
+}
+
+.awsui-dark-mode .cdn-auth-code-cell {
+	background-color: rgba(28, 34, 48, 0.65);
+	color: var(--cdn-lavender);
+}
+
+.cdn-auth-code-cell:focus-visible,
+.cdn-auth-code-cell:focus {
+	outline: none;
+	border-color: var(--cdn-amber);
+	box-shadow: 0 0 0 2px var(--cdn-amber);
+}
+
+.awsui-dark-mode .cdn-auth-code-cell:focus-visible,
+.awsui-dark-mode .cdn-auth-code-cell:focus {
+	border-color: var(--cdn-violet);
+	box-shadow: 0 0 0 2px var(--cdn-violet);
+}
+
+@keyframes cdn-auth-cell-flash {
+	0% {
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(255, 153, 0, 0.7);
+	}
+	50% {
+		transform: scale(1.08);
+		box-shadow: 0 0 8px 2px rgba(255, 153, 0, 0.55);
+	}
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(255, 153, 0, 0);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.cdn-auth-code-cell.flash {
+		animation: cdn-auth-cell-flash 280ms ease-out;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-auth-code-cell.flash {
+		animation: none;
+	}
+}
+
+/* ==========================================================================
+   Wallpaper alpha taper on auth subdomain
+
+   AuthLayout sets body.cdn-auth-subdomain on mount. Drops both dune scene
+   canvas + fallback gradient div to 0.6 alpha so the form pulls focus while
+   ambient backdrop still bleeds through. dune-scene.ts canvas hook is
+   data-cdn-dune-canvas="1" and fallback is [data-cdn-dune-fallback].
+   ========================================================================== */
+body.cdn-auth-subdomain [data-cdn-dune-canvas="1"],
+body.cdn-auth-subdomain [data-cdn-dune-fallback] {
+	opacity: 0.6;
+	transition: opacity 600ms ease-out;
 }

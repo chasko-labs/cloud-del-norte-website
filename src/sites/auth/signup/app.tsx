@@ -21,6 +21,7 @@ import {
 	signUp,
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
+import CodeInput from "../_layout/CodeInput";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
 /* match verify/app.tsx — 120s gives time to switch to email/authenticator
@@ -59,6 +60,9 @@ function SignupWizard() {
 	const [formError, setFormError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [signUpCalled, setSignUpCalled] = useState(false);
+	const [submitState, setSubmitState] = useState<
+		"idle" | "verifying" | "success" | "failed"
+	>("idle");
 
 	useEffect(
 		() => () => {
@@ -171,6 +175,7 @@ function SignupWizard() {
 		}
 
 		setLoading(true);
+		setSubmitState("verifying");
 		setFormError("");
 		try {
 			await confirmSignUp(email, code.trim());
@@ -179,9 +184,12 @@ function SignupWizard() {
 			const accessToken = sessionStorage.getItem("cdn.accessToken") ?? "";
 			const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
 			const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
-			window.location.assign(
-				`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
-			);
+			setSubmitState("success");
+			window.setTimeout(() => {
+				window.location.assign(
+					`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
+				);
+			}, 500);
 		} catch (err) {
 			if (err instanceof AuthError) {
 				if (err.code === "CodeMismatchException") {
@@ -196,7 +204,9 @@ function SignupWizard() {
 			} else {
 				setFormError(t("auth.signup.genericError"));
 			}
+			setSubmitState("failed");
 			setLoading(false);
+			window.setTimeout(() => setSubmitState("idle"), 400);
 		}
 	}
 
@@ -340,12 +350,7 @@ function SignupWizard() {
 						label={t("auth.signup.verifyCodeLabel")}
 						errorText={step4Errors.code ?? undefined}
 					>
-						<Input
-							value={code}
-							onChange={({ detail }) => setCode(detail.value)}
-							placeholder={t("auth.signup.verifyCodePlaceholder")}
-							inputMode="numeric"
-						/>
+						<CodeInput value={code} onChange={setCode} autoFocus />
 					</FormField>
 					<Link
 						onFollow={() => {
@@ -365,34 +370,46 @@ function SignupWizard() {
 		},
 	];
 
+	// Disable wizard submit until all 6 cells filled (only on the verify step).
+	// Submit handler ignores attempts when incomplete — the existing handleSubmit
+	// below still validates so the wire stays unchanged.
+	const submitDisabled =
+		activeStepIndex === 3 && code.replace(/\D/g, "").length < 6;
+
 	return (
-		<Wizard
-			steps={steps}
-			activeStepIndex={activeStepIndex}
-			onNavigate={(e) => {
-				void handleNavigate(e);
-			}}
-			onSubmit={() => {
-				void handleSubmit();
-			}}
-			isLoadingNextStep={loading}
-			i18nStrings={{
-				stepNumberLabel: (n) => `Step ${n}`,
-				collapsedStepsLabel: (n, total) => `Step ${n} of ${total}`,
-				navigationAriaLabel: "Signup steps",
-				cancelButton: "Cancel",
-				previousButton: t("auth.signup.backButton"),
-				nextButton: t("auth.signup.nextButton"),
-				submitButton: t("auth.signup.submitButton"),
-				optional: "optional",
-			}}
-		/>
+		<div className={`cdn-auth-submit-state ${submitState}`}>
+			<Wizard
+				steps={steps}
+				activeStepIndex={activeStepIndex}
+				onNavigate={(e) => {
+					void handleNavigate(e);
+				}}
+				onSubmit={() => {
+					if (submitDisabled) return;
+					void handleSubmit();
+				}}
+				isLoadingNextStep={loading}
+				i18nStrings={{
+					stepNumberLabel: (n) => `Step ${n}`,
+					collapsedStepsLabel: (n, total) => `Step ${n} of ${total}`,
+					navigationAriaLabel: "Signup steps",
+					cancelButton: "Cancel",
+					previousButton: t("auth.signup.backButton"),
+					nextButton: t("auth.signup.nextButton"),
+					submitButton:
+						submitState === "verifying"
+							? "Verifying with Cognito"
+							: t("auth.signup.submitButton"),
+					optional: "optional",
+				}}
+			/>
+		</div>
 	);
 }
 
 export default function App() {
 	return (
-		<AuthLayout>
+		<AuthLayout pageContext="Create your account">
 			<SignupWizard />
 		</AuthLayout>
 	);

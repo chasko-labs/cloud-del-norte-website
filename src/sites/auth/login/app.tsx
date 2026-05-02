@@ -21,6 +21,8 @@ import AuthLayout from "../_layout";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
 
+type SubmitState = "idle" | "verifying" | "success" | "failed";
+
 function LoginForm() {
 	const { t } = useTranslation();
 	const [email, setEmail] = useState("");
@@ -30,6 +32,7 @@ function LoginForm() {
 	const [passwordError, setPasswordError] = useState("");
 	const [formError, setFormError] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [submitState, setSubmitState] = useState<SubmitState>("idle");
 
 	document.title = t("auth.login.title") + " — " + t("auth.siteTitle");
 
@@ -56,6 +59,7 @@ function LoginForm() {
 		e.preventDefault();
 		if (!validate()) return;
 		setLoading(true);
+		setSubmitState("verifying");
 		setFormError("");
 		try {
 			await signInWithPassword(email, password);
@@ -64,9 +68,14 @@ function LoginForm() {
 			const accessToken = sessionStorage.getItem("cdn.accessToken") ?? "";
 			const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
 			const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
-			window.location.assign(
-				`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
-			);
+			// Brief success flash before redirect — 500ms holds the violet fill +
+			// ✓ check long enough to register, then hand off to awsug/auth/redeem
+			setSubmitState("success");
+			window.setTimeout(() => {
+				window.location.assign(
+					`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
+				);
+			}, 500);
 		} catch (err) {
 			if (
 				err instanceof AuthError &&
@@ -77,7 +86,10 @@ function LoginForm() {
 			} else {
 				setFormError(t("auth.login.genericError"));
 			}
+			setSubmitState("failed");
 			setLoading(false);
+			// Clear failed state after shake completes so user can resubmit
+			window.setTimeout(() => setSubmitState("idle"), 400);
 		}
 	}
 
@@ -92,9 +104,21 @@ function LoginForm() {
 				<Form
 					actions={
 						<SpaceBetween direction="horizontal" size="xs">
-							<Button formAction="submit" variant="primary" loading={loading}>
-								{t("auth.login.signInButton")}
-							</Button>
+							<span className={`cdn-auth-submit-state ${submitState}`}>
+								<Button formAction="submit" variant="primary" loading={loading}>
+									{submitState === "verifying"
+										? "Verifying with Cognito"
+										: t("auth.login.signInButton")}
+								</Button>
+								{submitState === "success" && (
+									<span
+										className="cdn-auth-success-check"
+										aria-hidden="true"
+									>
+										✓
+									</span>
+								)}
+							</span>
 						</SpaceBetween>
 					}
 					errorText={formError || undefined}
@@ -145,7 +169,7 @@ function LoginForm() {
 
 export default function App() {
 	return (
-		<AuthLayout>
+		<AuthLayout pageContext="Sign in to Cloud Del Norte">
 			<LoginForm />
 		</AuthLayout>
 	);

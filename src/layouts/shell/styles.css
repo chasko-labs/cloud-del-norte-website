@@ -777,14 +777,20 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	}
 }
 
-/* Hover: subtle scale + brightness pulse
+/* Hover/focus: subtle scale + brightness pulse
    Selectors match both EN and ES title text:
    EN: "Switch to light mode" / "Switch to dark mode"
-   ES: "Cambiar a modo claro" / "Cambiar a modo oscuro" */
+   ES: "Cambiar a modo claro" / "Cambiar a modo oscuro"
+   Keyboard mirror via :focus-visible — :has() lifts the parent
+   utility-button when the inner button receives keyboard focus. */
 [class*="utility-button"]:has([title*="light mode"]):hover,
 [class*="utility-button"]:has([title*="dark mode"]):hover,
 [class*="utility-button"]:has([title*="modo claro"]):hover,
-[class*="utility-button"]:has([title*="modo oscuro"]):hover {
+[class*="utility-button"]:has([title*="modo oscuro"]):hover,
+[class*="utility-button"]:has([title*="light mode"]):focus-within,
+[class*="utility-button"]:has([title*="dark mode"]):focus-within,
+[class*="utility-button"]:has([title*="modo claro"]):focus-within,
+[class*="utility-button"]:has([title*="modo oscuro"]):focus-within {
 	transform: scale(1.15);
 	filter: brightness(1.2);
 	transition:
@@ -810,7 +816,9 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    EN: "Switch to Spanish" / ES: "Cambiar a Inglés" */
 
 [class*="utility-button"]:has([title*="Spanish"]):hover,
-[class*="utility-button"]:has([title*="Inglés"]):hover {
+[class*="utility-button"]:has([title*="Inglés"]):hover,
+[class*="utility-button"]:has([title*="Spanish"]):focus-within,
+[class*="utility-button"]:has([title*="Inglés"]):focus-within {
 	transform: scale(1.15);
 	filter: brightness(1.2);
 	transition:
