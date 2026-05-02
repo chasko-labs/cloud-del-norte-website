@@ -108,6 +108,9 @@ describe("translation coverage", () => {
 			"feedPage.infoLink", // "Info" - universal abbreviation
 			"helpPanel.andresWebsite", // "andmore.dev" - proper domain name
 			"helpPanel.andresMoreno", // Proper name
+			"helpPanel.aslLeadRole", // "ASL" - acronym
+			"helpPanel.lsmLead", // "LSM" - acronym
+			"helpPanel.arrowheadSoundstage", // Proper noun
 		]);
 
 		// Helper to get value by dot-notation key

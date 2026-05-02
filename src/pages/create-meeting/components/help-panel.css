@@ -238,39 +238,52 @@
 }
 
 /* --------------------------------------------------------------------------
-   Role list items (Organizers Wanted section)
+   Role cards (volunteers wanted) — slimmer than leader cards
    -------------------------------------------------------------------------- */
-.hp-role-list {
-	list-style: none;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	flex-direction: column;
-	gap: var(--cdn-space-sm);
+.hp-role-card {
+	border-radius: var(--cdn-radius-md);
+	border: 1px solid rgba(139, 90, 43, 0.18);
+	background: rgba(250, 247, 240, 0.7);
+	padding: var(--cdn-space-sm) var(--cdn-space-md);
+	transition: var(--cdn-transition-smooth);
 }
 
-.hp-role-list li {
+.hp-role-card:hover {
+	border-color: rgba(139, 90, 43, 0.32);
+	background: rgba(250, 247, 240, 0.85);
+}
+
+.awsui-dark-mode .hp-role-card {
+	border-color: rgba(144, 96, 240, 0.18);
+	background: rgba(28, 34, 48, 0.6);
+}
+
+.awsui-dark-mode .hp-role-card:hover {
+	border-color: rgba(144, 96, 240, 0.35);
+	background: rgba(28, 34, 48, 0.8);
+}
+
+.hp-role-card-name {
+	font-size: var(--cdn-text-sm);
+	font-weight: var(--cdn-weight-bold);
+	color: var(--cdn-color-text-high);
+	margin: 0;
+	letter-spacing: 0.02em;
+}
+
+.awsui-dark-mode .hp-role-card-name {
+	color: var(--cdn-white);
+}
+
+.hp-role-card-desc {
 	font-size: var(--cdn-text-sm);
 	line-height: var(--cdn-leading-normal);
-	color: var(--cdn-color-text-medium);
-	padding-left: var(--cdn-space-md);
-	position: relative;
+	color: var(--cdn-color-text-muted);
+	margin: 4px 0 0;
 }
 
-.hp-role-list li::before {
-	content: "–";
-	position: absolute;
-	left: 0;
-	color: var(--cdn-amber);
-	font-weight: var(--cdn-weight-bold);
-}
-
-.awsui-dark-mode .hp-role-list li {
-	color: var(--cdn-lavender);
-}
-
-.awsui-dark-mode .hp-role-list li::before {
-	color: var(--cdn-violet);
+.awsui-dark-mode .hp-role-card-desc {
+	color: rgba(215, 199, 238, 0.78);
 }
 
 /* --------------------------------------------------------------------------

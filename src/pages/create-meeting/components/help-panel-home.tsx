@@ -18,25 +18,37 @@ export const HelpPanelHome = () => {
 					<p className="hp-body">{t("helpPanel.communityDescription")}</p>
 				</div>
 
-				<hr className="hp-divider" />
-
-				{/* Organizers wanted */}
+				{/* Volunteer roles — card grid (no heading; flows from "and beyond") */}
 				<div>
-					<h3 className="hp-section-heading">
-						{t("helpPanel.organizersWantedHeader")}
-					</h3>
-					<ul className="hp-role-list">
-						<li>
-							<strong>{t("helpPanel.aslLeadRole")}</strong> —{" "}
-							{t("helpPanel.aslLeadDesc")}
-						</li>
-						<li>
-							<strong>LSM Lead</strong> — {t("helpPanel.lsmLeadDesc")}
-						</li>
-						<li>{t("helpPanel.spanishSpeakers")}</li>
-						<li>{t("helpPanel.studentsStepUp")}</li>
-						<li>{t("helpPanel.womenWelcome")}</li>
-					</ul>
+					<SpaceBetween size="s">
+						<div className="hp-role-card">
+							<p className="hp-role-card-name">{t("helpPanel.aslLeadRole")}</p>
+							<p className="hp-role-card-desc">{t("helpPanel.aslLeadDesc")}</p>
+						</div>
+						<div className="hp-role-card">
+							<p className="hp-role-card-name">{t("helpPanel.lsmLead")}</p>
+							<p className="hp-role-card-desc">{t("helpPanel.lsmLeadDesc")}</p>
+						</div>
+						<div className="hp-role-card">
+							<p className="hp-role-card-name">
+								{t("helpPanel.spanishSpeakers")}
+							</p>
+							<p className="hp-role-card-desc">
+								{t("helpPanel.spanishSpeakersDesc")}
+							</p>
+						</div>
+						<div className="hp-role-card">
+							<p className="hp-role-card-name">
+								{t("helpPanel.studentsStepUp")}
+							</p>
+						</div>
+						<div className="hp-role-card">
+							<p className="hp-role-card-name">{t("helpPanel.womenWelcome")}</p>
+							<p className="hp-role-card-desc">
+								{t("helpPanel.womenWelcomeDesc")}
+							</p>
+						</div>
+					</SpaceBetween>
 					<p className="hp-body" style={{ marginTop: "12px" }}>
 						<Link href="https://www.meetup.com/awsugclouddelnorte/" external>
 							{t("helpPanel.reachOutOnMeetup")}
@@ -46,7 +58,7 @@ export const HelpPanelHome = () => {
 
 				<hr className="hp-divider" />
 
-				{/* Community leaders */}
+				{/* Group organizers */}
 				<div>
 					<h3 className="hp-section-heading">
 						{t("helpPanel.communityLeaders")}
@@ -106,19 +118,34 @@ export const HelpPanelHome = () => {
 								</Link>
 							</div>
 						</div>
-
-						<div className="hp-leader">
-							<p className="hp-leader-name">Wayne Savage</p>
-							<p className="hp-leader-role">{t("helpPanel.wayneSavageRole")}</p>
-							<p className="hp-leader-bio">
-								{t("helpPanel.wayneSavageBioPrefix")}{" "}
-								<Link href="https://arrowheadcenter.nmsu.edu/" external>
-									{t("helpPanel.arrowheadPark")}
-								</Link>{" "}
-								{t("helpPanel.wayneSavageBioSuffix")}
-							</p>
-						</div>
 					</SpaceBetween>
+				</div>
+
+				<hr className="hp-divider" />
+
+				{/* Hall of Fame */}
+				<div>
+					<h3 className="hp-section-heading">
+						{t("helpPanel.hallOfFameHeader")}
+					</h3>
+					<div className="hp-leader">
+						<p className="hp-leader-name">Wayne Savage</p>
+						<p className="hp-leader-role">{t("helpPanel.wayneSavageRole")}</p>
+						<p className="hp-leader-bio">
+							{t("helpPanel.wayneSavageBioPrefix")}{" "}
+							<Link href="https://arrowheadcenter.nmsu.edu/" external>
+								{t("helpPanel.arrowheadPark")}
+							</Link>
+							{t("helpPanel.wayneSavageBioMiddle")}{" "}
+							<Link
+								href="https://www.lascrucesbulletin.com/stories/arrowhead-studios-15-million-project-breaks-ground,136925"
+								external
+							>
+								{t("helpPanel.arrowheadSoundstage")}
+							</Link>{" "}
+							{t("helpPanel.wayneSavageBioSuffix")}
+						</p>
+					</div>
 				</div>
 
 				<hr className="hp-divider" />
