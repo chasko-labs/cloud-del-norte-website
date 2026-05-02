@@ -22,12 +22,24 @@ export const setStoredTheme = (theme: Theme): void => {
 };
 
 export const applyTheme = (theme: Theme): void => {
-	const mode: Mode = theme === "dark" ? Mode.Dark : Mode.Light;
-	applyMode(mode);
+	// IMMEDIATE: toggle the html class so our CSS palette + the wallpaper
+	// MutationObserver react synchronously. User sees the surface flip
+	// (light ↔ dark) within the same frame they clicked.
 	document.documentElement.classList.toggle(
 		"awsui-dark-mode",
 		theme === "dark",
 	);
+	// DEFERRED: Cloudscape's applyMode walks the design-token table and
+	// rewrites custom-property values across every component subtree. On
+	// large pages that's 30-80ms of synchronous work. Push it to the next
+	// paint so the click feels instant — the user has already seen our
+	// CSS-driven palette flip on the same frame.
+	const mode: Mode = theme === "dark" ? Mode.Dark : Mode.Light;
+	if (typeof requestAnimationFrame !== "undefined") {
+		requestAnimationFrame(() => applyMode(mode));
+	} else {
+		applyMode(mode);
+	}
 };
 
 export const initializeTheme = (): Theme => {
