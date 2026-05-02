@@ -499,6 +499,10 @@ function ShellContent({
 								? [
 										{
 											type: "menu-dropdown" as const,
+											// disableUtilityCollapse — the user dropdown shouldn't hide
+											// behind a "More" trigger; identity affordances need to be
+											// always visible.
+											disableUtilityCollapse: true,
 											text: auth.email ?? auth.name ?? "account",
 											description: auth.isModerator ? "moderator" : undefined,
 											iconName: "user-profile",
@@ -513,6 +517,11 @@ function ShellContent({
 									: [
 											{
 												type: "button" as const,
+												// Bryan v0.0.0058: "sign in" was hiding behind "More"
+												// (Cloudscape's overflow collapse) on mobile even
+												// though "sign in" is shorter than "more ▼". Force
+												// always visible.
+												disableUtilityCollapse: true,
 												text: "sign in",
 												onClick: () => {
 													window.location.assign(AUTH_LOGIN_URL);
