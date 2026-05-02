@@ -452,6 +452,24 @@ function ShellContent({
 					toolsToggle: t("shell.openHelpPanel"),
 				}}
 			/>
+			{/* Volunteer button — replaces the redundant ContentLayout Info
+			    popover (was inline next to the page-title h1 we hide). Renders
+			    only when a help panel is configured. Positioned in the
+			    breadcrumbs strip area via CSS, right-aligned under "Feed"/
+			    page-name. Click opens the tools drawer via the existing
+			    handler. */}
+			{tools && !toolsHide ? (
+				<button
+					type="button"
+					className="cdn-volunteer-btn"
+					aria-label={t("shell.openHelpPanel")}
+					onClick={() =>
+						handleToolsChange({ detail: { open: !toolsOpen } })
+					}
+				>
+					Volunteer
+				</button>
+			) : null}
 			<Footer />
 			<PersistentPlayer />
 		</>
