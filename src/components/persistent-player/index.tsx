@@ -3,10 +3,12 @@
 
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { clearMediaSession, setMediaSession } from "../../lib/media-session";
 import {
 	clearPlayerState,
 	loadPlayerState,
 	type PersistedPlayerState,
+	savePlayerState,
 } from "../../lib/player-persist";
 import { hexToRgbTuple } from "../../lib/streams";
 import { STREAMS } from "../../lib/streams-order";
@@ -17,9 +19,11 @@ const POLL_MS = 30_000;
 function PersistentPlayerBar({
 	state,
 	onStop,
+	onSkipStation,
 }: {
 	state: PersistedPlayerState;
 	onStop: () => void;
+	onSkipStation: (direction: 1 | -1) => void;
 }) {
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const [blocked, setBlocked] = useState(false);
@@ -29,7 +33,8 @@ function PersistentPlayerBar({
 
 	const fetchMeta = useCallback(() => {
 		if (!streamDef) return;
-		// stations without a now-playing endpoint (kunm, kutx) just show label
+		// stations without a now-playing endpoint (uam_radio, concepto_radial)
+		// just show label — Android notification still gets the station name
 		if (!streamDef.metaUrl || !streamDef.parseMeta) return;
 		const parse = streamDef.parseMeta;
 		fetch(streamDef.metaUrl)
@@ -41,6 +46,13 @@ function PersistentPlayerBar({
 			})
 			.catch(() => {});
 	}, [streamDef]);
+
+	// reset nowPlaying when station changes — otherwise the previous station's
+	// track briefly leaks into the new station's lockscreen notification
+	// biome-ignore lint/correctness/useExhaustiveDependencies: state.stationKey is the reset trigger; effect body intentionally only resets state
+	useEffect(() => {
+		setNowPlaying(null);
+	}, [state.stationKey]);
 
 	useEffect(() => {
 		const audio = audioRef.current;
@@ -100,6 +112,30 @@ function PersistentPlayerBar({
 		window.dispatchEvent(new CustomEvent("cdn:audio:stop"));
 	}, []);
 
+	// MediaSession integration — populates the OS-level media notification
+	// (Android lockscreen, macOS Now Playing, Chrome desktop global media hub)
+	// with station label + live track info instead of "AWS UG Cloud Del No...".
+	// Re-runs on station change AND on nowPlaying update so the notification
+	// title tracks the live song
+	useEffect(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+		setMediaSession({
+			stationLabel: state.stationLabel,
+			nowPlaying,
+			onPlay: () => {
+				audio.play().catch(() => setBlocked(true));
+			},
+			onPause: () => audio.pause(),
+			onSkipNext: () => onSkipStation(1),
+			onSkipPrev: () => onSkipStation(-1),
+		});
+		return () => {
+			// only clear on full unmount (handled by parent onStop). Returning
+			// nothing here keeps metadata visible across re-renders / track-change
+		};
+	}, [state.stationLabel, nowPlaying, onSkipStation]);
+
 	// per-station theming — emit the active station's brand palette as CSS
 	// custom properties so the pill border / play+stop button glow + hover
 	// inherit the institution's colors (KEXP buttercup vs KRUX crimson).
@@ -127,7 +163,7 @@ function PersistentPlayerBar({
 
 	return (
 		<section
-			className="cdn-pp"
+			className={`cdn-pp${nowPlaying ? " cdn-pp--has-track" : ""}`}
 			aria-label="now playing"
 			data-station={state.stationKey}
 			style={stationStyle}
@@ -144,12 +180,26 @@ function PersistentPlayerBar({
 			<span className="cdn-pp__headphones" aria-hidden="true">
 				🎧
 			</span>
-			<span className="cdn-pp__label">{state.stationLabel}</span>
-			{nowPlaying && (
-				<span className="cdn-pp__track" aria-live="polite">
-					{nowPlaying}
-				</span>
-			)}
+			<span className="cdn-pp__meta">
+				<span className="cdn-pp__label">{state.stationLabel}</span>
+				{nowPlaying && (
+					<span className="cdn-pp__track" aria-live="polite" title={nowPlaying}>
+						<span className="cdn-pp__eyebrow" aria-hidden="true">
+							now playing
+						</span>
+						<span className="cdn-pp__track-text">{nowPlaying}</span>
+					</span>
+				)}
+			</span>
+			<button
+				type="button"
+				className="cdn-pp__btn cdn-pp__btn--skip"
+				onClick={() => onSkipStation(1)}
+				aria-label="next station"
+				title="next station"
+			>
+				<span aria-hidden="true">⏭</span>
+			</button>
 			{blocked ? (
 				<button
 					type="button"
@@ -184,10 +234,38 @@ export default function PersistentPlayer() {
 
 	const handleStop = useCallback(() => {
 		clearPlayerState();
+		clearMediaSession();
 		setState(null);
+	}, []);
+
+	// skip station — direction +1 advances, -1 rewinds. Mirrors KruxPlayer's
+	// modulo arithmetic so the carousel order in feed/app.tsx stays in sync
+	// with the persistent-player skip buttons + Android notification skip
+	const handleSkipStation = useCallback((direction: 1 | -1) => {
+		setState((current) => {
+			if (!current) return current;
+			const idx = STREAMS.findIndex((s) => s.key === current.stationKey);
+			if (idx < 0) return current;
+			const nextIdx = (idx + direction + STREAMS.length) % STREAMS.length;
+			const next = STREAMS[nextIdx];
+			const nextState: PersistedPlayerState = {
+				stationKey: next.key,
+				stationUrl: next.url,
+				stationLabel: next.label,
+				metaUrl: next.metaUrl,
+			};
+			savePlayerState(nextState);
+			return nextState;
+		});
 	}, []);
 
 	if (!state) return null;
 
-	return <PersistentPlayerBar state={state} onStop={handleStop} />;
+	return (
+		<PersistentPlayerBar
+			state={state}
+			onStop={handleStop}
+			onSkipStation={handleSkipStation}
+		/>
+	);
 }

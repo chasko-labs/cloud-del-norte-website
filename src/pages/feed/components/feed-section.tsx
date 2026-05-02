@@ -50,6 +50,7 @@ function useFeed(key: "andmore" | "awsml"): {
 }
 
 function PostCarousel({ posts }: { posts: FeedPost[] }) {
+	const { t } = useTranslation();
 	const [index, setIndex] = useState(0);
 	const [paused, setPaused] = useState(false);
 	const panelIdBase = useId();
@@ -62,7 +63,7 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
 	}, [paused, posts.length]);
 
 	if (posts.length === 0) {
-		return <p className="feed-posts__empty">Check back soon.</p>;
+		return <p className="feed-posts__empty">{t("feedPage.feedPostsEmpty")}</p>;
 	}
 	const post = posts[index];
 	// Single panel for the carousel — tabs all reference it; content swaps inside.
@@ -136,7 +137,7 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
 			<div
 				className="feed-article-carousel__dots"
 				role="tablist"
-				aria-label="article selector"
+				aria-label={t("feedPage.articleSelector")}
 			>
 				{posts.map((dotPost, i) => (
 					<button
@@ -148,7 +149,7 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
 						role="tab"
 						aria-selected={i === index}
 						aria-controls={panelId}
-						aria-label={`article ${i + 1} of ${posts.length}`}
+						aria-label={`${t("feedPage.articleAriaPrefix")} ${i + 1} ${t("feedPage.articleAriaConnector")} ${posts.length}`}
 						tabIndex={i === index ? 0 : -1}
 						className={`feed-article-carousel__dot${i === index ? " feed-article-carousel__dot--active" : ""}`}
 						onClick={() => {
@@ -164,6 +165,7 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
 }
 
 export function FeedAndmore() {
+	const { t } = useTranslation();
 	const { posts } = useFeed("andmore");
 	return (
 		<Container
@@ -172,12 +174,14 @@ export function FeedAndmore() {
 					variant="h2"
 					actions={
 						<Link href="https://andmore.dev" external fontSize="body-s">
-							All posts
+							{t("feedPage.andresMediumAllPosts")}
 						</Link>
 					}
 				>
-					andmore.dev
-					<span className="feed-card-header-sub">by Andres Moreno</span>
+					{t("feedPage.andmoreDevHeader")}
+					<span className="feed-card-header-sub">
+						{t("feedPage.andmoreByAndres")}
+					</span>
 				</Header>
 			}
 		>
@@ -200,7 +204,7 @@ export function FeedAwsml() {
 							external
 							fontSize="body-s"
 						>
-							All posts
+							{t("feedPage.awsMlBlogAllPosts")}
 						</Link>
 					}
 				>

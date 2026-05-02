@@ -16,6 +16,24 @@ function withFallback(value: string, key: string, fallback: string): string {
 	return value === key ? fallback : value;
 }
 
+// Time-of-day greeting based on the visitor's local clock. Used on
+// stickynote 2 when zoomed — pairs with the country name for a moment of
+// recognition ("good morning, Pakistan"). Locale-aware. Falls back to
+// "good evening" / "buenas tardes" if the system clock gives a value
+// outside the expected ranges.
+function getTimeOfDayGreeting(locale: "us" | "mx"): string {
+	const hour = new Date().getHours();
+	if (locale === "mx") {
+		if (hour >= 5 && hour < 12) return "buenos días";
+		if (hour >= 12 && hour < 19) return "buenas tardes";
+		return "buenas noches";
+	}
+	if (hour >= 5 && hour < 12) return "good morning";
+	if (hour >= 12 && hour < 17) return "good afternoon";
+	if (hour >= 17 && hour < 21) return "good evening";
+	return "good night";
+}
+
 function detectDeviceInfo(): string {
 	if (typeof navigator === "undefined") return "";
 	const ua = navigator.userAgent;
@@ -191,6 +209,7 @@ function LioraFrame() {
 	const [stickyZoomed, setStickyZoomed] = useState(false);
 	const [stickyKey, setStickyKey] = useState(0);
 	const [sticky2Fallen, setSticky2Fallen] = useState(false);
+	const [sticky2Zoomed, setSticky2Zoomed] = useState(false);
 	const [visitor, setVisitor] = useState<VisitorInfo | null>(null);
 
 	// Locale=mx forces Norte greeting regardless of detected country.
@@ -359,14 +378,25 @@ function LioraFrame() {
 				</button>
 				<button
 					type="button"
-					className={`liora-stickynote-2${sticky2Fallen ? " liora-stickynote-2--fallen" : ""}`}
+					className={`liora-stickynote-2${sticky2Fallen ? " liora-stickynote-2--fallen" : ""}${sticky2Zoomed ? " liora-stickynote-2--zoomed" : ""}`}
+					aria-expanded={sticky2Zoomed}
 					aria-label={
-						visitor ? `${greetingPrefix}, ${visitor.greeting}.` : greetingPrefix
+						visitor
+							? `${sticky2Zoomed ? getTimeOfDayGreeting(locale) : greetingPrefix}, ${visitor.greeting}.`
+							: greetingPrefix
 					}
-					onClick={() => setSticky2Fallen(true)}
+					onClick={() => {
+						// Bryan ask: tap to zoom (mimics stickynote 1) when sticky 1
+						// isn't already zoomed; show time-of-day greeting when zoomed.
+						// If sticky 1 is currently zoomed, ignore tap so the user
+						// finishes that interaction first.
+						if (stickyZoomed) return;
+						setSticky2Zoomed((v) => !v);
+					}}
 				>
 					<span className="liora-stickynote-2-line">
-						{greetingPrefix}, {visitor?.greeting ?? ""}
+						{sticky2Zoomed ? getTimeOfDayGreeting(locale) : greetingPrefix},{" "}
+						{visitor?.greeting ?? ""}
 					</span>
 					{visitor?.flag ? (
 						<span className="liora-stickynote-2-flag" aria-hidden="true">

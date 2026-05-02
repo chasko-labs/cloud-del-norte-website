@@ -107,6 +107,7 @@ describe("translation coverage", () => {
 			"aboutPage.infoLink", // "Info" - universal abbreviation
 			"feedPage.infoLink", // "Info" - universal abbreviation
 			"helpPanel.andresWebsite", // "andmore.dev" - proper domain name
+			"feedPage.andmoreDevHeader", // "andmore.dev" - proper domain name
 			"helpPanel.andresMoreno", // Proper name
 			"helpPanel.aslLeadRole", // "ASL" - acronym
 			"helpPanel.lsmLead", // "LSM" - acronym

@@ -59,7 +59,9 @@ export default function ArrowheadNews() {
 			header={
 				<Header variant="h2">
 					Arrowhead Research Park
-					<span className="feed-card-header-sub">at NMSU</span>
+					<span className="feed-card-header-sub">
+						{t("feedPage.arrowheadAtNmsu")}
+					</span>
 				</Header>
 			}
 		>
@@ -109,7 +111,7 @@ export default function ArrowheadNews() {
 				<div
 					className="feed-article-carousel__dots"
 					role="tablist"
-					aria-label="article selector"
+					aria-label={t("feedPage.articleSelector")}
 				>
 					{(articles as { id: string }[]).map((a, i) => (
 						<button
@@ -121,7 +123,7 @@ export default function ArrowheadNews() {
 							role="tab"
 							aria-selected={i === index}
 							aria-controls={panelId}
-							aria-label={`article ${i + 1} of ${total}`}
+							aria-label={`${t("feedPage.articleAriaPrefix")} ${i + 1} ${t("feedPage.articleAriaConnector")} ${total}`}
 							tabIndex={i === index ? 0 : -1}
 							className={`feed-article-carousel__dot${i === index ? " feed-article-carousel__dot--active" : ""}`}
 							onClick={() => {
