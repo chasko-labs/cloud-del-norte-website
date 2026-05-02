@@ -827,6 +827,331 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	}
 }
 
+/* ==========================================================================
+   CUSTOM CELESTIAL + FLAG SVG TOGGLES
+   Replaces the stock emoji 🇲🇽 🇺🇸 ☀️ 🌙 in the top-nav utility buttons
+   with hand-built inline SVGs that carry the brand glow language and
+   live, breathing animation. Animations honor prefers-reduced-motion.
+
+   Architecture:
+     - shell/index.tsx renders <SunSvg/MoonSvg/MxFlagSvg/UsFlagSvg> wrapped in
+       a span carrying classes cdn-celestial-toggle / cdn-flag-toggle.
+     - The wrapper span sits inside Cloudscape's <a class="...top-navigation...">
+       link (TopNavigation routes button-type utilities through InternalLink
+       in the non-primary path — see node_modules .../parts/utility.js).
+     - Existing ambient circular glow (lines 749-764) stays — it provides the
+       soft halo behind both toggles for free.
+   ========================================================================== */
+
+/* Wrapper spans — inline-flex so SVG sizes consistently in the link's
+   inline flow, and pointer-events: none so the parent <a> still owns
+   the click target. */
+.cdn-celestial-toggle,
+.cdn-flag-toggle {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	pointer-events: none;
+	line-height: 0;
+	/* Crisp edges for tiny SVG details */
+	shape-rendering: geometricPrecision;
+}
+
+/* The wrapping <a> from Cloudscape has the existing 50% glow halo via
+   the rules at line 749-764. Make the SVG sit centered within it. */
+[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle),
+[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle) {
+	/* Slightly tighter padding so the SVG dominates the halo */
+	padding: 4px 6px !important;
+	display: inline-flex !important;
+	align-items: center;
+	justify-content: center;
+	transition:
+		box-shadow 0.25s ease,
+		filter 0.25s ease,
+		transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── SUN ──────────────────────────────────────────────────────────────────
+   Warm gold core + 8 rays. Rays rotate slowly (18s); core breathes (4s).
+   Hover: rotation speeds up, glow intensifies. */
+
+.cdn-svg-sun {
+	overflow: visible; /* let the drop-shadow paint outside the 22×22 box */
+	filter:
+		drop-shadow(0 0 2px rgba(255, 200, 80, 0.85))
+		drop-shadow(0 0 6px rgba(255, 153, 0, 0.55))
+		drop-shadow(0 0 14px rgba(255, 153, 0, 0.28));
+	transition: filter 0.3s ease;
+}
+
+.cdn-svg-sun__core {
+	fill: #ffcd55;
+	stroke: #ffb14a;
+	stroke-width: 0.6;
+	transform-origin: 11px 11px;
+}
+
+.cdn-svg-sun__rays {
+	stroke: #ffb14a;
+	stroke-width: 1.6;
+	stroke-linecap: round;
+	transform-origin: 11px 11px;
+}
+
+.cdn-svg-sun__rays line {
+	stroke: #ffb14a;
+}
+
+@keyframes cdn-sun-spin {
+	from { transform: rotate(0deg); }
+	to   { transform: rotate(360deg); }
+}
+
+@keyframes cdn-sun-pulse {
+	0%, 100% {
+		transform: scale(1);
+		fill: #ffcd55;
+	}
+	50% {
+		transform: scale(1.08);
+		fill: #ffd877;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.cdn-celestial-toggle--sun .cdn-svg-sun__rays {
+		animation: cdn-sun-spin 18s linear infinite;
+	}
+	.cdn-celestial-toggle--sun .cdn-svg-sun__core {
+		animation: cdn-sun-pulse 4s ease-in-out infinite;
+	}
+}
+
+/* Hover: amplify */
+[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--sun):hover .cdn-svg-sun {
+	filter:
+		drop-shadow(0 0 3px rgba(255, 220, 120, 1))
+		drop-shadow(0 0 9px rgba(255, 153, 0, 0.85))
+		drop-shadow(0 0 22px rgba(255, 153, 0, 0.5));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--sun):hover .cdn-svg-sun__rays {
+		animation-duration: 4s; /* spin faster on hover */
+	}
+	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--sun):hover .cdn-svg-sun__core {
+		animation-duration: 1.6s; /* pulse faster */
+	}
+}
+
+/* ── MOON ─────────────────────────────────────────────────────────────────
+   Crescent + craters + a tiny twinkling star to the upper-right.
+   Crescent breathes color (lavender → soft cream) on a slow cycle. */
+
+.cdn-svg-moon {
+	overflow: visible;
+	filter:
+		drop-shadow(0 0 2px rgba(215, 199, 238, 0.7))
+		drop-shadow(0 0 6px rgba(144, 96, 240, 0.45))
+		drop-shadow(0 0 14px rgba(144, 96, 240, 0.22));
+	transition: filter 0.3s ease;
+}
+
+.cdn-svg-moon__crescent {
+	fill: #ede5d4; /* cream — picks up brand against navy nav */
+}
+
+.cdn-svg-moon__crater {
+	fill: rgba(139, 90, 43, 0.32); /* faint amber speckle */
+}
+
+.cdn-svg-moon__star {
+	fill: #d7c7ee;
+	transform-origin: 17.5px 7.5px;
+}
+
+@keyframes cdn-moon-breathe {
+	0%, 100% { fill: #ede5d4; }
+	50%      { fill: #f5edd9; }
+}
+
+@keyframes cdn-moon-twinkle {
+	0%, 100% {
+		opacity: 0.85;
+		transform: scale(1) rotate(0deg);
+	}
+	30% {
+		opacity: 0.35;
+		transform: scale(0.6) rotate(20deg);
+	}
+	60% {
+		opacity: 1;
+		transform: scale(1.2) rotate(-10deg);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.cdn-celestial-toggle--moon .cdn-svg-moon__crescent {
+		animation: cdn-moon-breathe 6s ease-in-out infinite;
+	}
+	.cdn-celestial-toggle--moon .cdn-svg-moon__star {
+		animation: cdn-moon-twinkle 3.2s ease-in-out infinite;
+	}
+}
+
+[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--moon):hover .cdn-svg-moon {
+	filter:
+		drop-shadow(0 0 3px rgba(215, 199, 238, 1))
+		drop-shadow(0 0 10px rgba(144, 96, 240, 0.85))
+		drop-shadow(0 0 22px rgba(144, 96, 240, 0.5));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-celestial-toggle--moon):hover .cdn-svg-moon__star {
+		animation-duration: 1.4s; /* twinkle faster */
+	}
+}
+
+/* ── FLAGS — shared base ─────────────────────────────────────────────────
+   Both flags use rounded corners + a subtle perspective wave. Each stripe
+   group rides its own translateY/skew offset so the cloth reads as in
+   motion rather than rigid. */
+
+.cdn-svg-flag {
+	overflow: visible;
+	border-radius: 3px;
+	filter:
+		drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45))
+		drop-shadow(0 0 4px rgba(0, 0, 0, 0.25));
+	transition: filter 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.cdn-flag-toggle:hover .cdn-svg-flag,
+[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle):hover .cdn-svg-flag {
+	filter:
+		drop-shadow(0 2px 3px rgba(0, 0, 0, 0.55))
+		drop-shadow(0 0 8px rgba(255, 255, 255, 0.18));
+}
+
+/* Common stripe wave — vertical (MX) and horizontal (US) variants share
+   the same SVG transform target: each stripe group translates and skews
+   on a phase-offset cycle. transform-box: fill-box anchors the transform
+   to the rect's own bounding box rather than the SVG root. */
+.cdn-svg-flag__stripe,
+.cdn-svg-flag__stripes-h rect {
+	transform-box: fill-box;
+	transform-origin: center;
+}
+
+@keyframes cdn-flag-wave-v {
+	0%, 100% { transform: translateY(0)    skewY(0deg); }
+	25%      { transform: translateY(-0.4px) skewY(0.6deg); }
+	50%      { transform: translateY(0.3px)  skewY(-0.4deg); }
+	75%      { transform: translateY(-0.2px) skewY(0.3deg); }
+}
+
+@keyframes cdn-flag-wave-h {
+	0%, 100% { transform: translateX(0)    skewX(0deg); }
+	25%      { transform: translateX(-0.4px) skewX(0.6deg); }
+	50%      { transform: translateX(0.3px)  skewX(-0.4deg); }
+	75%      { transform: translateX(-0.2px) skewX(0.3deg); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	/* MX — three vertical stripes, each at a different phase */
+	.cdn-svg-flag--mx .cdn-svg-flag__stripe--a {
+		animation: cdn-flag-wave-v 3.6s ease-in-out infinite;
+		animation-delay: 0s;
+	}
+	.cdn-svg-flag--mx .cdn-svg-flag__stripe--b {
+		animation: cdn-flag-wave-v 3.6s ease-in-out infinite;
+		animation-delay: 0.3s;
+	}
+	.cdn-svg-flag--mx .cdn-svg-flag__stripe--c {
+		animation: cdn-flag-wave-v 3.6s ease-in-out infinite;
+		animation-delay: 0.6s;
+	}
+	/* MX emblem rides the middle stripe with its own gentle bob */
+	.cdn-svg-flag--mx .cdn-svg-flag__emblem {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: cdn-flag-wave-v 3.6s ease-in-out infinite;
+		animation-delay: 0.4s;
+	}
+
+	/* US — 13 horizontal stripes; nth-child phase offsets create a ripple
+	   that travels top-to-bottom. */
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect {
+		animation: cdn-flag-wave-h 3.6s ease-in-out infinite;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(1)  { animation-delay: 0.00s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(2)  { animation-delay: 0.08s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(3)  { animation-delay: 0.16s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(4)  { animation-delay: 0.24s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(5)  { animation-delay: 0.32s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(6)  { animation-delay: 0.40s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(7)  { animation-delay: 0.48s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(8)  { animation-delay: 0.56s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(9)  { animation-delay: 0.64s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(10) { animation-delay: 0.72s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(11) { animation-delay: 0.80s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(12) { animation-delay: 0.88s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stripes-h rect:nth-child(13) { animation-delay: 0.96s; }
+
+	/* US — stars get a subtle staggered sparkle */
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle {
+		transform-box: fill-box;
+		transform-origin: center;
+		animation: cdn-star-sparkle 4.2s ease-in-out infinite;
+	}
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(1) { animation-delay: 0.0s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(2) { animation-delay: 0.4s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(3) { animation-delay: 0.8s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(4) { animation-delay: 0.2s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(5) { animation-delay: 0.6s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(6) { animation-delay: 1.0s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(7) { animation-delay: 0.3s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(8) { animation-delay: 0.7s; }
+	.cdn-svg-flag--us .cdn-svg-flag__stars circle:nth-child(9) { animation-delay: 1.1s; }
+}
+
+@keyframes cdn-star-sparkle {
+	0%, 100% { opacity: 1;   transform: scale(1); }
+	50%      { opacity: 0.55; transform: scale(0.7); }
+}
+
+/* Hover: speed up the wave so cloth reads as catching wind */
+@media (prefers-reduced-motion: no-preference) {
+	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
+		.cdn-svg-flag__stripe,
+	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
+		.cdn-svg-flag__stripes-h rect,
+	[class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle):hover
+		.cdn-svg-flag__emblem {
+		animation-duration: 1.4s;
+	}
+}
+
+/* The existing utility-wrapper rules at line 750-764 already paint a soft
+   circular halo behind each toggle. Override it to a rounded-rect halo for
+   the flags so the halo silhouette matches the rectangular SVG. */
+:root:not(.awsui-dark-mode)
+	#top-nav
+	[class*="utility-wrapper"]
+	a[class*="top-navigation"]:has(.cdn-flag-toggle) {
+	border-radius: 5px !important;
+	box-shadow: 0 0 8px 3px rgba(139, 90, 43, 0.22) !important;
+}
+
+.awsui-dark-mode
+	#top-nav
+	[class*="utility-wrapper"]
+	a[class*="top-navigation"]:has(.cdn-flag-toggle) {
+	border-radius: 5px !important;
+	box-shadow: 0 0 10px 3px rgba(144, 96, 240, 0.28) !important;
+}
+
 /* ── Breadcrumb link color — palette override ──
    Cloudscape BreadcrumbGroup renders links with its own link blue token
    (#0073bb / similar) that falls outside the Cloud Del Norte palette.
@@ -1126,4 +1451,102 @@ body {
 .awsui-dark-mode .cdn-version {
 	color: rgba(215, 199, 238, 0.65);
 	background: rgba(144, 96, 240, 0.08);
+}
+
+/* ==========================================================================
+   AWS USER GROUP tagline — top-nav, right of star logo
+
+   Lit-sign treatment matching the 3D star:
+   - "AWS" in aws-orange, larger (display weight)
+   - "USER GROUP" in brand violet, smaller (subtitle weight)
+   - layered text-shadow simulates neon outer glow
+   - slow 6s brightness pulse, offset between lines for subtle parallax
+   - hidden below 480px so the mobile top-nav stays clean
+
+   Amazon Ember is Cloudscape's default font; falls through to system stack
+   if not loaded. Letters track wide for sign-shop legibility.
+   ========================================================================== */
+.cdn-ugtag {
+	position: absolute;
+	left: clamp(94px, 12vw, 116px);
+	top: 50%;
+	transform: translateY(-50%);
+	z-index: 1200;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 0;
+	font-family: "Amazon Ember", "Amazon Ember Display", -apple-system,
+		BlinkMacSystemFont, "Helvetica Neue", Roboto, Arial, sans-serif;
+	font-weight: 800;
+	letter-spacing: 0.09em;
+	pointer-events: none;
+	user-select: none;
+	line-height: 1;
+}
+
+.cdn-ugtag-aws {
+	font-size: clamp(15px, 1.8vw, 20px);
+	color: #ff9900;
+	text-shadow:
+		0 0 4px rgba(255, 153, 0, 0.75),
+		0 0 12px rgba(255, 153, 0, 0.55),
+		0 0 24px rgba(255, 153, 0, 0.32),
+		0 1px 2px rgba(0, 0, 0, 0.65);
+	animation: cdn-ugtag-pulse 6s ease-in-out infinite;
+}
+
+.cdn-ugtag-ug {
+	font-size: clamp(10px, 1.2vw, 13px);
+	margin-top: 2px;
+	color: #9060f0;
+	text-shadow:
+		0 0 3px rgba(144, 96, 240, 0.75),
+		0 0 8px rgba(144, 96, 240, 0.55),
+		0 0 18px rgba(144, 96, 240, 0.38),
+		0 1px 2px rgba(0, 0, 0, 0.65);
+	animation: cdn-ugtag-pulse 6s ease-in-out infinite;
+	animation-delay: 0.5s;
+}
+
+/* Dark mode keeps the same brand colors but the dark navy top-nav already
+   provides the contrast — slightly punchier glow to compensate for the
+   darker substrate */
+.awsui-dark-mode .cdn-ugtag-aws {
+	text-shadow:
+		0 0 6px rgba(255, 153, 0, 0.85),
+		0 0 16px rgba(255, 153, 0, 0.6),
+		0 0 32px rgba(255, 153, 0, 0.36),
+		0 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+.awsui-dark-mode .cdn-ugtag-ug {
+	text-shadow:
+		0 0 5px rgba(144, 96, 240, 0.85),
+		0 0 12px rgba(144, 96, 240, 0.6),
+		0 0 24px rgba(144, 96, 240, 0.45),
+		0 1px 2px rgba(0, 0, 0, 0.75);
+}
+
+@keyframes cdn-ugtag-pulse {
+	0%,
+	100% {
+		filter: brightness(1);
+	}
+	50% {
+		filter: brightness(1.2);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-ugtag-aws,
+	.cdn-ugtag-ug {
+		animation: none;
+	}
+}
+
+@media (max-width: 480px) {
+	.cdn-ugtag {
+		display: none;
+	}
 }
