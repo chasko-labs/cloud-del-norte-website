@@ -310,6 +310,54 @@
 		0 0 10px rgba(var(--station-secondary-rgb, 255, 153, 0), 0.3);
 }
 
+/* donate variant — tiny 3-line "donate / to / <key>" pill that surfaces
+   only when the active station has a donateUrl. Reads in station-secondary
+   tint so it sits visually subordinate to the primary play/stop button.
+   Each <span> stacks on its own line via flex-column + line-height:1. */
+.cdn-pp__btn--donate {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	min-width: 38px;
+	height: 32px;
+	padding: 2px 6px;
+	border-radius: 8px;
+	border: 1px solid rgba(var(--station-secondary-rgb, 215, 199, 238), 0.45);
+	background: rgba(var(--station-secondary-rgb, 215, 199, 238), 0.12);
+	color: rgba(240, 240, 240, 0.82);
+	font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont, sans-serif;
+	font-size: 8px;
+	font-weight: 600;
+	line-height: 1;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	text-decoration: none;
+	flex-shrink: 0;
+	gap: 1px;
+	transition:
+		background 0.18s ease,
+		border-color 0.18s ease,
+		color 0.18s ease,
+		box-shadow 0.18s ease,
+		transform 0.15s ease;
+}
+
+.cdn-pp__btn--donate:hover {
+	background: rgba(var(--station-secondary-rgb, 215, 199, 238), 0.28);
+	border-color: var(--station-secondary, rgba(240, 240, 240, 0.95));
+	color: rgba(240, 240, 240, 0.98);
+	box-shadow:
+		0 0 0 2px rgba(var(--station-secondary-rgb, 215, 199, 238), 0.22),
+		0 0 8px rgba(var(--station-secondary-rgb, 215, 199, 238), 0.3);
+	transform: scale(1.06);
+}
+
+.cdn-pp__btn--donate:focus-visible {
+	outline: 2px solid var(--station-secondary, rgba(240, 240, 240, 0.95));
+	outline-offset: 2px;
+}
+
 @media (prefers-reduced-motion: no-preference) {
 	.cdn-pp {
 		animation: cdn-pp-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
@@ -336,5 +384,23 @@
 	to {
 		opacity: 1;
 		transform: translateX(0);
+	}
+}
+
+/* Mobile: hide the persistent player pill entirely on narrow viewports.
+   The pill is fixed at right:192px with a dark navy 0.86-alpha bg + 12px
+   blur. On phones (<600px) it overlaps the right-edge top-nav utility
+   buttons (locale flag, theme toggle, sign-in). In light mode the dark
+   navy fill paints OPAQUELY over the cream nav, swallowing the locale
+   flag visually — reads as "flag collapsed behind More dropdown" even
+   though Cloudscape's overflow collapse is disabled per disableUtilityCollapse:true.
+   In dark mode the navy pill blends with the navy nav so the same
+   overlap is invisible — root cause of the asymmetric mobile bug.
+   Hiding the pill on mobile preserves locale-flag visibility in both
+   modes; audio playback continues uninterrupted (no DOM teardown of
+   the underlying <audio> element, only the visual chrome). */
+@media (max-width: 600px) {
+	.cdn-pp {
+		display: none !important;
 	}
 }

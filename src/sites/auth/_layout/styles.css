@@ -65,6 +65,36 @@ body.cdn-auth-subdomain:not(#\9):not(.awsui-dark-mode) {
 	   active) — replace generic grey rgb(101,104,113) with a soft warm-amber
 	   so the step strip reads in palette throughout */
 	--color-text-interactive-default-ugh9wp: rgba(139, 90, 43, 0.62);
+
+	/* v0.0.0054 (Bryan eyes-on, live signup): royal blue still leaked on
+	   mouseover — class-level button hover rules already exist but the Wizard's
+	   own "Resend code" Link variant=primary, the inactive Wizard step
+	   titles on hover, and any Cloudscape Button variant we DON'T wrap inside
+	   .cdn-auth-card (none today, but defensive) all still pulled the bare
+	   #002b66 / #f0fbff fallbacks. Override the hover/active tokens at the
+	   subdomain scope so every render path stays in palette without us
+	   chasing each new component class. */
+	--color-background-button-primary-hover-mo85i6: var(--cdn-purple);
+	--color-background-button-primary-active-5cqoqt: var(--cdn-purple);
+	--color-text-button-primary-hover-pw12ep: var(--cdn-white);
+	--color-text-button-primary-active-refmba: var(--cdn-white);
+	--color-background-button-normal-hover-53op9s: rgba(139, 90, 43, 0.08);
+	--color-background-button-normal-active-5imwxd: rgba(139, 90, 43, 0.14);
+	--color-border-button-normal-hover-6a2tdq: var(--cdn-violet);
+	--color-border-button-normal-active-ru7yhb: var(--cdn-violet);
+	--color-text-button-normal-hover-gusgyv: var(--cdn-violet);
+	--color-text-button-normal-active-vihsxh: var(--cdn-violet);
+	--color-background-button-link-hover-lhrs2u: rgba(144, 96, 240, 0.08);
+	--color-background-button-link-active-5oi2dp: rgba(144, 96, 240, 0.14);
+	--color-text-button-link-hover-kvrc36: var(--cdn-violet);
+	--color-text-button-link-active-dqdjg3: var(--cdn-purple);
+	/* Link variant=primary in-flow (Resend code) + Wizard inactive step
+	   title text on hover + button-normal label hover */
+	--color-text-link-button-normal-hover-jrnyw3: var(--cdn-violet);
+	--color-text-link-button-normal-active-js9ryu: var(--cdn-purple);
+	--color-text-link-button-underline-hover-cn3mqh: var(--cdn-violet);
+	--color-text-interactive-hover-6naf7i: var(--cdn-violet);
+	--color-text-interactive-active-uoe6zi: var(--cdn-purple);
 }
 
 body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
@@ -86,6 +116,29 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 	/* inactive step circle border + title — replace generic grey rgb(164,164,173)
 	   with a soft lavender so the step strip reads in palette throughout */
 	--color-text-interactive-default-ugh9wp: rgba(215, 199, 238, 0.55);
+
+	/* v0.0.0054 dark-mode hover/active token coverage — see light-mode block
+	   above for rationale. Lavender + violet pairing instead of purple +
+	   white so the hover ramp stays bright against the deep navy backdrop. */
+	--color-background-button-primary-hover-mo85i6: var(--cdn-purple);
+	--color-background-button-primary-active-5cqoqt: var(--cdn-purple);
+	--color-text-button-primary-hover-pw12ep: var(--cdn-white);
+	--color-text-button-primary-active-refmba: var(--cdn-white);
+	--color-background-button-normal-hover-53op9s: rgba(144, 96, 240, 0.12);
+	--color-background-button-normal-active-5imwxd: rgba(144, 96, 240, 0.2);
+	--color-border-button-normal-hover-6a2tdq: var(--cdn-lavender);
+	--color-border-button-normal-active-ru7yhb: var(--cdn-lavender);
+	--color-text-button-normal-hover-gusgyv: var(--cdn-lavender);
+	--color-text-button-normal-active-vihsxh: var(--cdn-lavender);
+	--color-background-button-link-hover-lhrs2u: rgba(144, 96, 240, 0.12);
+	--color-background-button-link-active-5oi2dp: rgba(144, 96, 240, 0.2);
+	--color-text-button-link-hover-kvrc36: var(--cdn-lavender);
+	--color-text-button-link-active-dqdjg3: var(--cdn-violet);
+	--color-text-link-button-normal-hover-jrnyw3: var(--cdn-lavender);
+	--color-text-link-button-normal-active-js9ryu: var(--cdn-violet);
+	--color-text-link-button-underline-hover-cn3mqh: var(--cdn-lavender);
+	--color-text-interactive-hover-6naf7i: var(--cdn-lavender);
+	--color-text-interactive-active-uoe6zi: var(--cdn-violet);
 }
 
 /* Constrain the auth form column. ContentLayout w/ contentType="form" already

@@ -839,6 +839,12 @@
 	letter-spacing: 0.06em;
 	cursor: pointer;
 	user-select: none;
+	/* s6 — runtime-measured horizontal shift so the pill lines up under the
+	   breadcrumb's last item ("Feed" / "Roadmap" / etc.). shell/index.tsx
+	   computes the delta between the breadcrumb's last <li> left edge and
+	   this pill's natural left edge each resize/layout cycle. Falls back to
+	   0px (natural inline position) when JS hasn't run yet. */
+	transform: translateX(var(--cdn-volunteer-shift-x, 0px));
 	transition:
 		transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
 		box-shadow 0.2s ease,

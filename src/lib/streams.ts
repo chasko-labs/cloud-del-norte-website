@@ -35,6 +35,12 @@ export interface StreamDef {
 	 */
 	readonly metaFormat?: "json" | "sse";
 	readonly colors: StationColors;
+	/**
+	 * canonical donation URL — surfaces a "donate | to | <key>" mini button
+	 * inline with the player when present. omit for stations without a public
+	 * donation channel (e.g. fully institution-funded mexican student radio)
+	 */
+	readonly donateUrl?: string;
 	/** parses metaUrl response into "song — artist" string. omit alongside metaUrl */
 	parseMeta?(data: unknown): string | null;
 }
@@ -45,6 +51,7 @@ export const STREAMS: StreamDef[] = [
 		url: "https://kruxstream.nmsu.edu/KRUX",
 		label: "krux 91.5",
 		metaUrl: "https://kruxstream.nmsu.edu/status-json.xsl",
+		donateUrl: "https://nmsufoundation.org/givenow/KRUX.html",
 		// nmsu brand book — https://brand.nmsu.edu/colors/
 		// primary: aggie crimson; secondary: mesilla valley sunset (orange);
 		// accent: warm cream (replaces banned #fff)
@@ -69,6 +76,7 @@ export const STREAMS: StreamDef[] = [
 		url: "https://kexp.streamguys1.com/kexp160.aac",
 		label: "kexp 90.3",
 		metaUrl: "https://api.kexp.org/v2/plays/?limit=1&format=json",
+		donateUrl: "https://www.kexp.org/donate/",
 		// kexp brand book — https://cargocollective.com/jonisdelicious/KEXP-Brand-Book
 		// primary: buttercup yellow; secondary: mona lisa coral; accent: thunder near-black
 		colors: {
@@ -103,16 +111,16 @@ export const STREAMS: StreamDef[] = [
 		label: "ksfr 101.1",
 		// metaUrl omitted — KSFR homepage exposes no NPR Composer widget id and no
 		// public json now-playing endpoint. Player relies on station label only.
-		// FOLLOWUP: contact info@ksfr.org for metadata feed if available.
-		// SFCC published no public brand-color palette; reusing UNM's cherry/turquoise/
-		// silver from the prior KUNM slot — Santa Fe regional warmth still reads.
+		donateUrl: "https://www.ksfr.org/donate",
+		// SFCC official brand: turquoise PMS 326 + maroon PMS 484. Replaces the
+		// v0.0.0065 UNM-cherry placeholder once bryan supplied the SFCC guide.
 		colors: {
-			primary: "#ba0c2f", // cherry red
-			secondary: "#007a86", // turquoise
-			accent: "#a7a8aa", // silver
-			// cherry too dark on navy bg — brighten for dark-mode AA contrast
-			primaryDark: "#e23457",
-			// cherry on cream: ~6.5:1 — passes AAA, no light override
+			primary: "#00B2A9", // SFCC turquoise (PMS 326)
+			secondary: "#9A3324", // SFCC maroon (PMS 484)
+			accent: "#faf7f0", // warm cream anchor (avoids #fff)
+			// turquoise borderline on cream (~3.4:1) — deepen for light-mode AA
+			primaryLight: "#006e69",
+			// turquoise on navy ~6.8:1 — passes AAA, no dark override needed
 		},
 	},
 	{
@@ -122,6 +130,7 @@ export const STREAMS: StreamDef[] = [
 		// only plays HLS natively on Safari. mp3 fallback works in all browsers.
 		url: "https://streams.kut.org/4428_192.mp3?aw_0_1st.playerid=kutx-free",
 		label: "kutx 98.9",
+		donateUrl: "https://www.kutx.org/donate",
 		// NPR Composer widget id 50ef24ebe1c8a1369593d032 sniffed from kutx.org
 		// homepage; CORS open (Access-Control-Allow-Origin: *)
 		metaUrl:

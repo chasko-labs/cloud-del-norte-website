@@ -375,6 +375,19 @@ function PersistentPlayerBar({
 					<span aria-hidden="true">↻</span>
 				</button>
 			)}
+			{streamDef?.donateUrl && (
+				<a
+					className="cdn-pp__btn cdn-pp__btn--donate"
+					href={streamDef.donateUrl}
+					target="_blank"
+					rel="noreferrer"
+					title={`donate to ${state.stationKey}`}
+				>
+					<span>donate</span>
+					<span>to</span>
+					<span>{state.stationKey}</span>
+				</a>
+			)}
 			<button
 				type="button"
 				className="cdn-pp__btn cdn-pp__btn--skip"
