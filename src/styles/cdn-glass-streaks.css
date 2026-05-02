@@ -84,9 +84,9 @@
 	--cdn-glass-bg: rgba(237, 229, 212, 0.55);
 	--cdn-glass-bg-strong: rgba(237, 229, 212, 0.7);
 	--cdn-glass-bg-breadcrumbs: rgba(237, 229, 212, 0.18);
-	--cdn-glass-bg-scroll: rgba(237, 229, 212, 0.2);
-	--cdn-glass-bg-ctl-header: rgba(237, 229, 212, 0.32);
-	--cdn-glass-bg-content: rgba(237, 229, 212, 0.18);
+	--cdn-glass-bg-scroll: rgba(237, 229, 212, 0.28);
+	--cdn-glass-bg-ctl-header: rgba(237, 229, 212, 0.42);
+	--cdn-glass-bg-content: rgba(237, 229, 212, 0.25);
 	--cdn-glass-border: rgba(139, 90, 43, 0.28);
 	--cdn-glass-shadow:
 		0 4px 24px rgba(139, 90, 43, 0.18),
@@ -115,9 +115,9 @@
 	--cdn-glass-bg: rgba(28, 34, 48, 0.55);
 	--cdn-glass-bg-strong: rgba(28, 34, 48, 0.72);
 	--cdn-glass-bg-breadcrumbs: rgba(10, 12, 32, 0.22);
-	--cdn-glass-bg-scroll: rgba(10, 12, 32, 0.25);
-	--cdn-glass-bg-ctl-header: rgba(10, 12, 32, 0.38);
-	--cdn-glass-bg-content: rgba(10, 12, 32, 0.22);
+	--cdn-glass-bg-scroll: rgba(10, 12, 32, 0.32);
+	--cdn-glass-bg-ctl-header: rgba(10, 12, 32, 0.5);
+	--cdn-glass-bg-content: rgba(10, 12, 32, 0.28);
 	--cdn-glass-border: rgba(144, 96, 240, 0.32);
 	--cdn-glass-shadow:
 		0 4px 24px rgba(144, 96, 240, 0.32),
@@ -426,18 +426,103 @@
 	backdrop-filter: blur(10px) saturate(1.05) !important;
 }
 
-/* main content area — backing behind the feed cards. Subtle so cards
-   still pop visually but the vertical column has shape. */
+/* main content area — backing behind the feed cards.
+
+   Layered:
+     1. background-color: tier-content cream/navy (low alpha) — base wash
+     2. background-image: radial-gradient ambient spotlights + paper grain
+        (the texture we lost when cdn-atmospheric force-transparent wiped
+        shell/styles.css's spotlight stack). Re-applied here so the page has
+        depth instead of a flat tint.
+
+   The image stack is fixed (background-attachment: fixed) so it tracks the
+   viewport rather than scrolling with content. */
 :root:not(.awsui-dark-mode)
 	main[class*="awsui_layout_"]:not(#\9):not(#\10),
 :root:not(.awsui-dark-mode)
 	[class*="awsui_layout-main"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-content) !important;
+	background-image:
+		radial-gradient(
+			60% 45% at 25% 15%,
+			rgba(201, 162, 63, 0.06) 0%,
+			rgba(201, 162, 63, 0) 70%
+		),
+		radial-gradient(
+			50% 40% at 80% 85%,
+			rgba(144, 96, 240, 0.05) 0%,
+			rgba(144, 96, 240, 0) 65%
+		),
+		repeating-linear-gradient(
+			135deg,
+			rgba(139, 90, 43, 0.022) 0 2px,
+			transparent 2px 8px
+		) !important;
+	background-attachment: fixed, fixed, fixed !important;
 }
 
 .awsui-dark-mode main[class*="awsui_layout_"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_layout-main"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-content) !important;
+	background-image:
+		radial-gradient(
+			60% 45% at 25% 15%,
+			rgba(144, 96, 240, 0.18) 0%,
+			rgba(144, 96, 240, 0) 70%
+		),
+		radial-gradient(
+			50% 40% at 80% 85%,
+			rgba(48, 0, 106, 0.28) 0%,
+			rgba(48, 0, 106, 0) 65%
+		),
+		repeating-linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.014) 0 2px,
+			transparent 2px 5px
+		) !important;
+	background-attachment: fixed, fixed, fixed !important;
+}
+
+/* ContentLayout header strip — horizon streak at bottom edge.
+   Saturated amber/violet gradient line gives the page header band a
+   visual shoulder separating it from the feed cards below.
+   Targets the same selector hierarchy as the bg rule above. */
+:root:not(.awsui-dark-mode)
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10),
+.awsui-dark-mode
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10) {
+	position: relative;
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10)::after,
+.awsui-dark-mode
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10)::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2px;
+	border-radius: 1px;
+	pointer-events: none;
+	opacity: 0.7;
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10)::after {
+	background: var(--cdn-streak-h-light);
+}
+
+.awsui-dark-mode
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10)::after {
+	background: var(--cdn-streak-h-dark);
 }
 
 /* Bottom streak — sits beneath the breadcrumbs strip as a horizon line */
