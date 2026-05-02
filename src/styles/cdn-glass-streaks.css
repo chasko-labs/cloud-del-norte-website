@@ -787,8 +787,7 @@
 	gap: 6px;
 	padding: 6px 16px;
 	border-radius: 999px;
-	font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont,
-		sans-serif;
+	font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont, sans-serif;
 	letter-spacing: 0.06em;
 	cursor: pointer;
 	user-select: none;
