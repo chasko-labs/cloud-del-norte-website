@@ -484,14 +484,18 @@
 }
 
 /* ContentLayout header strip — horizon streak via border-image.
-   DO NOT override position on awsui_background_ — Cloudscape sets it to
-   absolute so the band paints BEHIND its sibling .awsui_header_ holding
-   the page title. Setting position: relative pushes the band into the flow
-   and shoves the title off-screen.
 
-   border-image lets a gradient render as a bottom border without changing
-   the box-model height or stacking context. The 0 0 2px 0 slice paints
-   only the bottom edge. */
+   Cloudscape's awsui_has-header_ uses CSS Grid; awsui_background_ spans
+   grid rows 1-5 and the page-title sibling awsui_header-wrapper_ lives in
+   row 4 — the two OVERLAP in the same grid cell. With backdrop-filter on
+   the background creating its own stacking context, the bg paints over
+   the title text unless the title is explicitly lifted above it.
+
+   Two-part fix:
+     1. border-image streak on the bg (gradient bottom border, no position
+        override needed — keeps Cloudscape's grid cell sizing intact).
+     2. position: relative + z-index: 1 on the header-wrapper sibling —
+        forces the title text + Info button above the backdrop-filter layer. */
 :root:not(.awsui-dark-mode)
 	[class*="awsui_has-header_"]
 	> [class*="awsui_background_"]:not(#\9):not(#\10) {
@@ -510,6 +514,12 @@
 	border-image-slice: 0 0 1 0 !important;
 	border-image-width: 0 0 2px 0 !important;
 	border-image-repeat: stretch !important;
+}
+
+/* Lift the page-title sibling above the bg's backdrop-filter stacking context */
+[class*="awsui_has-header_"] > [class*="awsui_header-wrapper_"]:not(#\9):not(#\10) {
+	position: relative !important;
+	z-index: 1 !important;
 }
 
 /* Bottom streak — sits beneath the breadcrumbs strip as a horizon line */
