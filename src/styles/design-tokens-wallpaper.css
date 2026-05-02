@@ -36,11 +36,13 @@
 
 /* Light-mode alpha override — lower values = MORE translucency = MORE wallpaper visible.
    Gypsum-sands is intrinsically low-contrast (warm dune tones against cream UI),
-   so 0.65 was still too opaque — eye couldn't distinguish "panel cream" from
-   "dune showing through panel cream". Aggressive drop forces the panel to read
-   as visibly translucent with dune texture clearly behind it. */
+   so even 0.35 cream tint + blur made dunes visually disappear (eye reads as
+   uniform cream-behind-cream). Drop further AND remove blur on panels —
+   dune texture survives only when ridges aren't blurred away.
+   --cdn-wallpaper-blur-panel: 0 here disables the blur via the var fallback. */
 :root:not(.awsui-dark-mode) {
-	--cdn-wallpaper-alpha-panel: 0.35;
-	--cdn-wallpaper-alpha-header: 0.55;
-	--cdn-wallpaper-alpha-content: 0.45;
+	--cdn-wallpaper-alpha-panel: 0.20;
+	--cdn-wallpaper-alpha-header: 0.40;
+	--cdn-wallpaper-alpha-content: 0.30;
+	--cdn-wallpaper-blur-panel: 0px;
 }
