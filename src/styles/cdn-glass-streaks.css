@@ -377,13 +377,15 @@
 	display: list-item !important;
 }
 
-/* Breadcrumb `>` separator vertical alignment — v0.0.0061 over-nudged
-   downward (translateY(0.55em) pushed it under the font baseline).
-   Reverted to vertical-align: middle only, no transform. The Cinzel
-   line-height drives the natural inline alignment; middle is the right
-   default for the small icon. */
+/* Breadcrumb `>` separator vertical alignment — binary-search:
+     0em      → too high (sits above caps; Cinzel cap-height pushes
+                vertical-align:middle baseline upward vs the icon center)
+     0.55em   → too low (icon dipped under the font baseline, v0.0.0061)
+   Midpoint 0.25em lands the chevron centered against the Cinzel caps
+   without dropping below the baseline. */
 [class*="awsui_breadcrumbs_"] li [class*="awsui_icon_"]:not(#\9):not(#\10) {
 	vertical-align: middle !important;
+	transform: translateY(0.25em);
 }
 
 /* Hide the ellipsis "..." dropdown trigger + ghost-measurement items
