@@ -617,18 +617,20 @@
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 	color: transparent;
-	/* 1px contrasting outline — paints outside the gradient text-fill so the
-	   shape gets a defining stroke. Light mode: deep mahogany; dark mode:
-	   deep navy. Brings the lit-sign feel up to match AWS USER GROUP. */
-	-webkit-text-stroke: 1px rgba(44, 18, 6, 0.92);
 	display: inline-block;
 	padding: 0 6px;
-	/* Layered drop-shadow brings the Cinzel up to par with the lit AWS USER
-	   GROUP tagline — warm amber halo light mode, violet halo dark mode. */
+	/* Outside-only contrasting outline + ambient halo. drop-shadow filter
+	   composes around the gradient-filled text shape — using 8 sharp
+	   1-2px offsets builds an outline outside the letters (NOT a
+	   -webkit-text-stroke that paints half-inside the edge). Light mode:
+	   deep mahogany outline + warm amber halo. */
 	filter:
-		drop-shadow(0 1px 2px rgba(74, 40, 24, 0.35))
-		drop-shadow(0 0 8px rgba(255, 153, 0, 0.32))
-		drop-shadow(0 0 22px rgba(139, 90, 43, 0.18));
+		drop-shadow(-1px -1px 0 rgba(44, 18, 6, 0.92))
+		drop-shadow(1px -1px 0 rgba(44, 18, 6, 0.92))
+		drop-shadow(-1px 1px 0 rgba(44, 18, 6, 0.92))
+		drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.92))
+		drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
+		drop-shadow(0 0 18px rgba(139, 90, 43, 0.22));
 	transition:
 		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
 		filter 0.3s ease;
@@ -637,7 +639,13 @@
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
-	-webkit-text-stroke: 1px rgba(0, 0, 0, 0.85);
+	filter:
+		drop-shadow(-1px -1px 0 rgba(0, 0, 0, 0.85))
+		drop-shadow(1px -1px 0 rgba(0, 0, 0, 0.85))
+		drop-shadow(-1px 1px 0 rgba(0, 0, 0, 0.85))
+		drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.85))
+		drop-shadow(0 0 8px rgba(144, 96, 240, 0.55))
+		drop-shadow(0 0 22px rgba(144, 96, 240, 0.28));
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
@@ -689,42 +697,39 @@
 }
 
 /* ==========================================================================
-   Hide page-title h1 + Info button on pages with breadcrumbs — but PRESERVE
-   the actions area (where the persistent music player lives)
+   Hide page-title h1 + Info button on pages with breadcrumbs — PRESERVE
+   the actions area where the music player lives.
 
-   Reasoning (Bryan, v0.0.0034 / 0037): the breadcrumb h1 already shows
-   "CLOUD DEL NORTE > [page name]" — printing the same page name again
-   in the ContentLayout header is redundant. BUT the header-wrapper also
-   houses the page actions slot — that's where the radio station info
-   + play/skip buttons render (KruxPlayer on the right side of "Feed").
-   Hiding the entire wrapper killed the music player (Bryan v0.0.0037).
+   Reasoning (Bryan, v0.0.0034 / 0037 / 0038): the breadcrumb h1 already
+   shows "CLOUD DEL NORTE > [page name]" so the in-page heading is
+   redundant. But the header-wrapper also houses the page actions slot —
+   that's where the radio station info + play/skip buttons render
+   (KruxPlayer beside "Feed"). Hiding wrapper or root killed the player.
 
-   Cloudscape's Header renders:
-     awsui_header-wrapper_
-       > awsui_main_       ← title + actions LEFT side (inc. h1, Info)
-         > awsui_root_     ← title heading group
-           > awsui_main_main_  ← h1 + Info icon
-         > awsui_actions_  ← page actions (radio player lives here)
-       > (sometimes a spacer / right group depending on Header variant)
-
-   We hide ONLY the title-heading group, not its actions sibling. The
-   wrapper + actions area (radio player) keeps rendering, restoring the
-   music affordance Bryan expected.
+   v0.0.0039 fix: target h1 + Info popover anchor DIRECTLY rather than any
+   ancestor element. This way only the title text + Info circle hide;
+   every sibling inside awsui_root_ + awsui_actions_ keeps painting.
 
    To bring the title back on a specific page, override with a more-specific
    selector + display:revert.
    ========================================================================== */
 [class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
-	[class*="awsui_has-header_"]
 	[class*="awsui_header-wrapper_"]
-	[class*="awsui_root_"]:not([class*="awsui_actions_"]):not(#\9):not(#\10) {
+	h1:not(#\9):not(#\10),
+[class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]:not(#\9):not(#\10),
+[class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_main-main_"]
+	> [class*="awsui_title_"]:not(#\9):not(#\10) {
 	visibility: hidden !important;
 	height: 0 !important;
-	min-height: 0 !important;
 	max-height: 0 !important;
 	overflow: hidden !important;
 	margin: 0 !important;
 	padding: 0 !important;
+	pointer-events: none;
 }
 
 /* ==========================================================================
