@@ -1426,8 +1426,7 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
    that reads as a "stray bulb". */
 @media (max-width: 480px) {
 	.cdn-logo-hero .cdn-logo-img {
-		filter:
-			drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
+		filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
 			drop-shadow(0 0 6px rgba(201, 162, 63, 0.18)) !important;
 	}
 }
