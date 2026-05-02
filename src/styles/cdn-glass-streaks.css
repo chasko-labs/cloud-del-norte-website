@@ -658,7 +658,12 @@
 [class*="awsui_breadcrumbs_"] li:first-child a {
 	font-family: "Cinzel", Georgia, serif !important;
 	font-weight: 700 !important;
-	font-size: clamp(1.75rem, 2.6vw, 2.15rem) !important;
+	/* Lower clamp floor so "CLOUD DEL NORTE" fits the narrow phone column
+	   without truncation. At 360px viewport the previous 1.75rem floor +
+	   0.06em tracking + 6px padding overflowed the breadcrumb strip → the
+	   text rendered "Cloud Del No..." (Bryan v0.0.0058 mobile screenshot).
+	   1.05rem floor clears 360px with a slight margin. */
+	font-size: clamp(1.05rem, 5.2vw, 2.15rem) !important;
 	letter-spacing: 0.06em !important;
 	line-height: 1.1 !important;
 	text-decoration: none !important;
@@ -1398,21 +1403,32 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
    ========================================================================== */
 @media (max-width: 600px) {
 	.awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
-		filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.7))
-			drop-shadow(0 0 3px rgba(155, 92, 244, 0.65))
-			drop-shadow(0 0 8px rgba(144, 96, 240, 0.45))
-			drop-shadow(0 0 18px rgba(144, 96, 240, 0.22)) !important;
+		filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
+			drop-shadow(0 0 4px rgba(144, 96, 240, 0.32))
+			drop-shadow(0 0 10px rgba(144, 96, 240, 0.14)) !important;
 	}
 	:root:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img {
-		filter: drop-shadow(0 0 2px rgba(139, 90, 43, 0.6))
-			drop-shadow(0 0 6px rgba(201, 162, 63, 0.36))
-			drop-shadow(0 0 14px rgba(201, 162, 63, 0.16)) !important;
+		filter: drop-shadow(0 0 2px rgba(139, 90, 43, 0.5))
+			drop-shadow(0 0 5px rgba(201, 162, 63, 0.28))
+			drop-shadow(0 0 12px rgba(201, 162, 63, 0.12)) !important;
 	}
 	/* Tame the breathe keyframe peaks too so the animation stays in budget */
 	@media (prefers-reduced-motion: no-preference) {
 		.awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
 			animation: none;
 		}
+	}
+}
+
+/* ≤480px — kill the most-saturated violet bulb that was bleeding upper-left
+   of the logo on phones (Bryan v0.0.0058). Drop violet/purple drop-shadows
+   to amber/gold-only at this size — single warm halo, no blue/violet bloom
+   that reads as a "stray bulb". */
+@media (max-width: 480px) {
+	.cdn-logo-hero .cdn-logo-img {
+		filter:
+			drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
+			drop-shadow(0 0 6px rgba(201, 162, 63, 0.18)) !important;
 	}
 }
 

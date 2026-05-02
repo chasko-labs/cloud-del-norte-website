@@ -1661,10 +1661,12 @@ body {
 /* Mobile: shrink the tagline so AWS USER GROUP still appears next to the
    star (was display:none, hiding the brand entirely on phones). Stack
    stays vertical; smaller font + tighter spacing keeps it on the row
-   even at 360px viewport. */
+   even at 360px viewport.
+   v0.0.0058 Bryan: tagline was crowding the logo. Bump left offset so
+   there's a clear gutter between star + AWS USER GROUP. */
 @media (max-width: 480px) {
 	.cdn-ugtag {
-		left: 56px; /* logo (~44px) + 12px gutter */
+		left: 72px; /* logo (~48px) + 24px gutter */
 		letter-spacing: 0.05em;
 	}
 	.cdn-ugtag-aws {
