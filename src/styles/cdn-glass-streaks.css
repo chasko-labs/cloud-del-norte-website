@@ -654,3 +654,61 @@
 [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
 	min-height: auto !important;
 }
+
+/* ==========================================================================
+   Mobile scroll — left nav + right tools panel
+
+   Bryan ask: when API menu is expanded on mobile the left nav cuts off; the
+   last section of the right tools panel can't be reached on scroll-down.
+
+   Cloudscape sets inline block-size on nav drawer + tools-container that
+   matches viewport height MINUS top-nav, but doesn't enable internal scroll.
+   Force overflow-y:auto on the inner panels with a thin-styled scrollbar
+   so long content is reachable at any viewport size.
+
+   Scoped to mobile breakpoint (688px is Cloudscape's compact threshold) so
+   desktop layout is untouched. Shared rules across modes.
+   ========================================================================== */
+@media (max-width: 1080px) {
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
+	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
+		overflow-y: auto !important;
+		-webkit-overflow-scrolling: touch !important;
+		max-height: 100vh !important;
+		/* leave room at the bottom so the last section isn't cropped by the
+		   browser chrome (mobile address bar) when scrolled to end */
+		padding-bottom: 96px !important;
+	}
+
+	/* Thin branded scrollbar — light + dark mode tints */
+	nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar,
+	[class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar {
+		width: 6px;
+	}
+	:root:not(.awsui-dark-mode)
+		nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar-thumb,
+	:root:not(.awsui-dark-mode)
+		[class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
+		background: rgba(139, 90, 43, 0.4);
+		border-radius: 3px;
+	}
+	.awsui-dark-mode
+		nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar-thumb,
+	.awsui-dark-mode
+		[class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
+		background: rgba(144, 96, 240, 0.4);
+		border-radius: 3px;
+	}
+	nav[class*="awsui_navigation_"]:not(#\9),
+	[class*="awsui_tools_"]:not(#\9) {
+		scrollbar-width: thin;
+	}
+	:root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"]:not(#\9),
+	:root:not(.awsui-dark-mode) [class*="awsui_tools_"]:not(#\9) {
+		scrollbar-color: rgba(139, 90, 43, 0.4) transparent;
+	}
+	.awsui-dark-mode nav[class*="awsui_navigation_"]:not(#\9),
+	.awsui-dark-mode [class*="awsui_tools_"]:not(#\9) {
+		scrollbar-color: rgba(144, 96, 240, 0.4) transparent;
+	}
+}

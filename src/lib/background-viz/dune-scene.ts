@@ -199,6 +199,17 @@ void main(void) {
   float t = clamp(vHeight / 4.0, 0.0, 1.0);
   vec3 dune = mix(shadow, peak, t);
 
+  // Liveness pass 3 (2026-05-02) — wind-streak ripples (researcher rec #2).
+  // High-frequency anisotropic noise scrolling along a wind vector. Adds
+  // combed-sand microtexture only on the lit side. Amplitude 0.018 so it's
+  // imperceptible per-frame; reads as the surface "breathing" over seconds.
+  vec2 windDir = vec2(0.85, 0.32);
+  float streak = fragNoise(vUV * vec2(220.0, 60.0) + windDir * time * 0.6);
+  streak = smoothstep(0.45, 0.65, streak);
+  // Crest-weighted lambert at this stage isn't computed yet — apply after
+  // lambert in the lighting block instead. Stash for use below.
+  float windStreak = streak;
+
   // Lambertian diffuse with floor at 0.48 (was 0.62). Even at 0.48 against
   // the new #b89c78 shadow, the deepest fragment lands near (0.347, 0.294,
   // 0.226) — a deep warm taupe, still visibly NOT black, still on-palette.
@@ -246,6 +257,22 @@ void main(void) {
   // Warm gypsum-crystal tint — pale gold, never pure white.
   vec3 crestTint = vec3(1.0, 0.96, 0.86);
   lighting += crestTint * crestGlint * 0.22;
+
+  // Liveness pass 3 — wind-streak modulation (now lambert is in scope).
+  // Apply as a small additive whitening on the lit side only — combed-sand
+  // microtexture, never visible on the shadow side.
+  dune += vec3(0.020, 0.014, 0.006) * windStreak * lambert;
+
+  // Liveness pass 3 — gypsum sparkle (researcher rec #3).
+  // Sparse step-thresholded high-freq hash multiplied by ridge flatness +
+  // lambert. Only ~1 in 60 fragments at any moment; pinpoint glints on
+  // sunlit ridge tops. Cream-to-lavender tint introduces a subtle violet
+  // brand color into the scene without ever overpowering. floor(time*2.0)
+  // ticks the sparkle field at 2Hz so glints flicker rather than crawl.
+  float sparkleHash = fragHash(floor(vUV * 800.0) + floor(time * 2.0));
+  float sparkle = step(0.985, sparkleHash) * pow(ridgeFlatness, 8.0) * lambert;
+  vec3 sparkleTint = mix(vec3(1.0, 0.96, 0.86), vec3(0.92, 0.86, 1.0), 0.3);
+  lighting += sparkleTint * sparkle * 0.35;
 
   // Subtle GPU-noise paper-grain to harmonise with the production
   // repeating-linear-gradient(#8b5a2b05) overlay on light mode.
