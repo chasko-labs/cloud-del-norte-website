@@ -376,12 +376,15 @@
 	background-color: transparent !important;
 }
 
-/* Light mode — inner nav drawer + tools panel atmospheric */
+/* Light mode — inner nav drawer + tools panel atmospheric.
+   Order matters: rolldown's CSS minifier dedupes adjacent prefixed/unprefixed
+   pairs and keeps the LAST. Modern Chrome only honors the unprefixed form,
+   so unprefixed MUST be last. */
 :root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
 	background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
-	backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
 	-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
+	backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
 }
 
 /* Light mode — borders */
@@ -405,12 +408,13 @@
 	background-color: transparent !important;
 }
 
-/* Dark mode — inner nav drawer + tools panel atmospheric (navy) */
+/* Dark mode — inner nav drawer + tools panel atmospheric (navy).
+   Same prefix-order trick: unprefixed backdrop-filter declared LAST. */
 .awsui-dark-mode nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(#\9),
 .awsui-dark-mode [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not([class*="awsui_tools-container_"]):not(#\9) {
 	background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.88)) !important;
-	backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
 	-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
+	backdrop-filter: blur(var(--cdn-wallpaper-blur-panel, 6px)) saturate(var(--cdn-wallpaper-saturate, 1.05)) !important;
 }
 
 /* Dark mode — borders */
