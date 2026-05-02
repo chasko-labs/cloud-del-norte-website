@@ -76,9 +76,11 @@
 		rgba(10, 12, 32, 0.6) 100%
 	);
 
-	/* ── glass plate tokens — light mode defaults ───────────────────────────── */
-	--cdn-glass-bg: rgba(250, 247, 240, 0.85);
-	--cdn-glass-bg-strong: rgba(250, 247, 240, 0.92);
+	/* ── glass plate tokens — light mode defaults ─────────────────────────────
+	   rgb(237, 229, 212) = #ede5d4 (cream sandstone) — matches --cdn-color-bg.
+	   Lower alphas (0.55 / 0.7) keep the dunes visible through every plate. */
+	--cdn-glass-bg: rgba(237, 229, 212, 0.55);
+	--cdn-glass-bg-strong: rgba(237, 229, 212, 0.7);
 	--cdn-glass-border: rgba(139, 90, 43, 0.28);
 	--cdn-glass-shadow:
 		0 4px 24px rgba(139, 90, 43, 0.18),
@@ -88,7 +90,7 @@
 		0 8px 32px rgba(139, 90, 43, 0.28),
 		0 2px 6px rgba(0, 0, 0, 0.1),
 		0 0 2px rgba(139, 90, 43, 0.18);
-	--cdn-glass-blur: 8px;
+	--cdn-glass-blur: 10px;
 	--cdn-glass-streak: var(--cdn-streak-h-light);
 
 	/* ── text-shadow tokens ─────────────────────────────────────────────────── */
@@ -100,10 +102,11 @@
 		0 0 8px rgba(0, 0, 0, 0.45);
 }
 
-/* dark-mode overrides for tokens that switch palette */
+/* dark-mode overrides for tokens that switch palette.
+   Lower alphas (0.55 / 0.72) so the starfield + music-viz still bleeds through. */
 .awsui-dark-mode {
-	--cdn-glass-bg: rgba(28, 34, 48, 0.85);
-	--cdn-glass-bg-strong: rgba(28, 34, 48, 0.92);
+	--cdn-glass-bg: rgba(28, 34, 48, 0.55);
+	--cdn-glass-bg-strong: rgba(28, 34, 48, 0.72);
 	--cdn-glass-border: rgba(144, 96, 240, 0.32);
 	--cdn-glass-shadow:
 		0 4px 24px rgba(144, 96, 240, 0.32),
