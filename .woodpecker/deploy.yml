@@ -177,7 +177,9 @@ steps:
         region = us-west-2
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
-      - aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "[CDN dev] $${CI_COMMIT_SHA:0:7}\nlive: https://dev.clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/$$CI_COMMIT_SHA"
+      - |
+        MSG=$$(printf '[CDN dev] %s\nlive: https://dev.clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
+        aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"
 
   - name: notify-prod
     image: alpine:3.20
@@ -214,4 +216,6 @@ steps:
         region = us-west-2
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
-      - aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "[CDN prod] $${CI_COMMIT_SHA:0:7}\nlive: https://clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/$$CI_COMMIT_SHA"
+      - |
+        MSG=$$(printf '[CDN prod] %s\nlive: https://clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
+        aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"
