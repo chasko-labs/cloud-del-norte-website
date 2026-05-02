@@ -1205,10 +1205,18 @@
    "CLOUD DEL NORTE" breadcrumb h1 above. Light: warm cream backing +
    amber border. Dark: deep navy backing + violet border.
    ========================================================================== */
+/* Hide the Cloudscape tools-toggle — the Volunteer button replaces it.
+   Two help-panel openers were rendering side by side in v0.0.0042. */
+[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	display: none !important;
+}
+
 .cdn-volunteer-btn {
 	position: fixed;
-	top: 102px;
-	right: 76px;
+	/* Sits where the Cloudscape tools-toggle used to live — top-right of the
+	   AppLayout content, just under the top-nav. */
+	top: 78px;
+	right: 12px;
 	z-index: 850;
 	display: inline-flex;
 	align-items: center;

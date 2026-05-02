@@ -91,12 +91,18 @@ function MoonSvg() {
 	);
 }
 
+/* MX flag — three equal vertical bands of green / white / red (official
+   PMS 3415 #006847, white #ffffff, PMS 186 #ce1126) with the national coat
+   of arms (eagle on cactus devouring serpent) centered on the white band.
+   Full Wikipedia Commons SVG embeds a 200+ path heraldic seal — at 26×18
+   that detail collapses to noise, so we render a stylized but
+   structurally-faithful silhouette: green laurel wreath ring, brown
+   amber-headed eagle profile facing dexter (left), green cactus pad at the
+   base, dark serpent curve in the beak. Reads correctly at 26-32px. No
+   clipPath — Cloudscape iconSvg clones the SVG to multiple DOM positions
+   so id-based clip refs collide. Rounded corners come from CSS
+   border-radius on the SVG element. */
 function MxFlagSvg() {
-	// No clipPath — Cloudscape iconSvg clones the SVG to multiple DOM
-	// positions (desktop + mobile dropdown + offscreen). Duplicate
-	// `id="cdn-flag-mx-clip"` made the visible instance's clip resolve to a
-	// hidden node, blanking the render. Rounded corners come from CSS
-	// border-radius on the SVG element instead.
 	return (
 		<svg
 			className="cdn-svg-flag cdn-svg-flag--mx"
@@ -107,24 +113,69 @@ function MxFlagSvg() {
 			role="img"
 		>
 			<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--a">
-				<rect x="0" y="0" width="8.67" height="18" fill="#006847" />
+				<rect x="0" y="0" width="8.667" height="18" fill="#006847" />
 			</g>
 			<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--b">
-				<rect x="8.67" y="0" width="8.66" height="18" fill="#f5f5f5" />
+				<rect x="8.667" y="0" width="8.666" height="18" fill="#ffffff" />
 			</g>
 			<g className="cdn-svg-flag__stripe cdn-svg-flag__stripe--c">
-				<rect x="17.33" y="0" width="8.67" height="18" fill="#ce1126" />
+				<rect x="17.333" y="0" width="8.667" height="18" fill="#ce1126" />
 			</g>
 			<g className="cdn-svg-flag__emblem">
-				<ellipse cx="13" cy="9" rx="2.6" ry="1.3" fill="#8b5a2b" opacity="0.78" />
+				{/* laurel/oak wreath — split green ring at base, open at top */}
 				<path
-					d="M13 7.7 L13 10.3 M11.0 9 Q12 8.2 13 9 Q14 8.2 15.0 9 M11.4 10.0 Q12.2 10.7 13 10.3 Q13.8 10.7 14.6 10.0"
-					stroke="#5a1f8a"
-					strokeWidth="0.45"
+					d="M 10.7 9.4 A 2.45 2.45 0 0 0 13 11.85 A 2.45 2.45 0 0 0 15.3 9.4"
+					stroke="#006847"
+					strokeWidth="0.55"
 					fill="none"
 					strokeLinecap="round"
 				/>
-				<circle cx="13" cy="8.5" r="0.5" fill="#5a1f8a" />
+				{/* cactus pad — small green oval below eagle */}
+				<ellipse cx="13" cy="11.0" rx="0.95" ry="0.55" fill="#4a8a3f" />
+				<ellipse cx="12.35" cy="10.55" rx="0.4" ry="0.55" fill="#4a8a3f" />
+				<ellipse cx="13.65" cy="10.55" rx="0.4" ry="0.55" fill="#4a8a3f" />
+				{/* eagle body — brown silhouette, wing raised, profile facing left */}
+				<path
+					d="M 13.4 8.4
+					   Q 14.6 8.0 14.9 8.6
+					   Q 15.0 9.2 14.5 9.6
+					   Q 14.0 10.0 13.2 10.0
+					   Q 12.4 10.0 12.0 9.6
+					   Q 11.6 9.1 12.0 8.5
+					   Q 12.4 8.1 13.0 8.2 Z"
+					fill="#6b3410"
+				/>
+				{/* eagle wing — slightly lighter brown, raised */}
+				<path
+					d="M 13.4 8.5
+					   Q 14.0 7.4 14.6 7.5
+					   Q 14.7 8.1 14.4 8.7
+					   Q 14.0 9.0 13.5 8.9 Z"
+					fill="#8b5a2b"
+				/>
+				{/* eagle head — amber/gold profile to left of body */}
+				<path
+					d="M 12.0 8.55
+					   Q 11.4 8.4 11.3 8.85
+					   Q 11.4 9.15 11.95 9.1
+					   Q 12.15 8.95 12.0 8.55 Z"
+					fill="#d4a017"
+				/>
+				{/* eagle beak tip */}
+				<path
+					d="M 11.3 8.85 L 10.95 8.95 L 11.3 9.05 Z"
+					fill="#3a1a05"
+				/>
+				{/* serpent — dark curve from beak */}
+				<path
+					d="M 10.95 8.95 Q 10.5 9.15 10.7 9.5 Q 10.95 9.7 11.25 9.55"
+					stroke="#2a1605"
+					strokeWidth="0.28"
+					fill="none"
+					strokeLinecap="round"
+				/>
+				{/* eagle eye dot */}
+				<circle cx="11.85" cy="8.75" r="0.09" fill="#000000" />
 			</g>
 			<rect
 				x="0.5"
@@ -139,7 +190,29 @@ function MxFlagSvg() {
 	);
 }
 
+/* US flag — 13 alternating red/white horizontal stripes, blue canton in
+   the upper hoist covering 7 stripes tall × 40% of the fly, 50 white
+   five-pointed stars in the canonical 9-row staggered grid (rows of
+   6+5+6+5+6+5+6+5+6 = 50). Colors: Old Glory Red #b22234, Old Glory Blue
+   #3c3b6e, white #ffffff. Aspect ratio at 26×18 is ~1.44 (true flag is
+   1.9) but stripe count + canton ratio are preserved. No clipPath
+   (Cloudscape iconSvg duplicates the DOM and id refs collide); rounded
+   corners come from CSS border-radius on the SVG. Stars render as small
+   white circles for legibility at 26px — finer-than-circle detail blurs
+   to a smudge anyway at this size. */
 function UsFlagSvg() {
+	// 9-row staggered star grid inside canton (width 10.4, height 9.695).
+	// Long rows: 6 stars at xs = [0.867, 2.6, 4.333, 6.067, 7.8, 9.533].
+	// Short rows: 5 stars at xs = [1.733, 3.467, 5.2, 6.933, 8.667].
+	// Rows alternate long/short across 9 vertical positions.
+	const xLong = [0.867, 2.6, 4.333, 6.067, 7.8, 9.533];
+	const xShort = [1.733, 3.467, 5.2, 6.933, 8.667];
+	const ys = [0.539, 1.616, 2.693, 3.77, 4.848, 5.925, 7.002, 8.079, 9.156];
+	const stars: { cx: number; cy: number }[] = [];
+	for (let row = 0; row < 9; row++) {
+		const xs = row % 2 === 0 ? xLong : xShort;
+		for (const cx of xs) stars.push({ cx, cy: ys[row] });
+	}
 	return (
 		<svg
 			className="cdn-svg-flag cdn-svg-flag--us"
@@ -149,51 +222,42 @@ function UsFlagSvg() {
 			xmlns="http://www.w3.org/2000/svg"
 			role="img"
 		>
-			<defs>
-				<clipPath id="cdn-flag-us-clip">
-					<rect x="0.5" y="0.5" width="25" height="17" rx="2.5" ry="2.5" />
-				</clipPath>
-			</defs>
-			<g clipPath="url(#cdn-flag-us-clip)">
-				{/* 13 horizontal stripes (red/white alternating). Wave applied
-				   per-stripe via nth-child phase offset in CSS. */}
-				<g className="cdn-svg-flag__stripes-h">
-					<rect x="0" y="0" width="26" height="1.385" fill="#b22234" />
-					<rect x="0" y="1.385" width="26" height="1.385" fill="#ffffff" />
-					<rect x="0" y="2.77" width="26" height="1.385" fill="#b22234" />
-					<rect x="0" y="4.155" width="26" height="1.385" fill="#ffffff" />
-					<rect x="0" y="5.54" width="26" height="1.385" fill="#b22234" />
-					<rect x="0" y="6.925" width="26" height="1.385" fill="#ffffff" />
-					<rect x="0" y="8.31" width="26" height="1.385" fill="#b22234" />
-					<rect x="0" y="9.695" width="26" height="1.385" fill="#ffffff" />
-					<rect x="0" y="11.08" width="26" height="1.385" fill="#b22234" />
-					<rect x="0" y="12.465" width="26" height="1.385" fill="#ffffff" />
-					<rect x="0" y="13.85" width="26" height="1.385" fill="#b22234" />
-					<rect x="0" y="15.235" width="26" height="1.385" fill="#ffffff" />
-					<rect x="0" y="16.62" width="26" height="1.385" fill="#b22234" />
-				</g>
-				{/* canton */}
-				<rect x="0" y="0" width="11" height="9.7" fill="#3c3b6e" />
-				{/* simplified star grid — 9 stars in 3×3 abstraction (legible at 26px) */}
-				<g className="cdn-svg-flag__stars">
-					<circle cx="2.0" cy="2.0" r="0.55" fill="#ffffff" />
-					<circle cx="5.5" cy="2.0" r="0.55" fill="#ffffff" />
-					<circle cx="9.0" cy="2.0" r="0.55" fill="#ffffff" />
-					<circle cx="2.0" cy="4.85" r="0.55" fill="#ffffff" />
-					<circle cx="5.5" cy="4.85" r="0.55" fill="#ffffff" />
-					<circle cx="9.0" cy="4.85" r="0.55" fill="#ffffff" />
-					<circle cx="2.0" cy="7.7" r="0.55" fill="#ffffff" />
-					<circle cx="5.5" cy="7.7" r="0.55" fill="#ffffff" />
-					<circle cx="9.0" cy="7.7" r="0.55" fill="#ffffff" />
-				</g>
+			{/* 13 horizontal stripes (red/white alternating). Wave applied
+			   per-stripe via nth-child phase offset in CSS. */}
+			<g className="cdn-svg-flag__stripes-h">
+				<rect x="0" y="0"      width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="1.385"  width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="2.77"   width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="4.155"  width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="5.54"   width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="6.925"  width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="8.31"   width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="9.695"  width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="11.08"  width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="12.465" width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="13.85"  width="26" height="1.385" fill="#b22234" />
+				<rect x="0" y="15.235" width="26" height="1.385" fill="#ffffff" />
+				<rect x="0" y="16.62"  width="26" height="1.385" fill="#b22234" />
+			</g>
+			{/* canton — covers stripes 1–7 (height 9.695), width 40% of fly */}
+			<rect x="0" y="0" width="10.4" height="9.695" fill="#3c3b6e" />
+			{/* 50 stars — 9 rows of 6/5/6/5/6/5/6/5/6 staggered */}
+			<g className="cdn-svg-flag__stars">
+				{stars.map((s) => (
+					<circle
+						key={`${s.cx}-${s.cy}`}
+						cx={s.cx}
+						cy={s.cy}
+						r="0.32"
+						fill="#ffffff"
+					/>
+				))}
 			</g>
 			<rect
 				x="0.5"
 				y="0.5"
 				width="25"
 				height="17"
-				rx="2.5"
-				ry="2.5"
 				fill="none"
 				stroke="rgba(0,0,0,0.35)"
 				strokeWidth="1"

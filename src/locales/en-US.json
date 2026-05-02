@@ -656,5 +656,10 @@
 			"emptyMembers": "No members",
 			"emptyBanned": "No banned users"
 		}
+	},
+	"liora": {
+		"stickynoteLine1": "non load",
+		"stickynoteLine2": "bearing",
+		"welcomeGreeting": "welcome"
 	}
 }
