@@ -603,7 +603,15 @@
 	letter-spacing: 0.04em !important;
 	line-height: 1.1 !important;
 	text-decoration: none !important;
-	background-image: var(--cdn-streak-band-light);
+	/* Dedicated edge-to-edge gradient for text-fill — solid endpoints so
+	   "CLOUD" and "NORTE" don't fade into the page bg. The streak-band
+	   tokens have transparent edges, intended for full-width band fills. */
+	background-image: linear-gradient(
+		90deg,
+		#8b5a2b 0%,
+		#ff9900 50%,
+		#8b5a2b 100%
+	);
 	background-size: 200% 100%;
 	background-position: 0% 50%;
 	-webkit-background-clip: text;
@@ -620,7 +628,12 @@
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
-	background-image: var(--cdn-streak-band-dark);
+	background-image: linear-gradient(
+		90deg,
+		#9060f0 0%,
+		#d7c7ee 50%,
+		#9060f0 100%
+	);
 }
 
 [class*="awsui_breadcrumbs_"] li:first-child a:hover {
