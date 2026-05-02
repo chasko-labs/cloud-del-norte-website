@@ -654,28 +654,36 @@
 		filter 0.6s;
 	position: absolute;
 	inset: 0;
-	/* Audio-reactive head sway — amplitude scales with --cdn-bass, period fixed.
-	   Silent (--cdn-bass=0) → 0deg rotation throughout, no visible motion.
-	   Loud bass → ±2.5deg tilt at 3.6s period. transform-origin at bottom
-	   so the rotation pivots from the neck rather than the canvas center. */
+	/* Audio-reactive head tilt — LEFT-ONLY tilt scaled by --cdn-bass. Bryan
+	   v0.0.0066: previous ±2.5deg sway felt like she was nodding both ways;
+	   left-only at -2deg max reads as a subtle "into the bass" lean.
+	   Silent → 0deg rotation throughout. Loud bass → -2deg dip at 3.6s period.
+	   transform-origin at bottom so the rotation pivots from the neck.
+	   Animation is paused unless body has cdn-stream-playing AND canvas is
+	   --visible — head only "dances" while audio is actually playing. */
 	transform-origin: center bottom;
-	animation: liora-head-sway 3.6s ease-in-out infinite;
+	animation: liora-head-tilt-left 3.6s ease-in-out infinite;
+	animation-play-state: paused;
 	will-change: transform;
+}
+
+body.cdn-stream-playing .liora-canvas.liora-canvas--visible {
+	animation-play-state: running;
 }
 
 .liora-canvas.liora-canvas--visible {
 	opacity: 1;
 }
 
-@keyframes liora-head-sway {
+@keyframes liora-head-tilt-left {
 	0% {
-		transform: rotate(calc(var(--cdn-bass, 0) * -2.5deg));
+		transform: rotate(0deg);
 	}
 	50% {
-		transform: rotate(calc(var(--cdn-bass, 0) * 2.5deg));
+		transform: rotate(calc(var(--cdn-bass, 0) * -2deg));
 	}
 	100% {
-		transform: rotate(calc(var(--cdn-bass, 0) * -2.5deg));
+		transform: rotate(0deg);
 	}
 }
 
@@ -1030,14 +1038,24 @@
 	height: 8px;
 	animation: 2.4s linear infinite led-blink;
 	position: relative;
-	/* Audio-reactive glow — inner+outer blur radii expand on --cdn-bass kick.
-	   Static rim ring untouched. led-blink keyframe drives opacity+filter only,
-	   so box-shadow is a clean solo channel that won't fight the blink rhythm.
-	   Silent: 5px / 10px (current baseline). Full bass: 13px / 22px. */
+	/* Audio-reactive glow — band-driven via --cdn-led-band, set per-LED-group
+	   below so each LED stays consistent with the audio range it tracks
+	   (bass: 1-4, mid: 5-8, treble: 9-12). Default --cdn-led-band falls back
+	   to --cdn-bass (no group override) so silent state matches the unwired
+	   baseline. Bryan v0.0.0066: kill the led-blink randomness when the stream
+	   is playing — band amplitude IS the dance. */
 	box-shadow:
 		0 0 0 1.5px #080503f2,
-		0 0 calc(5px + var(--cdn-bass, 0) * 8px),
-		0 0 calc(10px + var(--cdn-bass, 0) * 12px) #ff990052;
+		0 0 calc(5px + var(--cdn-led-band, var(--cdn-bass, 0)) * 8px),
+		0 0 calc(10px + var(--cdn-led-band, var(--cdn-bass, 0)) * 12px) #ff990052;
+}
+
+/* When a stream is playing, freeze the random blink so the LEDs read as a
+   stable EQ array — each band's amplitude drives its assigned LEDs only */
+body.cdn-stream-playing .liora-led {
+	animation-play-state: paused;
+	opacity: 1;
+	filter: none;
 }
 
 .liora-led:before {
@@ -1124,13 +1142,32 @@
 	animation-delay: 0.9s;
 }
 
+/* Band assignment — when stream is playing, each LED reads its assigned
+   band variable. 12 LEDs partitioned into bass / mid / treble groups of 4. */
+body.cdn-stream-playing .liora-led:nth-child(-n + 4) {
+	--cdn-led-band: var(--cdn-bass, 0);
+}
+body.cdn-stream-playing .liora-led:nth-child(n + 5):nth-child(-n + 8) {
+	--cdn-led-band: var(--cdn-mid, 0);
+}
+body.cdn-stream-playing .liora-led:nth-child(n + 9) {
+	--cdn-led-band: var(--cdn-treble, 0);
+}
+
 :root:not(.awsui-dark-mode) .liora-led {
 	opacity: 0.85;
-	/* Light-mode bass response — softer baseline, same proportional expansion. */
+	/* Light-mode band response — softer baseline, same proportional expansion.
+	   Reads --cdn-led-band so per-LED group assignment carries through; falls
+	   back to --cdn-bass when not stream-playing. */
 	box-shadow:
 		0 0 0 1.5px #140c04e6,
-		0 0 calc(3px + var(--cdn-bass, 0) * 6px),
-		0 0 calc(6px + var(--cdn-bass, 0) * 10px) #ff990038;
+		0 0 calc(3px + var(--cdn-led-band, var(--cdn-bass, 0)) * 6px),
+		0 0 calc(6px + var(--cdn-led-band, var(--cdn-bass, 0)) * 10px) #ff990038;
+}
+
+body.cdn-stream-playing :root:not(.awsui-dark-mode) .liora-led,
+:root:not(.awsui-dark-mode) body.cdn-stream-playing .liora-led {
+	opacity: 1;
 }
 
 .liora-led-display:before {
