@@ -87,8 +87,13 @@ function createCanvas(): {
 	ctx: CanvasRenderingContext2D;
 } {
 	const el = document.createElement("canvas");
+	// z-index: -2 — sits BEHIND the dune canvas (z:-1) so dune always wins the
+	// stacking battle. Previously this was -1 and the dune was -2; even with
+	// opacity:0 set on this canvas after dune mounts, residual stacking-context
+	// quirks could obscure the dune. Cream-fallback is the role here, so being
+	// underneath is correct.
 	el.style.cssText =
-		"position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none";
+		"position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none";
 	document.body.appendChild(el);
 	document.documentElement.classList.add("cdn-viz-active");
 

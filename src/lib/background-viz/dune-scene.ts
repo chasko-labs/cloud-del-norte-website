@@ -650,8 +650,20 @@ export function ensureDuneFallback(container: HTMLElement): () => void {
 
 /**
  * Mount the dune scene as a full-viewport wallpaper. Creates its own canvas
- * inside `container` at z-index: -2 (behind the existing 2D background-viz
- * canvas at z-index: -1). The handle's destroy() removes the canvas.
+ * inside `container` at z-index: -1 (in front of the static cream-fallback
+ * 2D background-viz canvas at z-index: -2; both still behind body content
+ * at z:0+). The handle's destroy() removes the canvas.
+ *
+ * Stacking order (back to front):
+ *   z:-3  fallback gradient div (cream/lavender)
+ *   z:-2  static cream bg-viz canvas (watermark layer; opacity 0 when dune mounts)
+ *   z:-1  dune scene canvas (BabylonJS, this one)
+ *   z:0+  body content (cards, UI chrome)
+ *
+ * Pass 5 (z-index swap): dune was previously at z:-2 with static at z:-1.
+ * Even with opacity:0 on the static canvas after dune mounts, stacking-context
+ * quirks were burying the dune visually. Putting dune in front of static
+ * means dune ALWAYS wins and the static canvas's opacity state doesn't matter.
  *
  * Pass 4 (real black fix): the fallback div is now created via
  * ensureDuneFallback() and NOT torn down when this handle disposes. The
@@ -665,7 +677,7 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 
 	const canvas = document.createElement("canvas");
 	canvas.style.cssText =
-		"position:fixed;inset:0;width:100%;height:100%;z-index:-2;pointer-events:none";
+		"position:fixed;inset:0;width:100%;height:100%;z-index:-1;pointer-events:none";
 	canvas.setAttribute("aria-hidden", "true");
 	canvas.dataset.cdnDuneCanvas = "1";
 	container.appendChild(canvas);
