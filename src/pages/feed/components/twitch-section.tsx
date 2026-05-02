@@ -137,6 +137,7 @@ function TwitchChannelCard({
 	channel: (typeof CHANNELS)[number];
 	onLiveChange?: (isLive: boolean) => void;
 }) {
+	const { t } = useTranslation();
 	const hostname = useHostname();
 	return (
 		<Container>
@@ -155,7 +156,7 @@ function TwitchChannelCard({
 						target="_blank"
 						rel="noopener noreferrer"
 					>
-						Watch {channel.label} on Twitch
+						{t("feedPage.twitchWatchOn")} — {channel.label}
 					</a>
 				</p>
 			)}

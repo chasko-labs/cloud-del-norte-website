@@ -4,12 +4,14 @@
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
+import { useTranslation } from "../../../hooks/useTranslation";
 
 export default function AndresYoutubeLive({
 	videoId,
 }: {
 	videoId: string | null;
 }) {
+	const { t } = useTranslation();
 	const header = (
 		<Header
 			variant="h2"
@@ -19,12 +21,12 @@ export default function AndresYoutubeLive({
 					external
 					fontSize="body-s"
 				>
-					channel
+					{t("feedPage.andresYoutubeChannel")}
 				</Link>
 			}
 		>
 			<span className="feed-twitch__live-dot" aria-hidden="true" />
-			{" andres moreno — live on youtube"}
+			{` ${t("feedPage.andresYoutubeLiveHeader")}`}
 		</Header>
 	);
 
@@ -36,7 +38,7 @@ export default function AndresYoutubeLive({
 						<div className="feed-carousel__frame">
 							<iframe
 								src={`https://www.youtube.com/embed/${videoId}?autoplay=0`}
-								title="Andres Moreno live stream"
+								title={t("feedPage.andresYoutubeLiveTitle")}
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 								allowFullScreen
 							/>
@@ -46,7 +48,7 @@ export default function AndresYoutubeLive({
 			) : (
 				<p>
 					<Link href="https://www.youtube.com/@andmoredev/live" external>
-						watch live on youtube
+						{t("feedPage.andresYoutubeWatchLive")}
 					</Link>
 				</p>
 			)}

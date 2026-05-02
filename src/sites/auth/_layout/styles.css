@@ -30,38 +30,62 @@
    body.cdn-auth-subdomain scope — Cloudscape's `var(--token, #006ce0)` reads
    our value, no specificity battle, no !important.
 
+   v0.0.0053 (Bryan eyes-on): light mode honored the override but DARK MODE
+   still landed on Cloudscape's flat dodger-blue (#42b4ff) at the active
+   wizard step circle. Root cause: Cloudscape redefines tokens inside
+   `.awsui-dark-mode:not(#\9)` (specificity 1,1,0) which BEAT our previous
+   `:root.awsui-dark-mode body.cdn-auth-subdomain` selector (specificity
+   0,2,2). Mirroring the `:not(#\9)` trick raises ours to (1,2,1) so we win
+   regardless of where the dark-mode class lands (html or body — Cloudscape's
+   global-styles writes both).
+
+   Light-mode rule gets the same hardening defensively.
+
    Scoped to the auth subdomain only so the awsug + main sites are unaffected.
-   tokens covered: Link default/secondary/info, Input focus border + ring,
+   tokens covered: Link default/secondary/info, Input default + focus border,
    Wizard step active circle/title, secondary Button normal-default chrome.
    ========================================================================== */
-:root:not(.awsui-dark-mode) body.cdn-auth-subdomain {
+body.cdn-auth-subdomain:not(#\9):not(.awsui-dark-mode) {
 	--color-text-link-default-hude44: var(--cdn-purple);
 	--color-text-link-hover-2hfec2: var(--cdn-violet);
 	--color-text-link-secondary-default-4p0gj8: var(--cdn-purple);
 	--color-text-link-secondary-hover-0kzmc4: var(--cdn-violet);
 	--color-text-link-info-default-mrmt1i: var(--cdn-purple);
 	--color-text-link-info-hover-mu3ega: var(--cdn-violet);
+	--color-border-input-default-317xk5: rgba(139, 90, 43, 0.45);
 	--color-border-input-focused-4z0pgn: var(--cdn-amber);
 	--color-border-item-focused-uk47pl: var(--cdn-amber);
 	--color-background-control-checked-ka7kc2: var(--cdn-violet);
 	--color-background-button-primary-default-vdt0fu: var(--cdn-violet);
 	--color-text-button-normal-default-nzalii: var(--cdn-purple);
 	--color-border-button-normal-default-glqfp1: var(--cdn-purple);
+	--color-text-status-info-ue8bd2: var(--cdn-purple);
+	--color-text-link-button-normal-default-srprth: var(--cdn-purple);
+	/* inactive step circle border + title ("About you", "Your interests" before
+	   active) — replace generic grey rgb(101,104,113) with a soft warm-amber
+	   so the step strip reads in palette throughout */
+	--color-text-interactive-default-ugh9wp: rgba(139, 90, 43, 0.62);
 }
 
-:root.awsui-dark-mode body.cdn-auth-subdomain {
+body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 	--color-text-link-default-hude44: var(--cdn-lavender);
 	--color-text-link-hover-2hfec2: var(--cdn-violet);
 	--color-text-link-secondary-default-4p0gj8: var(--cdn-lavender);
 	--color-text-link-secondary-hover-0kzmc4: var(--cdn-violet);
 	--color-text-link-info-default-mrmt1i: var(--cdn-lavender);
 	--color-text-link-info-hover-mu3ega: var(--cdn-violet);
+	--color-border-input-default-317xk5: rgba(144, 96, 240, 0.42);
 	--color-border-input-focused-4z0pgn: var(--cdn-violet);
 	--color-border-item-focused-uk47pl: var(--cdn-violet);
 	--color-background-control-checked-ka7kc2: var(--cdn-violet);
 	--color-background-button-primary-default-vdt0fu: var(--cdn-violet);
 	--color-text-button-normal-default-nzalii: var(--cdn-lavender);
 	--color-border-button-normal-default-glqfp1: var(--cdn-violet);
+	--color-text-status-info-ue8bd2: var(--cdn-lavender);
+	--color-text-link-button-normal-default-srprth: var(--cdn-lavender);
+	/* inactive step circle border + title — replace generic grey rgb(164,164,173)
+	   with a soft lavender so the step strip reads in palette throughout */
+	--color-text-interactive-default-ugh9wp: rgba(215, 199, 238, 0.55);
 }
 
 /* Constrain the auth form column. ContentLayout w/ contentType="form" already
@@ -117,7 +141,13 @@
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 	color: transparent;
-	display: inline-block;
+	/* v0.0.0053: was inline-block which let the wordmark + context line collapse
+	   onto one row at desktop widths ("CLOUD DEL NORTECreate your account" with
+	   no separator). block forces a hard row break; margin-bottom opens the
+	   typographic gap so the amber underline beneath context reads as the seam
+	   between identity (wordmark) + intent (page context). */
+	display: block;
+	margin-bottom: 10px;
 }
 
 .awsui-dark-mode .cdn-auth-wordmark {

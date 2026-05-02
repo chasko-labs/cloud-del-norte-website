@@ -325,6 +325,64 @@
 	top: -8px;
 }
 
+/* sticky note 2 — zoom mirror of sticky 1. Bryan ask: tap to bring it
+   onto the screen with a time-of-day greeting (handled in TSX); CSS
+   gives it the same zoomed placement + cool sapphire treatment that
+   matches sticky 2's resting state. Right-side mirror of sticky 1's
+   bottom-left zoomed slot — keeps both notes visually distinct. */
+.liora-stickynote-2.liora-stickynote-2--zoomed {
+	transform-origin: 50%;
+	z-index: 500;
+	pointer-events: auto;
+	background-image:
+		repeating-linear-gradient(0deg, #5a32100f 0 1px, #0000 1px 5px),
+		linear-gradient(135deg, #d9f0fff5 0%, #b8d8efef 60%, #8ec1dfdf 100%);
+	background-size:
+		100% 5px,
+		100% 100%;
+	min-width: 240px;
+	max-width: clamp(240px, 72vw, 340px);
+	padding: 18px 22px 20px 28px;
+	font-size: clamp(20px, 6.5cqi, 28px);
+	line-height: 1.18;
+	transition:
+		transform 0.45s cubic-bezier(0.2, 0.85, 0.4, 1.1),
+		box-shadow 0.45s,
+		font-size 0.45s,
+		padding 0.45s,
+		min-width 0.45s,
+		max-width 0.45s,
+		opacity 0.35s;
+	position: absolute;
+	top: 60%;
+	right: 5%;
+	transform: rotate(2deg);
+	box-shadow:
+		10px 22px 44px #000000b3,
+		5px 10px 20px #0000007a,
+		2px 4px 8px #00000057,
+		inset 0 -4px 10px #1e609057;
+}
+
+.liora-stickynote-2.liora-stickynote-2--zoomed .liora-stickynote-2-line {
+	white-space: normal;
+	overflow: visible;
+	display: block;
+	font-weight: 600;
+}
+
+.liora-stickynote-2.liora-stickynote-2--zoomed .liora-stickynote-2-flag {
+	font-size: 1.4em;
+	margin-left: 4px;
+}
+
+.liora-stickynote-2.liora-stickynote-2--zoomed .liora-stickynote-2-ip {
+	font-size: 0.55em;
+	opacity: 0.7;
+	display: block;
+	margin-top: 6px;
+}
+
 @keyframes liora-stickynote-fadein {
 	0% {
 		opacity: 0;
@@ -484,15 +542,21 @@
 	transform: rotate(-32deg) translate(-22px, 60px) scale(0.92);
 }
 
-/* sticky note 2 falls off on first screen tap or direct click */
-.liora-bezel.screen-tap-1 ~ .liora-notes-row .liora-stickynote-2,
+/* sticky note 2 falls off on first screen tap or direct click — and STAYS
+   off across screen-tap-2/-3/etc (Bryan v0.0.0046+: previously came back
+   on screen-tap-3 because the rule only matched .screen-tap-1, so the
+   class progression broke the `forwards` animation hold). Match every
+   screen-tap-N via attribute substring so the fall persists. */
+.liora-bezel[class*="screen-tap-"] ~ .liora-notes-row .liora-stickynote-2,
 .liora-stickynote-2--fallen {
 	pointer-events: none;
 	animation: 1.05s cubic-bezier(0.42, 0, 0.78, 1) forwards
 		liora-stickynote-ripfall;
 }
 
-.liora-bezel.screen-tap-1 ~ .liora-notes-row .liora-stickynote-2:before,
+.liora-bezel[class*="screen-tap-"]
+	~ .liora-notes-row
+	.liora-stickynote-2:before,
 .liora-stickynote-2--fallen:before {
 	animation: 0.42s ease-in forwards liora-stickynote-tape-rip;
 }

@@ -377,13 +377,36 @@
 	display: list-item !important;
 }
 
-/* Hide the ellipsis "..." dropdown trigger Cloudscape inserts when items
-   would overflow. We always show all items, no need for a collapse. */
+/* Hide the ellipsis "..." dropdown trigger + ghost-measurement items
+   Cloudscape inserts when it thinks items would overflow. The actual
+   class names (verified via playwright DOM probe v0.0.0053):
+     - awsui_ellipsis_  — the visible "..." dropdown trigger li
+     - awsui_ghost-item_ — measurement-only li, width:0 but display:list-item
+   The Cinzel CDN h1 is wide enough that Cloudscape's overflow detector
+   forces ellipsis even with only 2 items. We always render all items so
+   the collapse is never needed.
+   Bryan eyes-on theme/index v0.0.0052: showed "CLOUD DEL NORTE > * >
+   Design System" with `*` being the awsui_ellipsis_ list item. */
+[class*="awsui_breadcrumbs_"] [class*="awsui_ellipsis_"]:not(#\9):not(#\10),
+[class*="awsui_breadcrumbs_"]
+	[class*="awsui_ghost-item_"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"]
 	[class*="awsui_ghost-breadcrumb_"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"]
 	[class*="awsui_breadcrumb-ellipsis_"]:not(#\9):not(#\10) {
 	display: none !important;
+}
+
+/* Cloudscape Container backing — Bryan eyes-on roadmap v0.0.0053 saw
+   kanban cards rendering with transparent bg, dunes visible THROUGH the
+   content. The Container component's `awsui_container_` doesn't ship with
+   a default opaque background. Apply the same warm-glass treatment we
+   use for .cdn-card so any page using Cloudscape Container gets a
+   readable plate over the wallpaper. Card-tier alpha 0.85+0.92 strong. */
+[class*="awsui_container_"]:not([class*="awsui_container-trigger_"]):not(
+		[class*="awsui_split-panel"]
+	):not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.92)) !important;
 }
 
 /* On narrow viewports stack the home (CLOUD DEL NORTE) + page-name on

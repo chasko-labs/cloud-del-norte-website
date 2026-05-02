@@ -11,6 +11,7 @@ import Navigation from "../../components/navigation";
 import { useAndresLive } from "../../hooks/useAndresLive";
 import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
+import { clearMediaSession, setMediaSession } from "../../lib/media-session";
 import { clearPlayerState, savePlayerState } from "../../lib/player-persist";
 import { hexToRgbTuple, type StreamDef } from "../../lib/streams";
 import { STREAMS } from "../../lib/streams-order";
@@ -161,6 +162,7 @@ function KruxPlayer() {
 		} else {
 			window.dispatchEvent(new CustomEvent("cdn:audio:stop"));
 			clearPlayerState();
+			clearMediaSession();
 		}
 	}, [playing, stream.key, stream.url, stream.label, stream.metaUrl]);
 
@@ -178,6 +180,29 @@ function KruxPlayer() {
 			if (!wasPlaying) setCarouselVersion((v) => v + 1);
 		}, FADE_MS);
 	}, []);
+
+	// MediaSession integration — populates the OS-level media notification
+	// (Android lockscreen, macOS Now Playing, Chrome global media hub) with
+	// station label + live track info instead of the page <title>. Re-runs
+	// on station change AND on nowPlaying update so the notification title
+	// follows the live song. Skip handlers cycle stations from the
+	// notification's prev/next buttons (both directions advance the carousel
+	// since the underlying skipStation is unidirectional)
+	useEffect(() => {
+		const a = audioRef.current;
+		if (!a) return;
+		if (!playing) return;
+		setMediaSession({
+			stationLabel: stream.label,
+			nowPlaying: nowPlaying[stream.key] ?? null,
+			onPlay: () => {
+				a.play().catch(() => {});
+			},
+			onPause: () => a.pause(),
+			onSkipNext: () => skipStation(),
+			onSkipPrev: () => skipStation(),
+		});
+	}, [playing, stream.key, stream.label, nowPlaying, skipStation]);
 
 	const toggle = useCallback(() => {
 		const a = audioRef.current;

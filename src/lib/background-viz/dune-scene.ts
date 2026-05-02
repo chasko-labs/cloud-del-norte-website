@@ -46,6 +46,21 @@
 // midday), sun direction stays at SUN_DIR_WORLD, canvas opacity is set to 1
 // immediately with no transition.
 //
+// Final liveness pass (2026-05-02) — researcher recs #6, #7, #8:
+//   - lavender ambient-occlusion crease: fragment shader fakes AO from a
+//     curvature proxy (1 - normal.y). Steep ridge sides + valley creases pick
+//     up a gentle wash toward #d7c7ee (brand lavender) at up to 18% strength,
+//     0 on flat areas. Never overpowers; introduces the brand violet INTO the
+//     scene without painting the whole sand dune.
+//   - time-of-day rim light: a back-lit second light direction
+//     (-sunDir.x, sunDir.y, -sunDir.z) contributes only on the shadow side via
+//     pow(1 - lambert, 3). Tint cycles amber → pale-warm → violet → soft-amber
+//     across the same 4-quadrant phase weights — subtle at midday, dramatic
+//     at dusk when violet catches the back of ridges.
+//   - camera radius breathe: ±0.15 sinusoidal oscillation around base radius
+//     45 over a 24s period. Imperceptible per-frame, alive over ~12s. Gated
+//     by reduced-motion (the early-return path leaves radius fixed at 45).
+//
 // Atmosphere pass (2026-05-02) — researcher recs #1, #4, #5:
 //   - aerial-perspective haze: exponential fog blends distant dune fragments
 //     toward the live horizon palette tint based on view-space depth (vDepth
@@ -300,6 +315,24 @@ void main(void) {
   vec3 crestTint = vec3(1.0, 0.96, 0.86);
   lighting += crestTint * crestGlint * 0.22;
 
+  // Liveness pass 4 (2026-05-02) — time-of-day rim light (researcher rec #7).
+  // Second light direction (back-lit relative to the sun) contributing only on
+  // the shadow side via pow(1 - lambert, 3) gate. rim term itself is
+  // pow(dot(N, rimDir), 4) so it's tight to the silhouette of far-side ridges.
+  // Tint cycles amber → pale-warm → violet → soft-amber across the same 4-
+  // quadrant phase weights. Subtle at midday, dramatic at dusk when violet
+  // catches the back of ridges.
+  vec3 rimDir = vec3(-sunDir.x, sunDir.y, -sunDir.z);
+  float rim = max(dot(normalize(vNormal), normalize(rimDir)), 0.0);
+  float rimMask = pow(1.0 - lambert, 3.0) * pow(rim, 4.0);
+  vec3 rimTintMidday  = vec3(1.000, 0.800, 0.500); // amber
+  vec3 rimTintLateAft = vec3(0.950, 0.850, 0.750); // pale warm
+  vec3 rimTintDusk    = vec3(0.850, 0.650, 0.950); // violet — dramatic
+  vec3 rimTintMorning = vec3(0.900, 0.750, 0.600); // soft amber
+  vec3 rimTint = rimTintMidday * wMidday + rimTintLateAft * wLateAft
+               + rimTintDusk * wDusk + rimTintMorning * wMorning;
+  lighting += rimTint * rimMask * 0.42;
+
   // Liveness pass 3 — wind-streak modulation (now lambert is in scope).
   // Apply as a small additive whitening on the lit side only — combed-sand
   // microtexture, never visible on the shadow side.
@@ -336,6 +369,17 @@ void main(void) {
   // mix at 0.55 so distant peaks still read as dunes — fade, not erase.
   float fogT = clamp((vDepth - 18.0) / 28.0, 0.0, 1.0);
   surface = mix(surface, horizonTint, fogT * 0.55);
+
+  // Liveness pass 4 (2026-05-02) — lavender ambient-occlusion crease (rec #6).
+  // Fake AO from height-curvature proxy: where the surface normal points more
+  // sideways than up (steep ridge sides + valley creases), tint slightly
+  // toward lavender #d7c7ee. smoothstep(0.3, 0.85) keeps flat areas untouched.
+  // 0.18 ceiling so the violet brand color never overpowers — only reads as a
+  // gentle wash where the geometry naturally pools shadow.
+  float aoCurve = 1.0 - max(normalize(vNormal).y, 0.0);
+  float aoStrength = smoothstep(0.3, 0.85, aoCurve) * 0.18;
+  vec3 aoTint = mix(vec3(1.0), vec3(0.84, 0.78, 0.93), aoStrength);
+  surface *= aoTint;
 
   gl_FragColor = vec4(surface, 1.0);
 }
@@ -645,6 +689,14 @@ export function mountDuneSceneOnCanvas(
 	// Ridge highlights drift across ~30s window. Imperceptible per-frame.
 	const SUN_WOBBLE_HZ = 0.05;
 	const SUN_WOBBLE_AMP = 0.05;
+	// Liveness pass 4 (2026-05-02) — camera radius breathe (researcher rec #8).
+	// Very low-amplitude sinusoidal radius oscillation gives the scene a
+	// gentle "alive" parallax over a 24s period. ±0.15 around radius 45 is
+	// imperceptible per-frame, perceptible over ~12s. Reduced-motion users
+	// skip this (camera radius stays fixed at the constructor's 45).
+	const CAMERA_BREATHE_HZ = 1 / 24;
+	const CAMERA_BREATHE_AMP = 0.15;
+	const CAMERA_RADIUS_BASE = 45;
 	// Scratch vector reused each frame to avoid per-frame allocation pressure.
 	const sunScratch = new Vector3(0, 0, 0);
 	// horizonTint scratch — reused each frame to avoid per-frame Color3 alloc.
@@ -674,6 +726,13 @@ export function mountDuneSceneOnCanvas(
 		timeSeconds += delta;
 		duneMat.setFloat("time", timeSeconds);
 		camera.alpha += 0.00004;
+		// Camera radius breathe — sinusoidal ±0.15 around base 45 over 24s.
+		// Tiny parallax that reads as ambient liveness, not zoom. Always active
+		// when not reduced-motion (early-return above already skipped this path).
+		camera.radius =
+			CAMERA_RADIUS_BASE +
+			Math.sin(timeSeconds * CAMERA_BREATHE_HZ * Math.PI * 2) *
+				CAMERA_BREATHE_AMP;
 
 		// timeOfDay — 0..1 over a 90s loop. Same phase pushed to both the
 		// dune material and the sky material so the surface and the horizon
