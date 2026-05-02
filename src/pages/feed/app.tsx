@@ -57,7 +57,7 @@ function KruxPlayer() {
 	const nextStream = STREAMS[(idx + 1) % STREAMS.length];
 
 	const fetchMeta = useCallback((s: StreamDef) => {
-		// stations without a now-playing endpoint (kunm, kutx) just show label
+		// stations without a now-playing endpoint (ksfr, uam radio) just show label
 		if (!s.metaUrl || !s.parseMeta) return;
 		// SSE stations are wired through the EventSource effect below — skip
 		// JSON fetch path for them

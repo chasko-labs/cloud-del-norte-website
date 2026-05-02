@@ -94,44 +94,25 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	{
-		key: "kunm",
-		url: "https://playerservices.streamtheworld.com/api/livestream-redirect/KUNMFM_128.mp3",
-		label: "kunm 89.9",
-		// NPR Composer widget id 5182a6d2e1c8c6a23e9e6a6c surfaced from kunm.org's
-		// live network capture (playwright). The widget hydrates dynamically so a
-		// static-fetch hunt missed it. Validated 200 against
-		// api.composer.nprstations.org/v1/widget/.../now?format=json
-		metaUrl:
-			"https://api.composer.nprstations.org/v1/widget/5182a6d2e1c8c6a23e9e6a6c/now?format=json&show_song=true",
-		metaFormat: "json",
-		// unm brand book — cherry / turquoise / silver
+		key: "ksfr",
+		// StreamTheWorld AAC+ endpoint surfaced from ksfr.org homepage HTML scan
+		// (curl + grep). 302 redirects to 18243.live.streamtheworld.com:443/KSFRFM_ICE.aac.
+		// Validated: HTTP/1.1 302 → HTTP/1.0 200, Content-Type: audio/aacp,
+		// Access-Control-Allow-Origin: * (CORS open).
+		url: "https://playerservices.streamtheworld.com/api/livestream-redirect/KSFRFM_ICE.aac",
+		label: "ksfr 101.1",
+		// metaUrl omitted — KSFR homepage exposes no NPR Composer widget id and no
+		// public json now-playing endpoint. Player relies on station label only.
+		// FOLLOWUP: contact info@ksfr.org for metadata feed if available.
+		// SFCC published no public brand-color palette; reusing UNM's cherry/turquoise/
+		// silver from the prior KUNM slot — Santa Fe regional warmth still reads.
 		colors: {
-			primary: "#ba0c2f", // cherry — unm iconic red
+			primary: "#ba0c2f", // cherry red
 			secondary: "#007a86", // turquoise
 			accent: "#a7a8aa", // silver
 			// cherry too dark on navy bg — brighten for dark-mode AA contrast
 			primaryDark: "#e23457",
 			// cherry on cream: ~6.5:1 — passes AAA, no light override
-		},
-		parseMeta(data) {
-			// nprstations widget shape mirrors KUTX: onNow.song.{trackName, artistName}
-			// when track-logging is active. KUNM frequently airs talk/music shows
-			// without inline track metadata (e.g., "Iyah Music"), so fall back to
-			// onNow.program.name when song is absent
-			const d = data as {
-				onNow?: {
-					program?: { name?: string };
-					song?: { trackName?: string; artistName?: string };
-				} | null;
-			};
-			const song = d?.onNow?.song;
-			if (song) {
-				const { trackName: track, artistName: artist } = song;
-				if (track && artist) return `${track} — ${artist}`;
-				if (track || artist) return track ?? artist ?? null;
-			}
-			const program = d?.onNow?.program?.name?.trim();
-			return program || null;
 		},
 	},
 	{
