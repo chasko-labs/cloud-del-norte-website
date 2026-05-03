@@ -9,8 +9,9 @@
     <meta name="color-scheme" content="light dark" />
     <title>AWS UG Cloud Del Norte</title>
     <!-- Preconnect to radio stream hosts — saves ~100-300ms TLS+DNS per first-play.
-         Persistent player + KruxPlayer hit these origins on user click; warming
-         the connection lets audio start sooner. crossorigin set because <audio
+         PersistentPlayer (shell-mounted, sole radio after KruxPlayer retired
+         2026-05-03) hits these origins on user click; warming the connection
+         lets audio start sooner. crossorigin set because <audio
          crossOrigin="anonymous"> uses anonymous CORS mode. mexiserver omitted —
          non-standard port 1124, preconnect benefit unclear. -->
     <link rel="preconnect" href="https://playerservices.streamtheworld.com" crossorigin />

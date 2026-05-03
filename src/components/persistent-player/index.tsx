@@ -4,14 +4,13 @@
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
-import { clearMediaSession, setMediaSession } from "../../lib/media-session";
+import { setMediaSession } from "../../lib/media-session";
 import {
-	clearPlayerState,
 	loadPlayerState,
 	type PersistedPlayerState,
 	savePlayerState,
 } from "../../lib/player-persist";
-import { hexToRgbTuple } from "../../lib/streams";
+import { formatLocation, hexToRgbTuple } from "../../lib/streams";
 import { STREAMS } from "../../lib/streams-order";
 import "./styles.css";
 
@@ -32,16 +31,22 @@ type StreamHealth = "ok" | "retrying" | "failed";
 
 function PersistentPlayerBar({
 	state,
+	autoplay,
 	onStop,
 	onSkipStation,
 }: {
 	state: PersistedPlayerState;
+	/** when true, attempt audio.play() on mount + on station-change. set when
+	 *  the player was hydrated from sessionStorage (user already pressed play
+	 *  this session) or after the user advances stations via skip */
+	autoplay: boolean;
 	onStop: () => void;
 	onSkipStation: (direction: 1 | -1) => void;
 }) {
-	const { t } = useTranslation();
+	const { t, locale } = useTranslation();
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const [blocked, setBlocked] = useState(false);
+	const [playing, setPlaying] = useState(false);
 	const [nowPlaying, setNowPlaying] = useState<string | null>(null);
 	const [streamHealth, setStreamHealth] = useState<StreamHealth>("ok");
 	// debounce + retry timers — refs so cleanup can clear them across renders
@@ -161,9 +166,14 @@ function PersistentPlayerBar({
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
-		const onPlay = () => document.body.classList.add("cdn-stream-playing");
-		const onStopEvt = () =>
+		const onPlay = () => {
+			document.body.classList.add("cdn-stream-playing");
+			setPlaying(true);
+		};
+		const onStopEvt = () => {
 			document.body.classList.remove("cdn-stream-playing");
+			setPlaying(false);
+		};
 		audio.addEventListener("playing", onPlay);
 		audio.addEventListener("pause", onStopEvt);
 		audio.addEventListener("ended", onStopEvt);
@@ -195,7 +205,13 @@ function PersistentPlayerBar({
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
-		audio.play().catch(() => setBlocked(true));
+		// only auto-play when the user already pressed play this session
+		// (state was hydrated from sessionStorage). On bootstrap (no prior
+		// state) the pill renders idle so first-paint isn't a forced play
+		// attempt — the user clicks play to opt in
+		if (autoplay) {
+			audio.play().catch(() => setBlocked(true));
+		}
 
 		// SSE branch: Zeno.fm mounts push metadata as text/event-stream. open
 		// an EventSource for the lifetime of the bar and parse each message.
@@ -234,6 +250,16 @@ function PersistentPlayerBar({
 	const resume = useCallback(() => {
 		audioRef.current?.play().catch(() => {});
 		setBlocked(false);
+	}, []);
+
+	const play = useCallback(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+		audio.play().catch(() => setBlocked(true));
+	}, []);
+
+	const pause = useCallback(() => {
+		audioRef.current?.pause();
 	}, []);
 
 	const handlePlay = useCallback(() => {
@@ -418,9 +444,34 @@ function PersistentPlayerBar({
 						</span>
 						<span className="cdn-pp__track-text">{nowPlaying}</span>
 					</span>
+				) : streamDef?.metaFallback ? (
+					// no live track string — surface a station-specific fallback
+					// link (Spotify playlist, podcast catalog, programs grid) so
+					// the row carries an actionable affordance instead of going
+					// blank. label flips per locale; href is shared
+					<span className="cdn-pp__track">
+						<span className="cdn-pp__eyebrow" aria-hidden="true">
+							{fallbackSubtitle}
+						</span>
+						<a
+							className="cdn-pp__now-playing-link"
+							href={streamDef.metaFallback.href}
+							target="_blank"
+							rel="noreferrer"
+						>
+							{locale === "mx"
+								? streamDef.metaFallback.labelEs
+								: streamDef.metaFallback.labelEn}
+						</a>
+					</span>
 				) : (
 					<span className="cdn-pp__track" aria-hidden="true">
 						<span className="cdn-pp__eyebrow">{fallbackSubtitle}</span>
+						{streamDef && (
+							<span className="cdn-pp__geo">
+								{formatLocation(streamDef.location)}
+							</span>
+						)}
 					</span>
 				)}
 			</span>
@@ -466,14 +517,23 @@ function PersistentPlayerBar({
 				>
 					&#9654;
 				</button>
-			) : (
+			) : playing ? (
 				<button
 					type="button"
 					className="cdn-pp__btn cdn-pp__btn--stop"
-					onClick={onStop}
-					aria-label="stop playback"
+					onClick={pause}
+					aria-label="pause playback"
 				>
 					&#9632;
+				</button>
+			) : (
+				<button
+					type="button"
+					className="cdn-pp__btn cdn-pp__btn--play"
+					onClick={play}
+					aria-label="play"
+				>
+					&#9654;
 				</button>
 			)}
 		</section>
@@ -482,23 +542,39 @@ function PersistentPlayerBar({
 
 export default function PersistentPlayer() {
 	const [state, setState] = useState<PersistedPlayerState | null>(null);
+	// autoplay = true once the user has indicated intent (hydrated from
+	// sessionStorage = previously pressed play, OR clicked skip on the
+	// idle bootstrap pill). Stays true for the rest of the session so a
+	// station skip mid-playback doesn't drop into idle
+	const [autoplay, setAutoplay] = useState(false);
 
 	useEffect(() => {
-		// only activate on non-feed pages — feed has its own KruxPlayer
-		if (window.location.pathname.includes("/feed/")) return;
-		setState(loadPlayerState());
+		// hydrate from sessionStorage if the user already picked a station
+		// this session; otherwise bootstrap with the first stream so the pill
+		// is visible from first paint. KruxPlayer (the previous launcher on
+		// /feed/) was removed 2026-05-03 — this widget is now the sole radio
+		const persisted = loadPlayerState();
+		if (persisted) {
+			setState(persisted);
+			setAutoplay(true);
+			return;
+		}
+		const first = STREAMS[0];
+		if (!first) return;
+		setState({
+			stationKey: first.key,
+			stationUrl: first.url,
+			stationLabel: first.label,
+			metaUrl: first.metaUrl,
+		});
 	}, []);
 
-	const handleStop = useCallback(() => {
-		clearPlayerState();
-		clearMediaSession();
-		setState(null);
-	}, []);
-
-	// skip station — direction +1 advances, -1 rewinds. Mirrors KruxPlayer's
-	// modulo arithmetic so the carousel order in feed/app.tsx stays in sync
-	// with the persistent-player skip buttons + Android notification skip
+	// skip station — direction +1 advances, -1 rewinds. Mirrors the
+	// previous KruxPlayer modulo arithmetic so OS media-session skip
+	// behaves the same. After the first user-initiated skip, flip autoplay
+	// on so subsequent station changes resume audio without an extra click
 	const handleSkipStation = useCallback((direction: 1 | -1) => {
+		setAutoplay(true);
 		setState((current) => {
 			if (!current) return current;
 			const idx = STREAMS.findIndex((s) => s.key === current.stationKey);
@@ -516,11 +592,19 @@ export default function PersistentPlayer() {
 		});
 	}, []);
 
+	// stop button removed — pause keeps the pill visible. Old onStop
+	// closed the pill entirely; with the bootstrap behavior we want the
+	// widget permanently on screen so the user can re-engage
+	const handleStop = useCallback(() => {
+		// no-op: kept on the prop signature for future "close pill" UI
+	}, []);
+
 	if (!state) return null;
 
 	return (
 		<PersistentPlayerBar
 			state={state}
+			autoplay={autoplay}
 			onStop={handleStop}
 			onSkipStation={handleSkipStation}
 		/>

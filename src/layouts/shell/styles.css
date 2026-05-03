@@ -466,6 +466,43 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	max-height: calc(100vh - 56px);
 }
 
+/* v0.0.0125 — mobile nav drawer + inner scroller must fit the viewport
+   Bryan eyes-on at 375×667: opening the drawer renders Liora + Weather
+   below the fold. Probe found awsui_navigation-container is position:fixed
+   with top:50px and computed height ≈727px → bottom sits ~110px BELOW the
+   viewport edge. Inner awsui_content-container scrolls (overflow:scroll
+   + scrollbar-chrome hidden by line ~1534), but its bottom edge is also
+   off-screen, so a touch swipe only exposes part of Weather even at
+   max scrollTop.
+   Fix: clamp the fixed nav-container + the inner content-container to
+   the visible viewport on small screens so the inner scroller can pan
+   the full Liora→Weather stack into view. Uses dvh (dynamic viewport
+   height) so iOS Safari's collapsing URL bar doesn't leave a gap.
+   100vh fallback first for browsers without dvh.
+
+   v0.0.0126 — Bryan eyes-on at 375×667: weather card cropped at viewport
+   edge even after max scrollTop. Probe: nav-container is position:fixed
+   with top:100px (50 top-nav + 50 AppLayout header strip), but max-height
+   was only `100vh - 50px = 617px`, so bottom sits at top(100) + height(617)
+   = 717px, 50px below the 667 viewport. The inner content-container then
+   inherits that overshoot — the last 50px of weather lives off-screen and
+   touch-scroll can't reach it. Subtracting 100px (full top offset) so the
+   container fits inside the visible viewport. */
+@media (max-width: 768px) {
+	[class*="awsui_navigation-container_"] {
+		max-height: calc(100vh - 100px) !important;
+		max-height: calc(100dvh - 100px) !important;
+	}
+	[class*="awsui_navigation_"] [class*="awsui_content-container_"] {
+		max-height: calc(100vh - 100px) !important;
+		max-height: calc(100dvh - 100px) !important;
+	}
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]) {
+		max-height: calc(100vh - 100px) !important;
+		max-height: calc(100dvh - 100px) !important;
+	}
+}
+
 /* Outer Cloudscape chrome — defanged from opaque to TRANSPARENT in both modes.
    Light: was #ede5d4 to mask Cloudscape's default white.
    Dark:  Cloudscape applies its own dark layout-bg by default; we want the
@@ -1518,9 +1555,50 @@ body {
 
    Selector pattern: matches the content-container inside any awsui_navigation_
    element, scoped to avoid catching non-nav surfaces. !important beats
-   Cloudscape's auto override at the same specificity tier. */
+   Cloudscape's auto override at the same specificity tier.
+
+   v0.0.0118 — hide the native scrollbar chrome on every nav-drawer scrolling
+   surface. Bryan eyes-on: default OS scrollbar (opaque light-gray track on
+   linux/chromium) cut a visible "hole" in the gradient backdrop, and because
+   the inner awsui_content-container_ has block-size:auto (rule at line ~432)
+   the bar terminated where the inner element ended — abrupt cut partway
+   down the drawer. Hiding the scrollbar chrome (without touching overflow)
+   keeps the always-mounted scroll behaviour (no width wobble) and keeps the
+   parent drawer scrollable via wheel + touch-drag, while removing the visual
+   gash. Applied to both the parent drawer (which is the actually-scrolling
+   container with max-height: calc(100vh - 56px) at line ~466) and the inner
+   content-container with the always-mounted bar. */
 [class*="awsui_navigation_"] [class*="awsui_content-container_"] {
 	overflow-y: scroll !important;
+	scrollbar-width: none; /* firefox */
+	-ms-overflow-style: none; /* legacy edge / ie */
+}
+[class*="awsui_navigation_"] [class*="awsui_content-container_"]::-webkit-scrollbar {
+	display: none; /* chromium / webkit */
+	width: 0;
+	height: 0;
+}
+
+/* Mirror onto the parent drawer surfaces too — these carry max-height:
+   calc(100vh - 56px) at line ~466 and are the actual scroll viewport for
+   tall nav content. Without this, content overflowing the inner element
+   would surface a default OS bar on the outer drawer instead. */
+nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+[class*="awsui_navigation__drawer"],
+[class*="awsui_navigation-container"] [class*="awsui_drawer-content"],
+[class*="awsui_drawer"] [class*="awsui_drawer-content"],
+[class*="awsui_drawer-content-container"] {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+}
+nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::-webkit-scrollbar,
+[class*="awsui_navigation__drawer"]::-webkit-scrollbar,
+[class*="awsui_navigation-container"] [class*="awsui_drawer-content"]::-webkit-scrollbar,
+[class*="awsui_drawer"] [class*="awsui_drawer-content"]::-webkit-scrollbar,
+[class*="awsui_drawer-content-container"]::-webkit-scrollbar {
+	display: none;
+	width: 0;
+	height: 0;
 }
 
 /* Top nav — opaque (the nav bar itself; header strip BELOW it is the
