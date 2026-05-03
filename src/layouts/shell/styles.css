@@ -1775,3 +1775,45 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::-webki
 		margin-top: 1px;
 	}
 }
+
+/* ── Audio reactivity — Phase A ──────────────────────────────────────────
+   Treble drives logo brightness; flux drives sun glow.
+   cdn-star-sparkle exists but is scoped to the US flag stars (.cdn-svg-flag--us
+   .cdn-svg-flag__stars circle) — no logo sparkle animation to gate here.
+   All gated on cdn-stream-playing so the page stays quiet when idle.
+   No transition: these properties update every animation frame. */
+
+/* Logo brightness scales with treble — dark mode */
+.cdn-stream-playing.awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
+	filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.85))
+		drop-shadow(0 0 4px rgba(155, 92, 244, 1))
+		drop-shadow(0 0 11px rgba(144, 96, 240, 0.75))
+		drop-shadow(0 0 26px rgba(144, 96, 240, 0.38))
+		drop-shadow(0 0 52px rgba(90, 31, 138, 0.18))
+		brightness(calc(1 + var(--cdn-treble, 0) * 0.35));
+}
+
+/* Logo brightness scales with treble — light mode */
+.cdn-stream-playing:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img {
+	filter: drop-shadow(0 0 3px rgba(139, 90, 43, 0.72))
+		drop-shadow(0 0 9px rgba(201, 162, 63, 0.45))
+		drop-shadow(0 0 22px rgba(201, 162, 63, 0.2))
+		brightness(calc(1 + var(--cdn-treble, 0) * 0.35));
+}
+
+/* Sun glow scales with flux */
+.cdn-stream-playing .cdn-svg-sun {
+	filter: drop-shadow(0 0 2px rgba(255, 200, 80, 0.85))
+		drop-shadow(0 0 6px rgba(255, 153, 0, 0.55))
+		drop-shadow(0 0 14px rgba(255, 153, 0, 0.28))
+		brightness(calc(1 + var(--cdn-flux, 0) * 0.4));
+}
+
+/* prefers-reduced-motion: no audio-reactive changes */
+@media (prefers-reduced-motion: reduce) {
+	.cdn-stream-playing.awsui-dark-mode .cdn-logo-hero .cdn-logo-img,
+	.cdn-stream-playing:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img,
+	.cdn-stream-playing .cdn-svg-sun {
+		filter: initial;
+	}
+}
