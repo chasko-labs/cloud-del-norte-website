@@ -1873,3 +1873,27 @@ nav[class*="awsui_navigation_"]:not(
 		transform: initial;
 	}
 }
+
+/* ── Audio reactivity — Phase D ──────────────────────────────────────────
+   Flag wave speed mid coupling; top-nav shimmer flux coupling.
+   All gated on body.cdn-stream-playing + prefers-reduced-motion: no-preference.
+   No reduce resets needed — the base animation rules live inside
+   no-preference blocks and never fire under reduce. */
+
+/* Phase D — flag wave speed mid coupling (MX stripes + US horizontal stripes) */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-stream-playing .cdn-svg-flag--mx .cdn-svg-flag__stripe--a,
+	body.cdn-stream-playing .cdn-svg-flag--mx .cdn-svg-flag__stripe--b,
+	body.cdn-stream-playing .cdn-svg-flag--mx .cdn-svg-flag__stripe--c,
+	body.cdn-stream-playing .cdn-svg-flag--mx .cdn-svg-flag__emblem,
+	body.cdn-stream-playing .cdn-svg-flag--us .cdn-svg-flag__stripes-h rect {
+		animation-duration: calc(3.6s / (1 + var(--cdn-mid, 0) * 1.5));
+	}
+}
+
+/* Phase D — top-nav shimmer flux coupling (flux speeds sweep 24s → 6s at peak) */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-stream-playing #top-nav::after {
+		animation-duration: calc(24s * max(0.25, 1 - var(--cdn-flux, 0) * 0.75));
+	}
+}
