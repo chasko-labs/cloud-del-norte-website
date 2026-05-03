@@ -51,12 +51,21 @@ export function FranklinOverlay(): ReactElement | null {
 				xmlns="http://www.w3.org/2000/svg"
 				role="presentation"
 			>
-				{/* Silhouette — single closed path. Fill comes from styles.css. */}
-				<path d={SILHOUETTE_PATH} className="franklin-overlay__silhouette" />
-				{/* El Paso Star — pentagram on the south face of South Franklin.
-				    Glow halo applied via the CSS drop-shadow filter chain in
-				    styles.css (one shadow for the inner halo, one for the
-				    outer bloom). Single path keeps the DOM minimal. */}
+				{/* Silhouette — mirrored horizontally per v0.0.0087. North Franklin
+				    (tallest peak, authored at x=240) now renders visually at x=760
+				    (right side); foothills slope off the bottom-right corner. We
+				    apply the flip via SVG `transform` on this `<g>` (rather than
+				    CSS on the parent <svg>) so that ONLY the silhouette mirrors —
+				    the star sits outside this group and keeps its asymmetric
+				    logo-star geometry un-mirrored. */}
+				<g transform={`scale(-1, 1) translate(-${VIEWBOX_WIDTH}, 0)`}>
+					<path d={SILHOUETTE_PATH} className="franklin-overlay__silhouette" />
+				</g>
+				{/* El Paso Star — simplified silhouette of the CDN brand logo-star.
+				    Authored at the pre-mirrored x-coord (340 = 1000 - 660) so it
+				    lands on the south face of the now-visually-left South Franklin
+				    without inheriting the silhouette's flip. Glow halo applied via
+				    the CSS drop-shadow filter chain in styles.css. */}
 				<path d={STAR_PATH} className="franklin-overlay__star" />
 			</svg>
 		</div>

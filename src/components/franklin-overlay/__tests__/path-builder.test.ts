@@ -127,7 +127,11 @@ describe("buildSilhouettePath", () => {
 });
 
 describe("buildStarPath", () => {
-	it("returns a 10-vertex closed pentagram path (M + 9 L + Z)", () => {
+	// Geometry constants mirrored from path-builder.ts buildStarPath().
+	const INNER_RATIO = 0.32;
+	const HERO_TIP_SCALE = 1.18;
+
+	it("returns a 10-vertex closed logo-star path (M + 9 L + Z)", () => {
 		const path = buildStarPath(100, 100, 20);
 		expect(path.startsWith("M")).toBe(true);
 		expect(path.trimEnd().endsWith("Z")).toBe(true);
@@ -135,47 +139,82 @@ describe("buildStarPath", () => {
 		expect(lineCount).toBe(9);
 	});
 
-	it("the first vertex points up (top of the star)", () => {
-		const path = buildStarPath(100, 100, 20);
-		// First vertex is at angle -π/2 → x=cx+0, y=cy-radius.
-		// Path starts "M 100.000 80.000 ..."
-		expect(path).toMatch(/^M 100\.000 80\.000/);
-	});
-
-	it("inner-radius vertices sit closer to the centre than outer", () => {
+	it("inner vertices use a sharper ratio (0.32) than a golden-ratio pentagram (0.382)", () => {
 		const cx = 0;
 		const cy = 0;
 		const r = 10;
 		const path = buildStarPath(cx, cy, r);
-		// Parse out the numeric coords — pull every "x y" pair.
 		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
 			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
 		);
-		// 10 vertices alternating outer / inner. Outer distance == r,
-		// inner distance == r * 0.382.
-		for (let i = 0; i < coords.length; i++) {
+		// Indices 1, 3, 5, 7, 9 are inner vertices; all sit at r * 0.32.
+		for (const i of [1, 3, 5, 7, 9]) {
 			const [x, y] = coords[i];
 			const dist = Math.hypot(x - cx, y - cy);
-			if (i % 2 === 0) {
-				expect(dist).toBeCloseTo(r, 2);
-			} else {
-				expect(dist).toBeCloseTo(r * 0.382, 2);
-			}
+			expect(dist).toBeCloseTo(r * INNER_RATIO, 2);
 		}
+	});
+
+	it("the hero tip (vertex 0) is elongated 1.18× — asymmetric brand accent", () => {
+		const cx = 0;
+		const cy = 0;
+		const r = 10;
+		const path = buildStarPath(cx, cy, r);
+		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
+			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
+		);
+		const [hx, hy] = coords[0];
+		expect(Math.hypot(hx - cx, hy - cy)).toBeCloseTo(r * HERO_TIP_SCALE, 2);
+		// Other outer vertices (2, 4, 6, 8) sit at the un-elongated outer radius.
+		for (const i of [2, 4, 6, 8]) {
+			const [x, y] = coords[i];
+			expect(Math.hypot(x - cx, y - cy)).toBeCloseTo(r, 2);
+		}
+	});
+
+	it("hero tip is rotated +20° from straight up so the burst leans upper-right", () => {
+		const cx = 0;
+		const cy = 0;
+		const r = 10;
+		const path = buildStarPath(cx, cy, r);
+		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
+			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
+		);
+		const [hx, hy] = coords[0];
+		// Hero tip angle: baseline -π/2 + 20° rotation. atan2(y,x) of the tip
+		// vector from centre should match -π/2 + 20° (≈ -1.221 rad).
+		const expectedAngle = -Math.PI / 2 + (20 * Math.PI) / 180;
+		expect(Math.atan2(hy - cy, hx - cx)).toBeCloseTo(expectedAngle, 3);
+		// Hero tip leans upper-right: positive x, negative y.
+		expect(hx).toBeGreaterThan(0);
+		expect(hy).toBeLessThan(0);
 	});
 });
 
 describe("EL_PASO_STAR_ANCHOR", () => {
-	it("sits south-east of the South Franklin apex (south face of the peak)", () => {
+	it("sits south-east of the South Franklin apex (in pre-flip authoring coords)", () => {
 		const south = RIDGE_POINTS.find((p) => p.name === "south-franklin");
 		expect(south).toBeDefined();
 		if (!south) return;
-		// Star anchor x is east of (greater than) the south-franklin apex x.
-		expect(EL_PASO_STAR_ANCHOR.cx).toBeGreaterThan(south.x);
+		// v0.0.0087: the silhouette `<g>` is mirrored via SVG transform, so
+		// the star anchor is authored at the pre-mirrored x = VIEWBOX_WIDTH -
+		// originalCx. The star's apparent (post-flip) position is what should
+		// sit south-east of the South Franklin apex; un-flip the cx for the
+		// comparison.
+		const apparentCx = VIEWBOX_WIDTH - EL_PASO_STAR_ANCHOR.cx;
+		expect(apparentCx).toBeGreaterThan(south.x);
 		// And it sits below the peak apex height-wise (cy is bigger = lower
 		// on the screen than the apex's svg y coordinate).
 		const apexY = heightToSvgY(south.h, VIEWBOX_HEIGHT);
 		expect(EL_PASO_STAR_ANCHOR.cy).toBeGreaterThan(apexY);
+	});
+
+	it("cx is the pre-mirrored coordinate (lands on the visually-left South Franklin)", () => {
+		// After the silhouette flip, South Franklin (authored x=630) renders
+		// visually around x=370. The star's authored cx should be on the
+		// left half of the viewBox (< VIEWBOX_WIDTH / 2) so it lands on the
+		// south face of that flipped peak rather than the right side.
+		expect(EL_PASO_STAR_ANCHOR.cx).toBeLessThan(VIEWBOX_WIDTH / 2);
 	});
 
 	it("has a positive radius", () => {
