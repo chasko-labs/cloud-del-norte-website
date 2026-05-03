@@ -14,6 +14,12 @@
 // Geometry: silhouette path + el paso star path are built by path-builder.ts
 // (pure TS, unit-tested). Both are inlined into the SVG so we ship one
 // component file with no extra HTTP request.
+//
+// v0.0.0104 — El Paso Star reduced to a humble lightbulb landmark. Dropped
+// the orange/white core (no solid centre per Bryan: "center shouldn't be
+// solid white"). 5 lavender bulbs cycle ON sequentially via CSS keyframes
+// with phase offsets of 1/5 each — only ~1 bulb is bright at a time, the
+// rest are dim. Reads as a single mountainside bulb blinking, not a logo.
 
 import type { ReactElement } from "react";
 import { useWallpaperTheme } from "../../hooks/useWallpaperTheme";
@@ -21,7 +27,6 @@ import {
 	buildSilhouettePath,
 	buildStarBodyPath,
 	buildStarBulbTips,
-	buildStarCorePath,
 	EL_PASO_STAR_ANCHOR,
 	VIEWBOX_HEIGHT,
 	VIEWBOX_WIDTH,
@@ -29,16 +34,7 @@ import {
 import "./styles.css";
 
 const SILHOUETTE_PATH = buildSilhouettePath();
-// El Paso Star — composite CDN logo-star landmark (v0.0.0102). Three layers
-// stacked back-to-front so the violet body silhouettes against the dark sky,
-// the orange core glows through, and the lavender bulb tips read as discrete
-// pinpoints at each arm end. See path-builder.ts for full design rationale.
 const STAR_BODY_PATH = buildStarBodyPath(
-	EL_PASO_STAR_ANCHOR.cx,
-	EL_PASO_STAR_ANCHOR.cy,
-	EL_PASO_STAR_ANCHOR.radius,
-);
-const STAR_CORE_PATH = buildStarCorePath(
 	EL_PASO_STAR_ANCHOR.cx,
 	EL_PASO_STAR_ANCHOR.cy,
 	EL_PASO_STAR_ANCHOR.radius,
@@ -52,8 +48,9 @@ const STAR_BULB_TIPS = buildStarBulbTips(
 /**
  * FranklinOverlay — static SVG mountain silhouette + El Paso Star landmark.
  * Renders only in dark mode (el-paso-nights theme). Decorative — aria-hidden,
- * pointer-events:none. No animation; respects prefers-reduced-motion by
- * being inert.
+ * pointer-events:none. The 5 bulb circles cycle ON in rotation via CSS
+ * keyframes; prefers-reduced-motion holds them static at the baseline opacity
+ * (handled in styles.css).
  */
 export function FranklinOverlay(): ReactElement | null {
 	const theme = useWallpaperTheme();
@@ -77,34 +74,24 @@ export function FranklinOverlay(): ReactElement | null {
 				<g transform={`scale(-1, 1) translate(-${VIEWBOX_WIDTH}, 0)`}>
 					<path d={SILHOUETTE_PATH} className="franklin-overlay__silhouette" />
 				</g>
-				{/* El Paso Star — composite CDN brand logo-star landmark (v0.0.0102).
-				    Authored at the pre-mirrored x-coord (340 = 1000 - 660) so it
-				    lands on the south face of the now-visually-left South Franklin
-				    without inheriting the silhouette's flip. Three stacked layers:
-				      • star-body  → cdn-violet 5-arm slim starburst (the brand
-				        silhouette; hero tip leans upper-right at +20°)
-				      • star-core  → aws-orange concentric inner star (warm core
-				        that reads through the violet body, evokes the white-hot
-				        centre where multiple arm paths overlap in the brand mark)
-				      • star-bulb  → 5 cdn-lavender bulb tips at each arm end; the
-				        hero bulb (index 0) is enlarged + aws-orange to match the
-				        cdn-bulb-tip-hero focal accent in src/components/logo-svg
-				    Glow halo cascades from the wrapping `<g class="franklin-overlay__star">`
-				    via the CSS drop-shadow filter chain in styles.css. */}
+				{/* El Paso Star — humble lightbulb landmark (v0.0.0104). Two layers:
+				      • star-body  → slim violet 5-arm star at opacity 0.55 (no
+				        solid centre — empty star-cutout reads through to the
+				        mountain silhouette behind)
+				      • star-bulb  → 5 lavender bulbs at each arm tip, animated
+				        with CSS keyframe phase offsets so they cycle ON in
+				        rotation (bulb 0 peaks at t=0, bulb 1 at t=1/5, etc.)
+				    Soft violet halo cascades from the wrapping `<g>` filter so
+				    the whole composite reads as a single mountainside twinkle. */}
 				<g className="franklin-overlay__star">
 					<path d={STAR_BODY_PATH} className="franklin-overlay__star-body" />
-					<path d={STAR_CORE_PATH} className="franklin-overlay__star-core" />
 					{STAR_BULB_TIPS.map((tip) => (
 						<circle
-							key={`${tip.cx.toFixed(2)}-${tip.cy.toFixed(2)}`}
+							key={tip.cycleIndex}
 							cx={tip.cx}
 							cy={tip.cy}
 							r={tip.r}
-							className={
-								tip.hero
-									? "franklin-overlay__star-bulb franklin-overlay__star-bulb--hero"
-									: "franklin-overlay__star-bulb"
-							}
+							className={`franklin-overlay__star-bulb franklin-overlay__star-bulb--c${tip.cycleIndex}`}
 						/>
 					))}
 				</g>

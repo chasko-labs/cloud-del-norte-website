@@ -6,16 +6,14 @@ import {
 	buildSilhouettePath,
 	buildStarBodyPath,
 	buildStarBulbTips,
-	buildStarCorePath,
 	buildStarPath,
 	EL_PASO_STAR_ANCHOR,
 	heightToSvgY,
 	RIDGE_POINTS,
+	STAR_BULB_COUNT,
 	STAR_BULB_RADIUS_RATIO,
-	STAR_CORE_SCALE,
-	STAR_HERO_BULB_SCALE,
-	STAR_HERO_TIP_SCALE,
 	STAR_INNER_RATIO,
+	STAR_ROTATION_DEG,
 	VIEWBOX_HEIGHT,
 	VIEWBOX_WIDTH,
 } from "../path-builder";
@@ -135,7 +133,7 @@ describe("buildSilhouettePath", () => {
 });
 
 describe("buildStarBodyPath", () => {
-	it("returns a 10-vertex closed logo-star path (M + 9 L + Z)", () => {
+	it("returns a 10-vertex closed star path (M + 9 L + Z)", () => {
 		const path = buildStarBodyPath(100, 100, 20);
 		expect(path.startsWith("M")).toBe(true);
 		expect(path.trimEnd().endsWith("Z")).toBe(true);
@@ -159,7 +157,9 @@ describe("buildStarBodyPath", () => {
 		}
 	});
 
-	it("the hero tip (vertex 0) is elongated 1.18× — asymmetric brand accent", () => {
+	it("v0.0.0104 — all 5 outer arms are equal length (no hero-tip asymmetry)", () => {
+		// Humble lightbulb has no brand-accent arm. Outer vertices 0/2/4/6/8
+		// must all sit at exactly r from the centre.
 		const cx = 0;
 		const cy = 0;
 		const r = 10;
@@ -167,19 +167,13 @@ describe("buildStarBodyPath", () => {
 		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
 			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
 		);
-		const [hx, hy] = coords[0];
-		expect(Math.hypot(hx - cx, hy - cy)).toBeCloseTo(
-			r * STAR_HERO_TIP_SCALE,
-			2,
-		);
-		// Other outer vertices (2, 4, 6, 8) sit at the un-elongated outer radius.
-		for (const i of [2, 4, 6, 8]) {
+		for (const i of [0, 2, 4, 6, 8]) {
 			const [x, y] = coords[i];
 			expect(Math.hypot(x - cx, y - cy)).toBeCloseTo(r, 2);
 		}
 	});
 
-	it("hero tip is rotated +20° from straight up so the burst leans upper-right", () => {
+	it("body is rotated -20° (counterclockwise) so the upper arm leans upper-left", () => {
 		const cx = 0;
 		const cy = 0;
 		const r = 10;
@@ -188,98 +182,42 @@ describe("buildStarBodyPath", () => {
 			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
 		);
 		const [hx, hy] = coords[0];
-		// Hero tip angle: baseline -π/2 + 20° rotation. atan2(y,x) of the tip
-		// vector from centre should match -π/2 + 20° (≈ -1.221 rad).
-		const expectedAngle = -Math.PI / 2 + (20 * Math.PI) / 180;
+		const expectedAngle = -Math.PI / 2 + (STAR_ROTATION_DEG * Math.PI) / 180;
 		expect(Math.atan2(hy - cy, hx - cx)).toBeCloseTo(expectedAngle, 3);
-		// Hero tip leans upper-right: positive x, negative y.
-		expect(hx).toBeGreaterThan(0);
+		// Upper-LEFT quadrant: negative x, negative y. Bryan v0.0.0112 ccw flip.
+		expect(hx).toBeLessThan(0);
 		expect(hy).toBeLessThan(0);
 	});
 });
 
-describe("buildStarCorePath", () => {
-	it("is a 10-vertex closed star (same topology as the body)", () => {
-		const path = buildStarCorePath(0, 0, 20);
-		expect(path.startsWith("M")).toBe(true);
-		expect(path.trimEnd().endsWith("Z")).toBe(true);
-		expect((path.match(/ L /g) ?? []).length).toBe(9);
+describe("buildStarBulbTips", () => {
+	it("returns exactly STAR_BULB_COUNT (5) bulb-tip descriptors", () => {
+		const tips = buildStarBulbTips(0, 0, 20);
+		expect(tips.length).toBe(STAR_BULB_COUNT);
+		expect(STAR_BULB_COUNT).toBe(5);
 	});
 
-	it("outer vertices sit at STAR_CORE_SCALE × outerRadius (smaller than body)", () => {
-		const cx = 0;
-		const cy = 0;
-		const r = 10;
-		const path = buildStarCorePath(cx, cy, r);
-		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
-			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
-		);
-		// Outer vertices 2, 4, 6, 8 sit at r * STAR_CORE_SCALE.
-		for (const i of [2, 4, 6, 8]) {
-			const [x, y] = coords[i];
-			expect(Math.hypot(x - cx, y - cy)).toBeCloseTo(r * STAR_CORE_SCALE, 2);
+	it("v0.0.0104 — all bulbs are equal radius (no hero accent)", () => {
+		const r = 20;
+		const tips = buildStarBulbTips(0, 0, r);
+		const expected = r * STAR_BULB_RADIUS_RATIO;
+		for (const t of tips) {
+			expect(t.r).toBeCloseTo(expected, 4);
 		}
 	});
 
-	it("preserves the hero-tip elongation at the smaller scale (asymmetry survives)", () => {
-		const cx = 0;
-		const cy = 0;
-		const r = 10;
-		const path = buildStarCorePath(cx, cy, r);
-		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
-			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
-		);
-		const [hx, hy] = coords[0];
-		expect(Math.hypot(hx - cx, hy - cy)).toBeCloseTo(
-			r * STAR_CORE_SCALE * STAR_HERO_TIP_SCALE,
-			2,
-		);
-	});
-});
-
-describe("buildStarBulbTips", () => {
-	it("returns exactly 5 bulb-tip descriptors (one per outer arm)", () => {
+	it("each bulb has a unique cycleIndex 0..4 for staggered keyframe phasing", () => {
 		const tips = buildStarBulbTips(0, 0, 20);
-		expect(tips.length).toBe(5);
+		const indices = tips.map((t) => t.cycleIndex).sort();
+		expect(indices).toEqual([0, 1, 2, 3, 4]);
 	});
 
-	it("exactly one bulb is flagged as the hero (the elongated upper-right arm)", () => {
-		const tips = buildStarBulbTips(0, 0, 20);
-		const heroes = tips.filter((t) => t.hero);
-		expect(heroes.length).toBe(1);
-	});
-
-	it("hero bulb is rendered at STAR_HERO_BULB_SCALE × peer radius", () => {
+	it("all bulbs sit on the body's outer arm tips (distance from centre = outerRadius)", () => {
 		const r = 20;
 		const tips = buildStarBulbTips(0, 0, r);
-		const hero = tips.find((t) => t.hero);
-		const peer = tips.find((t) => !t.hero);
-		expect(hero).toBeDefined();
-		expect(peer).toBeDefined();
-		if (!hero || !peer) return;
-		expect(peer.r).toBeCloseTo(r * STAR_BULB_RADIUS_RATIO, 4);
-		expect(hero.r).toBeCloseTo(peer.r * STAR_HERO_BULB_SCALE, 4);
-	});
-
-	it("hero bulb sits on the elongated upper-right arm (positive x, negative y from centre)", () => {
-		const tips = buildStarBulbTips(0, 0, 20);
-		const hero = tips.find((t) => t.hero);
-		expect(hero).toBeDefined();
-		if (!hero) return;
-		expect(hero.cx).toBeGreaterThan(0);
-		expect(hero.cy).toBeLessThan(0);
-	});
-
-	it("hero bulb radius is at the body's elongated hero-tip vertex (not the un-scaled outer radius)", () => {
-		// The bulb cx/cy must equal the body's hero-tip vertex coordinate so
-		// the bulb sits AT the visible arm tip, not floating short of it.
-		const r = 20;
-		const tips = buildStarBulbTips(0, 0, r);
-		const hero = tips.find((t) => t.hero);
-		expect(hero).toBeDefined();
-		if (!hero) return;
-		const heroDist = Math.hypot(hero.cx, hero.cy);
-		expect(heroDist).toBeCloseTo(r * STAR_HERO_TIP_SCALE, 2);
+		for (const t of tips) {
+			expect(Math.hypot(t.cx, t.cy)).toBeCloseTo(r, 2);
+		}
 	});
 });
 
@@ -319,5 +257,12 @@ describe("EL_PASO_STAR_ANCHOR", () => {
 
 	it("has a positive radius", () => {
 		expect(EL_PASO_STAR_ANCHOR.radius).toBeGreaterThan(0);
+	});
+
+	it("v0.0.0104 — radius is small enough to read as a humble landmark, not a brand showcase", () => {
+		// Pre-v0.0.0104 the radius was 18. The new humble-bulb design is
+		// half that. Future tweaks above 12 would re-introduce the "logo
+		// billboard" feel Bryan called out.
+		expect(EL_PASO_STAR_ANCHOR.radius).toBeLessThanOrEqual(12);
 	});
 });

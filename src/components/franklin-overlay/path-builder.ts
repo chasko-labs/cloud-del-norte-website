@@ -81,6 +81,12 @@ export const RIDGE_POINTS: readonly RidgePoint[] = [
  * coords). We place it slightly south-east of the South Franklin apex so it
  * reads as being on the southern flank, not at the summit.
  *
+ * v0.0.0104 — Bryan: "the bulbs on your star look cartoonish ... its just a
+ * lightbulb it shouldnt be much different than the stars behind the
+ * mountain". Radius dropped from 18 → 9 so the landmark sits closer in scale
+ * to the canvas-2D background twinkles. The star is a single tiny bulb on a
+ * dark mountainside, not a brand showcase.
+ *
  * NOTE on cx after the v0.0.0087 horizontal flip: the silhouette `<g>` is
  * mirrored via SVG `transform="scale(-1,1) translate(-1000,0)"`, so South
  * Franklin's apex (authored at x=630) renders visually at x=370. The star
@@ -93,7 +99,7 @@ export const RIDGE_POINTS: readonly RidgePoint[] = [
 export const EL_PASO_STAR_ANCHOR = {
 	cx: 340, // = 1000 - 660; pre-mirrored so the un-flipped star lands on S.F.'s south face
 	cy: VIEWBOX_HEIGHT - 95, // partway down the south face
-	radius: 18, // larger than the retired pentagram (11) — logo-star reads better at scale
+	radius: 9, // v0.0.0104: humble landmark — half the v0.0.0102 size
 } as const;
 
 /** Convert a height-above-bottom to an SVG y-coordinate (top-origin). */
@@ -158,64 +164,64 @@ export function buildSilhouettePath(
 }
 
 // ---------------------------------------------------------------------------
-// El Paso Star — composite logo-star geometry
+// El Paso Star — humble lightbulb landmark (v0.0.0104)
 // ---------------------------------------------------------------------------
 //
-// v0.0.0102 — Bryan: "currently a yellow 'straight' star, needs to be replaced
-// with our theme colored logo". The previous single-path aws-orange polygon
-// read as a generic yellow pentagram, not the CDN brand mark.
+// v0.0.0102 was a multi-bulb logo composite (cdn-violet body + aws-orange core
+// + 5 lavender peer bulbs + 1 white hero bulb). v0.0.0103 swapped to
+// purples-only but kept the same shape. Both read as a flashy brand mark.
 //
-// The full brand mark (src/components/logo-svg/index.tsx, 354 paths in a
-// 1024² viewBox) is a violet-dominant 5-arm starburst with white highlights,
-// deep-violet shadow side, and lavender bulb tips at each arm end — one of
-// which (the "hero" tip at logo coords (574,351)) is the brand's distinctive
-// off-balance focal accent. Reproducing all 354 paths inline at a 30-unit
-// landmark scale would add disproportionate DOM weight and the audio-reactive
-// bulb animations would be too noisy as a small static landmark.
+// v0.0.0104 — Bryan: "the bulbs on your star look cartoonish - your going to
+// need vector layers so that not all of them are on at the same time & the
+// center shouldn't be solid white. remember its dark its night time its
+// mountain this is just a lightbulb it shouldnt be much different than the
+// stars behind the mountain".
 //
-// Composite reduction (Option B): four geometry builders feed a small
-// multi-path render in index.tsx so the franklin star reads as the CDN logo
-// at distance:
+// New direction (Option C — composite with staggered bulb cycle):
+//   - Drop the orange/white core entirely — center is the slim violet body
+//     showing through, NO solid fill at the center.
+//   - Drop the hero-tip asymmetry — a humble lightbulb has no brand accent.
+//     All 5 outer arms are equal radius. The slim body still reads as a
+//     star-shape but quietly, not as the CDN logo.
+//   - Halve the radius (18 → 9) so the landmark sits closer in scale to the
+//     background canvas-2D twinkles in dark.ts.
+//   - 5 small lavender bulbs at each arm tip, animated via CSS keyframes
+//     with phase offsets of 1/5 cycle each so they cycle ON sequentially —
+//     bulb 0 peaks at t=0, bulb 1 at t=1/5, bulb 2 at t=2/5, etc. At any
+//     moment ~1 bulb is bright while the others are dim. This mirrors the
+//     real El Paso Star bulbs blinking in rotation.
+//   - Body opacity 0.55 baseline (set in styles.css) so the whole composite
+//     sits in the visual hierarchy WITH the background stars, not above.
+//   - Halo glow softened (alpha 0.3 from 0.85) — moonlit, not headlight.
 //
-//   1. buildStarBodyPath — the violet body. 10-vertex slim starburst, sharper
-//      inner ratio (0.32) than a golden-ratio pentagram, one hero tip elongated
-//      1.18×, whole burst rotated +20° clockwise so the hero tip leans
-//      upper-right (matches brand mark orientation).
-//   2. buildStarCorePath — a smaller concentric 10-vertex star at 0.55× the
-//      outer radius. Filled aws-orange to give the warm-orange centre that
-//      reads through the violet body — matches the white-hot core in the
-//      brand mark where multiple arm paths overlap at the centre.
-//   3. buildStarBulbTips — 5 small lavender circles at each outer arm tip.
-//      The hero bulb (index 0) is rendered slightly larger and aws-orange to
-//      echo the brand's cdn-bulb-tip-hero focal point.
-//   4. buildStarPath (legacy) — kept as an alias of buildStarBodyPath so any
-//      external import of buildStarPath continues to resolve to the body
-//      geometry. The default fill cascades to violet via index.tsx.
+// Geometry exports:
+//   STAR_BULB_COUNT — number of bulbs (5, one per outer arm)
+//   STAR_INNER_RATIO — slim-star inner notch ratio (0.32, unchanged)
+//   STAR_BULB_RADIUS_RATIO — bulb circle radius vs outer radius (0.18 — bumped
+//     from 0.12 because absolute pixel size matters more than ratio at the new
+//     smaller landmark scale; the pinpoints would otherwise be sub-pixel)
+//   STAR_ROTATION_DEG — body rotation (20°, unchanged — keeps the same
+//     orientation for any external consumer that locks to it)
 //
-// Total DOM cost: 1 body path + 1 core path + 5 circles = 7 SVG nodes
-// (vs the prior 1 path, vs the canonical 354). All decorative,
-// no animations — the franklin star is a static landmark, not a hero mark.
+// Total DOM cost: 1 body path + 5 circles = 6 SVG nodes (was 7 in v0.0.0103).
 
-/** Geometry constants shared across the composite star builders so the body,
- *  core, and bulb tips stay in sync if someone tweaks the silhouette. */
 export const STAR_INNER_RATIO = 0.32;
-export const STAR_HERO_TIP_INDEX = 0;
-export const STAR_HERO_TIP_SCALE = 1.18;
-export const STAR_ROTATION_DEG = 20;
+// v0.0.0112 — bryan: "rotate it counterclockwise a bit". Flipped from +20°
+// (clockwise lean per v0.0.0087) to -20° so the star tilts gently to the
+// upper-LEFT. SVG y-down convention: negative degree = counterclockwise.
+export const STAR_ROTATION_DEG = -20;
 const STAR_ROTATION_RAD = (STAR_ROTATION_DEG * Math.PI) / 180;
-/** Inner orange-core star scale — fraction of outer radius. 0.55 keeps the
- *  core visible behind the slim violet arms without bleeding past the inner
- *  vertex notches (which sit at 0.32 × outerRadius). */
-export const STAR_CORE_SCALE = 0.55;
-/** Bulb-tip radius — fraction of outer radius. ~12% reads as a discrete
- *  pinpoint at the 30-unit landmark scale. */
-export const STAR_BULB_RADIUS_RATIO = 0.12;
-/** Hero bulb is rendered 1.5× larger than peer bulbs — matches the brand
- *  mark's wider hero halo (cdn-bulb-tip-hero filter chain in logo-svg). */
-export const STAR_HERO_BULB_SCALE = 1.5;
+/** Bulb-tip radius — fraction of outer radius. ~18% reads as a discrete
+ *  pinpoint at the v0.0.0104 humble-landmark scale (radius 9 → bulb r ≈ 1.6
+ *  in viewBox units, on par with the canvas-2D background star sizes). */
+export const STAR_BULB_RADIUS_RATIO = 0.18;
+/** Number of outer arms / bulbs. Five points = a star shape; one bulb per
+ *  arm tip cycles ON in rotation via CSS keyframe phase offsets. */
+export const STAR_BULB_COUNT = 5;
 
 /** Compute the (x,y) of a star vertex i ∈ [0..9] given centre + outerRadius.
- *  Even indices = outer arms (with hero scale on index 0); odd = inner notch. */
+ *  Even indices = outer arms; odd = inner notches. v0.0.0104 dropped the
+ *  hero-tip elongation — all outer arms are equal length now. */
 function starVertex(
 	cx: number,
 	cy: number,
@@ -225,15 +231,15 @@ function starVertex(
 	const baseAngle = -Math.PI / 2 + (i * Math.PI) / 5;
 	const angle = baseAngle + STAR_ROTATION_RAD;
 	const innerRadius = outerRadius * STAR_INNER_RATIO;
-	const baseR = i % 2 === 0 ? outerRadius : innerRadius;
-	const r = i === STAR_HERO_TIP_INDEX ? baseR * STAR_HERO_TIP_SCALE : baseR;
+	const r = i % 2 === 0 ? outerRadius : innerRadius;
 	return { x: cx + Math.cos(angle) * r, y: cy + Math.sin(angle) * r };
 }
 
 /**
- * Build the violet logo-star BODY — the recognizable 5-arm slim starburst.
- * 10 vertices (5 outer arms + 5 inner notches), hero tip at index 0
- * elongated 1.18×, whole burst rotated +20° clockwise from straight up.
+ * Build the violet body path — slim 5-arm star, equal arm lengths.
+ * 10 vertices (5 outer arms + 5 inner notches), rotated +20° clockwise so
+ * the upper arm leans upper-right (preserves orientation continuity with
+ * v0.0.0103 callers). No hero-tip asymmetry — humble lightbulb, not logo.
  */
 export function buildStarBodyPath(
 	cx: number,
@@ -248,58 +254,41 @@ export function buildStarBodyPath(
 	return `M ${points[0]} L ${points.slice(1).join(" L ")} Z`;
 }
 
-/**
- * Build the orange-core inner star — same 10-vertex geometry as the body but
- * scaled to STAR_CORE_SCALE × outerRadius so it sits inside the violet body
- * as a warm-orange centre. Hero asymmetry is preserved at the smaller scale
- * so the core leans the same direction as the body.
- */
-export function buildStarCorePath(
-	cx: number,
-	cy: number,
-	outerRadius: number,
-): string {
-	return buildStarBodyPath(cx, cy, outerRadius * STAR_CORE_SCALE);
-}
-
-/** Bulb tip descriptor — one per outer arm. `hero` flags the focal bulb. */
+/** Bulb tip descriptor — one per outer arm. `cycleIndex` ∈ [0..4] is the
+ *  position in the staggered keyframe cycle so styles.css can address each
+ *  bulb's phase via a CSS custom property or per-index class. */
 export interface StarBulbTip {
 	cx: number;
 	cy: number;
 	r: number;
-	hero: boolean;
+	cycleIndex: number;
 }
 
 /**
  * Build the 5 bulb-tip positions at each outer arm vertex (indices 0/2/4/6/8).
- * The hero bulb (index 0, post-rotation upper-right) gets a larger radius to
- * echo the cdn-bulb-tip-hero focal accent in the brand mark.
+ * All bulbs are equal radius (no hero accent). cycleIndex is the bulb's slot
+ * in the rotation animation — bulb at cycleIndex=0 peaks first, then 1, 2,
+ * 3, 4, then back to 0.
  */
 export function buildStarBulbTips(
 	cx: number,
 	cy: number,
 	outerRadius: number,
 ): readonly StarBulbTip[] {
-	const baseR = outerRadius * STAR_BULB_RADIUS_RATIO;
+	const r = outerRadius * STAR_BULB_RADIUS_RATIO;
 	const tips: StarBulbTip[] = [];
-	for (const i of [0, 2, 4, 6, 8]) {
+	const outerVertices = [0, 2, 4, 6, 8];
+	for (let k = 0; k < outerVertices.length; k++) {
+		const i = outerVertices[k];
 		const { x, y } = starVertex(cx, cy, outerRadius, i);
-		const isHero = i === STAR_HERO_TIP_INDEX;
-		tips.push({
-			cx: x,
-			cy: y,
-			r: isHero ? baseR * STAR_HERO_BULB_SCALE : baseR,
-			hero: isHero,
-		});
+		tips.push({ cx: x, cy: y, r, cycleIndex: k });
 	}
 	return tips;
 }
 
 /**
- * Backward-compatible alias — `buildStarPath` now resolves to the violet
- * body path. Pre-v0.0.0102 callers that imported buildStarPath continue to
- * receive a 10-vertex closed star path; the new composite is opt-in via the
- * `buildStarBodyPath` / `buildStarCorePath` / `buildStarBulbTips` trio.
+ * Backward-compatible alias — `buildStarPath` resolves to the body path.
+ * Pre-v0.0.0102 callers continue to receive a 10-vertex closed star path.
  */
 export function buildStarPath(
 	cx: number,
