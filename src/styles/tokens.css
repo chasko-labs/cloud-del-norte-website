@@ -612,3 +612,69 @@
 	flex-direction: column;
 	min-width: 0;
 }
+
+/* ==========================================================================
+   Unified card surface — cream gradient + warm rim light
+   --------------------------------------------------------------------------
+   Bryan feedback (2026-05-03): "next-meetup card has a pleasing cream color
+   but the others have jarring whites only — bring more style, gradients &
+   lighting effects to our cards throughout the site"
+
+   Strategy: stack a subtle background-image gradient OVER Cloudscape's flat
+   --color-background-container-content fill, and add a warm rim shadow. The
+   gradient is alpha-modulated cream→amber→cream so it composites cleanly on
+   both the light cream base AND the dark elevation-1 base — single rule, dual
+   mode. Plus a dedicated rule for the .feed-mini-card__link inner builder
+   cards which bypass Cloudscape Container.
+
+   No backdrop-filter, no transform on hover — keeps cards on the compositor
+   thread + preserves clamp/excerpt geometry from the v0.0.0114 sprint.
+   ========================================================================== */
+
+/* shared gradient + shadow tokens — single source of truth, both modes */
+:root {
+	/* light mode: warm cream → amber-tinted cream → warm cream
+	   subtle 4-6% alpha shift, reads as cream-with-light not as gradient */
+	--cdn-card-gradient-light: linear-gradient(
+		135deg,
+		rgba(255, 250, 235, 0.55) 0%,
+		rgba(232, 215, 180, 0.18) 45%,
+		rgba(250, 244, 230, 0.5) 100%
+	);
+	/* warm amber rim glow + soft drop — sits above the existing cloudscape shadow */
+	--cdn-card-rim-light:
+		inset 0 1px 0 rgba(255, 250, 235, 0.7),
+		inset 0 -1px 0 rgba(139, 90, 43, 0.06),
+		0 1px 3px rgba(139, 90, 43, 0.08),
+		0 6px 16px -4px rgba(139, 90, 43, 0.12);
+}
+
+.awsui-dark-mode {
+	/* dark mode: violet bloom from top-left fading to deeper navy bottom-right
+	   reads as ambient violet rim light, not as a gradient */
+	--cdn-card-gradient-light: linear-gradient(
+		135deg,
+		rgba(144, 96, 240, 0.08) 0%,
+		rgba(48, 0, 106, 0.04) 45%,
+		rgba(10, 10, 46, 0.18) 100%
+	);
+	--cdn-card-rim-light:
+		inset 0 1px 0 rgba(199, 184, 232, 0.08),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.25),
+		0 2px 6px rgba(0, 0, 0, 0.32),
+		0 8px 22px -6px rgba(144, 96, 240, 0.18);
+}
+
+/* Cloudscape Container body — variant-default + variant-stacked.
+   Targets the same internal .awsui_root_X.awsui_variant-default_X selector
+   that paints --color-background-container-content. We layer background-image
+   on top of it (background-color stays as the cream/elevation-1 base). */
+[class*="awsui_root_"][class*="awsui_variant-default_"],
+[class*="awsui_root_"][class*="awsui_variant-stacked_"] {
+	background-image: var(--cdn-card-gradient-light);
+	box-shadow: var(--cdn-card-rim-light);
+}
+
+/* Per-surface application of --cdn-card-gradient-light + --cdn-card-rim-light
+   for non-Cloudscape card surfaces (e.g. .feed-mini-card__link) is colocated
+   with each surface's own rule — see src/pages/feed/styles.css. */
