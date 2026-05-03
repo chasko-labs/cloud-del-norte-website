@@ -94,7 +94,8 @@
 		"nextMeetupPastLabel": "Last meetup:",
 		"infoLinkAriaLabel": "Open help panel",
 		"streamKrux": "stream krux",
-		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen."
+		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen.",
+		"streamingFrom": "streaming from"
 	},
 	"dashboardPage": {
 		"productionOverview": {
