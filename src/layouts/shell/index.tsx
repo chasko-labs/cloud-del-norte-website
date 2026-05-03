@@ -66,88 +66,10 @@ function SunSvg() {
 	);
 }
 
-/**
- * Compute the moon's synodic phase (0-1) for a given date. Reference new
- * moon: 2000-01-06 18:14 UTC (Julian Day 2451550.26). Synodic period:
- * 29.530588853 mean solar days. Result wraps into [0, 1):
- *   0     = new moon (fully shadowed)
- *   0.25  = first quarter (right half lit)
- *   0.5   = full moon (fully lit)
- *   0.75  = last quarter (left half lit)
- */
-function computeMoonPhase(d: Date): number {
-	const jd = d.getTime() / 86400000 + 2440587.5;
-	const phase = ((jd - 2451550.26) / 29.530588853) % 1;
-	return phase < 0 ? phase + 1 : phase;
-}
-
-/**
- * Build an SVG path string describing today's illuminated lunar area.
- *
- * Geometry: moon disc is a circle at (11, 11) radius 8.5 inside a 22×22
- * viewBox. The terminator is approximated as an ellipse of (rx, 8.5)
- * where rx = |R · cos(phase_angle)|. The lit-area path = outer half-arc
- * of the moon (right for waxing, left for waning) closed by the
- * terminator half-arc. SVG sweep flags pick which side of the ellipse
- * the terminator bows through.
- *
- * Bryan v0.0.0079: mask-based v0.0.0078 still rendered as a flat circle
- * — turned out url(#mask-id) refs are still flaky across browsers when
- * IDs are dynamic. Single-path rewrite eliminates defs / mask / clip
- * entirely, so there's nothing for the renderer to skip.
- */
-function buildLunarPath(phase: number): string | null {
-	if (phase < 0.02 || phase > 0.98) return null;
-	if (Math.abs(phase - 0.5) < 0.02) {
-		return "M 11,2.5 A 8.5,8.5 0 1,1 11,19.5 A 8.5,8.5 0 1,1 11,2.5 Z";
-	}
-	const isWaxing = phase < 0.5;
-	const pa = isWaxing ? (1 - 2 * phase) * Math.PI : (2 * phase - 1) * Math.PI;
-	const rx = Math.abs(8.5 * Math.cos(pa));
-	const outerSweep = isWaxing ? 1 : 0;
-	// v0.0.0099 — bryan: "moon STILL looks like sun". The v0.0.0080 sweep
-	// mapping inverted the crescent case so the terminator passed through
-	// the DARK side (large rx-magnitude on dark side = lit area covered
-	// most of the disc → looked like a full sun). Correct mapping (verified
-	// via SVG y-down clock-position analysis): the lit-area boundary
-	// terminator passes through the LIT side for a crescent (small lit
-	// sliver bounded between the lit limb + terminator close to it on the
-	// SAME side) and through the DARK side for a gibbous (most of disc
-	// lit, terminator close to the dark limb).
-	const isCrescent = phase < 0.25 || phase > 0.75;
-	const terminatorSweep = isCrescent ? 1 : 0;
-	return `M 11,2.5 A 8.5,8.5 0 0,${outerSweep} 11,19.5 A ${rx.toFixed(2)},8.5 0 0,${terminatorSweep} 11,2.5 Z`;
-}
-
-function MoonSvg() {
-	const phase = computeMoonPhase(new Date());
-	const litPath = buildLunarPath(phase);
-	return (
-		// biome-ignore lint/a11y/noSvgWithoutTitle: decorative; aria-hidden inside button which carries ariaLabel
-		<svg
-			className="cdn-svg-moon"
-			width="22"
-			height="22"
-			viewBox="0 0 22 22"
-			fill="none"
-			xmlns="http://www.w3.org/2000/svg"
-			role="img"
-		>
-			{/* faint outline of full moon — always present so the icon never
-			    fully disappears at new moon AND so the dark portion is hinted */}
-			<circle
-				className="cdn-svg-moon__outline"
-				cx="11"
-				cy="11"
-				r="8.5"
-				fill="none"
-			/>
-			{/* lit lunar surface — single path, no mask/defs/clip means no
-			    browser id-resolution flakiness */}
-			{litPath ? <path className="cdn-svg-moon__disc" d={litPath} /> : null}
-		</svg>
-	);
-}
+// MoonSvg lives in ./moon-icon so the leaf icon component is testable
+// without dragging Cloudscape AppLayout / TopNavigation imports into the
+// vitest jsdom env.
+import { MoonSvg } from "./moon-icon";
 
 /* MX flag — three equal vertical bands of green / white / red (official
    PMS 3415 #006847, white #ffffff, PMS 186 #ce1126) with the national coat
