@@ -25,6 +25,7 @@ kick drums, sub-bass, low-end energy
 | hamburger nav-toggle ring | `[class*="awsui_navigation-toggle_"]` — `cdn-glass-streaks.css` | ring expands `2px + band*4px`, glow `6px + band*10px`; ravy cycle `cdn-ravy-ring-bass` at 3.2s | violet | aws-orange |
 | liora LED group 1–4 | `body.cdn-stream-playing .liora-led` — `navigation/liora.css` | `liora-led-cycle-bass` at 3s — slow brand palette rotation on the bottom 4 EQ LEDs | yes | yes |
 | liora head tilt | `.liora-canvas` — `navigation/liora.css` | `rotate: calc(var(--cdn-bass,0) * -4deg)` — avatar leans left with each bass hit, pivots from neck | yes | yes |
+| mx flag wave exaggeration | `.cdn-stream-playing .cdn-svg-flag--mx` — `shell/styles.css` (Phase C) | `scaleX(calc(1 + bass*0.04))` from left origin — flag stretches horizontally up to 4% on kick, amplifying the existing stripe wave | yes | yes |
 
 ## mid ( 250 hz – 4 khz )
 
@@ -54,7 +55,7 @@ cymbals, hi-hats, shimmer, high transients
 | dune sparkle tint within axis | fragment shader — `DuneMaterial.ts` | `warmMix = mix(amber, awsOrange, clamp(trebleLevel*1.5,0,1))` and same for cool axis — treble picks the warm/cool pair member | yes | yes |
 | franklin star bulb brightness | `.cdn-stream-playing .franklin-overlay__star-bulb` — `franklin-overlay/styles.css` | `opacity: calc(0.35 + var(--cdn-treble,0)*0.5)` — all 5 tip bulbs + center brighten on hi-hats | dark only | n/a |
 | site logo brightness | `.cdn-stream-playing .cdn-logo-hero .cdn-logo-img` — `shell/styles.css` | `brightness(calc(1 + var(--cdn-treble,0)*0.35))` appended to multi-layer drop-shadow filter chain | yes (violet halos) | yes (amber halos) |
-| us flag stars | `.cdn-svg-flag--us .cdn-svg-flag__stars circle` — `shell/styles.css` | `cdn-star-sparkle` keyframe — time-based scale/opacity pulse, **not yet audio-reactive** | yes | yes |
+| us flag stars treble brightness | `.cdn-stream-playing .cdn-svg-flag--us .cdn-svg-flag__stars circle` — `shell/styles.css` (Phase C) | `brightness(calc(1 + treble*0.6))` layered on top of existing `cdn-star-sparkle` time animation — stars flare brighter on hi-hats | yes | yes |
 | info tools-toggle ring | `[class*="awsui_tools-toggle_"]` — `cdn-glass-streaks.css` | `--cdn-band: var(--cdn-treble)`, ring/glow formula; ravy `cdn-ravy-ring-treble` at 0.7s (fastest — matches hat cadence) | violet | aws-orange |
 | liora LED group 9–12 | `body.cdn-stream-playing .liora-led:nth-child(n+9)` — `navigation/liora.css` | `liora-led-cycle-treble` at 0.6s — fast brand palette rotation on top 4 EQ LEDs | yes | yes |
 
@@ -68,6 +69,8 @@ transient detector — fires on beat hits and sudden energy changes
 | sun icon glow | `.cdn-stream-playing .cdn-svg-sun` — `shell/styles.css` | `brightness(calc(1 + var(--cdn-flux,0)*0.4))` on the multi-layer drop-shadow — solar icon flares on snares/onsets | yes | yes |
 | logo-svg hero tip halo | `.cdn-bulb-tip-hero` — `logo-svg/index.tsx` | `drop-shadow(0 0 calc(6px + var(--cdn-flux,0)*14px) rgba(155,92,244,0.85))` — topmost bulb tip halo ignites 6→20px on transients | yes | yes |
 | beat detection | `canvas.ts` render loop — `lib/background-viz/canvas.ts` | `beatFired` bool passed to 2d renderer each frame; used to trigger particle/flash events in the background-viz starfield | yes | yes |
+| moon flux beat-flash | `.cdn-stream-playing .cdn-svg-moon` — `shell/styles.css` (Phase C) | `drop-shadow(0 0 calc(3px + flux*10px) ...)` + `brightness(calc(1 + flux*0.3))` — moon halo ignites 3→13px and brightens on beat onset | yes | yes |
+| liora crt scan-line opacity | `.cdn-stream-playing .liora-panel-wrap::before` — `liora-panel/styles.css` (Phase C) | `opacity: calc(0.65 + flux*0.12)` — scan-line overlay base 0.65, surges to 0.77 on transients, making phosphor sweep more visible on beats | yes | yes |
 
 ---
 
@@ -75,12 +78,9 @@ transient detector — fires on beat hits and sudden energy changes
 
 elements with animation that could be connected to a band but aren't yet:
 
-- moon shine (`cdn-moon-shine` keyframe on `.cdn-svg-moon`) — 6s scale/filter pulse, time-only, no band coupling
-- flag wave (`cdn-flag-wave-v` / `cdn-flag-wave-h`) — 3.6s time-based stripe wave on mx/us flags
+- flag wave (`cdn-flag-wave-v` / `cdn-flag-wave-h`) — 3.6s time-based stripe wave speed on us flag horizontal stripes (mx flag wave exaggeration wired to bass via scaleX in Phase C)
 - auth card shimmer — `cdn-auth-card` surface has no audio var coupling
 - weather shimmer (`cdn-shimmer` on `#top-nav::after`) — 24s time-based sweep, independent of any band
-- liora crt effects (`crt-roll`, `crt-scan`) — 8s/10s time-based rolling scan lines; no band gate
-- us flag stars (`cdn-star-sparkle`) — already noted in treble table; runs on time, not treble level
 
 ---
 

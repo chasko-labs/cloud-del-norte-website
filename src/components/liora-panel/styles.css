@@ -2781,3 +2781,19 @@
 		0 0 4px rgba(144, 96, 240, 0.85),
 		0 0 10px rgba(144, 96, 240, 0.55);
 }
+
+/* ── Audio reactivity — Phase C ──────────────────────────────────────────
+   Liora CRT scan-line flux coupling. Base opacity 0.65 keeps scanlines
+   readable at rest; flux pushes up to 0.77 on beat onset.
+   .liora-panel-wrap::before is the rolling-scan pseudo-element (crt-roll).
+   No liora-crt-overlay class exists — selector targets the actual element. */
+
+/* Phase C — liora crt scan-line flux coupling */
+.cdn-stream-playing .liora-panel-wrap::before {
+	opacity: calc(0.65 + var(--cdn-flux, 0) * 0.12);
+}
+@media (prefers-reduced-motion: reduce) {
+	.cdn-stream-playing .liora-panel-wrap::before {
+		opacity: initial;
+	}
+}
