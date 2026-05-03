@@ -263,109 +263,6 @@ function AnimDemoTile({ demo }: { demo: (typeof animationDemos)[0] }) {
 }
 
 /* --------------------------------------------------------------------------
-   KruxPlayer widget demo — idle + playing states
-   -------------------------------------------------------------------------- */
-
-function KruxWidgetDemo() {
-	return (
-		<div className="theme-krux-widget">
-			{/* idle state */}
-			<div className="theme-krux-state">
-				<div className="theme-krux-state__heading">idle — not playing</div>
-				<div className="theme-krux-player">
-					<div className="theme-krux-player__top">
-						{/* skip pill */}
-						<button
-							type="button"
-							className="feed-krux__skip"
-							aria-label="skip station"
-						>
-							&#187;&#187;
-						</button>
-						{/* label with headphones + station shimmer */}
-						<button
-							type="button"
-							className="feed-krux__label"
-							aria-label="krux stream idle"
-						>
-							<span className="feed-krux__headphones" aria-hidden="true">
-								&#127911;
-							</span>
-							<span className="feed-krux__station">KRUX Station</span>
-						</button>
-						{/* play button with glass ring */}
-						<button
-							type="button"
-							className="feed-krux__btn"
-							aria-label="play krux stream"
-							data-state="idle"
-						>
-							&#9654;
-						</button>
-					</div>
-					<span className="feed-krux__now-playing">
-						aws builders radio — 24/7 stream
-					</span>
-				</div>
-			</div>
-
-			{/* playing state */}
-			<div className="theme-krux-state">
-				<div className="theme-krux-state__heading">playing — active state</div>
-				<div className="theme-krux-player">
-					<div className="theme-krux-player__top">
-						{/* skip pill */}
-						<button
-							type="button"
-							className="feed-krux__skip"
-							aria-label="skip station"
-						>
-							&#187;&#187;
-						</button>
-						{/* label with bobbing headphones + steady violet text */}
-						<button
-							type="button"
-							className="feed-krux__label feed-krux__label--playing"
-							aria-label="krux stream playing"
-						>
-							<span
-								className="feed-krux__headphones feed-krux__headphones--playing"
-								aria-hidden="true"
-							>
-								&#127911;
-							</span>
-							<span
-								style={{
-									background: "none",
-									WebkitTextFillColor: "var(--cdn-violet, #9060f0)",
-									color: "var(--cdn-violet, #9060f0)",
-									fontWeight:
-										"var(--cdn-weight-medium)" as React.CSSProperties["fontWeight"],
-								}}
-							>
-								KRUX Station
-							</span>
-						</button>
-						{/* stop button with pulse animation */}
-						<button
-							type="button"
-							className="feed-krux__btn"
-							aria-label="stop krux stream"
-							data-state="playing"
-						>
-							&#9646;&#9646;
-						</button>
-					</div>
-					<span className="feed-krux__now-playing">
-						now playing: builders lab live — track 04
-					</span>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-/* --------------------------------------------------------------------------
    Interactive states demo section
    -------------------------------------------------------------------------- */
 
@@ -803,19 +700,13 @@ function AppContent({
 					</Container>
 				</div>
 
-				{/* ── 3. Radio player (KruxPlayer widget) ── */}
-				<div id="section-player">
-					<Container header={<Header variant="h2">radio player widget</Header>}>
-						<SpaceBetween size="m">
-							<Box variant="p" fontSize="body-s">
-								full KruxPlayer widget in idle and playing states. idle:
-								periodic station shimmer + rotating glass ring. playing: pulsing
-								play button + headphone bob + steady violet text.
-							</Box>
-							<KruxWidgetDemo />
-						</SpaceBetween>
-					</Container>
-				</div>
+				{/* ── 3. Radio player widget — removed 2026-05-03 ──
+				    KruxPlayer was the inline feed-page radio. It was replaced
+				    by the shell-mounted PersistentPlayer pill (see
+				    src/components/persistent-player). The .feed-krux* CSS
+				    that backed this demo was deleted; the live player is
+				    visible on every page already, so a dedicated theme demo
+				    is redundant. */}
 
 				{/* ── 4. Interactive states ── */}
 				<div id="section-interactive">

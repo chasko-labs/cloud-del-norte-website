@@ -121,6 +121,56 @@
 	font-size: 0.72rem;
 }
 
+/* fallback link — surfaces a station-specific Spotify playlist / podcast /
+   programs URL when the live nowPlaying string is absent. Inherits the
+   station's primary color so it reads as part of the player surface
+   rather than a generic blue link. Salvaged from feed-krux on
+   2026-05-03 when KruxPlayer was retired in favor of this pill */
+.cdn-pp__now-playing-link {
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	text-decoration: none;
+	border-bottom: 1px dotted
+		rgba(var(--station-primary-mode-rgb), 0.55);
+	font-size: 0.72rem;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+	transition:
+		color 0.2s ease,
+		border-bottom-color 0.2s ease;
+}
+
+.cdn-pp__now-playing-link:hover,
+.cdn-pp__now-playing-link:focus-visible {
+	border-bottom-color: var(
+		--station-primary-mode,
+		var(--cdn-violet, #9060f0)
+	);
+	text-decoration: none;
+}
+
+/* origin geo line — "City, Region, Country" rendered under the fallback
+   eyebrow when no track meta + no metaFallback is available. monospace +
+   muted so it sits subordinate to the station label / track row */
+.cdn-pp__geo {
+	font-family: var(
+		--cdn-font-mono,
+		ui-monospace,
+		"SF Mono",
+		Menlo,
+		Consolas,
+		monospace
+	);
+	font-size: 0.6rem;
+	color: rgba(240, 240, 240, 0.62);
+	letter-spacing: 0.02em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+}
+
 /* eyebrow warn variant — orange-tinted micro-label used during the
    "retrying" stream-health state so the stall surfaces visually
    without screaming red. Same scale + weight as default eyebrow */
@@ -292,6 +342,25 @@
 			0 0 0 5px rgba(var(--station-primary-mode-rgb), 0.34),
 			0 0 14px rgba(var(--station-primary-mode-rgb), 0.44);
 	}
+}
+
+/* play variant — idle state on the bootstrapped pill (no prior session play).
+   Same shape + sizing as the stop button so the slot doesn't reflow on
+   play→stop, but uses the station's secondary palette as a subtle cue this
+   is the opt-in trigger rather than the live-locked stop affordance */
+.cdn-pp__btn--play {
+	border-color: rgba(var(--station-primary-mode-rgb), 0.55);
+	background: rgba(var(--station-primary-mode-rgb), 0.18);
+	color: var(--station-primary-mode, rgba(240, 240, 240, 0.95));
+}
+
+.cdn-pp__btn--play:hover {
+	background: rgba(var(--station-primary-mode-rgb), 0.34);
+	border-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	box-shadow:
+		0 0 0 3px rgba(var(--station-primary-mode-rgb), 0.22),
+		0 0 10px rgba(var(--station-primary-mode-rgb), 0.3);
+	transform: scale(1.06);
 }
 
 /* resume variant — autoplay was blocked, draw attention via station secondary
