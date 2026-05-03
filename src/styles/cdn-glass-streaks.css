@@ -381,11 +381,19 @@
      0em      → too high (sits above caps; Cinzel cap-height pushes
                 vertical-align:middle baseline upward vs the icon center)
      0.55em   → too low (icon dipped under the font baseline, v0.0.0061)
-   Midpoint 0.25em lands the chevron centered against the Cinzel caps
-   without dropping below the baseline. */
+   Desktop: 0.25em lands the chevron centered against the Cinzel caps.
+   Mobile (≤600px): the breadcrumb font scales down so the same em-based
+   shift overshoots — Bryan v0.0.0070: "very slightly too low on mobile,
+   perfect on desktop". 0.15em centers it for the smaller cap height. */
 [class*="awsui_breadcrumbs_"] li [class*="awsui_icon_"]:not(#\9):not(#\10) {
 	vertical-align: middle !important;
 	transform: translateY(0.25em);
+}
+
+@media (max-width: 600px) {
+	[class*="awsui_breadcrumbs_"] li [class*="awsui_icon_"]:not(#\9):not(#\10) {
+		transform: translateY(0.15em);
+	}
 }
 
 /* Hide the ellipsis "..." dropdown trigger + ghost-measurement items

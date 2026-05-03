@@ -11,9 +11,12 @@
    ========================================================================== */
 
 .cdn-weather {
-	margin: 14px auto 24px;
+	/* horizontal margin gives the card breathing room from the drawer edge.
+	   matches liora-frame max-width (424px) but with side padding on the
+	   row above so the card sits within the same gutter. */
+	margin: 16px 14px 24px;
 	max-width: 424px;
-	padding: 14px 16px 12px;
+	padding: 16px 20px 14px;
 	border-radius: 10px;
 	font-family:
 		"Amazon Ember", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Roboto,
@@ -22,18 +25,33 @@
 	flex-direction: column;
 	gap: 10px;
 	contain: layout style;
-	/* fade-in matches the liora-bezel choreography — weather isn't a load
-	   pillar, let it ease in after the console settles. */
-	opacity: 0;
-	animation: 0.85s 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards
-		cdn-weather-fadein;
+	/* Cascade fade-in: head (cloud + el paso) at 0s, body at 0.18s, tomorrow
+	   at 0.36s. Component returns null until data is ready (see index.tsx)
+	   so the cascade only fires on the real card, never on a placeholder. */
 	will-change: transform, opacity;
+}
+
+.cdn-weather__head,
+.cdn-weather__now,
+.cdn-weather__tomorrow {
+	opacity: 0;
+	animation: 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards cdn-weather-fadein;
+}
+
+.cdn-weather__head {
+	animation-delay: 0s;
+}
+.cdn-weather__now {
+	animation-delay: 0.18s;
+}
+.cdn-weather__tomorrow {
+	animation-delay: 0.36s;
 }
 
 @keyframes cdn-weather-fadein {
 	from {
 		opacity: 0;
-		transform: translateY(8px);
+		transform: translateY(6px);
 	}
 	to {
 		opacity: 1;
@@ -42,9 +60,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.cdn-weather {
+	.cdn-weather__head,
+	.cdn-weather__now,
+	.cdn-weather__tomorrow {
 		animation: none;
 		opacity: 1;
+		transform: none;
 	}
 }
 
@@ -93,12 +114,16 @@
 	gap: 8px;
 }
 
+/* "EL PASO" — uses the same Cinzel display serif as the CLOUD DEL NORTE
+   breadcrumb so the card reads as a sister branded element. Cinzel is
+   already loaded by the breadcrumb h1 — no extra @import needed. */
 .cdn-weather__city {
-	font-size: 11px;
-	font-weight: 700;
-	letter-spacing: 0.12em;
+	font-family: Cinzel, "Cinzel Decorative", "Times New Roman", Georgia, serif;
+	font-size: 16px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	opacity: 0.85;
+	opacity: 0.92;
 }
 
 .cdn-weather__glyph {
@@ -119,20 +144,21 @@
 	gap: 18px;
 }
 
+/* Temperature stack — Cinzel matches the "CLOUD DEL NORTE" breadcrumb
+   wordmark formatting. Reads as a sister element to the page header. */
 .cdn-weather__temp {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	min-width: 64px;
-	font-family:
-		"Amazon Ember", "Amazon Ember Display", -apple-system, sans-serif;
-	font-weight: 800;
+	min-width: 72px;
+	font-family: Cinzel, "Cinzel Decorative", "Times New Roman", Georgia, serif;
+	font-weight: 700;
 	line-height: 1;
 }
 
 .cdn-weather__temp-f {
-	font-size: 26px;
-	letter-spacing: 0.01em;
+	font-size: 28px;
+	letter-spacing: 0.02em;
 }
 
 /* Stylish hairline rule between F + C readouts. light: warm amber gradient;

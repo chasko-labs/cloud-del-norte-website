@@ -109,8 +109,14 @@ export const STREAMS: StreamDef[] = [
 		// Access-Control-Allow-Origin: * (CORS open).
 		url: "https://playerservices.streamtheworld.com/api/livestream-redirect/KSFRFM_ICE.aac",
 		label: "ksfr 101.1",
-		// metaUrl omitted — KSFR homepage exposes no NPR Composer widget id and no
-		// public json now-playing endpoint. Player relies on station label only.
+		// NPR Composer widget id 5182a3cce1c805df63015f16 captured via headless
+		// playwright network sniff of ksfr.org (v0.0.0071). Lazy-hydrated player
+		// widget didn't expose this in static HTML. Same shape as KUNM's prior
+		// composer feed — onNow.song.{trackName, artistName} when track-logging
+		// is active, falls back to onNow.program.name on talk shows.
+		metaUrl:
+			"https://api.composer.nprstations.org/v1/widget/5182a3cce1c805df63015f16/now?format=json&style=v2&show_song=true",
+		metaFormat: "json",
 		donateUrl: "https://www.ksfr.org/donate",
 		// SFCC official brand: turquoise PMS 326 + maroon PMS 484. Replaces the
 		// v0.0.0065 UNM-cherry placeholder once bryan supplied the SFCC guide.
@@ -121,6 +127,25 @@ export const STREAMS: StreamDef[] = [
 			// turquoise borderline on cream (~3.4:1) — deepen for light-mode AA
 			primaryLight: "#006e69",
 			// turquoise on navy ~6.8:1 — passes AAA, no dark override needed
+		},
+		parseMeta(data) {
+			// nprstations widget shape: onNow.song.{trackName, artistName} when
+			// the track-logger is active. Programs without inline track metadata
+			// (talk shows like "Somos Son") fall back to onNow.program.name
+			const d = data as {
+				onNow?: {
+					program?: { name?: string };
+					song?: { trackName?: string; artistName?: string };
+				} | null;
+			};
+			const song = d?.onNow?.song;
+			if (song) {
+				const { trackName: track, artistName: artist } = song;
+				if (track && artist) return `${track} — ${artist}`;
+				if (track || artist) return track ?? artist ?? null;
+			}
+			const program = d?.onNow?.program?.name?.trim();
+			return program || null;
 		},
 	},
 	{

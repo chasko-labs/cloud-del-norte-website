@@ -125,17 +125,11 @@ export default function Weather() {
 		};
 	}, []);
 
-	if (!data?.forecast) {
-		return (
-			<aside
-				className="cdn-weather cdn-weather--loading"
-				aria-label="el paso weather"
-			>
-				<span className="cdn-weather__city">el paso</span>
-				<span className="cdn-weather__hint">·</span>
-			</aside>
-		);
-	}
+	// Bryan v0.0.0070: render NOTHING while data is loading. The placeholder
+	// flashed on every cold load. Once data resolves the card fades in starting
+	// with the cloud glyph + city header, then the body, then the tomorrow row
+	// (CSS choreographs the cascade via animation-delay).
+	if (!data?.forecast) return null;
 
 	const f = data.forecast;
 	const cur = f.current;
