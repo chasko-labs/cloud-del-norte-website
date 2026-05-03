@@ -1,5 +1,5 @@
 /* cdn-pp — persistent player. Tight inline widget, not a card.
-   Layout: [⏭ skip] [label · geo/track] [● play/stop]
+   Layout: [💃🏾] [⏭ skip] [label · geo · track] [● play/stop]
    The cluster is right-aligned; the circular play button is the visual anchor.
    No card chrome — a subtle station-tinted radial bg and bottom streak are
    the only structural marks.
@@ -84,7 +84,15 @@
 	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
 }
 
-/* meta — right-aligned text column: station label on top, geo/track below */
+/* type icon — 💃🏾 radio / 🗣️ podcast */
+.cdn-pp__icon {
+	font-size: 1.1rem;
+	line-height: 1;
+	flex-shrink: 0;
+	user-select: none;
+}
+
+/* meta — right-aligned text column: station label on top, sub-row below */
 .cdn-pp__meta {
 	display: flex;
 	flex-direction: column;
@@ -94,11 +102,12 @@
 	overflow: hidden;
 }
 
-/* station label — Cinzel in the school's contrast-tuned primary color */
+/* station label — condensed bold sans for "AWS builder" feel */
 .cdn-pp__label {
-	font-family: Cinzel, "Cinzel Decorative", "Times New Roman", Georgia, serif;
-	font-weight: 600;
-	letter-spacing: 0.04em;
+	font-family: "Amazon Ember", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
 	font-size: var(--cdn-text-base, 0.875rem);
 	line-height: 1.2;
 	flex-shrink: 0;
@@ -150,7 +159,25 @@ a.cdn-pp__label--donate:focus-visible {
 	opacity: 0.75;
 }
 
-/* track row — geo or now-playing */
+/* sub-row — geo + separator + track on one line */
+.cdn-pp__sub {
+	display: flex;
+	align-items: baseline;
+	gap: 0;
+	min-width: 0;
+	max-width: 100%;
+	overflow: hidden;
+	line-height: 1.15;
+}
+
+/* separator · between geo and track */
+.cdn-pp__sep {
+	flex-shrink: 0;
+	color: var(--station-primary-mode, var(--cdn-color-text-low, #8a6a4e));
+	opacity: 0.5;
+}
+
+/* track row — legacy container (kept for error/retrying sub-states) */
 .cdn-pp__track {
 	display: flex;
 	flex-direction: column;
@@ -180,7 +207,7 @@ a.cdn-pp__label--donate:focus-visible {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 240px;
+	max-width: none;
 	font-size: var(--cdn-text-sm, 0.75rem);
 }
 
@@ -202,7 +229,7 @@ a.cdn-pp__label--donate:focus-visible {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 240px;
+	max-width: none;
 	transition: border-bottom-color 0.2s ease;
 }
 
@@ -211,7 +238,7 @@ a.cdn-pp__label--donate:focus-visible {
 	border-bottom-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 }
 
-/* geo — city/region/country in school color at reduced opacity */
+/* geo — city/region/country in station color at reduced opacity */
 .cdn-pp__geo {
 	font-family: var(
 		--cdn-font-mono,
@@ -228,7 +255,7 @@ a.cdn-pp__label--donate:focus-visible {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 240px;
+	max-width: none;
 }
 
 .awsui-dark-mode .cdn-pp__geo {
@@ -259,7 +286,7 @@ a.cdn-pp__label--donate:focus-visible {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 240px;
+	max-width: none;
 	font-size: var(--cdn-text-sm, 0.75rem);
 	font-weight: var(--cdn-weight-semibold, 600);
 }
@@ -355,9 +382,9 @@ a.cdn-pp__label--donate:focus-visible {
 	outline-offset: 3px;
 }
 
-/* stop — circle, solid fill, pulsing glow animation.
-   Audio-reactive: --cdn-mid shifts the ring radius each frame so the
-   glow breathes with the music on top of the base 2s pulse. */
+/* stop — circle, solid fill, pulsing glow + spinning conic spotlight.
+   Audio-reactive: --cdn-mid shifts the ring radius each frame.
+   --cdn-band is set from --cdn-mid so cdn-ravy-ring-mid can read it. */
 @keyframes cdn-pp-pulse {
 	0%,
 	100% {
@@ -377,6 +404,7 @@ a.cdn-pp__label--donate:focus-visible {
 }
 
 .cdn-pp__btn--stop {
+	--cdn-band: var(--cdn-mid, 0);
 	width: 36px;
 	height: 36px;
 	border-radius: 50%;
@@ -384,7 +412,42 @@ a.cdn-pp__label--donate:focus-visible {
 	background: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	color: #fff;
 	font-size: 13px;
-	animation: cdn-pp-pulse 2s ease-in-out infinite;
+	position: relative;
+	overflow: hidden;
+	animation:
+		cdn-pp-pulse 2s ease-in-out infinite,
+		cdn-ravy-ring-mid 1.6s linear infinite;
+}
+
+/* spinning conic spotlight — same pattern as hamburger/info chrome buttons */
+.cdn-pp__btn--stop::after {
+	content: "";
+	pointer-events: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 220%;
+	height: 220%;
+	border-radius: 50%;
+	background: conic-gradient(
+		from 0deg,
+		transparent 0deg,
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.55) 35deg,
+		rgba(255, 255, 255, 0.7) 50deg,
+		rgba(var(--station-secondary-rgb, 144, 96, 240), 0.55) 65deg,
+		transparent 100deg,
+		transparent 180deg,
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.4) 215deg,
+		rgba(255, 255, 255, 0.5) 230deg,
+		rgba(var(--station-secondary-rgb, 144, 96, 240), 0.4) 245deg,
+		transparent 280deg,
+		transparent 360deg
+	);
+	mix-blend-mode: screen;
+	opacity: calc(0.25 + var(--cdn-band, 0) * 0.65);
+	filter: blur(2px);
+	z-index: 0;
+	animation: 3.2s linear infinite cdn-ravy-spotlight-spin;
 }
 
 .cdn-pp__btn--stop:hover {
@@ -394,6 +457,12 @@ a.cdn-pp__label--donate:focus-visible {
 .cdn-pp__btn--stop:focus-visible {
 	outline: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	outline-offset: 3px;
+}
+
+/* light mode — overlay blend reads better on the cream bg */
+:root:not(.awsui-dark-mode) .cdn-pp__btn--stop::after {
+	mix-blend-mode: overlay;
+	opacity: calc(0.35 + var(--cdn-band, 0) * 0.55);
 }
 
 /* album art — reserved for Phase 2 parseMetaRich */
@@ -408,6 +477,9 @@ a.cdn-pp__label--donate:focus-visible {
 
 @media (prefers-reduced-motion: reduce) {
 	.cdn-pp__btn--stop {
+		animation: none;
+	}
+	.cdn-pp__btn--stop::after {
 		animation: none;
 	}
 	.cdn-pp__btn--play:hover,
@@ -431,13 +503,11 @@ a.cdn-pp__label--donate:focus-visible {
 		padding: 4px 0;
 		min-height: 44px;
 	}
+	.cdn-pp__icon {
+		font-size: 1rem;
+	}
 	.cdn-pp__label {
 		font-size: var(--cdn-text-sm, 0.75rem);
-	}
-	.cdn-pp__track-text,
-	.cdn-pp__geo,
-	.cdn-pp__now-playing-link {
-		max-width: 160px;
 	}
 	.cdn-pp__btn--play,
 	.cdn-pp__btn--resume,

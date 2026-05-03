@@ -78,6 +78,14 @@ export interface StreamDef {
 	readonly key: string;
 	readonly url: string;
 	readonly label: string;
+	/** "radio" for live icecast/Zeno streams, "podcast" for episodic RSS feeds.
+	 * Defaults to "radio" when absent. Podcast entries resolve their audio URL
+	 * from rssFeedUrl at play time and always show the latest episode title. */
+	readonly type?: "radio" | "podcast";
+	/** RSS feed URL for type:"podcast" entries. Player fetches this on station-
+	 * change, parses the latest <item>, resolves the <enclosure url> as audio
+	 * src, and extracts <title> as now-playing. Ignored for radio streams. */
+	readonly rssFeedUrl?: string;
 	/** now-playing endpoint — omit when station has no public metadata feed */
 	readonly metaUrl?: string;
 	/**
@@ -619,31 +627,166 @@ export const STREAMS: StreamDef[] = [
 			return t;
 		},
 	},
-	// TODO: Mexican student radio (Ciudad Juárez) — pending research verification
-	// {
-	// 	key: "radio_upnech",
-	// 	url: "...",
-	// 	label: "radio upnech",
-	// 	metaUrl: "...",
-	// 	colors: {
-	// 		primary: "#cc4422",   // orange-red placeholder
-	// 		secondary: "#faf7f0", // warm cream
-	// 		accent: "#231F20",
-	// 	},
-	// 	parseMeta() { return null; },
-	// },
-	// {
-	// 	key: "lobos_radio",
-	// 	url: "...",
-	// 	label: "lobos radio",
-	// 	metaUrl: "...",
-	// 	colors: {
-	// 		primary: "#cc4422",
-	// 		secondary: "#faf7f0",
-	// 		accent: "#231F20",
-	// 	},
-	// 	parseMeta() { return null; },
-	// },
+	// ── Podcasts ────────────────────────────────────────────────────────────
+	// type:"podcast" entries resolve audio URL from rssFeedUrl at play time.
+	// parseMeta receives a DOMDocument (metaFormat:"rss") — extracts latest
+	// episode title from the first <item><title>.
+	{
+		key: "rustacean_station",
+		type: "podcast",
+		url: "https://rustacean-station.org/feed.xml", // overridden at play time from rssFeedUrl
+		rssFeedUrl: "https://rustacean-station.org/feed.xml",
+		label: "rustacean station",
+		location: { city: "distributed", region: "open source", country: "global" },
+		colors: {
+			primary: "#CE422B",
+			secondary: "#e8c547",
+			accent: "#1f1f1f",
+			primaryLight: "#d96040",
+			primaryDark: "#e06040",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
+				null
+			);
+		},
+	},
+	{
+		key: "syntax_fm",
+		type: "podcast",
+		url: "https://feed.syntax.fm/rss",
+		rssFeedUrl: "https://feed.syntax.fm/rss",
+		label: "syntax.fm",
+		location: { city: "distributed", region: "web dev", country: "global" },
+		colors: {
+			primary: "#4A90D9",
+			secondary: "#F5A623",
+			accent: "#2D333B",
+			primaryLight: "#6aabe8",
+			primaryDark: "#3472b0",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
+				null
+			);
+		},
+	},
+	{
+		key: "talk_python",
+		type: "podcast",
+		url: "https://talkpython.fm/episodes/rss",
+		rssFeedUrl: "https://talkpython.fm/episodes/rss",
+		label: "talk python to me",
+		location: { city: "Portland", region: "Oregon", country: "USA" },
+		colors: {
+			primary: "#3776ab",
+			secondary: "#ffd43b",
+			accent: "#1a1a1a",
+			primaryLight: "#5a94c8",
+			primaryDark: "#1a3a52",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
+				null
+			);
+		},
+	},
+	{
+		key: "aws_developers_podcast",
+		type: "podcast",
+		// podtrac redirect — may return 403; player fails gracefully
+		url: "https://dts.podtrac.com/redirect.mp3/aws-podcast.s3.amazonaws.com/awsdevelopers/AWS_Developers_Podcast.xml",
+		rssFeedUrl:
+			"https://dts.podtrac.com/redirect.mp3/aws-podcast.s3.amazonaws.com/awsdevelopers/AWS_Developers_Podcast.xml",
+		label: "aws developers podcast",
+		location: { city: "Seattle", region: "Washington", country: "USA" },
+		colors: {
+			primary: "#FF9900",
+			secondary: "#232F3E",
+			accent: "#faf7f0",
+			primaryLight: "#ffb84d",
+			primaryDark: "#cc7700",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
+				null
+			);
+		},
+	},
+	{
+		key: "aws_bites",
+		type: "podcast",
+		url: "https://anchor.fm/s/6a3312a0/podcast/rss",
+		rssFeedUrl: "https://anchor.fm/s/6a3312a0/podcast/rss",
+		label: "aws bites",
+		location: { city: "Cork", region: "Munster", country: "Ireland" },
+		colors: {
+			primary: "#FF6B35",
+			secondary: "#004E89",
+			accent: "#f8971f",
+			primaryLight: "#ff8c5a",
+			primaryDark: "#cc5428",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
+				null
+			);
+		},
+	},
+	{
+		key: "logicast",
+		type: "podcast",
+		url: "https://feed.podbean.com/logicast/feed.xml",
+		rssFeedUrl: "https://feed.podbean.com/logicast/feed.xml",
+		label: "logicast aws news",
+		location: { city: "London", region: "England", country: "UK" },
+		colors: {
+			primary: "#1e3a5f",
+			secondary: "#f4a261",
+			accent: "#faf7f0",
+			primaryLight: "#3d5fa3",
+			primaryDark: "#0a2752",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
+				null
+			);
+		},
+	},
+	{
+		key: "rust_in_production",
+		type: "podcast",
+		url: "https://letscast.fm/podcasts/rust-in-production-82281512/feed",
+		rssFeedUrl: "https://letscast.fm/podcasts/rust-in-production-82281512/feed",
+		label: "rust in production",
+		location: { city: "Düsseldorf", region: "NRW", country: "Germany" },
+		colors: {
+			primary: "#CE422B",
+			secondary: "#4a4a8a",
+			accent: "#fad5b8",
+			primaryLight: "#d96040",
+			primaryDark: "#8B4513",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
+				null
+			);
+		},
+	},
 ];
 
 /**

@@ -340,6 +340,25 @@
 	overflow: hidden;
 }
 
+/* design-system baseline — cream surface for feed cards (light mode).
+   Cloudscape Container chrome is suppressed to transparent below; this rule
+   paints the outer cdn-card wrapper so the cream shows through the transparent
+   inner shell. Dark mode uses the navy elevation token. */
+:root:not(.awsui-dark-mode) .cdn-card {
+	background-color: var(--cdn-color-surface, #faf7f0);
+	background-image: var(--cdn-card-gradient-light);
+	box-shadow: var(--cdn-card-rim-light);
+	border-radius: var(--cdn-radius-md, 8px);
+	border: 1px solid rgba(139, 90, 43, 0.14);
+}
+.awsui-dark-mode .cdn-card {
+	background-color: var(--cdn-elevation-1, #12123a);
+	background-image: var(--cdn-card-gradient-light);
+	box-shadow: var(--cdn-card-rim-light);
+	border-radius: var(--cdn-radius-md, 8px);
+	border: 1px solid rgba(144, 96, 240, 0.16);
+}
+
 /* glassmorphism — suppress Container chrome so the cdn-card glass surface shows.
    descendant (not direct-child) combinator handles any React wrapper divs between
    cdn-card and the Cloudscape root element. */
