@@ -64,6 +64,10 @@ function PersistentPlayerBar({
 	// counts retry attempts; 0 = no retry yet. each attempt tries the next
 	// fallback URL before giving up (uam_radio cycles to yanapak mirror)
 	const retryCountRef = useRef<number>(0);
+	// true once audio has fired playing/canplaythrough at least once this session.
+	// error/stall timer only arms after the stream has connected — initial buffering
+	// should never surface the error UI
+	const hasConnectedRef = useRef<boolean>(false);
 	// stable ref so the health-monitor effect can read current streamDef
 	// without being in its dep list (would force re-registration on meta updates)
 	const streamDefRef = useRef(
@@ -159,6 +163,7 @@ function PersistentPlayerBar({
 		setNowPlaying(null);
 		setStreamHealth("ok");
 		retryCountRef.current = 0;
+		hasConnectedRef.current = false;
 		if (errorTimerRef.current !== null) {
 			window.clearTimeout(errorTimerRef.current);
 			errorTimerRef.current = null;
@@ -181,6 +186,9 @@ function PersistentPlayerBar({
 		if (!audio) return;
 
 		const tripError = () => {
+			// only arm the error timer after the stream has successfully connected once.
+			// initial buffering fires waiting/stalled before canplay — suppress those.
+			if (!hasConnectedRef.current) return;
 			if (errorTimerRef.current !== null) return; // already counting down
 			errorTimerRef.current = window.setTimeout(() => {
 				errorTimerRef.current = null;
@@ -211,6 +219,8 @@ function PersistentPlayerBar({
 		};
 
 		const clearError = () => {
+			// mark as connected — from here on, errors/stalls are real mid-stream drops
+			hasConnectedRef.current = true;
 			if (errorTimerRef.current !== null) {
 				window.clearTimeout(errorTimerRef.current);
 				errorTimerRef.current = null;
@@ -340,6 +350,21 @@ function PersistentPlayerBar({
 
 	const pause = useCallback(() => {
 		audioRef.current?.pause();
+	}, []);
+
+	const rewindSeek = useCallback(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+		audio.currentTime = Math.max(0, audio.currentTime - 15);
+	}, []);
+
+	const ffSeek = useCallback(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+		audio.currentTime = Math.min(
+			audio.duration || Number.POSITIVE_INFINITY,
+			audio.currentTime + 15,
+		);
 	}, []);
 
 	const handlePlay = useCallback(() => {
@@ -593,6 +618,28 @@ function PersistentPlayerBar({
 					<span aria-hidden="true">↻</span>
 				</button>
 			)}
+			{isPodcast && playing && (
+				<>
+					<button
+						type="button"
+						className="cdn-pp__btn cdn-pp__btn--seek"
+						onClick={rewindSeek}
+						aria-label="rewind 15 seconds"
+						title="rewind 15s"
+					>
+						<span aria-hidden="true">«15</span>
+					</button>
+					<button
+						type="button"
+						className="cdn-pp__btn cdn-pp__btn--seek"
+						onClick={ffSeek}
+						aria-label="fast-forward 15 seconds"
+						title="fast-forward 15s"
+					>
+						<span aria-hidden="true">15»</span>
+					</button>
+				</>
+			)}
 			{blocked ? (
 				<button
 					type="button"
@@ -605,11 +652,11 @@ function PersistentPlayerBar({
 			) : playing ? (
 				<button
 					type="button"
-					className="cdn-pp__btn cdn-pp__btn--stop"
+					className={`cdn-pp__btn ${isPodcast ? "cdn-pp__btn--resume" : "cdn-pp__btn--stop"}`}
 					onClick={pause}
 					aria-label="pause playback"
 				>
-					&#9632;
+					{isPodcast ? <>&#9646;&#9646;</> : <>&#9632;</>}
 				</button>
 			) : (
 				<button
@@ -627,10 +674,10 @@ function PersistentPlayerBar({
 
 export default function PersistentPlayer() {
 	const [state, setState] = useState<PersistedPlayerState | null>(null);
-	// autoplay = true once the user has indicated intent (hydrated from
-	// sessionStorage = previously pressed play, OR clicked skip on the
-	// idle bootstrap pill). Stays true for the rest of the session so a
-	// station skip mid-playback doesn't drop into idle
+	// autoplay reflects whether audio is currently running. set true by
+	// handlePlayStateChange when the audio element fires "playing"; set false
+	// on pause/end. session restore does NOT set this — the user must press
+	// play to opt in, even after a page reload.
 	const [autoplay, setAutoplay] = useState(false);
 
 	useEffect(() => {
@@ -649,7 +696,10 @@ export default function PersistentPlayer() {
 						}
 					: persisted,
 			);
-			setAutoplay(true);
+			// do NOT set autoplay here — session restore only determines the station,
+			// not whether audio starts. autoplay is only true when audio is actually
+			// running (set by handlePlayStateChange). this prevents skip from starting
+			// playback when the user never pressed play this session.
 			return;
 		}
 		const first = STREAMS[0];
