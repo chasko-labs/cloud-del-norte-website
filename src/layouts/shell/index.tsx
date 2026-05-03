@@ -7,7 +7,7 @@ import AppLayout, {
 import TopNavigation, {
 	type TopNavigationProps,
 } from "@cloudscape-design/components/top-navigation";
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { CdnWallpaper } from "../../components/cdn-wallpaper";
 import Footer from "../../components/footer";
 import LogoSvg from "../../components/logo-svg";
@@ -76,20 +76,40 @@ function computeMoonPhase(d: Date): number {
 	return phase < 0 ? phase + 1 : phase;
 }
 
+/**
+ * Build an SVG path string describing today's illuminated lunar area.
+ *
+ * Geometry: moon disc is a circle at (11, 11) radius 8.5 inside a 22×22
+ * viewBox. The terminator is approximated as an ellipse of (rx, 8.5)
+ * where rx = |R · cos(phase_angle)|. The lit-area path = outer half-arc
+ * of the moon (right for waxing, left for waning) closed by the
+ * terminator half-arc. SVG sweep flags pick which side of the ellipse
+ * the terminator bows through.
+ *
+ * Bryan v0.0.0079: mask-based v0.0.0078 still rendered as a flat circle
+ * — turned out url(#mask-id) refs are still flaky across browsers when
+ * IDs are dynamic. Single-path rewrite eliminates defs / mask / clip
+ * entirely, so there's nothing for the renderer to skip.
+ */
+function buildLunarPath(phase: number): string | null {
+	if (phase < 0.02 || phase > 0.98) return null;
+	if (Math.abs(phase - 0.5) < 0.02) {
+		return "M 11,2.5 A 8.5,8.5 0 1,1 11,19.5 A 8.5,8.5 0 1,1 11,2.5 Z";
+	}
+	const isWaxing = phase < 0.5;
+	const pa = isWaxing ? (1 - 2 * phase) * Math.PI : (2 * phase - 1) * Math.PI;
+	const rx = Math.abs(8.5 * Math.cos(pa));
+	const outerSweep = isWaxing ? 1 : 0;
+	// Crescent: terminator passes through the LIT side (rx near 8.5)
+	// Gibbous:  terminator passes through the DARK side (rx near 0)
+	const isCrescent = phase < 0.25 || phase > 0.75;
+	const terminatorSweep = isWaxing ? (isCrescent ? 0 : 1) : isCrescent ? 1 : 0;
+	return `M 11,2.5 A 8.5,8.5 0 0,${outerSweep} 11,19.5 A ${rx.toFixed(2)},8.5 0 0,${terminatorSweep} 11,2.5 Z`;
+}
+
 function MoonSvg() {
-	// v0.0.0078 — bryan eyes-on (Naa'dahéńdé "moon"): the v0.0.0072 mask was
-	// invisible because React's useId() returns ":r0:" with colons, and SVG
-	// `url(#:r0:)` doesn't parse — the # before a colon is read as an empty
-	// fragment, so the mask reference resolved to nothing. Result: the
-	// unmasked full moon disc rendered as a plain white circle.
-	// Fix: strip non-alphanumeric chars from useId() so url() parses.
-	// Also restored the cdn-moon-breathe animation binding (was orphaned
-	// when v0.0.0069 renamed __crescent → __disc).
 	const phase = computeMoonPhase(new Date());
-	const cxShadow = phase < 0.5 ? 11 - phase * 34 : 28 - (phase - 0.5) * 34;
-	const maskId = `cdn-moon-mask-${useId().replace(/[^a-z0-9]/gi, "")}`;
-	// Faint outline so the icon never fully disappears at new moon (phase ~0)
-	const isVeryDark = phase < 0.04 || phase > 0.96;
+	const litPath = buildLunarPath(phase);
 	return (
 		// biome-ignore lint/a11y/noSvgWithoutTitle: decorative; aria-hidden inside button which carries ariaLabel
 		<svg
@@ -101,49 +121,18 @@ function MoonSvg() {
 			xmlns="http://www.w3.org/2000/svg"
 			role="img"
 		>
-			<defs>
-				<mask id={maskId}>
-					{/* full moon area is white (visible) */}
-					<rect width="22" height="22" fill="white" />
-					{/* shadow disc subtracts (black = invisible). When cxShadow is
-					    far outside the viewBox, this rect-minus-circle just yields a
-					    white rect → full moon. When fully overlapping, the moon disc
-					    is entirely subtracted → new moon. */}
-					<circle cx={cxShadow} cy="11" r="8.5" fill="black" />
-				</mask>
-			</defs>
-			{/* outline — always visible so the icon never disappears (new moon) */}
-			{isVeryDark ? (
-				<circle
-					className="cdn-svg-moon__outline"
-					cx="11"
-					cy="11"
-					r="8.5"
-					fill="none"
-				/>
-			) : null}
-			{/* lit lunar surface — masked to only render the illuminated portion */}
-			<g mask={`url(#${maskId})`}>
-				<circle className="cdn-svg-moon__disc" cx="11" cy="11" r="8.5" />
-				<circle
-					className="cdn-svg-moon__crater cdn-svg-moon__crater--a"
-					cx="9.4"
-					cy="8.0"
-					r="0.7"
-				/>
-				<circle
-					className="cdn-svg-moon__crater cdn-svg-moon__crater--b"
-					cx="11.2"
-					cy="13.4"
-					r="0.55"
-				/>
-				<circle
-					className="cdn-svg-moon__crater cdn-svg-moon__crater--c"
-					cx="8.0"
-					cy="12.0"
-					r="0.4"
-				/>
-			</g>
+			{/* faint outline of full moon — always present so the icon never
+			    fully disappears at new moon AND so the dark portion is hinted */}
+			<circle
+				className="cdn-svg-moon__outline"
+				cx="11"
+				cy="11"
+				r="8.5"
+				fill="none"
+			/>
+			{/* lit lunar surface — single path, no mask/defs/clip means no
+			    browser id-resolution flakiness */}
+			{litPath ? <path className="cdn-svg-moon__disc" d={litPath} /> : null}
 		</svg>
 	);
 }
