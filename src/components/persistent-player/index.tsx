@@ -48,9 +48,6 @@ function PersistentPlayerBar({
 	const [blocked, setBlocked] = useState(false);
 	const [playing, setPlaying] = useState(false);
 	const [nowPlaying, setNowPlaying] = useState<string | null>(null);
-	// audioSrc starts as state.stationUrl; podcast entries override this
-	// asynchronously by resolving the latest episode <enclosure url> from RSS
-	const [audioSrc, setAudioSrc] = useState<string>(state.stationUrl);
 	const [streamHealth, setStreamHealth] = useState<StreamHealth>("ok");
 	// debounce + retry timers — refs so cleanup can clear them across renders
 	// without accidentally triggering re-renders or stale captures
@@ -76,27 +73,17 @@ function PersistentPlayerBar({
 			.catch(() => {});
 	}, [streamDef]);
 
-	// reset nowPlaying + stream health when station changes — otherwise the
-	// previous station's track briefly leaks into the new station's lockscreen
-	// notification, and a "failed" badge from a flaky uam_radio session would
-	// stick around when the user skips to a healthy station
-	// podcast URL resolution — fetches the RSS feed, extracts the latest
-	// episode <enclosure url> as audio src and <title> as now-playing.
+	// podcast title refresh — best-effort RSS fetch for episode title.
+	// audio src comes from state.stationUrl directly (no audioSrc state needed).
+	// RSS fetch is CORS-blocked from the browser for most feeds; silently ignored.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: state.stationKey is the reset trigger
 	useEffect(() => {
-		setAudioSrc(state.stationUrl);
 		if (streamDef?.type !== "podcast" || !streamDef.rssFeedUrl) return;
-		const feedUrl = streamDef.rssFeedUrl;
-		fetch(feedUrl)
+		fetch(streamDef.rssFeedUrl)
 			.then((r) => (r.ok ? r.text() : null))
 			.then((xml) => {
 				if (!xml) return;
 				const doc = new DOMParser().parseFromString(xml, "text/xml");
-				const enclosure = doc.querySelector(
-					"channel > item:first-child > enclosure",
-				);
-				const url = enclosure?.getAttribute("url");
-				if (url) setAudioSrc(url);
 				const title = doc
 					.querySelector("channel > item:first-child > title")
 					?.textContent?.trim();
@@ -433,9 +420,9 @@ function PersistentPlayerBar({
 			{/* biome-ignore lint/a11y/useMediaCaption: live radio stream — no caption track available */}
 			<audio
 				ref={audioRef}
-				src={audioSrc}
+				src={state.stationUrl}
 				preload="none"
-				crossOrigin={streamDef?.type !== "podcast" ? "anonymous" : undefined}
+				crossOrigin="anonymous"
 				onPlay={handlePlay}
 				onPause={handlePause}
 			/>
@@ -579,13 +566,16 @@ export default function PersistentPlayer() {
 	const [autoplay, setAutoplay] = useState(false);
 
 	useEffect(() => {
-		// hydrate from sessionStorage if the user already picked a station
-		// this session; otherwise bootstrap with the first stream so the pill
-		// is visible from first paint. KruxPlayer (the previous launcher on
-		// /feed/) was removed 2026-05-03 — this widget is now the sole radio
+		// hydrate from sessionStorage; validate stationUrl against current STREAMS
+		// so stale cached URLs (e.g. old RSS xml urls) never reach the audio element
 		const persisted = loadPlayerState();
 		if (persisted) {
-			setState(persisted);
+			const live = STREAMS.find((s) => s.key === persisted.stationKey);
+			setState(
+				live
+					? { stationKey: live.key, stationUrl: live.url, stationLabel: live.label, metaUrl: live.metaUrl }
+					: persisted,
+			);
 			setAutoplay(true);
 			return;
 		}
