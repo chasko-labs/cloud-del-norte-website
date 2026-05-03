@@ -108,14 +108,16 @@ export const RIDGE_POINTS: readonly RidgePoint[] = [
  * the asymmetric logo-star points facing their original orientation rather
  * than mirroring with the silhouette.
  */
-// v0.0.0113 — bryan: nudge star up + LEFT so an outer arm just grazes the
-// silhouette edge of the right (visually closer) Franklin peak. Horizontal
-// slot preserved per the brief — only enough shift to make the point touch
-// the slope. cx 340→335 (left 5), cy 155→128 (up 27) so the upper-right arm
-// lands within ~1px of the south-franklin slope at the new raised height.
+// v0.0.0114 — bryan: prior nudge missed the target — left arm was floating in
+// open sky / overshooting the mountain. Move RIGHT and UP so the LEFT-pointing
+// outer arm (vertex 8, ≈187° from x-axis) grazes the south-franklin → loop-375
+// slope. cx 335→350 (right 15), cy 128→100 (up 28 ≈ 46px on a 1920 viewport).
+// Bezier solution: at cy=100 the left-arm tip y ≈ 98.9; on the south-franklin
+// slope bezier, y=98.9 lands at authored x≈658 → visual x≈342; tip x = cx-8.93
+// → cx=350.9 → rounded to 350.
 export const EL_PASO_STAR_ANCHOR = {
-	cx: 335, // pre-mirrored; un-flipped star renders visually at x≈335
-	cy: VIEWBOX_HEIGHT - 122, // raised so the upper arm tip grazes the peak edge
+	cx: 350, // pre-mirrored; un-flipped star renders visually at x≈350
+	cy: VIEWBOX_HEIGHT - 150, // 100 — raised so the LEFT arm tip grazes the slope
 	radius: 9, // v0.0.0104: humble landmark — half the v0.0.0102 size
 } as const;
 

@@ -413,22 +413,28 @@
 
 /* responsive window: 1col mobile → 2col narrow tablet → 4col desktop.
    Mobile shows 4 stacked cards, still navigable via chevrons. Total deck
-   pages remain the same since the component window size is locked at 4. */
+   pages remain the same since the component window size is locked at 4.
+   Stacked-mode gap (mobile + tablet) is intentionally wider than the 4-up
+   desktop gap so cards don't crowd each other vertically — v0.0.0114
+   regression: stacked cards "collided" with insufficient breathing room. */
 .feed-mini-grid--window {
 	display: grid;
 	grid-template-columns: 1fr;
-	gap: 12px;
+	gap: 16px;
+	align-items: stretch;
 }
 
 @media (min-width: 600px) {
 	.feed-mini-grid--window {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 14px;
 	}
 }
 
 @media (min-width: 900px) {
 	.feed-mini-grid--window {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
+		gap: 10px;
 	}
 }
 
@@ -517,17 +523,22 @@
 .feed-mini-card {
 	margin: 0;
 	min-width: 0;
+	display: flex; /* let <li> stretch to row height so .feed-mini-card__link
+	                  can fill 100% — keeps all 4 cards uniform-height across
+	                  the visible window regardless of intrinsic content. */
 }
 
 .feed-mini-card__link {
 	position: relative;
 	display: flex;
 	flex-direction: row;
-	align-items: flex-start;
+	align-items: stretch; /* numeral + body share full card height — body
+	                         margin-top:auto on .meta still pins to bottom */
 	gap: 10px;
-	min-height: 132px;
+	min-height: 124px;
 	height: 100%;
-	padding: 12px;
+	width: 100%;
+	padding: 9px 10px;
 	border: 1px solid rgba(139, 90, 43, 0.22);
 	border-radius: var(--cdn-radius-md, 8px);
 	background: #faf7f0;
@@ -539,6 +550,7 @@
 		box-shadow 0.15s ease,
 		transform 0.15s ease;
 	overflow: hidden;
+	box-sizing: border-box;
 }
 
 .awsui-dark-mode .feed-mini-card__link {
@@ -588,6 +600,7 @@
    poorly. */
 .feed-mini-card__number {
 	flex-shrink: 0;
+	flex-grow: 0;
 	align-self: center;
 	font-size: 3.25rem;
 	font-weight: 800;
@@ -595,7 +608,11 @@
 	letter-spacing: -0.04em;
 	font-variant-numeric: tabular-nums;
 	font-family: ui-serif, Georgia, "Times New Roman", serif;
-	min-width: 1.8rem;
+	/* fixed width column so the body-track origin is identical across all
+	   four visible cards regardless of digit count (1..9 vs 10+). Prior
+	   min-width:1.8rem allowed the column to grow on 2-digit numbers. */
+	width: 2.4rem;
+	min-width: 2.4rem;
 	text-align: center;
 	color: var(--cdn-amber, #8b5a2b);
 }
@@ -616,10 +633,12 @@
 .feed-mini-card__body {
 	display: flex;
 	flex-direction: column;
-	gap: 6px;
+	gap: 5px;
 	min-width: 0;
 	overflow: hidden;
-	flex: 1;
+	flex: 1 1 auto;
+	align-self: stretch; /* fill card height so .meta margin-top:auto anchors
+	                         the bottom row identically across the window */
 }
 
 /* one-line excerpt — first sentence of the article body. Single-line clamp
