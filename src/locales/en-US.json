@@ -63,6 +63,11 @@
 		"andresMediumAllPosts": "All posts",
 		"builderCenterHeader": "AWS Builder Center",
 		"builderCenterOpen": "Open AWS Builder Center",
+		"builderBadge": {
+			"employee": "aws employee",
+			"communityBuilder": "aws community builder",
+			"hero": "aws hero"
+		},
 		"arrowheadHeader": "Arrowhead Research Park & NMSU",
 		"arrowheadAtNmsu": "at NMSU",
 		"previousArticle": "Previous article",

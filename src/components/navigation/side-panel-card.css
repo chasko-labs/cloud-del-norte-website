@@ -1,0 +1,99 @@
+/* side-panel-card — narrow article card for the side-nav drawer column.
+   Tokens reused from src/styles/cdn-glass-streaks.css:
+     --cdn-glass-bg-strong / --cdn-glass-border / --cdn-glass-shadow
+     --cdn-glass-shadow-hover / --cdn-glass-blur / --cdn-radius-md
+   Title clamps to 2 lines, blurb to 3 — no overflow horizontally either. */
+
+.side-panel-section {
+	padding: 8px 12px 4px;
+	margin-top: 4px;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: lowercase;
+	color: var(--cdn-color-text, currentColor);
+	opacity: 0.8;
+}
+
+.side-panel-card-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 4px 12px 12px;
+	max-width: 300px;
+}
+
+.side-panel-card {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 10px 12px;
+	background-color: var(--cdn-glass-bg-strong);
+	border: 1px solid var(--cdn-glass-border);
+	border-radius: var(--cdn-radius-md);
+	box-shadow: var(--cdn-glass-shadow);
+	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	color: inherit;
+	text-decoration: none;
+	transition:
+		transform 180ms ease,
+		box-shadow 180ms ease;
+}
+
+.side-panel-card:hover,
+.side-panel-card:focus-visible {
+	transform: translateY(-1px);
+	box-shadow: var(--cdn-glass-shadow-hover);
+	outline: none;
+}
+
+.side-panel-card__title {
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.3;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.side-panel-card__author {
+	font-size: 11px;
+	opacity: 0.75;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.side-panel-card__badge {
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	padding: 1px 5px;
+	border: 1px solid var(--cdn-glass-border);
+	border-radius: 999px;
+}
+
+.side-panel-card__blurb {
+	font-size: 12px;
+	line-height: 1.35;
+	opacity: 0.85;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.side-panel-card {
+		transition: none;
+	}
+	.side-panel-card:hover,
+	.side-panel-card:focus-visible {
+		transform: none;
+	}
+}

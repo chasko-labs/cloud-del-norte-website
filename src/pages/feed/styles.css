@@ -391,43 +391,67 @@
 	min-height: 0;
 }
 
-/* ---------- Builder center "top 4" mini-card grid (tumblr feel) ----------
-   each card: big numeral left, title + author block right; per-card accent
-   color cycles through the cdn palette; cards spaced via larger gap. */
+/* ---------- Builder center deck — pinned primaries + hover-scroll carousel
+   Cards live in a single horizontal scroll-snap track. The first 4 cards
+   are visible by default at desktop widths (4-up). On mouseenter the
+   parent JS auto-advances scrollLeft every CAROUSEL_ADVANCE_MS ms, which
+   slides the carousel-only cards into view. prefers-reduced-motion turns
+   off both the JS timer (component) and CSS scroll-behavior here. */
+
+.feed-builder-deck {
+	position: relative;
+	margin: 0 -4px; /* let cards bleed slightly to soften the edge */
+}
 
 .feed-mini-grid {
 	list-style: none;
 	margin: 0;
-	padding: 0;
-	display: grid;
-	/* minmax(0, 1fr) forces columns to accept 0 as their floor — prevents grid
-     blowout when content min-width would otherwise push 1fr wider than half
-     the container, causing cards 2/4 to overflow off-screen */
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	align-items: start;
-	gap: 8px 10px;
+	padding: 0 4px 6px;
 	counter-reset: mini-card;
 }
 
-@media (max-width: 480px) {
-	.feed-mini-grid {
-		grid-template-columns: 1fr;
+.feed-mini-grid--scroll {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: minmax(260px, 1fr);
+	gap: 12px;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+	scrollbar-width: thin;
+}
+
+.feed-mini-grid--scroll::-webkit-scrollbar {
+	height: 6px;
+}
+.feed-mini-grid--scroll::-webkit-scrollbar-thumb {
+	background: rgba(144, 96, 240, 0.35);
+	border-radius: 3px;
+}
+
+@media (min-width: 900px) {
+	/* 4 primaries fit visibly; carousel-only cards reveal on hover-scroll */
+	.feed-mini-grid--scroll {
+		grid-auto-columns: minmax(0, 1fr);
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+		grid-auto-flow: column;
 	}
 }
 
 .feed-mini-card {
 	margin: 0;
-	min-width: 0; /* grid item must be able to shrink below content width */
+	min-width: 0;
+	scroll-snap-align: start;
 }
 
 .feed-mini-card__link {
 	display: flex;
 	flex-direction: row;
-	align-items: center;
+	align-items: flex-start;
 	gap: 10px;
-	/* fixed height — all 4 cards identical, no layout jitter */
-	height: 52px;
-	padding: 0 12px;
+	min-height: 132px;
+	height: 100%;
+	padding: 12px;
 	border: 1px solid rgba(139, 90, 43, 0.22);
 	border-radius: var(--cdn-radius-md, 8px);
 	background: #faf7f0;
@@ -436,12 +460,12 @@
 	text-decoration: none;
 	transition:
 		border-color 0.15s ease,
-		box-shadow 0.15s ease;
+		box-shadow 0.15s ease,
+		transform 0.15s ease;
 	overflow: hidden;
 }
 
 .awsui-dark-mode .feed-mini-card__link {
-	/* slightly lighter than outer dark glass so cards visually lift */
 	background: rgba(255, 255, 255, 0.06);
 	border-color: rgba(144, 96, 240, 0.22);
 	box-shadow:
@@ -449,14 +473,18 @@
 		0 0 0 1px rgba(144, 96, 240, 0.1);
 }
 
-/* per-card accent: left-edge color stripe in palette colors */
-.feed-mini-card--n1 .feed-mini-card__link {
+/* per-card accent: left-edge color stripe — palette cycles every 4 cards
+   so the carousel-only cards (#5+) reuse the same hue rotation. */
+.feed-mini-card--n1 .feed-mini-card__link,
+.feed-mini-card--n5 .feed-mini-card__link {
 	border-left: 4px solid var(--cdn-violet, #9060f0);
 }
-.feed-mini-card--n2 .feed-mini-card__link {
+.feed-mini-card--n2 .feed-mini-card__link,
+.feed-mini-card--n6 .feed-mini-card__link {
 	border-left: 4px solid var(--cdn-aws-orange, #ff9900);
 }
-.feed-mini-card--n3 .feed-mini-card__link {
+.feed-mini-card--n3 .feed-mini-card__link,
+.feed-mini-card--n7 .feed-mini-card__link {
 	border-left: 4px solid var(--cdn-purple, #5a1f8a);
 }
 .feed-mini-card--n4 .feed-mini-card__link {
@@ -469,6 +497,7 @@
 		0 8px 20px -8px rgba(144, 96, 240, 0.3),
 		0 0 0 1px rgba(144, 96, 240, 0.15);
 	border-color: rgba(144, 96, 240, 0.35);
+	transform: translateY(-1px);
 }
 
 .feed-mini-card__link:focus-visible {
@@ -476,7 +505,6 @@
 	outline-offset: 2px;
 }
 
-/* ranked numeral on the left — fixed size, no viewport-relative value */
 .feed-mini-card__number {
 	flex-shrink: 0;
 	font-size: 1.5rem;
@@ -489,13 +517,16 @@
 	text-align: center;
 }
 
-.feed-mini-card--n1 .feed-mini-card__number {
+.feed-mini-card--n1 .feed-mini-card__number,
+.feed-mini-card--n5 .feed-mini-card__number {
 	color: var(--cdn-violet, #9060f0);
 }
-.feed-mini-card--n2 .feed-mini-card__number {
+.feed-mini-card--n2 .feed-mini-card__number,
+.feed-mini-card--n6 .feed-mini-card__number {
 	color: var(--cdn-aws-orange, #ff9900);
 }
-.feed-mini-card--n3 .feed-mini-card__number {
+.feed-mini-card--n3 .feed-mini-card__number,
+.feed-mini-card--n7 .feed-mini-card__number {
 	color: var(--cdn-purple, #5a1f8a);
 }
 .feed-mini-card--n4 .feed-mini-card__number {
@@ -505,30 +536,89 @@
 .feed-mini-card__body {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 4px;
 	min-width: 0;
-	overflow: hidden; /* clip children so title never bleeds past card edge */
+	overflow: hidden;
+	flex: 1;
 }
 
 .feed-mini-card__title {
-	font-size: 0.8125rem; /* 13px — fixed, not token-relative to avoid vw jitter */
+	font-size: 0.8125rem;
 	font-weight: var(--cdn-weight-medium);
-	line-height: 1.2;
-	white-space: nowrap;
+	line-height: 1.25;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
 	overflow: hidden;
-	text-overflow: ellipsis;
 }
 
 .feed-mini-card__meta {
-	font-size: 0.6875rem; /* 11px fixed */
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.6875rem;
 	color: var(--cdn-color-text-muted);
 	letter-spacing: 0.02em;
+}
+
+.feed-mini-card__author {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	max-width: 60%;
+}
+
+.feed-mini-card__sub {
+	font-style: italic;
+	opacity: 0.85;
+}
+
+.feed-mini-card__blurb {
+	font-size: 0.75rem;
+	line-height: 1.35;
+	color: var(--cdn-color-text-secondary, var(--cdn-color-text-muted));
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+/* ---------- builder badge pills ---------- */
+.feed-builder-badge {
+	display: inline-flex;
+	align-items: center;
+	font-size: 0.625rem; /* 10px */
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	line-height: 1;
+	padding: 3px 6px;
+	border-radius: 999px;
+	border: 1px solid currentColor;
+	white-space: nowrap;
+	text-transform: lowercase;
+}
+
+.feed-builder-badge--employee {
+	color: var(--cdn-aws-orange, #ff9900);
+	background: rgba(255, 153, 0, 0.08);
+}
+.feed-builder-badge--communityBuilder {
+	color: var(--cdn-violet, #9060f0);
+	background: rgba(144, 96, 240, 0.08);
+}
+.feed-builder-badge--hero {
+	color: var(--cdn-purple, #5a1f8a);
+	background: rgba(90, 31, 138, 0.1);
+}
+.awsui-dark-mode .feed-builder-badge--hero {
+	color: #c79bff;
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.feed-mini-grid--scroll {
+		scroll-behavior: auto;
+	}
 	.feed-mini-card__link {
 		transition: none;
 	}
