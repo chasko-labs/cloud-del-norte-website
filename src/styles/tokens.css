@@ -678,3 +678,44 @@
 /* Per-surface application of --cdn-card-gradient-light + --cdn-card-rim-light
    for non-Cloudscape card surfaces (e.g. .feed-mini-card__link) is colocated
    with each surface's own rule — see src/pages/feed/styles.css. */
+
+/* ==========================================================================
+   Phase B — card rim light mid-band pulse
+
+   --cdn-mid drives a secondary outer glow layer that broadens + brightens
+   on vocal/instrument peaks. Kept ambient: 4px base spread expanding to 12px
+   at full mid, 4..14% alpha so it never strobes. Dark mode only — light mode
+   cards use the warm-amber shadow system where a violet pulse reads wrong.
+   ========================================================================== */
+body.cdn-stream-playing .cdn-card {
+	box-shadow:
+		0 8px 24px -6px rgba(0, 0, 0, 0.3),
+		0 0 20px -8px rgba(144, 96, 240, 0.1),
+		0 0 calc(4px + var(--cdn-mid, 0) * 8px)
+		rgba(144, 96, 240, calc(0.04 + var(--cdn-mid, 0) * 0.10));
+}
+
+/* Cloudscape containers get the same mid pulse via the token surface */
+body.cdn-stream-playing
+	[class*="awsui_root_"][class*="awsui_variant-default_"],
+body.cdn-stream-playing
+	[class*="awsui_root_"][class*="awsui_variant-stacked_"] {
+	box-shadow:
+		var(--cdn-card-rim-light),
+		0 0 calc(4px + var(--cdn-mid, 0) * 8px)
+		rgba(144, 96, 240, calc(0.04 + var(--cdn-mid, 0) * 0.10));
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body.cdn-stream-playing .cdn-card {
+		box-shadow:
+			0 8px 24px -6px rgba(0, 0, 0, 0.3),
+			0 0 20px -8px rgba(144, 96, 240, 0.1);
+	}
+	body.cdn-stream-playing
+		[class*="awsui_root_"][class*="awsui_variant-default_"],
+	body.cdn-stream-playing
+		[class*="awsui_root_"][class*="awsui_variant-stacked_"] {
+		box-shadow: var(--cdn-card-rim-light);
+	}
+}
