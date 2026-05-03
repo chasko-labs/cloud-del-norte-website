@@ -33,7 +33,9 @@ const SUN_WOBBLE_AMP = 0.035;
 // Camera breathe — was ±0.15 on 1/24 Hz. 30% reduction → ±0.105.
 const CAMERA_BREATHE_HZ = 1 / 24;
 const CAMERA_BREATHE_AMP = 0.105;
-export const CAMERA_RADIUS_BASE = 45;
+// Radius: was 45. Reduced to 40 to move camera closer to the dunes —
+// reinforces the street-level feel achieved by raising beta to 1.38.
+export const CAMERA_RADIUS_BASE = 40;
 
 // Logo pulse — 24s cycle echoes the star-logo bulb keyframe (2.4s × 10
 // harmonic). Used as a gentle low-frequency multiplier on the sparkle
