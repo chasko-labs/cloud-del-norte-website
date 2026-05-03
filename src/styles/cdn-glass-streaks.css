@@ -1482,6 +1482,194 @@ body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
 }
 
 /* ==========================================================================
+   RAVY mode — chrome ring color cycling + conic spotlight sweep.
+   Bryan v0.0.0091: "too much simple white when music is playing, lets get
+   ravy". Each band-wired chrome button gets:
+   1. border-color cycle through brand palette at the band's tempo
+      (bass → 3.2s, mid → 1.6s, treble → 0.7s) so colors PULSE on
+      every kick/snare/hat instead of staying glued to station-primary.
+   2. a conic-gradient spotlight rotating around the button face,
+      pointer-events: none so tap targets stay intact. Driven by an
+      audio-time accumulator in CSS — opacity scales with --cdn-band so
+      silent → invisible, loud → club-spot intensity.
+   ========================================================================== */
+@keyframes cdn-ravy-ring-bass {
+	0% {
+		border-color: rgba(
+			var(--station-primary-rgb, 255, 153, 0),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+	25% {
+		border-color: rgba(
+			var(--station-secondary-rgb, 144, 96, 240),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+	50% {
+		border-color: rgba(144, 96, 240, calc(0.6 + var(--cdn-band, 0) * 0.4));
+	}
+	75% {
+		border-color: rgba(215, 199, 238, calc(0.6 + var(--cdn-band, 0) * 0.4));
+	}
+	100% {
+		border-color: rgba(
+			var(--station-primary-rgb, 255, 153, 0),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+}
+@keyframes cdn-ravy-ring-mid {
+	0% {
+		border-color: rgba(
+			var(--station-primary-rgb, 255, 153, 0),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+	33% {
+		border-color: rgba(144, 96, 240, calc(0.65 + var(--cdn-band, 0) * 0.35));
+	}
+	66% {
+		border-color: rgba(215, 199, 238, calc(0.65 + var(--cdn-band, 0) * 0.35));
+	}
+	100% {
+		border-color: rgba(
+			var(--station-primary-rgb, 255, 153, 0),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+}
+@keyframes cdn-ravy-ring-treble {
+	0% {
+		border-color: rgba(
+			var(--station-secondary-rgb, 144, 96, 240),
+			calc(0.6 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+	50% {
+		border-color: rgba(255, 153, 0, calc(0.65 + var(--cdn-band, 0) * 0.35));
+	}
+	100% {
+		border-color: rgba(
+			var(--station-secondary-rgb, 144, 96, 240),
+			calc(0.6 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+}
+
+@keyframes cdn-ravy-spotlight-spin {
+	0% {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	100% {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
+}
+
+/* Apply the ring cycle. The band-tempo selectors override the static
+   stream-playing border-color rule above thanks to later cascade order. */
+body.cdn-stream-playing .cdn-volunteer-btn {
+	animation: 1.6s linear infinite cdn-ravy-ring-mid;
+}
+body.cdn-stream-playing [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
+	animation: 3.2s linear infinite cdn-ravy-ring-bass !important;
+}
+body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	animation: 0.7s linear infinite cdn-ravy-ring-treble !important;
+}
+
+/* Conic-gradient spotlight overlay — uses ::before so we don't trample
+   any existing ::after pseudo. Position absolute, clip to parent via
+   border-radius inheritance, pointer-events disabled so the underlying
+   button still receives clicks. mix-blend-mode: screen on the dark UI
+   keeps it luminous; light mode uses overlay for similar feel without
+   blowing out the cream chrome. */
+body.cdn-stream-playing .cdn-volunteer-btn,
+body.cdn-stream-playing [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
+body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	position: relative;
+	overflow: hidden;
+}
+
+body.cdn-stream-playing .cdn-volunteer-btn::after,
+body.cdn-stream-playing
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
+body.cdn-stream-playing
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
+	content: "";
+	pointer-events: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 220%;
+	height: 220%;
+	border-radius: 50%;
+	background: conic-gradient(
+		from 0deg,
+		transparent 0deg,
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.55) 35deg,
+		rgba(255, 255, 255, 0.7) 50deg,
+		rgba(var(--station-secondary-rgb, 144, 96, 240), 0.55) 65deg,
+		transparent 100deg,
+		transparent 180deg,
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.4) 215deg,
+		rgba(255, 255, 255, 0.5) 230deg,
+		rgba(var(--station-secondary-rgb, 144, 96, 240), 0.4) 245deg,
+		transparent 280deg,
+		transparent 360deg
+	);
+	mix-blend-mode: screen;
+	opacity: calc(0.25 + var(--cdn-band, 0) * 0.65);
+	filter: blur(2px);
+	z-index: 0;
+}
+
+/* Tempos differ per button so each spotlight wheels at its own pace */
+body.cdn-stream-playing .cdn-volunteer-btn::after {
+	animation: 3.6s linear infinite cdn-ravy-spotlight-spin;
+}
+body.cdn-stream-playing
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after {
+	animation: 5.2s linear infinite cdn-ravy-spotlight-spin;
+}
+body.cdn-stream-playing
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
+	animation: 2.4s linear infinite cdn-ravy-spotlight-spin;
+}
+
+/* Light-mode tweak — overlay blend reads better on the cream pill */
+:root:not(.awsui-dark-mode) body.cdn-stream-playing .cdn-volunteer-btn::after,
+:root:not(.awsui-dark-mode)
+	body.cdn-stream-playing
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
+:root:not(.awsui-dark-mode)
+	body.cdn-stream-playing
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
+	mix-blend-mode: overlay;
+	opacity: calc(0.35 + var(--cdn-band, 0) * 0.55);
+}
+
+/* Reduced-motion gate — kill ALL ravy cycling + spinning on chrome.
+   The static stream-playing ring rules above keep their station-tinted
+   border + glow so the audio-reactive UI signal doesn't disappear, but
+   the moving parts are gone. */
+@media (prefers-reduced-motion: reduce) {
+	body.cdn-stream-playing .cdn-volunteer-btn,
+	body.cdn-stream-playing
+		[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
+	body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+		animation: none !important;
+	}
+	body.cdn-stream-playing .cdn-volunteer-btn::after,
+	body.cdn-stream-playing
+		[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
+	body.cdn-stream-playing
+		[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
+		display: none !important;
+	}
+}
+
+/* ==========================================================================
    Breadcrumb separator + non-first-item — subtle brand-accent polish
 
    Cloudscape renders the breadcrumb separator as an SVG icon and the
