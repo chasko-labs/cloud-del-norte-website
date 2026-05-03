@@ -578,34 +578,34 @@ function AppContent({
 			<SpaceBetween size="l">
 				{/* ── Brand logo ── */}
 				<div id="section-brand-logo">
-				<Container header={<Header variant="h2">brand logo</Header>}>
-					<div className="theme-logo-showcase">
-						<img
-							src="/brand/logo.svg"
-							alt="Cloud Del Norte AWS User Group"
-							className="theme-logo-img"
-						/>
-						<div className="theme-logo-meta">
-							<p>
-								<strong>asset:</strong> <code>/brand/logo.svg</code>
-							</p>
-							<p>
-								<strong>viewBox:</strong> 1024×1024 — square, transparent
-							</p>
-							<p>
-								<strong>structure:</strong> 3 large purple star-arm paths + 12
-								small circular bulb dots in a ring + near-white inner geometric
-								structure (vtracer polygon trace)
-							</p>
-							<p>
-								<strong>filters:</strong> SVG <code>&lt;defs&gt;</code> with{" "}
-								<code>cdn-bulb-glow</code> (dual feGaussianBlur core+bloom) and{" "}
-								<code>cdn-arm-glow</code>; bulbs animate independently with
-								staggered <code>animation-delay</code> 0–2.75s
-							</p>
+					<Container header={<Header variant="h2">brand logo</Header>}>
+						<div className="theme-logo-showcase">
+							<img
+								src="/brand/logo.svg"
+								alt="Cloud Del Norte AWS User Group"
+								className="theme-logo-img"
+							/>
+							<div className="theme-logo-meta">
+								<p>
+									<strong>asset:</strong> <code>/brand/logo.svg</code>
+								</p>
+								<p>
+									<strong>viewBox:</strong> 1024×1024 — square, transparent
+								</p>
+								<p>
+									<strong>structure:</strong> 3 large purple star-arm paths + 12
+									small circular bulb dots in a ring + near-white inner
+									geometric structure (vtracer polygon trace)
+								</p>
+								<p>
+									<strong>filters:</strong> SVG <code>&lt;defs&gt;</code> with{" "}
+									<code>cdn-bulb-glow</code> (dual feGaussianBlur core+bloom)
+									and <code>cdn-arm-glow</code>; bulbs animate independently
+									with staggered <code>animation-delay</code> 0–2.75s
+								</p>
+							</div>
 						</div>
-					</div>
-				</Container>
+					</Container>
 				</div>
 
 				{/* ── Sticky TOC ── */}
@@ -636,7 +636,9 @@ function AppContent({
 							<PaletteGroupSection />
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── 1b. Borders + radius ── */}
@@ -673,7 +675,9 @@ function AppContent({
 							</div>
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── 2. Motion & animations ── */}
@@ -704,7 +708,9 @@ function AppContent({
 							</Grid>
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── 3. Radio player widget — removed 2026-05-03 ──
@@ -725,7 +731,9 @@ function AppContent({
 							<InteractiveStatesDemo />
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── 5. Typography ── */}
@@ -781,7 +789,9 @@ function AppContent({
 							<TypographyExtrasDemo />
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── 6. Glassmorphism / surface patterns ── */}
@@ -793,7 +803,9 @@ function AppContent({
 					>
 						<GlassmorphismDemo />
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── 7. Spacing scale ── */}
@@ -820,7 +832,9 @@ function AppContent({
 							</div>
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── text emphasis ── */}
@@ -858,7 +872,9 @@ function AppContent({
 							</ColumnLayout>
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── dark mode elevation ── */}
@@ -905,7 +921,9 @@ function AppContent({
 							</ColumnLayout>
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── shadow tokens ── */}
@@ -954,14 +972,18 @@ function AppContent({
 							</Grid>
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 
 				{/* ── glassmorphism card example ── */}
 				<div id="section-card-example">
 					<Container
 						header={
-							<Header variant="h2">{t("themePage.sections.cardExample")}</Header>
+							<Header variant="h2">
+								{t("themePage.sections.cardExample")}
+							</Header>
 						}
 					>
 						<SpaceBetween size="m">
@@ -973,7 +995,9 @@ function AppContent({
 									<Box variant="h3" fontSize="heading-m">
 										{t("themePage.cardExample.title")}
 									</Box>
-									<Box variant="p">{t("themePage.cardExample.description")}</Box>
+									<Box variant="p">
+										{t("themePage.cardExample.description")}
+									</Box>
 									<Box variant="small" color="text-body-secondary">
 										{t("themePage.cardExample.technicalNote")}
 									</Box>
@@ -981,7 +1005,9 @@ function AppContent({
 							</div>
 						</SpaceBetween>
 					</Container>
-					<a href="#toc" className="theme-toc-back">^ top</a>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
 				</div>
 			</SpaceBetween>
 		</ContentLayout>

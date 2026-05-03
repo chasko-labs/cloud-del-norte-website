@@ -445,6 +445,21 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	max-height: calc(100vh - 56px);
 }
 
+/* v0.0.0131 — info/tools-toggle disappears past ~1 viewport of scroll.
+   Root cause: Cloudscape's drawers-container (which holds the tools-toggle
+   ⓘ button) is position:sticky with block-size: calc(100vh - header-height).
+   Once the user scrolls past that 100vh window the sticky container's
+   height runs out and the toggle scrolls off screen. The fix expands the
+   container to fill its grid row so sticky remains active for the entire
+   page length. min-block-size:100% overrides the 100vh cap without
+   fighting the inline custom-property calc. Scoped to desktop (≥689px)
+   since mobile uses position:fixed for the drawers container. */
+@media (min-width: 689px) {
+	[class*="awsui_drawers-container"] {
+		min-block-size: 100% !important;
+	}
+}
+
 /* v0.0.0110 — left nav drawer parity with right tools panel
    Bryan: "scroll bar for the left side menu must be hidden? allow that
    to be viewable / usable so we can get to the bottom of the left menu,
@@ -490,15 +505,12 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
    container fits inside the visible viewport. */
 @media (max-width: 768px) {
 	[class*="awsui_navigation-container_"] {
-		max-height: calc(100vh - 100px) !important;
 		max-height: calc(100dvh - 100px) !important;
 	}
 	[class*="awsui_navigation_"] [class*="awsui_content-container_"] {
-		max-height: calc(100vh - 100px) !important;
 		max-height: calc(100dvh - 100px) !important;
 	}
 	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]) {
-		max-height: calc(100vh - 100px) !important;
 		max-height: calc(100dvh - 100px) !important;
 	}
 }
@@ -1573,7 +1585,8 @@ body {
 	scrollbar-width: none; /* firefox */
 	-ms-overflow-style: none; /* legacy edge / ie */
 }
-[class*="awsui_navigation_"] [class*="awsui_content-container_"]::-webkit-scrollbar {
+[class*="awsui_navigation_"]
+	[class*="awsui_content-container_"]::-webkit-scrollbar {
 	display: none; /* chromium / webkit */
 	width: 0;
 	height: 0;
@@ -1591,9 +1604,12 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 }
-nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::-webkit-scrollbar,
+nav[class*="awsui_navigation_"]:not(
+		[class*="awsui_navigation-toggle_"]
+	)::-webkit-scrollbar,
 [class*="awsui_navigation__drawer"]::-webkit-scrollbar,
-[class*="awsui_navigation-container"] [class*="awsui_drawer-content"]::-webkit-scrollbar,
+[class*="awsui_navigation-container"]
+	[class*="awsui_drawer-content"]::-webkit-scrollbar,
 [class*="awsui_drawer"] [class*="awsui_drawer-content"]::-webkit-scrollbar,
 [class*="awsui_drawer-content-container"]::-webkit-scrollbar {
 	display: none;
@@ -1825,7 +1841,10 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::-webki
 
 /* Phase C — moon flux beat-flash */
 .cdn-stream-playing .cdn-svg-moon {
-	filter: drop-shadow(0 0 calc(3px + var(--cdn-flux, 0) * 10px) rgba(200, 220, 255, calc(0.5 + var(--cdn-flux, 0) * 0.4)))
+	filter: drop-shadow(
+			0 0 calc(3px + var(--cdn-flux, 0) * 10px)
+				rgba(200, 220, 255, calc(0.5 + var(--cdn-flux, 0) * 0.4))
+		)
 		brightness(calc(1 + var(--cdn-flux, 0) * 0.3));
 }
 @media (prefers-reduced-motion: reduce) {

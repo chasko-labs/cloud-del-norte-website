@@ -1959,7 +1959,8 @@ body.cdn-stream-playing [class*="awsui_breadcrumbs_"] li:first-child a {
 		brightness(calc(1 + var(--cdn-flux, 0) * 0.28));
 }
 
-.awsui-dark-mode body.cdn-stream-playing
+.awsui-dark-mode
+	body.cdn-stream-playing
 	[class*="awsui_breadcrumbs_"]
 	li:first-child
 	a {
@@ -1971,7 +1972,8 @@ body.cdn-stream-playing [class*="awsui_breadcrumbs_"] li:first-child a {
 
 @media (prefers-reduced-motion: reduce) {
 	body.cdn-stream-playing [class*="awsui_breadcrumbs_"] li:first-child a,
-	.awsui-dark-mode body.cdn-stream-playing
+	.awsui-dark-mode
+		body.cdn-stream-playing
 		[class*="awsui_breadcrumbs_"]
 		li:first-child
 		a {
@@ -1982,7 +1984,8 @@ body.cdn-stream-playing [class*="awsui_breadcrumbs_"] li:first-child a {
 			drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
 			drop-shadow(0 0 18px rgba(139, 90, 43, 0.22));
 	}
-	.awsui-dark-mode body.cdn-stream-playing
+	.awsui-dark-mode
+		body.cdn-stream-playing
 		[class*="awsui_breadcrumbs_"]
 		li:first-child
 		a {
