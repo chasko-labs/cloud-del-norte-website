@@ -666,7 +666,7 @@ export const STREAMS: StreamDef[] = [
 			secondary: "#F5A623",
 			accent: "#2D333B",
 			primaryLight: "#6aabe8",
-			primaryDark: "#3472b0",
+			primaryDark: "#8ec8f5", // lighter than primary for navy bg legibility
 		},
 		parseMeta(data) {
 			const doc = data as Document;
@@ -688,7 +688,7 @@ export const STREAMS: StreamDef[] = [
 			secondary: "#ffd43b",
 			accent: "#1a1a1a",
 			primaryLight: "#5a94c8",
-			primaryDark: "#1a3a52",
+			primaryDark: "#7ab5e8", // lighter than primary for navy bg legibility
 		},
 		parseMeta(data) {
 			const doc = data as Document;
@@ -710,7 +710,7 @@ export const STREAMS: StreamDef[] = [
 			secondary: "#FF6B35",
 			accent: "#1a1a1a",
 			primaryLight: "#1ab8f0",
-			primaryDark: "#0080b0",
+			primaryDark: "#40c8f0", // lighter than primary for navy bg legibility
 		},
 		parseMeta(data) {
 			const doc = data as Document;
@@ -754,7 +754,7 @@ export const STREAMS: StreamDef[] = [
 			secondary: "#f4a261",
 			accent: "#faf7f0",
 			primaryLight: "#3d5fa3",
-			primaryDark: "#0a2752",
+			primaryDark: "#6b8fcf", // lighter than primary for navy bg legibility
 		},
 		parseMeta(data) {
 			const doc = data as Document;
@@ -776,7 +776,7 @@ export const STREAMS: StreamDef[] = [
 			secondary: "#4a4a8a",
 			accent: "#fad5b8",
 			primaryLight: "#d96040",
-			primaryDark: "#8B4513",
+			primaryDark: "#e8826a", // lighter than primary for navy bg legibility
 		},
 		parseMeta(data) {
 			const doc = data as Document;
