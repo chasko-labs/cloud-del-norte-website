@@ -77,17 +77,17 @@ function computeMoonPhase(d: Date): number {
 }
 
 function MoonSvg() {
-	// v0.0.0072 — bryan eyes-on (mobile): the v0.0.0069 two-disc approach
-	// rendered the shadow disc OUTSIDE the SVG viewBox at certain phases,
-	// reading as "light circle next to dark circle" + breaking click target
-	// (anything outside the 22×22 box isn't part of the parent <a> hit area).
-	// Fix: SVG <mask> subtracts the shadow disc from the moon disc, so only
-	// the lit portion paints. Click target = SVG bounds, which is always
-	// the full 22×22. useId() avoids id collisions when Cloudscape clones
-	// the utility into the overflow menu (per the MX flag note).
+	// v0.0.0078 — bryan eyes-on (Naa'dahéńdé "moon"): the v0.0.0072 mask was
+	// invisible because React's useId() returns ":r0:" with colons, and SVG
+	// `url(#:r0:)` doesn't parse — the # before a colon is read as an empty
+	// fragment, so the mask reference resolved to nothing. Result: the
+	// unmasked full moon disc rendered as a plain white circle.
+	// Fix: strip non-alphanumeric chars from useId() so url() parses.
+	// Also restored the cdn-moon-breathe animation binding (was orphaned
+	// when v0.0.0069 renamed __crescent → __disc).
 	const phase = computeMoonPhase(new Date());
 	const cxShadow = phase < 0.5 ? 11 - phase * 34 : 28 - (phase - 0.5) * 34;
-	const maskId = useId();
+	const maskId = `cdn-moon-mask-${useId().replace(/[^a-z0-9]/gi, "")}`;
 	// Faint outline so the icon never fully disappears at new moon (phase ~0)
 	const isVeryDark = phase < 0.04 || phase > 0.96;
 	return (
