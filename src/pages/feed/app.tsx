@@ -155,21 +155,7 @@ function AppContent({
 	return (
 		<ContentLayout
 			header={
-				<Header
-					variant="h1"
-					info={
-						<Link
-							variant="info"
-							onFollow={(e) => {
-								e.preventDefault();
-								onOpenTools();
-							}}
-							ariaLabel={t("feedPage.infoLinkAriaLabel")}
-						>
-							{t("feedPage.infoLink")}
-						</Link>
-					}
-				>
+				<Header variant="h1">
 					{t("feedPage.header")}
 				</Header>
 			}

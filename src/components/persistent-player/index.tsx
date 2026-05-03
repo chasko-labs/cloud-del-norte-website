@@ -48,6 +48,9 @@ function PersistentPlayerBar({
 	const [blocked, setBlocked] = useState(false);
 	const [playing, setPlaying] = useState(false);
 	const [nowPlaying, setNowPlaying] = useState<string | null>(null);
+	// audioSrc starts as state.stationUrl; podcast entries override this
+	// asynchronously by resolving the latest episode <enclosure url> from RSS
+	const [audioSrc, setAudioSrc] = useState<string>(state.stationUrl);
 	const [streamHealth, setStreamHealth] = useState<StreamHealth>("ok");
 	// debounce + retry timers — refs so cleanup can clear them across renders
 	// without accidentally triggering re-renders or stale captures
@@ -77,6 +80,31 @@ function PersistentPlayerBar({
 	// previous station's track briefly leaks into the new station's lockscreen
 	// notification, and a "failed" badge from a flaky uam_radio session would
 	// stick around when the user skips to a healthy station
+	// podcast URL resolution — fetches the RSS feed, extracts the latest
+	// episode <enclosure url> as audio src and <title> as now-playing.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: state.stationKey is the reset trigger
+	useEffect(() => {
+		setAudioSrc(state.stationUrl);
+		if (streamDef?.type !== "podcast" || !streamDef.rssFeedUrl) return;
+		const feedUrl = streamDef.rssFeedUrl;
+		fetch(feedUrl)
+			.then((r) => (r.ok ? r.text() : null))
+			.then((xml) => {
+				if (!xml) return;
+				const doc = new DOMParser().parseFromString(xml, "text/xml");
+				const enclosure = doc.querySelector(
+					"channel > item:first-child > enclosure",
+				);
+				const url = enclosure?.getAttribute("url");
+				if (url) setAudioSrc(url);
+				const title = doc
+					.querySelector("channel > item:first-child > title")
+					?.textContent?.trim();
+				if (title) setNowPlaying(title);
+			})
+			.catch(() => {});
+	}, [state.stationKey]);
+
 	// biome-ignore lint/correctness/useExhaustiveDependencies: state.stationKey is the reset trigger; effect body intentionally only resets state
 	useEffect(() => {
 		setNowPlaying(null);
@@ -405,12 +433,26 @@ function PersistentPlayerBar({
 			{/* biome-ignore lint/a11y/useMediaCaption: live radio stream — no caption track available */}
 			<audio
 				ref={audioRef}
-				src={state.stationUrl}
+				src={audioSrc}
 				preload="none"
 				crossOrigin="anonymous"
 				onPlay={handlePlay}
 				onPause={handlePause}
 			/>
+			{/* type icon — 💃🏾 for radio, 🗣️ for podcast */}
+			<span className="cdn-pp__icon" aria-hidden="true">
+				{streamDef?.type === "podcast" ? "🗣️" : "💃🏾"}
+			</span>
+			{/* skip — left of meta */}
+			<button
+				type="button"
+				className="cdn-pp__btn cdn-pp__btn--skip"
+				onClick={() => onSkipStation(1)}
+				aria-label="next station"
+				title="next station"
+			>
+				<span aria-hidden="true">⏭</span>
+			</button>
 			<span className="cdn-pp__meta">
 				{streamDef?.donateUrl ? (
 					<a
@@ -428,6 +470,7 @@ function PersistentPlayerBar({
 				) : (
 					<span className="cdn-pp__label">{state.stationLabel}</span>
 				)}
+				{/* sub-row: always show geo, append song title or fallback when present */}
 				{showFailedUI ? (
 					<span
 						className="cdn-pp__error"
@@ -440,7 +483,7 @@ function PersistentPlayerBar({
 						</span>
 					</span>
 				) : showRetryingUI ? (
-					<span className="cdn-pp__track" role="status" aria-live="polite">
+					<span className="cdn-pp__sub" role="status" aria-live="polite">
 						<span
 							className="cdn-pp__eyebrow cdn-pp__eyebrow--warn"
 							aria-hidden="true"
@@ -448,35 +491,40 @@ function PersistentPlayerBar({
 							{t("persistentPlayer.streamErrorRetrying")}
 						</span>
 					</span>
-				) : nowPlaying ? (
-					<span className="cdn-pp__track" aria-live="polite" title={nowPlaying}>
-						<span className="cdn-pp__track-text">{nowPlaying}</span>
-					</span>
-				) : streamDef?.metaFallback ? (
-					// no live track string — surface a station-specific fallback
-					// link (Spotify playlist, podcast catalog, programs grid) so
-					// the row carries an actionable affordance instead of going
-					// blank. label flips per locale; href is shared
-					<span className="cdn-pp__track">
-						<a
-							className="cdn-pp__now-playing-link"
-							href={streamDef.metaFallback.href}
-							target="_blank"
-							rel="noreferrer"
-						>
-							{locale === "mx"
-								? streamDef.metaFallback.labelEs
-								: streamDef.metaFallback.labelEn}
-						</a>
-					</span>
 				) : (
-					streamDef && (
-						<span className="cdn-pp__track" aria-hidden="true">
+					<span className="cdn-pp__sub" aria-live="polite">
+						{streamDef && (
 							<span className="cdn-pp__geo">
 								{formatLocation(streamDef.location)}
 							</span>
-						</span>
-					)
+						)}
+						{nowPlaying ? (
+							<>
+								{streamDef && (
+									<span className="cdn-pp__sep" aria-hidden="true">
+										{" · "}
+									</span>
+								)}
+								<span className="cdn-pp__track-text" title={nowPlaying}>
+									{nowPlaying}
+								</span>
+							</>
+						) : streamDef?.metaFallback ? (
+							<>
+								<span className="cdn-pp__sep" aria-hidden="true">{" · "}</span>
+								<a
+									className="cdn-pp__now-playing-link"
+									href={streamDef.metaFallback.href}
+									target="_blank"
+									rel="noreferrer"
+								>
+									{locale === "mx"
+										? streamDef.metaFallback.labelEs
+										: streamDef.metaFallback.labelEn}
+								</a>
+							</>
+						) : null}
+					</span>
 				)}
 			</span>
 			{showFailedUI && (
@@ -490,15 +538,6 @@ function PersistentPlayerBar({
 					<span aria-hidden="true">↻</span>
 				</button>
 			)}
-			<button
-				type="button"
-				className="cdn-pp__btn cdn-pp__btn--skip"
-				onClick={() => onSkipStation(1)}
-				aria-label="next station"
-				title="next station"
-			>
-				<span aria-hidden="true">⏭</span>
-			</button>
 			{blocked ? (
 				<button
 					type="button"
