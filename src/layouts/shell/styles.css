@@ -492,6 +492,19 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	background-color: #ede5d4 !important;
 }
 
+/* v0.0.0071 — mobile side-nav drawer body needs vertical breathing room
+   below the weather card so it doesn't slam against the viewport edge.
+   Bryan eyes-on (mobile screenshots): bottom of left panel reads "kind of
+   a mess". Padding + ensure overflow-y scrolls cleanly. */
+@media (max-width: 768px) {
+	[class*="awsui_drawer"] [class*="awsui_drawer-content"],
+	[class*="awsui_drawer-content-container"] {
+		padding-bottom: 32px !important;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+}
+
 /* ── Logo hero — custom element, free of Cloudscape identity sizing ──────────
    Absolutely positioned over #top-nav so Cloudscape cannot constrain its size.
    Cloudscape identity gets href only (no logo prop) so the identity link area
