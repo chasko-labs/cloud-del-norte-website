@@ -1,93 +1,89 @@
-/* cdn-pp — persistent player pill, anchored in top-nav bar (right of center, left of utility buttons) */
+/* cdn-pp — persistent player card. Rendered inside .cdn-player-slot at the
+   top of every page's content (immediately under the Cloudscape breadcrumb).
+   Visual: rectangular cream-gradient card matching .feed-mini-card / Cloudscape
+   Container surfaces (tokens.css --cdn-card-gradient-light + --cdn-card-rim-light).
+   Color discipline: only ONE station-tinted accent (the left-edge stripe);
+   everything else defers to theme tokens for legibility.
+   v0.0.0115: prior fixed-pill layout overlapped the AWS UG header strip and
+   read as a "wash of disparate colors" — replaced with this in-flow card. */
 
-/* per-station theming — the active station's brand palette is injected as
-   CSS custom properties on .cdn-pp by index.tsx. The pill's own surface is
-   semi-transparent navy in BOTH page themes (it floats over the nav bar,
-   not the page bg), so --station-primary-mode always resolves to the
-   *dark*-mode-tuned variant: KRUX gets brightened crimson (#d63868) and
-   KEXP keeps buttercup yellow because both read >= 3:1 on navy.
-   Fallback to brand violet if a station hasn't supplied colors. */
+/* slot reserves the same vertical space on every page so children below the
+   player don't shift when the station meta changes. Sits at top of AppLayout
+   content (Cloudscape renders breadcrumbs above content). */
+.cdn-player-slot {
+	display: block;
+	width: 100%;
+	margin: 0 0 16px 0;
+	/* min-height matches .cdn-pp height so the slot still occupies space if
+	   the player ever conditionally returns null (it doesn't today, but keeps
+	   page geometry stable across hydration) */
+	min-height: 64px;
+}
+
 .cdn-pp {
-	position: fixed;
-	top: 10px;
-	right: 192px; /* leaves room for locale + theme + sign-in utility buttons */
-	z-index: 1003; /* above #top-nav z-index:1002 */
-
 	display: flex;
 	align-items: center;
-	gap: 8px;
-	padding: 6px 12px;
+	gap: 12px;
+	width: 100%;
+	min-height: 64px;
+	padding: 10px 14px;
 
-	/* pill bg is always dark navy → use the *-dark contrast-tuned variant
-	   regardless of which mode the rest of the page is in */
-	--station-primary-mode: var(
-		--station-primary-dark,
-		var(--station-primary, var(--cdn-violet, #9060f0))
+	/* unified cream surface — mirror of .feed-mini-card__link in pages/feed/styles.css.
+	   Solid color base + diagonal gradient overlay + warm rim light. Reads as a
+	   sibling of feed cards, not as a floating widget. */
+	background-color: #faf7f0;
+	background-image: var(--cdn-card-gradient-light);
+	border: 1px solid rgba(139, 90, 43, 0.22);
+	/* single station-tinted accent — left-edge stripe matches the .feed-mini-card
+	   per-card-accent pattern. Falls back to brand violet when station palette is absent */
+	border-left: 4px solid var(
+		--station-primary,
+		var(--cdn-violet, #9060f0)
 	);
-	--station-primary-mode-rgb: var(
-		--station-primary-dark-rgb,
-		var(--station-primary-rgb, 144, 96, 240)
-	);
+	border-radius: var(--cdn-radius-md, 8px);
+	box-shadow: var(--cdn-card-rim-light);
 
-	/* tint the pill itself toward the active station's primary so it reads as
-	   branded chrome, not a neutral bar */
-	background: linear-gradient(
-		135deg,
-		rgba(10, 10, 46, 0.86) 0%,
-		rgba(var(--station-primary-mode-rgb), 0.18) 100%
-	);
-	border: 1px solid rgba(var(--station-primary-mode-rgb), 0.45);
-	border-radius: 999px;
-	box-shadow:
-		0 2px 12px rgba(0, 0, 0, 0.35),
-		0 0 12px rgba(var(--station-primary-mode-rgb), 0.22);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-
-	color: rgba(240, 240, 240, 0.87);
-	font-size: 0.75rem;
-	white-space: nowrap;
-	max-width: 360px;
+	color: var(--cdn-color-text, #2c1a0e);
+	font-size: var(--cdn-text-sm, 0.75rem);
+	box-sizing: border-box;
 	transition:
-		background 0.4s ease,
-		border-color 0.4s ease,
-		box-shadow 0.4s ease,
-		max-width 0.3s ease;
+		border-color 0.2s ease,
+		box-shadow 0.2s ease;
 }
 
-/* hover-expand — when a track is showing, allow the pill to widen so the
-   full track string is readable. cap at viewport-aware width to avoid
-   colliding with the utility buttons on narrower laptops */
-.cdn-pp--has-track:hover,
-.cdn-pp--has-track:focus-within {
-	max-width: min(560px, calc(100vw - 220px));
-}
-
-.cdn-pp__headphones {
-	font-size: 1rem;
-	flex-shrink: 0;
-	filter: drop-shadow(0 0 3px rgba(var(--station-primary-mode-rgb), 0.55));
+.awsui-dark-mode .cdn-pp {
+	background-color: var(--cdn-elevation-1, #12123a);
+	background-image: var(--cdn-card-gradient-light);
+	border-color: rgba(144, 96, 240, 0.22);
+	border-left-color: var(--station-primary, var(--cdn-violet, #9060f0));
+	box-shadow: var(--cdn-card-rim-light);
+	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
 }
 
 /* meta wrapper — stacks station label over now-playing track text. flex-column
-   keeps the pill compact when no track is showing (single-line collapse),
-   and gives the track its own row when present */
+   keeps the card compact when no track is showing and gives the track its own
+   row when present */
 .cdn-pp__meta {
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
 	gap: 1px;
-	min-width: 0; /* allow track-text ellipsis */
+	min-width: 0;
 	flex: 1 1 auto;
+	overflow: hidden;
 }
 
 .cdn-pp__label {
-	font-weight: 600;
+	font-weight: var(--cdn-weight-semibold, 600);
 	letter-spacing: 0.04em;
-	color: var(--station-primary-mode, var(--cdn-lavender, #d7c7ee));
+	color: var(--cdn-color-text-high, var(--cdn-color-text, #2c1a0e));
 	flex-shrink: 0;
-	transition: color 0.4s ease;
 	line-height: 1.2;
+	font-size: var(--cdn-text-base, 0.875rem);
+}
+
+.awsui-dark-mode .cdn-pp__label {
+	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
 }
 
 .cdn-pp__track {
@@ -101,37 +97,47 @@
 }
 
 /* "now playing" eyebrow — uppercase micro-label above the track text so the
-   hierarchy reads as <station> / now playing / <track>. brand violet at
-   reduced alpha so it doesn't compete with the station-tinted label */
+   hierarchy reads as <station> / now playing / <track>. Theme-token muted
+   color so it doesn't compete with the station-tinted accent */
 .cdn-pp__eyebrow {
-	font-size: 0.55rem;
-	font-weight: 700;
+	font-size: var(--cdn-text-xs, 0.6875rem);
+	font-weight: var(--cdn-weight-bold, 700);
 	letter-spacing: 0.12em;
 	text-transform: uppercase;
-	color: rgba(var(--station-secondary-rgb, 215, 199, 238), 0.75);
+	color: var(--cdn-color-text-medium, #5a3a1e);
 	margin-bottom: 1px;
 }
 
+.awsui-dark-mode .cdn-pp__eyebrow {
+	color: var(--cdn-color-text-medium, rgba(240, 240, 240, 0.6));
+}
+
 .cdn-pp__track-text {
-	color: rgba(240, 240, 240, 0.78);
+	color: var(--cdn-color-text-medium, #5a3a1e);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	max-width: 100%;
-	font-size: 0.72rem;
+	font-size: var(--cdn-text-sm, 0.75rem);
 }
 
-/* fallback link — surfaces a station-specific Spotify playlist / podcast /
-   programs URL when the live nowPlaying string is absent. Inherits the
-   station's primary color so it reads as part of the player surface
-   rather than a generic blue link. Salvaged from feed-krux on
-   2026-05-03 when KruxPlayer was retired in favor of this pill */
+.awsui-dark-mode .cdn-pp__track-text {
+	color: var(--cdn-color-text-medium, rgba(240, 240, 240, 0.6));
+}
+
+/* fallback link — surfaces a station-specific URL when live nowPlaying is
+   absent. Inherits the station's primary so it carries the only station-tinted
+   accent inside the card text content (the left stripe and this link). */
 .cdn-pp__now-playing-link {
-	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	color: var(--station-primary, var(--cdn-purple, #5a1f8a));
 	text-decoration: none;
 	border-bottom: 1px dotted
-		rgba(var(--station-primary-mode-rgb), 0.55);
-	font-size: 0.72rem;
+		color-mix(
+			in srgb,
+			var(--station-primary, var(--cdn-purple, #5a1f8a)) 55%,
+			transparent
+		);
+	font-size: var(--cdn-text-sm, 0.75rem);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -141,18 +147,17 @@
 		border-bottom-color 0.2s ease;
 }
 
+.awsui-dark-mode .cdn-pp__now-playing-link {
+	color: var(--station-primary, var(--cdn-violet-soft, #a080e8));
+}
+
 .cdn-pp__now-playing-link:hover,
 .cdn-pp__now-playing-link:focus-visible {
-	border-bottom-color: var(
-		--station-primary-mode,
-		var(--cdn-violet, #9060f0)
-	);
-	text-decoration: none;
+	border-bottom-color: var(--station-primary, var(--cdn-violet, #9060f0));
 }
 
 /* origin geo line — "City, Region, Country" rendered under the fallback
-   eyebrow when no track meta + no metaFallback is available. monospace +
-   muted so it sits subordinate to the station label / track row */
+   eyebrow when no track meta + no metaFallback is available. tertiary text */
 .cdn-pp__geo {
 	font-family: var(
 		--cdn-font-mono,
@@ -162,8 +167,8 @@
 		Consolas,
 		monospace
 	);
-	font-size: 0.6rem;
-	color: rgba(240, 240, 240, 0.62);
+	font-size: var(--cdn-text-xs, 0.6875rem);
+	color: var(--cdn-color-text-low, #8a6a4e);
 	letter-spacing: 0.02em;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -171,17 +176,21 @@
 	max-width: 100%;
 }
 
-/* eyebrow warn variant — orange-tinted micro-label used during the
-   "retrying" stream-health state so the stall surfaces visually
-   without screaming red. Same scale + weight as default eyebrow */
-.cdn-pp__eyebrow--warn {
-	color: rgba(255, 153, 0, 0.85);
+.awsui-dark-mode .cdn-pp__geo {
+	color: var(--cdn-color-text-low, rgba(240, 240, 240, 0.38));
 }
 
-/* error message — replaces the track row when stream-health = "failed"
-   (auto-retry exhausted). Single line, ellipsis on overflow; the full
-   string is in the title attr so hover surfaces it. Soft red-orange
-   keeps it inside the brand palette (no harsh #f00) */
+/* eyebrow warn variant — used during the "retrying" stream-health state */
+.cdn-pp__eyebrow--warn {
+	color: var(--cdn-status-warning, #d97706);
+}
+
+.awsui-dark-mode .cdn-pp__eyebrow--warn {
+	color: var(--cdn-status-warning, #fbbf24);
+}
+
+/* error message — replaces the track row when stream-health = "failed".
+   Single line, ellipsis on overflow; full string in title attr. */
 .cdn-pp__error {
 	display: flex;
 	flex-direction: column;
@@ -193,313 +202,166 @@
 }
 
 .cdn-pp__error-text {
-	color: rgba(255, 138, 102, 0.92);
+	color: var(--cdn-status-error, #dc2626);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	max-width: 100%;
-	font-size: 0.72rem;
-	font-weight: 600;
+	font-size: var(--cdn-text-sm, 0.75rem);
+	font-weight: var(--cdn-weight-semibold, 600);
 }
 
-/* widen the pill when failed so the friendly Norte-voice error string
-   fits without aggressive truncation. Same cap as has-track:hover */
-.cdn-pp--failed,
-.cdn-pp--failed:hover {
-	max-width: min(560px, calc(100vw - 220px));
+.awsui-dark-mode .cdn-pp__error-text {
+	color: var(--cdn-status-error, #f87171);
 }
 
-/* retry button — circular, station-secondary palette so it reads as
-   a recovery affordance distinct from the stop/skip primary actions.
-   Reuses the .cdn-pp__btn base; only border/bg/color differ */
-.cdn-pp__btn--retry {
-	border-color: rgba(255, 153, 0, 0.55);
-	background: rgba(255, 153, 0, 0.18);
-	color: rgba(255, 195, 130, 0.95);
-}
-
-.cdn-pp__btn--retry:hover {
-	background: rgba(255, 153, 0, 0.32);
-	border-color: rgba(255, 195, 130, 0.95);
-	box-shadow:
-		0 0 0 3px rgba(255, 153, 0, 0.22),
-		0 0 10px rgba(255, 153, 0, 0.3);
-}
-
-/* play / stop button — themed from the active station's primary so the icon,
-   border, and hover ring all reflect the institution's identity. The "playing"
-   stop variant fills with primary at full saturation; the "blocked" resume
-   variant uses station secondary as a contrasting alert tone. */
+/* control buttons — icon-only, theme-token foreground, no neon glow. Square-ish
+   rounded rectangles to match the card silhouette (no circles). The play/pause/
+   skip/retry buttons all share this base; the donate anchor has its own variant. */
 .cdn-pp__btn {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	width: 28px;
-	height: 28px;
-	border-radius: 50%;
-	border: 1px solid rgba(var(--station-primary-mode-rgb), 0.55);
-	background: rgba(var(--station-primary-mode-rgb), 0.18);
-	color: var(--station-primary-mode, rgba(240, 240, 240, 0.87));
-	font-size: 12px;
+	width: 32px;
+	height: 32px;
+	border-radius: var(--cdn-radius-sm, 4px);
+	border: 1px solid rgba(139, 90, 43, 0.32);
+	background: rgba(255, 250, 235, 0.5);
+	color: var(--cdn-color-text-high, #1a0f05);
+	font-size: 13px;
 	cursor: pointer;
 	flex-shrink: 0;
 	transition:
-		background 0.18s ease,
-		border-color 0.18s ease,
-		color 0.4s ease,
-		box-shadow 0.18s ease,
-		transform 0.15s ease;
+		background 0.15s ease,
+		border-color 0.15s ease,
+		color 0.15s ease;
 }
 
 .cdn-pp__btn:hover {
-	background: rgba(var(--station-primary-mode-rgb), 0.34);
-	border-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
-	box-shadow:
-		0 0 0 3px rgba(var(--station-primary-mode-rgb), 0.22),
-		0 0 10px rgba(var(--station-primary-mode-rgb), 0.3);
-	transform: scale(1.06);
+	background: rgba(139, 90, 43, 0.1);
+	border-color: rgba(139, 90, 43, 0.55);
 }
 
 .cdn-pp__btn:focus-visible {
-	outline: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
-	outline-offset: 3px;
+	outline: 2px solid var(--cdn-amber, #8b5a2b);
+	outline-offset: 2px;
 }
 
-/* skip variant — secondary action styling so it sits visually subordinate to
-   the primary play/stop button. Border + bg use station secondary so the
-   "next" affordance reads in the institution's complementary palette */
-.cdn-pp__btn--skip {
-	width: 26px;
-	height: 26px;
-	border-color: rgba(var(--station-secondary-rgb, 215, 199, 238), 0.45);
-	background: rgba(var(--station-secondary-rgb, 215, 199, 238), 0.12);
-	color: rgba(240, 240, 240, 0.78);
-	font-size: 11px;
+.awsui-dark-mode .cdn-pp__btn {
+	border-color: rgba(144, 96, 240, 0.32);
+	background: rgba(10, 10, 46, 0.4);
+	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
 }
 
-.cdn-pp__btn--skip:hover {
-	background: rgba(var(--station-secondary-rgb, 215, 199, 238), 0.28);
-	border-color: var(--station-secondary, rgba(240, 240, 240, 0.95));
-	box-shadow:
-		0 0 0 2px rgba(var(--station-secondary-rgb, 215, 199, 238), 0.22),
-		0 0 8px rgba(var(--station-secondary-rgb, 215, 199, 238), 0.3);
-	color: rgba(240, 240, 240, 0.95);
+.awsui-dark-mode .cdn-pp__btn:hover {
+	background: rgba(144, 96, 240, 0.18);
+	border-color: rgba(144, 96, 240, 0.55);
 }
 
-/* stop variant — actively-playing state. Fill with the station primary so
-   the icon reads as "live, locked in". Glyph color flips to the station's
-   accent (high-contrast neutral) so the square stays legible on the tint.
-
-   glass-button depth: 135deg overlay over the station-primary fill — faint
-   top-light highlight into transparency into a darker bottom shade. The
-   dark-leaning blend keeps KEXP buttercup readable in dark mode (where a
-   white overlay would wash out the pale yellow) while still bevelling
-   deeper hues like KRUX crimson. The cdn-pp pill is always navy chrome so
-   --station-primary-mode resolves to *-dark variants here. The pulse
-   keyframe layers an inset bevel + outer ring; both stay station-tinted. */
-.cdn-pp__btn--stop {
-	background:
-		linear-gradient(
-			135deg,
-			rgba(255, 255, 255, 0.08) 0%,
-			rgba(255, 255, 255, 0) 45%,
-			rgba(0, 0, 0, 0.16) 100%
-		),
-		var(--station-primary-mode, var(--cdn-violet, #9060f0));
-	color: var(--station-accent, rgba(240, 240, 240, 0.95));
-	border-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
-	animation: cdn-pp-pulse 2s ease-in-out infinite;
+.awsui-dark-mode .cdn-pp__btn:focus-visible {
+	outline-color: var(--cdn-violet, #9060f0);
 }
 
-.cdn-pp__btn--stop:hover {
-	background:
-		linear-gradient(
-			135deg,
-			rgba(255, 255, 255, 0.12) 0%,
-			rgba(255, 255, 255, 0) 45%,
-			rgba(0, 0, 0, 0.18) 100%
-		),
-		var(--station-primary-mode, var(--cdn-violet, #9060f0));
-	color: var(--station-accent, rgba(240, 240, 240, 0.95));
-}
-
-/* outer ripple uses --station-primary-mode-rgb so the pulse matches
-   active station hue; inset bevel stack stays constant across both
-   keyframes so the glass depth survives the breathing animation */
-@keyframes cdn-pp-pulse {
-	0%,
-	100% {
-		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.18),
-			inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-			0 0 0 2px rgba(var(--station-primary-mode-rgb), 0.22),
-			0 0 6px rgba(var(--station-primary-mode-rgb), 0.28);
-	}
-	50% {
-		box-shadow:
-			inset 0 1px 0 rgba(255, 255, 255, 0.18),
-			inset 0 -1px 0 rgba(0, 0, 0, 0.18),
-			0 0 0 5px rgba(var(--station-primary-mode-rgb), 0.34),
-			0 0 14px rgba(var(--station-primary-mode-rgb), 0.44);
-	}
-}
-
-/* play variant — idle state on the bootstrapped pill (no prior session play).
-   Same shape + sizing as the stop button so the slot doesn't reflow on
-   play→stop, but uses the station's secondary palette as a subtle cue this
-   is the opt-in trigger rather than the live-locked stop affordance */
-.cdn-pp__btn--play {
-	border-color: rgba(var(--station-primary-mode-rgb), 0.55);
-	background: rgba(var(--station-primary-mode-rgb), 0.18);
-	color: var(--station-primary-mode, rgba(240, 240, 240, 0.95));
-}
-
-.cdn-pp__btn--play:hover {
-	background: rgba(var(--station-primary-mode-rgb), 0.34);
-	border-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
-	box-shadow:
-		0 0 0 3px rgba(var(--station-primary-mode-rgb), 0.22),
-		0 0 10px rgba(var(--station-primary-mode-rgb), 0.3);
-	transform: scale(1.06);
-}
-
-/* resume variant — autoplay was blocked, draw attention via station secondary
-   (KEXP coral / KRUX orange) so it reads as "click here to recover". */
-.cdn-pp__btn--resume {
-	border-color: rgba(var(--station-secondary-rgb, 255, 153, 0), 0.6);
-	background: rgba(var(--station-secondary-rgb, 255, 153, 0), 0.18);
-	color: var(--station-secondary, rgba(240, 240, 240, 0.95));
-}
-
-.cdn-pp__btn--resume:hover {
-	background: rgba(var(--station-secondary-rgb, 255, 153, 0), 0.32);
-	border-color: var(--station-secondary, rgba(240, 240, 240, 0.95));
-	box-shadow:
-		0 0 0 3px rgba(var(--station-secondary-rgb, 255, 153, 0), 0.22),
-		0 0 10px rgba(var(--station-secondary-rgb, 255, 153, 0), 0.3);
-}
-
-/* donate variant — tiny 3-line "donate / to / <key>" pill that surfaces
-   only when the active station has a donateUrl. Reads in station-secondary
-   tint so it sits visually subordinate to the primary play/stop button.
-   Each <span> stacks on its own line via flex-column + line-height:1. */
+/* donate anchor — small text-only pill, theme-token, no glow.
+   Stacks "donate / to / <key>" on three short lines like the prior version */
 .cdn-pp__btn--donate {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	min-width: 38px;
-	height: 32px;
-	padding: 2px 6px;
-	border-radius: 8px;
-	border: 1px solid rgba(var(--station-secondary-rgb, 215, 199, 238), 0.45);
-	background: rgba(var(--station-secondary-rgb, 215, 199, 238), 0.12);
-	color: rgba(240, 240, 240, 0.82);
+	min-width: 44px;
+	height: 36px;
+	padding: 3px 8px;
+	border-radius: var(--cdn-radius-sm, 4px);
+	border: 1px solid rgba(139, 90, 43, 0.32);
+	background: rgba(255, 250, 235, 0.5);
+	color: var(--cdn-color-text-high, #1a0f05);
 	font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont, sans-serif;
 	font-size: 8px;
-	font-weight: 600;
-	line-height: 1;
+	font-weight: var(--cdn-weight-semibold, 600);
+	line-height: 1.05;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
 	text-decoration: none;
 	flex-shrink: 0;
 	gap: 1px;
 	transition:
-		background 0.18s ease,
-		border-color 0.18s ease,
-		color 0.18s ease,
-		box-shadow 0.18s ease,
-		transform 0.15s ease;
+		background 0.15s ease,
+		border-color 0.15s ease,
+		color 0.15s ease;
 }
 
 .cdn-pp__btn--donate:hover {
-	background: rgba(var(--station-secondary-rgb, 215, 199, 238), 0.28);
-	border-color: var(--station-secondary, rgba(240, 240, 240, 0.95));
-	color: rgba(240, 240, 240, 0.98);
-	box-shadow:
-		0 0 0 2px rgba(var(--station-secondary-rgb, 215, 199, 238), 0.22),
-		0 0 8px rgba(var(--station-secondary-rgb, 215, 199, 238), 0.3);
-	transform: scale(1.06);
+	background: rgba(139, 90, 43, 0.1);
+	border-color: rgba(139, 90, 43, 0.55);
 }
 
 .cdn-pp__btn--donate:focus-visible {
-	outline: 2px solid var(--station-secondary, rgba(240, 240, 240, 0.95));
+	outline: 2px solid var(--cdn-amber, #8b5a2b);
 	outline-offset: 2px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-	.cdn-pp {
-		animation: cdn-pp-slide-in 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
-	}
+.awsui-dark-mode .cdn-pp__btn--donate {
+	border-color: rgba(144, 96, 240, 0.32);
+	background: rgba(10, 10, 46, 0.4);
+	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
 }
 
-@media (prefers-reduced-motion: reduce) {
-	.cdn-pp__btn--stop {
-		animation: none;
-	}
-	.cdn-pp {
-		transition:
-			background 0.4s ease,
-			border-color 0.4s ease,
-			box-shadow 0.4s ease;
-	}
+.awsui-dark-mode .cdn-pp__btn--donate:hover {
+	background: rgba(144, 96, 240, 0.18);
+	border-color: rgba(144, 96, 240, 0.55);
 }
 
-@keyframes cdn-pp-slide-in {
-	from {
-		opacity: 0;
-		transform: translateX(20px);
-	}
-	to {
-		opacity: 1;
-		transform: translateX(0);
-	}
+.awsui-dark-mode .cdn-pp__btn--donate:focus-visible {
+	outline-color: var(--cdn-violet, #9060f0);
 }
 
-/* Mobile (<=600px): the v0.0.0068 fix hid the entire .cdn-pp pill because
-   its dark navy 0.86-alpha bg painted opaquely over the right-edge top-nav
-   utility buttons (locale flag, theme toggle, sign-in) in light mode, making
-   the locale flag look like it had collapsed into a More overflow (Cloudscape
-   collapse is actually disabled via disableUtilityCollapse:true). In dark
-   mode the navy pill blended with the navy nav so the overlap was invisible
-   — that asymmetry was the original bug.
-   v0.0.0083: bryan asked where the donate button went on phones. It was a
-   side-effect victim of `.cdn-pp { display:none }`. Fix: strip the pill
-   chrome (bg / border / shadow / blur), hide every child EXCEPT donate,
-   and re-anchor donate as a slim affordance in the same top-right slot.
-   Audio keeps playing (the <audio> element stays mounted via .cdn-pp itself
-   which we now keep in the DOM with display:flex but no visual chrome).
-   Trade-off: stop / skip / retry buttons are mobile-invisible — phone users
-   can stop playback only via OS media-session controls. Acceptable because
-   bryan explicitly prioritized donate visibility. */
+/* retry / play / stop / skip / resume — all reuse the .cdn-pp__btn base.
+   No per-variant tinting; theme tokens carry the look. The stop button gets
+   a faint station-tinted background so the active-playing state still reads. */
+.cdn-pp__btn--stop {
+	background: color-mix(
+		in srgb,
+		var(--station-primary, var(--cdn-violet, #9060f0)) 18%,
+		rgba(255, 250, 235, 0.5)
+	);
+	border-color: var(--station-primary, var(--cdn-violet, #9060f0));
+}
+
+.awsui-dark-mode .cdn-pp__btn--stop {
+	background: color-mix(
+		in srgb,
+		var(--station-primary, var(--cdn-violet, #9060f0)) 22%,
+		rgba(10, 10, 46, 0.4)
+	);
+	border-color: var(--station-primary, var(--cdn-violet, #9060f0));
+}
+
+/* Mobile (<=600px): keep all controls visible — the card is in-flow now,
+   no overlap with top-nav utility buttons, so we don't need the prior
+   "hide everything except donate" fallback. Just shrink padding + gaps. */
 @media (max-width: 600px) {
+	.cdn-player-slot {
+		margin-bottom: 12px;
+		min-height: 56px;
+	}
 	.cdn-pp {
-		/* strip pill chrome — keep flex container + fixed positioning so the
-		   donate child anchors to the same nav slot, just without the navy
-		   bg that was eating the locale flag */
-		background: none !important;
-		border: none !important;
-		box-shadow: none !important;
-		backdrop-filter: none !important;
-		-webkit-backdrop-filter: none !important;
-		padding: 6px 0 !important;
-		max-width: none !important;
-		right: 152px; /* tighter offset — no pill bg means we can sit closer to utility buttons without colliding */
+		gap: 8px;
+		padding: 8px 10px;
+		min-height: 56px;
+		font-size: var(--cdn-text-xs, 0.6875rem);
 	}
-	/* hide every direct child except donate. headphones / meta / stop / skip
-	   / retry / resume all collapse; only the donate anchor surfaces */
-	.cdn-pp > *:not(.cdn-pp__btn--donate) {
-		display: none !important;
+	.cdn-pp__label {
+		font-size: var(--cdn-text-sm, 0.75rem);
 	}
-	/* shrink donate slightly so it doesn't dominate the nav bar on narrow
-	   viewports, and add a translucent backplate so the gold/coral text
-	   stays legible against either cream or navy nav bg */
-	.cdn-pp__btn--donate {
-		min-width: 34px;
+	.cdn-pp__btn {
+		width: 28px;
 		height: 28px;
+		font-size: 12px;
+	}
+	.cdn-pp__btn--donate {
+		min-width: 38px;
+		height: 30px;
 		font-size: 7px;
-		background: rgba(10, 10, 46, 0.55);
-		backdrop-filter: blur(6px);
-		-webkit-backdrop-filter: blur(6px);
 	}
 }

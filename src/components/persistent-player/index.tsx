@@ -412,9 +412,6 @@ function PersistentPlayerBar({
 				onPlay={handlePlay}
 				onPause={handlePause}
 			/>
-			<span className="cdn-pp__headphones" aria-hidden="true">
-				🎧
-			</span>
 			<span className="cdn-pp__meta">
 				<span className="cdn-pp__label">{state.stationLabel}</span>
 				{showFailedUI ? (
