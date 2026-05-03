@@ -212,15 +212,16 @@ describe("buildStarBulbTips", () => {
 		}
 	});
 
-	it("v0.0.0113 — the 6th tip is the center bulb at 1/3 the outer-arm radius", () => {
+	it("v0.0.0113 — the 6th tip is the center bulb using STAR_CENTER_BULB_RADIUS_RATIO", () => {
 		const r = 20;
 		const tips = buildStarBulbTips(0, 0, r);
 		const center = tips[STAR_BULB_COUNT];
 		expect(center.cx).toBe(0);
 		expect(center.cy).toBe(0);
 		expect(center.r).toBeCloseTo(r * STAR_CENTER_BULB_RADIUS_RATIO, 4);
-		// Exactly 1/3 the outer-arm bulb radius.
-		expect(center.r).toBeCloseTo((r * STAR_BULB_RADIUS_RATIO) / 3, 4);
+		// Center bulb is decoupled from STAR_BULB_RADIUS_RATIO — held at the
+		// pre-halved absolute size (0.06 = original 0.18 / 3).
+		expect(STAR_CENTER_BULB_RADIUS_RATIO).toBeCloseTo(0.06, 4);
 		expect(center.cycleIndex).toBe(STAR_BULB_COUNT);
 	});
 
