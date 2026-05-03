@@ -556,8 +556,8 @@ export const STREAMS: StreamDef[] = [
 		// most useful "what they're playing" affordance available
 		metaFallback: {
 			href: "https://conceptoradial.com/es/podcast",
-			labelEn: "podcasts",
-			labelEs: "podcasts",
+			labelEn: "podcasts available",
+			labelEs: "podcasts disponibles",
 		},
 		// Tec de Monterrey CEDETEC — Centro de Diseño y Tecnología on the
 		// Ciudad de México (Tlalpan) campus, NOT the Monterrey home campus.
@@ -809,13 +809,16 @@ export function hexToRgbTuple(hex: string): string {
  * Example: formatLocation({ city: "Las Cruces", region: "New Mexico", country: "USA" })
  *   -> "Las Cruces, New Mexico, USA"
  * Example: formatLocation({ city: "Ciudad de México", region: "Ciudad de México", country: "México" })
- *   -> "Ciudad de México, Ciudad de México, México"
+ *   -> "Ciudad de México, México"
  *
- * For CDMX entries the city + region intentionally repeat — Ciudad de México is
- * both the city and the entidad federativa, mirroring how locals refer to it.
+ * When city === region (CDMX stations) the duplicate segment is dropped so the
+ * line reads "Ciudad de México, México" rather than repeating the name twice.
  * Spanish accents are preserved verbatim from the source object so the output
  * reads naturally regardless of the user's UI locale.
  */
 export function formatLocation(loc: StreamLocation): string {
+	if (loc.city === loc.region) {
+		return `${loc.city}, ${loc.country}`;
+	}
 	return `${loc.city}, ${loc.region}, ${loc.country}`;
 }

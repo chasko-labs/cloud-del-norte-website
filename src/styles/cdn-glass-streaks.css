@@ -1941,3 +1941,53 @@ body.cdn-stream-playing
 		transform: none;
 	}
 }
+
+/* ==========================================================================
+   Phase B — breadcrumb flux beat-flash
+
+   The "Cloud Del Norte" home link already composites drop-shadow filters for
+   its glow treatment. Layering brightness() via a body-class wrapper adds the
+   flux beat on top without disturbing the existing drop-shadow chain.
+   --cdn-flux is a 0..1 beat-onset signal (peaks on kick/snare transients).
+   ========================================================================== */
+body.cdn-stream-playing [class*="awsui_breadcrumbs_"] li:first-child a {
+	filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
+		drop-shadow(1px 0 0 rgba(44, 18, 6, 0.22))
+		drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22))
+		drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
+		drop-shadow(0 0 18px rgba(139, 90, 43, 0.22))
+		brightness(calc(1 + var(--cdn-flux, 0) * 0.28));
+}
+
+.awsui-dark-mode body.cdn-stream-playing
+	[class*="awsui_breadcrumbs_"]
+	li:first-child
+	a {
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
+		drop-shadow(0 0 8px rgba(144, 96, 240, 0.5))
+		drop-shadow(0 0 22px rgba(144, 96, 240, 0.25))
+		brightness(calc(1 + var(--cdn-flux, 0) * 0.28));
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body.cdn-stream-playing [class*="awsui_breadcrumbs_"] li:first-child a,
+	.awsui-dark-mode body.cdn-stream-playing
+		[class*="awsui_breadcrumbs_"]
+		li:first-child
+		a {
+		/* preserve existing static drop-shadow, drop the brightness() pulse */
+		filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
+			drop-shadow(1px 0 0 rgba(44, 18, 6, 0.22))
+			drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22))
+			drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
+			drop-shadow(0 0 18px rgba(139, 90, 43, 0.22));
+	}
+	.awsui-dark-mode body.cdn-stream-playing
+		[class*="awsui_breadcrumbs_"]
+		li:first-child
+		a {
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
+			drop-shadow(0 0 8px rgba(144, 96, 240, 0.5))
+			drop-shadow(0 0 22px rgba(144, 96, 240, 0.25));
+	}
+}
