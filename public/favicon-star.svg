@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <title>Cloud Del Norte</title>
+  <!-- 5-point star matching the El Paso Star landmark on the Franklin Mountains.
+       Geometry mirrors path-builder.ts: R=14, inner ratio=0.32, rotation=-11deg,
+       bulb ratio=0.09. Center (16,16). -->
+  <path
+    d="M 13.329 2.257 L 17.893 11.940 L 28.245 9.213 L 20.447 16.546 L 26.239 25.548 L 16.855 20.398 L 10.083 28.688 L 12.082 18.172 L 2.104 14.294 L 12.724 12.945 Z"
+    fill="rgba(144, 96, 240, 0.15)"
+    stroke="#9060f0"
+    stroke-width="1"
+    stroke-linejoin="round"/>
+  <!-- Outer arm tip bulbs — lavender, one per point, mirroring the mountain landmark -->
+  <circle cx="13.329" cy="2.257"  r="1.5" fill="#d7c7ee"/>
+  <circle cx="28.245" cy="9.213"  r="1.5" fill="#d7c7ee"/>
+  <circle cx="26.239" cy="25.548" r="1.5" fill="#d7c7ee"/>
+  <circle cx="10.083" cy="28.688" r="1.5" fill="#d7c7ee"/>
+  <circle cx="2.104"  cy="14.294" r="1.5" fill="#d7c7ee"/>
+</svg>
