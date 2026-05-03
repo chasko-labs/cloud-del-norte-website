@@ -799,6 +799,22 @@
 	text-decoration: none !important;
 }
 
+/* Spanish locale fit — "Nube of the North > Novedades" is ~23% wider than
+   the English "Cloud Del Norte > Feed" (Novedades=9 chars vs Feed=4).
+   On phones the page-name segment overflows the breadcrumb strip. Trim
+   the Cinzel home wordmark floor + tighten tracking so both segments
+   share the row at ≤600px. lang attr set on documentElement by
+   initializeLocale() in src/utils/locale.ts → "es" or "en". */
+@media (max-width: 600px) {
+	html[lang="es"] [class*="awsui_breadcrumbs_"] li:first-child a {
+		font-size: clamp(0.95rem, 4.7vw, 1.95rem) !important;
+		letter-spacing: 0.04em !important;
+	}
+	html[lang="es"] [class*="awsui_breadcrumbs_"] li:not(:first-child) {
+		font-size: 0.92em;
+	}
+}
+
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a:hover,
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a:focus-visible {
 	filter: drop-shadow(0 0 12px rgba(144, 96, 240, 0.55));

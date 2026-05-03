@@ -1,16 +1,14 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-// Narrow article card variant for the side-nav drawer column. Mirrors the
-// feed's article card visual language (glass plate, brand palette) but with
-// tighter sizing (~280-300px max width) so it fits beneath the SideNavigation
-// items without forcing a horizontal scroll on the drawer.
+// Narrow article card variant rendered inside the right-side help panel
+// (Cloudscape AppLayout `tools` slot — see help-panel-home.tsx). Mirrors the
+// feed's article card visual language (glass plate, brand palette) at a
+// tight ~280-300px width so it fits in the panel column.
 //
-// Cloudscape's SideNavigation `items` prop only supports its built-in item
-// types (link / section / divider / expandable-link-group / link-group) — no
-// arbitrary JSX. So this card is rendered OUTSIDE the SideNavigation tree, as
-// a floating block under a labelled section header that lives in the same
-// React fragment. See ../index.tsx for the wiring.
+// w24 v0.0.0098 originally placed these under the LEFT side-navigation
+// drawer; w24 v0.0.0104 moved them to the right help panel under the
+// organizer's section because they were blocking Liora.
 
 import "./side-panel-card.css";
 

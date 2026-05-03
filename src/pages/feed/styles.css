@@ -391,16 +391,17 @@
 	min-height: 0;
 }
 
-/* ---------- Builder center deck — pinned primaries + hover-scroll carousel
-   Cards live in a single horizontal scroll-snap track. The first 4 cards
-   are visible by default at desktop widths (4-up). On mouseenter the
-   parent JS auto-advances scrollLeft every CAROUSEL_ADVANCE_MS ms, which
-   slides the carousel-only cards into view. prefers-reduced-motion turns
-   off both the JS timer (component) and CSS scroll-behavior here. */
+/* ---------- Builder center deck — 4-card window with rotation
+   v0.0.0105 — bryan: "stick to showing 4 at a time with ability to rotate
+   through the article cards to see the rest". Window of exactly 4 cards;
+   chevron buttons + auto-advance every AUTO_ADVANCE_MS swap which 4 are
+   shown. Wrap-around at the end (last window borrows the first card(s)).
+   Component layer owns the timer + window math; CSS just lays out the
+   visible 4 in a grid + handles fade-in animation per window swap. */
 
 .feed-builder-deck {
 	position: relative;
-	margin: 0 -4px; /* let cards bleed slightly to soften the edge */
+	margin: 0 -4px;
 }
 
 .feed-mini-grid {
@@ -410,48 +411,114 @@
 	counter-reset: mini-card;
 }
 
-.feed-mini-grid--scroll {
+/* responsive window: 1col mobile → 2col narrow tablet → 4col desktop.
+   Mobile shows 4 stacked cards, still navigable via chevrons. Total deck
+   pages remain the same since the component window size is locked at 4. */
+.feed-mini-grid--window {
 	display: grid;
-	grid-auto-flow: column;
-	grid-auto-columns: minmax(260px, 1fr);
+	grid-template-columns: 1fr;
 	gap: 12px;
-	overflow-x: auto;
-	scroll-snap-type: x mandatory;
-	scroll-behavior: smooth;
-	scrollbar-width: thin;
 }
 
-.feed-mini-grid--scroll::-webkit-scrollbar {
-	height: 6px;
-}
-.feed-mini-grid--scroll::-webkit-scrollbar-thumb {
-	background: rgba(144, 96, 240, 0.35);
-	border-radius: 3px;
+@media (min-width: 600px) {
+	.feed-mini-grid--window {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
 }
 
 @media (min-width: 900px) {
-	/* 4 primaries fit visibly; carousel-only cards reveal on hover-scroll */
-	.feed-mini-grid--scroll {
-		grid-auto-columns: minmax(0, 1fr);
+	.feed-mini-grid--window {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
-		grid-auto-flow: column;
 	}
+}
+
+/* fade-in on window swap. Component remounts the <ol> via `key` so this
+   animation re-runs on every rotation. reduced-motion suppression below. */
+@keyframes feed-builder-window-fade {
+	from {
+		opacity: 0;
+		transform: translateY(4px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.feed-mini-grid--window {
+		animation: feed-builder-window-fade 0.32s ease-out;
+	}
+}
+
+/* chevron + counter row sits below the window. Chevrons use the standard
+   feed-carousel button styling tokens for consistency with other rotators
+   on the page. */
+.feed-builder-deck__controls {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	margin-top: 6px;
+}
+
+.feed-builder-deck__chev {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 2rem;
+	height: 2rem;
+	padding: 0;
+	border: 1px solid rgba(139, 90, 43, 0.3);
+	border-radius: var(--cdn-radius-sm, 4px);
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	font-size: 1.25rem;
+	line-height: 1;
+	transition:
+		background 0.15s ease,
+		border-color 0.15s ease,
+		color 0.15s ease;
+}
+
+.awsui-dark-mode .feed-builder-deck__chev {
+	border-color: rgba(144, 96, 240, 0.3);
+}
+
+.feed-builder-deck__chev:hover {
+	background: rgba(144, 96, 240, 0.08);
+	border-color: rgba(144, 96, 240, 0.5);
+	color: var(--cdn-violet, #9060f0);
+}
+
+.feed-builder-deck__chev:focus-visible {
+	outline: 2px solid var(--cdn-violet, #9060f0);
+	outline-offset: 2px;
+}
+
+.feed-builder-deck__counter {
+	font-size: 0.75rem;
+	color: var(--cdn-color-text-muted);
+	font-variant-numeric: tabular-nums;
+	letter-spacing: 0.04em;
+	min-width: 3em;
+	text-align: center;
 }
 
 .feed-mini-card {
 	margin: 0;
 	min-width: 0;
-	scroll-snap-align: start;
 }
 
 .feed-mini-card__link {
+	position: relative;
 	display: flex;
-	flex-direction: row;
-	align-items: flex-start;
-	gap: 10px;
-	min-height: 132px;
+	flex-direction: column;
+	gap: 6px;
+	min-height: 96px;
 	height: 100%;
-	padding: 12px;
+	padding: 10px 12px 10px 12px;
 	border: 1px solid rgba(139, 90, 43, 0.22);
 	border-radius: var(--cdn-radius-md, 8px);
 	background: #faf7f0;
@@ -505,58 +572,79 @@
 	outline-offset: 2px;
 }
 
-.feed-mini-card__number {
-	flex-shrink: 0;
-	font-size: 1.5rem;
-	font-weight: 800;
+/* rank pill — small chip in the top-right corner so it doesn't compete
+   with the title for the first-fixation read. The accent color matches
+   the per-card stripe so the rank reads as part of the same identity. */
+.feed-mini-card__rank {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1.6rem;
+	height: 1.1rem;
+	padding: 0 6px;
+	font-size: 0.6875rem;
+	font-weight: 700;
 	line-height: 1;
-	letter-spacing: -0.03em;
+	letter-spacing: 0.02em;
 	font-variant-numeric: tabular-nums;
-	font-family: ui-serif, Georgia, "Times New Roman", serif;
-	width: 1.5rem;
-	text-align: center;
+	border-radius: 999px;
+	background: rgba(139, 90, 43, 0.12);
+	color: var(--cdn-amber, #8b5a2b);
 }
 
-.feed-mini-card--n1 .feed-mini-card__number,
-.feed-mini-card--n5 .feed-mini-card__number {
+.awsui-dark-mode .feed-mini-card__rank {
+	background: rgba(144, 96, 240, 0.18);
+}
+
+.feed-mini-card--n1 .feed-mini-card__rank {
+	background: rgba(144, 96, 240, 0.14);
 	color: var(--cdn-violet, #9060f0);
 }
-.feed-mini-card--n2 .feed-mini-card__number,
-.feed-mini-card--n6 .feed-mini-card__number {
+.feed-mini-card--n2 .feed-mini-card__rank {
+	background: rgba(255, 153, 0, 0.14);
 	color: var(--cdn-aws-orange, #ff9900);
 }
-.feed-mini-card--n3 .feed-mini-card__number,
-.feed-mini-card--n7 .feed-mini-card__number {
+.feed-mini-card--n3 .feed-mini-card__rank {
+	background: rgba(90, 31, 138, 0.14);
 	color: var(--cdn-purple, #5a1f8a);
 }
-.feed-mini-card--n4 .feed-mini-card__number {
+.feed-mini-card--n4 .feed-mini-card__rank {
+	background: rgba(139, 90, 43, 0.14);
 	color: var(--cdn-amber, #8b5a2b);
 }
 
 .feed-mini-card__body {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 6px;
 	min-width: 0;
 	overflow: hidden;
 	flex: 1;
+	/* leave space for the rank pill in the top-right corner */
+	padding-right: 2.4rem;
 }
 
 .feed-mini-card__title {
 	font-size: 0.8125rem;
 	font-weight: var(--cdn-weight-medium);
-	line-height: 1.25;
+	line-height: 1.3;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 }
 
+/* author + badge in a single bottom row, anchored to the bottom of the
+   card so cards with shorter titles don't float their meta high. */
 .feed-mini-card__meta {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 6px;
+	margin-top: auto;
 	font-size: 0.6875rem;
 	color: var(--cdn-color-text-muted);
 	letter-spacing: 0.02em;
@@ -566,22 +654,7 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	max-width: 60%;
-}
-
-.feed-mini-card__sub {
-	font-style: italic;
-	opacity: 0.85;
-}
-
-.feed-mini-card__blurb {
-	font-size: 0.75rem;
-	line-height: 1.35;
-	color: var(--cdn-color-text-secondary, var(--cdn-color-text-muted));
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
+	max-width: 100%;
 }
 
 /* ---------- builder badge pills ---------- */
@@ -616,10 +689,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.feed-mini-grid--scroll {
-		scroll-behavior: auto;
+	.feed-mini-grid--window {
+		animation: none;
 	}
-	.feed-mini-card__link {
+	.feed-mini-card__link,
+	.feed-builder-deck__chev {
 		transition: none;
 	}
 	.feed-mini-card__link:hover,
@@ -1310,6 +1384,47 @@
    so the transition from loading does not shift the page layout. */
 .feed-next-meetup {
 	min-height: 180px;
+}
+
+/* ---------- Past meetup spotlight (es-MX fallback) ---------- */
+/* Renders inside the NextMeetup container when locale === "mx" + no upcoming
+   event is loadable. Compact 4-speaker list — name (bold), role (secondary),
+   optional link label (italic muted). Pure list reset so it sits flush inside
+   the SpaceBetween rhythm without extra indent. */
+.feed-past-meetup__speakers {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-direction: column;
+	gap: var(--cdn-space-xs, 6px);
+}
+
+.feed-past-meetup__speaker {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding-left: var(--cdn-space-sm, 8px);
+	border-left: 2px solid rgba(144, 96, 240, 0.35);
+}
+
+.feed-past-meetup__speaker-name {
+	font-size: var(--cdn-text-sm, 0.8125rem);
+	font-weight: var(--cdn-weight-medium, 500);
+	color: var(--cdn-color-text-primary);
+}
+
+.feed-past-meetup__speaker-role {
+	font-size: var(--cdn-text-xs, 0.75rem);
+	color: var(--cdn-color-text-secondary);
+	line-height: 1.35;
+}
+
+.feed-past-meetup__speaker-link {
+	font-size: var(--cdn-text-xs, 0.6875rem);
+	font-style: italic;
+	color: var(--cdn-color-text-muted);
+	letter-spacing: 0.02em;
 }
 
 /* ---------- Next meetup section divider ---------- */

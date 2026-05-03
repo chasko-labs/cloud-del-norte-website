@@ -267,6 +267,7 @@
 .hp-social-pill {
 	display: inline-flex;
 	align-items: center;
+	gap: 6px;
 	font-size: var(--cdn-text-sm);
 	font-weight: var(--cdn-weight-semibold);
 	padding: 4px 10px;
@@ -282,6 +283,15 @@
 		transform 0.18s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.18s ease;
 	cursor: pointer;
+}
+
+/* Inline icon glyph (e.g. bluesky butterfly) inside a pill — slight size
+   bump so the unicode reads at parity with the text. */
+.hp-social-pill__icon {
+	font-size: 1.1em;
+	line-height: 1;
+	display: inline-flex;
+	align-items: center;
 }
 
 .hp-social-pill:hover,

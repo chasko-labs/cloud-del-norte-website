@@ -425,6 +425,10 @@ function AppContent({
 	const { t } = useTranslation();
 
 	const [liveKeys, setLiveKeys] = useState<Set<string>>(new Set());
+	// twitch channels confirmed offline — drop from gridOrder so the empty
+	// card doesn't take up a slot. Confirmed via upfront gql probe OR via the
+	// embed SDK OFFLINE event; see twitch-section.tsx for detection.
+	const [offlineKeys, setOfflineKeys] = useState<Set<string>>(new Set());
 
 	const markLive = useCallback((key: string, isLive: boolean) => {
 		setLiveKeys((prev) => {
@@ -437,6 +441,16 @@ function AppContent({
 		});
 	}, []);
 
+	const markOffline = useCallback((key: string, isOffline: boolean) => {
+		setOfflineKeys((prev) => {
+			if (prev.has(key) === isOffline) return prev;
+			const next = new Set(prev);
+			if (isOffline) next.add(key);
+			else next.delete(key);
+			return next;
+		});
+	}, []);
+
 	const { live: andresLive, videoId: andresVideoId } = useAndresLive();
 
 	// sections wired with live callbacks — stable because markLive is stable
@@ -444,18 +458,22 @@ function AppContent({
 		() => ({
 			youtube: <YoutubeCarousel />,
 			twitchAws: (
-				<TwitchAws onLiveChange={(live) => markLive("twitchAws", live)} />
+				<TwitchAws
+					onLiveChange={(live) => markLive("twitchAws", live)}
+					onOfflineChange={(off) => markOffline("twitchAws", off)}
+				/>
 			),
 			twitchAwsOnAir: (
 				<TwitchAwsOnAir
 					onLiveChange={(live) => markLive("twitchAwsOnAir", live)}
+					onOfflineChange={(off) => markOffline("twitchAwsOnAir", off)}
 				/>
 			),
 			andmore: <FeedAndmore />,
 			awsml: <FeedAwsml />,
 			arrowhead: <ArrowheadNews />,
 		}),
-		[markLive],
+		[markLive, markOffline],
 	);
 
 	// stable shuffle — recomputed only if sections reference changes (it won't)
@@ -470,7 +488,9 @@ function AppContent({
 	}, [liveKeys, andresLive]);
 
 	const liveToShow = LIVE_PRIORITY.filter((k) => allLiveKeys.has(k));
-	const gridOrder = shuffledOrder.filter((k) => !allLiveKeys.has(k));
+	const gridOrder = shuffledOrder.filter(
+		(k) => !allLiveKeys.has(k) && !offlineKeys.has(k),
+	);
 
 	return (
 		<ContentLayout

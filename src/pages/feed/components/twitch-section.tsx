@@ -4,6 +4,7 @@
 import Container from "@cloudscape-design/components/container";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
+import { probeTwitchLive } from "../../../lib/twitch-channel-cache";
 
 // Twitch Embed SDK types (loaded via script tag at runtime)
 interface TwitchEmbed {
@@ -23,28 +24,25 @@ declare global {
 	}
 }
 
-// Note on offline behavior + IVS 404 console errors:
+// Offline behavior:
 //
-// When a twitch channel is offline, the embed SDK still attempts to load the
-// IVS HLS master playlist before resolving to its built-in offline UI. That
-// probe surfaces in the console as:
-//   `Player stopping playback - error MasterPlaylist:11
-//    (ErrorNotAvailable code 404 - Failed to load playlist)`
+// Bryan rejects the default Twitch embed offline UI ("AWS is offline — visit
+// AWS"). We hide the entire card when the channel is not currently live.
 //
-// Eliminating the 404 cleanly requires the Twitch Helix API: check
-// /helix/streams?user_login=<channel> for live state, and on offline call
-// /helix/videos?user_id=<id>&first=1&type=archive to swap in the most recent
-// VOD. Helix needs a Bearer token from a Twitch app client_id+secret pair.
-// This project has NO twitch credentials configured (.env.production /
-// .env.local both empty of TWITCH_*), so we fall back to embedding the
-// channel directly per the documented graceful-degradation path. Twitch's
-// own player UI surfaces a "channel offline — see recent broadcasts" panel
-// once the IVS probe resolves; we accept the one-time 404 as the cost of
-// not running a credentialed integration.
+// Detection runs in two layers:
+//   1. Upfront probe via gql.twitch.tv UseLive (unauthenticated public client
+//      id, same call the official twitch.tv bundle uses to render the green
+//      LIVE dot). Cached per-session via twitch-channel-cache. When this
+//      returns { live: false } we never mount the embed at all → no flash, no
+//      404 console noise from the IVS playlist probe.
+//   2. Reactive fallback via the Embed SDK's OFFLINE event. This catches the
+//      case where the upfront probe returned null (transient failure: 5xx,
+//      network drop, malformed payload) so we still mount-then-hide rather
+//      than show the offline CTA forever.
 //
-// To upgrade later: add VITE_TWITCH_CLIENT_ID + a server-side token-mint
-// endpoint, then call helix from a useEffect that gates whether to mount
-// the embed with `channel:` (live) vs `video:` (most recent VOD).
+// Live discovery surfaces upward via the existing onLiveChange callback
+// (hero-promotion in feed/app.tsx). Offline discovery surfaces upward via the
+// new onOfflineChange callback so the parent can drop the empty grid cell.
 const CHANNELS = [
 	{ id: "aws", label: "AWS" },
 	{ id: "awsonair", label: "AWS on Air" },
@@ -75,10 +73,12 @@ function TwitchChannelEmbed({
 	channelId,
 	hostname,
 	onLiveChange,
+	onOfflineChange,
 }: {
 	channelId: string;
 	hostname: string;
 	onLiveChange?: (isLive: boolean) => void;
+	onOfflineChange?: (isOffline: boolean) => void;
 }) {
 	const { t } = useTranslation();
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -103,13 +103,16 @@ function TwitchChannelEmbed({
 			embed.addEventListener(twitch.Player.OFFLINE, () => {
 				setLive(false);
 				onLiveChange?.(false);
+				// reactive hide path: probe was null/transient and SDK confirms offline
+				onOfflineChange?.(true);
 			});
 			embed.addEventListener(twitch.Player.ONLINE, () => {
 				setLive(true);
 				onLiveChange?.(true);
+				onOfflineChange?.(false);
 			});
 		});
-	}, [channelId, hostname, onLiveChange]);
+	}, [channelId, hostname, onLiveChange, onOfflineChange]);
 
 	return (
 		<div className="feed-twitch__channel">
@@ -121,8 +124,6 @@ function TwitchChannelEmbed({
 					</span>
 				</span>
 			)}
-			{/* Twitch embed always visible — SDK shows Twitch's own offline screen
-			    (with recent-broadcasts navigation) when the channel is down. */}
 			<div ref={containerRef} style={{ width: "100%", height: 300 }} />
 		</div>
 	);
@@ -139,52 +140,85 @@ function useHostname(): string | null {
 function TwitchChannelCard({
 	channel,
 	onLiveChange,
+	onOfflineChange,
 }: {
 	channel: (typeof CHANNELS)[number];
 	onLiveChange?: (isLive: boolean) => void;
+	onOfflineChange?: (isOffline: boolean) => void;
 }) {
-	const { t } = useTranslation();
 	const hostname = useHostname();
+	// upfront probe — null = unknown/transient (mount embed, rely on SDK event),
+	// true = live (mount), false = offline (skip mount entirely, signal up).
+	const [probeLive, setProbeLive] = useState<boolean | null>(null);
+
+	useEffect(() => {
+		let cancelled = false;
+		probeTwitchLive(channel.id).then((result) => {
+			if (cancelled) return;
+			if (result === null) {
+				// transient failure — leave probeLive null so embed mounts and
+				// SDK OFFLINE/ONLINE events take over
+				setProbeLive(null);
+				return;
+			}
+			setProbeLive(result.live);
+			if (!result.live) onOfflineChange?.(true);
+			else onLiveChange?.(true);
+		});
+		return () => {
+			cancelled = true;
+		};
+	}, [channel.id, onLiveChange, onOfflineChange]);
+
+	// confirmed offline by upfront probe → render nothing (parent hides cell)
+	if (probeLive === false) return null;
+
+	if (!hostname) {
+		// SSR / pre-hydration — no embed, no fallback CTA (Bryan rejects it)
+		return null;
+	}
+
 	return (
 		<Container>
-			{hostname ? (
-				<TwitchChannelEmbed
-					channelId={channel.id}
-					hostname={hostname}
-					onLiveChange={onLiveChange}
-				/>
-			) : (
-				<p className="feed-twitch__fallback">
-					<a
-						href={`https://www.twitch.tv/${channel.id}`}
-						target="_blank"
-						rel="noopener noreferrer"
-					>
-						{t("feedPage.twitchWatchOn")} — {channel.label}
-					</a>
-				</p>
-			)}
+			<TwitchChannelEmbed
+				channelId={channel.id}
+				hostname={hostname}
+				onLiveChange={onLiveChange}
+				onOfflineChange={onOfflineChange}
+			/>
 		</Container>
 	);
 }
 
 export function TwitchAws({
 	onLiveChange,
+	onOfflineChange,
 }: {
 	onLiveChange?: (isLive: boolean) => void;
+	onOfflineChange?: (isOffline: boolean) => void;
 } = {}) {
 	return (
-		<TwitchChannelCard channel={CHANNELS[0]} onLiveChange={onLiveChange} />
+		<TwitchChannelCard
+			channel={CHANNELS[0]}
+			onLiveChange={onLiveChange}
+			onOfflineChange={onOfflineChange}
+		/>
 	);
 }
 
 export function TwitchAwsOnAir({
 	onLiveChange,
+	onOfflineChange,
 }: {
 	onLiveChange?: (isLive: boolean) => void;
+	onOfflineChange?: (isOffline: boolean) => void;
 } = {}) {
 	return (
-		<TwitchChannelCard channel={CHANNELS[1]} onLiveChange={onLiveChange} />
+		<TwitchChannelCard
+			channel={CHANNELS[1]}
+			onLiveChange={onLiveChange}
+			onOfflineChange={onOfflineChange}
+		/>
 	);
 }
 

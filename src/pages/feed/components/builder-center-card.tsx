@@ -13,22 +13,31 @@ import {
 	deckForLocale,
 } from "./builder-center-data";
 
-const MAX_TITLE = 65;
+const MAX_TITLE = 90; // 2-line clamp handles wrap; this caps absurd outliers
 const truncate = (s: string) =>
 	s.length > MAX_TITLE ? `${s.slice(0, MAX_TITLE)}…` : s;
 
-// hover auto-advance: scroll the carousel one card to the right every
-// CAROUSEL_ADVANCE_MS while the pointer is over the section. Pause on
-// click / touch / pointerdown so a user can read without the deck moving
-// out from under them. prefers-reduced-motion suppresses the timer
-// entirely (no auto-advance, no smooth scroll).
-const CAROUSEL_ADVANCE_MS = 3000;
+const VISIBLE = 4;
+const AUTO_ADVANCE_MS = 7000;
 
-function CardItem({ card, n }: { card: Card; n: number }) {
+// v0.0.0105 — bryan: "rethink the builder section a bit - stick to showing 4
+// at a time with ability to rotate through the article cards to see the
+// rest". Window of 4 cards, prev/next chevrons + auto-advance every Ns,
+// wrap-around at the end so the last window borrows the first card(s).
+// prefers-reduced-motion: kills auto-advance + the fade animation (instant
+// swap). Each card shows: rank #, 2-line title clamp, author, badge.
+// Drops blurb + sub.
+
+interface VisibleCard extends Card {
+	rank: number; // 1..N visible rank stays stable per source-array index
+}
+
+function CardItem({ card }: { card: VisibleCard }) {
 	const badge = badgeForAuthor(card.author);
+	const n = card.rank;
 	return (
 		<li
-			className={`feed-mini-card feed-mini-card--n${n}`}
+			className={`feed-mini-card feed-mini-card--n${((n - 1) % 4) + 1}`}
 			data-author={card.author}
 		>
 			<a
@@ -37,19 +46,15 @@ function CardItem({ card, n }: { card: Card; n: number }) {
 				rel="noopener noreferrer"
 				className="feed-mini-card__link"
 			>
-				<span className="feed-mini-card__number" aria-hidden="true">
-					{n}
+				<span className="feed-mini-card__rank" aria-hidden="true">
+					#{n}
 				</span>
 				<div className="feed-mini-card__body">
 					<span className="feed-mini-card__title">{truncate(card.title)}</span>
 					<span className="feed-mini-card__meta">
 						<span className="feed-mini-card__author">{card.author}</span>
 						{badge && <BuilderBadge badge={badge} />}
-						{card.sub && (
-							<span className="feed-mini-card__sub">{card.sub}</span>
-						)}
 					</span>
-					<span className="feed-mini-card__blurb">{card.blurb}</span>
 				</div>
 			</a>
 		</li>
@@ -59,12 +64,9 @@ function CardItem({ card, n }: { card: Card; n: number }) {
 export default function BuilderCenterCard() {
 	const { t, locale } = useTranslation();
 	const deck = useMemo(() => deckForLocale(locale), [locale]);
-	const carouselRef = useRef<HTMLOListElement>(null);
-	const [paused, setPaused] = useState(false);
-	const [hovering, setHovering] = useState(false);
+	const total = deck.cards.length;
 
-	// honor prefers-reduced-motion — kill auto-advance entirely. Reads the
-	// match once on mount; subscribers re-evaluate on media query change.
+	// honor prefers-reduced-motion — kill auto-advance + transition.
 	const [reducedMotion, setReducedMotion] = useState(false);
 	useEffect(() => {
 		if (typeof window === "undefined" || !window.matchMedia) return;
@@ -75,31 +77,58 @@ export default function BuilderCenterCard() {
 		return () => mq.removeEventListener("change", handler);
 	}, []);
 
-	const advance = useCallback(() => {
-		const el = carouselRef.current;
-		if (!el) return;
-		// step = average card width; falls back to el.clientWidth if the
-		// rendered children haven't sized yet (e.g. font load race).
-		const first = el.querySelector<HTMLElement>(".feed-mini-card");
-		const step = first
-			? first.getBoundingClientRect().width + 12
-			: el.clientWidth;
-		const maxScroll = el.scrollWidth - el.clientWidth;
-		const next = el.scrollLeft + step;
-		el.scrollTo({
-			left: next > maxScroll - 4 ? 0 : next,
-			behavior: reducedMotion ? "auto" : "smooth",
-		});
-	}, [reducedMotion]);
+	// `start` is the index into deck.cards of the first card in the visible
+	// window. Window steps by VISIBLE; wraps modulo total. Pause auto-advance
+	// when the user hovers OR has interacted via chevrons (so reading isn't
+	// hijacked).
+	const [start, setStart] = useState(0);
+	const [paused, setPaused] = useState(false);
+	const interactedRef = useRef(false);
+
+	const step = useCallback(
+		(dir: 1 | -1) => {
+			if (total <= VISIBLE) return;
+			setStart((s) => {
+				const next = (s + dir * VISIBLE + total) % total;
+				return next;
+			});
+		},
+		[total],
+	);
+
+	const next = useCallback(() => step(1), [step]);
+	const prev = useCallback(() => step(-1), [step]);
 
 	useEffect(() => {
-		if (!hovering || paused || reducedMotion) return;
-		if (deck.carousel.length === 0) return;
-		const id = setInterval(advance, CAROUSEL_ADVANCE_MS);
+		if (reducedMotion || paused || interactedRef.current) return;
+		if (total <= VISIBLE) return;
+		const id = setInterval(() => {
+			setStart((s) => (s + VISIBLE) % total);
+		}, AUTO_ADVANCE_MS);
 		return () => clearInterval(id);
-	}, [hovering, paused, reducedMotion, deck.carousel.length, advance]);
+	}, [reducedMotion, paused, total]);
 
-	const allCards = useMemo(() => [...deck.primary, ...deck.carousel], [deck]);
+	// Build visible window with wrap-around. Each entry carries a stable
+	// rank (1..total) tied to the underlying deck index so the # stays
+	// associated with the article, not the window slot.
+	const visible = useMemo<VisibleCard[]>(() => {
+		const out: VisibleCard[] = [];
+		const take = Math.min(VISIBLE, total);
+		for (let i = 0; i < take; i++) {
+			const idx = (start + i) % total;
+			out.push({ ...deck.cards[idx], rank: idx + 1 });
+		}
+		return out;
+	}, [deck.cards, start, total]);
+
+	const canRotate = total > VISIBLE;
+	const windowCount = canRotate ? Math.ceil(total / VISIBLE) : 1;
+	const windowIndex = canRotate ? Math.floor(start / VISIBLE) % windowCount : 0;
+
+	const handleUserStep = (dir: 1 | -1) => {
+		interactedRef.current = true;
+		step(dir);
+	};
 
 	return (
 		<Container
@@ -116,26 +145,52 @@ export default function BuilderCenterCard() {
 				</Header>
 			}
 		>
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: hover/touch handlers are pure presentation — they only auto-scroll the carousel for sighted/pointer users; the links inside remain fully keyboard- and screen-reader-accessible without these handlers */}
+			{/* biome-ignore lint/a11y/noStaticElementInteractions: pointer handlers only pause auto-advance — keyboard / SR users use the chevron buttons below */}
 			<div
 				className="feed-builder-deck"
-				onMouseEnter={() => setHovering(true)}
-				onMouseLeave={() => {
-					setHovering(false);
-					setPaused(false);
-				}}
-				onPointerDown={() => setPaused(true)}
-				onTouchStart={() => setPaused(true)}
+				onMouseEnter={() => setPaused(true)}
+				onMouseLeave={() => setPaused(false)}
 			>
 				<ol
-					ref={carouselRef}
-					className="feed-mini-grid feed-mini-grid--scroll"
+					// key forces remount per window so the fade-in animation re-runs
+					key={`window-${windowIndex}`}
+					className="feed-mini-grid feed-mini-grid--window"
 					aria-label={t("feedPage.builderCenterHeader")}
+					aria-live="polite"
 				>
-					{allCards.map((card, i) => (
-						<CardItem key={card.url} card={card} n={i + 1} />
+					{visible.map((card) => (
+						<CardItem key={card.url} card={card} />
 					))}
 				</ol>
+
+				{canRotate && (
+					<div
+						className="feed-builder-deck__controls"
+						role="group"
+						aria-label={t("feedPage.builderCenterHeader")}
+					>
+						<button
+							type="button"
+							className="feed-builder-deck__chev"
+							onClick={() => handleUserStep(-1)}
+							aria-label={t("feedPage.previousArticle")}
+						>
+							‹
+						</button>
+						<span
+							className="feed-builder-deck__counter"
+							aria-hidden="true"
+						>{`${windowIndex + 1} / ${windowCount}`}</span>
+						<button
+							type="button"
+							className="feed-builder-deck__chev"
+							onClick={() => handleUserStep(1)}
+							aria-label={t("feedPage.nextArticle")}
+						>
+							›
+						</button>
+					</div>
+				)}
 			</div>
 		</Container>
 	);
