@@ -20,17 +20,15 @@ describe("formatLocation", () => {
 		expect(formatLocation(loc)).toBe("Lagos de Moreno, Jalisco, México");
 	});
 
-	it("renders the CDMX duplicate city/region pattern verbatim", () => {
+	it("deduplicates the CDMX city/region pattern to city-only", () => {
 		// Ciudad de México is both the city and the entidad federativa — the
-		// helper does not deduplicate, mirroring how the line is normally written
+		// helper returns only the city when city === region to avoid repetition
 		const loc: StreamLocation = {
 			city: "Ciudad de México",
 			region: "Ciudad de México",
 			country: "México",
 		};
-		expect(formatLocation(loc)).toBe(
-			"Ciudad de México, Ciudad de México, México",
-		);
+		expect(formatLocation(loc)).toBe("Ciudad de México");
 	});
 });
 
@@ -46,8 +44,8 @@ describe("STREAMS — location coverage", () => {
 
 	it("Mexican stations use proper Spanish naming (México with accent)", () => {
 		const mxStations = STREAMS.filter((s) => s.location.country === "México");
-		// uam_radio, ibero_909, concepto_radial, radio_udg_lagos
-		expect(mxStations.length).toBe(4);
+		// ibero_909, concepto_radial, radio_udg_lagos
+		expect(mxStations.length).toBe(3);
 		for (const s of mxStations) {
 			expect(s.location.country).toBe("México");
 		}

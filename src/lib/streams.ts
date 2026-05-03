@@ -808,10 +808,10 @@ export function hexToRgbTuple(hex: string): string {
  * Example: formatLocation({ city: "Las Cruces", region: "New Mexico", country: "USA" })
  *   -> "Las Cruces, New Mexico, USA"
  * Example: formatLocation({ city: "Ciudad de México", region: "Ciudad de México", country: "México" })
- *   -> "Ciudad de México, México"
+ *   -> "Ciudad de México"
  *
- * When city === region (CDMX stations) the duplicate segment is dropped so the
- * line reads "Ciudad de México, México" rather than repeating the name twice.
+ * When city === region (CDMX stations) only the city is returned — the region
+ * segment is redundant and the country context is implicit from the station.
  * Spanish accents are preserved verbatim from the source object so the output
  * reads naturally regardless of the user's UI locale.
  */
