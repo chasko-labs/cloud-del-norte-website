@@ -34,6 +34,7 @@ function PersistentPlayerBar({
 	autoplay,
 	onStop,
 	onSkipStation,
+	onPlayStateChange,
 }: {
 	state: PersistedPlayerState;
 	/** when true, attempt audio.play() on mount + on station-change. set when
@@ -42,6 +43,9 @@ function PersistentPlayerBar({
 	autoplay: boolean;
 	onStop: () => void;
 	onSkipStation: (direction: 1 | -1) => void;
+	/** fired when audio play/pause state changes so the outer component can
+	 *  track "is currently playing" independently of the autoplay flag */
+	onPlayStateChange?: (playing: boolean) => void;
 }) {
 	const { t, locale } = useTranslation();
 	const audioRef = useRef<HTMLAudioElement>(null);
@@ -54,10 +58,26 @@ function PersistentPlayerBar({
 	// without accidentally triggering re-renders or stale captures
 	const errorTimerRef = useRef<number | null>(null);
 	const retryTimerRef = useRef<number | null>(null);
-	const retriedRef = useRef<boolean>(false);
+	// counts retry attempts; 0 = no retry yet. each attempt tries the next
+	// fallback URL before giving up (uam_radio cycles to yanapak mirror)
+	const retryCountRef = useRef<number>(0);
+	// stable ref so the health-monitor effect can read current streamDef
+	// without being in its dep list (would force re-registration on meta updates)
+	const streamDefRef = useRef(
+		STREAMS.find((s) => s.key === state.stationKey) ?? null,
+	);
+	// stable ref for onPlayStateChange so body-class effect stays dep-clean
+	const onPlayStateChangeRef = useRef(onPlayStateChange);
 
 	const streamDef = STREAMS.find((s) => s.key === state.stationKey) ?? null;
 	const isPodcast = streamDef?.type === "podcast";
+
+	useEffect(() => {
+		streamDefRef.current = streamDef;
+	}, [streamDef]);
+	useEffect(() => {
+		onPlayStateChangeRef.current = onPlayStateChange;
+	}, [onPlayStateChange]);
 
 	const fetchMeta = useCallback(() => {
 		if (!streamDef) return;
@@ -107,7 +127,7 @@ function PersistentPlayerBar({
 	useEffect(() => {
 		setNowPlaying(null);
 		setStreamHealth("ok");
-		retriedRef.current = false;
+		retryCountRef.current = 0;
 		if (errorTimerRef.current !== null) {
 			window.clearTimeout(errorTimerRef.current);
 			errorTimerRef.current = null;
@@ -121,14 +141,13 @@ function PersistentPlayerBar({
 	// stream health monitor — listens for error / stalled / abort on the audio
 	// element. Brief network blips fire and clear quickly, so we only surface
 	// UI when an error condition persists past STREAM_ERROR_THRESHOLD_MS. Once
-	// surfaced, we auto-retry once after STREAM_AUTO_RETRY_MS (reload the
-	// audio src — re-establishes the icecast connection) before falling back
-	// to user-facing failure UI. Healthy events (playing / canplay) reset the
-	// debounce timer so a transient stall that recovers on its own is silent.
+	// surfaced, we auto-retry cycling through primary + fallbackUrls before
+	// giving up. Healthy events (playing / canplay) reset the debounce timer
+	// so a transient stall that recovers on its own is silent.
 	//
-	// uam_radio at sp2.servidorrprivado.com:1124 / mexiserver:1124 is the
-	// motivating case: 503s + SSL hiccups are routine. Logic is station-agnostic
-	// so any flaky icecast endpoint benefits without per-station branching
+	// uam_radio at sp2.servidorrprivado.com:1124 is the chronic case — the
+	// yanapak.org mirror is wired as fallbackUrls[0] so a primary failure
+	// automatically promotes to the mirror on the second attempt.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: isPodcast forces re-registration when audio element is recreated via key prop
 	useEffect(() => {
 		const audio = audioRef.current;
@@ -138,22 +157,25 @@ function PersistentPlayerBar({
 			if (errorTimerRef.current !== null) return; // already counting down
 			errorTimerRef.current = window.setTimeout(() => {
 				errorTimerRef.current = null;
-				if (retriedRef.current) {
+				const fallbacks = streamDefRef.current?.fallbackUrls ?? [];
+				const maxAttempts = 1 + fallbacks.length; // primary + each fallback
+				if (retryCountRef.current >= maxAttempts) {
 					setStreamHealth("failed");
 					return;
 				}
-				// first trip — surface "retrying" + reload audio src after a brief delay
 				setStreamHealth("retrying");
-				retriedRef.current = true;
+				const attemptIdx = retryCountRef.current;
+				retryCountRef.current++;
 				retryTimerRef.current = window.setTimeout(() => {
 					retryTimerRef.current = null;
+					// attempt 0 = primary (reload), attempt N = fallback[N-1]
+					if (attemptIdx > 0) {
+						const fallbackUrl = fallbacks[attemptIdx - 1];
+						if (fallbackUrl) audio.src = fallbackUrl;
+					}
 					try {
 						audio.load();
-						audio.play().catch(() => {
-							// retry attempt blocked / failed — surface failure UI immediately,
-							// don't wait for another threshold cycle
-							setStreamHealth("failed");
-						});
+						audio.play().catch(() => setStreamHealth("failed"));
 					} catch {
 						setStreamHealth("failed");
 					}
@@ -197,10 +219,12 @@ function PersistentPlayerBar({
 		const onPlay = () => {
 			document.body.classList.add("cdn-stream-playing");
 			setPlaying(true);
+			onPlayStateChangeRef.current?.(true);
 		};
 		const onStopEvt = () => {
 			document.body.classList.remove("cdn-stream-playing");
 			setPlaying(false);
+			onPlayStateChangeRef.current?.(false);
 		};
 		audio.addEventListener("playing", onPlay);
 		audio.addEventListener("pause", onStopEvt);
@@ -216,11 +240,11 @@ function PersistentPlayerBar({
 	}, [isPodcast]);
 
 	// manual retry — user-triggered escape hatch when auto-retry didn't recover.
-	// Resets the retried flag so a fresh failure cycle gets one more auto-retry
+	// Resets retry counter and restores primary URL before re-attempting
 	const manualRetry = useCallback(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
-		retriedRef.current = false;
+		retryCountRef.current = 0;
 		setStreamHealth("ok");
 		try {
 			audio.load();
@@ -613,8 +637,9 @@ export default function PersistentPlayer() {
 
 	// skip station — direction +1 advances, -1 rewinds. Mirrors the
 	// previous KruxPlayer modulo arithmetic so OS media-session skip
-	// behaves the same. Autoplay only flips on when skipping to a radio
-	// station — podcasts never autoplay on skip (user opts in via play btn)
+	// behaves the same. autoplay state is preserved as-is — if something
+	// was playing the next station keeps playing; if idle it stays idle.
+	// Both radio and podcast follow the same rule.
 	const handleSkipStation = useCallback((direction: 1 | -1) => {
 		setState((current) => {
 			if (!current) return current;
@@ -622,8 +647,6 @@ export default function PersistentPlayer() {
 			if (idx < 0) return current;
 			const nextIdx = (idx + direction + STREAMS.length) % STREAMS.length;
 			const next = STREAMS[nextIdx];
-			if (next.type !== "podcast") setAutoplay(true);
-			else setAutoplay(false);
 			const nextState: PersistedPlayerState = {
 				stationKey: next.key,
 				stationUrl: next.url,
@@ -633,6 +656,10 @@ export default function PersistentPlayer() {
 			savePlayerState(nextState);
 			return nextState;
 		});
+	}, []);
+
+	const handlePlayStateChange = useCallback((isPlaying: boolean) => {
+		setAutoplay(isPlaying);
 	}, []);
 
 	// stop button removed — pause keeps the pill visible. Old onStop
@@ -650,6 +677,7 @@ export default function PersistentPlayer() {
 			autoplay={autoplay}
 			onStop={handleStop}
 			onSkipStation={handleSkipStation}
+			onPlayStateChange={handlePlayStateChange}
 		/>
 	);
 }
