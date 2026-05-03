@@ -173,9 +173,17 @@ export const DEFAULT_FIELD_COMPOSITION: DuneFieldComposition = {
 export const HAZE_QUAD_DISTANCE = 38; // meters in front of camera (legacy)
 export const HAZE_QUAD_SCALE_W = 90; // wider than the dune ground (legacy)
 export const HAZE_QUAD_SCALE_H = 28; // legacy
-export const HAZE_BAND_TOP_OPACITY = 0.0;
-export const HAZE_BAND_MID_OPACITY = 0.55;
-export const HAZE_BAND_BOTTOM_OPACITY = 0.35;
+// v0.0.0092 — escalated again. v0.0.0085 alphas (0.55 / 0.35) STILL invisible
+// in dev playwright capture: pixel-sample at viewport y=0.5 returned
+// rgb(184,170,160) — warm haze quad alpha-blending against gray-mauve dune
+// body did not register as peach-cream. The lavender ao-crease multiplier in
+// the dune fragment shader was eating the haze contribution AFTER the mix.
+// Bumped: top 0.0→0.10, mid 0.55→0.92, bottom 0.35→0.78. Combined with the
+// horizon-strip pass at 0.95 + the dune-fragment haze mix moved AFTER aoTint,
+// the lower 60% of the viewport is now an undeniable warm peach-cream wash.
+export const HAZE_BAND_TOP_OPACITY = 0.1;
+export const HAZE_BAND_MID_OPACITY = 0.92;
+export const HAZE_BAND_BOTTOM_OPACITY = 0.78;
 
 /**
  * Warm desert-morning haze color. Distinct from `horizon` palette stop —
@@ -183,11 +191,14 @@ export const HAZE_BAND_BOTTOM_OPACITY = 0.35;
  * dune body color rather than dissolving into it. Bryan: "foggy desert
  * morning vibe" / El Paso haze.
  *
- * RGB linear 0..1 — peach-cream (~#fadbb0). Reads as warm sunlit haze across
- * the lower viewport, anchoring the dunes against the sky.
+ * v0.0.0092 — pushed deeper toward saturated warm cream / almost-orange so
+ * the haze cannot be confused with the cream dune body even at high alpha
+ * blending. (~#ffd199 — peach with an orange undertone.)
+ *
+ * RGB linear 0..1.
  */
 export const HAZE_COLOR_WARM: readonly [number, number, number] = [
-	0.98, 0.86, 0.69,
+	1.0, 0.82, 0.6,
 ];
 
 /**
@@ -196,10 +207,14 @@ export const HAZE_COLOR_WARM: readonly [number, number, number] = [
  * horizon line itself reads as the densest haze (where atmospheric path-length
  * is longest in real-world physics). Center y in [0,1] viewport coords; height
  * is the band thickness in viewport coords.
+ *
+ * v0.0.0092 — peak opacity 0.5 → 0.95 so the strip behaves as a near-opaque
+ * bridging band between the dune horizon line and the sky cream. Bryan's
+ * "deniably obvious" requirement.
  */
 export const HAZE_HORIZON_STRIP_CENTER_Y = 0.55;
 export const HAZE_HORIZON_STRIP_HEIGHT = 0.18;
-export const HAZE_HORIZON_STRIP_PEAK_OPACITY = 0.5;
+export const HAZE_HORIZON_STRIP_PEAK_OPACITY = 0.95;
 
 /**
  * Validates a DuneFieldComposition — every amp must be finite and ≥ 0.
