@@ -1,6 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import BreadcrumbGroup from "@cloudscape-design/components/breadcrumb-group";
 import ContentLayout from "@cloudscape-design/components/content-layout";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -69,6 +70,17 @@ export default function AuthLayout({
 			hideSignInUtility={true}
 			contentType="form"
 			identityHref="https://clouddelnorte.org/feed/index.html"
+			breadcrumbs={
+				<BreadcrumbGroup
+					items={[
+						{
+							text: "Cloud Del Norte",
+							href: "https://clouddelnorte.org/feed/index.html",
+						},
+						{ text: contextLine, href: "" },
+					]}
+				/>
+			}
 		>
 			<ContentLayout>
 				<header className="cdn-auth-page-header">
