@@ -30,11 +30,13 @@ import { Scene } from "@babylonjs/core/scene";
 import { type AnimationState, SUN_DIR_WORLD } from "./AnimationController.js";
 import { mixPhaseColor } from "./dune-colors.js";
 
-// Density tuned over a CAMERA_RADIUS_BASE=45 dune scene. 0.012 gives a soft
-// veil that's invisible at scene centre but builds noticeably toward the
-// viewport edges where the dune mesh rounds off — enough to dissolve the
-// awkward LEFT-edge cream gap, not enough to wash out the central crests.
-const FOG_DENSITY_BASE = 0.012;
+// Density tuned over a CAMERA_RADIUS_BASE=45 dune scene. Bumped 0.012 → 0.028
+// in the White Sands pass so the fog is actually visible at noon — the prior
+// veil was too soft to read against the cream dune body. 0.028 gives a clear
+// haze gradient toward the viewport edges without washing the central crests.
+// Pairs with HazeBackdrop's vertical alpha gradient quad which sells the
+// horizon haze that scene fog alone can't deliver against a bounded mesh.
+const FOG_DENSITY_BASE = 0.028;
 
 // Station tint weight — fog colour is 85% palette-horizon, 15% station tint.
 // Subtle; the goal is "the haze breathes with the player" not "the dunes

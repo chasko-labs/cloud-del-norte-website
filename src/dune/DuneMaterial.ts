@@ -37,17 +37,41 @@ import type { AnimationState } from "./AnimationController.js";
 import type { AudioLevels } from "./AudioAdapter.js";
 import { createBlueNoiseTexture } from "./blue-noise.js";
 import { mixPhaseColor, type PhaseWeights } from "./dune-colors.js";
+import {
+	DEFAULT_FIELD_COMPOSITION,
+	GYPSUM_WASH_STRENGTH,
+	GYPSUM_WASH_THRESHOLD,
+	MIGRATION_SPEED_MULTIPLIER,
+	RIPPLE_AMPLITUDE,
+	RIPPLE_FREQUENCY,
+} from "./white-sands-features.js";
 
 const SHADER_NAME = "duneDisplaceV2";
 
-// Vertex shader — same noise field as the original, plus two coarse outputs:
-//   vCloudShadow — [0..1] cloud-mask sample. Smooth enough at 150-subdivision
-//                  ground that vertex interpolation reads identical to the
-//                  per-fragment sample. Saves 2 fragNoise invocations / pixel.
-//   vFogT        — [0..1] aerial-haze fade factor based on view-space depth.
-//                  Was computed in fragment from vDepth; computing in vertex
-//                  saves a clamp + divide per pixel and is exact (linear in
-//                  depth, which is itself linear across the triangle).
+// Vertex shader — White Sands dune-type composition:
+//
+// Three overlapping signatures contribute to the height field, each weighted
+// by region (see white-sands-features.ts/regionWeights for the JS-side intent):
+//
+//   1. DOME LAYER — low-amplitude isotropic noise. Reads as small circular
+//      mounds at the upwind edge of the field. Cheapest layer.
+//   2. BARCHAN LAYER — anisotropic noise stretched along the wind axis with
+//      crescent-asymmetric phase. Reads as crescent dunes with horns trailing
+//      downwind. Mid-frequency.
+//   3. TRANSVERSE LAYER — long sinuous ridges perpendicular to wind. Encoded
+//      as sin(x*freq + noise(z)) — gives the long parallel ridges that read
+//      as "transverse dune field" from above.
+//   4. PARABOLIC LAYER — opposite-asymmetry crescent at the downwind edge,
+//      U-arms pointing UPWIND (anchored ends).
+//
+// Plus the existing two coarse outputs:
+//   vCloudShadow — [0..1] cloud-mask sample
+//   vFogT        — [0..1] aerial-haze depth ramp
+//
+// Migration: drift coefficient bumped from 0.012 to 0.036 (3x) so the
+// pattern flow reads as visible motion across the 90s timeOfDay loop. Bryan
+// asked for "faster than 10 ft/year" — at wallpaper scale this is the right
+// visual analogue.
 const VERTEX_SOURCE = `
 precision highp float;
 attribute vec3 position;
@@ -59,11 +83,17 @@ uniform mat4 view;
 uniform float time;
 uniform float bassLevel;
 uniform float midLevel;
+uniform float domeAmp;
+uniform float barchanAmp;
+uniform float transverseAmp;
+uniform float parabolicAmp;
+uniform float migrationSpeed;
 varying vec2 vUV;
 varying float vHeight;
 varying vec3 vNormal;
 varying float vCloudShadow;
 varying float vFogT;
+varying float vRegionGypsum;
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 float vnoise(vec2 p) {
@@ -73,19 +103,79 @@ float vnoise(vec2 p) {
              mix(hash(i+vec2(0.0,1.0)), hash(i+vec2(1.0,1.0)), u.x), u.y);
 }
 
+// Dome dunes: small low isotropic mounds. Two octaves of plain noise.
+float domeLayer(vec2 p, float drift) {
+  float n = vnoise((p + vec2(drift * 0.6, 0.0)) * 0.55) * 0.7;
+  n += vnoise((p + vec2(drift * 0.9, drift * 0.3)) * 1.2) * 0.3;
+  return n;
+}
+
+// Barchan crescents: anisotropic noise stretched along wind (x-axis), with
+// asymmetric phase shift via abs() folding so leading face is steep, lee face
+// trails as horns. Wind is +X by convention. The squared-then-rescaled term
+// (n*n*1.4) builds a slip-face-style steeper crest profile than plain noise.
+float barchanLayer(vec2 p, float drift) {
+  vec2 stretched = vec2(p.x * 0.6, p.y * 1.4);
+  float n = vnoise(stretched * 0.32 + vec2(drift * 1.6, drift * 0.4));
+  // Asymmetric envelope — steep on upwind side via folded gradient.
+  float asym = abs(fract(p.x * 0.18 + drift * 0.4) - 0.4);
+  return n * n * 1.4 * (0.6 + asym * 0.8);
+}
+
+// Transverse ridges: long sinuous ridges perpendicular to wind axis. The
+// sin(x * freq) is the carrier; vnoise(z) phase-shifts the carrier so the
+// ridges aren't perfectly parallel — they meander like real transverse dunes.
+float transverseLayer(vec2 p, float drift) {
+  float phase = vnoise(vec2(p.y * 0.18, drift * 0.4)) * 6.28;
+  float ridge = sin(p.x * 0.42 + phase + drift * 1.1);
+  // smoothstep to bias toward crests not troughs (real transverse fields are
+  // ridges rising from a flat interdune, not symmetric sin waves).
+  ridge = smoothstep(-0.3, 0.9, ridge);
+  // Mild noise modulation on amplitude so each ridge has variation.
+  float amp = 0.6 + vnoise(p * 0.08 + drift * 0.3) * 0.6;
+  return ridge * amp;
+}
+
+// Parabolic dunes: opposite-asymmetry crescents (arms point UPWIND). At the
+// downwind edge of the field. Sign-flipped barchan, basically.
+float parabolicLayer(vec2 p, float drift) {
+  vec2 stretched = vec2(p.x * 0.5, p.y * 1.6);
+  float n = vnoise(stretched * 0.36 + vec2(-drift * 1.2, drift * 0.5));
+  float asym = abs(fract(-p.x * 0.20 + drift * 0.3) - 0.4);
+  return n * n * 1.2 * (0.6 + asym * 0.7);
+}
+
+// Per-vertex region weights — match white-sands-features.ts/regionWeights.
+// Smoothstep-soft transitions so the field reads as a continuous gradient
+// of dune types upwind→downwind, not banded zones.
+vec4 regionWeights(vec2 p) {
+  // Normalize to [0,1] across the 60×40 ground centred at origin.
+  float xn = (p.x + 30.0) / 60.0;
+  float zn = (p.y + 20.0) / 40.0;
+  float dome      = smoothstep(0.0, 1.0, 1.0 - xn) * 0.7 + 0.3;
+  float barchan   = smoothstep(0.0, 1.0, 1.0 - abs(xn - 0.5) * 2.0) * 0.8 + 0.2;
+  float transvers = smoothstep(0.0, 1.0, 1.0 - abs(xn - 0.55) * 1.6) * 0.8 + 0.2;
+  float parab     = smoothstep(0.0, 1.0, xn) * 0.6
+                  + smoothstep(0.0, 1.0, abs(zn - 0.5) * 2.0) * 0.4;
+  return vec4(dome, barchan, transvers, parab);
+}
+
 float duneHeight(vec2 p, float drift) {
-  float h  = vnoise((p + vec2(drift, drift * 0.4)) * 0.18) * 3.2;
-        h += vnoise((p + vec2(drift * 1.3, drift * 0.7)) * 0.42) * 1.1;
+  vec4 rw = regionWeights(p);
+  float h = 0.0;
+  h += domeLayer(p, drift)       * domeAmp       * rw.x * 1.6;
+  h += barchanLayer(p, drift)    * barchanAmp    * rw.y * 1.4;
+  h += transverseLayer(p, drift) * transverseAmp * rw.z * 1.1;
+  h += parabolicLayer(p, drift)  * parabolicAmp  * rw.w * 1.0;
   return h;
 }
 
 void main(void) {
   vec2 p = position.xz;
-  // Domain-warp drift: drift advances time, but the height field is now
-  // sampled with an additional low-amplitude noise offset on p so the
-  // surface evolution reads as horizontal swirl rather than vertical slosh.
-  // Amplitude clamped (0.4 plane units) to stay below the smaller octave.
-  float drift = time * (0.012 + midLevel * 0.012);
+  // Migration: drift advances time. migrationSpeed uniform pushes ~3x faster
+  // than the original 0.012 baseline so the pattern flow reads on the 90s
+  // timeOfDay loop. midLevel still gates audio reactivity bonus.
+  float drift = time * (0.012 * migrationSpeed + midLevel * 0.012);
   float warpA = vnoise(p * 0.07 + vec2(drift * 0.5, 0.0));
   float warpB = vnoise(p * 0.07 + vec2(0.0, drift * 0.5));
   vec2 pWarp = p + (vec2(warpA, warpB) - 0.5) * 0.4;
@@ -106,6 +196,11 @@ void main(void) {
   vHeight = hOut;
   vUV = uv;
 
+  // Region-gypsum mask — pass to FS. Highest in barchan + transverse mid-field
+  // bands where the gypsum sand is most active. Used by FS for white wash.
+  vec4 rw = regionWeights(p);
+  vRegionGypsum = clamp(rw.y * 0.5 + rw.z * 0.5, 0.0, 1.0);
+
   // Cloud-shadow sample at vertex. Two octaves; smoothstep-darken later in FS.
   vec2 cloudUV = uv * vec2(60.0, 40.0);
   float cd1 = time * 0.008;
@@ -114,7 +209,8 @@ void main(void) {
   cloud += vnoise(cloudUV * 0.16 + vec2(cd1 * 1.3, cd2 * 0.9)) * 0.5;
   vCloudShadow = cloud / 1.5;
 
-  // View-space depth → fog ramp [18, 46].
+  // View-space depth → fog ramp [18, 46]. Cap raised to 0.85 (was 0.55 in FS)
+  // so distant dunes more clearly fade into the haze backdrop.
   vec4 viewPos = view * world * vec4(displaced, 1.0);
   float vDepth = -viewPos.z;
   vFogT = clamp((vDepth - 18.0) / 28.0, 0.0, 1.0);
@@ -125,6 +221,15 @@ void main(void) {
 
 // Fragment shader — palette uniforms pre-mixed CPU side. ALU budget under
 // 8ms / pixel on integrated GPU. High-power pow() approximated via squaring.
+//
+// White Sands additions:
+//   - WIND RIPPLES: small-scale 90°-to-wind ripples encoded as a high-freq
+//     sin term modulated by noise. Tints lit-side ridges, no extra mesh cost.
+//   - GYPSUM WASH: bright-white highlight on lit crests above a lambert
+//     threshold, scaled by vRegionGypsum so only barchan/transverse bands
+//     get the white wash. Brand palette stays load-bearing for shadows.
+//   - STRONGER HAZE: vFogT mix raised 0.55 → 0.78 so distant dunes dissolve
+//     into the haze backdrop rather than reading as a hard horizon line.
 const FRAGMENT_SOURCE = `
 precision highp float;
 varying vec2 vUV;
@@ -132,11 +237,16 @@ varying float vHeight;
 varying vec3 vNormal;
 varying float vCloudShadow;
 varying float vFogT;
+varying float vRegionGypsum;
 uniform float time;
 uniform vec3 sunDir;
 uniform float fluxLevel;
 uniform float midLevel;
 uniform float logoPulse; // [-1, 1], slow 24s sinusoid
+uniform float rippleFreq;
+uniform float rippleAmp;
+uniform float gypsumWash;
+uniform float gypsumThresh;
 // Palette uniforms — pre-mixed JS-side from the 4-quadrant phase weights
 // (see dune-colors.ts). Removes ~20 vec3 muls per fragment.
 uniform vec3 shadowCol;
@@ -206,6 +316,17 @@ void main(void) {
   // Wind streak whitening, lit side only.
   dune += vec3(0.020, 0.014, 0.006) * streak * lambert;
 
+  // Wind ripples — high-frequency 90°-to-wind oscillation. Wind = +X, so
+  // ripples run perpendicular to X, meaning their carrier is sin(uv.x * freq).
+  // Modulated by noise so they're not perfectly periodic. Tint lit-side only.
+  // Visible on flat-ish ridge tops where light grazes; gated by ridgeFlatness
+  // so the troughs don't get rippled.
+  float rippleNoise = fragNoise(vUV * 60.0);
+  float ripple = sin(vUV.x * rippleFreq + rippleNoise * 6.28);
+  ripple = ripple * 0.5 + 0.5; // [0, 1]
+  ripple = smoothstep(0.4, 0.9, ripple);
+  dune += vec3(rippleAmp) * ripple * lambert * ridgeFlatness;
+
   // Sparkle — sparse glints on sunlit ridge tops. Threshold 0.992 (was 0.985)
   // → ~50% fewer glints. Tint mixes 0.5 toward lavender (was 0.3) so the
   // brand violet axis reads in the highlights. Brightness modulated by
@@ -232,8 +353,24 @@ void main(void) {
 
   vec3 surface = (dune * lighting + vec3(grain)) * fluxPop;
 
-  // Aerial-haze fog — vFogT interpolated from vertex. Cap mix at 0.55.
-  surface = mix(surface, horizonTint, vFogT * 0.55);
+  // Gypsum-white wash on bright lit crests in the active dune-type bands.
+  // Bryan: "20% white wash on the surface lit by sun-disc". Gated by:
+  //   - lambert > gypsumThresh (only sun-facing lit fragments)
+  //   - vRegionGypsum (only barchan/transverse mid-field where gypsum is most
+  //     active visually)
+  //   - ridgeFlatness (only ridge tops, not slip faces)
+  // Mixes toward bright gypsum white (1, 1, 0.985) — slightly cool to read
+  // as bright sun-on-gypsum, not warm desert sand.
+  float gypsumMask = smoothstep(gypsumThresh, 1.0, lambert)
+                   * vRegionGypsum
+                   * ridgeFlatness;
+  vec3 gypsumColor = vec3(1.0, 1.0, 0.985);
+  surface = mix(surface, gypsumColor, gypsumMask * gypsumWash);
+
+  // Aerial-haze fog — vFogT interpolated from vertex. Cap mix raised to 0.78
+  // so distant dunes dissolve into the haze backdrop. Pairs with HazeBackdrop
+  // (camera-locked alpha quad) and the bumped scene fog density (0.028).
+  surface = mix(surface, horizonTint, vFogT * 0.78);
 
   // AO crease — lavender wash on steep sides, capped at 0.18 strength.
   // Cheap: one max + smoothstep + mix.
@@ -304,6 +441,16 @@ export class DuneMaterial {
 					"sunTint",
 					"horizonTint",
 					"rimTint",
+					// White Sands additions — dune-type composition + ripples + gypsum.
+					"domeAmp",
+					"barchanAmp",
+					"transverseAmp",
+					"parabolicAmp",
+					"migrationSpeed",
+					"rippleFreq",
+					"rippleAmp",
+					"gypsumWash",
+					"gypsumThresh",
 				],
 				samplers: ["blueNoise"],
 			},
@@ -318,6 +465,24 @@ export class DuneMaterial {
 		this.material.setFloat("midLevel", 0);
 		this.material.setFloat("fluxLevel", 0);
 		this.material.setFloat("logoPulse", 0);
+		// White Sands constants — set once, never change per-frame. Pulled from
+		// white-sands-features.ts so the values are reviewable in plain TS rather
+		// than buried as GLSL literals.
+		this.material.setFloat("domeAmp", DEFAULT_FIELD_COMPOSITION.domeAmp);
+		this.material.setFloat("barchanAmp", DEFAULT_FIELD_COMPOSITION.barchanAmp);
+		this.material.setFloat(
+			"transverseAmp",
+			DEFAULT_FIELD_COMPOSITION.transverseAmp,
+		);
+		this.material.setFloat(
+			"parabolicAmp",
+			DEFAULT_FIELD_COMPOSITION.parabolicAmp,
+		);
+		this.material.setFloat("migrationSpeed", MIGRATION_SPEED_MULTIPLIER);
+		this.material.setFloat("rippleFreq", RIPPLE_FREQUENCY);
+		this.material.setFloat("rippleAmp", RIPPLE_AMPLITUDE);
+		this.material.setFloat("gypsumWash", GYPSUM_WASH_STRENGTH);
+		this.material.setFloat("gypsumThresh", GYPSUM_WASH_THRESHOLD);
 		this.applyPhase({ midday: 1, lateAft: 0, dusk: 0, morning: 0 });
 	}
 
