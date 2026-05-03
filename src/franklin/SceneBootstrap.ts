@@ -116,12 +116,17 @@ export function mountFranklinSceneOnCanvas(
 	// pulse layers + El Paso star.
 	scene.clearColor = new Color4(0, 0, 0, 0);
 
+	// Camera target elevated to ~peak level so the silhouette anchors to the
+	// BOTTOM of the viewport. Bryan v0.0.0078: prior framing had mountains
+	// floating mid-screen with sky underneath ("doesnt make a lot of sense").
+	// With target at peak height, the silhouette occupies the lower portion of
+	// the view and sky only shows in the V-shaped crevasses between peaks.
 	const camera = new ArcRotateCamera(
 		"franklin-cam",
 		CAMERA_ALPHA,
 		CAMERA_BETA,
 		CAMERA_RADIUS,
-		Vector3.Zero(),
+		new Vector3(0, 7.8, 0),
 		scene,
 	);
 	camera.fov = CAMERA_FOV;

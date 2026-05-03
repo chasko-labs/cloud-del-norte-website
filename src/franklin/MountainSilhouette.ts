@@ -59,8 +59,12 @@ void main(void) {
 }
 `;
 
-// Fragment shader — near-black base with horizontal strata bands and a
-// bottom-edge darkening curve so the silhouette dissolves into the back-plane.
+// Fragment shader — near-black base with horizontal strata bands. v0.0.0079:
+// removed the bottom-fade dissolve. The mesh now extends well below the
+// viewport (yBot = -SILHOUETTE_HEIGHT_U * 2) so its base is never visible —
+// the silhouette stays solid alpha=1 from peak down to off-screen, occluding
+// the back-plane stars wherever the mountain sits. Bryan v0.0.0078: don't
+// show stars under the mountains.
 const FRAGMENT_SOURCE = `
 precision highp float;
 varying vec2 vUV;
@@ -77,13 +81,7 @@ void main(void) {
   float band = sin(bandPhase) * 0.5 + 0.5;
   vec3 col = silhouetteColor * (1.0 + band * strataStrength);
 
-  // Bottom-edge dissolve — multiply alpha by a smooth step from 0 at the
-  // very bottom (where the silhouette meets the viewport floor) up to 1 by
-  // 12% of the way up. Sells the merge into the canvas-2D backdrop without
-  // a hard horizon line.
-  float bottomFade = smoothstep(0.0, 0.12, vHeightFrac);
-
-  gl_FragColor = vec4(col, bottomFade);
+  gl_FragColor = vec4(col, 1.0);
 }
 `;
 
@@ -159,12 +157,18 @@ export class MountainSilhouette {
 		// front and back faces. Front face: z = -halfDepth. Back face: z = +halfDepth.
 		// Layout indices per column i: [frontTop, frontBot, backTop, backBot]
 		//   = i*4 + 0, i*4 + 1, i*4 + 2, i*4 + 3.
+		// yBot extends FAR below the viewport so the silhouette occludes the
+		// back-plane stars all the way down. v0.0.0079: was 0 (silhouette base
+		// at world origin) which left a horizon line mid-screen with stars
+		// showing below it. Now -SILHOUETTE_HEIGHT_U * 2 puts the mesh base
+		// well off-screen.
+		const yBotExtended = -SILHOUETTE_HEIGHT_U * 2;
 		for (let i = 0; i < r; i++) {
 			const xn = this.profile.xs[i]; // 0..1
 			const yn = this.profile.ys[i]; // 0..1
 			const x = (xn - 0.5) * SILHOUETTE_WIDTH_U;
 			const yTop = yn * SILHOUETTE_HEIGHT_U;
-			const yBot = 0;
+			const yBot = yBotExtended;
 			// front (z = -halfDepth)
 			positions.push(x, yTop, -halfDepth);
 			uvs.push(xn, 1);
