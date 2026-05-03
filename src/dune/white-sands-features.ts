@@ -155,18 +155,51 @@ export const DEFAULT_FIELD_COMPOSITION: DuneFieldComposition = {
 };
 
 /**
- * Horizon-haze backdrop tunables. The HazeBackdrop quad is a camera-locked
- * billboard with a vertical gradient from horizon-color (top) to ground-color
- * (bottom), alpha-blended on top of the dune scene. Its purpose is to make
- * the FOG actually visible — scene fog alone isn't reading because the dune
- * mesh is bounded and the sky is a clear gradient.
+ * Horizon-haze backdrop tunables. The HazeBackdrop is a screen-space NDC quad
+ * (vertex shader bypasses view/projection — guaranteed always-on-screen) with
+ * a vertical alpha gradient. Color is a deliberately WARMER cream-peach than
+ * the dune body / sky horizon stop so the haze actually READS as haze rather
+ * than blending invisibly into the cream dune body.
+ *
+ * v0.0.0085 — escalated. Prior attempts (camera-parented quad, scene fog
+ * density, dune fragment fogMix) all collapsed because horizonTint ≈ dune body
+ * color (both cream). Fix: use HAZE_COLOR_WARM, raise mid-band alpha to 0.55,
+ * push the alpha into the lower 60% of the viewport (where the dunes actually
+ * are) so the eye sees a distinct warm haze layer at the horizon.
+ *
+ * HAZE_QUAD_* values retained for back-compat / tests; the screen-space rewrite
+ * no longer reads them at runtime but the constants must keep shape.
  */
-export const HAZE_QUAD_DISTANCE = 38; // meters in front of camera
-export const HAZE_QUAD_SCALE_W = 90; // wider than the dune ground
-export const HAZE_QUAD_SCALE_H = 28;
+export const HAZE_QUAD_DISTANCE = 38; // meters in front of camera (legacy)
+export const HAZE_QUAD_SCALE_W = 90; // wider than the dune ground (legacy)
+export const HAZE_QUAD_SCALE_H = 28; // legacy
 export const HAZE_BAND_TOP_OPACITY = 0.0;
-export const HAZE_BAND_MID_OPACITY = 0.42;
-export const HAZE_BAND_BOTTOM_OPACITY = 0.18;
+export const HAZE_BAND_MID_OPACITY = 0.55;
+export const HAZE_BAND_BOTTOM_OPACITY = 0.35;
+
+/**
+ * Warm desert-morning haze color. Distinct from `horizon` palette stop —
+ * pushed warmer + slightly more saturated so the haze sits ABOVE the cream
+ * dune body color rather than dissolving into it. Bryan: "foggy desert
+ * morning vibe" / El Paso haze.
+ *
+ * RGB linear 0..1 — peach-cream (~#fadbb0). Reads as warm sunlit haze across
+ * the lower viewport, anchoring the dunes against the sky.
+ */
+export const HAZE_COLOR_WARM: readonly [number, number, number] = [
+	0.98, 0.86, 0.69,
+];
+
+/**
+ * Horizon strip — second haze pass, narrow horizontal band at the dune-meets-
+ * sky line. Painted ABOVE the main vertical gradient at higher alpha so the
+ * horizon line itself reads as the densest haze (where atmospheric path-length
+ * is longest in real-world physics). Center y in [0,1] viewport coords; height
+ * is the band thickness in viewport coords.
+ */
+export const HAZE_HORIZON_STRIP_CENTER_Y = 0.55;
+export const HAZE_HORIZON_STRIP_HEIGHT = 0.18;
+export const HAZE_HORIZON_STRIP_PEAK_OPACITY = 0.5;
 
 /**
  * Validates a DuneFieldComposition — every amp must be finite and ≥ 0.

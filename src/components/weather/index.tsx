@@ -2,10 +2,15 @@
 // SPDX-License-Identifier: MIT-0
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getBandBass } from "../../lib/background-viz/audio";
 import { CITIES, type City } from "./cities";
 import "./styles.css";
 
 const CACHE_TTL_MS = 10 * 60 * 1000;
+const AUTO_ADVANCE_MS = 4000;
+const BASS_THRESHOLD = 0.5;
+const BASS_RELEASE_RATIO = 0.7;
+const BASS_DEBOUNCE_MS = 600;
 
 const forecastUrl = (c: City): string =>
 	`https://api.open-meteo.com/v1/forecast?latitude=${c.latitude}&longitude=${c.longitude}&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=${encodeURIComponent(c.timezone)}`;
@@ -102,6 +107,12 @@ export default function Weather() {
 	const city = CITIES[cityIndex];
 	const [data, setData] = useState<CachedWeather | null>(() => loadCache(city));
 	const touchStartX = useRef<number | null>(null);
+	const [hovered, setHovered] = useState(false);
+	const [touching, setTouching] = useState(false);
+	const [streamPlaying, setStreamPlaying] = useState(
+		typeof document !== "undefined" &&
+			document.body.classList.contains("cdn-stream-playing"),
+	);
 
 	useEffect(() => {
 		const cached = loadCache(city);
@@ -143,9 +154,11 @@ export default function Weather() {
 
 	const onTouchStart = useCallback((e: React.TouchEvent) => {
 		touchStartX.current = e.touches[0].clientX;
+		setTouching(true);
 	}, []);
 	const onTouchEnd = useCallback(
 		(e: React.TouchEvent) => {
+			setTouching(false);
 			const start = touchStartX.current;
 			if (start == null) return;
 			touchStartX.current = null;
@@ -156,6 +169,62 @@ export default function Weather() {
 		},
 		[next, prev],
 	);
+	const onMouseEnter = useCallback(() => setHovered(true), []);
+	const onMouseLeave = useCallback(() => setHovered(false), []);
+
+	// Track stream-playing state via body class (set by persistent-player).
+	// MutationObserver scoped to the class attribute — cheap, no polling.
+	useEffect(() => {
+		if (typeof document === "undefined") return;
+		const update = () =>
+			setStreamPlaying(document.body.classList.contains("cdn-stream-playing"));
+		update();
+		const obs = new MutationObserver(update);
+		obs.observe(document.body, {
+			attributes: true,
+			attributeFilter: ["class"],
+		});
+		return () => obs.disconnect();
+	}, []);
+
+	// Auto-advance: 4s timer when idle, bass-kick driven when stream playing.
+	// Skipped entirely under prefers-reduced-motion. Paused on hover/touch.
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+		const reduced = window.matchMedia(
+			"(prefers-reduced-motion: reduce)",
+		).matches;
+		if (reduced) return;
+		if (hovered || touching) return;
+
+		if (streamPlaying) {
+			let raf = 0;
+			let prevBass = 0;
+			let lastKickAt = 0;
+			const tick = () => {
+				const bass = getBandBass();
+				const now = performance.now();
+				// Rising-edge: previous frame quiet, current frame above threshold,
+				// and outside the debounce window so a single sustained kick
+				// doesn't fire repeatedly.
+				if (
+					bass > BASS_THRESHOLD &&
+					prevBass < BASS_THRESHOLD * BASS_RELEASE_RATIO &&
+					now - lastKickAt > BASS_DEBOUNCE_MS
+				) {
+					lastKickAt = now;
+					next();
+				}
+				prevBass = bass;
+				raf = requestAnimationFrame(tick);
+			};
+			raf = requestAnimationFrame(tick);
+			return () => cancelAnimationFrame(raf);
+		}
+
+		const id = window.setInterval(next, AUTO_ADVANCE_MS);
+		return () => window.clearInterval(id);
+	}, [hovered, touching, streamPlaying, next]);
 
 	const onKeyDown = useCallback(
 		(e: React.KeyboardEvent) => {
@@ -195,6 +264,8 @@ export default function Weather() {
 			onClick={next}
 			onTouchStart={onTouchStart}
 			onTouchEnd={onTouchEnd}
+			onMouseEnter={onMouseEnter}
+			onMouseLeave={onMouseLeave}
 			onKeyDown={onKeyDown}
 		>
 			<header className="cdn-weather__head">

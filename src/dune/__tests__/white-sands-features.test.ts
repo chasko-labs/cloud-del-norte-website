@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from "vitest";
 
+import { DUNE_PHASES } from "../dune-colors.js";
 import {
 	DEFAULT_FIELD_COMPOSITION,
 	GYPSUM_WASH_STRENGTH,
@@ -9,6 +10,10 @@ import {
 	HAZE_BAND_BOTTOM_OPACITY,
 	HAZE_BAND_MID_OPACITY,
 	HAZE_BAND_TOP_OPACITY,
+	HAZE_COLOR_WARM,
+	HAZE_HORIZON_STRIP_CENTER_Y,
+	HAZE_HORIZON_STRIP_HEIGHT,
+	HAZE_HORIZON_STRIP_PEAK_OPACITY,
 	isValidComposition,
 	MIGRATION_BASS_SWAY,
 	MIGRATION_PLAYING_BOOST,
@@ -73,6 +78,94 @@ describe("white-sands-features constants", () => {
 		expect(HAZE_BAND_BOTTOM_OPACITY).toBeLessThan(HAZE_BAND_MID_OPACITY);
 		expect(HAZE_BAND_TOP_OPACITY).toBeGreaterThanOrEqual(0);
 		expect(HAZE_BAND_MID_OPACITY).toBeLessThanOrEqual(1);
+	});
+});
+
+// v0.0.0085 — fog-visibility regressions. Three prior fog passes (v0.0.0067,
+// v0.0.0073, and the unnamed today-attempt) all collapsed to invisible because
+// the haze color was effectively the same cream as the dune body. These tests
+// guard the invariants that make the fog actually READ as fog.
+describe("v0.0.0085 fog visibility invariants", () => {
+	it("HAZE_BAND_MID_OPACITY is high enough to register visually (≥0.4)", () => {
+		// Below ~0.35 alpha-blended cream over cream is sub-threshold. Bryan
+		// complained "where's my fog" three times — the 0.42 in v0.0.0073 was
+		// borderline. v0.0.0085 raises to 0.55. Floor at 0.4 to lock in the gain.
+		expect(HAZE_BAND_MID_OPACITY).toBeGreaterThanOrEqual(0.4);
+	});
+
+	it("HAZE_BAND_BOTTOM_OPACITY also visually readable (≥0.25)", () => {
+		// The bottom of the viewport is where the dune base sits — haze must be
+		// dense enough at the ground to read as a dust pool, not a faint wash.
+		expect(HAZE_BAND_BOTTOM_OPACITY).toBeGreaterThanOrEqual(0.25);
+	});
+
+	it("HAZE_COLOR_WARM is meaningfully DIFFERENT from every phase horizon stop", () => {
+		// THE v0.0.0073 BUG: haze color = mixed `horizon` palette stop, which
+		// for every phase is in the cream-cream-cream-lavender-cream family —
+		// the SAME color as the dune body. Cream-on-cream at any alpha = invis.
+		// v0.0.0085 fix: HAZE_COLOR_WARM is a peach-cream pushed warmer +
+		// slightly more saturated. This test fails if some future palette tweak
+		// brings the horizon stops too close to the haze (re-introducing the
+		// invisible-fog bug).
+		const minPerceptualDelta = 0.05; // ~13/255 in any channel
+		for (const [name, phase] of Object.entries(DUNE_PHASES)) {
+			const dr = HAZE_COLOR_WARM[0] - phase.horizon[0];
+			const dg = HAZE_COLOR_WARM[1] - phase.horizon[1];
+			const db = HAZE_COLOR_WARM[2] - phase.horizon[2];
+			const delta = Math.hypot(dr, dg, db);
+			expect(
+				delta,
+				`HAZE_COLOR_WARM too close to ${name}.horizon — fog will be invisible`,
+			).toBeGreaterThanOrEqual(minPerceptualDelta);
+		}
+	});
+
+	it("HAZE_COLOR_WARM is warmer than it is cool (R + G > 1.6 * B)", () => {
+		// Warm desert haze invariant. If this flips toward blue/grey it stops
+		// reading as "El Paso morning" and starts reading as "wet city smog".
+		const [r, g, b] = HAZE_COLOR_WARM;
+		expect(r + g).toBeGreaterThan(b * 1.6);
+	});
+
+	it("HAZE_COLOR_WARM is also distinct from the cream peak palette", () => {
+		// Peak (ridge top) color is a near-white cream. The haze must differ
+		// from it for the same reason it must differ from horizon — fog must
+		// be visible against ridge tops, not invisible.
+		const minDelta = 0.05;
+		for (const [name, phase] of Object.entries(DUNE_PHASES)) {
+			const dr = HAZE_COLOR_WARM[0] - phase.peak[0];
+			const dg = HAZE_COLOR_WARM[1] - phase.peak[1];
+			const db = HAZE_COLOR_WARM[2] - phase.peak[2];
+			const delta = Math.hypot(dr, dg, db);
+			expect(
+				delta,
+				`HAZE_COLOR_WARM too close to ${name}.peak — fog invisible on ridges`,
+			).toBeGreaterThanOrEqual(minDelta);
+		}
+	});
+
+	it("HAZE_HORIZON_STRIP center sits in the lower half of the viewport", () => {
+		// The dune horizon line at the standard ArcRotate frame sits roughly at
+		// y=0.55 in screen UV (lower half). Strip must straddle that line, not
+		// float in the sky.
+		expect(HAZE_HORIZON_STRIP_CENTER_Y).toBeGreaterThan(0.4);
+		expect(HAZE_HORIZON_STRIP_CENTER_Y).toBeLessThan(0.7);
+	});
+
+	it("HAZE_HORIZON_STRIP_HEIGHT is narrow (under 25% viewport)", () => {
+		// A thick strip would read as a banded sky; a narrow strip reads as
+		// the horizon-line haze. Between 5% and 25% viewport is the sweet spot.
+		expect(HAZE_HORIZON_STRIP_HEIGHT).toBeGreaterThan(0.05);
+		expect(HAZE_HORIZON_STRIP_HEIGHT).toBeLessThan(0.25);
+	});
+
+	it("HAZE_HORIZON_STRIP_PEAK_OPACITY exceeds the vertical mid band", () => {
+		// The strip is the densest part of the haze — that's the point. If the
+		// strip alpha drops below the mid band it disappears into the gradient.
+		expect(HAZE_HORIZON_STRIP_PEAK_OPACITY).toBeGreaterThanOrEqual(
+			HAZE_BAND_MID_OPACITY * 0.85,
+		);
+		expect(HAZE_HORIZON_STRIP_PEAK_OPACITY).toBeLessThanOrEqual(1);
 	});
 });
 

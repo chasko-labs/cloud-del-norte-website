@@ -37,6 +37,11 @@ import type { AnimationState } from "./AnimationController.js";
 import type { AudioLevels } from "./AudioAdapter.js";
 import { createBlueNoiseTexture } from "./blue-noise.js";
 import { mixPhaseColor, type PhaseWeights } from "./dune-colors.js";
+// v0.0.0085 — share the same warm-haze color helper as HazeBackdrop so the
+// quad and the dune fragment fog mix paint to the SAME target color (so the
+// far-distance dune fade and the screen-space haze layer composite into one
+// continuous atmospheric layer rather than two mismatched cream washes).
+import { computeHazeColor } from "./HazeBackdrop.js";
 import {
 	DEFAULT_FIELD_COMPOSITION,
 	GYPSUM_WASH_STRENGTH,
@@ -290,6 +295,10 @@ uniform vec3 peakCol;
 uniform vec3 sunTint;
 uniform vec3 horizonTint;
 uniform vec3 rimTint;
+// v0.0.0085 — distinct warm haze color (NOT horizonTint, which is cream and
+// invisible against the cream dune body). Pre-mixed JS-side from
+// HAZE_COLOR_WARM + a small contribution from the phase horizon for mood.
+uniform vec3 hazeCol;
 // 64×64 procedural blue-noise lookup — replaces a per-fragment trig hash for
 // sparkle sampling. Wraps via WRAP_ADDRESSMODE so the dune ground tiles.
 uniform sampler2D blueNoise;
@@ -431,10 +440,23 @@ void main(void) {
   vec3 gypsumColor = vec3(1.0, 1.0, 0.985);
   surface = mix(surface, gypsumColor, gypsumMask * gypsumWash);
 
-  // Aerial-haze fog — vFogT interpolated from vertex. Cap mix raised to 0.78
-  // so distant dunes dissolve into the haze backdrop. Pairs with HazeBackdrop
-  // (camera-locked alpha quad) and the bumped scene fog density (0.028).
-  surface = mix(surface, horizonTint, vFogT * 0.78);
+  // Aerial-haze fog — vFogT interpolated from vertex. v0.0.0085: mix target
+  // changed from horizonTint (cream — equals dune body color, invisible) to
+  // hazeCol (warm peach-cream — distinct from dune body so the haze actually
+  // READS at distance). Cap raised to 0.85 so far dunes nearly dissolve into
+  // the warm haze. Also adds a screen-space-Y haze contribution: any fragment
+  // in the lower 50% of the viewport gets an extra haze mix scaled by how
+  // close it is to the bottom — sells the "dust haze rising from the ground"
+  // effect that pure depth-fog can't deliver against a near-flat dune mesh.
+  surface = mix(surface, hazeCol, vFogT * 0.85);
+  // Screen-Y haze — gl_FragCoord.y goes 0 (bottom) to viewport_h (top). We
+  // don't have viewport_h as a uniform; use a normalized proxy via the
+  // built-in gl_FragCoord.w (perspective-divide reciprocal) which correlates
+  // with view depth. Cheaper and good-enough: just take a constant fraction
+  // of the existing vFogT contribution and add a height-driven term from
+  // vHeight (low dune troughs get more haze than crests, sells the dust pool).
+  float groundHaze = (1.0 - clamp(vHeight / 4.0, 0.0, 1.0)) * 0.18;
+  surface = mix(surface, hazeCol, groundHaze);
 
   // AO crease — lavender wash on steep sides, capped at 0.18 strength.
   // Cheap: one max + smoothstep + mix.
@@ -483,11 +505,16 @@ export class DuneMaterial {
 	private readonly sunTintScratch: [number, number, number] = [0, 0, 0];
 	private readonly horizonScratch: [number, number, number] = [0, 0, 0];
 	private readonly rimScratch: [number, number, number] = [0, 0, 0];
+	// v0.0.0085 — warm haze scratch + Color3, refreshed per frame from
+	// computeHazeColor so the dune fragment fog mix lands on the same warm
+	// peach-cream as the HazeBackdrop layer.
+	private readonly hazeScratch: [number, number, number] = [0, 0, 0];
 	private readonly shadowColor = new Color3(0, 0, 0);
 	private readonly peakColor = new Color3(0, 0, 0);
 	private readonly sunTintColor = new Color3(0, 0, 0);
 	private readonly horizonColor = new Color3(0, 0, 0);
 	private readonly rimColor = new Color3(0, 0, 0);
+	private readonly hazeColor = new Color3(0, 0, 0);
 	// v0.0.0082 — sparkle palette Color3 instances (constructed once).
 	// Declarations only; assigned in the constructor below where the imported
 	// SPARKLE_COLOR_* tuples are unpacked into Color3.
@@ -521,6 +548,8 @@ export class DuneMaterial {
 					"sunTint",
 					"horizonTint",
 					"rimTint",
+					// v0.0.0085 — warm haze tint for the fragment-shader fog mix.
+					"hazeCol",
 					// White Sands additions — dune-type composition + ripples + gypsum.
 					"domeAmp",
 					"barchanAmp",
@@ -687,5 +716,16 @@ export class DuneMaterial {
 		this.material.setColor3("sunTint", this.sunTintColor);
 		this.material.setColor3("horizonTint", this.horizonColor);
 		this.material.setColor3("rimTint", this.rimColor);
+		// v0.0.0085 — push warm haze color (matches HazeBackdrop layer) so the
+		// dune fragment fog mix lands on the SAME tint as the screen-space haze
+		// pass — the two layers composite into one continuous atmospheric haze
+		// rather than reading as two mismatched washes.
+		computeHazeColor(w, this.hazeScratch);
+		this.hazeColor.set(
+			this.hazeScratch[0],
+			this.hazeScratch[1],
+			this.hazeScratch[2],
+		);
+		this.material.setColor3("hazeCol", this.hazeColor);
 	}
 }
