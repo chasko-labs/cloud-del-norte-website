@@ -10,72 +10,12 @@ import { useTranslation } from "../../hooks/useTranslation";
 import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
 import Weather from "../weather";
 import "./liora.css";
-import SidePanelCard, { type SidePanelCardItem } from "./side-panel-card";
 
-// Side-panel cards grouped by named contributor section. Rendered as floating
-// blocks beneath SideNavigation (Cloudscape's items prop doesn't accept JSX —
-// only its built-in link / section / divider / expandable-link-group types).
-// "wayne -> arrowhead" is intentionally redundant with the feed's ArrowheadNews
-// carousel — Bryan's ask: keep it in BOTH places.
-const SIDE_PANEL_SECTIONS: {
-	key: "andres" | "bryan" | "wayne";
-	label: string;
-	cards: SidePanelCardItem[];
-}[] = [
-	{
-		key: "andres",
-		label: "andres",
-		cards: [
-			{
-				title: "Step Functions without ASL? Welcome Lambda Durable Functions",
-				author: "Andres Moreno",
-				authorBadge: "AWS CB",
-				blurb:
-					"AWS announced Lambda Durable Functions at re:Invent 2025. Run multi-step workflows with checkpoints and state using familiar code — without Amazon State Language.",
-				url: "https://builder.aws.com/content/2c0uRhtYh1arjgygZUvxKOspmrw/step-functions-without-asl-welcome-lambda-durable-functions",
-			},
-		],
-	},
-	{
-		key: "bryan",
-		label: "bryan",
-		cards: [
-			{
-				title:
-					"Core Concepts of Containers: Technical Intro to Running Software on Containers featuring Amazon ECS Express Mode",
-				author: "Bryan Chasko",
-				authorBadge: "AWS Hero",
-				blurb:
-					"Hands-on intro to containers — images, runtimes, orchestration — with Amazon ECS Express Mode as the first-deploy path.",
-				url: "https://builder.aws.com/content/38G26lD5rr5GOqDtjfeo3cO4Z1g/core-concepts-of-containers-technical-intro-to-running-software-on-containers-featuring-amazon-ecs-express-mode",
-			},
-			{
-				title:
-					"Applied Technology — Amazon Leo: How AWS Brought Amazon's Project Kuiper to Market",
-				author: "Bryan Chasko",
-				authorBadge: "AWS Hero",
-				blurb:
-					"How Project Kuiper went from R&D to commercial availability under the Amazon Leo brand — applied AWS infrastructure at orbital scale.",
-				url: "https://builder.aws.com/content/36fvKToWy99YcAK3sDn34yjS6FE/applied-technology-amazon-leo-how-aws-brought-amazons-project-kuiper-to-market",
-			},
-		],
-	},
-	{
-		key: "wayne",
-		label: "wayne",
-		cards: [
-			// Redundant with feed's ArrowheadNews on purpose — Bryan ask.
-			{
-				title:
-					"Arrowhead Center Seeks Design-Build Teams for New Film & TV Soundstage Complex",
-				author: "Arrowhead Center",
-				blurb:
-					"Arrowhead Center Inc. is developing a Film and TV Soundstage Complex at Arrowhead Park and is now accepting proposals from qualified Design-Build teams.",
-				url: "https://arrowheadcenter.nmsu.edu/park/Soundstage-DB-RFP.pdf",
-			},
-		],
-	},
-];
+// w24 v0.0.0098 added contributor article cards (andres / bryan / wayne) here
+// as a floating <nav> sibling to SideNavigation. v0.0.0104 moved them to the
+// right help panel (HelpPanelHome) because the floating block was covering
+// Liora. The card component itself now lives at
+// src/pages/create-meeting/components/side-panel-card.tsx.
 
 // Silence the dynamically-loaded liora-embed bundle's [gestureQueue]
 // console.info chatter (30+ lines per gesture.glb load). We can't edit the
@@ -509,20 +449,6 @@ export default function Navigation() {
 					}
 				}}
 			/>
-			{/* Side-panel article cards. Floating JSX (not Cloudscape items) so we
-			    can render the existing feed-card content shape inside the drawer. */}
-			<nav className="side-panel-card-region" aria-label="contributor articles">
-				{SIDE_PANEL_SECTIONS.map((section) => (
-					<div key={section.key} data-section={section.key}>
-						<div className="side-panel-section">{section.label}</div>
-						<div className="side-panel-card-stack">
-							{section.cards.map((card) => (
-								<SidePanelCard key={card.url} item={card} />
-							))}
-						</div>
-					</div>
-				))}
-			</nav>
 			<LioraFrame />
 		</>
 	);

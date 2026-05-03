@@ -1,6 +1,8 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import SidePanelCard, { type SidePanelCardItem } from "../side-panel-card";
+import SidePanelCard, {
+	type SidePanelCardItem,
+} from "../components/side-panel-card";
 
 const fullCard: SidePanelCardItem = {
 	title: "Step Functions without ASL? Welcome Lambda Durable Functions",

@@ -1,26 +1,15 @@
-/* side-panel-card — narrow article card for the side-nav drawer column.
-   Tokens reused from src/styles/cdn-glass-streaks.css:
+/* side-panel-card — narrow article card rendered inside the right help
+   panel under each .hp-leader. Tokens reused from
+   src/styles/cdn-glass-streaks.css:
      --cdn-glass-bg-strong / --cdn-glass-border / --cdn-glass-shadow
      --cdn-glass-shadow-hover / --cdn-glass-blur / --cdn-radius-md
    Title clamps to 2 lines, blurb to 3 — no overflow horizontally either. */
-
-.side-panel-section {
-	padding: 8px 12px 4px;
-	margin-top: 4px;
-	font-size: 12px;
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: lowercase;
-	color: var(--cdn-color-text, currentColor);
-	opacity: 0.8;
-}
 
 .side-panel-card-stack {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
-	padding: 4px 12px 12px;
-	max-width: 300px;
+	margin-top: var(--cdn-space-sm, 8px);
 }
 
 .side-panel-card {

@@ -38,6 +38,22 @@ const MEETUP_GROUP_URL = `https://www.meetup.com/${MEETUP_GROUP}/`;
 const STATIC_DATA_URL = "/data/next-meetup.json";
 const MAX_DESCRIPTION_CHARS = 200;
 
+// Static past-meetup payload — surfaces in es-MX locale when no upcoming event
+// is available. Hard-coded per bryan: simpler than another data-source while
+// the iCal fetch path is CORS-blocked + the CI static-gen step is pending.
+const PAST_MEETUP_MX_URL =
+	"https://www.meetup.com/awsugclouddelnorte/events/312780239/?eventOrigin=group_past_events";
+const PAST_MEETUP_MX_SPEAKERS = [
+	{ key: "1", linkLabel: "Sessionize", linkUrl: undefined },
+	{
+		key: "2",
+		linkLabel: "@veroniica · AWS Builder Center",
+		linkUrl: undefined,
+	},
+	{ key: "3", linkLabel: "LinkedIn", linkUrl: undefined },
+	{ key: "4", linkLabel: "DEV.to", linkUrl: undefined },
+] as const;
+
 interface MeetupEvent {
 	summary: string;
 	dtstart: string; // ISO 8601
@@ -195,22 +211,75 @@ export default function NextMeetup() {
 			</Box>
 		);
 	} else if (state === "fallback" || !event) {
-		content = (
-			<SpaceBetween size="s">
-				<Box color="text-body-secondary" fontSize="body-s">
-					{t("feedPage.nextMeetupFallback")}
-				</Box>
-				<Button
-					variant="link"
-					href={MEETUP_GROUP_URL}
-					target="_blank"
-					iconAlign="right"
-					iconName="external"
-				>
-					{t("feedPage.nextMeetupCta")}
-				</Button>
-			</SpaceBetween>
-		);
+		// es-MX gets a rich past-event spotlight card instead of the bare CTA.
+		// English locale keeps the existing minimal fallback so non-Spanish
+		// readers aren't shown Spanish-only speaker copy.
+		if (locale === "mx") {
+			content = (
+				<SpaceBetween size="s">
+					<Box color="text-status-info" fontSize="body-s" fontWeight="bold">
+						{t("feedPage.pastMeetupBadge")}
+					</Box>
+					<Box fontWeight="bold" fontSize="heading-m">
+						<Link href={PAST_MEETUP_MX_URL} external>
+							{t("feedPage.pastMeetupTitle")}
+						</Link>
+					</Box>
+					<Box color="text-body-secondary" fontSize="body-s">
+						{t("feedPage.pastMeetupIntroP1")}
+					</Box>
+					<Box color="text-body-secondary" fontSize="body-s">
+						{t("feedPage.pastMeetupIntroP2")}
+					</Box>
+					<Box fontWeight="bold" fontSize="body-s">
+						{t("feedPage.pastMeetupSpeakersHeader")}
+					</Box>
+					<ul className="feed-past-meetup__speakers">
+						{PAST_MEETUP_MX_SPEAKERS.map((s) => (
+							<li key={s.key} className="feed-past-meetup__speaker">
+								<span className="feed-past-meetup__speaker-name">
+									{t(`feedPage.pastMeetupSpeaker${s.key}Name`)}
+								</span>
+								<span className="feed-past-meetup__speaker-role">
+									{t(`feedPage.pastMeetupSpeaker${s.key}Role`)}
+								</span>
+								{s.linkLabel && (
+									<span className="feed-past-meetup__speaker-link">
+										{s.linkLabel}
+									</span>
+								)}
+							</li>
+						))}
+					</ul>
+					<Button
+						variant="link"
+						href={PAST_MEETUP_MX_URL}
+						target="_blank"
+						iconAlign="right"
+						iconName="external"
+					>
+						{t("feedPage.pastMeetupViewEvent")}
+					</Button>
+				</SpaceBetween>
+			);
+		} else {
+			content = (
+				<SpaceBetween size="s">
+					<Box color="text-body-secondary" fontSize="body-s">
+						{t("feedPage.nextMeetupFallback")}
+					</Box>
+					<Button
+						variant="link"
+						href={MEETUP_GROUP_URL}
+						target="_blank"
+						iconAlign="right"
+						iconName="external"
+					>
+						{t("feedPage.nextMeetupCta")}
+					</Button>
+				</SpaceBetween>
+			);
+		}
 	} else {
 		content = (
 			<SpaceBetween size="s">

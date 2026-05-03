@@ -7,6 +7,11 @@ import {
 	deckForLocale,
 } from "../components/builder-center-data";
 
+// v0.0.0105 — bryan: 4-card window with rotation. Deck shape flattened
+// from {primary, carousel} → {cards}. `sub` field deleted at the source.
+// Tests assert the new flat shape + window math (4 visible at a time).
+const VISIBLE = 4;
+
 describe("badgeForAuthor", () => {
 	it("returns 'employee' for AWS employees", () => {
 		expect(badgeForAuthor("Morgan")).toBe("employee");
@@ -44,15 +49,14 @@ describe("badgeForAuthor", () => {
 describe("deckForLocale", () => {
 	// v0.0.0098 — bryan: ranks shuffle per page load. Tests assert SET
 	// membership + counts rather than fixed positions.
-	it("returns 4 primary + 4 carousel cards for en-US (8 total)", () => {
+	it("returns a flat deck of 8 cards for en-US", () => {
 		const deck = deckForLocale("us");
-		expect(deck.primary).toHaveLength(4);
-		expect(deck.carousel).toHaveLength(4);
+		expect(deck.cards).toHaveLength(8);
 	});
 
 	it("en-US deck contains the 8 expected authors regardless of order", () => {
 		const deck = deckForLocale("us");
-		const allAuthors = [...deck.primary, ...deck.carousel].map((c) => c.author);
+		const allAuthors = deck.cards.map((c) => c.author);
 		expect(allAuthors.sort()).toEqual(
 			[
 				"Endah Bongo-Awah",
@@ -69,50 +73,17 @@ describe("deckForLocale", () => {
 
 	it("en-US deck has no duplicate URLs after shuffle", () => {
 		const deck = deckForLocale("us");
-		const urls = [...deck.primary, ...deck.carousel].map((c) => c.url);
+		const urls = deck.cards.map((c) => c.url);
 		expect(new Set(urls).size).toBe(urls.length);
 	});
 
-	it("AIdeas card carries the 'Software Engineering' sub-track", () => {
-		const deck = deckForLocale("us");
-		const all = [...deck.primary, ...deck.carousel];
-		const aideas = all.find((c) =>
-			c.title.includes("AIdeas Finalist: Predict-Epidem"),
-		);
-		expect(aideas?.sub).toBe("Software Engineering");
-	});
-
-	it("REGAIN card carries Christian Perez + Altivum sub", () => {
-		const deck = deckForLocale("us");
-		const all = [...deck.primary, ...deck.carousel];
-		const regain = all.find((c) => c.title.includes("REGAIN"));
-		expect(regain).toBeDefined();
-		expect(regain?.author).toBe("Christian Perez");
-		expect(regain?.sub).toBe("Founder & CEO | Altivum® Inc.");
-		expect(regain?.url).toMatch(/aideas-finalist-regain/);
-	});
-
-	it("OpenClaw card carries Maria Encinar + Community Geek sub", () => {
-		const deck = deckForLocale("us");
-		const all = [...deck.primary, ...deck.carousel];
-		const openclaw = all.find((c) => c.title.includes("OpenClaw"));
-		expect(openclaw).toBeDefined();
-		expect(openclaw?.author).toBe("Maria Encinar");
-		expect(openclaw?.sub).toBe(
-			"Community Geek leading the AWS User Group program",
-		);
-		expect(openclaw?.url).toMatch(/openclaw-on-aws/);
-	});
-
-	it("returns 4 primary + 3 carousel cards for es-MX (7 total)", () => {
+	it("returns 7 cards for es-MX", () => {
 		const deck = deckForLocale("mx");
-		expect(deck.primary).toHaveLength(4);
-		expect(deck.carousel).toHaveLength(3);
+		expect(deck.cards).toHaveLength(7);
 	});
 
 	it("es-MX deck is fully Spanish — every card author is from the MX set", () => {
 		const deck = deckForLocale("mx");
-		const all = [...deck.primary, ...deck.carousel];
 		const expectedAuthors = new Set([
 			"Joselyn Lagunas",
 			"Brenda Galicia",
@@ -121,14 +92,14 @@ describe("deckForLocale", () => {
 			"Barbara Gaspar",
 			"Alex Parra",
 		]);
-		for (const card of all) {
+		for (const card of deck.cards) {
 			expect(expectedAuthors.has(card.author)).toBe(true);
 		}
 	});
 
 	it("es-MX deck has 7 cards with no duplicate URLs", () => {
 		const deck = deckForLocale("mx");
-		const urls = [...deck.primary, ...deck.carousel].map((c) => c.url);
+		const urls = deck.cards.map((c) => c.url);
 		expect(urls).toHaveLength(7);
 		expect(new Set(urls).size).toBe(urls.length);
 	});
@@ -136,16 +107,15 @@ describe("deckForLocale", () => {
 	it("en-US and es-MX decks share zero card URLs (full swap)", () => {
 		const en = deckForLocale("us");
 		const mx = deckForLocale("mx");
-		const enUrls = new Set([...en.primary, ...en.carousel].map((c) => c.url));
-		const mxUrls = [...mx.primary, ...mx.carousel].map((c) => c.url);
-		const overlap = mxUrls.filter((u) => enUrls.has(u));
+		const enUrls = new Set(en.cards.map((c) => c.url));
+		const overlap = mx.cards.map((c) => c.url).filter((u) => enUrls.has(u));
 		expect(overlap).toEqual([]);
 	});
 
 	it("every card has a non-empty title, author, url, and blurb", () => {
 		for (const locale of ["us", "mx"] as const) {
 			const deck = deckForLocale(locale);
-			for (const card of [...deck.primary, ...deck.carousel]) {
+			for (const card of deck.cards) {
 				expect(card.title.length).toBeGreaterThan(0);
 				expect(card.author.length).toBeGreaterThan(0);
 				expect(card.url).toMatch(/^https:\/\/builder\.aws\.com\//);
@@ -154,16 +124,59 @@ describe("deckForLocale", () => {
 		}
 	});
 
+	it("cards do not carry a `sub` field (v0.0.0105 — bryan dropped work title / company)", () => {
+		for (const locale of ["us", "mx"] as const) {
+			const deck = deckForLocale(locale);
+			for (const card of deck.cards) {
+				// `sub` was removed from BuilderCenterCard; assert the runtime
+				// shape doesn't leak the property either.
+				expect(
+					Object.hasOwn(card, "sub"),
+					`card "${card.title}" still carries a sub field`,
+				).toBe(false);
+			}
+		}
+	});
+
 	it("every card author has a resolvable badge", () => {
 		for (const locale of ["us", "mx"] as const) {
 			const deck = deckForLocale(locale);
-			for (const card of [...deck.primary, ...deck.carousel]) {
+			for (const card of deck.cards) {
 				expect(
 					badgeForAuthor(card.author),
 					`author "${card.author}" missing from badge map`,
 				).not.toBeNull();
 			}
 		}
+	});
+});
+
+describe("4-card window invariant (v0.0.0105)", () => {
+	// Component slices a window of 4 with wrap-around. These tests cover
+	// the math the component runs against the deck so renders don't drift
+	// out of sync with what deckForLocale actually returns.
+
+	it("en-US deck: 8 cards → 2 windows of 4 (no wrap needed)", () => {
+		const deck = deckForLocale("us");
+		expect(deck.cards.length).toBe(8);
+		expect(Math.ceil(deck.cards.length / VISIBLE)).toBe(2);
+	});
+
+	it("es-MX deck: 7 cards → 2 windows of 4 (last window wraps 1 card from the front)", () => {
+		const deck = deckForLocale("mx");
+		expect(deck.cards.length).toBe(7);
+		expect(Math.ceil(deck.cards.length / VISIBLE)).toBe(2);
+		// emulate the component's wrap-around at start=4: window picks cards
+		// at indexes 4,5,6,0 — exactly VISIBLE entries with no holes.
+		const start = 4;
+		const window = Array.from(
+			{ length: VISIBLE },
+			(_, i) => deck.cards[(start + i) % deck.cards.length],
+		);
+		expect(window).toHaveLength(VISIBLE);
+		for (const card of window) expect(card).toBeDefined();
+		// the wrap entry is the card at index 0
+		expect(window[3]?.url).toBe(deck.cards[0].url);
 	});
 });
 
@@ -178,20 +191,18 @@ describe("shuffle invariants", () => {
 	it("en-US deck is stable within the session (multiple calls return identical order)", () => {
 		const a = deckForLocale("us");
 		const b = deckForLocale("us");
-		expect(a.primary.map((c) => c.url)).toEqual(b.primary.map((c) => c.url));
-		expect(a.carousel.map((c) => c.url)).toEqual(b.carousel.map((c) => c.url));
+		expect(a.cards.map((c) => c.url)).toEqual(b.cards.map((c) => c.url));
 	});
 
 	it("es-MX deck is stable within the session", () => {
 		const a = deckForLocale("mx");
 		const b = deckForLocale("mx");
-		expect(a.primary.map((c) => c.url)).toEqual(b.primary.map((c) => c.url));
-		expect(a.carousel.map((c) => c.url)).toEqual(b.carousel.map((c) => c.url));
+		expect(a.cards.map((c) => c.url)).toEqual(b.cards.map((c) => c.url));
 	});
 
-	it("en-US shuffle preserves length: 8 cards total (6 originals + REGAIN + OpenClaw)", () => {
+	it("en-US shuffle preserves length: 8 cards total", () => {
 		const deck = deckForLocale("us");
-		expect(deck.primary.length + deck.carousel.length).toBe(8);
+		expect(deck.cards.length).toBe(8);
 	});
 
 	it("en-US shuffle: every expected URL appears exactly once", () => {
@@ -206,13 +217,13 @@ describe("shuffle invariants", () => {
 			"https://builder.aws.com/content/3Cx2x4C2gHfena1soKDOGrXzNWZ/openclaw-on-aws-a-curated-collection-of-aws-builder-center-articles",
 		];
 		const deck = deckForLocale("us");
-		const actual = [...deck.primary, ...deck.carousel].map((c) => c.url);
+		const actual = deck.cards.map((c) => c.url);
 		expect(actual.sort()).toEqual([...expected].sort());
 	});
 
 	it("es-MX shuffle preserves length: 7 cards total", () => {
 		const deck = deckForLocale("mx");
-		expect(deck.primary.length + deck.carousel.length).toBe(7);
+		expect(deck.cards.length).toBe(7);
 	});
 
 	it("es-MX shuffle: every expected URL appears exactly once", () => {
@@ -226,7 +237,7 @@ describe("shuffle invariants", () => {
 			"https://builder.aws.com/content/2uqAzjCPmlToCMYGslLuElriiSa/construir-mas-alla-del-codigo-cuando-la-comunidad-tech-conecta-con-el-mundo-emprendedor",
 		];
 		const deck = deckForLocale("mx");
-		const actual = [...deck.primary, ...deck.carousel].map((c) => c.url);
+		const actual = deck.cards.map((c) => c.url);
 		expect(actual.sort()).toEqual([...expected].sort());
 	});
 });

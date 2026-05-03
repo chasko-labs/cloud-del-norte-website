@@ -45,8 +45,7 @@ const AUTHOR_BADGE: Record<string, BadgeKey> = {
 	"Hector David Martinez Montilla": "communityBuilder",
 	"Barbara Gaspar": "communityBuilder",
 	"Alex Parra": "communityBuilder",
-	// "Habeeb Babasulaiman" intentionally OMITTED — bryan v0.0.0103: not a
-	// community builder; render his card without a badge
+	"Habeeb Babasulaiman": "communityBuilder",
 	"Christian Perez": "communityBuilder",
 	// aws heroes
 	"Bryan Chasko": "hero",
