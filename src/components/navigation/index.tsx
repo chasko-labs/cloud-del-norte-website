@@ -7,6 +7,7 @@ import SideNavigation, {
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
+import Weather from "../weather";
 import "./liora.css";
 
 // Translation fallback — useTranslation's t() returns the key string itself
@@ -408,6 +409,7 @@ function LioraFrame() {
 					) : null}
 				</button>
 			</div>
+			<Weather />
 		</div>
 	);
 }

@@ -30,40 +30,76 @@ function AppContent() {
 		document.title = `${t("roadmap.title")} — AWS UG Cloud Del Norte`;
 	}, [t]);
 
+	const totalCards = boardColumns.reduce((sum, c) => sum + c.cards.length, 0);
+
 	return (
-		<ContentLayout header={<Header variant="h1">{t("roadmap.title")}</Header>}>
-			<div className="cdn-roadmap-board">
+		<ContentLayout
+			header={
+				<Header
+					variant="h1"
+					description={t("roadmap.subtitle")}
+					counter={`(${totalCards} ${t("roadmap.totalLabel")})`}
+				>
+					{t("roadmap.title")}
+				</Header>
+			}
+		>
+			<nav className="cdn-roadmap-legend" aria-label={t("roadmap.legendLabel")}>
 				{boardColumns.map((column) => (
-					<div
+					<a
 						key={column.key}
-						className="cdn-roadmap-column"
+						href={`#cdn-roadmap-col-${column.key}`}
+						className="cdn-roadmap-legend-item"
 						data-column={column.key}
 					>
-						<div className="cdn-roadmap-column-header">
+						<span className="cdn-roadmap-legend-dot" aria-hidden="true" />
+						<span className="cdn-roadmap-legend-label">
+							{t(column.translationKey)}
+						</span>
+					</a>
+				))}
+			</nav>
+			<div className="cdn-roadmap-board" role="list">
+				{boardColumns.map((column) => (
+					<section
+						key={column.key}
+						id={`cdn-roadmap-col-${column.key}`}
+						className="cdn-roadmap-column"
+						data-column={column.key}
+						data-empty={column.cards.length === 0 ? "true" : undefined}
+						role="listitem"
+						aria-label={t(column.translationKey)}
+					>
+						<header className="cdn-roadmap-column-header">
 							<span className="cdn-roadmap-column-title">
 								{t(column.translationKey)}
 							</span>
 							<span className="cdn-roadmap-column-count">
 								{column.cards.length}
 							</span>
-						</div>
-						{column.cards.length === 0 ? (
-							<div className="cdn-roadmap-empty-state">
-								{t("roadmap.emptyColumn")}
-							</div>
-						) : (
-							column.cards.map((card) => (
-								<div key={card.id} className="cdn-roadmap-card">
-									<span className="cdn-roadmap-card-id">{card.id}</span>
-									<span className="cdn-roadmap-card-title">
-										{locale === "mx" && card.titleEs
-											? card.titleEs
-											: card.title}
+						</header>
+						<div className="cdn-roadmap-column-body">
+							{column.cards.length === 0 ? (
+								<div className="cdn-roadmap-empty-state">
+									<span className="cdn-roadmap-empty-glyph" aria-hidden="true">
+										&#9676;
 									</span>
+									<span>{t("roadmap.emptyColumn")}</span>
 								</div>
-							))
-						)}
-					</div>
+							) : (
+								column.cards.map((card) => (
+									<article key={card.id} className="cdn-roadmap-card">
+										<span className="cdn-roadmap-card-id">{card.id}</span>
+										<span className="cdn-roadmap-card-title">
+											{locale === "mx" && card.titleEs
+												? card.titleEs
+												: card.title}
+										</span>
+									</article>
+								))
+							)}
+						</div>
+					</section>
 				))}
 			</div>
 		</ContentLayout>

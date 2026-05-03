@@ -1,15 +1,149 @@
-/* Roadmap Scrum Board Layout */
+/* ==========================================================================
+   Roadmap — kanban board
+
+   Design intent (Bryan v0.0.0067 design QA + roadmap-page-major-love pass):
+
+   - The cream ContentLayout header band no longer reads as a separate "style
+     element on top of content". Two coordinated moves achieve this:
+       1. The page title gets a subtitle + counter via Cloudscape Header so
+          the band carries real information instead of being decorative chrome
+       2. A stage-legend strip sits directly below the band in glass tone,
+          visually fusing band → legend → board into one unit
+
+   - Cards are paper-tier objects: subtle grain texture, deeper shadow,
+     hover lift with sweep highlight, accent bar already present per column
+
+   - Empty columns get a light glyph + softened text instead of dead space;
+     reduced visual weight via data-empty="true" hook
+
+   - Mobile: switch from vertical stack to horizontal scroll-snap so the
+     5-column metaphor survives the phone form factor; sticky column headers
+     during internal scroll on tall columns
+
+   - Color: column gradients stay (semantic), all chrome pulls --cdn-* tokens
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Stage legend — sits between ContentLayout header band and board.
+   Acts as both visual fuser (band → legend → board) and a scroll/anchor index.
+   -------------------------------------------------------------------------- */
+
+.cdn-roadmap-legend {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--cdn-space-sm);
+	margin: 0 0 var(--cdn-space-lg) 0;
+	padding: var(--cdn-space-sm) var(--cdn-space-md);
+	border-radius: var(--cdn-radius-md);
+	background-color: var(--cdn-glass-bg-strong);
+	border: 1px solid var(--cdn-glass-border);
+	box-shadow: var(--cdn-glass-shadow);
+	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
+}
+
+.cdn-roadmap-legend-item {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 4px 10px;
+	border-radius: 100px;
+	font-size: var(--cdn-text-sm);
+	font-weight: var(--cdn-weight-semibold);
+	letter-spacing: 0.02em;
+	color: var(--cdn-color-text-medium);
+	text-decoration: none;
+	background: rgba(255, 255, 255, 0.18);
+	border: 1px solid transparent;
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease,
+		color 0.15s ease;
+}
+
+.cdn-roadmap-legend-item:hover,
+.cdn-roadmap-legend-item:focus-visible {
+	background: rgba(255, 255, 255, 0.32);
+	border-color: var(--cdn-glass-border);
+	color: var(--cdn-color-text-high);
+	outline: none;
+}
+
+.awsui-dark-mode .cdn-roadmap-legend-item {
+	background: rgba(144, 96, 240, 0.12);
+	color: var(--cdn-color-text-medium);
+}
+
+.awsui-dark-mode .cdn-roadmap-legend-item:hover,
+.awsui-dark-mode .cdn-roadmap-legend-item:focus-visible {
+	background: rgba(144, 96, 240, 0.24);
+}
+
+.cdn-roadmap-legend-dot {
+	display: inline-block;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+	flex-shrink: 0;
+}
+
+/* Per-stage legend dot colors (mid-stop of each column gradient) */
+.cdn-roadmap-legend-item[data-column="idea"] .cdn-roadmap-legend-dot {
+	background: linear-gradient(135deg, #7a4e1c 0%, #b88b2a 100%);
+}
+.cdn-roadmap-legend-item[data-column="todo"] .cdn-roadmap-legend-dot {
+	background: linear-gradient(135deg, #003e44 0%, #007a86 100%);
+}
+.cdn-roadmap-legend-item[data-column="inProgress"] .cdn-roadmap-legend-dot {
+	background: linear-gradient(135deg, #b84a10 0%, #d97810 100%);
+}
+.cdn-roadmap-legend-item[data-column="inReview"] .cdn-roadmap-legend-dot {
+	background: linear-gradient(135deg, #5a1f8a 0%, #8050d0 100%);
+}
+.cdn-roadmap-legend-item[data-column="done"] .cdn-roadmap-legend-dot {
+	background: linear-gradient(135deg, #1a7a3c 0%, #4caf50 100%);
+}
+
+/* --------------------------------------------------------------------------
+   Board grid
+   -------------------------------------------------------------------------- */
 
 .cdn-roadmap-board {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-	gap: var(--cdn-space-xl);
-	padding: var(--cdn-space-lg) 0;
+	grid-template-columns: repeat(5, minmax(220px, 1fr));
+	gap: var(--cdn-space-lg);
+	padding: 0 0 var(--cdn-space-xl) 0;
 }
 
+/* Tablet: still 5 cols when room allows, otherwise 2-up wrap */
+@media (max-width: 1100px) {
+	.cdn-roadmap-board {
+		grid-template-columns: repeat(2, minmax(240px, 1fr));
+	}
+}
+
+/* Mobile: horizontal scroll-snap so the kanban metaphor survives phones.
+   Each column is full-width snap-target. Indicator: subtle right-edge
+   gradient hints at additional columns offscreen. */
 @media (max-width: 768px) {
 	.cdn-roadmap-board {
-		grid-template-columns: 1fr;
+		grid-template-columns: none;
+		display: flex;
+		flex-direction: row;
+		overflow-x: auto;
+		scroll-snap-type: x mandatory;
+		gap: var(--cdn-space-md);
+		padding: 0 var(--cdn-space-md) var(--cdn-space-lg) 0;
+		-webkit-overflow-scrolling: touch;
+		scrollbar-width: thin;
+	}
+
+	.cdn-roadmap-column {
+		flex: 0 0 88%;
+		max-width: 88%;
+		scroll-snap-align: start;
 	}
 }
 
@@ -21,10 +155,25 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--cdn-space-sm);
+	min-width: 0;
+}
+
+/* Empty columns get reduced visual weight so populated columns lead */
+.cdn-roadmap-column[data-empty="true"] {
+	opacity: 0.78;
+}
+
+/* Column body wraps the cards/empty-state; allows future internal scroll
+   for very tall columns without breaking the sticky header pattern */
+.cdn-roadmap-column-body {
+	display: flex;
+	flex-direction: column;
+	gap: var(--cdn-space-sm);
+	min-height: 80px;
 }
 
 /* --------------------------------------------------------------------------
-   Column header
+   Column header — sticky during internal scroll, semantic gradient stays
    -------------------------------------------------------------------------- */
 
 .cdn-roadmap-column-header {
@@ -32,7 +181,7 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--cdn-space-sm);
-	padding: 8px 12px;
+	padding: 10px 14px;
 	border-radius: var(--cdn-radius-md);
 	font-weight: var(--cdn-weight-bold);
 	font-size: var(--cdn-text-sm);
@@ -40,6 +189,12 @@
 	letter-spacing: 0.07em;
 	color: var(--cdn-white, #f0f0f0);
 	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	box-shadow:
+		0 2px 6px rgba(0, 0, 0, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.18);
+	position: sticky;
+	top: var(--cdn-space-sm);
+	z-index: 2;
 	/* Default — overridden per column below */
 	background: linear-gradient(135deg, #7a4e1c 0%, #b88b2a 100%);
 }
@@ -93,24 +248,35 @@
 }
 
 /* --------------------------------------------------------------------------
-   Card
+   Card — paper-tier object: grain texture, deeper shadow, hover sweep
    -------------------------------------------------------------------------- */
 
 .cdn-roadmap-card {
-	padding: 10px 12px 10px 15px;
+	padding: 12px 14px 12px 17px;
 	border-radius: var(--cdn-radius-md);
-	background: var(--cdn-color-surface, #fff);
-	border: 1px solid var(--cdn-color-border);
-	box-shadow: var(--cdn-shadow-card-light);
+	background-color: var(--cdn-glass-bg-strong);
+	background-image: repeating-linear-gradient(
+		135deg,
+		rgba(139, 90, 43, 0.025) 0 2px,
+		transparent 2px 7px
+	);
+	border: 1px solid var(--cdn-glass-border);
+	box-shadow:
+		0 1px 2px rgba(74, 40, 24, 0.08),
+		0 2px 6px rgba(74, 40, 24, 0.06);
 	transition:
-		transform 0.15s ease,
-		box-shadow 0.15s ease;
+		transform 0.18s ease,
+		box-shadow 0.18s ease,
+		border-color 0.18s ease;
 	cursor: pointer;
 	position: relative;
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	gap: 5px;
+	gap: 6px;
+	-webkit-backdrop-filter: blur(6px) saturate(1.05);
+	backdrop-filter: blur(6px) saturate(1.05);
+	isolation: isolate;
 }
 
 /* Left accent bar — visible at rest, full on hover */
@@ -122,21 +288,74 @@
 	width: 3px;
 	height: 100%;
 	background: linear-gradient(180deg, #7a4e1c 0%, #b88b2a 100%);
-	opacity: 0.45;
+	opacity: 0.55;
 	transition:
-		opacity 0.15s ease,
-		width 0.15s ease;
+		opacity 0.18s ease,
+		width 0.18s ease;
 	border-radius: var(--cdn-radius-md) 0 0 var(--cdn-radius-md);
 }
 
+/* Sweep highlight — diagonal sheen on hover, evokes craft paper catching
+   light. Hidden at rest; reveals via opacity + translateX. */
+.cdn-roadmap-card::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		115deg,
+		transparent 35%,
+		rgba(255, 255, 255, 0.18) 50%,
+		transparent 65%
+	);
+	opacity: 0;
+	transform: translateX(-30%);
+	transition:
+		opacity 0.25s ease,
+		transform 0.45s ease;
+	pointer-events: none;
+	z-index: 0;
+}
+
 .cdn-roadmap-card:hover {
-	transform: translateY(-2px);
-	box-shadow: var(--cdn-shadow-card-hover-light);
+	transform: translateY(-3px);
+	box-shadow:
+		0 4px 14px rgba(74, 40, 24, 0.18),
+		0 1px 3px rgba(74, 40, 24, 0.1);
+	border-color: rgba(139, 90, 43, 0.42);
 }
 
 .cdn-roadmap-card:hover::before {
 	opacity: 1;
-	width: 4px;
+	width: 5px;
+}
+
+.cdn-roadmap-card:hover::after {
+	opacity: 1;
+	transform: translateX(30%);
+}
+
+.cdn-roadmap-card > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* Reduced motion — kill transform + sweep, keep color / border feedback */
+@media (prefers-reduced-motion: reduce) {
+	.cdn-roadmap-card,
+	.cdn-roadmap-card::before,
+	.cdn-roadmap-card::after,
+	.cdn-roadmap-legend-item {
+		transition: none;
+	}
+
+	.cdn-roadmap-card:hover {
+		transform: none;
+	}
+
+	.cdn-roadmap-card:hover::after {
+		opacity: 0;
+		transform: translateX(-30%);
+	}
 }
 
 /* Column-specific left accent bar colors */
@@ -145,7 +364,7 @@
 }
 
 .cdn-roadmap-column[data-column="todo"] .cdn-roadmap-card::before {
-	background: linear-gradient(180deg, #1a4a8a 0%, #2a90d0 100%);
+	background: linear-gradient(180deg, #003e44 0%, #007a86 100%);
 }
 
 .cdn-roadmap-column[data-column="inProgress"] .cdn-roadmap-card::before {
@@ -160,15 +379,25 @@
 	background: linear-gradient(180deg, #1a7a3c 0%, #4caf50 100%);
 }
 
-/* Dark mode card surface */
+/* Dark mode card surface — switch grain to violet/cyan whisper */
 .awsui-dark-mode .cdn-roadmap-card {
-	background: var(--cdn-elevation-1);
-	border-color: rgba(144, 96, 240, 0.18);
-	box-shadow: var(--cdn-shadow-sm);
+	background-color: var(--cdn-glass-bg-strong);
+	background-image: repeating-linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.018) 0 2px,
+		transparent 2px 7px
+	);
+	border-color: rgba(144, 96, 240, 0.22);
+	box-shadow:
+		0 1px 3px rgba(0, 0, 0, 0.45),
+		0 2px 8px rgba(48, 0, 106, 0.32);
 }
 
 .awsui-dark-mode .cdn-roadmap-card:hover {
-	box-shadow: var(--cdn-shadow-md);
+	box-shadow:
+		0 4px 16px rgba(144, 96, 240, 0.42),
+		0 2px 6px rgba(0, 0, 0, 0.55);
+	border-color: rgba(144, 96, 240, 0.5);
 }
 
 /* --------------------------------------------------------------------------
@@ -178,19 +407,20 @@
 .cdn-roadmap-card-id {
 	display: inline-block;
 	align-self: flex-start;
-	font-size: 0.6875rem; /* 11px */
+	font-size: var(--cdn-text-xs);
 	font-weight: var(--cdn-weight-bold);
 	letter-spacing: 0.04em;
-	padding: 2px 7px;
+	padding: 2px 8px;
 	border-radius: 100px;
 	background: rgba(90, 31, 138, 0.1);
 	color: var(--cdn-color-text-medium);
 	border: 1px solid rgba(90, 31, 138, 0.18);
+	font-variant-numeric: tabular-nums;
 }
 
 .awsui-dark-mode .cdn-roadmap-card-id {
-	background: rgba(144, 96, 240, 0.15);
-	border-color: rgba(144, 96, 240, 0.25);
+	background: rgba(144, 96, 240, 0.18);
+	border-color: rgba(144, 96, 240, 0.32);
 	color: var(--cdn-color-text-medium);
 }
 
@@ -206,21 +436,36 @@
 }
 
 /* --------------------------------------------------------------------------
-   Empty state — shown when a column has no cards
+   Empty state — softened: light glyph + faded text, lower visual weight
    -------------------------------------------------------------------------- */
 
 .cdn-roadmap-empty-state {
 	flex: 1;
-	min-height: 80px;
+	min-height: 100px;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
+	gap: 6px;
 	border-radius: var(--cdn-radius-md);
-	border: 2px dashed var(--cdn-color-border);
+	border: 1.5px dashed var(--cdn-glass-border);
+	background: rgba(237, 229, 212, 0.18);
 	color: var(--cdn-color-text-low);
 	font-size: var(--cdn-text-sm);
 	font-style: italic;
 	text-align: center;
 	padding: var(--cdn-space-lg) var(--cdn-space-md);
 	user-select: none;
+}
+
+.awsui-dark-mode .cdn-roadmap-empty-state {
+	background: rgba(10, 12, 32, 0.22);
+	border-color: rgba(144, 96, 240, 0.22);
+}
+
+.cdn-roadmap-empty-glyph {
+	font-size: 1.5rem;
+	line-height: 1;
+	opacity: 0.55;
+	font-style: normal;
 }

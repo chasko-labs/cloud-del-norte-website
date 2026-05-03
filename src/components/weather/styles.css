@@ -1,0 +1,288 @@
+/* ==========================================================================
+   Weather card — branded panel that lives below liora in the side-nav drawer
+   so the left column reaches the footer on mobile (Bryan v0.0.0069: gap was
+   awkward). Pulls Open-Meteo data for el paso (lat 31.7619, lon -106.4850),
+   caches 10 min in localStorage so subsequent renders are instant.
+
+   Visual: warm cream/amber craft panel in light mode; deep navy with violet
+   trim in dark mode. Stacked F/C temps separated by a stylish hairline rule.
+   Tomorrow row reserves precip% real estate so the row doesn't reflow on
+   dry days.
+   ========================================================================== */
+
+.cdn-weather {
+	margin: 14px auto 24px;
+	max-width: 424px;
+	padding: 14px 16px 12px;
+	border-radius: 10px;
+	font-family:
+		"Amazon Ember", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Roboto,
+		Arial, sans-serif;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	contain: layout style;
+	/* fade-in matches the liora-bezel choreography — weather isn't a load
+	   pillar, let it ease in after the console settles. */
+	opacity: 0;
+	animation: 0.85s 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards
+		cdn-weather-fadein;
+	will-change: transform, opacity;
+}
+
+@keyframes cdn-weather-fadein {
+	from {
+		opacity: 0;
+		transform: translateY(8px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-weather {
+		animation: none;
+		opacity: 1;
+	}
+}
+
+/* ── Light mode — warm cream craft card ─────────────────────────────────── */
+:root:not(.awsui-dark-mode) .cdn-weather {
+	background: linear-gradient(
+		178deg,
+		rgba(250, 247, 240, 0.94) 0%,
+		rgba(244, 234, 215, 0.92) 100%
+	);
+	border: 1.5px solid rgba(139, 90, 43, 0.42);
+	box-shadow:
+		0 6px 20px -6px rgba(80, 50, 20, 0.32),
+		0 1px 3px rgba(80, 50, 20, 0.18),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6);
+	color: var(--cdn-amber, #8b5a2b);
+}
+
+/* ── Dark mode — deep navy panel + violet trim ──────────────────────────── */
+.awsui-dark-mode .cdn-weather {
+	background: linear-gradient(
+		178deg,
+		rgba(28, 34, 48, 0.92) 0%,
+		rgba(20, 16, 48, 0.88) 100%
+	);
+	border: 1.5px solid rgba(144, 96, 240, 0.52);
+	box-shadow:
+		0 6px 22px -6px rgba(0, 0, 0, 0.62),
+		0 1px 3px rgba(0, 0, 0, 0.42),
+		inset 0 1px 0 rgba(144, 96, 240, 0.22);
+	color: var(--cdn-lavender, #d7c7ee);
+}
+
+/* Loading state — quieter card while data is in flight */
+.cdn-weather--loading {
+	min-height: 92px;
+	justify-content: center;
+	align-items: center;
+}
+
+/* ── Header row — city + condition glyph ────────────────────────────────── */
+.cdn-weather__head {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.cdn-weather__city {
+	font-size: 11px;
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	opacity: 0.85;
+}
+
+.cdn-weather__glyph {
+	font-size: 22px;
+	line-height: 1;
+}
+
+.cdn-weather__hint {
+	font-size: 22px;
+	line-height: 1;
+	opacity: 0.55;
+}
+
+/* ── Now row — stacked temps + metrics ──────────────────────────────────── */
+.cdn-weather__now {
+	display: flex;
+	align-items: center;
+	gap: 18px;
+}
+
+.cdn-weather__temp {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	min-width: 64px;
+	font-family:
+		"Amazon Ember", "Amazon Ember Display", -apple-system, sans-serif;
+	font-weight: 800;
+	line-height: 1;
+}
+
+.cdn-weather__temp-f {
+	font-size: 26px;
+	letter-spacing: 0.01em;
+}
+
+/* Stylish hairline rule between F + C readouts. light: warm amber gradient;
+   dark: violet → lavender → violet so the rule reads as a "thread". */
+.cdn-weather__temp-rule {
+	display: block;
+	width: 38px;
+	height: 1px;
+	margin: 4px 0;
+	border-radius: 1px;
+}
+
+:root:not(.awsui-dark-mode) .cdn-weather__temp-rule {
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(139, 90, 43, 0.55) 30%,
+		rgba(255, 153, 0, 0.55) 70%,
+		transparent 100%
+	);
+}
+
+.awsui-dark-mode .cdn-weather__temp-rule {
+	background: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(144, 96, 240, 0.7) 30%,
+		rgba(215, 199, 238, 0.85) 70%,
+		transparent 100%
+	);
+}
+
+.cdn-weather__temp-c {
+	font-size: 18px;
+	opacity: 0.72;
+}
+
+.cdn-weather__deg {
+	font-size: 0.55em;
+	font-weight: 600;
+	opacity: 0.7;
+	margin-left: 1px;
+}
+
+/* ── Metric column (wind / precip / uv / aqi) ───────────────────────────── */
+.cdn-weather__metrics {
+	flex: 1;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 4px 12px;
+	margin: 0;
+	padding: 0;
+	font-size: 11px;
+	letter-spacing: 0.04em;
+}
+
+.cdn-weather__metric {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	min-width: 0;
+}
+
+.cdn-weather__metric dt {
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	opacity: 0.65;
+}
+
+.cdn-weather__metric dd {
+	margin: 0;
+	font-weight: 600;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.cdn-weather__aqi-label {
+	font-size: 9px;
+	font-weight: 500;
+	opacity: 0.7;
+}
+
+/* ── Tomorrow row — labeled compact summary ─────────────────────────────── */
+.cdn-weather__tomorrow {
+	display: grid;
+	grid-template-columns: auto 1fr auto;
+	align-items: baseline;
+	gap: 10px;
+	padding-top: 8px;
+	font-size: 11px;
+	letter-spacing: 0.04em;
+	font-variant-numeric: tabular-nums;
+}
+
+:root:not(.awsui-dark-mode) .cdn-weather__tomorrow {
+	border-top: 1px solid rgba(139, 90, 43, 0.28);
+}
+
+.awsui-dark-mode .cdn-weather__tomorrow {
+	border-top: 1px solid rgba(144, 96, 240, 0.28);
+}
+
+.cdn-weather__tomorrow-label {
+	font-size: 9px;
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	opacity: 0.65;
+}
+
+.cdn-weather__tomorrow-temps {
+	display: flex;
+	gap: 8px;
+	font-weight: 700;
+	justify-self: end;
+}
+
+.cdn-weather__hi::before {
+	content: "↑";
+	margin-right: 2px;
+	opacity: 0.7;
+}
+
+.cdn-weather__lo::before {
+	content: "↓";
+	margin-right: 2px;
+	opacity: 0.7;
+}
+
+.cdn-weather__lo {
+	opacity: 0.78;
+}
+
+/* Reserve real estate for precip% — empty span keeps the right column at a
+   fixed width so the row doesn't reflow on dry days. */
+.cdn-weather__tomorrow-precip {
+	min-width: 36px;
+	text-align: right;
+	font-weight: 700;
+	font-size: 11px;
+}
+
+:root:not(.awsui-dark-mode) .cdn-weather__tomorrow-precip {
+	color: var(--cdn-aws-orange, #ff9900);
+}
+
+.awsui-dark-mode .cdn-weather__tomorrow-precip {
+	color: var(--cdn-violet, #9060f0);
+}

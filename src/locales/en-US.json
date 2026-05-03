@@ -426,7 +426,10 @@
 		"inProgress": "In Progress",
 		"inReview": "In Review",
 		"done": "Done",
-		"emptyColumn": "No items"
+		"emptyColumn": "Nothing here yet",
+		"subtitle": "What the user group is building, in five stages",
+		"legendLabel": "Stages",
+		"totalLabel": "items"
 	},
 	"maintenanceCalendar": {
 		"breadcrumb": "Maintenance Calendar",
