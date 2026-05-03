@@ -21,6 +21,19 @@ export interface StationColors {
 	readonly primaryDark?: string;
 }
 
+/**
+ * Origin of the broadcast — surfaced as "streaming from <city>, <region>, <country>"
+ * inside the feed player. Mexican stations carry proper Spanish forms (México with
+ * the accent, Ciudad de México rather than Mexico City) so the line reads
+ * naturally regardless of UI locale. Region maps to state for US stations and
+ * to estado for MX stations
+ */
+export interface StreamLocation {
+	readonly city: string;
+	readonly region: string;
+	readonly country: string;
+}
+
 export interface StreamDef {
 	readonly key: string;
 	readonly url: string;
@@ -42,14 +55,13 @@ export interface StreamDef {
 	 */
 	readonly donateUrl?: string;
 	/**
-	 * approximate broadcast-region latitude (decimal degrees, +N / -S). paired
-	 * with longitude so the feed player can render a clickable geo line beneath
-	 * the station name as part of the donate target. omit alongside donateUrl
-	 * when the station has no donation channel
+	 * city / region / country of the broadcast origin. populated for every
+	 * station (donate-enabled or not) so the feed player can render a
+	 * "streaming from …" line. Mexican entries use proper Spanish naming —
+	 * México (with accent), Ciudad de México — so the line reads naturally
+	 * even when the user is on the en-US locale
 	 */
-	readonly latitude?: number;
-	/** approximate broadcast-region longitude (decimal degrees, +E / -W) */
-	readonly longitude?: number;
+	readonly location: StreamLocation;
 	/** parses metaUrl response into "song — artist" string. omit alongside metaUrl */
 	parseMeta?(data: unknown): string | null;
 }
@@ -62,8 +74,7 @@ export const STREAMS: StreamDef[] = [
 		metaUrl: "https://kruxstream.nmsu.edu/status-json.xsl",
 		donateUrl: "https://nmsufoundation.org/givenow/KRUX.html",
 		// NMSU Las Cruces, NM — Milton Hall studios on the main campus
-		latitude: 32.281,
-		longitude: -106.748,
+		location: { city: "Las Cruces", region: "New Mexico", country: "USA" },
 		// nmsu brand book — https://brand.nmsu.edu/colors/
 		// primary: aggie crimson; secondary: mesilla valley sunset (orange);
 		// accent: warm cream (replaces banned #fff)
@@ -90,8 +101,7 @@ export const STREAMS: StreamDef[] = [
 		metaUrl: "https://api.kexp.org/v2/plays/?limit=1&format=json",
 		donateUrl: "https://www.kexp.org/donate/",
 		// KEXP Gathering Space — Seattle Center, WA
-		latitude: 47.61,
-		longitude: -122.342,
+		location: { city: "Seattle", region: "Washington", country: "USA" },
 		// kexp brand book — https://cargocollective.com/jonisdelicious/KEXP-Brand-Book
 		// primary: buttercup yellow; secondary: mona lisa coral; accent: thunder near-black
 		colors: {
@@ -134,8 +144,7 @@ export const STREAMS: StreamDef[] = [
 		metaFormat: "json",
 		donateUrl: "https://www.ksfr.org/donate",
 		// SFCC studios — Santa Fe, NM
-		latitude: 35.687,
-		longitude: -105.938,
+		location: { city: "Santa Fe", region: "New Mexico", country: "USA" },
 		// SFCC official brand: turquoise PMS 326 + maroon PMS 484. Replaces the
 		// v0.0.0065 UNM-cherry placeholder once bryan supplied the SFCC guide.
 		colors: {
@@ -175,8 +184,7 @@ export const STREAMS: StreamDef[] = [
 		label: "kutx 98.9",
 		donateUrl: "https://www.kutx.org/donate",
 		// KUT/KUTX studios — UT Austin campus, TX
-		latitude: 30.275,
-		longitude: -97.741,
+		location: { city: "Austin", region: "Texas", country: "USA" },
 		// NPR Composer widget id 50ef24ebe1c8a1369593d032 sniffed from kutx.org
 		// homepage; CORS open (Access-Control-Allow-Origin: *)
 		metaUrl:
@@ -213,6 +221,12 @@ export const STREAMS: StreamDef[] = [
 		url: "https://stream5.mexiserver.com:1124/",
 		label: "uam radio 94.1",
 		// metaUrl omitted — uam radio site has no public json now-playing endpoint
+		// UAM Azcapotzalco unidad — Universidad Autónoma Metropolitana, CDMX
+		location: {
+			city: "Ciudad de México",
+			region: "Ciudad de México",
+			country: "México",
+		},
 		// uam institutional brand — agent guess: red/black/white with yellow accent
 		// (azcapotzalco unidad color). FOLLOWUP: refine once official uam brand
 		// guidelines confirmed — five unidades each carry distinct accent colors
@@ -237,6 +251,12 @@ export const STREAMS: StreamDef[] = [
 		// often absent (DJ feed without inline metadata); parseMeta returns null
 		// gracefully and the player just shows the station label
 		metaUrl: "https://shaincast.caster.fm:20866/status-json.xsl",
+		// Universidad Iberoamericana — Santa Fe campus, CDMX
+		location: {
+			city: "Ciudad de México",
+			region: "Ciudad de México",
+			country: "México",
+		},
 		// universidad iberoamericana institutional brand — agent guess: navy + red,
 		// gold accent for warmth. FOLLOWUP: refine once official ibero brand book
 		// confirmed (homepage css fetch did not surface inline color values)
@@ -267,6 +287,14 @@ export const STREAMS: StreamDef[] = [
 		url: "https://sp2.servidorrprivado.com:8196/stream",
 		label: "concepto radial",
 		// metaUrl omitted — no public json now-playing endpoint
+		// Tec de Monterrey CEDETEC — Centro de Diseño y Tecnología on the
+		// Ciudad de México (Tlalpan) campus, NOT the Monterrey home campus.
+		// Student-programmed station, hence the CDMX location
+		location: {
+			city: "Ciudad de México",
+			region: "Ciudad de México",
+			country: "México",
+		},
 		// tec de monterrey institutional brand — deep blue + lime green accent
 		// (CEDETEC building, mexico city campus; student-programmed)
 		colors: {
@@ -290,6 +318,12 @@ export const STREAMS: StreamDef[] = [
 		// falls back to the station label
 		metaUrl: "https://api.zeno.fm/mounts/metadata/subscribe/8hage4z92hhvv",
 		metaFormat: "sse",
+		// Centro Universitario de los Lagos (UDG sede Lagos) — Lagos de Moreno, Jalisco
+		location: {
+			city: "Lagos de Moreno",
+			region: "Jalisco",
+			country: "México",
+		},
 		// UDG institutional palette: Pantone 7406 (gold) + black anchor
 		// Differentiation from KEXP (also yellow): UDG gold is more saturated/orange-leaning,
 		// and the secondary swap to deep terra-cotta keeps it apart visually
@@ -355,16 +389,17 @@ export function hexToRgbTuple(hex: string): string {
 }
 
 /**
- * Format a (lat, lon) decimal pair into a human-readable cardinal string.
- * Example: formatGeo(35.687, -105.938) -> "35.69°N, 105.94°W"
+ * Format a StreamLocation into a comma-separated "City, Region, Country" string.
+ * Example: formatLocation({ city: "Las Cruces", region: "New Mexico", country: "USA" })
+ *   -> "Las Cruces, New Mexico, USA"
+ * Example: formatLocation({ city: "Ciudad de México", region: "Ciudad de México", country: "México" })
+ *   -> "Ciudad de México, Ciudad de México, México"
  *
- * Two decimal places gives ~1.1 km of precision at the equator — enough to
- * point at a campus or studio without surfacing exact rooftop coordinates.
- * Sign convention: positive lat = north, positive lon = east. Magnitudes
- * are rendered absolute alongside an N/S or E/W cardinal letter.
+ * For CDMX entries the city + region intentionally repeat — Ciudad de México is
+ * both the city and the entidad federativa, mirroring how locals refer to it.
+ * Spanish accents are preserved verbatim from the source object so the output
+ * reads naturally regardless of the user's UI locale.
  */
-export function formatGeo(lat: number, lon: number): string {
-	const latCard = lat >= 0 ? "N" : "S";
-	const lonCard = lon >= 0 ? "E" : "W";
-	return `${Math.abs(lat).toFixed(2)}°${latCard}, ${Math.abs(lon).toFixed(2)}°${lonCard}`;
+export function formatLocation(loc: StreamLocation): string {
+	return `${loc.city}, ${loc.region}, ${loc.country}`;
 }

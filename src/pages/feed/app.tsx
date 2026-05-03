@@ -13,7 +13,11 @@ import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
 import { clearMediaSession, setMediaSession } from "../../lib/media-session";
 import { clearPlayerState, savePlayerState } from "../../lib/player-persist";
-import { formatGeo, hexToRgbTuple, type StreamDef } from "../../lib/streams";
+import {
+	formatLocation,
+	hexToRgbTuple,
+	type StreamDef,
+} from "../../lib/streams";
 import { STREAMS } from "../../lib/streams-order";
 import {
 	applyLocale,
@@ -42,6 +46,7 @@ const FADE_MS = 500;
 const POLL_MS = 30_000;
 
 function KruxPlayer() {
+	const { t } = useTranslation();
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const [playing, setPlaying] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -312,6 +317,15 @@ function KruxPlayer() {
 			>
 				{nowPlaying[stream.key] ?? ""}
 			</span>
+			{/*
+			 * "streaming from <city, region, country>" sits INSIDE the donate <a>
+			 * — keeps the feed player visually compact and ties the origin line
+			 * to the donate target. Tradeoff: stations without a donateUrl
+			 * (uam_radio, ibero_909, concepto_radial, radio_udg_lagos) won't
+			 * show their location here. If we ever want every station to
+			 * display origin regardless of donate availability, lift this
+			 * <span> out of the <a> into its own non-clickable line above.
+			 */}
 			{stream.donateUrl && (
 				<a
 					className="feed-krux__donate"
@@ -323,11 +337,9 @@ function KruxPlayer() {
 					<span className="feed-krux__donate-line">
 						donate to {stream.label}
 					</span>
-					{stream.latitude !== undefined && stream.longitude !== undefined && (
-						<span className="feed-krux__donate-geo">
-							{formatGeo(stream.latitude, stream.longitude)}
-						</span>
-					)}
+					<span className="feed-krux__donate-geo">
+						{t("feedPage.streamingFrom")} {formatLocation(stream.location)}
+					</span>
 				</a>
 			)}
 			{/* biome-ignore lint/a11y/useMediaCaption: live radio stream — no caption track available */}
