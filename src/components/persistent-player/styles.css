@@ -536,15 +536,11 @@ a.cdn-pp__label--donate:focus-visible {
 	.cdn-pp__label {
 		font-size: var(--cdn-text-sm, 0.75rem);
 	}
-	/* 3-line layout: track on line 2, geo on line 3 */
+	/* 3-line layout: track on line 1, geo on line 2 (DOM order matches visual order) */
 	.cdn-pp__sub {
 		flex-direction: column;
 		align-items: flex-end;
 		gap: 1px;
-	}
-	.cdn-pp__track-text,
-	.cdn-pp__now-playing-link {
-		order: -1;
 	}
 	.cdn-pp__sep {
 		display: none;

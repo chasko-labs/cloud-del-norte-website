@@ -48,6 +48,7 @@ function PersistentPlayerBar({
 	const [blocked, setBlocked] = useState(false);
 	const [playing, setPlaying] = useState(false);
 	const [nowPlaying, setNowPlaying] = useState<string | null>(null);
+	const [rssAudioUrl, setRssAudioUrl] = useState<string | null>(null);
 	const [streamHealth, setStreamHealth] = useState<StreamHealth>("ok");
 	// debounce + retry timers — refs so cleanup can clear them across renders
 	// without accidentally triggering re-renders or stale captures
@@ -74,12 +75,14 @@ function PersistentPlayerBar({
 			.catch(() => {});
 	}, [streamDef]);
 
-	// podcast title refresh — best-effort RSS fetch for episode title.
-	// audio src comes from state.stationUrl directly (no audioSrc state needed).
+	// podcast title refresh — best-effort RSS fetch for episode title + enclosure URL.
 	// RSS fetch is CORS-blocked from the browser for most feeds; silently ignored.
+	// When the enclosure URL differs from the hardcoded stationUrl, rssAudioUrl
+	// overrides the audio src so the latest episode plays automatically.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: state.stationKey is the reset trigger
 	useEffect(() => {
 		if (streamDef?.type !== "podcast" || !streamDef.rssFeedUrl) return;
+		setRssAudioUrl(null); // reset on station change
 		fetch(streamDef.rssFeedUrl)
 			.then((r) => (r.ok ? r.text() : null))
 			.then((xml) => {
@@ -89,6 +92,13 @@ function PersistentPlayerBar({
 					.querySelector("channel > item:first-child > title")
 					?.textContent?.trim();
 				if (title) setNowPlaying(title);
+				// Try to extract latest episode audio URL for dynamic rotation
+				const encUrl = doc
+					.querySelector("channel > item:first-child > enclosure")
+					?.getAttribute("url");
+				if (encUrl && encUrl !== state.stationUrl) {
+					setRssAudioUrl(encUrl);
+				}
 			})
 			.catch(() => {});
 	}, [state.stationKey]);
@@ -422,7 +432,7 @@ function PersistentPlayerBar({
 			<audio
 				key={isPodcast ? "podcast" : "radio"}
 				ref={audioRef}
-				src={state.stationUrl}
+				src={rssAudioUrl ?? state.stationUrl}
 				preload="none"
 				crossOrigin={isPodcast ? undefined : "anonymous"}
 				onPlay={handlePlay}
@@ -478,25 +488,19 @@ function PersistentPlayerBar({
 					</span>
 				) : (
 					<span className="cdn-pp__sub" aria-live="polite">
-						{streamDef && (
-							<span className="cdn-pp__geo">
-								{formatLocation(streamDef.location)}
-							</span>
-						)}
 						{nowPlaying ? (
 							<>
+								<span className="cdn-pp__track-text" title={nowPlaying}>
+									{nowPlaying}
+								</span>
 								{streamDef && (
 									<span className="cdn-pp__sep" aria-hidden="true">
 										{" · "}
 									</span>
 								)}
-								<span className="cdn-pp__track-text" title={nowPlaying}>
-									{nowPlaying}
-								</span>
 							</>
 						) : streamDef?.metaFallback ? (
 							<>
-								<span className="cdn-pp__sep" aria-hidden="true">{" · "}</span>
 								<a
 									className="cdn-pp__now-playing-link"
 									href={streamDef.metaFallback.href}
@@ -507,8 +511,14 @@ function PersistentPlayerBar({
 										? streamDef.metaFallback.labelEs
 										: streamDef.metaFallback.labelEn}
 								</a>
+								<span className="cdn-pp__sep" aria-hidden="true">{" · "}</span>
 							</>
 						) : null}
+						{streamDef && (
+							<span className="cdn-pp__geo">
+								{formatLocation(streamDef.location)}
+							</span>
+						)}
 					</span>
 				)}
 			</span>
