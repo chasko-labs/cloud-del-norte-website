@@ -119,14 +119,13 @@ export interface StreamDef {
 	readonly location: StreamLocation;
 	/**
 	 * fallback stream URLs tried in order after the primary URL fails. player
-	 * cycles through these before surfacing "failed" UI. uam_radio uses
-	 * yanapak.org mirror as fallback when mexiserver.com:1124 is down
+	 * cycles through these before surfacing "failed" UI.
 	 */
 	readonly fallbackUrls?: readonly string[];
 	/**
 	 * static fallback link for when the live track string is unavailable —
 	 * either the station has no meta endpoint reachable from the browser
-	 * (uam_radio, concepto_radial — both CORS-blocked Shoutcast), the SSE
+	 * (concepto_radial — CORS-blocked Shoutcast), the SSE
 	 * mount keeps emitting a placeholder (radio_udg_lagos sends " - " on
 	 * talk shows), or the icecast source.title field is empty (ibero_909
 	 * frequently). Player UI surfaces this as an inviting Spanish-leaning
@@ -421,54 +420,6 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	{
-		key: "uam_radio",
-		// FOLLOWUP: verify CORS works in browser; alt URL: https://radios.yanapak.org/UAMRadio if primary fails
-		// non-standard port 1124 — icecast mp3; <audio crossOrigin="anonymous"> may need
-		// per-station opt-out if origin lacks Access-Control-Allow-Origin header
-		url: "https://stream5.mexiserver.com:1124/",
-		label: "uam radio 94.1",
-		// metaUrl omitted — Shoutcast v2 stats endpoint exists at
-		// https://stream5.mexiserver.com:1124/stats?json=1 and returns
-		// {songtitle, currentlisteners, peaklisteners, bitrate, servertitle}
-		// but the server emits NO Access-Control-Allow-Origin header so a
-		// browser fetch blocks on CORS. FOLLOWUP: route through a small Lambda /
-		// CloudFront function proxy (response headers: ACAO:*) before wiring as
-		// metaUrl. The audio /stream itself does send ACAO:* so playback works
-		// FOLLOWUP-2: songtitle observed as "RT1=" placeholder — confirm whether
-		// UAM sends real track titles during music programs (vs. talk slots)
-		// before investing in the proxy
-		scheduleUrl: "https://uamradio.uam.mx/programacion/",
-		// official UAM radio Spotify creator profile — surfaced from
-		// uamradio.uam.mx/en-vivo where the page itself prompts "¿Escuchaste
-		// algo que te gustó? En esta playlist puedes revisar qué transmitimos."
-		// Used as a richer fallback when the Shoutcast meta is CORS-blocked
-		// (the normal case for browser fetches against mexiserver:1124)
-		metaFallback: {
-			href: "https://open.spotify.com/user/uamradio?si=CrV4ocZwTqKJhdWcn3gKbw",
-			labelEn: "playlist",
-			labelEs: "playlist",
-		},
-		fallbackUrls: ["https://radios.yanapak.org/UAMRadio"],
-		// UAM Azcapotzalco unidad — Universidad Autónoma Metropolitana, CDMX
-		location: {
-			city: "Ciudad de México",
-			region: "Ciudad de México",
-			country: "México",
-		},
-		// uam institutional brand — agent guess: red/black/white with yellow accent
-		// (azcapotzalco unidad color). FOLLOWUP: refine once official uam brand
-		// guidelines confirmed — five unidades each carry distinct accent colors
-		colors: {
-			primary: "#a72f2f", // uam university red — institutional
-			secondary: "#000000", // uam black
-			accent: "#e8c547", // warm yellow — azcapotzalco accent
-			// red too dark on navy bg — brighten for dark-mode AA contrast
-			primaryDark: "#d44f4f",
-			// red on cream borderline — deepen for light-mode AA contrast
-			primaryLight: "#7a1f1f",
-		},
-	},
-	{
 		key: "ibero_909",
 		// FOLLOWUP: verify CORS works in browser; alt URL: https://noasrv.caster.fm:10182/live
 		// caster.fm icecast mp3 endpoint extracted from live player network sniff;
@@ -709,6 +660,10 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	{
+		// AWS Podcast RSS at d3gih7jbfe3jlq.cloudfront.net does not emit
+		// Access-Control-Allow-Origin headers → browser fetch() is CORS-blocked.
+		// Episode title will not surface in the player UI; the hardcoded Episode 754
+		// mp3 will play until go-aws.com DNS resolves and rssAudioUrl updates.
 		key: "aws_podcast",
 		type: "podcast",
 		url: "https://d1le29qyzha1u4.cloudfront.net/AWS_Podcast_Episode_754.mp3",
@@ -720,6 +675,36 @@ export const STREAMS: StreamDef[] = [
 			secondary: "#232F3E",
 			accent: "#faf7f0",
 			primaryLight: "#FF9900",
+			primaryDark: "#ffb84d",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
+			);
+		},
+	},
+	{
+		// AWS Developers Podcast — hosted by Sébastien Stormacq. RSS feed at
+		// aws-podcast.s3.amazonaws.com; S3 bucket policy may restrict direct access
+		// but browser fetch() with Origin header may succeed. Episode audio
+		// resolves from the RSS enclosure once the RSS fetch succeeds.
+		// Note: go-aws.com DNS was SERVFAIL as of 2026-05-03 — episode audio
+		// will fail until that resolves; rssAudioUrl updates when RSS is accessible.
+		key: "aws_developers_podcast",
+		type: "podcast",
+		url: "https://op3.dev/e/dts.podtrac.com/redirect.mp3/developers.podcast.go-aws.com/media/176.mp3",
+		rssFeedUrl:
+			"https://aws-podcast.s3.amazonaws.com/awsdevelopers/AWS_Developers_Podcast.xml",
+		label: "the aws developers podcast",
+		location: { city: "Seattle", region: "Washington", country: "USA" },
+		colors: {
+			primary: "#FF9900",
+			secondary: "#232F3E",
+			accent: "#faf7f0",
+			primaryLight: "#d97b00",
 			primaryDark: "#ffb84d",
 		},
 		parseMeta(data) {

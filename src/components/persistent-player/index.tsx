@@ -111,7 +111,16 @@ function PersistentPlayerBar({
 				const title = doc
 					.querySelector("channel > item:first-child > title")
 					?.textContent?.trim();
-				if (title) setNowPlaying(title);
+				const subtitle = doc
+					.querySelector("channel > item:first-child > itunes\\:subtitle")
+					?.textContent?.trim();
+				if (title) {
+					setNowPlaying(
+						subtitle && subtitle !== title
+							? `${title} — ${subtitle.substring(0, 90)}`
+							: title,
+					);
+				}
 				// Try to extract latest episode audio URL for dynamic rotation
 				const encUrl = doc
 					.querySelector("channel > item:first-child > enclosure")
@@ -144,10 +153,6 @@ function PersistentPlayerBar({
 	// surfaced, we auto-retry cycling through primary + fallbackUrls before
 	// giving up. Healthy events (playing / canplay) reset the debounce timer
 	// so a transient stall that recovers on its own is silent.
-	//
-	// uam_radio at sp2.servidorrprivado.com:1124 is the chronic case — the
-	// yanapak.org mirror is wired as fallbackUrls[0] so a primary failure
-	// automatically promotes to the mirror on the second attempt.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: isPodcast forces re-registration when audio element is recreated via key prop
 	useEffect(() => {
 		const audio = audioRef.current;
