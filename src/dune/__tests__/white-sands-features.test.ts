@@ -81,22 +81,27 @@ describe("white-sands-features constants", () => {
 	});
 });
 
-// v0.0.0085 — fog-visibility regressions. Three prior fog passes (v0.0.0067,
-// v0.0.0073, and the unnamed today-attempt) all collapsed to invisible because
-// the haze color was effectively the same cream as the dune body. These tests
-// guard the invariants that make the fog actually READ as fog.
-describe("v0.0.0085 fog visibility invariants", () => {
-	it("HAZE_BAND_MID_OPACITY is high enough to register visually (≥0.4)", () => {
-		// Below ~0.35 alpha-blended cream over cream is sub-threshold. Bryan
-		// complained "where's my fog" three times — the 0.42 in v0.0.0073 was
-		// borderline. v0.0.0085 raises to 0.55. Floor at 0.4 to lock in the gain.
-		expect(HAZE_BAND_MID_OPACITY).toBeGreaterThanOrEqual(0.4);
+// v0.0.0085 → v0.0.0092 — fog-visibility regressions. Five prior fog passes
+// (v0.0.0067 fogDensity, v0.0.0073 cream-on-cream, v0.0.0085 NDC quad, two
+// silent today-attempts) all collapsed to invisible. Bryan: "still don't see
+// the fog" five times. v0.0.0092 escalation: alpha bands pushed past 0.75,
+// strip peak past 0.9, dune-fragment haze mix moved AFTER the lavender
+// ao-crease so the haze isn't grey-shifted in the final composite. These
+// tests guard the invariants that make the fog actually READ as fog.
+describe("v0.0.0092 fog visibility invariants", () => {
+	it("HAZE_BAND_MID_OPACITY is high enough to register visually (≥0.75)", () => {
+		// v0.0.0085 set 0.55 → playwright-confirmed invisible at viewport y≈0.5
+		// (sample rgb 184,170,160 — gray-mauve, not peach-cream). v0.0.0092
+		// pushes to 0.92 so the warm haze fully dominates the dune body in the
+		// horizon band. Floor at 0.75 to lock in the gain.
+		expect(HAZE_BAND_MID_OPACITY).toBeGreaterThanOrEqual(0.75);
 	});
 
-	it("HAZE_BAND_BOTTOM_OPACITY also visually readable (≥0.25)", () => {
+	it("HAZE_BAND_BOTTOM_OPACITY also visually readable (≥0.6)", () => {
 		// The bottom of the viewport is where the dune base sits — haze must be
 		// dense enough at the ground to read as a dust pool, not a faint wash.
-		expect(HAZE_BAND_BOTTOM_OPACITY).toBeGreaterThanOrEqual(0.25);
+		// v0.0.0092 raises 0.35 → 0.78 to match Bryan's "deniably obvious" bar.
+		expect(HAZE_BAND_BOTTOM_OPACITY).toBeGreaterThanOrEqual(0.6);
 	});
 
 	it("HAZE_COLOR_WARM is meaningfully DIFFERENT from every phase horizon stop", () => {
@@ -162,10 +167,19 @@ describe("v0.0.0085 fog visibility invariants", () => {
 	it("HAZE_HORIZON_STRIP_PEAK_OPACITY exceeds the vertical mid band", () => {
 		// The strip is the densest part of the haze — that's the point. If the
 		// strip alpha drops below the mid band it disappears into the gradient.
+		// v0.0.0092: bumped 0.5 → 0.95 so the strip behaves as a near-opaque
+		// bridging band over the horizon line.
 		expect(HAZE_HORIZON_STRIP_PEAK_OPACITY).toBeGreaterThanOrEqual(
 			HAZE_BAND_MID_OPACITY * 0.85,
 		);
 		expect(HAZE_HORIZON_STRIP_PEAK_OPACITY).toBeLessThanOrEqual(1);
+	});
+
+	it("HAZE_HORIZON_STRIP_PEAK_OPACITY is near-opaque (≥0.9)", () => {
+		// v0.0.0092 invariant: the horizon-line bridging strip MUST read as
+		// near-solid haze. Below 0.9 the dune horizon line still pokes through
+		// and the eye reads "tinted dunes" instead of "fog blanket".
+		expect(HAZE_HORIZON_STRIP_PEAK_OPACITY).toBeGreaterThanOrEqual(0.9);
 	});
 });
 

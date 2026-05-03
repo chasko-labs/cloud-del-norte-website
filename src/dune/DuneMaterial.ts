@@ -440,32 +440,33 @@ void main(void) {
   vec3 gypsumColor = vec3(1.0, 1.0, 0.985);
   surface = mix(surface, gypsumColor, gypsumMask * gypsumWash);
 
-  // Aerial-haze fog — vFogT interpolated from vertex. v0.0.0085: mix target
-  // changed from horizonTint (cream — equals dune body color, invisible) to
-  // hazeCol (warm peach-cream — distinct from dune body so the haze actually
-  // READS at distance). Cap raised to 0.85 so far dunes nearly dissolve into
-  // the warm haze. Also adds a screen-space-Y haze contribution: any fragment
-  // in the lower 50% of the viewport gets an extra haze mix scaled by how
-  // close it is to the bottom — sells the "dust haze rising from the ground"
-  // effect that pure depth-fog can't deliver against a near-flat dune mesh.
-  surface = mix(surface, hazeCol, vFogT * 0.85);
-  // Screen-Y haze — gl_FragCoord.y goes 0 (bottom) to viewport_h (top). We
-  // don't have viewport_h as a uniform; use a normalized proxy via the
-  // built-in gl_FragCoord.w (perspective-divide reciprocal) which correlates
-  // with view depth. Cheaper and good-enough: just take a constant fraction
-  // of the existing vFogT contribution and add a height-driven term from
-  // vHeight (low dune troughs get more haze than crests, sells the dust pool).
-  float groundHaze = (1.0 - clamp(vHeight / 4.0, 0.0, 1.0)) * 0.18;
-  surface = mix(surface, hazeCol, groundHaze);
-
   // AO crease — lavender wash on steep sides, capped at 0.18 strength.
   // Cheap: one max + smoothstep + mix.
+  // v0.0.0092: applied BEFORE haze. Previous order (haze then aoTint*=) was
+  // multiplying the warm haze contribution by lavender, gray-shifting the
+  // result and killing the "morning fog" read at viewport y≈0.5.
   float aoCurve = 1.0 - max(N.y, 0.0);
   float aoStrength = smoothstep(0.3, 0.85, aoCurve) * 0.18;
   // Brand lavender #d7c7ee = (0.843, 0.780, 0.933). Was darker (0.84, 0.78,
   // 0.93) — same axis but brand-exact.
   vec3 aoTint = mix(vec3(1.0), vec3(0.843, 0.780, 0.933), aoStrength);
   surface *= aoTint;
+
+  // Aerial-haze fog — vFogT interpolated from vertex. v0.0.0085: mix target
+  // changed from horizonTint (cream — equals dune body color, invisible) to
+  // hazeCol (warm peach-cream — distinct from dune body so the haze actually
+  // READS at distance). v0.0.0092: cap raised 0.85 → 1.0 so far dunes fully
+  // dissolve into the warm haze (was Bryan's "still don't see the fog" 5th
+  // complaint — at 0.85 distant dunes were still gray-mauve under the
+  // lavender ao-crease, after reordering ao→haze and pushing to 1.0 they go
+  // full peach at depth).
+  surface = mix(surface, hazeCol, vFogT * 1.0);
+  // Screen-Y haze — vHeight drives groundHaze (low dune troughs get more
+  // haze than crests, sells the dust pool). v0.0.0092 coefficient bumped
+  // 0.18 → 0.45 so the trough wash actually competes with the dune body
+  // colour rather than just slightly warming it.
+  float groundHaze = (1.0 - clamp(vHeight / 4.0, 0.0, 1.0)) * 0.45;
+  surface = mix(surface, hazeCol, groundHaze);
 
   gl_FragColor = vec4(surface, 1.0);
 }
