@@ -557,10 +557,10 @@ function AppContent({
 	}, [t]);
 
 	const tocItems = [
+		{ id: "brand-logo", label: "brand logo" },
 		{ id: "colors", label: "color palette" },
 		{ id: "borders", label: "borders + radius" },
 		{ id: "motion", label: "motion + animations" },
-		{ id: "player", label: "radio player" },
 		{ id: "interactive", label: "interactive states" },
 		{ id: "typography", label: "typography" },
 		{ id: "glassmorphism", label: "glassmorphism" },
@@ -568,6 +568,7 @@ function AppContent({
 		{ id: "text-emphasis", label: "text emphasis" },
 		{ id: "elevation", label: "elevation" },
 		{ id: "shadows", label: "shadows" },
+		{ id: "card-example", label: "card example" },
 	];
 
 	return (
@@ -576,6 +577,7 @@ function AppContent({
 		>
 			<SpaceBetween size="l">
 				{/* ── Brand logo ── */}
+				<div id="section-brand-logo">
 				<Container header={<Header variant="h2">brand logo</Header>}>
 					<div className="theme-logo-showcase">
 						<img
@@ -604,17 +606,19 @@ function AppContent({
 						</div>
 					</div>
 				</Container>
+				</div>
 
-				{/* ── TOC ── */}
-				<Container header={<Header variant="h2">token index</Header>}>
-					<nav className="theme-toc" aria-label="jump to section">
+				{/* ── Sticky TOC ── */}
+				<div id="toc" className="theme-toc-sticky">
+					<nav aria-label="jump to section">
+						<span className="theme-toc-sticky__heading">token index</span>
 						{tocItems.map(({ id, label }) => (
 							<a key={id} href={`#section-${id}`} className="theme-toc__link">
 								{label}
 							</a>
 						))}
 					</nav>
-				</Container>
+				</div>
 
 				{/* ── 1. Color palette ── */}
 				<div id="section-colors">
@@ -632,6 +636,7 @@ function AppContent({
 							<PaletteGroupSection />
 						</SpaceBetween>
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── 1b. Borders + radius ── */}
@@ -668,6 +673,7 @@ function AppContent({
 							</div>
 						</SpaceBetween>
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── 2. Motion & animations ── */}
@@ -698,6 +704,7 @@ function AppContent({
 							</Grid>
 						</SpaceBetween>
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── 3. Radio player widget — removed 2026-05-03 ──
@@ -718,6 +725,7 @@ function AppContent({
 							<InteractiveStatesDemo />
 						</SpaceBetween>
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── 5. Typography ── */}
@@ -773,6 +781,7 @@ function AppContent({
 							<TypographyExtrasDemo />
 						</SpaceBetween>
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── 6. Glassmorphism / surface patterns ── */}
@@ -784,6 +793,7 @@ function AppContent({
 					>
 						<GlassmorphismDemo />
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── 7. Spacing scale ── */}
@@ -810,6 +820,7 @@ function AppContent({
 							</div>
 						</SpaceBetween>
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── text emphasis ── */}
@@ -847,6 +858,7 @@ function AppContent({
 							</ColumnLayout>
 						</SpaceBetween>
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── dark mode elevation ── */}
@@ -893,6 +905,7 @@ function AppContent({
 							</ColumnLayout>
 						</SpaceBetween>
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── shadow tokens ── */}
@@ -941,31 +954,35 @@ function AppContent({
 							</Grid>
 						</SpaceBetween>
 					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
 				</div>
 
 				{/* ── glassmorphism card example ── */}
-				<Container
-					header={
-						<Header variant="h2">{t("themePage.sections.cardExample")}</Header>
-					}
-				>
-					<SpaceBetween size="m">
-						<Box variant="p">
-							{t("themePage.sections.cardExampleDescription")}
-						</Box>
-						<div className="cdn-card" style={{ padding: "24px" }}>
-							<SpaceBetween size="s">
-								<Box variant="h3" fontSize="heading-m">
-									{t("themePage.cardExample.title")}
-								</Box>
-								<Box variant="p">{t("themePage.cardExample.description")}</Box>
-								<Box variant="small" color="text-body-secondary">
-									{t("themePage.cardExample.technicalNote")}
-								</Box>
-							</SpaceBetween>
-						</div>
-					</SpaceBetween>
-				</Container>
+				<div id="section-card-example">
+					<Container
+						header={
+							<Header variant="h2">{t("themePage.sections.cardExample")}</Header>
+						}
+					>
+						<SpaceBetween size="m">
+							<Box variant="p">
+								{t("themePage.sections.cardExampleDescription")}
+							</Box>
+							<div className="cdn-card" style={{ padding: "24px" }}>
+								<SpaceBetween size="s">
+									<Box variant="h3" fontSize="heading-m">
+										{t("themePage.cardExample.title")}
+									</Box>
+									<Box variant="p">{t("themePage.cardExample.description")}</Box>
+									<Box variant="small" color="text-body-secondary">
+										{t("themePage.cardExample.technicalNote")}
+									</Box>
+								</SpaceBetween>
+							</div>
+						</SpaceBetween>
+					</Container>
+					<a href="#toc" className="theme-toc-back">^ top</a>
+				</div>
 			</SpaceBetween>
 		</ContentLayout>
 	);
