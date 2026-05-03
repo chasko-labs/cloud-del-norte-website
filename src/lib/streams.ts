@@ -34,6 +34,31 @@ export interface StreamLocation {
 	readonly country: string;
 }
 
+/**
+ * Richer extraction shape — surfaces fields beyond the "song — artist" string
+ * the UI currently consumes. Populated by parseMetaRich on stations whose
+ * metaUrl exposes more than a flat title:
+ *  - artworkUrl: cover-art / album-art image (KEXP image_uri, NPR Composer
+ *    when widget_config.album_art is true and song.itunes/release art surfaces)
+ *  - programName: currently-airing show (NPR Composer onNow.program.name) —
+ *    fallback display when no song metadata is logged (talk shows, between
+ *    tracks)
+ *  - programLink: linkable program page (NPR Composer onNow.program.program_link)
+ *  - listeners: live listener count (icecast source.listeners) — surfaceable
+ *    as a "N listening" mini-line
+ *  - djComment: free-form DJ note (KEXP plays.comment) — RIP / show context
+ * Title remains the canonical "song — artist" string for back-compat with the
+ * existing UI consumer; everything else is additive
+ */
+export interface RichMeta {
+	readonly title: string | null;
+	readonly artworkUrl?: string;
+	readonly programName?: string;
+	readonly programLink?: string;
+	readonly listeners?: number;
+	readonly djComment?: string;
+}
+
 export interface StreamDef {
 	readonly key: string;
 	readonly url: string;
@@ -55,6 +80,13 @@ export interface StreamDef {
 	 */
 	readonly donateUrl?: string;
 	/**
+	 * weekly program schedule URL — public-facing page (not API). Surfaces
+	 * a "schedule" mini link inline with the station label. Most stations
+	 * publish one; UAM has none, Concepto has none. Set to undefined for
+	 * stations without a discoverable schedule page
+	 */
+	readonly scheduleUrl?: string;
+	/**
 	 * city / region / country of the broadcast origin. populated for every
 	 * station (donate-enabled or not) so the feed player can render a
 	 * "streaming from …" line. Mexican entries use proper Spanish naming —
@@ -64,6 +96,14 @@ export interface StreamDef {
 	readonly location: StreamLocation;
 	/** parses metaUrl response into "song — artist" string. omit alongside metaUrl */
 	parseMeta?(data: unknown): string | null;
+	/**
+	 * extended extraction — returns artwork, program, listener fields when the
+	 * upstream response carries them. Optional: stations whose metaUrl only
+	 * exposes a flat title (KRUX icecast) can omit this. UI consumers should
+	 * fall back to parseMeta when parseMetaRich is absent. Do NOT remove
+	 * parseMeta — the persistent-player + feed page still consume that signature
+	 */
+	parseMetaRich?(data: unknown): RichMeta | null;
 }
 
 export const STREAMS: StreamDef[] = [
@@ -73,6 +113,8 @@ export const STREAMS: StreamDef[] = [
 		label: "krux 91.5",
 		metaUrl: "https://kruxstream.nmsu.edu/status-json.xsl",
 		donateUrl: "https://nmsufoundation.org/givenow/KRUX.html",
+		// KRUX program grid — student-run, schedule on the official site
+		scheduleUrl: "https://krux.nmsu.edu/schedule/",
 		// NMSU Las Cruces, NM — Milton Hall studios on the main campus
 		location: { city: "Las Cruces", region: "New Mexico", country: "USA" },
 		// nmsu brand book — https://brand.nmsu.edu/colors/
@@ -93,6 +135,27 @@ export const STREAMS: StreamDef[] = [
 			const s = Array.isArray(src) ? src[0] : src;
 			return s?.title ?? null;
 		},
+		parseMetaRich(data) {
+			// icecast status-json.xsl carries source.listeners (current count) +
+			// source.listener_peak. Surfaces title for back-compat alongside the
+			// listener count so a single rich call can replace parseMeta + a side
+			// listener fetch. listener_peak is intentionally not surfaced — only
+			// the live count is interesting in the player UI
+			const d = data as {
+				icestats?: {
+					source?:
+						| { title?: string; listeners?: number }
+						| Array<{ title?: string; listeners?: number }>;
+				};
+			};
+			const src = d?.icestats?.source;
+			const s = Array.isArray(src) ? src[0] : src;
+			if (!s) return null;
+			const out: RichMeta = { title: s.title ?? null };
+			if (typeof s.listeners === "number")
+				return { ...out, listeners: s.listeners };
+			return out;
+		},
 	},
 	{
 		key: "kexp",
@@ -100,6 +163,8 @@ export const STREAMS: StreamDef[] = [
 		label: "kexp 90.3",
 		metaUrl: "https://api.kexp.org/v2/plays/?limit=1&format=json",
 		donateUrl: "https://www.kexp.org/donate/",
+		// public weekly grid — KEXP schedule page
+		scheduleUrl: "https://www.kexp.org/schedule/",
 		// KEXP Gathering Space — Seattle Center, WA
 		location: { city: "Seattle", region: "Washington", country: "USA" },
 		// kexp brand book — https://cargocollective.com/jonisdelicious/KEXP-Brand-Book
@@ -125,6 +190,37 @@ export const STREAMS: StreamDef[] = [
 			if (artist && song) return `${song} — ${artist}`;
 			return song ?? artist ?? null;
 		},
+		parseMetaRich(data) {
+			// KEXP plays row carries image_uri (cover-art-archive 500px) and an
+			// optional comment field DJs use for show notes / RIP messages.
+			// image_uri is empty when there is no MusicBrainz match — treat blank
+			// string as absent. play_type !== "trackplay" still surfaces so the UI
+			// can render the airbreak / nontrackplay state without a stale title
+			const d = data as {
+				results?: Array<{
+					artist?: string;
+					song?: string;
+					play_type?: string;
+					image_uri?: string;
+					comment?: string;
+				}>;
+			};
+			const play = d?.results?.[0];
+			if (!play) return null;
+			const isTrack = !play.play_type || play.play_type === "trackplay";
+			const title = isTrack
+				? play.artist && play.song
+					? `${play.song} — ${play.artist}`
+					: (play.song ?? play.artist ?? null)
+				: null;
+			const out: RichMeta = { title };
+			if (play.image_uri && play.image_uri.length > 0)
+				return play.comment
+					? { ...out, artworkUrl: play.image_uri, djComment: play.comment }
+					: { ...out, artworkUrl: play.image_uri };
+			if (play.comment) return { ...out, djComment: play.comment };
+			return out;
+		},
 	},
 	{
 		key: "ksfr",
@@ -143,6 +239,8 @@ export const STREAMS: StreamDef[] = [
 			"https://api.composer.nprstations.org/v1/widget/5182a3cce1c805df63015f16/now?format=json&style=v2&show_song=true",
 		metaFormat: "json",
 		donateUrl: "https://www.ksfr.org/donate",
+		// KSFR public weekly schedule page
+		scheduleUrl: "https://www.ksfr.org/schedule",
 		// SFCC studios — Santa Fe, NM
 		location: { city: "Santa Fe", region: "New Mexico", country: "USA" },
 		// SFCC official brand: turquoise PMS 326 + maroon PMS 484. Replaces the
@@ -174,6 +272,39 @@ export const STREAMS: StreamDef[] = [
 			const program = d?.onNow?.program?.name?.trim();
 			return program || null;
 		},
+		parseMetaRich(data) {
+			// nprstations widget — surfaces program.name + program_link separately
+			// so the UI can render "now: <Program> →" link beside the song line on
+			// talk shows or between tracks. song trackName/artistName remain the
+			// title source. KSFR widgets do not enable album_art (widget_config
+			// confirms false), so artworkUrl stays absent here
+			const d = data as {
+				onNow?: {
+					program?: { name?: string; program_link?: string };
+					song?: { trackName?: string; artistName?: string };
+				} | null;
+			};
+			const on = d?.onNow ?? null;
+			if (!on) return null;
+			const song = on.song;
+			let title: string | null = null;
+			if (song) {
+				const { trackName: track, artistName: artist } = song;
+				if (track && artist) title = `${track} — ${artist}`;
+				else title = track ?? artist ?? null;
+			}
+			const programName = on.program?.name?.trim() || undefined;
+			const programLink = on.program?.program_link?.trim() || undefined;
+			if (!title && !programName) return null;
+			const out: RichMeta = { title: title ?? programName ?? null };
+			if (programName && title) {
+				return programLink
+					? { ...out, programName, programLink }
+					: { ...out, programName };
+			}
+			if (programLink && programName) return { ...out, programLink };
+			return out;
+		},
 	},
 	{
 		key: "kutx",
@@ -183,6 +314,8 @@ export const STREAMS: StreamDef[] = [
 		url: "https://streams.kut.org/4428_192.mp3?aw_0_1st.playerid=kutx-free",
 		label: "kutx 98.9",
 		donateUrl: "https://www.kutx.org/donate",
+		// KUTX schedule lives at /schedule on kutx.org
+		scheduleUrl: "https://www.kutx.org/schedule/",
 		// KUT/KUTX studios — UT Austin campus, TX
 		location: { city: "Austin", region: "Texas", country: "USA" },
 		// NPR Composer widget id 50ef24ebe1c8a1369593d032 sniffed from kutx.org
@@ -212,6 +345,40 @@ export const STREAMS: StreamDef[] = [
 			if (track && artist) return `${track} — ${artist}`;
 			return track ?? artist ?? null;
 		},
+		parseMetaRich(data) {
+			// KUTX widget enables album_art in widget_config (confirmed live), but
+			// the album-art image URL itself is NOT in /now — it lives behind the
+			// `playlist` field that returns "REMOVED" on the public widget. So
+			// artworkUrl stays absent. We DO surface programName + programLink so
+			// the player can render "now: The Breaks with Confucius and Fresh"
+			// even when song is null
+			const d = data as {
+				onNow?: {
+					program?: { name?: string; program_link?: string };
+					song?: { trackName?: string; artistName?: string };
+				} | null;
+			};
+			const on = d?.onNow ?? null;
+			if (!on) return null;
+			const song = on.song;
+			let title: string | null = null;
+			if (song) {
+				const { trackName: track, artistName: artist } = song;
+				if (track && artist) title = `${track} — ${artist}`;
+				else title = track ?? artist ?? null;
+			}
+			const programName = on.program?.name?.trim() || undefined;
+			const programLink = on.program?.program_link?.trim() || undefined;
+			if (!title && !programName) return null;
+			const out: RichMeta = { title: title ?? programName ?? null };
+			if (programName && title) {
+				return programLink
+					? { ...out, programName, programLink }
+					: { ...out, programName };
+			}
+			if (programLink && programName) return { ...out, programLink };
+			return out;
+		},
 	},
 	{
 		key: "uam_radio",
@@ -220,7 +387,17 @@ export const STREAMS: StreamDef[] = [
 		// per-station opt-out if origin lacks Access-Control-Allow-Origin header
 		url: "https://stream5.mexiserver.com:1124/",
 		label: "uam radio 94.1",
-		// metaUrl omitted — uam radio site has no public json now-playing endpoint
+		// metaUrl omitted — Shoutcast v2 stats endpoint exists at
+		// https://stream5.mexiserver.com:1124/stats?json=1 and returns
+		// {songtitle, currentlisteners, peaklisteners, bitrate, servertitle}
+		// but the server emits NO Access-Control-Allow-Origin header so a
+		// browser fetch blocks on CORS. FOLLOWUP: route through a small Lambda /
+		// CloudFront function proxy (response headers: ACAO:*) before wiring as
+		// metaUrl. The audio /stream itself does send ACAO:* so playback works
+		// FOLLOWUP-2: songtitle observed as "RT1=" placeholder — confirm whether
+		// UAM sends real track titles during music programs (vs. talk slots)
+		// before investing in the proxy
+		scheduleUrl: "https://uamradio.uam.mx/programacion/",
 		// UAM Azcapotzalco unidad — Universidad Autónoma Metropolitana, CDMX
 		location: {
 			city: "Ciudad de México",
@@ -251,6 +428,8 @@ export const STREAMS: StreamDef[] = [
 		// often absent (DJ feed without inline metadata); parseMeta returns null
 		// gracefully and the player just shows the station label
 		metaUrl: "https://shaincast.caster.fm:20866/status-json.xsl",
+		// Ibero 90.9 weekly grid — official station site
+		scheduleUrl: "https://ibero909.fm/programacion/",
 		// Universidad Iberoamericana — Santa Fe campus, CDMX
 		location: {
 			city: "Ciudad de México",
@@ -279,6 +458,25 @@ export const STREAMS: StreamDef[] = [
 			const s = Array.isArray(src) ? src[0] : src;
 			return s?.title ?? null;
 		},
+		parseMetaRich(data) {
+			// caster.fm icecast — surfaces source.listeners alongside title.
+			// Currently observed ~7 listeners during off-hours; useful for
+			// "N listening" affordance once the player UI consumes it
+			const d = data as {
+				icestats?: {
+					source?:
+						| { title?: string; listeners?: number }
+						| Array<{ title?: string; listeners?: number }>;
+				};
+			};
+			const src = d?.icestats?.source;
+			const s = Array.isArray(src) ? src[0] : src;
+			if (!s) return null;
+			const out: RichMeta = { title: s.title ?? null };
+			if (typeof s.listeners === "number")
+				return { ...out, listeners: s.listeners };
+			return out;
+		},
 	},
 	{
 		key: "concepto_radial",
@@ -286,7 +484,17 @@ export const STREAMS: StreamDef[] = [
 		// Chrome/Safari/FF; may need fallback for older browsers)
 		url: "https://sp2.servidorrprivado.com:8196/stream",
 		label: "concepto radial",
-		// metaUrl omitted — no public json now-playing endpoint
+		// metaUrl omitted — Shoutcast v2 stats endpoint at
+		// https://sp2.servidorrprivado.com:8196/stats?json=1 returns
+		// {songtitle, currentlisteners, peaklisteners, bitrate, servertitle}
+		// but emits NO Access-Control-Allow-Origin header. The CentovaCast
+		// widget at /cp/widgets/player/single/?p=8196 also exposes nowplay.php
+		// and art.php (cover art!) but again no CORS. FOLLOWUP: route through
+		// a Lambda / CloudFront function proxy. As of probe 2026-05-02 the
+		// songtitle was empty even mid-broadcast, so the upstream may not be
+		// pushing inline track titles for this Shoutcast mount — verify at a
+		// musical timeslot before investing in proxy work
+		scheduleUrl: "https://conceptoradial.com/es/programacion",
 		// Tec de Monterrey CEDETEC — Centro de Diseño y Tecnología on the
 		// Ciudad de México (Tlalpan) campus, NOT the Monterrey home campus.
 		// Student-programmed station, hence the CDMX location

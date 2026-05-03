@@ -27,6 +27,10 @@ import {
 	setStoredNavState,
 } from "../../utils/locale";
 import { loadVisitorInfo, readCachedVisitor } from "../../utils/visitor";
+// MoonSvg lives in ./moon-icon so the leaf icon component is testable
+// without dragging Cloudscape AppLayout / TopNavigation imports into the
+// vitest jsdom env.
+import { MoonSvg } from "./moon-icon";
 
 import "./styles.css";
 
@@ -65,11 +69,6 @@ function SunSvg() {
 		</svg>
 	);
 }
-
-// MoonSvg lives in ./moon-icon so the leaf icon component is testable
-// without dragging Cloudscape AppLayout / TopNavigation imports into the
-// vitest jsdom env.
-import { MoonSvg } from "./moon-icon";
 
 /* MX flag — three equal vertical bands of green / white / red (official
    PMS 3415 #006847, white #ffffff, PMS 186 #ce1126) with the national coat
