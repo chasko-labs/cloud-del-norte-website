@@ -754,21 +754,33 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    Specificity beats the blanket strip rule above via the extra
    :root/:not() or .awsui-dark-mode class selector. */
 
-/* Light mode: warm amber glow */
+/* v0.0.0069 — utility icons sit in neumorphic recesses. Bryan eyes-on
+   v0.0.0068: the flat soft glow read as decorative "cutouts" without
+   purpose. Replace with paired highlight (top-left) + shadow (bottom-
+   right) inset shadows so each icon appears RECESSED into the nav
+   chrome — gives the cutout a tactile-depth purpose. */
+
+/* Light mode: cream highlight + warm mahogany shadow inset */
 :root:not(.awsui-dark-mode)
 	#top-nav
 	[class*="utility-wrapper"]
 	a[class*="top-navigation"] {
 	border-radius: 50% !important;
-	box-shadow: 0 0 8px 3px rgba(139, 90, 43, 0.18) !important;
+	box-shadow:
+		inset 1px 1px 2px rgba(44, 18, 6, 0.32),
+		inset -1px -1px 2px rgba(255, 245, 220, 0.28),
+		0 0 6px 1px rgba(139, 90, 43, 0.12) !important;
 }
 
-/* Dark mode: soft violet luminous glow */
+/* Dark mode: violet outer rim + black inner shadow inset for moonlit recess */
 .awsui-dark-mode #top-nav
 	[class*="utility-wrapper"]
 	a[class*="top-navigation"] {
 	border-radius: 50% !important;
-	box-shadow: 0 0 10px 3px rgba(144, 96, 240, 0.22) !important;
+	box-shadow:
+		inset 1px 1px 3px rgba(0, 0, 0, 0.55),
+		inset -1px -1px 2px rgba(144, 96, 240, 0.25),
+		0 0 8px 1px rgba(144, 96, 240, 0.18) !important;
 }
 
 /* THEME TOGGLE — spin/flip on click, gentle pulse on hover */
@@ -972,8 +984,11 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 /* ── MOON ─────────────────────────────────────────────────────────────────
-   Crescent + craters + a tiny twinkling star to the upper-right.
-   Crescent breathes color (lavender → soft cream) on a slow cycle. */
+   v0.0.0069 — date-driven moon phase. Replaces the prior crescent + star
+   sidekick which Bryan flagged as too close to the Islamic crescent-and-
+   star symbol. Two stacked discs: a lit moon disc + a shadow disc whose
+   horizontal offset (computed in MoonSvg from the synodic phase of TODAY)
+   models the lunar terminator. Phases cycle naturally over 29.5 days. */
 
 .cdn-svg-moon {
 	overflow: visible;
@@ -983,17 +998,19 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	transition: filter 0.3s ease;
 }
 
-.cdn-svg-moon__crescent {
-	fill: #ede5d4; /* cream — picks up brand against navy nav */
+.cdn-svg-moon__disc {
+	fill: #ede5d4; /* cream — lit lunar surface */
+	animation: cdn-moon-breathe 6s ease-in-out infinite;
 }
 
 .cdn-svg-moon__crater {
-	fill: rgba(139, 90, 43, 0.32); /* faint amber speckle */
+	fill: rgba(139, 90, 43, 0.28); /* faint amber speckle on the lit area */
 }
 
-.cdn-svg-moon__star {
-	fill: #d7c7ee;
-	transform-origin: 17.5px 7.5px;
+.cdn-svg-moon__shadow {
+	/* matches the navy top-nav backdrop so the dark portion reads as
+	   "this part of the moon is in shadow", not "this is a separate disc" */
+	fill: var(--cdn-deep-navy, #0a0a2e);
 }
 
 @keyframes cdn-moon-breathe {
@@ -1006,45 +1023,12 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	}
 }
 
-@keyframes cdn-moon-twinkle {
-	0%,
-	100% {
-		opacity: 0.85;
-		transform: scale(1) rotate(0deg);
-	}
-	30% {
-		opacity: 0.35;
-		transform: scale(0.6) rotate(20deg);
-	}
-	60% {
-		opacity: 1;
-		transform: scale(1.2) rotate(-10deg);
-	}
-}
-
-@media (prefers-reduced-motion: no-preference) {
-	.cdn-celestial-toggle--moon .cdn-svg-moon__crescent {
-		animation: cdn-moon-breathe 6s ease-in-out infinite;
-	}
-	.cdn-celestial-toggle--moon .cdn-svg-moon__star {
-		animation: cdn-moon-twinkle 3.2s ease-in-out infinite;
-	}
-}
-
 [class*="utility-wrapper"]
 	a[class*="top-navigation"]:has(.cdn-celestial-toggle--moon):hover
 	.cdn-svg-moon {
 	filter: drop-shadow(0 0 3px rgba(215, 199, 238, 1))
 		drop-shadow(0 0 10px rgba(144, 96, 240, 0.85))
 		drop-shadow(0 0 22px rgba(144, 96, 240, 0.5));
-}
-
-@media (prefers-reduced-motion: no-preference) {
-	[class*="utility-wrapper"]
-		a[class*="top-navigation"]:has(.cdn-celestial-toggle--moon):hover
-		.cdn-svg-moon__star {
-		animation-duration: 1.4s; /* twinkle faster */
-	}
 }
 
 /* ── FLAGS — shared base ─────────────────────────────────────────────────
@@ -1597,12 +1581,14 @@ body {
 	/* Slight transparency tones the orange down without dulling the brand */
 	color: rgba(255, 153, 0, 0.88);
 	/* Right + bottom asymmetric drop-shadow (no left/top) reads as a soft
-	   3D shadow rather than a full outline. */
+	   3D shadow rather than a full outline. v0.0.0069: tightened the inner
+	   glow blur (8px → 3px) so it doesn't bleed into the A's interior
+	   triangle. Outer halo (18px) preserved for the lit-sign glow. */
 	text-shadow:
 		1px 1px 0 rgba(44, 18, 6, 0.85),
 		1px 0 0 rgba(44, 18, 6, 0.6),
 		0 1px 0 rgba(44, 18, 6, 0.6),
-		0 0 8px rgba(255, 153, 0, 0.32),
+		0 0 3px rgba(255, 153, 0, 0.45),
 		0 0 18px rgba(255, 153, 0, 0.18);
 	animation: cdn-ugtag-pulse 6s ease-in-out infinite;
 }
@@ -1626,8 +1612,10 @@ body {
    provides the contrast — slightly punchier glow to compensate for the
    darker substrate */
 .awsui-dark-mode .cdn-ugtag-aws {
+	/* v0.0.0069: tight inner shadow (6→2px) keeps the A's interior triangle
+	   clean. Mid + outer halos drive the lit-sign glow without bleeding. */
 	text-shadow:
-		0 0 6px rgba(255, 153, 0, 0.85),
+		0 0 2px rgba(255, 153, 0, 0.95),
 		0 0 16px rgba(255, 153, 0, 0.6),
 		0 0 32px rgba(255, 153, 0, 0.36),
 		0 1px 2px rgba(0, 0, 0, 0.75);

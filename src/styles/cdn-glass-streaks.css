@@ -979,6 +979,20 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 	}
 }
 
+/* Tablet collision zone (601px–1024px) — fade Volunteer out before it
+   collides with the .cdn-pp player pill (right:192px, ~280px wide). At
+   these widths the page-title area is narrow enough that the s6-shifted
+   pill ends up overlapping the player. Bryan v0.0.0068: "volunteer needs
+   to fade away before that happens". opacity:0 + pointer-events:none
+   keeps the slot in flow so the awsui_title_ layout stays calm. */
+@media (min-width: 601px) and (max-width: 1024px) {
+	[class*="awsui_header-wrapper_"] [class*="awsui_info_"]:not(#\9):not(#\10) {
+		opacity: 0 !important;
+		pointer-events: none !important;
+		transform: scale(0.96);
+	}
+}
+
 /* ContentLayout hero-strip background — collapse on pages with breadcrumbs.
    Bryan eyes-on (roadmap, v0.0.0039): the cream-tinted ctl-header band sits
    above page content and reads as "a style element on top of content"

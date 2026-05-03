@@ -61,7 +61,31 @@ function SunSvg() {
 	);
 }
 
+/**
+ * Compute the moon's synodic phase (0-1) for a given date. Reference new
+ * moon: 2000-01-06 18:14 UTC (Julian Day 2451550.26). Synodic period:
+ * 29.530588853 mean solar days. Result wraps into [0, 1):
+ *   0     = new moon (fully shadowed)
+ *   0.25  = first quarter (right half lit)
+ *   0.5   = full moon (fully lit)
+ *   0.75  = last quarter (left half lit)
+ */
+function computeMoonPhase(d: Date): number {
+	const jd = d.getTime() / 86400000 + 2440587.5;
+	const phase = ((jd - 2451550.26) / 29.530588853) % 1;
+	return phase < 0 ? phase + 1 : phase;
+}
+
 function MoonSvg() {
+	// v0.0.0069 — Bryan flagged the prior crescent + star as too close to the
+	// Islamic crescent-and-star symbol. Replace with TODAY'S lunar phase
+	// (date-computed, no sidekick star). Norte stargazer-friendly: the icon
+	// changes daily across the synodic cycle.
+	const phase = computeMoonPhase(new Date());
+	// Shadow disc (same radius as the moon disc) overlays the lit moon and
+	// shifts horizontally to model the terminator. waxing: shadow exits to
+	// the LEFT (cx 11 → -6); waning: shadow enters from the RIGHT (cx 28 → 11).
+	const cxShadow = phase < 0.5 ? 11 - phase * 34 : 28 - (phase - 0.5) * 34;
 	return (
 		// biome-ignore lint/a11y/noSvgWithoutTitle: decorative; aria-hidden inside button which carries ariaLabel
 		<svg
@@ -73,14 +97,10 @@ function MoonSvg() {
 			xmlns="http://www.w3.org/2000/svg"
 			role="img"
 		>
-			{/* crescent — even-odd fill: outer disc minus offset disc */}
-			<path
-				className="cdn-svg-moon__crescent"
-				fillRule="evenodd"
-				clipRule="evenodd"
-				d="M14.6 17.5a7.5 7.5 0 1 1 0-13.0 5.6 5.6 0 0 0 0 13.0z"
-			/>
-			{/* faint craters — cluster on the lit edge */}
+			{/* lit moon disc — full diameter, cool moonlight color via CSS */}
+			<circle className="cdn-svg-moon__disc" cx="11" cy="11" r="8.5" />
+			{/* faint craters — render BEFORE shadow so they're hidden in the
+			    dark portion of the terminator */}
 			<circle
 				className="cdn-svg-moon__crater cdn-svg-moon__crater--a"
 				cx="9.4"
@@ -99,11 +119,8 @@ function MoonSvg() {
 				cy="12.0"
 				r="0.4"
 			/>
-			{/* twinkling sidekick star — 4-point sparkle */}
-			<path
-				className="cdn-svg-moon__star"
-				d="M17.5 5.5 L18.0 7.0 L19.5 7.5 L18.0 8.0 L17.5 9.5 L17.0 8.0 L15.5 7.5 L17.0 7.0 Z"
-			/>
+			{/* shadow disc — overlays bright disc + craters in the dark portion */}
+			<circle className="cdn-svg-moon__shadow" cx={cxShadow} cy="11" r="8.5" />
 		</svg>
 	);
 }

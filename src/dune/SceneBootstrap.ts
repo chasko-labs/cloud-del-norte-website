@@ -58,6 +58,10 @@ export interface DuneSceneCanvasHandle {
 	isPerfDegraded(): boolean;
 	/** Re-read --station-primary-rgb and tint scene fog. Call on station change, NOT per frame. */
 	refreshStationTint(): void;
+	/** Pause render loop without disposing GPU resources. Survives theme flips. */
+	pause(): void;
+	/** Resume render loop after a pause(). No-op if not paused. */
+	resume(): void;
 }
 
 /** Wallpaper handle. */
@@ -67,6 +71,13 @@ export interface DuneSceneHandle {
 	getPerfMedian(): number;
 	/** Re-read --station-primary-rgb and tint scene fog. Call on station change, NOT per frame. */
 	refreshStationTint(): void;
+	/**
+	 * Hide/show the dune canvas + pause/resume the render loop in one call.
+	 * Cheaper than destroy+rebuild on every theme flip — keeps shaders compiled,
+	 * blue-noise texture uploaded, mesh on the GPU. Memory cost: ~25-40MB
+	 * resident vs reclaiming it. Win: 200-400ms cold-mount cost paid once.
+	 */
+	setVisible(visible: boolean): void;
 }
 
 /**
@@ -126,6 +137,7 @@ export function mountDuneSceneOnCanvas(
 	const ground = new DuneGround(scene);
 
 	let lastFrameMs = performance.now();
+	let paused = false;
 
 	scene.registerBeforeRender(() => {
 		const now = performance.now();
@@ -156,7 +168,12 @@ export function mountDuneSceneOnCanvas(
 	let currentMedian = 0;
 	let degraded = false;
 
-	engine.runRenderLoop(() => {
+	// Named tick so pause()/resume() can re-arm the same callback after a
+	// stopRenderLoop. Babylon doesn't expose a "pause without losing the
+	// callback" primitive — stopRenderLoop clears its registered loops
+	// outright. Hoisting the function lets resume() rebind without a closure
+	// allocation churn each cycle.
+	const renderTick = (): void => {
 		const start = performance.now();
 		scene.render();
 		const end = performance.now();
@@ -191,7 +208,8 @@ export function mountDuneSceneOnCanvas(
 			);
 			canvas.classList.add("dune-perf-degraded");
 		}
-	});
+	};
+	engine.runRenderLoop(renderTick);
 
 	return {
 		engine,
@@ -218,6 +236,26 @@ export function mountDuneSceneOnCanvas(
 		},
 		refreshStationTint() {
 			atmosphere.refreshStationTint();
+		},
+		// Pause/resume — stop the render loop without tearing down GPU state.
+		// Babylon's stopRenderLoop is a flag flip + clearing the rAF callback,
+		// runRenderLoop re-arms it. ~0.1ms each direction. Resetting
+		// lastFrameMs on resume prevents the first delta after resume from
+		// reflecting the entire pause duration (which would jolt the
+		// AnimationController state).
+		pause() {
+			if (paused) return;
+			paused = true;
+			engine.stopRenderLoop();
+		},
+		resume() {
+			if (!paused) return;
+			paused = false;
+			lastFrameMs = performance.now();
+			// Re-arm the render loop with the same closure used at construction.
+			// Babylon allows multiple loops; we registered exactly one above
+			// and need to re-register the identical pump after stopRenderLoop.
+			engine.runRenderLoop(renderTick);
 		},
 	};
 }
@@ -273,6 +311,9 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 			refreshStationTint() {
 				/* no-op: no babylon scene to tint */
 			},
+			setVisible(_visible: boolean) {
+				/* no-op: nothing to show or hide */
+			},
 		};
 	}
 
@@ -308,6 +349,19 @@ export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 		},
 		refreshStationTint() {
 			inner.refreshStationTint();
+		},
+		setVisible(visible: boolean) {
+			// CSS visibility (not display) keeps the canvas in layout — same
+			// width/height/dpr — so engine.resize() observations stay valid
+			// while hidden. pointer-events:none is already on the element.
+			// pause() drops render-loop CPU + GPU submission cost to zero
+			// while hidden; resume() re-arms in <1ms.
+			canvas.style.visibility = visible ? "visible" : "hidden";
+			if (visible) {
+				inner.resume();
+			} else {
+				inner.pause();
+			}
 		},
 	};
 }

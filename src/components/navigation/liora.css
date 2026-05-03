@@ -43,6 +43,33 @@
 		inset 2px 0 #fff5d766,
 		inset -2px 0 #5037194d;
 	container-type: inline-size;
+	/* Bryan ask 2026-05-02: console isn't a load pillar — let it fade in
+	   gracefully instead of popping. Stickies follow at 1.4s/1.6s for the
+	   stagger (handwriting begins ~2.1s). Reduced-motion override below
+	   nukes the entrance animation but preserves all interactive states. */
+	opacity: 0;
+	animation: 0.85s 0.15s cubic-bezier(0.22, 0.61, 0.36, 1) forwards
+		liora-bezel-fadein;
+}
+
+@keyframes liora-bezel-fadein {
+	0% {
+		opacity: 0;
+		transform: translateY(6px) scale(0.985);
+		filter: blur(2px);
+	}
+	60% {
+		opacity: 1;
+		filter: blur(0);
+	}
+	to {
+		opacity: 1;
+		/* `none` (not scale(1)) so we don't permanently install a containing
+		   block on .liora-bezel — keeps `position: fixed` descendants like
+		   .liora-stickynote--flying-out anchored to the viewport. */
+		transform: none;
+		filter: none;
+	}
 }
 
 .liora-bezel:before {
@@ -274,8 +301,15 @@
 	overflow: hidden;
 }
 
+/* zoomed === "stuck onto the screen". Bryan ask 2026-05-02: when zoomed,
+   the sticky covers the whole liora canvas (panel-wrap area sits above the
+   notes-row). We anchor `bottom: 100%` to the row so the sticky lifts up
+   and overlays the bezel; aspect-ratio 4/3 matches panel-wrap so the cover
+   reads as a sticker slapped over the screen. Click again toggles it back
+   to its anchor — the toggle never adds .screen-tap-N classes to the bezel,
+   so no crack-burst / shatter-flash fires (no "damage" on dismiss). */
 .liora-stickynote.liora-stickynote--zoomed {
-	transform-origin: 50%;
+	transform-origin: 50% 100%;
 	z-index: 500;
 	pointer-events: auto;
 	background-image:
@@ -284,22 +318,27 @@
 	background-size:
 		100% 5px,
 		100% 100%;
-	min-width: 240px;
-	max-width: clamp(240px, 72vw, 340px);
-	padding: 18px 28px 20px 22px;
-	font-size: clamp(25px, 8.5cqi, 36px);
+	min-width: 0;
+	max-width: none;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	padding: 22px 24px 26px;
+	font-size: clamp(28px, 10cqi, 44px);
+	line-height: 1.05;
+	justify-content: center;
 	transition:
 		transform 0.45s cubic-bezier(0.2, 0.85, 0.4, 1.1),
 		box-shadow 0.45s,
 		font-size 0.45s,
 		padding 0.45s,
-		min-width 0.45s,
-		max-width 0.45s,
 		opacity 0.35s;
 	position: absolute;
-	top: 75%;
-	left: 5%;
-	transform: rotate(-2deg);
+	left: 0;
+	right: 0;
+	top: auto;
+	bottom: 100%;
+	margin-bottom: 60px; /* clear the status bar inset below panel-wrap */
+	transform: rotate(-1.4deg);
 	box-shadow:
 		10px 22px 44px #000000b3,
 		5px 10px 20px #0000007a,
@@ -332,7 +371,7 @@
    matches sticky 2's resting state. Right-side mirror of sticky 1's
    bottom-left zoomed slot — keeps both notes visually distinct. */
 .liora-stickynote-2.liora-stickynote-2--zoomed {
-	transform-origin: 50%;
+	transform-origin: 50% 100%;
 	z-index: 500;
 	pointer-events: auto;
 	background-image:
@@ -341,23 +380,27 @@
 	background-size:
 		100% 5px,
 		100% 100%;
-	min-width: 240px;
-	max-width: clamp(240px, 72vw, 340px);
-	padding: 18px 22px 20px 28px;
-	font-size: clamp(20px, 6.5cqi, 28px);
+	min-width: 0;
+	max-width: none;
+	width: 100%;
+	aspect-ratio: 4 / 3;
+	padding: 22px 28px 26px;
+	font-size: clamp(22px, 8cqi, 34px);
 	line-height: 1.18;
+	justify-content: center;
 	transition:
 		transform 0.45s cubic-bezier(0.2, 0.85, 0.4, 1.1),
 		box-shadow 0.45s,
 		font-size 0.45s,
 		padding 0.45s,
-		min-width 0.45s,
-		max-width 0.45s,
 		opacity 0.35s;
 	position: absolute;
-	top: 60%;
-	right: 5%;
-	transform: rotate(2deg);
+	left: 0;
+	right: 0;
+	top: auto;
+	bottom: 100%;
+	margin-bottom: 60px; /* clear the status bar inset below panel-wrap */
+	transform: rotate(1.4deg);
 	box-shadow:
 		10px 22px 44px #000000b3,
 		5px 10px 20px #0000007a,
@@ -1409,6 +1452,28 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .liora-led,
 	.liora-canvas {
 		animation: none;
 		transform: none;
+	}
+	/* Bryan ask 2026-05-02: skip the entrance fade for console + stickies
+	   under reduced-motion. Click-to-cover state still works — that's a
+	   class toggle on the sticky, not an entrance animation. */
+	.liora-bezel,
+	.liora-stickynote,
+	.liora-stickynote-2 {
+		animation: none;
+		opacity: 1;
+		transform: none;
+		filter: none;
+	}
+	.liora-stickynote {
+		transform: rotate(-4.5deg);
+	}
+	.liora-stickynote-2 {
+		transform: rotate(2.8deg);
+	}
+	.liora-stickynote-line,
+	.liora-stickynote-sig {
+		animation: none;
+		clip-path: none;
 	}
 }
 
