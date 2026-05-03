@@ -118,6 +118,12 @@ export interface StreamDef {
 	 */
 	readonly location: StreamLocation;
 	/**
+	 * fallback stream URLs tried in order after the primary URL fails. player
+	 * cycles through these before surfacing "failed" UI. uam_radio uses
+	 * yanapak.org mirror as fallback when mexiserver.com:1124 is down
+	 */
+	readonly fallbackUrls?: readonly string[];
+	/**
 	 * static fallback link for when the live track string is unavailable —
 	 * either the station has no meta endpoint reachable from the browser
 	 * (uam_radio, concepto_radial — both CORS-blocked Shoutcast), the SSE
@@ -442,6 +448,7 @@ export const STREAMS: StreamDef[] = [
 			labelEn: "playlist",
 			labelEs: "playlist",
 		},
+		fallbackUrls: ["https://radios.yanapak.org/UAMRadio"],
 		// UAM Azcapotzalco unidad — Universidad Autónoma Metropolitana, CDMX
 		location: {
 			city: "Ciudad de México",
@@ -825,7 +832,7 @@ export function hexToRgbTuple(hex: string): string {
  */
 export function formatLocation(loc: StreamLocation): string {
 	if (loc.city === loc.region) {
-		return `${loc.city}, ${loc.country}`;
+		return loc.city;
 	}
 	return `${loc.city}, ${loc.region}, ${loc.country}`;
 }
