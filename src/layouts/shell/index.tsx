@@ -105,10 +105,17 @@ function buildLunarPath(phase: number): string | null {
 	const pa = isWaxing ? (1 - 2 * phase) * Math.PI : (2 * phase - 1) * Math.PI;
 	const rx = Math.abs(8.5 * Math.cos(pa));
 	const outerSweep = isWaxing ? 1 : 0;
-	// Crescent: terminator passes through the LIT side (rx near 8.5)
-	// Gibbous:  terminator passes through the DARK side (rx near 0)
+	// v0.0.0099 — bryan: "moon STILL looks like sun". The v0.0.0080 sweep
+	// mapping inverted the crescent case so the terminator passed through
+	// the DARK side (large rx-magnitude on dark side = lit area covered
+	// most of the disc → looked like a full sun). Correct mapping (verified
+	// via SVG y-down clock-position analysis): the lit-area boundary
+	// terminator passes through the LIT side for a crescent (small lit
+	// sliver bounded between the lit limb + terminator close to it on the
+	// SAME side) and through the DARK side for a gibbous (most of disc
+	// lit, terminator close to the dark limb).
 	const isCrescent = phase < 0.25 || phase > 0.75;
-	const terminatorSweep = isWaxing ? (isCrescent ? 0 : 1) : isCrescent ? 1 : 0;
+	const terminatorSweep = isCrescent ? 1 : 0;
 	return `M 11,2.5 A 8.5,8.5 0 0,${outerSweep} 11,19.5 A ${rx.toFixed(2)},8.5 0 0,${terminatorSweep} 11,2.5 Z`;
 }
 

@@ -645,9 +645,21 @@
 	display: flex;
 	flex-direction: column;
 	align-items: flex-start;
-	justify-content: center;
+	/* anchor to the top of the reserved slot — when shorter content states
+	   (idle, no-donate stations, empty now-playing) render, the player sits
+	   at the slot's top edge instead of centering, which would feel like the
+	   widget is floating in empty space. */
+	justify-content: flex-start;
 	gap: 4px;
 	margin-inline-end: 6px;
+	/* lock worst-case slot height so state transitions (idle ↔ playing,
+	   has-donate ↔ no-donate, now-playing ↔ empty, retry/error states)
+	   don't reflow page content below the header band. Worst-case stack:
+	   top row (32px btn) + now-playing line (~13px) + donate block (~30px)
+	   + 2× 4px flex gaps + 8px container padding ≈ 91px. clamp() pads for
+	   font-size variance and 0.85rem stations like "amplifier institute"
+	   that wrap the label on narrow viewports. */
+	min-height: clamp(108px, 14vh, 132px);
 	/* light-mode default: use the station's primary-light if it provides one,
 	   else its primary, else the brand violet. */
 	--station-primary-mode: var(
@@ -1125,6 +1137,12 @@
 @media (max-width: 600px) {
 	.feed-krux {
 		align-self: flex-start;
+		/* mobile adds extra slack — long station labels (e.g. "amplifier
+		   institute" / "instituto tecnológico de estudios superiores")
+		   may wrap the top row to two lines, and the donate two-line block
+		   plus now-playing stay full-width. Bumps the floor so the worst
+		   wrapped state still doesn't push content. */
+		min-height: 148px;
 	}
 }
 

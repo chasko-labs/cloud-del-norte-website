@@ -698,21 +698,35 @@
 		filter 0.6s;
 	position: absolute;
 	inset: 0;
-	/* Audio-reactive head tilt — LEFT-ONLY tilt scaled by --cdn-bass. Bryan
+	/* Audio-reactive head dance — LEFT tilt (bass) + vertical NOD (mid). Bryan
 	   v0.0.0066: previous ±2.5deg sway felt like she was nodding both ways;
-	   left-only at -2deg max reads as a subtle "into the bass" lean.
-	   Silent → 0deg rotation throughout. Loud bass → -2deg dip at 3.6s period.
-	   transform-origin at bottom so the rotation pivots from the neck.
-	   Animation is paused unless body has cdn-stream-playing AND canvas is
-	   --visible — head only "dances" while audio is actually playing. */
+	   left-only at -2deg max read as "into the bass" but proved too subtle —
+	   v0.0.0102 raises lateral to -4deg and adds a vertical nod riding
+	   --cdn-mid (kick/snare band) so liora visibly head-bobs to the beat.
+	   Silent → 0deg + 0px throughout. Loud bass → -4deg lean. Loud mid → -6px
+	   nod. transform-origin at bottom so rotation pivots from the neck.
+	   Two parallel animations on different periods (3.6s tilt → individual
+	   `rotate` property, 0.9s nod → individual `translate` property). Using
+	   the modern individual-transform-properties (rotate / translate) instead
+	   of the legacy `transform` shorthand is critical: shorthand collides
+	   when two @keyframes both write `transform` (last-applied wins, no
+	   compose). The individual props cascade independently so lateral lean
+	   and vertical bob layer into a natural dance.
+	   Both animations paused unless body has cdn-stream-playing AND canvas is
+	   --visible — head only "dances" while audio is actually playing.
+	   No conflict with babylon emoteQueue/gestureQueue: those deform the 3D
+	   mesh INSIDE the canvas pixel buffer; the CSS transform rotates the
+	   <canvas> element AFTER rasterization, so the two layers compose. */
 	transform-origin: center bottom;
-	animation: liora-head-tilt-left 3.6s ease-in-out infinite;
-	animation-play-state: paused;
-	will-change: transform;
+	animation:
+		liora-head-tilt-left 3.6s ease-in-out infinite,
+		liora-head-nod 0.9s ease-in-out infinite;
+	animation-play-state: paused, paused;
+	will-change: rotate, translate;
 }
 
 body.cdn-stream-playing .liora-canvas.liora-canvas--visible {
-	animation-play-state: running;
+	animation-play-state: running, running;
 }
 
 .liora-canvas.liora-canvas--visible {
@@ -721,13 +735,28 @@ body.cdn-stream-playing .liora-canvas.liora-canvas--visible {
 
 @keyframes liora-head-tilt-left {
 	0% {
-		transform: rotate(0deg);
+		rotate: 0deg;
 	}
 	50% {
-		transform: rotate(calc(var(--cdn-bass, 0) * -2deg));
+		rotate: calc(var(--cdn-bass, 0) * -4deg);
 	}
 	100% {
-		transform: rotate(0deg);
+		rotate: 0deg;
+	}
+}
+
+/* Vertical head NOD — translate pulse riding --cdn-mid. 0.9s period (~67bpm
+   half-time) so it visibly bobs on most kick/snare cadences without strobing.
+   Negative Y = head moves UP into the beat, then settles. Uses individual
+   `translate` property so it composes with `rotate` from the tilt keyframe
+   above (transform-shorthand would clobber). */
+@keyframes liora-head-nod {
+	0%,
+	100% {
+		translate: 0 0;
+	}
+	50% {
+		translate: 0 calc(var(--cdn-mid, 0) * -6px);
 	}
 }
 
