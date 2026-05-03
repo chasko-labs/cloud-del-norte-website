@@ -1,23 +1,44 @@
-/* cdn-pp — persistent player card. Glassmorphic surface with dual horizontal
-   streak gradients (::before top, ::after bottom), audio-reactive outer glow
-   driven by --cdn-mid + --cdn-flux beat bloom, Cinzel station label, RAVY
-   conic spotlight on --stop while body.cdn-stream-playing. Station accent is
-   the left-edge stripe only; all other color inherits from theme tokens.
-   Layout slot cdn-pp__art reserved for Phase 2 parseMetaRich artworkUrl.
+/* cdn-pp — persistent player. Tight inline widget, not a card.
+   Layout: [⏭ skip] [label · geo/track] [● play/stop]
+   The cluster is right-aligned; the circular play button is the visual anchor.
+   No card chrome — a subtle station-tinted radial bg and bottom streak are
+   the only structural marks.
 
-   Phase history:
-   v0.0.0115 — opaque cream card (#f0e5cf): dissolved into cream wallpaper
-               scrolling-background overlay on light mode, "wash of colors"
-   v0.0.0120 — glassmorphic: backdrop-filter blur replaces opaque bg, dual
-               streaks + audio-reactive glow carry the card's visual weight */
+   Replaces glassmorphic card (v0.0.0120) which read as an "iceberg" on the
+   page — too heavy. Returns to the aesthetic of the removed KruxPlayer feed
+   widget: subtle, woven in, rizz from the circular button + school colors. */
 
-/* slot reserves the same vertical space on every page so children below the
-   player don't shift when station meta changes. Sits under Cloudscape breadcrumbs. */
+/* --station-primary-mode: contrast-tuned palette value for current mode.
+   Light uses primaryLight for cream legibility; dark uses primaryDark for
+   navy legibility. Exactly mirrors the feed-krux pattern. */
+.cdn-pp {
+	--station-primary-mode: var(
+		--station-primary-light,
+		var(--station-primary, var(--cdn-violet, #9060f0))
+	);
+	--station-primary-mode-rgb: var(
+		--station-primary-light-rgb,
+		var(--station-primary-rgb, 144, 96, 240)
+	);
+}
+
+.awsui-dark-mode .cdn-pp {
+	--station-primary-mode: var(
+		--station-primary-dark,
+		var(--station-primary, var(--cdn-violet, #9060f0))
+	);
+	--station-primary-mode-rgb: var(
+		--station-primary-dark-rgb,
+		var(--station-primary-rgb, 144, 96, 240)
+	);
+}
+
+/* slot — reserves vertical space, stacking context above awsui scrolling-bg */
 .cdn-player-slot {
 	display: block;
 	width: 100%;
-	margin: 0 0 16px 0;
-	min-height: 64px;
+	margin: 0 0 12px 0;
+	min-height: 48px;
 	position: relative;
 	z-index: 1;
 }
@@ -25,155 +46,71 @@
 .cdn-pp {
 	display: flex;
 	align-items: center;
-	gap: 12px;
+	justify-content: flex-end;
+	gap: 10px;
 	width: 100%;
-	min-height: 64px;
-	padding: 10px 14px;
+	min-height: 48px;
+	padding: 6px 0;
 	box-sizing: border-box;
 
-	/* stacking context — card sits above awsui_scrolling-background overlay
-	   that AppLayout hoists into the same grid cell (display:contents spans
-	   rows 1..9). Without this the card paints UNDER it on cream wallpaper. */
+	/* stacking context — sits above awsui_scrolling-background overlay */
 	position: relative;
 	z-index: 1;
-	overflow: hidden;
-	isolation: isolate;
 
-	/* glassmorphic surface — blurs dune wallpaper / scrolling-bg through.
-	   Replaced opaque #f0e5cf (v0.0.0115); opaque cream dissolved into the
-	   cream scrolling-background, reading as invisible. backdrop-filter blur
-	   creates visible surface separation even when backdrop hue matches. */
-	background-color: var(--cdn-glass-bg, rgba(237, 229, 212, 0.55));
-	-webkit-backdrop-filter: blur(10px) saturate(1.05);
-	backdrop-filter: blur(10px) saturate(1.05);
-
-	border: 1.5px solid var(--cdn-glass-border, rgba(139, 90, 43, 0.28));
-	/* single station-tinted accent — left-edge stripe is the only station color
-	   hit in the card frame; everything else defers to theme tokens */
-	border-left: 4px solid var(--station-primary, var(--cdn-violet, #9060f0));
-	border-radius: var(--cdn-radius-md, 8px);
-
-	/* base shadow + audio-reactive mid ring + flux beat bloom.
-	   --cdn-mid: station-tinted outer ring expands with the music (0→14px).
-	   --cdn-flux: warm transient bloom on beats/onsets (0→22px, fast flash). */
-	box-shadow:
-		var(
-			--cdn-glass-shadow,
-			0 4px 24px rgba(139, 90, 43, 0.18),
-			0 1px 3px rgba(0, 0, 0, 0.08),
-			0 0 1px rgba(139, 90, 43, 0.12)
-		),
-		0 0 calc(4px + var(--cdn-mid, 0) * 14px)
-			rgba(
-				var(--station-primary-rgb, 144, 96, 240),
-				calc(0.1 + var(--cdn-mid, 0) * 0.25)
-			),
-		0 0 calc(6px + var(--cdn-flux, 0) * 22px)
-			rgba(255, 153, 0, calc(0.06 + var(--cdn-flux, 0) * 0.2));
+	/* no card — subtle station-tinted radial from the right (play button side) */
+	background: radial-gradient(
+		ellipse at right center,
+		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.07) 0%,
+		transparent 68%
+	);
+	border: none;
+	border-bottom: 1px solid
+		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.18);
+	border-radius: 0;
+	box-shadow: none;
 
 	color: var(--cdn-color-text, #2c1a0e);
 	font-size: var(--cdn-text-sm, 0.75rem);
-	transition:
-		border-color 0.2s ease,
-		box-shadow 0.2s ease;
-}
-
-/* top streak — opacity pulses with --cdn-flux (beat flash) */
-.cdn-pp::before {
-	content: "";
-	position: absolute;
-	top: 0;
-	left: 0;
-	right: 0;
-	height: 2px;
-	background: var(--cdn-streak-h-light);
-	opacity: calc(0.65 + var(--cdn-flux, 0) * 0.35);
-	pointer-events: none;
-}
-
-/* bottom streak — softer presence, also flux-reactive */
-.cdn-pp::after {
-	content: "";
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	height: 2px;
-	background: var(--cdn-streak-h-light);
-	opacity: calc(0.35 + var(--cdn-flux, 0) * 0.3);
-	pointer-events: none;
+	transition: background 0.5s ease, border-color 0.5s ease;
 }
 
 .awsui-dark-mode .cdn-pp {
-	background-color: var(--cdn-glass-bg, rgba(28, 34, 48, 0.55));
-	border-color: var(--cdn-glass-border, rgba(144, 96, 240, 0.32));
-	border-left-color: var(--station-primary, var(--cdn-violet, #9060f0));
-	box-shadow:
-		var(
-			--cdn-glass-shadow,
-			0 4px 24px rgba(144, 96, 240, 0.32),
-			0 1px 4px rgba(0, 0, 0, 0.5),
-			0 0 1px rgba(144, 96, 240, 0.18)
-		),
-		0 0 calc(4px + var(--cdn-mid, 0) * 14px)
-			rgba(
-				var(--station-primary-rgb, 144, 96, 240),
-				calc(0.15 + var(--cdn-mid, 0) * 0.3)
-			),
-		0 0 calc(6px + var(--cdn-flux, 0) * 22px)
-			rgba(144, 96, 240, calc(0.1 + var(--cdn-flux, 0) * 0.25));
+	background: radial-gradient(
+		ellipse at right center,
+		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.1) 0%,
+		transparent 68%
+	);
+	border-bottom-color: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
 	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
 }
 
-.awsui-dark-mode .cdn-pp::before {
-	background: var(--cdn-streak-h-dark);
-	opacity: calc(0.7 + var(--cdn-flux, 0) * 0.3);
-}
-
-.awsui-dark-mode .cdn-pp::after {
-	background: var(--cdn-streak-h-dark);
-	opacity: calc(0.4 + var(--cdn-flux, 0) * 0.3);
-}
-
-/* album art thumbnail — reserved for Phase 2 parseMetaRich artworkUrl.
-   36px square, object-fit cover, flush border matching card rim. */
-.cdn-pp__art {
-	width: 36px;
-	height: 36px;
-	border-radius: var(--cdn-radius-sm, 4px);
-	object-fit: cover;
-	flex-shrink: 0;
-	border: 1px solid var(--cdn-glass-border, rgba(139, 90, 43, 0.28));
-}
-
-/* meta wrapper — stacks station label over now-playing track text */
+/* meta — right-aligned text column: station label on top, geo/track below */
 .cdn-pp__meta {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: flex-end;
 	gap: 1px;
 	min-width: 0;
-	flex: 1 1 auto;
 	overflow: hidden;
 }
 
-/* station label — Cinzel for brand cohesion with the breadcrumb wordmark */
+/* station label — Cinzel in the school's contrast-tuned primary color */
 .cdn-pp__label {
 	font-family: Cinzel, "Cinzel Decorative", "Times New Roman", Georgia, serif;
 	font-weight: 600;
 	letter-spacing: 0.04em;
-	color: var(--cdn-color-text-high, var(--cdn-color-text, #2c1a0e));
-	flex-shrink: 0;
-	line-height: 1.2;
 	font-size: var(--cdn-text-base, 0.875rem);
+	line-height: 1.2;
+	flex-shrink: 0;
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	text-shadow: var(--cdn-text-shadow-light, 0 1px 2px rgba(74, 40, 24, 0.18));
 }
 
 .awsui-dark-mode .cdn-pp__label {
-	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
+	text-shadow: var(--cdn-text-shadow-dark, 0 1px 2px rgba(0, 0, 0, 0.65));
 }
 
-/* station label as donate link — when streamDef.donateUrl present the
-   station name becomes the donate affordance with " · donate" appended */
+/* station label as donate link */
 a.cdn-pp__label--donate {
 	display: inline-flex;
 	align-items: baseline;
@@ -183,7 +120,7 @@ a.cdn-pp__label--donate {
 	border-bottom: 1px dotted
 		color-mix(
 			in srgb,
-			var(--station-primary, var(--cdn-violet, #9060f0)) 40%,
+			var(--station-primary-mode, var(--cdn-violet, #9060f0)) 40%,
 			transparent
 		);
 	transition: border-bottom-color 0.2s ease;
@@ -191,7 +128,7 @@ a.cdn-pp__label--donate {
 
 a.cdn-pp__label--donate:hover,
 a.cdn-pp__label--donate:focus-visible {
-	border-bottom-color: var(--station-primary, var(--cdn-violet, #9060f0));
+	border-bottom-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	outline: none;
 }
 
@@ -205,28 +142,25 @@ a.cdn-pp__label--donate:focus-visible {
 }
 
 .cdn-pp__label-donate {
-	color: var(--station-primary-light, var(--station-primary, var(--cdn-purple, #5a1f8a)));
+	color: var(--station-primary-mode, var(--cdn-purple, #5a1f8a));
 	font-size: var(--cdn-text-xs, 0.6875rem);
 	font-weight: var(--cdn-weight-bold, 700);
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
+	opacity: 0.75;
 }
 
-.awsui-dark-mode .cdn-pp__label-donate {
-	color: var(--station-primary-dark, var(--station-primary, var(--cdn-violet-soft, #a080e8)));
-}
-
+/* track row — geo or now-playing */
 .cdn-pp__track {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: flex-end;
 	min-width: 0;
 	max-width: 100%;
 	overflow: hidden;
 	line-height: 1.15;
 }
 
-/* eyebrow — uppercase micro-label. Used for "retrying" warn variant. */
 .cdn-pp__eyebrow {
 	font-size: var(--cdn-text-xs, 0.6875rem);
 	font-weight: var(--cdn-weight-bold, 700);
@@ -241,48 +175,43 @@ a.cdn-pp__label--donate:focus-visible {
 }
 
 .cdn-pp__track-text {
-	color: var(--cdn-color-text-medium, #5a3a1e);
+	color: var(--station-primary-mode, var(--cdn-color-text-medium, #5a3a1e));
+	opacity: 0.8;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 100%;
+	max-width: 240px;
 	font-size: var(--cdn-text-sm, 0.75rem);
 }
 
 .awsui-dark-mode .cdn-pp__track-text {
-	color: var(--cdn-color-text-medium, rgba(240, 240, 240, 0.6));
+	color: var(--station-primary-mode, rgba(240, 240, 240, 0.6));
 }
 
-/* fallback link — station-specific URL when live nowPlaying is absent */
+/* fallback link */
 .cdn-pp__now-playing-link {
-	color: var(--station-primary, var(--cdn-purple, #5a1f8a));
+	color: var(--station-primary-mode, var(--cdn-purple, #5a1f8a));
 	text-decoration: none;
 	border-bottom: 1px dotted
 		color-mix(
 			in srgb,
-			var(--station-primary, var(--cdn-purple, #5a1f8a)) 55%,
+			var(--station-primary-mode, var(--cdn-purple, #5a1f8a)) 45%,
 			transparent
 		);
 	font-size: var(--cdn-text-sm, 0.75rem);
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 100%;
-	transition:
-		color 0.2s ease,
-		border-bottom-color 0.2s ease;
-}
-
-.awsui-dark-mode .cdn-pp__now-playing-link {
-	color: var(--station-primary, var(--cdn-violet-soft, #a080e8));
+	max-width: 240px;
+	transition: border-bottom-color 0.2s ease;
 }
 
 .cdn-pp__now-playing-link:hover,
 .cdn-pp__now-playing-link:focus-visible {
-	border-bottom-color: var(--station-primary, var(--cdn-violet, #9060f0));
+	border-bottom-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 }
 
-/* origin geo line — "City, Region, Country" tertiary text */
+/* geo — city/region/country in school color at reduced opacity */
 .cdn-pp__geo {
 	font-family: var(
 		--cdn-font-mono,
@@ -293,19 +222,19 @@ a.cdn-pp__label--donate:focus-visible {
 		monospace
 	);
 	font-size: var(--cdn-text-xs, 0.6875rem);
-	color: var(--cdn-color-text-low, #8a6a4e);
+	color: var(--station-primary-mode, var(--cdn-color-text-low, #8a6a4e));
+	opacity: 0.7;
 	letter-spacing: 0.02em;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 100%;
+	max-width: 240px;
 }
 
 .awsui-dark-mode .cdn-pp__geo {
-	color: var(--cdn-color-text-low, rgba(240, 240, 240, 0.38));
+	opacity: 0.55;
 }
 
-/* warn variant — retrying stream-health state */
 .cdn-pp__eyebrow--warn {
 	color: var(--cdn-status-warning, #d97706);
 }
@@ -314,11 +243,11 @@ a.cdn-pp__label--donate:focus-visible {
 	color: var(--cdn-status-warning, #fbbf24);
 }
 
-/* error row — replaces track row when stream-health = "failed" */
+/* error row */
 .cdn-pp__error {
 	display: flex;
 	flex-direction: column;
-	align-items: flex-start;
+	align-items: flex-end;
 	min-width: 0;
 	max-width: 100%;
 	overflow: hidden;
@@ -330,7 +259,7 @@ a.cdn-pp__label--donate:focus-visible {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: 100%;
+	max-width: 240px;
 	font-size: var(--cdn-text-sm, 0.75rem);
 	font-weight: var(--cdn-weight-semibold, 600);
 }
@@ -339,181 +268,187 @@ a.cdn-pp__label--donate:focus-visible {
 	color: var(--cdn-status-error, #f87171);
 }
 
-/* control buttons — icon-only, theme-token foreground. position:relative +
-   overflow:hidden required for the RAVY conic ::after spotlight to clip
-   correctly within the button boundary during body.cdn-stream-playing. */
+/* ==========================================================================
+   Buttons — shared base, then per-variant
+   ========================================================================== */
 .cdn-pp__btn {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 32px;
-	height: 32px;
-	border-radius: var(--cdn-radius-sm, 4px);
-	border: 1px solid rgba(139, 90, 43, 0.32);
-	background: rgba(237, 229, 212, 0.35);
-	color: var(--cdn-color-text-high, #1a0f05);
-	font-size: 13px;
+	padding: 0;
 	cursor: pointer;
 	flex-shrink: 0;
-	position: relative;
-	overflow: hidden;
+	line-height: 1;
 	transition:
-		background 0.15s ease,
-		border-color 0.15s ease,
-		color 0.15s ease;
+		background 0.2s ease,
+		border-color 0.2s ease,
+		transform 0.15s ease,
+		box-shadow 0.2s ease;
 }
 
-.cdn-pp__btn:hover {
-	background: rgba(139, 90, 43, 0.12);
-	border-color: rgba(139, 90, 43, 0.55);
+/* skip — small rounded rect, preview the next station's color */
+.cdn-pp__btn--skip {
+	width: 28px;
+	height: 28px;
+	border-radius: 6px;
+	border: 1px solid rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
+	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.06);
+	color: var(--cdn-color-text-muted, #4a2818);
+	font-size: 0.85rem;
 }
 
-.cdn-pp__btn:focus-visible {
-	outline: 2px solid var(--cdn-amber, #8b5a2b);
+.awsui-dark-mode .cdn-pp__btn--skip {
+	color: rgba(240, 240, 240, 0.65);
+}
+
+.cdn-pp__btn--skip:hover {
+	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.14);
+	border-color: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.42);
+	transform: translateX(1px) scale(1.08);
+}
+
+.cdn-pp__btn--skip:focus-visible {
+	outline: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	outline-offset: 2px;
 }
 
-.awsui-dark-mode .cdn-pp__btn {
-	border-color: rgba(144, 96, 240, 0.32);
-	background: rgba(28, 34, 48, 0.4);
-	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
+/* retry — same shape as skip */
+.cdn-pp__btn--retry {
+	width: 28px;
+	height: 28px;
+	border-radius: 6px;
+	border: 1px solid rgba(139, 90, 43, 0.28);
+	background: rgba(139, 90, 43, 0.06);
+	color: var(--cdn-status-warning, #d97706);
+	font-size: 0.9rem;
 }
 
-.awsui-dark-mode .cdn-pp__btn:hover {
-	background: rgba(144, 96, 240, 0.18);
-	border-color: rgba(144, 96, 240, 0.55);
+.cdn-pp__btn--retry:hover {
+	background: rgba(139, 90, 43, 0.12);
+	border-color: rgba(139, 90, 43, 0.5);
 }
 
-.awsui-dark-mode .cdn-pp__btn:focus-visible {
-	outline-color: var(--cdn-violet, #9060f0);
-}
-
-/* stop button — station-tinted active state */
-.cdn-pp__btn--stop {
-	background: color-mix(
-		in srgb,
-		var(--station-primary, var(--cdn-violet, #9060f0)) 18%,
-		rgba(237, 229, 212, 0.35)
-	);
-	border-color: var(--station-primary, var(--cdn-violet, #9060f0));
-}
-
-.awsui-dark-mode .cdn-pp__btn--stop {
-	background: color-mix(
-		in srgb,
-		var(--station-primary, var(--cdn-violet, #9060f0)) 22%,
-		rgba(28, 34, 48, 0.4)
-	);
-	border-color: var(--station-primary, var(--cdn-violet, #9060f0));
-}
-
-/* ==========================================================================
-   RAVY mode — stop button gets ring animation + conic spotlight while a
-   stream plays. Matches the chrome-button RAVY in cdn-glass-streaks.css.
-   Mid band drives the stop button (the primary CTA during playback).
-   Keyframes cdn-ravy-ring-mid + cdn-ravy-spotlight-spin are defined in
-   cdn-glass-streaks.css which is loaded before this file.
-   ========================================================================== */
-body.cdn-stream-playing .cdn-pp__btn--stop {
-	--cdn-band: var(--cdn-mid, 0);
-}
-
-/* light-mode ring */
-:root:not(.awsui-dark-mode) body.cdn-stream-playing .cdn-pp__btn--stop {
-	border-color: rgba(
-		var(--station-primary-rgb, 255, 153, 0),
-		calc(0.5 + var(--cdn-band, 0) * 0.4)
-	);
-	box-shadow:
-		0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
-			rgba(var(--station-primary-rgb, 255, 153, 0), 0.22),
-		0 0 calc(6px + var(--cdn-band, 0) * 10px)
-			rgba(var(--station-primary-rgb, 255, 153, 0), 0.32);
-	animation: 1.6s linear infinite cdn-ravy-ring-mid;
-}
-
-/* dark-mode ring */
-:root.awsui-dark-mode body.cdn-stream-playing .cdn-pp__btn--stop {
-	border-color: rgba(
-		var(--station-primary-rgb, 144, 96, 240),
-		calc(0.5 + var(--cdn-band, 0) * 0.4)
-	);
-	box-shadow:
-		0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
-			rgba(var(--station-primary-rgb, 144, 96, 240), 0.28),
-		0 0 calc(6px + var(--cdn-band, 0) * 10px)
-			rgba(var(--station-primary-rgb, 144, 96, 240), 0.4);
-	animation: 1.6s linear infinite cdn-ravy-ring-mid;
-}
-
-/* conic spotlight overlay on stop button — same mechanism as chrome buttons */
-body.cdn-stream-playing .cdn-pp__btn--stop::after {
-	content: "";
-	pointer-events: none;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	width: 220%;
-	height: 220%;
+/* play — circle, station-bordered, transparent fill */
+.cdn-pp__btn--play,
+.cdn-pp__btn--resume {
+	width: 36px;
+	height: 36px;
 	border-radius: 50%;
-	background: conic-gradient(
-		from 0deg,
-		transparent 0deg,
-		rgba(var(--station-primary-rgb, 255, 153, 0), 0.55) 35deg,
-		rgba(255, 255, 255, 0.7) 50deg,
-		rgba(var(--station-secondary-rgb, 144, 96, 240), 0.55) 65deg,
-		transparent 100deg,
-		transparent 180deg,
-		rgba(var(--station-primary-rgb, 255, 153, 0), 0.4) 215deg,
-		rgba(255, 255, 255, 0.5) 230deg,
-		rgba(var(--station-secondary-rgb, 144, 96, 240), 0.4) 245deg,
-		transparent 280deg,
-		transparent 360deg
-	);
-	mix-blend-mode: screen;
-	opacity: calc(0.2 + var(--cdn-band, 0) * 0.65);
-	filter: blur(2px);
-	animation: 2.8s linear infinite cdn-ravy-spotlight-spin;
-	z-index: 0;
+	border: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	background: transparent;
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	font-size: 13px;
 }
 
-:root:not(.awsui-dark-mode) body.cdn-stream-playing .cdn-pp__btn--stop::after {
-	mix-blend-mode: overlay;
-	opacity: calc(0.3 + var(--cdn-band, 0) * 0.55);
+.cdn-pp__btn--play:hover,
+.cdn-pp__btn--resume:hover {
+	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.12);
+	box-shadow:
+		0 0 0 4px rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.18),
+		0 0 10px rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
+	transform: scale(1.06);
+}
+
+.cdn-pp__btn--play:focus-visible,
+.cdn-pp__btn--resume:focus-visible {
+	outline: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	outline-offset: 3px;
+}
+
+/* stop — circle, solid fill, pulsing glow animation.
+   Audio-reactive: --cdn-mid shifts the ring radius each frame so the
+   glow breathes with the music on top of the base 2s pulse. */
+@keyframes cdn-pp-pulse {
+	0%,
+	100% {
+		box-shadow:
+			0 0 0 calc(2px + var(--cdn-mid, 0) * 3px)
+				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22),
+			0 0 calc(8px + var(--cdn-mid, 0) * 8px)
+				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.28);
+	}
+	50% {
+		box-shadow:
+			0 0 0 calc(5px + var(--cdn-mid, 0) * 3px)
+				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.34),
+			0 0 calc(16px + var(--cdn-mid, 0) * 8px)
+				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.44);
+	}
+}
+
+.cdn-pp__btn--stop {
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	border: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	background: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	color: #fff;
+	font-size: 13px;
+	animation: cdn-pp-pulse 2s ease-in-out infinite;
+}
+
+.cdn-pp__btn--stop:hover {
+	transform: scale(1.06);
+}
+
+.cdn-pp__btn--stop:focus-visible {
+	outline: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	outline-offset: 3px;
+}
+
+/* album art — reserved for Phase 2 parseMetaRich */
+.cdn-pp__art {
+	width: 32px;
+	height: 32px;
+	border-radius: var(--cdn-radius-sm, 4px);
+	object-fit: cover;
+	flex-shrink: 0;
+	opacity: 0.9;
 }
 
 @media (prefers-reduced-motion: reduce) {
+	.cdn-pp__btn--stop {
+		animation: none;
+	}
+	.cdn-pp__btn--play:hover,
+	.cdn-pp__btn--stop:hover,
+	.cdn-pp__btn--skip:hover {
+		transform: none;
+	}
 	.cdn-pp {
 		transition: none;
 	}
-	body.cdn-stream-playing .cdn-pp__btn--stop {
-		--cdn-band: 0;
-		animation: none !important;
-	}
-	body.cdn-stream-playing .cdn-pp__btn--stop::after {
-		animation: none !important;
-		opacity: 0;
-	}
 }
 
-/* Mobile (<=600px): shrink padding + gaps, keep all controls visible */
+/* Mobile (<=600px) — same layout, slightly tighter */
 @media (max-width: 600px) {
 	.cdn-player-slot {
-		margin-bottom: 12px;
-		min-height: 56px;
+		margin-bottom: 8px;
+		min-height: 44px;
 	}
 	.cdn-pp {
 		gap: 8px;
-		padding: 8px 10px;
-		min-height: 56px;
-		font-size: var(--cdn-text-xs, 0.6875rem);
+		padding: 4px 0;
+		min-height: 44px;
 	}
 	.cdn-pp__label {
 		font-size: var(--cdn-text-sm, 0.75rem);
 	}
-	.cdn-pp__btn {
-		width: 28px;
-		height: 28px;
+	.cdn-pp__track-text,
+	.cdn-pp__geo,
+	.cdn-pp__now-playing-link {
+		max-width: 160px;
+	}
+	.cdn-pp__btn--play,
+	.cdn-pp__btn--resume,
+	.cdn-pp__btn--stop {
+		width: 32px;
+		height: 32px;
 		font-size: 12px;
+	}
+	.cdn-pp__btn--skip,
+	.cdn-pp__btn--retry {
+		width: 26px;
+		height: 26px;
 	}
 }
