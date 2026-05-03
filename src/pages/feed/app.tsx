@@ -288,10 +288,26 @@ function KruxPlayer() {
 					aria-hidden="true"
 					tabIndex={-1}
 				>
+					{/* headphones glyph: inline SVG (not unicode 🎧 emoji) so it inherits
+					    currentColor and can be tinted to --station-primary-mode, matching
+					    the play button hue per station. emoji are OS-rendered with fixed
+					    color and can't be retinted (Bryan's "too stack of asset" instinct).
+					    aria-hidden — the parent button is aria-hidden too; the labelled
+					    play button below carries the screen-reader affordance. */}
 					<span
 						className={`feed-krux__headphones${playing ? " feed-krux__headphones--playing" : ""}`}
+						aria-hidden="true"
 					>
-						🎧
+						{/* biome-ignore lint/a11y/noSvgWithoutTitle: decorative; parent span aria-hidden */}
+						<svg
+							viewBox="0 0 24 24"
+							width="14"
+							height="14"
+							fill="currentColor"
+							xmlns="http://www.w3.org/2000/svg"
+						>
+							<path d="M12 3a9 9 0 0 0-9 9v6a2 2 0 0 0 2 2h2a1 1 0 0 0 1-1v-6a1 1 0 0 0-1-1H5v-0a7 7 0 0 1 14 0v0h-2a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2a2 2 0 0 0 2-2v-6a9 9 0 0 0-9-9z" />
+						</svg>
 					</span>
 					<span
 						className={`feed-krux__station${fading ? " feed-krux__station--fading" : ""}`}
