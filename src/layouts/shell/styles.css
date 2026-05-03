@@ -1005,15 +1005,16 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 
 .cdn-svg-moon {
 	overflow: visible;
-	filter: drop-shadow(0 0 2px rgba(215, 199, 238, 0.7))
-		drop-shadow(0 0 6px rgba(144, 96, 240, 0.45))
-		drop-shadow(0 0 14px rgba(144, 96, 240, 0.22));
+	transform-origin: center;
 	transition: filter 0.3s ease;
+	/* visible "shine" — moon's halo + scale breathe in unison so the icon
+	   reads as alive even at thin-crescent phases. v0.0.0078 (bryan: "no
+	   animation"): the prior fill-only breathe was too subtle to spot. */
+	animation: cdn-moon-shine 6s ease-in-out infinite;
 }
 
 .cdn-svg-moon__disc {
 	fill: #ede5d4; /* cream — lit lunar surface */
-	animation: cdn-moon-breathe 6s ease-in-out infinite;
 }
 
 .cdn-svg-moon__crater {
@@ -1027,13 +1028,25 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	stroke-width: 1;
 }
 
-@keyframes cdn-moon-breathe {
+@keyframes cdn-moon-shine {
 	0%,
 	100% {
-		fill: #ede5d4;
+		filter: drop-shadow(0 0 2px rgba(215, 199, 238, 0.7))
+			drop-shadow(0 0 6px rgba(144, 96, 240, 0.45))
+			drop-shadow(0 0 14px rgba(144, 96, 240, 0.22));
+		transform: scale(1);
 	}
 	50% {
-		fill: #f5edd9;
+		filter: drop-shadow(0 0 3px rgba(215, 199, 238, 0.95))
+			drop-shadow(0 0 10px rgba(144, 96, 240, 0.7))
+			drop-shadow(0 0 22px rgba(144, 96, 240, 0.42));
+		transform: scale(1.06);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-svg-moon {
+		animation: none;
 	}
 }
 
