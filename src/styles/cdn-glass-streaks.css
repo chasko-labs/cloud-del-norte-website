@@ -336,6 +336,54 @@
 	background: var(--cdn-streak-h-dark) !important;
 }
 
+/* v0.0.0072 — mobile side-nav menu polish. Bryan eyes-on (mobile screenshots):
+   "general mobile appearance of that menu could use some love". On phones,
+   menu items get more vertical breathing room (touch-friendly), section
+   headers adopt Cinzel for brand cohesion with the breadcrumb wordmark,
+   and the active item gets a soft amber/violet wash. */
+@media (max-width: 768px) {
+	[class*="side-navigation"] [class*="section-header"],
+	[class*="side-navigation"] [class*="section-link"],
+	[class*="side-navigation"] [class*="link-text"] {
+		font-family: Cinzel, "Cinzel Decorative", "Times New Roman", Georgia, serif;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+	}
+
+	[class*="side-navigation"] li {
+		margin-block: 4px;
+	}
+
+	[class*="side-navigation"] a {
+		padding-block: 10px !important;
+		font-size: 15px !important;
+	}
+
+	:root:not(.awsui-dark-mode) [class*="side-navigation"] a[aria-current="page"],
+	:root:not(.awsui-dark-mode)
+		[class*="side-navigation"]
+		[class*="link-active"] {
+		background: linear-gradient(
+			90deg,
+			rgba(255, 153, 0, 0.16) 0%,
+			rgba(255, 153, 0, 0.04) 100%
+		);
+		border-left: 3px solid var(--cdn-aws-orange, #ff9900);
+		padding-left: calc(var(--cdn-space-md, 16px) - 3px);
+	}
+
+	.awsui-dark-mode [class*="side-navigation"] a[aria-current="page"],
+	.awsui-dark-mode [class*="side-navigation"] [class*="link-active"] {
+		background: linear-gradient(
+			90deg,
+			rgba(144, 96, 240, 0.22) 0%,
+			rgba(144, 96, 240, 0.05) 100%
+		);
+		border-left: 3px solid var(--cdn-violet, #9060f0);
+		padding-left: calc(var(--cdn-space-md, 16px) - 3px);
+	}
+}
+
 /* ==========================================================================
    breadcrumbs strip — glass plate + bottom streak
 

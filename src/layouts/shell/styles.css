@@ -1020,10 +1020,11 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	fill: rgba(139, 90, 43, 0.28); /* faint amber speckle on the lit area */
 }
 
-.cdn-svg-moon__shadow {
-	/* matches the navy top-nav backdrop so the dark portion reads as
-	   "this part of the moon is in shadow", not "this is a separate disc" */
-	fill: var(--cdn-deep-navy, #0a0a2e);
+/* outline — paints only at new moon when the whole disc is masked away,
+   so the icon stays clickable + visible. Subtle lavender ring. */
+.cdn-svg-moon__outline {
+	stroke: rgba(215, 199, 238, 0.55);
+	stroke-width: 1;
 }
 
 @keyframes cdn-moon-breathe {

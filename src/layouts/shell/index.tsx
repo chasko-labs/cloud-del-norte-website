@@ -7,7 +7,7 @@ import AppLayout, {
 import TopNavigation, {
 	type TopNavigationProps,
 } from "@cloudscape-design/components/top-navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { CdnWallpaper } from "../../components/cdn-wallpaper";
 import Footer from "../../components/footer";
 import LogoSvg from "../../components/logo-svg";
@@ -77,15 +77,19 @@ function computeMoonPhase(d: Date): number {
 }
 
 function MoonSvg() {
-	// v0.0.0069 — Bryan flagged the prior crescent + star as too close to the
-	// Islamic crescent-and-star symbol. Replace with TODAY'S lunar phase
-	// (date-computed, no sidekick star). Norte stargazer-friendly: the icon
-	// changes daily across the synodic cycle.
+	// v0.0.0072 — bryan eyes-on (mobile): the v0.0.0069 two-disc approach
+	// rendered the shadow disc OUTSIDE the SVG viewBox at certain phases,
+	// reading as "light circle next to dark circle" + breaking click target
+	// (anything outside the 22×22 box isn't part of the parent <a> hit area).
+	// Fix: SVG <mask> subtracts the shadow disc from the moon disc, so only
+	// the lit portion paints. Click target = SVG bounds, which is always
+	// the full 22×22. useId() avoids id collisions when Cloudscape clones
+	// the utility into the overflow menu (per the MX flag note).
 	const phase = computeMoonPhase(new Date());
-	// Shadow disc (same radius as the moon disc) overlays the lit moon and
-	// shifts horizontally to model the terminator. waxing: shadow exits to
-	// the LEFT (cx 11 → -6); waning: shadow enters from the RIGHT (cx 28 → 11).
 	const cxShadow = phase < 0.5 ? 11 - phase * 34 : 28 - (phase - 0.5) * 34;
+	const maskId = useId();
+	// Faint outline so the icon never fully disappears at new moon (phase ~0)
+	const isVeryDark = phase < 0.04 || phase > 0.96;
 	return (
 		// biome-ignore lint/a11y/noSvgWithoutTitle: decorative; aria-hidden inside button which carries ariaLabel
 		<svg
@@ -97,30 +101,49 @@ function MoonSvg() {
 			xmlns="http://www.w3.org/2000/svg"
 			role="img"
 		>
-			{/* lit moon disc — full diameter, cool moonlight color via CSS */}
-			<circle className="cdn-svg-moon__disc" cx="11" cy="11" r="8.5" />
-			{/* faint craters — render BEFORE shadow so they're hidden in the
-			    dark portion of the terminator */}
-			<circle
-				className="cdn-svg-moon__crater cdn-svg-moon__crater--a"
-				cx="9.4"
-				cy="8.0"
-				r="0.7"
-			/>
-			<circle
-				className="cdn-svg-moon__crater cdn-svg-moon__crater--b"
-				cx="11.2"
-				cy="13.4"
-				r="0.55"
-			/>
-			<circle
-				className="cdn-svg-moon__crater cdn-svg-moon__crater--c"
-				cx="8.0"
-				cy="12.0"
-				r="0.4"
-			/>
-			{/* shadow disc — overlays bright disc + craters in the dark portion */}
-			<circle className="cdn-svg-moon__shadow" cx={cxShadow} cy="11" r="8.5" />
+			<defs>
+				<mask id={maskId}>
+					{/* full moon area is white (visible) */}
+					<rect width="22" height="22" fill="white" />
+					{/* shadow disc subtracts (black = invisible). When cxShadow is
+					    far outside the viewBox, this rect-minus-circle just yields a
+					    white rect → full moon. When fully overlapping, the moon disc
+					    is entirely subtracted → new moon. */}
+					<circle cx={cxShadow} cy="11" r="8.5" fill="black" />
+				</mask>
+			</defs>
+			{/* outline — always visible so the icon never disappears (new moon) */}
+			{isVeryDark ? (
+				<circle
+					className="cdn-svg-moon__outline"
+					cx="11"
+					cy="11"
+					r="8.5"
+					fill="none"
+				/>
+			) : null}
+			{/* lit lunar surface — masked to only render the illuminated portion */}
+			<g mask={`url(#${maskId})`}>
+				<circle className="cdn-svg-moon__disc" cx="11" cy="11" r="8.5" />
+				<circle
+					className="cdn-svg-moon__crater cdn-svg-moon__crater--a"
+					cx="9.4"
+					cy="8.0"
+					r="0.7"
+				/>
+				<circle
+					className="cdn-svg-moon__crater cdn-svg-moon__crater--b"
+					cx="11.2"
+					cy="13.4"
+					r="0.55"
+				/>
+				<circle
+					className="cdn-svg-moon__crater cdn-svg-moon__crater--c"
+					cx="8.0"
+					cy="12.0"
+					r="0.4"
+				/>
+			</g>
 		</svg>
 	);
 }
