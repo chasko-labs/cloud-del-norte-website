@@ -56,6 +56,8 @@ import {
 	HAZE_HORIZON_STRIP_CENTER_Y,
 	HAZE_HORIZON_STRIP_HEIGHT,
 	HAZE_HORIZON_STRIP_PEAK_OPACITY,
+	HAZE_WISP_CONTRAST,
+	HAZE_WISP_SCALE,
 } from "./white-sands-features.js";
 
 const HAZE_SHADER_NAME = "cdnDuneHazeV2";
@@ -80,17 +82,23 @@ void main(void) {
 }
 `;
 
-// Fragment shader — composite TWO haze passes:
+// Fragment shader — composite THREE haze passes (v0.0.0093):
 //
 //   1. Bottom-weighted vertical gradient. y < 0.6 ramps from bottomOpacity
 //      (at y=0, viewport bottom) up through midOpacity at y≈0.4 to topOpacity
 //      at y=0.6+. Above that, fully transparent.
 //   2. Horizontal strip centered at stripCenterY ± stripHalfHeight, peaking
 //      at stripPeak alpha. Smoothstep falloff at the edges.
+//   3. **NEW v0.0.0093** — screen-space fbm noise modulation. The flat
+//      vertical gradient was Bryan's complaint: "kind of wasted in this sea
+//      of cream". Multiplying the gradient by a low-freq fbm pattern breaks
+//      up the blanket into floating wisps + clearings — eye reads as actual
+//      atmosphere with structure, not a uniform tinted overlay. The wisps
+//      are biased so CLEARINGS (low noise) carve through the haze, exposing
+//      the dune body underneath, while the dense bands keep their peach.
 //
 // Both passes use the SAME warm haze color (hazeCol uniform). Final alpha is
-// max(verticalAlpha, stripAlpha) so the strip can pop above the gradient
-// without simple-summing into >1.0 alpha (which would blow out highlights).
+// max(verticalAlpha, stripAlpha) THEN multiplied by the wisp factor.
 //
 // vUV.y goes 0 (bottom of screen) to 1 (top) — convention from CreatePlane
 // + the way the NDC-bypass vertex shader passes uv unchanged.
@@ -104,6 +112,25 @@ uniform float bottomOpacity;
 uniform float stripCenterY;
 uniform float stripHalfHeight;
 uniform float stripPeak;
+uniform float wispScale;
+uniform float wispContrast;
+
+// Cheap value-noise + fbm for the wisp modulation. 3 octaves keeps it lively
+// without aliasing on integrated GPU. No time term — wisps are STATIC so the
+// pattern doesn't fight the dune migration; reduced-motion safe out-of-box.
+float wispHash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+float wispNoise(vec2 p) {
+  vec2 i = floor(p); vec2 f = fract(p);
+  vec2 u = f * f * (3.0 - 2.0 * f);
+  return mix(mix(wispHash(i), wispHash(i+vec2(1.0,0.0)), u.x),
+             mix(wispHash(i+vec2(0.0,1.0)), wispHash(i+vec2(1.0,1.0)), u.x), u.y);
+}
+float fbm(vec2 p) {
+  float v = wispNoise(p) * 0.5;
+  v += wispNoise(p * 2.07) * 0.25;
+  v += wispNoise(p * 4.13) * 0.125;
+  return v;
+}
 
 void main(void) {
   float y = vUV.y;
@@ -131,8 +158,28 @@ void main(void) {
   float stripT = 1.0 - smoothstep(0.0, stripHalfHeight, dy);
   float stripAlpha = stripPeak * stripT;
 
-  // Composite — max so peaks don't sum past 1.0. Strip wins where it's denser.
+  // Composite passes 1+2 — max so peaks don't sum past 1.0.
   float a = max(vAlpha, stripAlpha);
+
+  // Pass 3 — wisp modulation (v0.0.0093). Anisotropic UV stretches the noise
+  // along X (wispScale on x is 2x the y), so wisps read as horizontal
+  // streaks rather than blobby clouds — like real ground-fog drifting on
+  // a faint wind. Map [0,1] noise to a [1-wispContrast, 1+wispContrast*0.4]
+  // multiplier asymmetric around 1.0: clearings (low noise) PUNCH OUT the
+  // haze (down to 1 - wispContrast); dense bands (high noise) only modestly
+  // boost the existing alpha. Stronger subtraction than addition because the
+  // base alpha is already high (0.78-0.95) and we want to expose the dunes
+  // underneath in the clearings without blowing alpha past 1.0.
+  vec2 wispUV = vec2(vUV.x * wispScale * 2.0, vUV.y * wispScale);
+  float w = fbm(wispUV);
+  float wispMult = mix(1.0 - wispContrast, 1.0 + wispContrast * 0.4, w);
+  // Soft-clamp so the strip's peak (≥0.9) doesn't get destroyed by a dark
+  // wisp — preserves the horizon focal line. The strip contribution is
+  // gated to lose only 50% of the wisp dimming.
+  float stripGuard = stripT * 0.5;
+  float wispEffective = mix(wispMult, 1.0, stripGuard);
+  a *= wispEffective;
+  a = clamp(a, 0.0, 1.0);
 
   gl_FragColor = vec4(hazeCol, a);
 }
@@ -213,6 +260,8 @@ export class HazeBackdrop {
 					"stripCenterY",
 					"stripHalfHeight",
 					"stripPeak",
+					"wispScale",
+					"wispContrast",
 				],
 				needAlphaBlending: true,
 			},
@@ -233,6 +282,9 @@ export class HazeBackdrop {
 		this.material.setFloat("stripCenterY", HAZE_HORIZON_STRIP_CENTER_Y);
 		this.material.setFloat("stripHalfHeight", HAZE_HORIZON_STRIP_HEIGHT * 0.5);
 		this.material.setFloat("stripPeak", HAZE_HORIZON_STRIP_PEAK_OPACITY);
+		// v0.0.0093 — wisp modulation tunables.
+		this.material.setFloat("wispScale", HAZE_WISP_SCALE);
+		this.material.setFloat("wispContrast", HAZE_WISP_CONTRAST);
 		this.mesh.material = this.material;
 		// renderingGroupId 1 — render AFTER the dune ground (default group 0)
 		// so the haze composites on top.

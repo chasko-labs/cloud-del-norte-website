@@ -217,6 +217,25 @@ export const HAZE_HORIZON_STRIP_HEIGHT = 0.18;
 export const HAZE_HORIZON_STRIP_PEAK_OPACITY = 0.95;
 
 /**
+ * Wisp modulation — v0.0.0093 (Bryan: "fog is wasted in this sea of cream,
+ * reimagine it"). The screen-space haze quad now multiplies its alpha by an
+ * fbm noise field so the haze breaks up into floating wisps + clearings
+ * rather than reading as a flat horizontal blanket. Clearings expose the
+ * dune body underneath; dense bands keep their warm-peach character.
+ *
+ * HAZE_WISP_SCALE — fbm UV multiplier. Higher = smaller, busier wisps.
+ *   Around 4-8 reads as ground-fog wisps; <2 reads as one giant blob; >12
+ *   reads as static noise / dirty screen.
+ * HAZE_WISP_CONTRAST — how aggressively the wisps carve through the haze.
+ *   At 0 the haze stays flat (v0.0.0092 behaviour). At 0.5 the clearings
+ *   drop the haze alpha to 50% of the gradient value. Above 0.7 the dunes
+ *   start poking through the haze even at the densest band. 0.45 is the
+ *   sweet spot — undeniably broken-up but the haze still reads as continuous.
+ */
+export const HAZE_WISP_SCALE = 6.0;
+export const HAZE_WISP_CONTRAST = 0.45;
+
+/**
  * Validates a DuneFieldComposition — every amp must be finite and ≥ 0.
  * Negative amps would invert dune types into pits which is not physical;
  * NaN/Infinity would propagate into the vertex shader and blank the mesh.
