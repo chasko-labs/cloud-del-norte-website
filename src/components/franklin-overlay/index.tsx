@@ -1,0 +1,66 @@
+// franklin-overlay — static SVG silhouette of the Franklin Mountains.
+//
+// Replaces the retired BabylonJS franklin scene (src/franklin/) per Bryan
+// v0.0.0081: "the mountain scene doesnt seem to be offering benefit worth
+// the pain as it doesnt really look like mountains. lets instead generate
+// an svg in the shape of the christian mountains and provide that as an
+// overlay on our backdrop to give the same shadowey appearance".
+//
+// Mounting: rendered as a sibling to the canvas-2D dark starfield from
+// el-paso-nights.tsx. Visibility is theme-driven via useWallpaperTheme()
+// — the overlay only renders in dark mode so the light-mode dune scene
+// stays unobstructed.
+//
+// Geometry: silhouette path + el paso star path are built by path-builder.ts
+// (pure TS, unit-tested). Both are inlined into the SVG so we ship one
+// component file with no extra HTTP request.
+
+import type { ReactElement } from "react";
+import { useWallpaperTheme } from "../../hooks/useWallpaperTheme";
+import {
+	buildSilhouettePath,
+	buildStarPath,
+	EL_PASO_STAR_ANCHOR,
+	VIEWBOX_HEIGHT,
+	VIEWBOX_WIDTH,
+} from "./path-builder";
+import "./styles.css";
+
+const SILHOUETTE_PATH = buildSilhouettePath();
+const STAR_PATH = buildStarPath(
+	EL_PASO_STAR_ANCHOR.cx,
+	EL_PASO_STAR_ANCHOR.cy,
+	EL_PASO_STAR_ANCHOR.radius,
+);
+
+/**
+ * FranklinOverlay — static SVG mountain silhouette + El Paso Star landmark.
+ * Renders only in dark mode (el-paso-nights theme). Decorative — aria-hidden,
+ * pointer-events:none. No animation; respects prefers-reduced-motion by
+ * being inert.
+ */
+export function FranklinOverlay(): ReactElement | null {
+	const theme = useWallpaperTheme();
+	if (theme !== "el-paso-nights") return null;
+
+	return (
+		<div className="franklin-overlay" aria-hidden="true">
+			<svg
+				viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
+				preserveAspectRatio="xMidYMax slice"
+				xmlns="http://www.w3.org/2000/svg"
+				role="presentation"
+			>
+				{/* Silhouette — single closed path. Fill comes from styles.css. */}
+				<path d={SILHOUETTE_PATH} className="franklin-overlay__silhouette" />
+				{/* El Paso Star — pentagram on the south face of South Franklin.
+				    Glow halo applied via the CSS drop-shadow filter chain in
+				    styles.css (one shadow for the inner halo, one for the
+				    outer bloom). Single path keeps the DOM minimal. */}
+				<path d={STAR_PATH} className="franklin-overlay__star" />
+			</svg>
+		</div>
+	);
+}
+
+export default FranklinOverlay;

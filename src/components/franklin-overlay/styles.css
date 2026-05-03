@@ -1,0 +1,51 @@
+/* franklin-overlay — static SVG silhouette of the Franklin Mountains.
+ *
+ * Layered between the canvas-2D dark starfield (z:-2) and content (z:0).
+ * Anchored to the viewport bottom so the silhouette occupies the lower
+ * portion of the screen and stars remain visible above it.
+ *
+ * Visibility is theme-driven via the awsui-dark-mode class on <html> — the
+ * overlay is hidden in light mode so the dune scene stays unobstructed.
+ */
+.franklin-overlay {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	width: 100%;
+	/* 4:1 viewBox aspect — height computed responsively. min/max keeps the
+	   silhouette readable on both phones and ultrawides. */
+	height: clamp(240px, 38vh, 520px);
+	z-index: -1;
+	pointer-events: none;
+	display: block;
+	/* Avoid the SVG promoting to its own GPU layer on some browsers — keep
+	   layout cheap, this is a static asset. */
+	will-change: auto;
+	contain: paint;
+}
+
+.franklin-overlay svg {
+	width: 100%;
+	height: 100%;
+	display: block;
+}
+
+.franklin-overlay__silhouette {
+	/* Near-black with subtle blue cast — matches the retired
+	 * PALETTE.silhouette = #030310 from franklin-features.ts. */
+	fill: #030310;
+}
+
+.franklin-overlay__star {
+	fill: #ff9900;
+	/* Glow halo via SVG filter (defined inline). The CSS drop-shadow
+	   fallback gives a softer halo on browsers that struggle with SVG
+	   filter chains, and stacks additively with the SVG filter. */
+	filter: drop-shadow(0 0 4px rgba(255, 153, 0, 0.85))
+		drop-shadow(0 0 12px rgba(255, 153, 0, 0.55));
+}
+
+/* prefers-reduced-motion: the overlay is already static (no animation or
+ * transition declared above), so the media query is documentation-only — no
+ * additional rules needed. Future motion additions must be wrapped here. */

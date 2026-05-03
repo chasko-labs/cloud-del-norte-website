@@ -32,8 +32,29 @@ export const WIND_DIR: readonly [number, number] = [1, 0];
  * Migration speed multiplier on the existing time-based drift.
  * Bryan: "faster than 10 ft/year for web". Original drift was 0.012; we
  * push to ~3x for visible motion across the 90s loop.
+ *
+ * v0.0.0082 audit: silent drift was not actually stopping when music played
+ * — but the bass-pulse vertical scaling (±18% height) outpaced the slow
+ * 0.036/s drift visually, so the eye locked onto throbbing-in-place. Fix:
+ * when body.cdn-stream-playing is set, multiply by MIGRATION_PLAYING_BOOST
+ * AND add bass-coupled sway via MIGRATION_BASS_SWAY so dunes roll harder in
+ * sync with the bassline.
  */
 export const MIGRATION_SPEED_MULTIPLIER = 3.0;
+
+/**
+ * Multiplier applied on top of MIGRATION_SPEED_MULTIPLIER when music is
+ * playing. 3.0 → effective ~9x baseline drift. Bryan: dunes should roll
+ * "more aggressively" in sync with the bassline.
+ */
+export const MIGRATION_PLAYING_BOOST = 3.0;
+
+/**
+ * Bass-coupled additive drift contribution. drift += bass * this when
+ * streamPlaying. 0.04 means full-bass = +0.04/s extra drift, on top of the
+ * boosted base. Eye reads as dunes lurching with each bass hit.
+ */
+export const MIGRATION_BASS_SWAY = 0.04;
 
 /**
  * Wind-ripple parameters — small-scale 90°-to-wind ripples on the dune
@@ -43,6 +64,56 @@ export const MIGRATION_SPEED_MULTIPLIER = 3.0;
  */
 export const RIPPLE_FREQUENCY = 180.0; // cycles across the dune ground
 export const RIPPLE_AMPLITUDE = 0.018; // tint contribution, lit side only
+
+/**
+ * Sparkle / ripple temporal scaling.
+ *
+ * v0.0.0082 — Bryan: "particularly the lights need to slow waaayyy down,
+ * they are distracting" when silent. Quartered when no music plays; restored
+ * (and slightly boosted) when streamPlaying.
+ *
+ * The sparkle glint phase advances at 2Hz baseline (floor(time * 2.0) in
+ * the fragment shader). SPARKLE_SPEED_SILENT scales that down to 0.5Hz so
+ * glints recompose every 2s instead of every 0.5s — reads as quiet
+ * twinkle, not strobing.
+ *
+ * SPARKLE_SPEED_PLAYING boosts past 1.0 — when music is playing the field
+ * "goes nuts", glints repositioning faster than baseline.
+ *
+ * Reduced-motion silent: SPARKLE_SPEED_REDUCED is 0 — sparkle is dropped
+ * entirely (uniform forces step() threshold to 1.0 in the shader path).
+ * Reduced-motion playing: damped to SPARKLE_SPEED_REDUCED_PLAYING so a
+ * subtle pulse still registers without the strobe risk.
+ */
+export const SPARKLE_SPEED_SILENT = 0.25;
+export const SPARKLE_SPEED_PLAYING = 1.5;
+export const SPARKLE_SPEED_REDUCED = 0.0;
+export const SPARKLE_SPEED_REDUCED_PLAYING = 0.4;
+
+/**
+ * Sparkle color palette — brand axis. When streamPlaying, the sparkle tint
+ * cycles through these four colors driven by mid + treble band amplitudes.
+ * Ordering: amber → aws-orange → violet → lavender. RGB triples in linear
+ * 0..1 space (matches shader vec3 uniforms).
+ *
+ * Sources:
+ *   amber       #ffbf66 (warm ridge highlight, brand cream-amber axis)
+ *   aws-orange  #ff9900 (AWS brand)
+ *   violet      #9060f0 (dusk violet, brand)
+ *   lavender    #d7c7ee (brand lavender, used in fallback gradient)
+ */
+export const SPARKLE_COLOR_AMBER: readonly [number, number, number] = [
+	1.0, 0.749, 0.4,
+];
+export const SPARKLE_COLOR_AWS_ORANGE: readonly [number, number, number] = [
+	1.0, 0.6, 0.0,
+];
+export const SPARKLE_COLOR_VIOLET: readonly [number, number, number] = [
+	0.565, 0.376, 0.941,
+];
+export const SPARKLE_COLOR_LAVENDER: readonly [number, number, number] = [
+	0.843, 0.78, 0.933,
+];
 
 /**
  * Gypsum-white highlight wash. Bryan: "20% white wash on the surface lit

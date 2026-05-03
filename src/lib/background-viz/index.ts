@@ -1,7 +1,3 @@
-import {
-	type FranklinSceneHandle,
-	mountFranklinScene,
-} from "../../franklin/index.js";
 import { createAudioBridge, resumeCtx } from "./audio.js";
 import { initCanvas, rebuildStatic } from "./canvas.js";
 import {
@@ -141,15 +137,10 @@ export function mount(): () => void {
 	let duneFallback = false;
 	let removeDuneFallback: (() => void) | null = null;
 
-	// Franklin Mountains (dark mode wallpaper). Augments the canvas-2D dark
-	// starfield by painting a mountain silhouette + on-mountain audio-reactive
-	// stars + the always-lit El Paso "Star on the Mountain" on top of it.
-	// Same mount-once + setVisible/pause/resume pattern as the dune scene.
-	// Software-rendering check is shared (shouldSkipDune detects SwiftShader/
-	// llvmpipe; same protection applies to franklin) — if we skip dune we
-	// also skip franklin and let the canvas-2D layer carry both modes.
-	let franklinHandle: FranklinSceneHandle | null = null;
-	let franklinFallback = false;
+	// Dark-mode wallpaper (v0.0.0081+): the BabylonJS Franklin scene was
+	// retired in favour of a static SVG silhouette (FranklinOverlay) rendered
+	// by the el-paso-nights layer. The canvas-2D dark.ts starfield still
+	// renders behind the overlay; nothing else lives here for dark mode.
 
 	function setStaticCanvasVisible(visible: boolean): void {
 		canvas.style.opacity = visible ? "1" : "0";
@@ -204,60 +195,6 @@ export function mount(): () => void {
 		// Pick up any station change that happened while we were hidden.
 		duneHandle.refreshStationTint();
 		setStaticCanvasVisible(false);
-	}
-
-	// Franklin lifecycle helpers — symmetric with dune's tryMountDune /
-	// hideDuneForDark / showDuneForLight. The franklin canvas sits at z:-1
-	// ABOVE the canvas-2D dark layer (z:-2) so the silhouette occludes the
-	// canvas-2D stars naturally; we DON'T hide the canvas-2D layer in dark
-	// mode (unlike dune which does, because dune is a full-coverage wallpaper).
-	function onFranklinResize(): void {
-		franklinHandle?.resize();
-	}
-
-	function tryMountFranklin(): void {
-		if (franklinHandle) return;
-		if (!isDarkMode()) return;
-		if (franklinFallback) return;
-		if (reducedMotion()) return;
-		// Same software-render gate the dune scene uses. If WebGL is
-		// software-rasterised, the babylon engine is unreliable for both
-		// scenes — leave the canvas-2D dark layer to carry the visual.
-		if (shouldSkipDune()) {
-			franklinFallback = true;
-			return;
-		}
-		try {
-			franklinHandle = mountFranklinScene(document.body);
-		} catch (err) {
-			console.warn(
-				"[bg-viz] franklin scene mount failed; staying on canvas-2D dark",
-				err,
-			);
-			return;
-		}
-		window.addEventListener("resize", onFranklinResize);
-	}
-
-	function hideFranklinForLight(): void {
-		if (!franklinHandle) return;
-		franklinHandle.setVisible(false);
-	}
-
-	function showFranklinForDark(): void {
-		if (!franklinHandle) {
-			tryMountFranklin();
-			return;
-		}
-		franklinHandle.setVisible(true);
-	}
-
-	function disposeFranklin(): void {
-		if (franklinHandle) {
-			franklinHandle.destroy();
-			franklinHandle = null;
-			window.removeEventListener("resize", onFranklinResize);
-		}
 	}
 
 	function tryMountDune(): void {
@@ -355,9 +292,8 @@ export function mount(): () => void {
 	}
 
 	tryMountDune();
-	// Dark-mode wallpaper is the franklin scene; mount lazily on first dark
-	// entry. tryMountFranklin is a no-op if the page boots in light mode.
-	tryMountFranklin();
+	// Dark-mode wallpaper is the static FranklinOverlay SVG (rendered by the
+	// el-paso-nights React layer) — no imperative mount needed here.
 
 	// React to runtime theme toggles. Cloudscape adds/removes
 	// awsui-dark-mode on <html> when the theme picker fires.
@@ -387,9 +323,7 @@ export function mount(): () => void {
 			themeFlipQueued = false;
 			if (isDarkMode()) {
 				hideDuneForDark();
-				showFranklinForDark();
 			} else {
-				hideFranklinForLight();
 				showDuneForLight();
 			}
 		});
@@ -405,7 +339,6 @@ export function mount(): () => void {
 		destroyAudio();
 		themeObserver.disconnect();
 		disposeDune();
-		disposeFranklin();
 		window.removeEventListener("cdn:audio:play", onPlay);
 		window.removeEventListener("cdn:audio:stop", onStop);
 		window.removeEventListener("resize", resize);

@@ -6,18 +6,24 @@
 // skyline of El Paso deserves. Future dark-mode layers follow this convention:
 //   chihuahuan-storm, tularosa-aurora, etc.
 //
-// This is a structural refactor only — the rendered output is identical to the
-// existing background-viz mount in shell/index.tsx. The original
-// src/lib/background-viz/index.ts is preserved so other consumers can still
-// import it directly. <CdnWallpaper> is now the canonical lifecycle owner for
-// shell contexts.
+// Composition (v0.0.0081):
+//   - canvas-2D dark starfield (z:-2) — managed imperatively via the
+//     background-viz mount in src/lib/background-viz/index.ts
+//   - franklin-overlay static SVG silhouette (z:-1) — React component below.
+//     Replaces the retired BabylonJS franklin scene.
+// The overlay component self-gates on theme via useWallpaperTheme() so it
+// returns null in light mode without us doing extra branching here.
 
+import type { ReactElement } from "react";
 import { useEffect } from "react";
 
-/** el-paso-nights layer — mounts the existing background-viz (music-viz + stars)
- *  canvas. Returns null — the canvas injects itself directly into document.body
- *  at z-index:-1, matching the prior shell/index.tsx behaviour exactly. */
-export function ElPasoNightsLayer(): null {
+import { FranklinOverlay } from "../../franklin-overlay";
+
+/** el-paso-nights layer — mounts the canvas-2D background-viz (music-viz + stars)
+ *  scene imperatively, AND renders the static Franklin Mountains SVG overlay
+ *  on top of it via React. The canvas injects itself directly into document.body
+ *  at z-index:-2; the SVG overlay sits at z-index:-1 above it. */
+export function ElPasoNightsLayer(): ReactElement {
 	useEffect(() => {
 		let cleanup: (() => void) | null = null;
 		let cancelled = false;
@@ -61,5 +67,5 @@ export function ElPasoNightsLayer(): null {
 		};
 	}, []);
 
-	return null;
+	return <FranklinOverlay />;
 }

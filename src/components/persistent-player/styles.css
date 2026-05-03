@@ -387,20 +387,50 @@
 	}
 }
 
-/* Mobile: hide the persistent player pill entirely on narrow viewports.
-   The pill is fixed at right:192px with a dark navy 0.86-alpha bg + 12px
-   blur. On phones (<600px) it overlaps the right-edge top-nav utility
-   buttons (locale flag, theme toggle, sign-in). In light mode the dark
-   navy fill paints OPAQUELY over the cream nav, swallowing the locale
-   flag visually — reads as "flag collapsed behind More dropdown" even
-   though Cloudscape's overflow collapse is disabled per disableUtilityCollapse:true.
-   In dark mode the navy pill blends with the navy nav so the same
-   overlap is invisible — root cause of the asymmetric mobile bug.
-   Hiding the pill on mobile preserves locale-flag visibility in both
-   modes; audio playback continues uninterrupted (no DOM teardown of
-   the underlying <audio> element, only the visual chrome). */
+/* Mobile (<=600px): the v0.0.0068 fix hid the entire .cdn-pp pill because
+   its dark navy 0.86-alpha bg painted opaquely over the right-edge top-nav
+   utility buttons (locale flag, theme toggle, sign-in) in light mode, making
+   the locale flag look like it had collapsed into a More overflow (Cloudscape
+   collapse is actually disabled via disableUtilityCollapse:true). In dark
+   mode the navy pill blended with the navy nav so the overlap was invisible
+   — that asymmetry was the original bug.
+   v0.0.0083: bryan asked where the donate button went on phones. It was a
+   side-effect victim of `.cdn-pp { display:none }`. Fix: strip the pill
+   chrome (bg / border / shadow / blur), hide every child EXCEPT donate,
+   and re-anchor donate as a slim affordance in the same top-right slot.
+   Audio keeps playing (the <audio> element stays mounted via .cdn-pp itself
+   which we now keep in the DOM with display:flex but no visual chrome).
+   Trade-off: stop / skip / retry buttons are mobile-invisible — phone users
+   can stop playback only via OS media-session controls. Acceptable because
+   bryan explicitly prioritized donate visibility. */
 @media (max-width: 600px) {
 	.cdn-pp {
+		/* strip pill chrome — keep flex container + fixed positioning so the
+		   donate child anchors to the same nav slot, just without the navy
+		   bg that was eating the locale flag */
+		background: none !important;
+		border: none !important;
+		box-shadow: none !important;
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+		padding: 6px 0 !important;
+		max-width: none !important;
+		right: 152px; /* tighter offset — no pill bg means we can sit closer to utility buttons without colliding */
+	}
+	/* hide every direct child except donate. headphones / meta / stop / skip
+	   / retry / resume all collapse; only the donate anchor surfaces */
+	.cdn-pp > *:not(.cdn-pp__btn--donate) {
 		display: none !important;
+	}
+	/* shrink donate slightly so it doesn't dominate the nav bar on narrow
+	   viewports, and add a translucent backplate so the gold/coral text
+	   stays legible against either cream or navy nav bg */
+	.cdn-pp__btn--donate {
+		min-width: 34px;
+		height: 28px;
+		font-size: 7px;
+		background: rgba(10, 10, 46, 0.55);
+		backdrop-filter: blur(6px);
+		-webkit-backdrop-filter: blur(6px);
 	}
 }

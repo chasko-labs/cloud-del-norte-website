@@ -20,6 +20,7 @@
 // Shell renders <CdnWallpaper /> at the top of the tree. No other component
 // should import background-viz/index.ts for wallpaper lifecycle purposes.
 
+import type { ReactElement } from "react";
 import { useEffect } from "react";
 // GypsumSandsLayer is rendered via the el-paso-nights mount (background-viz/index.ts
 // owns the dune-scene lifecycle internally). Import here for future explicit use.
@@ -57,10 +58,13 @@ export interface CdnWallpaperProps {
 
 /**
  * CdnWallpaper — mounts the active wallpaper layer based on theme.
- * Renders null — all visuals are injected imperatively into document.body
- * at z-index: var(--cdn-wallpaper-z-index, -3).
+ * The canvas-2D + babylon scenes inject themselves imperatively into
+ * document.body. The Franklin Mountains static SVG overlay (v0.0.0081+) is
+ * a React node returned by ElPasoNightsLayer and renders inline here.
  */
-export function CdnWallpaper({ layer: _layer }: CdnWallpaperProps = {}): null {
+export function CdnWallpaper({
+	layer: _layer,
+}: CdnWallpaperProps = {}): ReactElement {
 	// Theme tracking — exposed via useWallpaperTheme for external consumers.
 	// The actual theme-switching logic is internal to background-viz/index.ts
 	// (MutationObserver on <html> class), so we don't need to act on the value
@@ -71,13 +75,12 @@ export function CdnWallpaper({ layer: _layer }: CdnWallpaperProps = {}): null {
 	// cdn-star-logo registration (decorative enhancement, same lifecycle tier)
 	useCdnStarLogo();
 
-	// The el-paso-nights layer owns the full wallpaper lifecycle (both scenes):
-	// - dark mode: music-viz + stars
-	// - light mode: dune-scene (via tryMountDune() inside background-viz/index.ts)
-	// Both are switched internally via MutationObserver on awsui-dark-mode class.
-	ElPasoNightsLayer();
-
-	return null;
+	// The el-paso-nights layer owns the full wallpaper lifecycle:
+	// - imperative: music-viz + stars canvas (always-on); dune-scene swap
+	//   via tryMountDune() inside background-viz/index.ts
+	// - React: static Franklin Mountains SVG overlay (dark mode only — the
+	//   component self-gates on theme via useWallpaperTheme).
+	return <ElPasoNightsLayer />;
 }
 
 export default CdnWallpaper;

@@ -12,6 +12,7 @@ import type { Scene } from "@babylonjs/core/scene";
 
 import {
 	DuneMaterial,
+	type DuneMaterialOptions,
 	type DuneMaterialUpdateContext,
 } from "./DuneMaterial.js";
 
@@ -19,13 +20,13 @@ export class DuneGround {
 	readonly mesh: Mesh;
 	private readonly duneMaterial: DuneMaterial;
 
-	constructor(scene: Scene) {
+	constructor(scene: Scene, options: DuneMaterialOptions = {}) {
 		this.mesh = MeshBuilder.CreateGround(
 			"dune-ground",
 			{ width: 60, height: 40, subdivisions: 150 },
 			scene,
 		);
-		this.duneMaterial = new DuneMaterial(scene);
+		this.duneMaterial = new DuneMaterial(scene, options);
 		this.duneMaterial.attach(this.mesh);
 	}
 
