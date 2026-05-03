@@ -18,6 +18,13 @@
 	   the player ever conditionally returns null (it doesn't today, but keeps
 	   page geometry stable across hydration) */
 	min-height: 64px;
+	/* establish a stacking context so the cdn-pp child's z-index resolves
+	   against the AppLayout grid (where awsui_scrolling-background spans rows
+	   1..9 via display:contents hoist — see cdn-pp z-index comment). Without
+	   this the card was visually painted UNDER the cream-tinted scrolling-bg
+	   on light mode, reading as invisible against the desert wallpaper */
+	position: relative;
+	z-index: 1;
 }
 
 .cdn-pp {
@@ -27,13 +34,22 @@
 	width: 100%;
 	min-height: 64px;
 	padding: 10px 14px;
+	/* z-index + position so the card is unambiguously on top of any
+	   awsui_scrolling-background overlay that AppLayout drops into the same
+	   grid cell (display:contents hoists scrolling-background as a sibling
+	   spanning rows 1..9 of the layout grid — without an explicit z-index
+	   the card paints UNDER it on cream wallpaper, reading as invisible) */
+	position: relative;
+	z-index: 1;
 
-	/* unified cream surface — mirror of .feed-mini-card__link in pages/feed/styles.css.
-	   Solid color base + diagonal gradient overlay + warm rim light. Reads as a
-	   sibling of feed cards, not as a floating widget. */
-	background-color: #faf7f0;
+	/* opaque cream surface — wallpaper + scrolling-background overlay don't
+	   show through, so the card frame reads as solid even on the cream
+	   desert / navy starfield wallpapers. Was rgba-mixed with the page
+	   underneath; bumped to fully-opaque + denser warm tint so the card
+	   pops away from the breadcrumb instead of dissolving into it */
+	background-color: #f0e5cf;
 	background-image: var(--cdn-card-gradient-light);
-	border: 1px solid rgba(139, 90, 43, 0.22);
+	border: 1px solid rgba(139, 90, 43, 0.55);
 	/* single station-tinted accent — left-edge stripe matches the .feed-mini-card
 	   per-card-accent pattern. Falls back to brand violet when station palette is absent */
 	border-left: 4px solid var(
@@ -41,7 +57,12 @@
 		var(--cdn-violet, #9060f0)
 	);
 	border-radius: var(--cdn-radius-md, 8px);
-	box-shadow: var(--cdn-card-rim-light);
+	/* stronger drop shadow than feed-mini-cards — those sit inside a Cloudscape
+	   Container that frames them; the player card is a standalone surface
+	   floating directly on the wallpaper, so it carries its own elevation cue */
+	box-shadow:
+		0 2px 6px rgba(60, 30, 10, 0.18),
+		0 1px 2px rgba(60, 30, 10, 0.12);
 
 	color: var(--cdn-color-text, #2c1a0e);
 	font-size: var(--cdn-text-sm, 0.75rem);
@@ -52,11 +73,13 @@
 }
 
 .awsui-dark-mode .cdn-pp {
-	background-color: var(--cdn-elevation-1, #12123a);
+	background-color: #1a1a4a;
 	background-image: var(--cdn-card-gradient-light);
-	border-color: rgba(144, 96, 240, 0.22);
+	border-color: rgba(144, 96, 240, 0.55);
 	border-left-color: var(--station-primary, var(--cdn-violet, #9060f0));
-	box-shadow: var(--cdn-card-rim-light);
+	box-shadow:
+		0 2px 8px rgba(0, 0, 0, 0.5),
+		0 1px 2px rgba(144, 96, 240, 0.25);
 	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
 }
 
@@ -86,6 +109,52 @@
 	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
 }
 
+/* station label as donate link — when streamDef.donateUrl present the
+   station name itself becomes the donate affordance (with " · donate"
+   appended in station-tinted accent). Replaces the prior standalone
+   donate button so the station identity is referenced once, not twice. */
+a.cdn-pp__label--donate {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0;
+	text-decoration: none;
+	color: inherit;
+	border-bottom: 1px dotted
+		color-mix(
+			in srgb,
+			var(--station-primary, var(--cdn-violet, #9060f0)) 40%,
+			transparent
+		);
+	transition: border-bottom-color 0.2s ease;
+}
+
+a.cdn-pp__label--donate:hover,
+a.cdn-pp__label--donate:focus-visible {
+	border-bottom-color: var(--station-primary, var(--cdn-violet, #9060f0));
+	outline: none;
+}
+
+a.cdn-pp__label--donate:focus-visible {
+	outline: 2px solid var(--cdn-amber, #8b5a2b);
+	outline-offset: 2px;
+}
+
+.awsui-dark-mode a.cdn-pp__label--donate:focus-visible {
+	outline-color: var(--cdn-violet, #9060f0);
+}
+
+.cdn-pp__label-donate {
+	color: var(--station-primary-light, var(--station-primary, var(--cdn-purple, #5a1f8a)));
+	font-size: var(--cdn-text-xs, 0.6875rem);
+	font-weight: var(--cdn-weight-bold, 700);
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.awsui-dark-mode .cdn-pp__label-donate {
+	color: var(--station-primary-dark, var(--station-primary, var(--cdn-violet-soft, #a080e8)));
+}
+
 .cdn-pp__track {
 	display: flex;
 	flex-direction: column;
@@ -96,9 +165,9 @@
 	line-height: 1.15;
 }
 
-/* "now playing" eyebrow — uppercase micro-label above the track text so the
-   hierarchy reads as <station> / now playing / <track>. Theme-token muted
-   color so it doesn't compete with the station-tinted accent */
+/* eyebrow — uppercase micro-label. Used for the "retrying" warn variant
+   below; the prior "now playing" eyebrow above the track was removed —
+   listeners know they're listening, the label was noise */
 .cdn-pp__eyebrow {
 	font-size: var(--cdn-text-xs, 0.6875rem);
 	font-weight: var(--cdn-weight-bold, 700);
@@ -217,7 +286,8 @@
 
 /* control buttons — icon-only, theme-token foreground, no neon glow. Square-ish
    rounded rectangles to match the card silhouette (no circles). The play/pause/
-   skip/retry buttons all share this base; the donate anchor has its own variant. */
+   skip/retry buttons all share this base. Donate is now folded into the station
+   label (see .cdn-pp__label--donate above) so it's no longer a button variant. */
 .cdn-pp__btn {
 	display: flex;
 	align-items: center;
@@ -262,60 +332,6 @@
 	outline-color: var(--cdn-violet, #9060f0);
 }
 
-/* donate anchor — small text-only pill, theme-token, no glow.
-   Stacks "donate / to / <key>" on three short lines like the prior version */
-.cdn-pp__btn--donate {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	min-width: 44px;
-	height: 36px;
-	padding: 3px 8px;
-	border-radius: var(--cdn-radius-sm, 4px);
-	border: 1px solid rgba(139, 90, 43, 0.32);
-	background: rgba(255, 250, 235, 0.5);
-	color: var(--cdn-color-text-high, #1a0f05);
-	font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont, sans-serif;
-	font-size: 8px;
-	font-weight: var(--cdn-weight-semibold, 600);
-	line-height: 1.05;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	text-decoration: none;
-	flex-shrink: 0;
-	gap: 1px;
-	transition:
-		background 0.15s ease,
-		border-color 0.15s ease,
-		color 0.15s ease;
-}
-
-.cdn-pp__btn--donate:hover {
-	background: rgba(139, 90, 43, 0.1);
-	border-color: rgba(139, 90, 43, 0.55);
-}
-
-.cdn-pp__btn--donate:focus-visible {
-	outline: 2px solid var(--cdn-amber, #8b5a2b);
-	outline-offset: 2px;
-}
-
-.awsui-dark-mode .cdn-pp__btn--donate {
-	border-color: rgba(144, 96, 240, 0.32);
-	background: rgba(10, 10, 46, 0.4);
-	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
-}
-
-.awsui-dark-mode .cdn-pp__btn--donate:hover {
-	background: rgba(144, 96, 240, 0.18);
-	border-color: rgba(144, 96, 240, 0.55);
-}
-
-.awsui-dark-mode .cdn-pp__btn--donate:focus-visible {
-	outline-color: var(--cdn-violet, #9060f0);
-}
-
 /* retry / play / stop / skip / resume — all reuse the .cdn-pp__btn base.
    No per-variant tinting; theme tokens carry the look. The stop button gets
    a faint station-tinted background so the active-playing state still reads. */
@@ -338,8 +354,7 @@
 }
 
 /* Mobile (<=600px): keep all controls visible — the card is in-flow now,
-   no overlap with top-nav utility buttons, so we don't need the prior
-   "hide everything except donate" fallback. Just shrink padding + gaps. */
+   no overlap with top-nav utility buttons. Just shrink padding + gaps. */
 @media (max-width: 600px) {
 	.cdn-player-slot {
 		margin-bottom: 12px;
@@ -358,10 +373,5 @@
 		width: 28px;
 		height: 28px;
 		font-size: 12px;
-	}
-	.cdn-pp__btn--donate {
-		min-width: 38px;
-		height: 30px;
-		font-size: 7px;
 	}
 }

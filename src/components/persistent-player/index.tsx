@@ -386,15 +386,14 @@ function PersistentPlayerBar({
 	}, [streamDef]);
 
 	// surface state derivations — keeps JSX readable and centralizes the
-	// "what gets shown in the eyebrow / track row" decision tree:
+	// "what gets shown in the track row" decision tree:
 	//   1. failed   → red error message + retry button (auto-retry exhausted)
 	//   2. retrying → soft "retrying" hint, no retry button (auto-retry in flight)
-	//   3. track    → "now playing" eyebrow + nowPlaying string
-	//   4. neither  → "streaming on clouddelnorte.org" fallback eyebrow
-	//                 (matches the lockscreen artist line set in media-session.ts)
+	//   3. track    → nowPlaying string (no eyebrow — listener knows it's playing)
+	//   4. fallback → station-specific link (playlist / podcasts / programs)
+	//   5. neither  → origin geo line ("City, Region, Country")
 	const showFailedUI = streamHealth === "failed";
 	const showRetryingUI = streamHealth === "retrying";
-	const fallbackSubtitle = t("persistentPlayer.streamingFallback");
 
 	return (
 		<section
@@ -413,7 +412,22 @@ function PersistentPlayerBar({
 				onPause={handlePause}
 			/>
 			<span className="cdn-pp__meta">
-				<span className="cdn-pp__label">{state.stationLabel}</span>
+				{streamDef?.donateUrl ? (
+					<a
+						className="cdn-pp__label cdn-pp__label--donate"
+						href={streamDef.donateUrl}
+						target="_blank"
+						rel="noreferrer"
+						title={`donate to ${state.stationLabel}`}
+					>
+						<span className="cdn-pp__label-text">{state.stationLabel}</span>
+						<span className="cdn-pp__label-donate" aria-hidden="true">
+							{" · donate"}
+						</span>
+					</a>
+				) : (
+					<span className="cdn-pp__label">{state.stationLabel}</span>
+				)}
 				{showFailedUI ? (
 					<span
 						className="cdn-pp__error"
@@ -436,9 +450,6 @@ function PersistentPlayerBar({
 					</span>
 				) : nowPlaying ? (
 					<span className="cdn-pp__track" aria-live="polite" title={nowPlaying}>
-						<span className="cdn-pp__eyebrow" aria-hidden="true">
-							now playing
-						</span>
 						<span className="cdn-pp__track-text">{nowPlaying}</span>
 					</span>
 				) : streamDef?.metaFallback ? (
@@ -447,9 +458,6 @@ function PersistentPlayerBar({
 					// the row carries an actionable affordance instead of going
 					// blank. label flips per locale; href is shared
 					<span className="cdn-pp__track">
-						<span className="cdn-pp__eyebrow" aria-hidden="true">
-							{fallbackSubtitle}
-						</span>
 						<a
 							className="cdn-pp__now-playing-link"
 							href={streamDef.metaFallback.href}
@@ -462,14 +470,13 @@ function PersistentPlayerBar({
 						</a>
 					</span>
 				) : (
-					<span className="cdn-pp__track" aria-hidden="true">
-						<span className="cdn-pp__eyebrow">{fallbackSubtitle}</span>
-						{streamDef && (
+					streamDef && (
+						<span className="cdn-pp__track" aria-hidden="true">
 							<span className="cdn-pp__geo">
 								{formatLocation(streamDef.location)}
 							</span>
-						)}
-					</span>
+						</span>
+					)
 				)}
 			</span>
 			{showFailedUI && (
@@ -482,19 +489,6 @@ function PersistentPlayerBar({
 				>
 					<span aria-hidden="true">↻</span>
 				</button>
-			)}
-			{streamDef?.donateUrl && (
-				<a
-					className="cdn-pp__btn cdn-pp__btn--donate"
-					href={streamDef.donateUrl}
-					target="_blank"
-					rel="noreferrer"
-					title={`donate to ${state.stationKey}`}
-				>
-					<span>donate</span>
-					<span>to</span>
-					<span>{state.stationKey}</span>
-				</a>
 			)}
 			<button
 				type="button"

@@ -24,16 +24,6 @@
  * still a meaningful upgrade over "AWS UG Cloud Del No...".
  */
 
-/**
- * Marketing-style fallback subtitle surfaced in the lockscreen / Now Playing
- * widget when the station has no live track metadata (no metaUrl OR endpoint
- * errored / returned empty). Lives in the artist field because the Web
- * MediaSession spec doesn't expose displaySubtitle. Same string is also
- * rendered in the in-page pill via the eyebrow row so the web UI matches the
- * OS notification copy.
- */
-export const STREAMING_FALLBACK_SUBTITLE = "streaming on clouddelnorte.org";
-
 interface MediaSessionInput {
 	stationLabel: string;
 	/** "song — artist" or null when no live track info available */
@@ -62,15 +52,13 @@ export function setMediaSession(input: MediaSessionInput): void {
 	// title + artist resolution:
 	// - track present  → title = "<song>", artist = "<station label>"
 	//   (Android renders these on two lines; reads as "<song> / <station>")
-	// - track absent   → title = "<station label>", artist = STREAMING_FALLBACK_SUBTITLE
-	//   so the notification surfaces brand context ("streaming on clouddelnorte.org")
-	//   instead of "<station> / <station>" duplication when no nowPlaying string
-	//   is available (uam_radio, concepto_radial, or any station whose metadata
-	//   endpoint errored / returned empty)
+	// - track absent   → title = "<station label>", artist = ""
+	//   the listener already knows what they're hearing; no need for marketing
+	//   subtitle. Empty artist field collapses to a single line on Android
 	const hasTrack = !!input.nowPlaying;
 	ms.metadata = new MediaMetadata({
 		title: hasTrack ? (input.nowPlaying as string) : input.stationLabel,
-		artist: hasTrack ? input.stationLabel : STREAMING_FALLBACK_SUBTITLE,
+		artist: hasTrack ? input.stationLabel : "",
 		album: "AWS UG Cloud Del Norte",
 		artwork: [
 			// 512×512 first — Android picks the largest sufficient size for full-screen
