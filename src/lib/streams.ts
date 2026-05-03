@@ -702,18 +702,18 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	{
-		key: "screaming_in_the_cloud",
+		key: "aws_podcast",
 		type: "podcast",
-		url: "https://dts.podtrac.com/redirect.mp3/media.transistor.fm/41391d7a/34028eaa.mp3",
-		rssFeedUrl: "https://feeds.transistor.fm/screaming-in-the-cloud",
-		label: "screaming in the cloud",
-		location: { city: "San Francisco", region: "California", country: "USA" },
+		url: "https://d1le29qyzha1u4.cloudfront.net/AWS_Podcast_Episode_754.mp3",
+		rssFeedUrl: "https://d3gih7jbfe3jlq.cloudfront.net/aws-podcast.rss",
+		label: "the aws podcast",
+		location: { city: "Seattle", region: "Washington", country: "USA" },
 		colors: {
-			primary: "#00A8E1",
-			secondary: "#FF6B35",
-			accent: "#1a1a1a",
-			primaryLight: "#1ab8f0",
-			primaryDark: "#40c8f0", // lighter than primary for navy bg legibility
+			primary: "#FF9900",
+			secondary: "#232F3E",
+			accent: "#faf7f0",
+			primaryLight: "#FF9900",
+			primaryDark: "#ffb84d",
 		},
 		parseMeta(data) {
 			const doc = data as Document;

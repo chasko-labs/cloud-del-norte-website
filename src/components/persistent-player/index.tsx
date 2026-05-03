@@ -613,16 +613,17 @@ export default function PersistentPlayer() {
 
 	// skip station — direction +1 advances, -1 rewinds. Mirrors the
 	// previous KruxPlayer modulo arithmetic so OS media-session skip
-	// behaves the same. After the first user-initiated skip, flip autoplay
-	// on so subsequent station changes resume audio without an extra click
+	// behaves the same. Autoplay only flips on when skipping to a radio
+	// station — podcasts never autoplay on skip (user opts in via play btn)
 	const handleSkipStation = useCallback((direction: 1 | -1) => {
-		setAutoplay(true);
 		setState((current) => {
 			if (!current) return current;
 			const idx = STREAMS.findIndex((s) => s.key === current.stationKey);
 			if (idx < 0) return current;
 			const nextIdx = (idx + direction + STREAMS.length) % STREAMS.length;
 			const next = STREAMS[nextIdx];
+			if (next.type !== "podcast") setAutoplay(true);
+			else setAutoplay(false);
 			const nextState: PersistedPlayerState = {
 				stationKey: next.key,
 				stationUrl: next.url,
