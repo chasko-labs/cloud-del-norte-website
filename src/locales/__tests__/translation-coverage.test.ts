@@ -112,6 +112,8 @@ describe("translation coverage", () => {
 			"helpPanel.aslLeadRole", // "ASL" - acronym
 			"helpPanel.lsmLead", // "LSM" - acronym
 			"helpPanel.arrowheadSoundstage", // Proper noun
+			"feedPage.builderBadge.communityBuilder", // "aws community builder" - AWS program name (kept untranslated as bryan's directive)
+			"feedPage.builderBadge.hero", // "aws hero" - AWS program name (kept untranslated as bryan's directive)
 		]);
 
 		// Helper to get value by dot-notation key
