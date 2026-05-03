@@ -311,26 +311,44 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 	}
 }
 
-/* ── Brand-violet primary button — explicit chrome on the rendered button ──
-   Cloudscape's primary button reads --color-background-button-primary-default-vdt0fu
-   (now overridden above to violet) for its bg, but the border + text-color
-   tokens are separate. Reinforce here so the button reads as a single solid
-   violet pill. White text needed because the button text token defaults to
-   container-content cream which would disappear on the violet bg.
+/* ── Primary button — warm amber on light, violet on dark ──────────────────
+   Light mode: amber (#8b5a2b) reads as desert earth — grounded, warm, on
+   palette with the cream card. Avoids the jarring bright-violet-on-cream
+   contrast that read as "dark mode purple bleeding through".
+   Dark mode: violet stays — it pops against navy and reads as the brand
+   accent on dark backgrounds. */
 
-   Hover: deeper purple (--cdn-purple) with a soft violet glow ring for
-   tactile feedback. variant-primary descendant selector is intentionally
-   broad so the rule covers Form action buttons + Wizard primary submit. */
+:root:not(.awsui-dark-mode)
+	.cdn-auth-card
+	[class*="awsui_button"][class*="variant-primary"],
+:root:not(.awsui-dark-mode) .cdn-auth-card button[class*="variant-primary"] {
+	background: var(--cdn-amber) !important;
+	border-color: var(--cdn-amber) !important;
+	color: var(--cdn-white) !important;
+}
 
-.cdn-auth-card [class*="awsui_button"][class*="variant-primary"],
-.cdn-auth-card button[class*="variant-primary"] {
+:root:not(.awsui-dark-mode)
+	.cdn-auth-card
+	[class*="awsui_button"][class*="variant-primary"]:hover,
+:root:not(.awsui-dark-mode)
+	.cdn-auth-card
+	button[class*="variant-primary"]:hover {
+	background: color-mix(in srgb, var(--cdn-amber) 80%, black 20%) !important;
+	border-color: color-mix(in srgb, var(--cdn-amber) 80%, black 20%) !important;
+	box-shadow: 0 0 0 3px rgba(139, 90, 43, 0.22) !important;
+}
+
+.awsui-dark-mode .cdn-auth-card [class*="awsui_button"][class*="variant-primary"],
+.awsui-dark-mode .cdn-auth-card button[class*="variant-primary"] {
 	background: var(--cdn-violet) !important;
 	border-color: var(--cdn-violet) !important;
 	color: var(--cdn-white) !important;
 }
 
-.cdn-auth-card [class*="awsui_button"][class*="variant-primary"]:hover,
-.cdn-auth-card button[class*="variant-primary"]:hover {
+.awsui-dark-mode
+	.cdn-auth-card
+	[class*="awsui_button"][class*="variant-primary"]:hover,
+.awsui-dark-mode .cdn-auth-card button[class*="variant-primary"]:hover {
 	background: var(--cdn-purple) !important;
 	border-color: var(--cdn-purple) !important;
 	box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.22) !important;
@@ -782,4 +800,23 @@ body.cdn-auth-subdomain [data-cdn-dune-fallback] {
 	[class*="awsui_navigation_"]
 	[class*="awsui_number_"] {
 	color: rgba(215, 199, 238, 0.65) !important;
+}
+
+/* ── Footer pinned to viewport bottom on auth pages ────────────────────────
+   Auth pages have minimal content; without this the footer floats below the
+   AppLayout fold (AppLayout consumes the full viewport height). Fixed bottom
+   keeps it accessible on all viewport sizes. padding-bottom on the card
+   prevents the form from hiding behind the footer on very short viewports. */
+body.cdn-auth-subdomain .cdn-footer {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	z-index: 150;
+	padding-top: 6px;
+	padding-bottom: 6px;
+}
+
+body.cdn-auth-subdomain [class*="awsui_content-layout"] {
+	padding-bottom: 72px;
 }

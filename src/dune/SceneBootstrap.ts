@@ -126,25 +126,25 @@ export function mountDuneSceneOnCanvas(
 	const scene = new Scene(engine);
 	scene.clearColor = new Color4(0.929, 0.898, 0.831, 1.0); // #ede5d4
 
-	// alpha -π/3: camera in -X/-Z quadrant, looking toward +origin.
-	// beta 1.52 ≈ 87° from vertical (was 1.38 ≈ 79°, still "street-level").
-	//   Near-horizontal view + target.y=-3 tilts gaze slightly downward so
-	//   terrain fills ~75% of viewport and the horizon sits at roughly 25%
-	//   from top — just above the first content card when frosted player is
-	//   visible. fov 0.6→0.65 widens the vertical angle to show more terrain.
-	// target -5 X: shifts view leftward (closes lower-left gap).
-	// target -3 Y: combined with near-horizontal beta, the camera looks
-	//   slightly below the ground plane so terrain fills the upper portion
-	//   of the fixed canvas, dunes visible through the frosted player slot.
+	// alpha -3π/4: camera in the SW quadrant, looking northeast (+X, +Z).
+	//   Terrain stretches away toward the NE horizon; the radio player slot
+	//   sits at the top of the viewport framing the dune skyline.
+	// beta 1.55 ≈ 89° from vertical — nearly horizontal. Camera y ≈ target.y
+	//   + radius*cos(1.55) ≈ target.y + 0.5 → just above terrain surface.
+	// radius 25: camera inside the 60×40 mesh bounds. Near dunes are visible
+	//   at the very bottom of frame; far dunes recede to the NE horizon.
+	// target.y 2: keeps camera just above mid-dune height (~2.5u) so high
+	//   crests break above the horizon line for the "under the dunes" feel.
+	// fov 0.78 (≈45°): wider vertical angle fills more of the frame with terrain.
 	const camera = new ArcRotateCamera(
 		"dune-cam",
-		-Math.PI / 3,
-		1.52,
+		-Math.PI * 0.75,
+		1.55,
 		CAMERA_RADIUS_BASE,
-		new Vector3(-5, -3, 0),
+		new Vector3(-5, 2, 0),
 		scene,
 	);
-	camera.fov = 0.65;
+	camera.fov = 0.78;
 	camera.inputs.clear();
 	const cameraAlphaBase = camera.alpha;
 

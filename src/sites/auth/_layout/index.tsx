@@ -83,10 +83,6 @@ export default function AuthLayout({
 			}
 		>
 			<ContentLayout>
-				<header className="cdn-auth-page-header">
-					<div className="cdn-auth-wordmark">Cloud Del Norte</div>
-					<div className="cdn-auth-context">{contextLine}</div>
-				</header>
 				<div className="cdn-card cdn-auth-card cdn-glass">{children}</div>
 			</ContentLayout>
 		</Shell>

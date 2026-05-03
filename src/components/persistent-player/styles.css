@@ -33,10 +33,22 @@
 	);
 }
 
-/* slot — frosted glass strip. Sticky below top-nav; dune canvas shows through.
-   backdrop-filter composites against the fixed dune scene underneath.
-   v0.0.0131 — sticky: locks below top-nav once breadcrumb scrolls off.
-   z-index:100 sits above awsui grid content but below tools-toggle layer. */
+/* slot — dissolves left half into the dune canvas; gradient cream + station
+   color splash on the right where the controls live.
+
+   Design intent: "left 50% = 0% card" — the dune terrain shows through
+   completely. The controls cluster right-aligned (.cdn-pp justify-content:
+   flex-end) so content is entirely in the visible right half.
+
+   Mask: linear-gradient fades the entire element (background + backdrop-filter
+   blur + ::before station splash) from invisible at 0% to fully opaque at 50%.
+   Soft 10% fade zone at the midpoint avoids a hard seam.
+
+   Station splash (::before): audio-reactive radial from the right edge using
+   --station-primary-light-rgb (set on :root by player's per-station effect)
+   + --cdn-mid (0-1 audio level written per-frame by background-viz/canvas.ts).
+   Only shows when cdn-stream-playing is on body. mix-blend-mode: multiply
+   deepens the station hue into the cream without blowing out to white. */
 .cdn-player-slot {
 	display: block;
 	width: 100%;
@@ -45,17 +57,73 @@
 	position: sticky;
 	top: 56px;
 	z-index: 100;
-	background: rgba(237, 229, 212, 0.88);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border-bottom: 1px solid rgba(139, 90, 43, 0.12);
+	/* light mode: gradient cream — transparent left → frosted right */
+	background: linear-gradient(
+		to right,
+		transparent 0%,
+		transparent 42%,
+		rgba(237, 229, 212, 0.55) 58%,
+		rgba(237, 229, 212, 0.78) 100%
+	);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	/* mask fades the whole element including blur + splash */
+	-webkit-mask-image: linear-gradient(
+		to right,
+		transparent 0%,
+		black 50%
+	);
+	mask-image: linear-gradient(to right, transparent 0%, black 50%);
+	border-bottom: none;
+}
+
+/* station color splash — audio-reactive radial from right edge */
+.cdn-player-slot::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: radial-gradient(
+		ellipse 80% 200% at right center,
+		rgba(
+				var(--station-primary-light-rgb, 144, 96, 240),
+				calc(0.18 + var(--cdn-mid, 0) * 0.38)
+			)
+			0%,
+		rgba(
+				var(--station-primary-light-rgb, 144, 96, 240),
+				calc(0.04 + var(--cdn-mid, 0) * 0.1)
+			)
+			55%,
+		transparent 78%
+	);
+	mix-blend-mode: multiply;
+	pointer-events: none;
+	z-index: 0;
+	opacity: 0;
+	transition: opacity 1.2s ease;
+}
+
+body.cdn-stream-playing .cdn-player-slot::before {
+	opacity: 1;
 }
 
 .awsui-dark-mode .cdn-player-slot {
-	background: rgba(10, 12, 20, 0.85);
+	background: linear-gradient(
+		to right,
+		transparent 0%,
+		transparent 42%,
+		rgba(10, 12, 20, 0.55) 58%,
+		rgba(10, 12, 20, 0.82) 100%
+	);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
+	-webkit-mask-image: linear-gradient(to right, transparent 0%, black 50%);
+	mask-image: linear-gradient(to right, transparent 0%, black 50%);
 	border-bottom: none;
+}
+
+.awsui-dark-mode .cdn-player-slot::before {
+	mix-blend-mode: screen;
 }
 
 .cdn-pp {
