@@ -32,6 +32,7 @@ import {
 import { Atmosphere } from "./Atmosphere.js";
 import { AudioAdapter } from "./AudioAdapter.js";
 import { DuneGround } from "./DuneGround.js";
+import { HazeBackdrop } from "./HazeBackdrop.js";
 import { Skybox } from "./Skybox.js";
 
 const PERF_WINDOW = 30;
@@ -135,6 +136,11 @@ export function mountDuneSceneOnCanvas(
 	const atmosphere = new Atmosphere(scene);
 	const skybox = new Skybox(scene);
 	const ground = new DuneGround(scene);
+	// Camera-locked horizon haze billboard. Sells the White Sands haze that
+	// scene fog alone can't deliver against a bounded mesh — alpha-blended quad
+	// parented to the camera so it always reads as horizon haze regardless of
+	// camera orbit. 1 extra draw call.
+	const haze = new HazeBackdrop(scene, camera);
 
 	let lastFrameMs = performance.now();
 	let paused = false;
@@ -157,6 +163,7 @@ export function mountDuneSceneOnCanvas(
 		skybox.update(animState);
 		ground.update({ animation: animState, audio: audioLevels });
 		atmosphere.update(animState);
+		haze.update(animState);
 	});
 
 	// Perf instrumentation — wraps scene.render() so the sample reflects
@@ -219,6 +226,7 @@ export function mountDuneSceneOnCanvas(
 		},
 		dispose() {
 			engine.stopRenderLoop();
+			haze.dispose();
 			ground.dispose();
 			skybox.dispose();
 			atmosphere.dispose();
