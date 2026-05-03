@@ -331,7 +331,18 @@ void main(void) {
   vec2 warpedUV = vUV + (baseNoise - 0.5) * midLevel * 0.008;
 
   // Wind streaks — anisotropic noise along wind vector, additive on lit side.
-  float streak = fragNoise(warpedUV * vec2(220.0, 60.0) + vec2(0.85, 0.32) * time * 0.6);
+  //
+  // v0.0.0101 — silent state reads as soft cloud-shadow drift, not fast white
+  // tracers. Bryan: "slow those down ~70% and broaden them so they appear as
+  // shadows of clouds slowly drifting across". Two silent-only changes:
+  //   - spatial scale dropped (220, 60) → (70, 20): each streak is ~3x wider,
+  //     soft cloud-shadow shape rather than thin needle of light.
+  //   - temporal advection dropped 0.6 → 0.18 (~70% slower).
+  // Music-playing path (streamPlaying=1) keeps original tight, fast streaks so
+  // the v0.0.0091 RAVY behaviour is unchanged.
+  vec2 streakScale = mix(vec2(70.0, 20.0), vec2(220.0, 60.0), streamPlaying);
+  float streakSpeed = mix(0.18, 0.6, streamPlaying);
+  float streak = fragNoise(warpedUV * streakScale + vec2(0.85, 0.32) * time * streakSpeed);
   streak = smoothstep(0.45, 0.65, streak);
 
   // Lighting — Lambert + sun-tint. Floor 0.48 keeps shadow side cream, not black.
