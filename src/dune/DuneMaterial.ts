@@ -456,17 +456,38 @@ void main(void) {
   // changed from horizonTint (cream — equals dune body color, invisible) to
   // hazeCol (warm peach-cream — distinct from dune body so the haze actually
   // READS at distance). v0.0.0092: cap raised 0.85 → 1.0 so far dunes fully
-  // dissolve into the warm haze (was Bryan's "still don't see the fog" 5th
-  // complaint — at 0.85 distant dunes were still gray-mauve under the
-  // lavender ao-crease, after reordering ao→haze and pushing to 1.0 they go
-  // full peach at depth).
+  // dissolve into the warm haze.
+  //
+  // v0.0.0093: terrain-modulated haze (Bryan: "fog is wasted in this sea of
+  // cream, reimagine — creep along edges of dunes but thin out over dunes").
+  //   - lambertHazeGate: lit slopes (lambert > 0.7) drop haze contribution to
+  //     0.20, shadow slopes (lambert < 0.3) push haze to 1.0. Smooth between.
+  //     Sells "morning fog burns off where the sun touches".
+  //   - heightHazeGate: dune troughs (low vHeight) get DENSER haze, ridge
+  //     tops get less. Layers with lambert.
+  // The depth-fog (vFogT) keeps its full strength so the far field still
+  // dissolves into atmosphere — terrain modulation only affects the
+  // proximate dune surface, not the distance fade.
   surface = mix(surface, hazeCol, vFogT * 1.0);
-  // Screen-Y haze — vHeight drives groundHaze (low dune troughs get more
-  // haze than crests, sells the dust pool). v0.0.0092 coefficient bumped
-  // 0.18 → 0.45 so the trough wash actually competes with the dune body
-  // colour rather than just slightly warming it.
-  float groundHaze = (1.0 - clamp(vHeight / 4.0, 0.0, 1.0)) * 0.45;
-  surface = mix(surface, hazeCol, groundHaze);
+
+  // Lambert-gated proximate haze. lit fragments: 0.20 mix; shadow: 1.0 mix.
+  // smoothstep gives a graded shoulder between the two regimes rather than a
+  // hard ridge-line. Re-uses the lambert var computed earlier in main().
+  float lambertHazeGate = mix(1.0, 0.20, smoothstep(0.30, 0.70, lambert));
+
+  // Height-gated proximate haze. Troughs (vHeight ≈ 0) get full strength,
+  // crests (vHeight ≈ 4) get ~0.15. Steeper curve than v0.0.0092 so the
+  // contrast between crest and valley is unmistakeable.
+  float heightFactor = 1.0 - clamp(vHeight / 4.0, 0.0, 1.0);
+  float heightHazeGate = pow(heightFactor, 1.6);
+
+  // Combined proximate-haze coefficient. Multiplied (not added) so that a
+  // lit ridge-top (low lambertGate * low heightGate) cannot have haze bleed
+  // back in — lit crests stay PEACH-LIGHT cream, troughs + shadows pool DENSE
+  // peach. Cap multiplier at 0.85 so even shadow troughs keep a hint of the
+  // underlying dune color (full 1.0 would erase the dune body entirely).
+  float proximateHaze = lambertHazeGate * heightHazeGate * 0.85;
+  surface = mix(surface, hazeCol, proximateHaze);
 
   gl_FragColor = vec4(surface, 1.0);
 }

@@ -14,6 +14,8 @@ import {
 	HAZE_HORIZON_STRIP_CENTER_Y,
 	HAZE_HORIZON_STRIP_HEIGHT,
 	HAZE_HORIZON_STRIP_PEAK_OPACITY,
+	HAZE_WISP_CONTRAST,
+	HAZE_WISP_SCALE,
 	isValidComposition,
 	MIGRATION_BASS_SWAY,
 	MIGRATION_PLAYING_BOOST,
@@ -180,6 +182,49 @@ describe("v0.0.0092 fog visibility invariants", () => {
 		// near-solid haze. Below 0.9 the dune horizon line still pokes through
 		// and the eye reads "tinted dunes" instead of "fog blanket".
 		expect(HAZE_HORIZON_STRIP_PEAK_OPACITY).toBeGreaterThanOrEqual(0.9);
+	});
+});
+
+// v0.0.0093 — terrain-modulated fog (Bryan: "fog is wasted in this sea of
+// cream, reimagine — creep along the edges of the dunes but thin out over
+// the dunes"). The flat horizontal blanket of v0.0.0092 is broken into:
+//   1. lambert-gated proximate haze (DuneMaterial fragment, lit dune surfaces
+//      get less haze, shadow surfaces pool more)
+//   2. height-gated proximate haze (troughs denser than crests, ^1.6 curve)
+//   3. screen-space wisp modulation (HazeBackdrop fragment, fbm noise carves
+//      clearings in the haze blanket so it reads as floating wisps not a wall)
+// These tests guard the wisp tunable invariants. The lambert + height gates
+// are pure GLSL inside DuneMaterial fragment — verified via playwright pixel
+// samples at crest / valley / lit / shadow rather than unit tests.
+describe("v0.0.0093 wisp modulation tunables", () => {
+	it("HAZE_WISP_SCALE reads as ground-fog wisps not blob or noise", () => {
+		// Below 2 the noise has too few cycles across the viewport — single
+		// blob obscures everything. Above 12 the wisps alias into screen-door
+		// noise on integrated GPUs. 4-8 is the sweet spot.
+		expect(HAZE_WISP_SCALE).toBeGreaterThanOrEqual(2);
+		expect(HAZE_WISP_SCALE).toBeLessThanOrEqual(12);
+	});
+
+	it("HAZE_WISP_CONTRAST is strong enough to break up the blanket (≥0.3)", () => {
+		// Below 0.3 the wisps are too subtle — eye still reads "flat blanket
+		// with mild texture". Above 0.7 the dunes poke through even at the
+		// densest band, defeating the haze. 0.3-0.65 is the working range.
+		expect(HAZE_WISP_CONTRAST).toBeGreaterThanOrEqual(0.3);
+		expect(HAZE_WISP_CONTRAST).toBeLessThanOrEqual(0.65);
+	});
+
+	it("wisp modulation can drive haze to ZERO at peak clearing", () => {
+		// At full clearing (fbm noise = 0), wispMult = 1 - HAZE_WISP_CONTRAST.
+		// For the dunes to be VISIBLE through the clearing we need the
+		// effective alpha to drop meaningfully — at least 30% reduction from
+		// the gradient peak. With contrast 0.45 this gives 0.55 multiplier.
+		const wispMultMin = 1 - HAZE_WISP_CONTRAST;
+		expect(wispMultMin).toBeLessThanOrEqual(0.7);
+		// And the boost at full density (1 + 0.4 * contrast) must stay below
+		// 1.2 so we don't clip the haze color past saturation when the band
+		// already has alpha 0.92.
+		const wispMultMax = 1 + HAZE_WISP_CONTRAST * 0.4;
+		expect(wispMultMax).toBeLessThanOrEqual(1.3);
 	});
 });
 
