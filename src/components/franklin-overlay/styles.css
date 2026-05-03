@@ -47,13 +47,49 @@
 	fill: #030310;
 }
 
+/* El Paso Star — composite CDN logo-star landmark (v0.0.0102, replaces the
+   prior single-fill aws-orange polygon). Three stacked layers map to the
+   brand mark's dominant palette in src/components/logo-svg/:
+     • cdn-violet  #9060f0 → body (the slim 5-arm starburst silhouette)
+     • aws-orange  #ff9900 → core + hero bulb (warm centre + focal accent)
+     • cdn-lavender #d7c7ee → peer bulb tips at each arm end
+   The wrapping <g class="franklin-overlay__star"> hosts the orange drop-shadow
+   glow chain so the whole composite halos as one visual unit (matches the
+   prior overlay's halo signature so the landmark still reads at distance). */
 .franklin-overlay__star {
-	fill: #ff9900;
-	/* Glow halo via SVG filter (defined inline). The CSS drop-shadow
-	   fallback gives a softer halo on browsers that struggle with SVG
-	   filter chains, and stacks additively with the SVG filter. */
+	/* Glow halo via CSS drop-shadow stack. Cascades down to the body, core,
+	   and bulb tips as a single composite halo — keeps the warm orange glow
+	   signature so the landmark still reads as the El Paso star at distance
+	   even though the body fill shifted from orange to violet. */
 	filter: drop-shadow(0 0 4px rgba(255, 153, 0, 0.85))
 		drop-shadow(0 0 12px rgba(255, 153, 0, 0.55));
+}
+
+/* Body — cdn-violet 5-arm slim starburst. The brand mark is violet-dominant
+   (#9B5CF4 cdn-arm in logo-svg). #9060f0 matches the dune palette cdn-violet
+   token used elsewhere. */
+.franklin-overlay__star-body {
+	fill: #9060f0;
+}
+
+/* Core — aws-orange concentric inner star. Reads as the warm centre that
+   glows through the violet body silhouette. */
+.franklin-overlay__star-core {
+	fill: #ff9900;
+}
+
+/* Bulb tips — 5 cdn-lavender pinpoints at each outer arm end. Matches the
+   brand mark's lavender bulb tips (#A064FA in logo-svg .cdn-bulb fills). */
+.franklin-overlay__star-bulb {
+	fill: #d7c7ee;
+}
+
+/* Hero bulb — focal accent at the elongated upper-right arm tip. Tinted
+   aws-orange to echo the cdn-bulb-tip-hero focal point in the brand mark
+   (logo-svg @keyframes cdn-bulb-blink-hero halos in violet/orange). The
+   geometry already enlarges this bulb 1.5× via STAR_HERO_BULB_SCALE. */
+.franklin-overlay__star-bulb--hero {
+	fill: #ff9900;
 }
 
 /* prefers-reduced-motion: the overlay is already static (no animation or

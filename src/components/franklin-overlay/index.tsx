@@ -19,7 +19,9 @@ import type { ReactElement } from "react";
 import { useWallpaperTheme } from "../../hooks/useWallpaperTheme";
 import {
 	buildSilhouettePath,
-	buildStarPath,
+	buildStarBodyPath,
+	buildStarBulbTips,
+	buildStarCorePath,
 	EL_PASO_STAR_ANCHOR,
 	VIEWBOX_HEIGHT,
 	VIEWBOX_WIDTH,
@@ -27,7 +29,21 @@ import {
 import "./styles.css";
 
 const SILHOUETTE_PATH = buildSilhouettePath();
-const STAR_PATH = buildStarPath(
+// El Paso Star — composite CDN logo-star landmark (v0.0.0102). Three layers
+// stacked back-to-front so the violet body silhouettes against the dark sky,
+// the orange core glows through, and the lavender bulb tips read as discrete
+// pinpoints at each arm end. See path-builder.ts for full design rationale.
+const STAR_BODY_PATH = buildStarBodyPath(
+	EL_PASO_STAR_ANCHOR.cx,
+	EL_PASO_STAR_ANCHOR.cy,
+	EL_PASO_STAR_ANCHOR.radius,
+);
+const STAR_CORE_PATH = buildStarCorePath(
+	EL_PASO_STAR_ANCHOR.cx,
+	EL_PASO_STAR_ANCHOR.cy,
+	EL_PASO_STAR_ANCHOR.radius,
+);
+const STAR_BULB_TIPS = buildStarBulbTips(
 	EL_PASO_STAR_ANCHOR.cx,
 	EL_PASO_STAR_ANCHOR.cy,
 	EL_PASO_STAR_ANCHOR.radius,
@@ -61,12 +77,37 @@ export function FranklinOverlay(): ReactElement | null {
 				<g transform={`scale(-1, 1) translate(-${VIEWBOX_WIDTH}, 0)`}>
 					<path d={SILHOUETTE_PATH} className="franklin-overlay__silhouette" />
 				</g>
-				{/* El Paso Star — simplified silhouette of the CDN brand logo-star.
+				{/* El Paso Star — composite CDN brand logo-star landmark (v0.0.0102).
 				    Authored at the pre-mirrored x-coord (340 = 1000 - 660) so it
 				    lands on the south face of the now-visually-left South Franklin
-				    without inheriting the silhouette's flip. Glow halo applied via
-				    the CSS drop-shadow filter chain in styles.css. */}
-				<path d={STAR_PATH} className="franklin-overlay__star" />
+				    without inheriting the silhouette's flip. Three stacked layers:
+				      • star-body  → cdn-violet 5-arm slim starburst (the brand
+				        silhouette; hero tip leans upper-right at +20°)
+				      • star-core  → aws-orange concentric inner star (warm core
+				        that reads through the violet body, evokes the white-hot
+				        centre where multiple arm paths overlap in the brand mark)
+				      • star-bulb  → 5 cdn-lavender bulb tips at each arm end; the
+				        hero bulb (index 0) is enlarged + aws-orange to match the
+				        cdn-bulb-tip-hero focal accent in src/components/logo-svg
+				    Glow halo cascades from the wrapping `<g class="franklin-overlay__star">`
+				    via the CSS drop-shadow filter chain in styles.css. */}
+				<g className="franklin-overlay__star">
+					<path d={STAR_BODY_PATH} className="franklin-overlay__star-body" />
+					<path d={STAR_CORE_PATH} className="franklin-overlay__star-core" />
+					{STAR_BULB_TIPS.map((tip) => (
+						<circle
+							key={`${tip.cx.toFixed(2)}-${tip.cy.toFixed(2)}`}
+							cx={tip.cx}
+							cy={tip.cy}
+							r={tip.r}
+							className={
+								tip.hero
+									? "franklin-overlay__star-bulb franklin-overlay__star-bulb--hero"
+									: "franklin-overlay__star-bulb"
+							}
+						/>
+					))}
+				</g>
 			</svg>
 		</div>
 	);
