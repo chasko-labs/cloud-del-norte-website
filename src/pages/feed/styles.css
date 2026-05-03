@@ -715,12 +715,17 @@
 	);
 }
 
-/* top row: skip | label (secondary control) | round play button */
+/* top row: skip | label (secondary control) | round play button.
+   width:100% + the play button's margin-left:auto pins ▶ flush right within
+   the container, regardless of station-label length or now-playing wrap state.
+   Without width:100% the row shrinks to its content and the play button drifts
+   horizontally as the label changes (Bryan's mobile bounce report). */
 .feed-krux__top {
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	gap: 8px;
+	width: 100%;
 }
 
 /* skip / "next" button — leftmost, gradient pill. Themed with the *next*
@@ -817,12 +822,18 @@
 	);
 }
 
-/* headphones emoji — ambient glow idle, stronger on play (themed per station) */
+/* headphones glyph — inline SVG (NOT unicode emoji) so currentColor inherits
+   --station-primary-mode and matches the play button's hue per station. The
+   svg path uses fill:currentColor; setting color here cascades through.
+   Ambient glow idle, stronger on play (themed per station). */
 .feed-krux__headphones {
-	display: inline-block;
+	display: inline-flex;
+	align-items: center;
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	transition:
 		transform 0.2s ease,
-		filter 0.3s ease;
+		filter 0.3s ease,
+		color 0.4s ease;
 	filter: drop-shadow(0 0 2px rgba(var(--station-primary-mode-rgb), 0.3));
 }
 
@@ -893,9 +904,15 @@
 }
 
 /* tiny now-playing line — always rendered so the header height never shifts
-   when switching stations. min-height = font-size × line-height = 0.825rem. */
+   when switching stations. min-height = font-size × line-height = 0.825rem.
+   align-self:flex-start + text-align:left + width:100% pins the line to the
+   container's left edge so as the track text length changes (or empties),
+   the row's left anchor stays put — no horizontal jitter under the play row. */
 .feed-krux__now-playing {
 	display: block;
+	align-self: flex-start;
+	text-align: left;
+	width: 100%;
 	min-height: calc(var(--cdn-text-xs, 0.6875rem) * 1.2);
 	font-size: var(--cdn-text-xs, 0.6875rem);
 	color: var(--cdn-color-text-muted);
@@ -976,6 +993,12 @@
 	width: 32px;
 	height: 32px;
 	padding: 0;
+	/* margin-left:auto pins the round play button to the right edge of the
+	   .feed-krux__top row. Combined with .feed-krux__top width:100%, this
+	   guarantees the play target stays in a stable position no matter how
+	   the station label, skip pill, or headphone glyph resize. */
+	margin-left: auto;
+	flex-shrink: 0;
 	/* idle border carries a tint of the active station's primary so cards read
 	   as visually different even before any interaction */
 	border: 1px solid rgba(var(--station-primary-mode-rgb), 0.35);
