@@ -12,6 +12,7 @@ import {
 	RIDGE_POINTS,
 	STAR_BULB_COUNT,
 	STAR_BULB_RADIUS_RATIO,
+	STAR_CENTER_BULB_RADIUS_RATIO,
 	STAR_INNER_RATIO,
 	STAR_ROTATION_DEG,
 	VIEWBOX_HEIGHT,
@@ -64,10 +65,12 @@ describe("RIDGE_POINTS", () => {
 		expect(fraction).toBeLessThan(0.32);
 	});
 
-	it("foothill anchor sits well above the bottom-left corner (sky visible there)", () => {
+	it("foothill anchor sits above the bottom-left corner (sky visible there)", () => {
 		// First control point's height must be > 0 so a triangular sky wedge
-		// is exposed in the bottom-left.
-		expect(RIDGE_POINTS[0].h).toBeGreaterThan(40);
+		// is exposed in the bottom-left. v0.0.0113: lowered to 40 so the
+		// post-mirror right viewport edge slopes gently into the footer band
+		// — still well above 0, just no longer popping up to a visible bump.
+		expect(RIDGE_POINTS[0].h).toBeGreaterThan(20);
 	});
 
 	it("ridge tail drops to near-zero before the right edge (sky visible top-right)", () => {
@@ -173,7 +176,10 @@ describe("buildStarBodyPath", () => {
 		}
 	});
 
-	it("body is rotated -20° (counterclockwise) so the upper arm leans upper-left", () => {
+	it("body is rotated -11° (slight ccw lean) so the upper arm tilts gently to upper-left", () => {
+		// v0.0.0113 — bryan rotated +9° clockwise from the prior -20° (which
+		// becomes -11°). Upper arm still in the upper-LEFT quadrant (negative
+		// x, negative y) but closer to vertical than the prior -20° lean.
 		const cx = 0;
 		const cy = 0;
 		const r = 10;
@@ -184,39 +190,52 @@ describe("buildStarBodyPath", () => {
 		const [hx, hy] = coords[0];
 		const expectedAngle = -Math.PI / 2 + (STAR_ROTATION_DEG * Math.PI) / 180;
 		expect(Math.atan2(hy - cy, hx - cx)).toBeCloseTo(expectedAngle, 3);
-		// Upper-LEFT quadrant: negative x, negative y. Bryan v0.0.0112 ccw flip.
 		expect(hx).toBeLessThan(0);
 		expect(hy).toBeLessThan(0);
 	});
 });
 
 describe("buildStarBulbTips", () => {
-	it("returns exactly STAR_BULB_COUNT (5) bulb-tip descriptors", () => {
+	it("returns STAR_BULB_COUNT outer-arm bulbs + 1 center bulb (6 total, v0.0.0113)", () => {
 		const tips = buildStarBulbTips(0, 0, 20);
-		expect(tips.length).toBe(STAR_BULB_COUNT);
+		expect(tips.length).toBe(STAR_BULB_COUNT + 1);
 		expect(STAR_BULB_COUNT).toBe(5);
 	});
 
-	it("v0.0.0104 — all bulbs are equal radius (no hero accent)", () => {
+	it("v0.0.0104 — all 5 outer-arm bulbs are equal radius (no hero accent)", () => {
 		const r = 20;
 		const tips = buildStarBulbTips(0, 0, r);
-		const expected = r * STAR_BULB_RADIUS_RATIO;
-		for (const t of tips) {
-			expect(t.r).toBeCloseTo(expected, 4);
+		const outerExpected = r * STAR_BULB_RADIUS_RATIO;
+		// First 5 entries are the outer-arm bulbs.
+		for (let i = 0; i < STAR_BULB_COUNT; i++) {
+			expect(tips[i].r).toBeCloseTo(outerExpected, 4);
 		}
 	});
 
-	it("each bulb has a unique cycleIndex 0..4 for staggered keyframe phasing", () => {
-		const tips = buildStarBulbTips(0, 0, 20);
-		const indices = tips.map((t) => t.cycleIndex).sort();
-		expect(indices).toEqual([0, 1, 2, 3, 4]);
-	});
-
-	it("all bulbs sit on the body's outer arm tips (distance from centre = outerRadius)", () => {
+	it("v0.0.0113 — the 6th tip is the center bulb at 1/3 the outer-arm radius", () => {
 		const r = 20;
 		const tips = buildStarBulbTips(0, 0, r);
-		for (const t of tips) {
-			expect(Math.hypot(t.cx, t.cy)).toBeCloseTo(r, 2);
+		const center = tips[STAR_BULB_COUNT];
+		expect(center.cx).toBe(0);
+		expect(center.cy).toBe(0);
+		expect(center.r).toBeCloseTo(r * STAR_CENTER_BULB_RADIUS_RATIO, 4);
+		// Exactly 1/3 the outer-arm bulb radius.
+		expect(center.r).toBeCloseTo((r * STAR_BULB_RADIUS_RATIO) / 3, 4);
+		expect(center.cycleIndex).toBe(STAR_BULB_COUNT);
+	});
+
+	it("each bulb has a unique cycleIndex 0..5 for staggered keyframe phasing", () => {
+		const tips = buildStarBulbTips(0, 0, 20);
+		const indices = tips.map((t) => t.cycleIndex).sort();
+		expect(indices).toEqual([0, 1, 2, 3, 4, 5]);
+	});
+
+	it("all 5 outer-arm bulbs sit on the outer arm tips (distance from centre = outerRadius)", () => {
+		const r = 20;
+		const tips = buildStarBulbTips(0, 0, r);
+		// Outer-arm tips only — the 6th (center) sits AT the centre.
+		for (let i = 0; i < STAR_BULB_COUNT; i++) {
+			expect(Math.hypot(tips[i].cx, tips[i].cy)).toBeCloseTo(r, 2);
 		}
 	});
 });

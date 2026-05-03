@@ -25,8 +25,14 @@ const AUTO_ADVANCE_MS = 7000;
 // rest". Window of 4 cards, prev/next chevrons + auto-advance every Ns,
 // wrap-around at the end so the last window borrows the first card(s).
 // prefers-reduced-motion: kills auto-advance + the fade animation (instant
-// swap). Each card shows: rank #, 2-line title clamp, author, badge.
-// Drops blurb + sub.
+// swap).
+//
+// v0.0.0114 — bryan: restore the prior big-serif numeral on the left
+// (palette-cycled per card via .feed-mini-card--n{1..4}) and surface a
+// one-line blurb excerpt below the title so cards aren't half-empty. The
+// corner pill chip + #-prefix variant looked terrible compared to the prior
+// big-numeral hierarchy. Each card shows: big serif #, 2-line title clamp,
+// 1-line excerpt from blurb, author + badge.
 
 interface VisibleCard extends Card {
 	rank: number; // 1..N visible rank stays stable per source-array index
@@ -46,11 +52,14 @@ function CardItem({ card }: { card: VisibleCard }) {
 				rel="noopener noreferrer"
 				className="feed-mini-card__link"
 			>
-				<span className="feed-mini-card__rank" aria-hidden="true">
-					#{n}
+				<span className="feed-mini-card__number" aria-hidden="true">
+					{n}
 				</span>
 				<div className="feed-mini-card__body">
 					<span className="feed-mini-card__title">{truncate(card.title)}</span>
+					{card.blurb && (
+						<span className="feed-mini-card__excerpt">{card.blurb}</span>
+					)}
 					<span className="feed-mini-card__meta">
 						<span className="feed-mini-card__author">{card.author}</span>
 						{badge && <BuilderBadge badge={badge} />}
