@@ -529,6 +529,15 @@ a.cdn-pp__label--donate:focus-visible {
 	}
 }
 
+/* Mobile (<=688px) — Cloudscape AppLayout shows a sticky breadcrumb toolbar
+   (~56px) below #top-nav (56px). The player slot must stick at 112px so it
+   clears both bars instead of hiding behind the breadcrumb. */
+@media (max-width: 688px) {
+	.cdn-player-slot {
+		top: 112px;
+	}
+}
+
 /* Mobile (<=600px) — same layout, slightly tighter.
    Sub-row stacks vertically: line 2 = track title, line 3 = geo.
    Sep hidden when stacked. */
