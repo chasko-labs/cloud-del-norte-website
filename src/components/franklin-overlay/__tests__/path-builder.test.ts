@@ -4,10 +4,18 @@ import { describe, expect, it } from "vitest";
 
 import {
 	buildSilhouettePath,
+	buildStarBodyPath,
+	buildStarBulbTips,
+	buildStarCorePath,
 	buildStarPath,
 	EL_PASO_STAR_ANCHOR,
 	heightToSvgY,
 	RIDGE_POINTS,
+	STAR_BULB_RADIUS_RATIO,
+	STAR_CORE_SCALE,
+	STAR_HERO_BULB_SCALE,
+	STAR_HERO_TIP_SCALE,
+	STAR_INNER_RATIO,
 	VIEWBOX_HEIGHT,
 	VIEWBOX_WIDTH,
 } from "../path-builder";
@@ -126,13 +134,9 @@ describe("buildSilhouettePath", () => {
 	});
 });
 
-describe("buildStarPath", () => {
-	// Geometry constants mirrored from path-builder.ts buildStarPath().
-	const INNER_RATIO = 0.32;
-	const HERO_TIP_SCALE = 1.18;
-
+describe("buildStarBodyPath", () => {
 	it("returns a 10-vertex closed logo-star path (M + 9 L + Z)", () => {
-		const path = buildStarPath(100, 100, 20);
+		const path = buildStarBodyPath(100, 100, 20);
 		expect(path.startsWith("M")).toBe(true);
 		expect(path.trimEnd().endsWith("Z")).toBe(true);
 		const lineCount = (path.match(/ L /g) ?? []).length;
@@ -143,15 +147,15 @@ describe("buildStarPath", () => {
 		const cx = 0;
 		const cy = 0;
 		const r = 10;
-		const path = buildStarPath(cx, cy, r);
+		const path = buildStarBodyPath(cx, cy, r);
 		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
 			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
 		);
-		// Indices 1, 3, 5, 7, 9 are inner vertices; all sit at r * 0.32.
+		// Indices 1, 3, 5, 7, 9 are inner vertices; all sit at r * STAR_INNER_RATIO.
 		for (const i of [1, 3, 5, 7, 9]) {
 			const [x, y] = coords[i];
 			const dist = Math.hypot(x - cx, y - cy);
-			expect(dist).toBeCloseTo(r * INNER_RATIO, 2);
+			expect(dist).toBeCloseTo(r * STAR_INNER_RATIO, 2);
 		}
 	});
 
@@ -159,12 +163,15 @@ describe("buildStarPath", () => {
 		const cx = 0;
 		const cy = 0;
 		const r = 10;
-		const path = buildStarPath(cx, cy, r);
+		const path = buildStarBodyPath(cx, cy, r);
 		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
 			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
 		);
 		const [hx, hy] = coords[0];
-		expect(Math.hypot(hx - cx, hy - cy)).toBeCloseTo(r * HERO_TIP_SCALE, 2);
+		expect(Math.hypot(hx - cx, hy - cy)).toBeCloseTo(
+			r * STAR_HERO_TIP_SCALE,
+			2,
+		);
 		// Other outer vertices (2, 4, 6, 8) sit at the un-elongated outer radius.
 		for (const i of [2, 4, 6, 8]) {
 			const [x, y] = coords[i];
@@ -176,7 +183,7 @@ describe("buildStarPath", () => {
 		const cx = 0;
 		const cy = 0;
 		const r = 10;
-		const path = buildStarPath(cx, cy, r);
+		const path = buildStarBodyPath(cx, cy, r);
 		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
 			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
 		);
@@ -188,6 +195,99 @@ describe("buildStarPath", () => {
 		// Hero tip leans upper-right: positive x, negative y.
 		expect(hx).toBeGreaterThan(0);
 		expect(hy).toBeLessThan(0);
+	});
+});
+
+describe("buildStarCorePath", () => {
+	it("is a 10-vertex closed star (same topology as the body)", () => {
+		const path = buildStarCorePath(0, 0, 20);
+		expect(path.startsWith("M")).toBe(true);
+		expect(path.trimEnd().endsWith("Z")).toBe(true);
+		expect((path.match(/ L /g) ?? []).length).toBe(9);
+	});
+
+	it("outer vertices sit at STAR_CORE_SCALE × outerRadius (smaller than body)", () => {
+		const cx = 0;
+		const cy = 0;
+		const r = 10;
+		const path = buildStarCorePath(cx, cy, r);
+		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
+			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
+		);
+		// Outer vertices 2, 4, 6, 8 sit at r * STAR_CORE_SCALE.
+		for (const i of [2, 4, 6, 8]) {
+			const [x, y] = coords[i];
+			expect(Math.hypot(x - cx, y - cy)).toBeCloseTo(r * STAR_CORE_SCALE, 2);
+		}
+	});
+
+	it("preserves the hero-tip elongation at the smaller scale (asymmetry survives)", () => {
+		const cx = 0;
+		const cy = 0;
+		const r = 10;
+		const path = buildStarCorePath(cx, cy, r);
+		const coords = [...path.matchAll(/(-?\d+\.\d+) (-?\d+\.\d+)/g)].map(
+			(m) => [Number.parseFloat(m[1]), Number.parseFloat(m[2])] as const,
+		);
+		const [hx, hy] = coords[0];
+		expect(Math.hypot(hx - cx, hy - cy)).toBeCloseTo(
+			r * STAR_CORE_SCALE * STAR_HERO_TIP_SCALE,
+			2,
+		);
+	});
+});
+
+describe("buildStarBulbTips", () => {
+	it("returns exactly 5 bulb-tip descriptors (one per outer arm)", () => {
+		const tips = buildStarBulbTips(0, 0, 20);
+		expect(tips.length).toBe(5);
+	});
+
+	it("exactly one bulb is flagged as the hero (the elongated upper-right arm)", () => {
+		const tips = buildStarBulbTips(0, 0, 20);
+		const heroes = tips.filter((t) => t.hero);
+		expect(heroes.length).toBe(1);
+	});
+
+	it("hero bulb is rendered at STAR_HERO_BULB_SCALE × peer radius", () => {
+		const r = 20;
+		const tips = buildStarBulbTips(0, 0, r);
+		const hero = tips.find((t) => t.hero);
+		const peer = tips.find((t) => !t.hero);
+		expect(hero).toBeDefined();
+		expect(peer).toBeDefined();
+		if (!hero || !peer) return;
+		expect(peer.r).toBeCloseTo(r * STAR_BULB_RADIUS_RATIO, 4);
+		expect(hero.r).toBeCloseTo(peer.r * STAR_HERO_BULB_SCALE, 4);
+	});
+
+	it("hero bulb sits on the elongated upper-right arm (positive x, negative y from centre)", () => {
+		const tips = buildStarBulbTips(0, 0, 20);
+		const hero = tips.find((t) => t.hero);
+		expect(hero).toBeDefined();
+		if (!hero) return;
+		expect(hero.cx).toBeGreaterThan(0);
+		expect(hero.cy).toBeLessThan(0);
+	});
+
+	it("hero bulb radius is at the body's elongated hero-tip vertex (not the un-scaled outer radius)", () => {
+		// The bulb cx/cy must equal the body's hero-tip vertex coordinate so
+		// the bulb sits AT the visible arm tip, not floating short of it.
+		const r = 20;
+		const tips = buildStarBulbTips(0, 0, r);
+		const hero = tips.find((t) => t.hero);
+		expect(hero).toBeDefined();
+		if (!hero) return;
+		const heroDist = Math.hypot(hero.cx, hero.cy);
+		expect(heroDist).toBeCloseTo(r * STAR_HERO_TIP_SCALE, 2);
+	});
+});
+
+describe("buildStarPath (legacy alias)", () => {
+	it("resolves to the violet body path (backward-compat for pre-v0.0.0102 callers)", () => {
+		const legacy = buildStarPath(50, 60, 15);
+		const body = buildStarBodyPath(50, 60, 15);
+		expect(legacy).toBe(body);
 	});
 });
 
