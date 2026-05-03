@@ -18,10 +18,15 @@ import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
 import { AUTH_LOGIN_URL } from "../../lib/auth";
 import {
+	getStoredLocale,
 	getStoredNavState,
+	isLocaleExplicit,
+	isSpanishSpeakingCountry,
 	type Locale,
+	markLocaleExplicit,
 	setStoredNavState,
 } from "../../utils/locale";
+import { loadVisitorInfo, readCachedVisitor } from "../../utils/visitor";
 
 import "./styles.css";
 
@@ -492,9 +497,55 @@ function ShellContent({
 	}, [theme, onThemeChange]);
 
 	const handleToggleLocale = useCallback(() => {
+		// Mark this as an explicit user choice so the IP-geo auto-detector will
+		// never override it — even if the visitor is in a Spanish-speaking
+		// country, their manual flag click wins from now on.
+		markLocaleExplicit();
 		onLocaleChange?.(locale === "mx" ? "us" : "mx");
 		setAnimatingLocale(true);
 		setTimeout(() => setAnimatingLocale(false), 400);
+	}, [locale, onLocaleChange]);
+
+	// IP-geo auto-locale backstop. The synchronous navigator.language probe in
+	// initializeLocale() catches most Spanish-speaking visitors before paint;
+	// this effect handles the case where the browser is en-* but the visitor
+	// is geographically in a Spanish-speaking country (es-MX gets set after
+	// first paint → brief flash of English, acceptable for hobbyist scope).
+	// Gating:
+	//   - skip if user already has a stored locale (their last session's choice)
+	//   - skip if user has explicitly toggled (locked in)
+	//   - skip if current locale is already mx (nothing to do)
+	// Reads the shared visitor cache first (zero network cost on second load),
+	// falls back to loadVisitorInfo() which dedupes with LioraFrame's call.
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+		if (getStoredLocale() !== null) return;
+		if (isLocaleExplicit()) return;
+		if (locale === "mx") return;
+
+		const cached = readCachedVisitor();
+		if (cached && isSpanishSpeakingCountry(cached.country)) {
+			onLocaleChange?.("mx");
+			return;
+		}
+
+		let cancelled = false;
+		void loadVisitorInfo().then((info) => {
+			if (cancelled) return;
+			if (!info) return;
+			// Re-check guards — user may have toggled while the fetch was inflight
+			if (isLocaleExplicit()) return;
+			if (getStoredLocale() !== null) return;
+			if (isSpanishSpeakingCountry(info.country)) {
+				onLocaleChange?.("mx");
+			}
+		});
+		return () => {
+			cancelled = true;
+		};
+		// onLocaleChange is stable per page; locale included so we re-check
+		// after a switch (e.g., explicit toggle back to us shouldn't re-trigger
+		// because isLocaleExplicit() will now be true)
 	}, [locale, onLocaleChange]);
 
 	return (
