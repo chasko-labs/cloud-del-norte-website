@@ -97,6 +97,20 @@
 		"nextMeetupFallback": "Check meetup.com for our next event.",
 		"nextMeetupCta": "Visit meetup.com →",
 		"nextMeetupPastLabel": "Last meetup:",
+		"pastMeetupBadge": "PAST EVENT",
+		"pastMeetupTitle": "Passionate about sharing AWS knowledge?",
+		"pastMeetupIntroP1": "Already giving talks, writing content, or helping others learn the cloud?",
+		"pastMeetupIntroP2": "Join us for a special event where you will get to know the AWS Community Builders program from LATAM Community Builders who have been sharing knowledge and leveraging the program's benefits for years.",
+		"pastMeetupSpeakersHeader": "Speakers",
+		"pastMeetupSpeaker1Name": "Carolina Herrera Monteza",
+		"pastMeetupSpeaker1Role": "Technical Leader / Cloud Engineer + Global Team Leader. Helps companies operate cloud systems and teaches teams to collaborate across countries and cultures. Mentors women and shares in community talks.",
+		"pastMeetupSpeaker2Name": "Verónica Rivera",
+		"pastMeetupSpeaker2Role": "Cloud Engineer + Community Leader. Shares cloud technology with clear explanations and hands-on learning. Blends the technical with visual storytelling.",
+		"pastMeetupSpeaker3Name": "Sary Libreros",
+		"pastMeetupSpeaker3Role": "Cloud Coach + Women in Tech Mentor. Walks alongside new folks and teams as they learn the cloud, focusing on clarity, confidence, and growth.",
+		"pastMeetupSpeaker4Name": "Brenda Galicia",
+		"pastMeetupSpeaker4Role": "AI + Cloud Educator. Explains how to build useful applications using cloud tools (pay-as-you-go). Creates simple, friendly tutorials.",
+		"pastMeetupViewEvent": "View event on Meetup →",
 		"infoLinkAriaLabel": "Open help panel",
 		"streamKrux": "stream krux",
 		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen."
@@ -273,7 +287,7 @@
 		"aslLeadRole": "ASL",
 		"aslLeadDesc": "coordinate American Sign Language interpretation for events, advocate for accessibility in session planning",
 		"lsmLead": "LSM",
-		"lsmLeadDesc": "Lengua de Señas Mexicana — conectar la comunidad sorda de Juárez con los eventos del grupo",
+		"lsmLeadDesc": "Mexican Sign Language — connecting the Juárez deaf community with group events",
 		"spanishSpeakersDesc": "help reach Spanish-speaking builders across the Borderplex",
 		"womenWelcomeDesc": "we actively recruit women builders for organizing roles",
 		"reachOutOnMeetup": "Reach out on Meetup"
@@ -688,7 +702,6 @@
 		"welcomeGreeting": "welcome"
 	},
 	"persistentPlayer": {
-		"streamingFallback": "streaming on clouddelnorte.org",
 		"streamErrorRetrying": "stream hiccup — retrying",
 		"streamErrorPersistent": "this station's stream is having a moment — try again or skip to another station",
 		"streamErrorRetryButton": "try again"

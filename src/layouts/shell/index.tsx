@@ -607,7 +607,21 @@ function ShellContent({
 				toolsHide={toolsHide}
 				toolsOpen={toolsOpen}
 				onToolsChange={handleToolsChange}
-				content={children}
+				content={
+					<>
+						{/* Reserved horizontal slot for the persistent radio player —
+						    sits at the top of every page's content, immediately under
+						    the Cloudscape breadcrumb (which AppLayout renders above
+						    `content`). Replaces the prior fixed top-right pill so the
+						    player no longer overlaps the AWS UG header band. The slot
+						    is reserved on every page so layout doesn't shift between
+						    pages with/without an active stream. */}
+						<div className="cdn-player-slot" aria-label="radio player">
+							<PersistentPlayer />
+						</div>
+						{children}
+					</>
+				}
 				headerSelector="#top-nav"
 				ariaLabels={{
 					navigation: t("shell.navigationDrawer"),
@@ -624,7 +638,6 @@ function ShellContent({
 			    cdn-glass-streaks.css. No floating React button: Bryan eyes-on
 			    v0.0.0046 found the floating pill landed in "no-mansland". */}
 			<Footer />
-			<PersistentPlayer />
 		</>
 	);
 }

@@ -20,6 +20,7 @@ vi.mock("../../../lib/auth", () => ({
 	getIdToken: vi.fn(() => null),
 	decodeToken: vi.fn(),
 	refreshTokens: vi.fn(),
+	AUTH_LOGIN_URL: "https://auth.clouddelnorte.org/login/index.html",
 }));
 
 vi.mock("../../../layouts/shell", () => ({
@@ -75,7 +76,12 @@ function state(overrides: Partial<AuthState> = {}): AuthState {
 describe("/create-meeting auth gating", () => {
 	beforeEach(() => {
 		Object.defineProperty(window, "location", {
-			value: { pathname: "/create-meeting", search: "" },
+			value: {
+				pathname: "/create-meeting",
+				search: "",
+				origin: "https://clouddelnorte.org",
+				assign: vi.fn(),
+			},
 			writable: true,
 		});
 	});
@@ -115,14 +121,13 @@ describe("/create-meeting auth gating", () => {
 		expect(container.textContent).toMatch(/sign out/i);
 	});
 
-	it("unauthenticated → triggers beginLogin and renders fallback", async () => {
-		const { beginLogin } = await import("../../../lib/auth");
+	it("unauthenticated → redirects to AUTH_LOGIN_URL and renders fallback", async () => {
 		const { container } = render(
 			<AuthContext.Provider value={state()}>
 				<App />
 			</AuthContext.Provider>,
 		);
-		await waitFor(() => expect(beginLogin).toHaveBeenCalled());
+		await waitFor(() => expect(window.location.assign).toHaveBeenCalled());
 		expect(screen.queryByTestId("create-form-inner")).not.toBeInTheDocument();
 		expect(container.textContent).toMatch(/redirecting to sign-in/i);
 	});

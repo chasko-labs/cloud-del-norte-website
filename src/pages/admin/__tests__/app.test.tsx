@@ -20,6 +20,7 @@ vi.mock("../../../lib/auth", () => ({
 	getIdToken: vi.fn(() => null),
 	decodeToken: vi.fn(),
 	refreshTokens: vi.fn(),
+	AUTH_LOGIN_URL: "https://auth.clouddelnorte.org/login/index.html",
 }));
 
 vi.mock("../../../lib/admin", () => ({
@@ -59,7 +60,12 @@ function state(overrides: Partial<AuthState> = {}): AuthState {
 describe("/admin auth gating + table", () => {
 	beforeEach(() => {
 		Object.defineProperty(window, "location", {
-			value: { pathname: "/admin", search: "" },
+			value: {
+				pathname: "/admin",
+				search: "",
+				origin: "https://clouddelnorte.org",
+				assign: vi.fn(),
+			},
 			writable: true,
 		});
 	});
@@ -174,14 +180,13 @@ describe("/admin auth gating + table", () => {
 		expect(screen.queryByRole("table")).not.toBeInTheDocument();
 	});
 
-	it("unauthenticated → triggers beginLogin, renders spinner not table", async () => {
-		const { beginLogin } = await import("../../../lib/auth");
+	it("unauthenticated → redirects to AUTH_LOGIN_URL, renders spinner not table", async () => {
 		render(
 			<AuthContext.Provider value={state()}>
 				<App />
 			</AuthContext.Provider>,
 		);
-		await waitFor(() => expect(beginLogin).toHaveBeenCalled());
+		await waitFor(() => expect(window.location.assign).toHaveBeenCalled());
 		expect(screen.queryByRole("table")).not.toBeInTheDocument();
 	});
 

@@ -10,6 +10,7 @@ vi.mock("../../../lib/auth", () => ({
 	getIdToken: vi.fn(() => null),
 	decodeToken: vi.fn(),
 	refreshTokens: vi.fn(),
+	AUTH_LOGIN_URL: "https://auth.clouddelnorte.org/login/index.html",
 }));
 
 class ResizeObserverMock {
@@ -56,7 +57,12 @@ describe("RequireAuth", () => {
 	beforeEach(async () => {
 		vi.resetModules();
 		Object.defineProperty(window, "location", {
-			value: { pathname: "/meetings", search: "?x=1" },
+			value: {
+				pathname: "/meetings",
+				search: "?x=1",
+				origin: "https://clouddelnorte.org",
+				assign: vi.fn(),
+			},
 			writable: true,
 		});
 		const { beginLogin } = await import("../../../lib/auth");
@@ -75,8 +81,7 @@ describe("RequireAuth", () => {
 		expect(screen.getByText("inside")).toBeInTheDocument();
 	});
 
-	it("unauthenticated → calls beginLogin with pathname+search and renders spinner fallback", async () => {
-		const { beginLogin } = await import("../../../lib/auth");
+	it("unauthenticated → redirects to AUTH_LOGIN_URL and renders spinner fallback", async () => {
 		const { container } = render(
 			wrap(
 				unauthedState(),
@@ -86,14 +91,15 @@ describe("RequireAuth", () => {
 			),
 		);
 		await waitFor(() => {
-			expect(beginLogin).toHaveBeenCalledWith("/meetings?x=1");
+			expect(window.location.assign).toHaveBeenCalledWith(
+				"https://auth.clouddelnorte.org/login/index.html",
+			);
 		});
 		expect(screen.queryByText("protected")).not.toBeInTheDocument();
 		expect(container.textContent).toMatch(/redirecting to sign-in/i);
 	});
 
 	it("unauthenticated with custom fallback renders fallback", async () => {
-		const { beginLogin } = await import("../../../lib/auth");
 		render(
 			wrap(
 				unauthedState(),
@@ -103,7 +109,7 @@ describe("RequireAuth", () => {
 			),
 		);
 		await waitFor(() => {
-			expect(beginLogin).toHaveBeenCalled();
+			expect(window.location.assign).toHaveBeenCalled();
 		});
 		expect(screen.getByText("custom-fb")).toBeInTheDocument();
 	});

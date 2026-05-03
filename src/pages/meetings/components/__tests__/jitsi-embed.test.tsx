@@ -35,7 +35,7 @@ function installFakeExternalApi(): {
 	let latest: FakeApi | null = null;
 	// Regular function (not arrow) so `new ctor(...)` treats its return value
 	// as the constructed instance — vi.fn() warns and skips with arrow fns.
-	const ctor = vi.fn(() => {
+	const ctor = vi.fn(function FakeJitsiCtor(this: unknown) {
 		const api: FakeApi = {
 			listeners: {},
 			addListener(ev, fn) {

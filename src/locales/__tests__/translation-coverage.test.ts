@@ -114,6 +114,14 @@ describe("translation coverage", () => {
 			"helpPanel.arrowheadSoundstage", // Proper noun
 			"feedPage.builderBadge.communityBuilder", // "aws community builder" - AWS program name (kept untranslated as bryan's directive)
 			"feedPage.builderBadge.hero", // "aws hero" - AWS program name (kept untranslated as bryan's directive)
+			"feedPage.andresMediumHeader", // "Andres Moreno — andmoredev" - proper name + handle
+			"feedPage.builderCenterHeader", // "AWS Builder Center" - AWS program proper noun
+			"helpPanel.arrowheadPark", // "Arrowhead Research Park" - proper noun
+			"helpPanel.communityFoundedSuffix", // ", NMSU." - punctuation + acronym
+			"feedPage.pastMeetupSpeaker1Name", // proper name
+			"feedPage.pastMeetupSpeaker2Name", // proper name
+			"feedPage.pastMeetupSpeaker3Name", // proper name
+			"feedPage.pastMeetupSpeaker4Name", // proper name
 		]);
 
 		// Helper to get value by dot-notation key

@@ -20,6 +20,7 @@ vi.mock("../../../lib/auth", () => ({
 	getIdToken: vi.fn(() => null),
 	decodeToken: vi.fn(),
 	refreshTokens: vi.fn(),
+	AUTH_LOGIN_URL: "https://auth.clouddelnorte.org/login/index.html",
 }));
 
 // Shell passes children through (skip AuthProvider wrap — we provide our own below).
@@ -62,7 +63,12 @@ function state(overrides: Partial<AuthState> = {}): AuthState {
 describe("/meetings auth gating", () => {
 	beforeEach(() => {
 		Object.defineProperty(window, "location", {
-			value: { pathname: "/meetings", search: "" },
+			value: {
+				pathname: "/meetings",
+				search: "",
+				origin: "https://clouddelnorte.org",
+				assign: vi.fn(),
+			},
 			writable: true,
 		});
 	});
@@ -78,15 +84,15 @@ describe("/meetings auth gating", () => {
 		expect(screen.getByTestId("meetings-table")).toBeInTheDocument();
 	});
 
-	it("unauthenticated → renders fallback, not table; triggers beginLogin", async () => {
-		const { beginLogin } = await import("../../../lib/auth");
-		const { container } = render(
+	it("unauthenticated → guests see meetings table (browse allowed, RSVP gates per-row)", () => {
+		// Per app.tsx: the whole table is visible to guests; the join action
+		// inside VariationsTable gates per-row (sign in to RSVP, not to view).
+		render(
 			<AuthContext.Provider value={state()}>
 				<App />
 			</AuthContext.Provider>,
 		);
-		await waitFor(() => expect(beginLogin).toHaveBeenCalled());
-		expect(screen.queryByTestId("meetings-table")).not.toBeInTheDocument();
-		expect(container.textContent).toMatch(/redirecting to sign-in/i);
+		expect(screen.getByTestId("meetings-table")).toBeInTheDocument();
+		expect(window.location.assign).not.toHaveBeenCalled();
 	});
 });

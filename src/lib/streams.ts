@@ -431,8 +431,8 @@ export const STREAMS: StreamDef[] = [
 		// (the normal case for browser fetches against mexiserver:1124)
 		metaFallback: {
 			href: "https://open.spotify.com/user/uamradio?si=CrV4ocZwTqKJhdWcn3gKbw",
-			labelEn: "playlist on Spotify — see what they're spinning",
-			labelEs: "playlist en Spotify — revisa qué transmiten",
+			labelEn: "playlist",
+			labelEs: "playlist",
 		},
 		// UAM Azcapotzalco unidad — Universidad Autónoma Metropolitana, CDMX
 		location: {
@@ -472,8 +472,8 @@ export const STREAMS: StreamDef[] = [
 		// gives the listener something to do instead of a blank line
 		metaFallback: {
 			href: "https://ibero909.fm/playlist/",
-			labelEn: "playlist — see what's on rotation",
-			labelEs: "playlist — mira qué está sonando",
+			labelEn: "playlist",
+			labelEs: "playlist",
 		},
 		// Universidad Iberoamericana — Santa Fe campus, CDMX
 		location: {
@@ -548,8 +548,8 @@ export const STREAMS: StreamDef[] = [
 		// most useful "what they're playing" affordance available
 		metaFallback: {
 			href: "https://conceptoradial.com/es/podcast",
-			labelEn: "podcasts — listen to recent episodes",
-			labelEs: "podcasts — escucha episodios recientes",
+			labelEn: "podcasts",
+			labelEs: "podcasts",
 		},
 		// Tec de Monterrey CEDETEC — Centro de Diseño y Tecnología on the
 		// Ciudad de México (Tlalpan) campus, NOT the Monterrey home campus.
@@ -589,8 +589,8 @@ export const STREAMS: StreamDef[] = [
 		// schedule so they can identify the show on air
 		metaFallback: {
 			href: "https://udgtv.com/radioudg/lagos-de-moreno/programas",
-			labelEn: "programs — see what's on air",
-			labelEs: "programas — mira qué está al aire",
+			labelEn: "programs",
+			labelEs: "programas",
 		},
 		// Centro Universitario de los Lagos (UDG sede Lagos) — Lagos de Moreno, Jalisco
 		location: {
