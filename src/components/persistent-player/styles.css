@@ -50,10 +50,13 @@
 	top: 56px;
 	z-index: 100;
 	background: #ede5d4;
+	/* light mode: a warm hairline shadow separates the slot from page content */
+	box-shadow: 0 2px 8px -2px rgba(139, 90, 43, 0.1);
 }
 
 .awsui-dark-mode .cdn-player-slot {
 	background: #0a0c14;
+	box-shadow: none;
 }
 
 .cdn-pp {
@@ -70,10 +73,11 @@
 	position: relative;
 	z-index: 1;
 
-	/* no card — subtle station-tinted radial from the right (play button side) */
+	/* no card — subtle station-tinted radial from the right (play button side).
+	   light mode uses 0.10 opacity for visible warmth on cream without going card-heavy. */
 	background: radial-gradient(
 		ellipse at right center,
-		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.07) 0%,
+		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.1) 0%,
 		transparent 68%
 	);
 	border: none;
@@ -92,10 +96,13 @@
 	left: 0;
 	right: 0;
 	height: 1px;
+	/* light mode: warm amber anchor at left fading to station tint at right.
+	   gives the streak a sepia ground that harmonizes with cream. */
 	background: linear-gradient(
 		to right,
-		transparent,
-		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.18) 18%
+		rgba(139, 90, 43, 0.12),
+		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.28) 50%,
+		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.18) 100%
 	);
 	pointer-events: none;
 }
@@ -234,8 +241,9 @@ a.cdn-pp__label--donate:focus-visible {
 }
 
 .cdn-pp__track-text {
-	color: var(--station-primary-mode, var(--cdn-color-text-medium, #5a3a1e));
-	opacity: 0.8;
+	/* light mode: warm brown — legible on cream, no orange saturation clash */
+	color: var(--cdn-color-text-medium, #5a3a1e);
+	opacity: 1;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
@@ -244,7 +252,9 @@ a.cdn-pp__label--donate:focus-visible {
 }
 
 .awsui-dark-mode .cdn-pp__track-text {
+	/* dark mode: station color at reduced opacity reads fine on navy */
 	color: var(--station-primary-mode, rgba(240, 240, 240, 0.6));
+	opacity: 0.8;
 }
 
 /* fallback link */
@@ -270,7 +280,9 @@ a.cdn-pp__label--donate:focus-visible {
 	border-bottom-color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 }
 
-/* geo — city/region/country in station color at reduced opacity */
+/* geo — city/region/country.
+   light mode: muted brown — legible, harmonizes with cream.
+   dark mode: station color at lower opacity for ambient tint. */
 .cdn-pp__geo {
 	font-family: var(
 		--cdn-font-mono,
@@ -281,8 +293,8 @@ a.cdn-pp__label--donate:focus-visible {
 		monospace
 	);
 	font-size: var(--cdn-text-xs, 0.6875rem);
-	color: var(--station-primary-mode, var(--cdn-color-text-low, #8a6a4e));
-	opacity: 0.7;
+	color: var(--cdn-color-text-low, #8a6a4e);
+	opacity: 1;
 	letter-spacing: 0.02em;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -291,7 +303,8 @@ a.cdn-pp__label--donate:focus-visible {
 }
 
 .awsui-dark-mode .cdn-pp__geo {
-	opacity: 0.55;
+	color: var(--station-primary-mode, rgba(240, 240, 240, 0.38));
+	opacity: 0.7;
 }
 
 /* retrying/error text — muted station-tinted, not system-red.
@@ -344,18 +357,22 @@ a.cdn-pp__label--donate:focus-visible {
 		box-shadow 0.2s ease;
 }
 
-/* skip — small rounded rect, preview the next station's color */
+/* skip — small rounded rect, preview the next station's color.
+   light mode: visible amber border + warm cream fill so it reads as a control
+   on cream background, not as a ghost shape. */
 .cdn-pp__btn--skip {
 	width: 28px;
 	height: 28px;
 	border-radius: 6px;
-	border: 1px solid rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
-	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.06);
+	border: 1px solid rgba(139, 90, 43, 0.32);
+	background: rgba(139, 90, 43, 0.06);
 	color: var(--cdn-color-text-muted, #4a2818);
 	font-size: 0.85rem;
 }
 
 .awsui-dark-mode .cdn-pp__btn--skip {
+	border: 1px solid rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
+	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.06);
 	color: rgba(240, 240, 240, 0.65);
 }
 
@@ -363,6 +380,11 @@ a.cdn-pp__label--donate:focus-visible {
 	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.14);
 	border-color: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.42);
 	transform: translateX(1px) scale(1.08);
+}
+
+:root:not(.awsui-dark-mode) .cdn-pp__btn--skip:hover {
+	background: rgba(139, 90, 43, 0.12);
+	border-color: rgba(139, 90, 43, 0.48);
 }
 
 .cdn-pp__btn--skip:focus-visible {
@@ -398,19 +420,22 @@ a.cdn-pp__label--donate:focus-visible {
 	outline-offset: 2px;
 }
 
-/* retry — same shape as skip, station-tinted instead of amber */
+/* retry — same shape as skip.
+   light mode: amber-bordered to stay integrated on cream. */
 .cdn-pp__btn--retry {
 	width: 28px;
 	height: 28px;
 	border-radius: 6px;
-	border: 1px solid rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
-	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.06);
-	color: var(--station-primary-mode, var(--cdn-color-text-muted, #4a2818));
+	border: 1px solid rgba(139, 90, 43, 0.32);
+	background: rgba(139, 90, 43, 0.06);
+	color: var(--cdn-color-text-muted, #4a2818);
 	font-size: 0.9rem;
-	opacity: 0.7;
+	opacity: 0.75;
 }
 
 .awsui-dark-mode .cdn-pp__btn--retry {
+	border: 1px solid rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
+	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.06);
 	color: rgba(240, 240, 240, 0.55);
 }
 
@@ -418,6 +443,11 @@ a.cdn-pp__label--donate:focus-visible {
 	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.14);
 	border-color: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.42);
 	opacity: 1;
+}
+
+:root:not(.awsui-dark-mode) .cdn-pp__btn--retry:hover {
+	background: rgba(139, 90, 43, 0.12);
+	border-color: rgba(139, 90, 43, 0.48);
 }
 
 /* play — circle, station-bordered, transparent fill */
@@ -447,9 +477,11 @@ a.cdn-pp__label--donate:focus-visible {
 	outline-offset: 3px;
 }
 
-/* stop — circle, solid fill, pulsing glow + spinning conic spotlight.
+/* stop — circle, pulsing glow + spinning conic spotlight.
    Audio-reactive: --cdn-mid shifts the ring radius each frame.
-   --cdn-band is set from --cdn-mid so cdn-ravy-ring-mid can read it. */
+   --cdn-band is set from --cdn-mid so cdn-ravy-ring-mid can read it.
+   Dark mode: station-primary glow (navy bg absorbs intensity).
+   Light mode: separate @keyframes below keep glow subtle on cream. */
 @keyframes cdn-pp-pulse {
 	0%,
 	100% {
@@ -468,6 +500,26 @@ a.cdn-pp__label--donate:focus-visible {
 	}
 }
 
+/* light mode pulse — warm amber ring at half the intensity so it reads as
+   a gentle breathing accent on cream rather than a station-color strobe. */
+@keyframes cdn-pp-pulse-light {
+	0%,
+	100% {
+		box-shadow:
+			0 0 0 calc(2px + var(--cdn-mid, 0) * 2px)
+			rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.14),
+			0 0 calc(6px + var(--cdn-mid, 0) * 6px)
+			rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.16);
+	}
+	50% {
+		box-shadow:
+			0 0 0 calc(4px + var(--cdn-mid, 0) * 2px)
+			rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.2),
+			0 0 calc(12px + var(--cdn-mid, 0) * 6px)
+			rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.24);
+	}
+}
+
 .cdn-pp__btn--stop {
 	--cdn-band: var(--cdn-mid, 0);
 	width: 36px;
@@ -482,6 +534,22 @@ a.cdn-pp__label--donate:focus-visible {
 	animation:
 		cdn-pp-pulse 2s ease-in-out infinite,
 		cdn-ravy-ring-mid 1.6s linear infinite;
+}
+
+/* light mode stop — warm cream fill + station border.
+   solid orange fill on cream is garish; this keeps the circle as a visual
+   anchor (strong border + station-tinted hover) without the paint-blob look.
+   animation-name override must come after .cdn-pp__btn--stop to win cascade. */
+:root:not(.awsui-dark-mode) .cdn-pp__btn--stop {
+	background: rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.1);
+	color: var(--station-primary-mode, #d97b00);
+	border-width: 2.5px;
+	animation-name: cdn-pp-pulse-light, cdn-ravy-ring-mid;
+}
+
+:root:not(.awsui-dark-mode) .cdn-pp__btn--stop:hover {
+	background: rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.18);
+	transform: scale(1.06);
 }
 
 /* spinning conic spotlight — same pattern as hamburger/info chrome buttons */
@@ -524,10 +592,11 @@ a.cdn-pp__label--donate:focus-visible {
 	outline-offset: 3px;
 }
 
-/* light mode — overlay blend reads better on the cream bg */
+/* light mode — overlay blend + reduced base opacity so the conic shimmer
+   reads as a polish detail, not a glare flare on the cream-fill circle. */
 :root:not(.awsui-dark-mode) .cdn-pp__btn--stop::after {
 	mix-blend-mode: overlay;
-	opacity: calc(0.35 + var(--cdn-band, 0) * 0.55);
+	opacity: calc(0.18 + var(--cdn-band, 0) * 0.35);
 }
 
 /* album art — reserved for Phase 2 parseMetaRich */
