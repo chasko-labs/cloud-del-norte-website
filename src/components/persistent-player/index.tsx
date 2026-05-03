@@ -56,6 +56,7 @@ function PersistentPlayerBar({
 	const retriedRef = useRef<boolean>(false);
 
 	const streamDef = STREAMS.find((s) => s.key === state.stationKey) ?? null;
+	const isPodcast = streamDef?.type === "podcast";
 
 	const fetchMeta = useCallback(() => {
 		if (!streamDef) return;
@@ -171,7 +172,7 @@ function PersistentPlayerBar({
 			audio.removeEventListener("playing", clearError);
 			audio.removeEventListener("canplay", clearError);
 		};
-	}, []);
+	}, [isPodcast]);
 
 	// stream-playing body class — gates audio-reactive UI (liora head sway,
 	// LED bands, dark-mode bursts) so the visualizers freeze when the user
@@ -200,7 +201,7 @@ function PersistentPlayerBar({
 			audio.removeEventListener("emptied", onStopEvt);
 			document.body.classList.remove("cdn-stream-playing");
 		};
-	}, []);
+	}, [isPodcast]);
 
 	// manual retry — user-triggered escape hatch when auto-retry didn't recover.
 	// Resets the retried flag so a fresh failure cycle gets one more auto-retry
@@ -279,13 +280,13 @@ function PersistentPlayerBar({
 
 	const handlePlay = useCallback(() => {
 		const a = audioRef.current;
-		if (!a) return;
+		if (!a || isPodcast) return;
 		window.dispatchEvent(
 			new CustomEvent("cdn:audio:play", {
 				detail: { element: a, stationKey: state.stationKey },
 			}),
 		);
-	}, [state.stationKey]);
+	}, [state.stationKey, isPodcast]);
 
 	const handlePause = useCallback(() => {
 		window.dispatchEvent(new CustomEvent("cdn:audio:stop"));
@@ -419,10 +420,11 @@ function PersistentPlayerBar({
 		>
 			{/* biome-ignore lint/a11y/useMediaCaption: live radio stream — no caption track available */}
 			<audio
+				key={isPodcast ? "podcast" : "radio"}
 				ref={audioRef}
 				src={state.stationUrl}
 				preload="none"
-				crossOrigin="anonymous"
+				crossOrigin={isPodcast ? undefined : "anonymous"}
 				onPlay={handlePlay}
 				onPause={handlePause}
 			/>
