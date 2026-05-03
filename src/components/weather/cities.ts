@@ -27,10 +27,10 @@ export const CITIES: City[] = [
 		timezone: "America/Denver",
 	},
 	{
-		key: "ruidoso",
-		label: "ruidoso",
-		latitude: 33.3322,
-		longitude: -105.6712,
+		key: "mescalero",
+		label: "mescalero",
+		latitude: 33.1532,
+		longitude: -105.7825,
 		timezone: "America/Denver",
 	},
 	{
