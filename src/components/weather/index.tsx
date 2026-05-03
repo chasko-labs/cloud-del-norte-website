@@ -1,15 +1,19 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { CITIES, type City } from "./cities";
 import "./styles.css";
 
-const CACHE_KEY = "cdn-weather-cache-v1";
 const CACHE_TTL_MS = 10 * 60 * 1000;
-const FORECAST_URL =
-	"https://api.open-meteo.com/v1/forecast?latitude=31.7619&longitude=-106.4850&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America/Denver";
-const AQI_URL =
-	"https://air-quality-api.open-meteo.com/v1/air-quality?latitude=31.7619&longitude=-106.4850&current=us_aqi,uv_index";
+
+const forecastUrl = (c: City): string =>
+	`https://api.open-meteo.com/v1/forecast?latitude=${c.latitude}&longitude=${c.longitude}&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=${encodeURIComponent(c.timezone)}`;
+
+const aqiUrl = (c: City): string =>
+	`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${c.latitude}&longitude=${c.longitude}&current=us_aqi,uv_index`;
+
+const cacheKey = (c: City): string => `cdn-weather-cache-v2-${c.key}`;
 
 interface Forecast {
 	current: {
@@ -42,7 +46,7 @@ interface CachedWeather {
 
 const fToC = (f: number): number => Math.round((f - 32) * 5) / 9;
 
-/** WMO weather code → tiny glyph + tone — keeps the card scannable */
+/** WMO weather code → tiny glyph — keeps the card scannable */
 function weatherGlyph(code: number): string {
 	if (code === 0) return "☀";
 	if (code <= 3) return "⛅";
@@ -71,10 +75,10 @@ function aqiLabel(aqi: number | null): string {
 	return "hazardous";
 }
 
-function loadCache(): CachedWeather | null {
+function loadCache(c: City): CachedWeather | null {
 	if (typeof localStorage === "undefined") return null;
 	try {
-		const raw = localStorage.getItem(CACHE_KEY);
+		const raw = localStorage.getItem(cacheKey(c));
 		if (!raw) return null;
 		const parsed = JSON.parse(raw) as CachedWeather;
 		if (Date.now() - parsed.ts > CACHE_TTL_MS) return null;
@@ -84,31 +88,34 @@ function loadCache(): CachedWeather | null {
 	}
 }
 
-function saveCache(data: CachedWeather): void {
+function saveCache(c: City, data: CachedWeather): void {
 	if (typeof localStorage === "undefined") return;
 	try {
-		localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+		localStorage.setItem(cacheKey(c), JSON.stringify(data));
 	} catch {
 		// quota exceeded / private mode — silently skip
 	}
 }
 
 export default function Weather() {
-	const [data, setData] = useState<CachedWeather | null>(() => loadCache());
+	const [cityIndex, setCityIndex] = useState(0);
+	const city = CITIES[cityIndex];
+	const [data, setData] = useState<CachedWeather | null>(() => loadCache(city));
+	const touchStartX = useRef<number | null>(null);
 
 	useEffect(() => {
-		// already-fresh cache — don't refetch on mount
-		const cached = loadCache();
+		const cached = loadCache(city);
 		if (cached) {
 			setData(cached);
 			return;
 		}
+		setData(null);
 		let cancelled = false;
 		void Promise.allSettled([
-			fetch(FORECAST_URL).then((r) =>
+			fetch(forecastUrl(city)).then((r) =>
 				r.ok ? (r.json() as Promise<Forecast>) : null,
 			),
-			fetch(AQI_URL).then((r) =>
+			fetch(aqiUrl(city)).then((r) =>
 				r.ok ? (r.json() as Promise<AirQuality>) : null,
 			),
 		]).then((results) => {
@@ -117,18 +124,52 @@ export default function Weather() {
 				results[0].status === "fulfilled" ? results[0].value : null;
 			const air = results[1].status === "fulfilled" ? results[1].value : null;
 			const fresh: CachedWeather = { ts: Date.now(), forecast, air };
-			saveCache(fresh);
+			saveCache(city, fresh);
 			setData(fresh);
 		});
 		return () => {
 			cancelled = true;
 		};
-	}, []);
+	}, [city]);
 
-	// Bryan v0.0.0070: render NOTHING while data is loading. The placeholder
-	// flashed on every cold load. Once data resolves the card fades in starting
-	// with the cloud glyph + city header, then the body, then the tomorrow row
-	// (CSS choreographs the cascade via animation-delay).
+	const next = useCallback(
+		() => setCityIndex((i) => (i + 1) % CITIES.length),
+		[],
+	);
+	const prev = useCallback(
+		() => setCityIndex((i) => (i - 1 + CITIES.length) % CITIES.length),
+		[],
+	);
+
+	const onTouchStart = useCallback((e: React.TouchEvent) => {
+		touchStartX.current = e.touches[0].clientX;
+	}, []);
+	const onTouchEnd = useCallback(
+		(e: React.TouchEvent) => {
+			const start = touchStartX.current;
+			if (start == null) return;
+			touchStartX.current = null;
+			const dx = e.changedTouches[0].clientX - start;
+			if (Math.abs(dx) < 32) return;
+			if (dx < 0) next();
+			else prev();
+		},
+		[next, prev],
+	);
+
+	const onKeyDown = useCallback(
+		(e: React.KeyboardEvent) => {
+			if (e.key === "ArrowRight" || e.key === " " || e.key === "Enter") {
+				e.preventDefault();
+				next();
+			} else if (e.key === "ArrowLeft") {
+				e.preventDefault();
+				prev();
+			}
+		},
+		[next, prev],
+	);
+
 	if (!data?.forecast) return null;
 
 	const f = data.forecast;
@@ -147,10 +188,21 @@ export default function Weather() {
 	const tomorrowLoC = Math.round(fToC(tomorrow.lo));
 
 	return (
-		<aside className="cdn-weather" aria-label="el paso weather">
+		<button
+			type="button"
+			className="cdn-weather"
+			aria-label={`${city.label} weather — tap for next city`}
+			onClick={next}
+			onTouchStart={onTouchStart}
+			onTouchEnd={onTouchEnd}
+			onKeyDown={onKeyDown}
+		>
 			<header className="cdn-weather__head">
-				<span className="cdn-weather__city">el paso</span>
-				<span className="cdn-weather__glyph" aria-hidden="true">
+				<span className="cdn-weather__city">{city.label}</span>
+				<span
+					className={`cdn-weather__glyph cdn-weather__glyph--code-${cur.weather_code}`}
+					aria-hidden="true"
+				>
 					{weatherGlyph(cur.weather_code)}
 				</span>
 			</header>
@@ -211,12 +263,20 @@ export default function Weather() {
 						{tomorrowLoF}°/{tomorrowLoC}°
 					</span>
 				</span>
-				{/* reserve real estate for precip% always so the row doesn't reflow on
-				    no-rain days; only render the value when probability > 0 */}
 				<span className="cdn-weather__tomorrow-precip">
 					{tomorrow.precip > 0 ? `${tomorrow.precip}%` : ""}
 				</span>
 			</footer>
-		</aside>
+
+			<nav className="cdn-weather__dots" aria-label="city carousel">
+				{CITIES.map((c, i) => (
+					<span
+						key={c.key}
+						className={`cdn-weather__dot${i === cityIndex ? " cdn-weather__dot--active" : ""}`}
+						aria-hidden="true"
+					/>
+				))}
+			</nav>
+		</button>
 	);
 }
