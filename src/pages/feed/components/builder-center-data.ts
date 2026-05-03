@@ -9,19 +9,23 @@ import type { Locale } from "../../../utils/locale";
 // authority; cards omit `badge` and resolve it at render time.
 export type BadgeKey = "employee" | "communityBuilder" | "hero";
 
+// v0.0.0105 — bryan: drop work title / company. Card only renders #, title,
+// author, badge. `blurb` field stays in the data shape so the underlying
+// dataset isn't lossy, but the card no longer renders it. `sub` removed
+// outright — Christian Perez "Founder & CEO | Altivum® Inc.", Maria Encinar
+// "Community Geek leading the AWS User Group program", Vicente "Software
+// Engineering" all lose their sub at the source.
 export interface BuilderCenterCard {
 	title: string;
 	author: string;
 	url: string;
 	blurb: string;
-	// Optional secondary tag (rendered next to badge). Only set on cards that
-	// actually carry a track (e.g. AIdeas Finalist → "Software Engineering").
-	sub?: string;
 }
 
+// v0.0.0105 — deck flattened. Previous primary/carousel split is gone;
+// rotation happens in the component over a single ordered array.
 export interface BuilderDeck {
-	primary: BuilderCenterCard[];
-	carousel: BuilderCenterCard[];
+	cards: BuilderCenterCard[];
 }
 
 // Author → badge resolution. Adding a future contributor: add one entry
@@ -41,7 +45,8 @@ const AUTHOR_BADGE: Record<string, BadgeKey> = {
 	"Hector David Martinez Montilla": "communityBuilder",
 	"Barbara Gaspar": "communityBuilder",
 	"Alex Parra": "communityBuilder",
-	"Habeeb Babasulaiman": "communityBuilder",
+	// "Habeeb Babasulaiman" intentionally OMITTED — bryan v0.0.0103: not a
+	// community builder; render his card without a badge
 	"Christian Perez": "communityBuilder",
 	// aws heroes
 	"Bryan Chasko": "hero",
@@ -52,8 +57,7 @@ export function badgeForAuthor(author: string): BadgeKey | null {
 	return AUTHOR_BADGE[author] ?? null;
 }
 
-// English deck — Gunnar's article moved to position #4.
-const EN_PRIMARY: BuilderCenterCard[] = [
+const EN_ALL: BuilderCenterCard[] = [
 	{
 		title:
 			"From Germany to Cameroon: One Trip, Every Hat, and a Room Full of Future Cloud Engineers",
@@ -83,14 +87,10 @@ const EN_PRIMARY: BuilderCenterCard[] = [
 		blurb:
 			"Walk through the DOOM MCP server: how it wires Claude Code to a running DOOM instance and what that says about agent tool surfaces.",
 	},
-];
-
-const EN_CAROUSEL: BuilderCenterCard[] = [
 	{
 		title: "AIdeas Finalist: Predict-Epidem",
 		author: "Vicente G. Guzmán Lucio",
 		url: "https://builder.aws.com/content/3B5n19jnSCfSKN6WqDvm1K1H5FK/aideas-finalist-predict-epidem",
-		sub: "Software Engineering",
 		blurb:
 			"Predict-Epidem is an epidemiological intelligence system designed to monitor and predict outbreaks in Latin America.",
 	},
@@ -105,7 +105,6 @@ const EN_CAROUSEL: BuilderCenterCard[] = [
 		title: "AIdeas Finalist: REGAIN - Your Professional Edge",
 		author: "Christian Perez",
 		url: "https://builder.aws.com/content/3BwChAzvUtvN1kq4uw1JfpuCEL5/aideas-finalist-regain-your-professional-edge",
-		sub: "Founder & CEO | Altivum® Inc.",
 		blurb:
 			"A campaign driven career platform for veterans and AI displaced workers, built around evidence instead of enrollment and a voice native coach instead of another chat box. The output is a machine readable, evidence linked profile designed for a hiring environment moving toward agents.",
 	},
@@ -114,15 +113,11 @@ const EN_CAROUSEL: BuilderCenterCard[] = [
 			"OpenClaw on AWS: A Curated Collection of AWS Builder Center articles",
 		author: "Maria Encinar",
 		url: "https://builder.aws.com/content/3Cx2x4C2gHfena1soKDOGrXzNWZ/openclaw-on-aws-a-curated-collection-of-aws-builder-center-articles",
-		sub: "Community Geek leading the AWS User Group program",
 		blurb:
 			"Interested in OpenClaw on AWS? We've got you covered! We've put together a list of articles covering everything from basic EC2 deploys to multi-tenant setups, security audits, and agents that build their own.",
 	},
 ];
 
-// Spanish deck — when locale === "mx", the entire deck swaps. All 7 cards
-// flow through the same primary+carousel split; first 4 are pinned, the
-// remainder feed the hover-auto-scroll carousel.
 const MX_ALL: BuilderCenterCard[] = [
 	{
 		title: "1000 Formas para entender la nube",
@@ -193,25 +188,13 @@ function shuffle<T>(arr: readonly T[]): T[] {
 	return out;
 }
 
-// Combine + shuffle the entire English deck so any article can rank #1.
-// First 4 of the shuffled order pin to primary, rest spill into carousel.
-const EN_SHUFFLED: BuilderCenterCard[] = shuffle([
-	...EN_PRIMARY,
-	...EN_CAROUSEL,
-]);
-const EN_SHUFFLED_PRIMARY = EN_SHUFFLED.slice(0, 4);
-const EN_SHUFFLED_CAROUSEL = EN_SHUFFLED.slice(4);
-
+const EN_SHUFFLED: BuilderCenterCard[] = shuffle(EN_ALL);
 const MX_SHUFFLED: BuilderCenterCard[] = shuffle(MX_ALL);
 
-// Locale-aware deck resolver. Each deck splits into 4 pinned + remainder
-// carousel. Order shuffles per page load; ranks stay 1..N visually.
+// Locale-aware deck resolver. Component pages through the deck 4 cards at
+// a time with a wrap-around at the end (last window borrows from the
+// front). Order shuffles per page load; ranks stay 1..N visually.
 export function deckForLocale(locale: Locale): BuilderDeck {
-	if (locale === "mx") {
-		return {
-			primary: MX_SHUFFLED.slice(0, 4),
-			carousel: MX_SHUFFLED.slice(4),
-		};
-	}
-	return { primary: EN_SHUFFLED_PRIMARY, carousel: EN_SHUFFLED_CAROUSEL };
+	if (locale === "mx") return { cards: MX_SHUFFLED };
+	return { cards: EN_SHUFFLED };
 }

@@ -47,22 +47,21 @@
 	fill: #030310;
 }
 
-/* El Paso Star — composite CDN logo-star landmark (v0.0.0102, replaces the
-   prior single-fill aws-orange polygon). Three stacked layers map to the
-   brand mark's dominant palette in src/components/logo-svg/:
+/* El Paso Star — composite CDN logo-star landmark. Bryan v0.0.0103: "if
+   your going to handraw instead of directly leveraging our logo then ditch
+   the orange and only use the purples whites & violets used in the logo".
+   Palette purified to violet / lavender / white only — no aws-orange:
      • cdn-violet  #9060f0 → body (the slim 5-arm starburst silhouette)
-     • aws-orange  #ff9900 → core + hero bulb (warm centre + focal accent)
+     • white       #ffffff → core (the bright centre, where logo arm overlaps)
      • cdn-lavender #d7c7ee → peer bulb tips at each arm end
-   The wrapping <g class="franklin-overlay__star"> hosts the orange drop-shadow
-   glow chain so the whole composite halos as one visual unit (matches the
-   prior overlay's halo signature so the landmark still reads at distance). */
+     • white       #ffffff → hero bulb (the focal accent — brightest spot)
+   The wrapping <g class="franklin-overlay__star"> hosts the violet drop-shadow
+   glow chain so the whole composite halos as one cool moonlit unit. */
 .franklin-overlay__star {
-	/* Glow halo via CSS drop-shadow stack. Cascades down to the body, core,
-	   and bulb tips as a single composite halo — keeps the warm orange glow
-	   signature so the landmark still reads as the El Paso star at distance
-	   even though the body fill shifted from orange to violet. */
-	filter: drop-shadow(0 0 4px rgba(255, 153, 0, 0.85))
-		drop-shadow(0 0 12px rgba(255, 153, 0, 0.55));
+	/* Cool violet drop-shadow stack — replaces the prior warm orange halo
+	   per bryan's "purples whites & violets only" call. */
+	filter: drop-shadow(0 0 4px rgba(144, 96, 240, 0.85))
+		drop-shadow(0 0 12px rgba(215, 199, 238, 0.55));
 }
 
 /* Body — cdn-violet 5-arm slim starburst. The brand mark is violet-dominant
@@ -72,10 +71,10 @@
 	fill: #9060f0;
 }
 
-/* Core — aws-orange concentric inner star. Reads as the warm centre that
+/* Core — pure white concentric inner star. Reads as the bright centre that
    glows through the violet body silhouette. */
 .franklin-overlay__star-core {
-	fill: #ff9900;
+	fill: #ffffff;
 }
 
 /* Bulb tips — 5 cdn-lavender pinpoints at each outer arm end. Matches the
@@ -84,12 +83,11 @@
 	fill: #d7c7ee;
 }
 
-/* Hero bulb — focal accent at the elongated upper-right arm tip. Tinted
-   aws-orange to echo the cdn-bulb-tip-hero focal point in the brand mark
-   (logo-svg @keyframes cdn-bulb-blink-hero halos in violet/orange). The
-   geometry already enlarges this bulb 1.5× via STAR_HERO_BULB_SCALE. */
+/* Hero bulb — focal accent at the elongated upper-right arm tip. Pure white
+   so it reads as the brightest spot, echoing cdn-bulb-tip-hero. The geometry
+   already enlarges this bulb 1.5× via STAR_HERO_BULB_SCALE. */
 .franklin-overlay__star-bulb--hero {
-	fill: #ff9900;
+	fill: #ffffff;
 }
 
 /* prefers-reduced-motion: the overlay is already static (no animation or
