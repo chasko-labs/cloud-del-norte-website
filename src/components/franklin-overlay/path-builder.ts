@@ -80,11 +80,20 @@ export const RIDGE_POINTS: readonly RidgePoint[] = [
  * (faceFraction ≈ 0.45 in the retired franklin-features.ts EL_PASO_STAR
  * coords). We place it slightly south-east of the South Franklin apex so it
  * reads as being on the southern flank, not at the summit.
+ *
+ * NOTE on cx after the v0.0.0087 horizontal flip: the silhouette `<g>` is
+ * mirrored via SVG `transform="scale(-1,1) translate(-1000,0)"`, so South
+ * Franklin's apex (authored at x=630) renders visually at x=370. The star
+ * sits OUTSIDE the flipped group and is authored at the already-mirrored
+ * coordinate cx=340 = 1000-660 so its un-flipped logo-star geometry lands
+ * on the south face of the (now visually-left) South Franklin. This keeps
+ * the asymmetric logo-star points facing their original orientation rather
+ * than mirroring with the silhouette.
  */
 export const EL_PASO_STAR_ANCHOR = {
-	cx: 660,
+	cx: 340, // = 1000 - 660; pre-mirrored so the un-flipped star lands on S.F.'s south face
 	cy: VIEWBOX_HEIGHT - 95, // partway down the south face
-	radius: 11,
+	radius: 18, // larger than the retired pentagram (11) — logo-star reads better at scale
 } as const;
 
 /** Convert a height-above-bottom to an SVG y-coordinate (top-origin). */
@@ -149,25 +158,46 @@ export function buildSilhouettePath(
 }
 
 /**
- * Build a 5-pointed star SVG path centred at (cx, cy) with the given outer
- * radius. The inner radius is fixed at 0.382 × outer (golden-ratio standard
- * pentagram inner radius) which gives a classic 5-pointed star.
+ * Build the El Paso Star landmark — a simplified silhouette of the CDN
+ * brand logo-star (src/components/logo-svg/index.tsx, 354-path mark).
  *
- * Used for the El Paso "Star on the Mountain" landmark — a single immovable
- * pentagram on the south face of South Franklin.
+ * The full brand mark is a 5-arm star burst with bulb tips, animated arms,
+ * audio-reactive halo + 3D filter chain — far too heavy for a small mountain
+ * landmark. This is a deliberate reduction to the recognizable silhouette:
+ *
+ *   - 5 outward-radiating points (the brand's defining shape)
+ *   - sharper inner radius (0.32 × outer) than a golden-ratio pentagram —
+ *     gives the slim "starburst" arms of the logo, not a fat pentagram
+ *   - one elongated "hero" tip extended 1.18× to match the asymmetric focal
+ *     bulb at (574,351) in the full logo (cdn-bulb-tip-hero — the brand's
+ *     distinctive off-balance accent point)
+ *   - hero tip rotated +20° clockwise from straight up so the burst reads
+ *     as the dynamic logo orientation rather than a flat upright pentagram
+ *
+ * Output is a single closed M/L path (10 vertices) — keeps DOM minimal and
+ * reuses the existing `.franklin-overlay__star` aws-orange #ff9900 fill +
+ * drop-shadow glow chain in styles.css.
  */
 export function buildStarPath(
 	cx: number,
 	cy: number,
 	outerRadius: number,
 ): string {
-	const innerRadius = outerRadius * 0.382;
+	const innerRadius = outerRadius * 0.32;
+	// Hero tip is index 0 (the first outer vertex). Elongate it 1.18× to echo
+	// the asymmetric focal bulb in the full brand mark.
+	const HERO_TIP_INDEX = 0;
+	const HERO_TIP_SCALE = 1.18;
+	// Rotate the whole burst +20° clockwise from straight up so the hero tip
+	// leans to the upper-right (the orientation of the brand mark's hero bulb
+	// relative to its own centre at (512,512) in the source SVG).
+	const ROTATION_RAD = (20 * Math.PI) / 180;
 	const points: string[] = [];
-	// 10 vertices alternating outer/inner. Start at the top (-π/2) so the
-	// star points up.
 	for (let i = 0; i < 10; i++) {
-		const angle = -Math.PI / 2 + (i * Math.PI) / 5;
-		const r = i % 2 === 0 ? outerRadius : innerRadius;
+		const baseAngle = -Math.PI / 2 + (i * Math.PI) / 5;
+		const angle = baseAngle + ROTATION_RAD;
+		const baseR = i % 2 === 0 ? outerRadius : innerRadius;
+		const r = i === HERO_TIP_INDEX ? baseR * HERO_TIP_SCALE : baseR;
 		const x = cx + Math.cos(angle) * r;
 		const y = cy + Math.sin(angle) * r;
 		points.push(`${x.toFixed(3)} ${y.toFixed(3)}`);
