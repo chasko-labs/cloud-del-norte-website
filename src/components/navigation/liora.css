@@ -725,8 +725,9 @@
 	will-change: rotate, translate;
 }
 
+/* head nods temporarily disabled for isolation — re-enable by restoring running, running */
 body.cdn-stream-playing .liora-canvas.liora-canvas--visible {
-	animation-play-state: running, running;
+	animation-play-state: paused, paused;
 }
 
 .liora-canvas.liora-canvas--visible {
