@@ -123,10 +123,15 @@ export function mount(): () => void {
 	// tarn's spec — ship simple, the audio-reactive bloom/motes overlay
 	// (approach (b)) is a known cleanup item for a future PR.
 	//
-	// Theme toggle: MutationObserver on <html> watches for awsui-dark-mode
-	// class changes. Destroy on dark, re-mount on light. Destroy is simpler
-	// than pause and avoids leaking the babylon engine when the user spends
-	// most of their session in dark mode.
+	// Theme toggle (v0.0.0067+): mount-once + pause/resume. The babylon scene
+	// is created lazily on the first light-mode entry, then KEPT ALIVE across
+	// all subsequent dark↔light flips via setVisible(). Cost trade:
+	//   - destroy+rebuild on every flip: 200-400ms per swap (engine boot,
+	//     shader compile, mesh build, blue-noise upload, perf-window warmup)
+	//   - mount-once + setVisible: <2ms per swap, ~25-40MB resident in dark
+	//     mode. Acceptable: a user who toggles mode 3+ times per session
+	//     (typical) wins; even 1-flip sessions break even because the
+	//     hidden scene is render-loop-paused and consumes near-zero CPU.
 	let duneHandle: DuneSceneHandle | null = null;
 	let dunePerfTimer: number | null = null;
 	let duneFallback = false;
@@ -160,6 +165,31 @@ export function mount(): () => void {
 			removeDuneFallback = null;
 		}
 		setStaticCanvasVisible(true);
+	}
+
+	// Cheap path for theme flips: keep the babylon scene mounted and just
+	// hide+pause it. Saves the 200-400ms cold-mount cost on dark→light flip
+	// for users who toggle mode (common). Falls through to tryMountDune() if
+	// the scene was never created (cold first light-mode entry) or was
+	// disposed by the perf gate / static-fallback gate.
+	function hideDuneForDark(): void {
+		if (!duneHandle) return;
+		duneHandle.setVisible(false);
+		setStaticCanvasVisible(true);
+		// Keep the fallback gradient div around — it lives behind the static
+		// dark canvas and is harmless. Removing+re-adding it on every flip
+		// would defeat the purpose of this pause optimisation.
+	}
+
+	function showDuneForLight(): void {
+		if (!duneHandle) {
+			tryMountDune();
+			return;
+		}
+		duneHandle.setVisible(true);
+		// Pick up any station change that happened while we were hidden.
+		duneHandle.refreshStationTint();
+		setStaticCanvasVisible(false);
 	}
 
 	function tryMountDune(): void {
@@ -260,15 +290,36 @@ export function mount(): () => void {
 
 	// React to runtime theme toggles. Cloudscape adds/removes
 	// awsui-dark-mode on <html> when the theme picker fires.
+	//
+	// Mount-once policy: on dark, hide+pause the babylon scene; on light,
+	// resume it. Only fall through to dispose/mount when the scene doesn't
+	// exist yet (first light-mode entry) or was killed by the perf gate.
+	// Coalesce rapid-fire mutations — Cloudscape can flip several class
+	// tokens in one transaction, generating multiple records per flip.
+	let themeFlipQueued = false;
 	const themeObserver = new MutationObserver((records) => {
+		// Single-pass: only honour records that actually changed `class`.
+		let saw = false;
 		for (const r of records) {
-			if (r.type !== "attributes" || r.attributeName !== "class") continue;
-			if (isDarkMode()) {
-				disposeDune();
-			} else {
-				tryMountDune();
+			if (r.type === "attributes" && r.attributeName === "class") {
+				saw = true;
+				break;
 			}
 		}
+		if (!saw || themeFlipQueued) return;
+		themeFlipQueued = true;
+		// Defer the visibility flip one frame so we don't fight Cloudscape's
+		// own applyMode walk that runs on the same tick. The class flip
+		// happens immediately (CSS palette swaps within the frame), the
+		// scene swap rides the following frame.
+		requestAnimationFrame(() => {
+			themeFlipQueued = false;
+			if (isDarkMode()) {
+				hideDuneForDark();
+			} else {
+				showDuneForLight();
+			}
+		});
 	});
 	themeObserver.observe(document.documentElement, {
 		attributes: true,
