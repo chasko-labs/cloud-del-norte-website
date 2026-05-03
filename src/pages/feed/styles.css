@@ -541,24 +541,28 @@
 	padding: 9px 10px;
 	border: 1px solid rgba(139, 90, 43, 0.22);
 	border-radius: var(--cdn-radius-md, 8px);
-	background: #faf7f0;
-	box-shadow: 0 1px 4px rgba(139, 90, 43, 0.12);
+	/* unified cream surface — solid color base + diagonal gradient overlay +
+	   warm rim light, sourced from --cdn-card-gradient-light + --cdn-card-rim-light
+	   in tokens.css. Keeps the cream identity of the next-meetup container. */
+	background-color: #faf7f0;
+	background-image: var(--cdn-card-gradient-light);
+	box-shadow: var(--cdn-card-rim-light);
 	color: inherit;
 	text-decoration: none;
 	transition:
 		border-color 0.15s ease,
 		box-shadow 0.15s ease,
-		transform 0.15s ease;
+		transform 0.15s ease,
+		filter 0.15s ease;
 	overflow: hidden;
 	box-sizing: border-box;
 }
 
 .awsui-dark-mode .feed-mini-card__link {
-	background: rgba(255, 255, 255, 0.06);
+	background-color: var(--cdn-elevation-1, #12123a);
+	background-image: var(--cdn-card-gradient-light);
 	border-color: rgba(144, 96, 240, 0.22);
-	box-shadow:
-		0 1px 6px rgba(0, 0, 0, 0.3),
-		0 0 0 1px rgba(144, 96, 240, 0.1);
+	box-shadow: var(--cdn-card-rim-light);
 }
 
 /* per-card accent: left-edge color stripe — palette cycles every 4 cards
@@ -581,11 +585,26 @@
 
 .feed-mini-card__link:hover,
 .feed-mini-card__link:focus-visible {
+	/* hover lift: warm rim glow + brightness bump, no double-transform
+	   (mini-card already has translateY(-1px) below) */
 	box-shadow:
-		0 8px 20px -8px rgba(144, 96, 240, 0.3),
-		0 0 0 1px rgba(144, 96, 240, 0.15);
+		inset 0 1px 0 rgba(255, 250, 235, 0.8),
+		inset 0 -1px 0 rgba(139, 90, 43, 0.08),
+		0 8px 22px -6px rgba(144, 96, 240, 0.28),
+		0 2px 6px rgba(139, 90, 43, 0.14);
 	border-color: rgba(144, 96, 240, 0.35);
 	transform: translateY(-1px);
+	filter: brightness(1.015);
+}
+
+.awsui-dark-mode .feed-mini-card__link:hover,
+.awsui-dark-mode .feed-mini-card__link:focus-visible {
+	box-shadow:
+		inset 0 1px 0 rgba(199, 184, 232, 0.12),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+		0 2px 6px rgba(0, 0, 0, 0.4),
+		0 12px 28px -6px rgba(144, 96, 240, 0.34);
+	filter: brightness(1.05);
 }
 
 .feed-mini-card__link:focus-visible {
