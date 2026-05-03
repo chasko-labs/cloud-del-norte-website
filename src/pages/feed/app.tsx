@@ -33,7 +33,6 @@ import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
 import YoutubeCarousel from "./components/youtube-carousel";
 import "./styles.css";
 
-
 // builder center top-4 is rendered as its own pinned section (between two hr
 // dividers, just below next-meetup) — NOT part of the rotating shuffled feed.
 // twitch was previously one full-span card with two panes; split into per-channel
@@ -154,11 +153,7 @@ function AppContent({
 
 	return (
 		<ContentLayout
-			header={
-				<Header variant="h1">
-					{t("feedPage.header")}
-				</Header>
-			}
+			header={<Header variant="h1">{t("feedPage.header")}</Header>}
 		>
 			{/* Stable hero slot — wrapper renders always so cards appearing /
 			    disappearing don't unmount a parent and reflow content below.

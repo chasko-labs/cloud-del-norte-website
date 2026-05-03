@@ -33,14 +33,27 @@
 	);
 }
 
-/* slot — reserves vertical space, stacking context above awsui scrolling-bg */
+/* slot — reserves vertical space, stacking context above awsui scrolling-bg.
+   v0.0.0131 — sticky: locks below the top-nav once the breadcrumb scrolls off.
+   The visual-refresh-toolbar AppLayout uses body scroll (no inner overflow
+   container), so position:sticky works against the viewport. top:56px clears
+   the sticky #top-nav bar (48px min-height + 2px border + ~6px clearance).
+   Background fills the stripe so scrolling content doesn't show through.
+   z-index:100 sits above awsui grid content (z-index:1) but well below the
+   tools-toggle / toolbar layer (z-index:830-1000). */
 .cdn-player-slot {
 	display: block;
 	width: 100%;
 	margin: 0 0 12px 0;
 	min-height: 48px;
-	position: relative;
-	z-index: 1;
+	position: sticky;
+	top: 56px;
+	z-index: 100;
+	background: var(--color-background-layout-main-5ilwcb, #ede5d4);
+}
+
+.awsui-dark-mode .cdn-player-slot {
+	background: var(--color-background-layout-main-5ilwcb, #0a0c14);
 }
 
 .cdn-pp {
@@ -415,16 +428,16 @@ a.cdn-pp__label--donate:focus-visible {
 	100% {
 		box-shadow:
 			0 0 0 calc(2px + var(--cdn-mid, 0) * 3px)
-				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22),
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22),
 			0 0 calc(8px + var(--cdn-mid, 0) * 8px)
-				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.28);
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.28);
 	}
 	50% {
 		box-shadow:
 			0 0 0 calc(5px + var(--cdn-mid, 0) * 3px)
-				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.34),
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.34),
 			0 0 calc(16px + var(--cdn-mid, 0) * 8px)
-				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.44);
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.44);
 	}
 }
 

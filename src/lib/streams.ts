@@ -649,8 +649,9 @@ export const STREAMS: StreamDef[] = [
 		parseMeta(data) {
 			const doc = data as Document;
 			return (
-				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
-				null
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
 			);
 		},
 	},
@@ -671,8 +672,9 @@ export const STREAMS: StreamDef[] = [
 		parseMeta(data) {
 			const doc = data as Document;
 			return (
-				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
-				null
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
 			);
 		},
 	},
@@ -693,8 +695,9 @@ export const STREAMS: StreamDef[] = [
 		parseMeta(data) {
 			const doc = data as Document;
 			return (
-				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
-				null
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
 			);
 		},
 	},
@@ -715,8 +718,9 @@ export const STREAMS: StreamDef[] = [
 		parseMeta(data) {
 			const doc = data as Document;
 			return (
-				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
-				null
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
 			);
 		},
 	},
@@ -737,8 +741,9 @@ export const STREAMS: StreamDef[] = [
 		parseMeta(data) {
 			const doc = data as Document;
 			return (
-				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
-				null
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
 			);
 		},
 	},
@@ -759,8 +764,9 @@ export const STREAMS: StreamDef[] = [
 		parseMeta(data) {
 			const doc = data as Document;
 			return (
-				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
-				null
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
 			);
 		},
 	},
@@ -781,8 +787,9 @@ export const STREAMS: StreamDef[] = [
 		parseMeta(data) {
 			const doc = data as Document;
 			return (
-				doc.querySelector?.("channel > item:first-child > title")?.textContent?.trim() ??
-				null
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
 			);
 		},
 	},

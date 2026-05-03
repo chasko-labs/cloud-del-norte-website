@@ -692,18 +692,17 @@ body.cdn-stream-playing .cdn-card {
 		0 8px 24px -6px rgba(0, 0, 0, 0.3),
 		0 0 20px -8px rgba(144, 96, 240, 0.1),
 		0 0 calc(4px + var(--cdn-mid, 0) * 8px)
-		rgba(144, 96, 240, calc(0.04 + var(--cdn-mid, 0) * 0.10));
+		rgba(144, 96, 240, calc(0.04 + var(--cdn-mid, 0) * 0.1));
 }
 
 /* Cloudscape containers get the same mid pulse via the token surface */
-body.cdn-stream-playing
-	[class*="awsui_root_"][class*="awsui_variant-default_"],
+body.cdn-stream-playing [class*="awsui_root_"][class*="awsui_variant-default_"],
 body.cdn-stream-playing
 	[class*="awsui_root_"][class*="awsui_variant-stacked_"] {
 	box-shadow:
 		var(--cdn-card-rim-light),
 		0 0 calc(4px + var(--cdn-mid, 0) * 8px)
-		rgba(144, 96, 240, calc(0.04 + var(--cdn-mid, 0) * 0.10));
+		rgba(144, 96, 240, calc(0.04 + var(--cdn-mid, 0) * 0.1));
 }
 
 @media (prefers-reduced-motion: reduce) {

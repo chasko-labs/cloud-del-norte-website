@@ -129,6 +129,7 @@ function PersistentPlayerBar({
 	// uam_radio at sp2.servidorrprivado.com:1124 / mexiserver:1124 is the
 	// motivating case: 503s + SSL hiccups are routine. Logic is station-agnostic
 	// so any flaky icecast endpoint benefits without per-station branching
+	// biome-ignore lint/correctness/useExhaustiveDependencies: isPodcast forces re-registration when audio element is recreated via key prop
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -189,6 +190,7 @@ function PersistentPlayerBar({
 	// stops the stream. --cdn-bass / --cdn-mid / --cdn-treble naturally drop
 	// to silence on pause but the keyframes still tick; a body-class toggle
 	// flips animation-play-state to paused for a clean stop
+	// biome-ignore lint/correctness/useExhaustiveDependencies: isPodcast forces re-registration when audio element is recreated via key prop
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -228,6 +230,7 @@ function PersistentPlayerBar({
 		}
 	}, []);
 
+	// biome-ignore lint/correctness/useExhaustiveDependencies: autoplay read once on mount; adding to deps restarts polling on user pause/play state changes
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -511,7 +514,9 @@ function PersistentPlayerBar({
 										? streamDef.metaFallback.labelEs
 										: streamDef.metaFallback.labelEn}
 								</a>
-								<span className="cdn-pp__sep" aria-hidden="true">{" · "}</span>
+								<span className="cdn-pp__sep" aria-hidden="true">
+									{" · "}
+								</span>
 							</>
 						) : null}
 						{streamDef && (
@@ -585,7 +590,12 @@ export default function PersistentPlayer() {
 			const live = STREAMS.find((s) => s.key === persisted.stationKey);
 			setState(
 				live
-					? { stationKey: live.key, stationUrl: live.url, stationLabel: live.label, metaUrl: live.metaUrl }
+					? {
+							stationKey: live.key,
+							stationUrl: live.url,
+							stationLabel: live.label,
+							metaUrl: live.metaUrl,
+						}
 					: persisted,
 			);
 			setAutoplay(true);

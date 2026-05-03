@@ -140,7 +140,10 @@
 /* Star composite — glow scales with mid band */
 .cdn-stream-playing .franklin-overlay__star {
 	opacity: calc(0.55 + var(--cdn-mid, 0) * 0.2);
-	filter: drop-shadow(0 0 calc(3px + var(--cdn-mid, 0) * 6px) rgba(144, 96, 240, calc(0.3 + var(--cdn-mid, 0) * 0.45)));
+	filter: drop-shadow(
+		0 0 calc(3px + var(--cdn-mid, 0) * 6px)
+			rgba(144, 96, 240, calc(0.3 + var(--cdn-mid, 0) * 0.45))
+	);
 }
 
 /* Body stroke brightens gently on mid peaks */
