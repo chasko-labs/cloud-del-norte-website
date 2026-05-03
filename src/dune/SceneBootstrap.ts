@@ -126,12 +126,19 @@ export function mountDuneSceneOnCanvas(
 	const scene = new Scene(engine);
 	scene.clearColor = new Color4(0.929, 0.898, 0.831, 1.0); // #ede5d4
 
+	// alpha -π/3: camera in -X/-Z quadrant, looking toward +origin.
+	// beta 1.38 ≈ 79° from vertical (was 1.1 ≈ 63°, "moon lander").
+	//   Higher beta lowers the horizon line — dunes stretch away from viewer,
+	//   street-level standing-on-dunes feel vs top-down aerial.
+	// target -5 X: shifts view leftward to pull the 60u mesh left edge into
+	//   frame. Camera is at ~(+20, y, -35) so -X closes the lower-left gap
+	//   without overshooting the right side (right edge still well inside 30u).
 	const camera = new ArcRotateCamera(
 		"dune-cam",
 		-Math.PI / 3,
-		1.1,
+		1.38,
 		CAMERA_RADIUS_BASE,
-		Vector3.Zero(),
+		new Vector3(-5, 0, 0),
 		scene,
 	);
 	camera.fov = 0.6;

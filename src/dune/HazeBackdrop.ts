@@ -22,9 +22,9 @@
 // projection, no parent. The quad ALWAYS covers the viewport regardless of
 // camera orbit. The fragment shader composites two haze passes:
 //
-//   1. Vertical alpha gradient, top→bottom: fully transparent above 60% up,
-//      ramping to 0.55 alpha across the lower 40% of the viewport (where the
-//      dunes actually are, post-camera-frame).
+//   1. Vertical alpha gradient, top→bottom: fully transparent above 68% up,
+//      ramping to max alpha across the lower 48% of the viewport (where the
+//      dunes actually are with beta=1.38 camera frame).
 //   2. Narrow horizontal strip centered on the dune horizon line (y≈0.55),
 //      18% tall, peaking at 0.5 alpha — this is where atmospheric path length
 //      is longest in real-world physics, sells the haze.
@@ -135,17 +135,17 @@ float fbm(vec2 p) {
 void main(void) {
   float y = vUV.y;
 
-  // Pass 1 — bottom-weighted vertical gradient. The dunes occupy roughly the
-  // lower 60% of the viewport at the standard ArcRotate frame, so the haze is
-  // densest where the dunes are, fading to clear above.
+  // Pass 1 — bottom-weighted vertical gradient. With camera beta raised to
+  // 1.38, dunes occupy roughly the lower 65% of the viewport. Gradient bands
+  // shifted up from 0.4/0.6 → 0.48/0.68 to follow the new dune fill.
   float vAlpha;
-  if (y < 0.4) {
-    // Bottom 40% — bottom→mid ramp.
-    float t = y / 0.4;
+  if (y < 0.48) {
+    // Bottom 48% — bottom→mid ramp.
+    float t = y / 0.48;
     vAlpha = mix(bottomOpacity, midOpacity, smoothstep(0.0, 1.0, t));
-  } else if (y < 0.6) {
-    // 40-60% — mid→top fadeout (haze thins above the dune line).
-    float t = (y - 0.4) / 0.2;
+  } else if (y < 0.68) {
+    // 48-68% — mid→top fadeout (haze thins above the dune line).
+    float t = (y - 0.48) / 0.2;
     vAlpha = mix(midOpacity, topOpacity, smoothstep(0.0, 1.0, t));
   } else {
     vAlpha = topOpacity;

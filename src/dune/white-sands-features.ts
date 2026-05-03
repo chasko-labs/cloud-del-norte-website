@@ -212,7 +212,10 @@ export const HAZE_COLOR_WARM: readonly [number, number, number] = [
  * bridging band between the dune horizon line and the sky cream. Bryan's
  * "deniably obvious" requirement.
  */
-export const HAZE_HORIZON_STRIP_CENTER_Y = 0.55;
+// Was 0.55. With camera beta raised from 1.1 → 1.38 the dune/sky horizon
+// climbs in the viewport (dunes fill more frame, sky pushed higher). Shifting
+// the strip center from 0.55 → 0.62 keeps it seated at the actual horizon line.
+export const HAZE_HORIZON_STRIP_CENTER_Y = 0.62;
 export const HAZE_HORIZON_STRIP_HEIGHT = 0.18;
 export const HAZE_HORIZON_STRIP_PEAK_OPACITY = 0.95;
 
