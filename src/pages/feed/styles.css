@@ -805,6 +805,68 @@
 	line-height: 1.2;
 }
 
+/* feed-krux__donate — two-line clickable block beneath the station name.
+   line 1: "donate to <station label>" (small, brand-tinted, slightly heavier)
+   line 2: station broadcast geo coordinates (smaller, monospace, muted)
+   Whole block is one <a> wrapping both lines so either click target opens
+   the station's donation page in a new tab. Inherits --station-primary-mode
+   from the active station's theming vars set on .feed-krux container. */
+.feed-krux__donate {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1px;
+	margin-top: 2px;
+	padding: 2px 4px;
+	max-width: 220px;
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	text-decoration: none;
+	border-radius: var(--cdn-radius-sm, 4px);
+	line-height: 1.15;
+	transition:
+		transform 0.15s ease,
+		filter 0.2s ease,
+		background-color 0.2s ease;
+}
+
+.feed-krux__donate:hover,
+.feed-krux__donate:focus-visible {
+	transform: translateY(-1px);
+	background-color: rgba(var(--station-primary-mode-rgb), 0.08);
+	filter: drop-shadow(0 0 4px rgba(var(--station-primary-mode-rgb), 0.45));
+	text-decoration: none;
+}
+
+.feed-krux__donate:focus-visible {
+	outline: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	outline-offset: 2px;
+}
+
+.feed-krux__donate-line {
+	font-size: 0.75rem;
+	font-weight: var(--cdn-weight-medium, 500);
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
+}
+
+.feed-krux__donate-geo {
+	font-family: var(
+		--cdn-font-mono,
+		ui-monospace,
+		"SF Mono",
+		Menlo,
+		Consolas,
+		monospace
+	);
+	font-size: 0.625rem;
+	opacity: 0.78;
+	letter-spacing: 0.02em;
+	white-space: nowrap;
+}
+
 .feed-krux__btn {
 	display: inline-flex;
 	align-items: center;

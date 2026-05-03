@@ -23,19 +23,31 @@ declare global {
 	}
 }
 
+// Note on offline behavior + IVS 404 console errors:
+//
+// When a twitch channel is offline, the embed SDK still attempts to load the
+// IVS HLS master playlist before resolving to its built-in offline UI. That
+// probe surfaces in the console as:
+//   `Player stopping playback - error MasterPlaylist:11
+//    (ErrorNotAvailable code 404 - Failed to load playlist)`
+//
+// Eliminating the 404 cleanly requires the Twitch Helix API: check
+// /helix/streams?user_login=<channel> for live state, and on offline call
+// /helix/videos?user_id=<id>&first=1&type=archive to swap in the most recent
+// VOD. Helix needs a Bearer token from a Twitch app client_id+secret pair.
+// This project has NO twitch credentials configured (.env.production /
+// .env.local both empty of TWITCH_*), so we fall back to embedding the
+// channel directly per the documented graceful-degradation path. Twitch's
+// own player UI surfaces a "channel offline — see recent broadcasts" panel
+// once the IVS probe resolves; we accept the one-time 404 as the cost of
+// not running a credentialed integration.
+//
+// To upgrade later: add VITE_TWITCH_CLIENT_ID + a server-side token-mint
+// endpoint, then call helix from a useEffect that gates whether to mount
+// the embed with `channel:` (live) vs `video:` (most recent VOD).
 const CHANNELS = [
-	{
-		id: "aws",
-		label: "AWS",
-		// Most recent AWS channel recording — update when a new notable stream is archived
-		fallbackVideoId: "yQNrgpIp1Fs",
-	},
-	{
-		id: "awsonair",
-		label: "AWS on Air",
-		// Most recent AWS on Air recording — update periodically
-		fallbackVideoId: "WUJUvTu2Qjo",
-	},
+	{ id: "aws", label: "AWS" },
+	{ id: "awsonair", label: "AWS on Air" },
 ];
 
 let twitchScriptLoading = false;
@@ -61,20 +73,15 @@ function loadTwitchSDK(onReady: () => void) {
 
 function TwitchChannelEmbed({
 	channelId,
-	label,
 	hostname,
-	fallbackVideoId,
 	onLiveChange,
 }: {
 	channelId: string;
-	label: string;
 	hostname: string;
-	fallbackVideoId: string;
 	onLiveChange?: (isLive: boolean) => void;
 }) {
 	const { t } = useTranslation();
 	const containerRef = useRef<HTMLDivElement>(null);
-	const [offline, setOffline] = useState(false);
 	const [live, setLive] = useState(false);
 
 	useEffect(() => {
@@ -92,14 +99,12 @@ function TwitchChannelEmbed({
 				autoplay: false,
 				layout: "video",
 			});
-			// OFFLINE/ONLINE fire on the embed directly — not on getPlayer()
+			// OFFLINE/ONLINE fire on the embed directly — not on getPlayer().
 			embed.addEventListener(twitch.Player.OFFLINE, () => {
-				setOffline(true);
 				setLive(false);
 				onLiveChange?.(false);
 			});
 			embed.addEventListener(twitch.Player.ONLINE, () => {
-				setOffline(false);
 				setLive(true);
 				onLiveChange?.(true);
 			});
@@ -116,7 +121,8 @@ function TwitchChannelEmbed({
 					</span>
 				</span>
 			)}
-			{/* Twitch embed always visible — SDK shows Twitch's own offline screen when channel is down */}
+			{/* Twitch embed always visible — SDK shows Twitch's own offline screen
+			    (with recent-broadcasts navigation) when the channel is down. */}
 			<div ref={containerRef} style={{ width: "100%", height: 300 }} />
 		</div>
 	);
@@ -144,9 +150,7 @@ function TwitchChannelCard({
 			{hostname ? (
 				<TwitchChannelEmbed
 					channelId={channel.id}
-					label={channel.label}
 					hostname={hostname}
-					fallbackVideoId={channel.fallbackVideoId}
 					onLiveChange={onLiveChange}
 				/>
 			) : (

@@ -231,10 +231,7 @@ export class HazeBackdrop {
 		this.material.setFloat("midOpacity", HAZE_BAND_MID_OPACITY);
 		this.material.setFloat("bottomOpacity", HAZE_BAND_BOTTOM_OPACITY);
 		this.material.setFloat("stripCenterY", HAZE_HORIZON_STRIP_CENTER_Y);
-		this.material.setFloat(
-			"stripHalfHeight",
-			HAZE_HORIZON_STRIP_HEIGHT * 0.5,
-		);
+		this.material.setFloat("stripHalfHeight", HAZE_HORIZON_STRIP_HEIGHT * 0.5);
 		this.material.setFloat("stripPeak", HAZE_HORIZON_STRIP_PEAK_OPACITY);
 		this.mesh.material = this.material;
 		// renderingGroupId 1 — render AFTER the dune ground (default group 0)

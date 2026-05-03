@@ -1,38 +1,36 @@
-import { useCallback } from "react";
-import { useStickyPoll } from "./useStickyPoll";
+import { useEffect, useState } from "react";
+import { probeOembed } from "../lib/youtube-oembed-cache";
 
-const OEMBED_URL =
-	"https://www.youtube.com/oembed?url=https://www.youtube.com/@andmoredev/live&format=json";
-const POLL_MS = 60_000;
+const CHANNEL_URL = "https://www.youtube.com/@andmoredev/live";
 
 type AndresLive = { live: boolean; videoId: string | null };
 
 const INITIAL: AndresLive = { live: false, videoId: null };
 
-function parseVideoId(html: string): string | null {
-	const m = html.match(/youtube\.com\/embed\/([a-zA-Z0-9_-]+)/);
-	return m ? m[1] : null;
-}
-
+/**
+ * useAndresLive — single-shot probe of the andmore-dev youtube channel's
+ * /live oembed endpoint, with sessionStorage cache.
+ *
+ * Behavior change from prior implementation: NO automatic re-poll. The oembed
+ * endpoint returns 404 when the channel is not currently live; repeatedly
+ * polling that endpoint floods the console + network panel with 404 errors
+ * even though the page is healthy. Per-session cache keeps the page quiet
+ * while still letting a hard reload pick up "channel went live since last
+ * load". See lib/youtube-oembed-cache.ts for cache semantics.
+ */
 export function useAndresLive(): AndresLive {
-	// fetcher resolves to:
-	//   - null on transient failure (network err / non-2xx) → useStickyPoll preserves prior state
-	//   - {live:false,videoId:null} on confirmed-empty 200 (channel up, not streaming)
-	//   - {live:true,videoId:...} on confirmed live embed
-	// YouTube's oEmbed returns 4xx for both offline channels AND transient API
-	// errors — without stickiness the hero block toggles every 60s and creates
-	// layout jumps. The shared hook now enforces this contract uniformly.
-	const fetcher = useCallback(async (): Promise<AndresLive | null> => {
-		const r = await fetch(OEMBED_URL);
-		if (!r.ok) return null;
-		const data = (await r.json()) as { html?: string };
-		if (!data.html) return { live: false, videoId: null };
-		return { live: true, videoId: parseVideoId(data.html) };
+	const [value, setValue] = useState<AndresLive>(INITIAL);
+
+	useEffect(() => {
+		let cancelled = false;
+		probeOembed(CHANNEL_URL).then((result) => {
+			if (cancelled || !result) return;
+			setValue({ live: result.live, videoId: result.videoId });
+		});
+		return () => {
+			cancelled = true;
+		};
 	}, []);
 
-	return useStickyPoll<AndresLive>({
-		fetcher,
-		intervalMs: POLL_MS,
-		initial: INITIAL,
-	});
+	return value;
 }
