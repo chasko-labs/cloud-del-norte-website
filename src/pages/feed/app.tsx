@@ -46,7 +46,7 @@ const FADE_MS = 500;
 const POLL_MS = 30_000;
 
 function KruxPlayer() {
-	const { t } = useTranslation();
+	const { locale } = useTranslation();
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const [playing, setPlaying] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -331,16 +331,35 @@ function KruxPlayer() {
 				aria-live="polite"
 				aria-atomic="true"
 			>
-				{nowPlaying[stream.key] ?? ""}
+				{nowPlaying[stream.key] ? (
+					nowPlaying[stream.key]
+				) : stream.metaFallback ? (
+					// no live track string — surface a station-specific fallback
+					// link (Spotify playlist, podcast catalog, programs grid) so
+					// the row carries an actionable affordance instead of going
+					// blank. label flips per locale; href is shared
+					<a
+						className="feed-krux__now-playing-link"
+						href={stream.metaFallback.href}
+						target="_blank"
+						rel="noreferrer"
+					>
+						{locale === "mx"
+							? stream.metaFallback.labelEs
+							: stream.metaFallback.labelEn}
+					</a>
+				) : (
+					""
+				)}
 			</span>
 			{/*
-			 * "streaming from <city, region, country>" sits INSIDE the donate <a>
-			 * — keeps the feed player visually compact and ties the origin line
-			 * to the donate target. Tradeoff: stations without a donateUrl
-			 * (uam_radio, ibero_909, concepto_radial, radio_udg_lagos) won't
-			 * show their location here. If we ever want every station to
-			 * display origin regardless of donate availability, lift this
-			 * <span> out of the <a> into its own non-clickable line above.
+			 * city, region, country sits INSIDE the donate <a> — keeps the
+			 * feed player visually compact and ties the origin line to the
+			 * donate target. Stations without a donateUrl (uam_radio,
+			 * ibero_909, concepto_radial, radio_udg_lagos) skip this block
+			 * entirely. The "streaming from" prefix was dropped per design
+			 * (locale value emptied) so only the location renders — keeps
+			 * the line short on mobile and trims the gap below.
 			 */}
 			{stream.donateUrl && (
 				<a
@@ -354,7 +373,7 @@ function KruxPlayer() {
 						donate to {stream.label}
 					</span>
 					<span className="feed-krux__donate-geo">
-						{t("feedPage.streamingFrom")} {formatLocation(stream.location)}
+						{formatLocation(stream.location)}
 					</span>
 				</a>
 			)}

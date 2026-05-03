@@ -451,15 +451,23 @@
 	}
 }
 
-/* chevron + counter row sits below the window. Chevrons use the standard
-   feed-carousel button styling tokens for consistency with other rotators
-   on the page. */
+/* chevron + counter row sits BELOW the window with comfortable separation
+   so the controls never visually overlap the card surface. Padded + a thin
+   top divider keep the nav anchored to its own band rather than crowding
+   the bottom edge of the card grid. v0.0.0114 — bryan flagged the prior
+   tight spacing as "on top of" the cards. */
 .feed-builder-deck__controls {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	gap: 12px;
-	margin-top: 6px;
+	gap: 16px;
+	margin-top: 16px;
+	padding-top: 12px;
+	border-top: 1px solid rgba(139, 90, 43, 0.14);
+}
+
+.awsui-dark-mode .feed-builder-deck__controls {
+	border-top-color: rgba(144, 96, 240, 0.18);
 }
 
 .feed-builder-deck__chev {
@@ -514,11 +522,12 @@
 .feed-mini-card__link {
 	position: relative;
 	display: flex;
-	flex-direction: column;
-	gap: 6px;
-	min-height: 96px;
+	flex-direction: row;
+	align-items: flex-start;
+	gap: 10px;
+	min-height: 132px;
 	height: 100%;
-	padding: 10px 12px 10px 12px;
+	padding: 12px;
 	border: 1px solid rgba(139, 90, 43, 0.22);
 	border-radius: var(--cdn-radius-md, 8px);
 	background: #faf7f0;
@@ -572,47 +581,35 @@
 	outline-offset: 2px;
 }
 
-/* rank pill — small chip in the top-right corner so it doesn't compete
-   with the title for the first-fixation read. The accent color matches
-   the per-card stripe so the rank reads as part of the same identity. */
-.feed-mini-card__rank {
-	position: absolute;
-	top: 8px;
-	right: 8px;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	min-width: 1.6rem;
-	height: 1.1rem;
-	padding: 0 6px;
-	font-size: 0.6875rem;
-	font-weight: 700;
-	line-height: 1;
-	letter-spacing: 0.02em;
+/* big serif numeral on the left edge — high-contrast hierarchy that anchors
+   the card identity. Color cycles per palette via .feed-mini-card--n{1..4}
+   so each card in the visible window reads as visually distinct. v0.0.0114
+   restored from the v0.0.0095 design after the corner-pill variant tested
+   poorly. */
+.feed-mini-card__number {
+	flex-shrink: 0;
+	align-self: center;
+	font-size: 3.25rem;
+	font-weight: 800;
+	line-height: 0.9;
+	letter-spacing: -0.04em;
 	font-variant-numeric: tabular-nums;
-	border-radius: 999px;
-	background: rgba(139, 90, 43, 0.12);
+	font-family: ui-serif, Georgia, "Times New Roman", serif;
+	min-width: 1.8rem;
+	text-align: center;
 	color: var(--cdn-amber, #8b5a2b);
 }
 
-.awsui-dark-mode .feed-mini-card__rank {
-	background: rgba(144, 96, 240, 0.18);
-}
-
-.feed-mini-card--n1 .feed-mini-card__rank {
-	background: rgba(144, 96, 240, 0.14);
+.feed-mini-card--n1 .feed-mini-card__number {
 	color: var(--cdn-violet, #9060f0);
 }
-.feed-mini-card--n2 .feed-mini-card__rank {
-	background: rgba(255, 153, 0, 0.14);
+.feed-mini-card--n2 .feed-mini-card__number {
 	color: var(--cdn-aws-orange, #ff9900);
 }
-.feed-mini-card--n3 .feed-mini-card__rank {
-	background: rgba(90, 31, 138, 0.14);
+.feed-mini-card--n3 .feed-mini-card__number {
 	color: var(--cdn-purple, #5a1f8a);
 }
-.feed-mini-card--n4 .feed-mini-card__rank {
-	background: rgba(139, 90, 43, 0.14);
+.feed-mini-card--n4 .feed-mini-card__number {
 	color: var(--cdn-amber, #8b5a2b);
 }
 
@@ -623,8 +620,19 @@
 	min-width: 0;
 	overflow: hidden;
 	flex: 1;
-	/* leave space for the rank pill in the top-right corner */
-	padding-right: 2.4rem;
+}
+
+/* one-line excerpt — first sentence of the article body. Single-line clamp
+   keeps the card height stable across the visible window and prevents long
+   blurbs from pushing the meta row off the bottom edge. */
+.feed-mini-card__excerpt {
+	font-size: 0.75rem;
+	line-height: 1.35;
+	color: var(--cdn-color-text-secondary);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
 }
 
 .feed-mini-card__title {
@@ -724,16 +732,17 @@
 	   at the slot's top edge instead of centering, which would feel like the
 	   widget is floating in empty space. */
 	justify-content: flex-start;
-	gap: 4px;
+	gap: 2px;
 	margin-inline-end: 6px;
 	/* lock worst-case slot height so state transitions (idle ↔ playing,
 	   has-donate ↔ no-donate, now-playing ↔ empty, retry/error states)
-	   don't reflow page content below the header band. Worst-case stack:
-	   top row (32px btn) + now-playing line (~13px) + donate block (~30px)
-	   + 2× 4px flex gaps + 8px container padding ≈ 91px. clamp() pads for
-	   font-size variance and 0.85rem stations like "amplifier institute"
-	   that wrap the label on narrow viewports. */
-	min-height: clamp(108px, 14vh, 132px);
+	   don't reflow page content below the header band. Tightened
+	   2026-05-03: dropped the floor + reduced flex gap (4→2) to remove
+	   the dead air below the location line that bryan flagged as visually
+	   loose. Worst-case stack: top row (32px btn) + now-playing line
+	   (~13px) + donate block (~28px) + flex gaps + container padding
+	   ≈ 80px; clamp pads for font wrap on the longest station labels. */
+	min-height: clamp(88px, 11vh, 110px);
 	/* light-mode default: use the station's primary-light if it provides one,
 	   else its primary, else the brand violet. */
 	--station-primary-mode: var(
@@ -1028,6 +1037,30 @@
 	line-height: 1.2;
 }
 
+/* fallback link — surfaces a station-specific Spotify playlist / podcast /
+   programs URL when the live nowPlaying string is absent (uam_radio,
+   concepto_radial, ibero_909 with empty source.title, radio_udg_lagos with
+   the " - " SSE placeholder). Inherits the station's primary color so it
+   reads as part of the player surface rather than a generic blue link */
+.feed-krux__now-playing-link {
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	text-decoration: none;
+	border-bottom: 1px dotted
+		rgba(var(--station-primary-mode-rgb), 0.45);
+	transition:
+		color 0.2s ease,
+		border-bottom-color 0.2s ease;
+}
+
+.feed-krux__now-playing-link:hover,
+.feed-krux__now-playing-link:focus-visible {
+	border-bottom-color: var(
+		--station-primary-mode,
+		var(--cdn-violet, #9060f0)
+	);
+	text-decoration: none;
+}
+
 /* feed-krux__donate — two-line clickable block beneath the station name.
    line 1: "donate to <station label>" (small, brand-tinted, slightly heavier)
    line 2: station broadcast geo coordinates (smaller, monospace, muted)
@@ -1272,12 +1305,12 @@
 @media (max-width: 600px) {
 	.feed-krux {
 		align-self: flex-start;
-		/* mobile adds extra slack — long station labels (e.g. "amplifier
-		   institute" / "instituto tecnológico de estudios superiores")
-		   may wrap the top row to two lines, and the donate two-line block
-		   plus now-playing stay full-width. Bumps the floor so the worst
-		   wrapped state still doesn't push content. */
-		min-height: 148px;
+		/* mobile slightly taller floor — long station labels (e.g. "amplifier
+		   institute" / "instituto tecnológico de estudios superiores") may
+		   wrap the top row to two lines, donate stays two lines. Tightened
+		   2026-05-03 from 148→124 to remove dead air below the location
+		   line that bryan flagged as visually loose on phone widths. */
+		min-height: 124px;
 	}
 }
 

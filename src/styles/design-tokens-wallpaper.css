@@ -42,3 +42,106 @@
    Both modes now use the same alpha + blur values from :root. If the
    starfield/sand-dunes balance ever needs to differ between modes, this
    block is the place to override per-mode. */
+
+/* ==========================================================================
+   Dark-mode no-canvas fallback (v0.0.0082+)
+   --------------------------------------------------------------------------
+   The el-paso-nights canvas-2D starfield depends on `OffscreenCanvas`
+   (used by static.ts to bake the star bitmap). On macbook-air-class
+   devices without a discrete GPU AND running older Safari/WebKit
+   (pre-16.4) the OffscreenCanvas constructor throws and the static
+   star bitmap is never produced — the dark scene paints nothing
+   opaque, so the page reads as a flat empty area below the Franklin
+   silhouette.
+
+   Fix: paint a deep-navy gradient + CSS-only star pinpoints on
+   <html> in dark mode. Sits at `background-color`/`background-image`
+   level (effective z behind the canvas at z:-2), so:
+     - canvas works → canvas's opaque #0a0c14 base covers this fully,
+       no visual change vs prior behavior
+     - canvas fails or hasn't mounted yet → this underlay is the
+       visible night sky base, Franklin overlay still reads correctly
+       on top
+   Light mode is untouched.
+   ========================================================================== */
+html.awsui-dark-mode {
+	/* deep-navy vertical gradient — slightly lighter near the horizon to
+	   echo the el paso glow that the canvas would normally render at the
+	   bottom 5%. base color matches buildStaticDark's #0a0c14 fill so
+	   there's no seam if the canvas paints over the bottom but not the
+	   top (partial-failure mode). */
+	background-color: #0a0c14;
+	background-image:
+		/* sparse "stars" — radial-gradient pinpoints. positions chosen so
+		   they don't all line up; sizes 1px–2px to read as distant. */
+		radial-gradient(
+			1px 1px at 12% 18%,
+			rgba(255, 255, 255, 0.55),
+			transparent 60%
+		),
+		radial-gradient(
+			1px 1px at 28% 42%,
+			rgba(255, 255, 255, 0.4),
+			transparent 60%
+		),
+		radial-gradient(
+			2px 2px at 47% 12%,
+			rgba(255, 255, 255, 0.6),
+			transparent 60%
+		),
+		radial-gradient(
+			1px 1px at 63% 28%,
+			rgba(255, 255, 255, 0.35),
+			transparent 60%
+		),
+		radial-gradient(
+			1px 1px at 81% 8%,
+			rgba(255, 255, 255, 0.5),
+			transparent 60%
+		),
+		radial-gradient(
+			1px 1px at 92% 36%,
+			rgba(255, 255, 255, 0.4),
+			transparent 60%
+		),
+		radial-gradient(
+			2px 2px at 18% 56%,
+			rgba(215, 199, 238, 0.35),
+			transparent 60%
+		),
+		radial-gradient(
+			1px 1px at 38% 68%,
+			rgba(255, 255, 255, 0.32),
+			transparent 60%
+		),
+		radial-gradient(
+			1px 1px at 56% 48%,
+			rgba(255, 255, 255, 0.45),
+			transparent 60%
+		),
+		radial-gradient(
+			1px 1px at 72% 62%,
+			rgba(255, 255, 255, 0.3),
+			transparent 60%
+		),
+		radial-gradient(
+			2px 2px at 88% 78%,
+			rgba(255, 255, 255, 0.5),
+			transparent 60%
+		),
+		radial-gradient(
+			1px 1px at 6% 84%,
+			rgba(255, 255, 255, 0.32),
+			transparent 60%
+		),
+		/* horizon glow + sky body — bottom warm, top deep midnight */
+			linear-gradient(
+				to bottom,
+				#05060d 0%,
+				#0a0c14 55%,
+				#10131c 88%,
+				#1a1410 100%
+			);
+	background-attachment: fixed;
+	background-repeat: no-repeat;
+}

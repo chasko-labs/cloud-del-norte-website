@@ -113,8 +113,7 @@
 		"pastMeetupViewEvent": "Ver evento en Meetup →",
 		"infoLinkAriaLabel": "Abrir panel de ayuda",
 		"streamKrux": "escucha krux",
-		"streamKruxFallback": "Tu navegador no soporta audio en vivo. Visita kruxstream.nmsu.edu/KRUX para escuchar.",
-		"streamingFrom": "transmitiendo desde"
+		"streamKruxFallback": "Tu navegador no soporta audio en vivo. Visita kruxstream.nmsu.edu/KRUX para escuchar."
 	},
 	"dashboardPage": {
 		"productionOverview": {

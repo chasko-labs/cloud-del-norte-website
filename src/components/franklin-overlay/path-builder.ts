@@ -40,35 +40,47 @@ export interface RidgePoint {
  * is the tallest and the ridge descends, with notch points (low h) between
  * named summits to create the V-shaped transverse-fault gaps.
  */
+// v0.0.0113 — bryan: peaks felt too short. Heights raised across the named
+// summits (north-franklin 230→245, anthonys-nose 175→195, mundys-peak
+// 195→215, south-franklin 165→190, ranger-peak 130→145, sugarloaf
+// 100→115). Saddles bumped modestly to keep V-notches readable. X-positions
+// preserved exactly — the el paso star's horizontal slot is locked to the
+// south-franklin slope and any x-shift would break its grazing alignment.
+//
+// Foothill-anchor h dropped 70→40 so the visually-right viewport edge (post-
+// mirror this is what reads as the right side) descends gradually into the
+// footer band rather than popping up to a small bump and cutting off.
 export const RIDGE_POINTS: readonly RidgePoint[] = [
-	// Foothill anchor — above the bottom-left corner, ridge slopes DOWN to
-	// the left edge from here so a triangular sky wedge is exposed.
-	{ name: "foothill-anchor", x: 30, h: 70 },
+	// Foothill anchor — above the bottom-left corner (visually the bottom-
+	// RIGHT after the mirror flip). v0.0.0113: lowered to 40 so the post-
+	// mirror right viewport edge slopes gently into the footer rather than
+	// terminating at a visible bump.
+	{ name: "foothill-anchor", x: 30, h: 40 },
 	// Ascending toward North Franklin — small bump (Anthonys foothill north)
-	{ name: "north-saddle", x: 130, h: 110 },
+	{ name: "north-saddle", x: 130, h: 115 },
 	// North Franklin — tallest, ~25% from left (left-of-centre per brief)
-	{ name: "north-franklin", x: 240, h: 230 },
+	{ name: "north-franklin", x: 240, h: 245 },
 	// Trans-Mountain Rd transverse-fault gap (V-notch between N. Franklin
 	// and Anthonys Nose)
-	{ name: "trans-mountain-gap", x: 310, h: 95 },
+	{ name: "trans-mountain-gap", x: 310, h: 100 },
 	// Anthonys Nose — secondary peak south of N. Franklin
-	{ name: "anthonys-nose", x: 380, h: 175 },
+	{ name: "anthonys-nose", x: 380, h: 195 },
 	// Saddle between Anthonys and Mundys
-	{ name: "anthonys-mundys-saddle", x: 440, h: 120 },
+	{ name: "anthonys-mundys-saddle", x: 440, h: 130 },
 	// Mundys Peak — second-tallest in the ridge
-	{ name: "mundys-peak", x: 500, h: 195 },
+	{ name: "mundys-peak", x: 500, h: 215 },
 	// Saddle into South Franklin
-	{ name: "mundys-south-saddle", x: 565, h: 105 },
+	{ name: "mundys-south-saddle", x: 565, h: 115 },
 	// South Franklin — hosts the El Paso Star on its south face
-	{ name: "south-franklin", x: 630, h: 165 },
+	{ name: "south-franklin", x: 630, h: 190 },
 	// Loop 375 transverse-fault gap (V-notch)
-	{ name: "loop-375-gap", x: 700, h: 75 },
+	{ name: "loop-375-gap", x: 700, h: 80 },
 	// Ranger Peak — smaller, southward
-	{ name: "ranger-peak", x: 765, h: 130 },
+	{ name: "ranger-peak", x: 765, h: 145 },
 	// Saddle into Sugarloaf
-	{ name: "ranger-sugarloaf-saddle", x: 815, h: 80 },
+	{ name: "ranger-sugarloaf-saddle", x: 815, h: 85 },
 	// Sugarloaf — final named summit, smaller still
-	{ name: "sugarloaf", x: 860, h: 100 },
+	{ name: "sugarloaf", x: 860, h: 115 },
 	// Drop-off after Sugarloaf — ridge falls to near-zero before the right
 	// edge so the top-right corner of the viewport stays open for stars.
 	{ name: "sugarloaf-tail", x: 940, h: 35 },
@@ -96,9 +108,14 @@ export const RIDGE_POINTS: readonly RidgePoint[] = [
  * the asymmetric logo-star points facing their original orientation rather
  * than mirroring with the silhouette.
  */
+// v0.0.0113 — bryan: nudge star up + LEFT so an outer arm just grazes the
+// silhouette edge of the right (visually closer) Franklin peak. Horizontal
+// slot preserved per the brief — only enough shift to make the point touch
+// the slope. cx 340→335 (left 5), cy 155→128 (up 27) so the upper-right arm
+// lands within ~1px of the south-franklin slope at the new raised height.
 export const EL_PASO_STAR_ANCHOR = {
-	cx: 340, // = 1000 - 660; pre-mirrored so the un-flipped star lands on S.F.'s south face
-	cy: VIEWBOX_HEIGHT - 95, // partway down the south face
+	cx: 335, // pre-mirrored; un-flipped star renders visually at x≈335
+	cy: VIEWBOX_HEIGHT - 122, // raised so the upper arm tip grazes the peak edge
 	radius: 9, // v0.0.0104: humble landmark — half the v0.0.0102 size
 } as const;
 
@@ -133,11 +150,15 @@ export function buildSilhouettePath(
 	// Start below the bottom-left corner — guarantees the fill closes cleanly
 	// even on viewports wider than the viewBox aspect ratio.
 	parts.push(`M 0 ${viewBoxHeight + 20}`);
-	// Rise to the first ridge point. Going through the bottom-left corner
-	// keeps the foothill triangle sky-gap intact (left side slopes UP from
-	// off-screen, NOT from a flat ground).
-	parts.push(`L 0 ${heightToSvgY(points[0].h * 0.45, viewBoxHeight)}`);
-	parts.push(`L ${points[0].x} ${heightToSvgY(points[0].h, viewBoxHeight)}`);
+	// v0.0.0113 — gentle slope from the off-screen bottom into the foothill
+	// anchor. Use a cubic Bezier (rather than two straight Ls) so the post-
+	// mirror right viewport edge reads as a continuous descending ridge that
+	// merges into the footer band, not a kinked V-notch at the corner.
+	const firstY = heightToSvgY(points[0].h, viewBoxHeight);
+	const baselineY = viewBoxHeight + 4;
+	parts.push(
+		`C 0 ${baselineY}, ${points[0].x * 0.5} ${firstY + 8}, ${points[0].x} ${firstY}`,
+	);
 
 	// Ridge segments — cubic Bezier between each pair, control handle length
 	// = 35% of segment x-span, biased so handles sit at the same height as
@@ -206,18 +227,23 @@ export function buildSilhouettePath(
 // Total DOM cost: 1 body path + 5 circles = 6 SVG nodes (was 7 in v0.0.0103).
 
 export const STAR_INNER_RATIO = 0.32;
-// v0.0.0112 — bryan: "rotate it counterclockwise a bit". Flipped from +20°
-// (clockwise lean per v0.0.0087) to -20° so the star tilts gently to the
-// upper-LEFT. SVG y-down convention: negative degree = counterclockwise.
-export const STAR_ROTATION_DEG = -20;
+// v0.0.0113 — bryan: rotate ~9° clockwise from the v0.0.0112 -20° baseline so
+// the upper arm leans LESS to the left (now -11°). SVG y-down convention:
+// negative degree = counterclockwise, so adding +9° to -20° = -11° is a 9°
+// clockwise rotation from the prior orientation.
+export const STAR_ROTATION_DEG = -11;
 const STAR_ROTATION_RAD = (STAR_ROTATION_DEG * Math.PI) / 180;
 /** Bulb-tip radius — fraction of outer radius. ~18% reads as a discrete
  *  pinpoint at the v0.0.0104 humble-landmark scale (radius 9 → bulb r ≈ 1.6
  *  in viewBox units, on par with the canvas-2D background star sizes). */
 export const STAR_BULB_RADIUS_RATIO = 0.18;
-/** Number of outer arms / bulbs. Five points = a star shape; one bulb per
+/** Number of outer-arm bulbs. Five points = a star shape; one bulb per
  *  arm tip cycles ON in rotation via CSS keyframe phase offsets. */
 export const STAR_BULB_COUNT = 5;
+/** v0.0.0113 — center bulb radius is 1/3 the outer-arm bulb radius. Joins
+ *  the same staggered cycle as a 6th slot so it pulses with the others but
+ *  never in sync with any single arm. */
+export const STAR_CENTER_BULB_RADIUS_RATIO = STAR_BULB_RADIUS_RATIO / 3;
 
 /** Compute the (x,y) of a star vertex i ∈ [0..9] given centre + outerRadius.
  *  Even indices = outer arms; odd = inner notches. v0.0.0104 dropped the
@@ -265,10 +291,11 @@ export interface StarBulbTip {
 }
 
 /**
- * Build the 5 bulb-tip positions at each outer arm vertex (indices 0/2/4/6/8).
- * All bulbs are equal radius (no hero accent). cycleIndex is the bulb's slot
- * in the rotation animation — bulb at cycleIndex=0 peaks first, then 1, 2,
- * 3, 4, then back to 0.
+ * Build the 5 outer-arm bulbs + 1 center bulb (v0.0.0113). The 5 outer bulbs
+ * sit at vertices 0/2/4/6/8 with equal radius. The center bulb sits at
+ * (cx, cy) at 1/3 the outer bulb radius and gets cycleIndex=5 — the same
+ * staggered-keyframe class system as the others, so it pulses with them but
+ * never in sync with any individual arm.
  */
 export function buildStarBulbTips(
 	cx: number,
@@ -283,6 +310,13 @@ export function buildStarBulbTips(
 		const { x, y } = starVertex(cx, cy, outerRadius, i);
 		tips.push({ cx: x, cy: y, r, cycleIndex: k });
 	}
+	// Center bulb — 1/3 the outer bulb radius, slot 5 in the staggered cycle.
+	tips.push({
+		cx,
+		cy,
+		r: outerRadius * STAR_CENTER_BULB_RADIUS_RATIO,
+		cycleIndex: STAR_BULB_COUNT,
+	});
 	return tips;
 }
 

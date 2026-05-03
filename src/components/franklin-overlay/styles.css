@@ -62,11 +62,15 @@
 	filter: drop-shadow(0 0 3px rgba(144, 96, 240, 0.3));
 }
 
-/* Body — slim violet 5-arm star silhouette. NO solid centre per Bryan
-   ("center shouldn't be solid white"); the star's inner notches form a
-   natural cutout that reads through to the mountain behind. */
+/* Body — slim violet 5-arm star wireframe. v0.0.0113: dropped fill entirely
+   so the star reads as thin connecting lines between the points (the prior
+   solid violet polygon felt too logo-like). The mountain silhouette behind
+   shows through the open interior, matching the "humble lightbulb" brief. */
 .franklin-overlay__star-body {
-	fill: #9060f0;
+	fill: none;
+	stroke: #9060f0;
+	stroke-width: 0.6;
+	stroke-linejoin: round;
 }
 
 /* Bulb tips — 5 lavender pinpoints at each outer arm tip. Baseline opacity
@@ -112,6 +116,13 @@
 }
 .franklin-overlay__star-bulb--c4 {
 	animation-delay: -4s;
+}
+/* v0.0.0113 — center bulb (1/3 the outer-arm bulb radius). Half-step phase
+   between the c0 and c1 outer bulbs (-0.5s within a 5s cycle) so its peak
+   never coincides with any single arm. Pulses with the others, in sync with
+   none. */
+.franklin-overlay__star-bulb--c5 {
+	animation-delay: -0.5s;
 }
 
 /* prefers-reduced-motion — hold all bulbs at the dim baseline so the

@@ -35,6 +35,21 @@ export interface StreamLocation {
 }
 
 /**
+ * Static fallback link for stations whose now-playing endpoint is unreachable
+ * (CORS-blocked Shoutcast, no public meta API, or chronically empty inline
+ * track titles like UAM's "RT1=" placeholder). When the live nowPlaying string
+ * is absent the player surfaces this as a clickable line in place of the empty
+ * track row — gives the listener something to do rather than staring at a
+ * blank label. Both locale strings are required so the line reads naturally
+ * regardless of UI language; href is the same for both.
+ */
+export interface StreamMetaFallback {
+	readonly href: string;
+	readonly labelEn: string;
+	readonly labelEs: string;
+}
+
+/**
  * Richer extraction shape — surfaces fields beyond the "song — artist" string
  * the UI currently consumes. Populated by parseMetaRich on stations whose
  * metaUrl exposes more than a flat title:
@@ -94,6 +109,17 @@ export interface StreamDef {
 	 * even when the user is on the en-US locale
 	 */
 	readonly location: StreamLocation;
+	/**
+	 * static fallback link for when the live track string is unavailable —
+	 * either the station has no meta endpoint reachable from the browser
+	 * (uam_radio, concepto_radial — both CORS-blocked Shoutcast), the SSE
+	 * mount keeps emitting a placeholder (radio_udg_lagos sends " - " on
+	 * talk shows), or the icecast source.title field is empty (ibero_909
+	 * frequently). Player UI surfaces this as an inviting Spanish-leaning
+	 * line that points listeners at the station's playlist / podcast page
+	 * instead of leaving an empty row
+	 */
+	readonly metaFallback?: StreamMetaFallback;
 	/** parses metaUrl response into "song — artist" string. omit alongside metaUrl */
 	parseMeta?(data: unknown): string | null;
 	/**
@@ -398,6 +424,16 @@ export const STREAMS: StreamDef[] = [
 		// UAM sends real track titles during music programs (vs. talk slots)
 		// before investing in the proxy
 		scheduleUrl: "https://uamradio.uam.mx/programacion/",
+		// official UAM radio Spotify creator profile — surfaced from
+		// uamradio.uam.mx/en-vivo where the page itself prompts "¿Escuchaste
+		// algo que te gustó? En esta playlist puedes revisar qué transmitimos."
+		// Used as a richer fallback when the Shoutcast meta is CORS-blocked
+		// (the normal case for browser fetches against mexiserver:1124)
+		metaFallback: {
+			href: "https://open.spotify.com/user/uamradio?si=CrV4ocZwTqKJhdWcn3gKbw",
+			labelEn: "playlist on Spotify — see what they're spinning",
+			labelEs: "playlist en Spotify — revisa qué transmiten",
+		},
 		// UAM Azcapotzalco unidad — Universidad Autónoma Metropolitana, CDMX
 		location: {
 			city: "Ciudad de México",
@@ -430,6 +466,15 @@ export const STREAMS: StreamDef[] = [
 		metaUrl: "https://shaincast.caster.fm:20866/status-json.xsl",
 		// Ibero 90.9 weekly grid — official station site
 		scheduleUrl: "https://ibero909.fm/programacion/",
+		// dedicated playlist page on the station's own site (ibero909.fm/playlist)
+		// is the navigable equivalent of a now-playing log. icecast source.title
+		// is frequently empty for this mount during DJ feeds, so the fallback
+		// gives the listener something to do instead of a blank line
+		metaFallback: {
+			href: "https://ibero909.fm/playlist/",
+			labelEn: "playlist — see what's on rotation",
+			labelEs: "playlist — mira qué está sonando",
+		},
 		// Universidad Iberoamericana — Santa Fe campus, CDMX
 		location: {
 			city: "Ciudad de México",
@@ -495,6 +540,17 @@ export const STREAMS: StreamDef[] = [
 		// pushing inline track titles for this Shoutcast mount — verify at a
 		// musical timeslot before investing in proxy work
 		scheduleUrl: "https://conceptoradial.com/es/programacion",
+		// Concepto Radial podcast catalog — the station archives student-produced
+		// shows as Spotify-embedded episodes on its own site. Substitutes for a
+		// missing now-playing line: the live mount has no public CORS-open meta
+		// (Shoutcast /stats?json=1 lacks ACAO header) and the songtitle field
+		// has been observed empty mid-broadcast, so a podcast catalog is the
+		// most useful "what they're playing" affordance available
+		metaFallback: {
+			href: "https://conceptoradial.com/es/podcast",
+			labelEn: "podcasts — listen to recent episodes",
+			labelEs: "podcasts — escucha episodios recientes",
+		},
 		// Tec de Monterrey CEDETEC — Centro de Diseño y Tecnología on the
 		// Ciudad de México (Tlalpan) campus, NOT the Monterrey home campus.
 		// Student-programmed station, hence the CDMX location
@@ -526,6 +582,16 @@ export const STREAMS: StreamDef[] = [
 		// falls back to the station label
 		metaUrl: "https://api.zeno.fm/mounts/metadata/subscribe/8hage4z92hhvv",
 		metaFormat: "sse",
+		// official UDG sede Lagos programs grid (udgtv.com/radioudg/lagos-de-moreno/programas)
+		// — verified live 2026-05-03. Substitutes for the Zeno SSE mount when
+		// streamTitle arrives as " - " (placeholder, common during live talk
+		// shows without inline track logging). Points listeners at the weekly
+		// schedule so they can identify the show on air
+		metaFallback: {
+			href: "https://udgtv.com/radioudg/lagos-de-moreno/programas",
+			labelEn: "programs — see what's on air",
+			labelEs: "programas — mira qué está al aire",
+		},
 		// Centro Universitario de los Lagos (UDG sede Lagos) — Lagos de Moreno, Jalisco
 		location: {
 			city: "Lagos de Moreno",
