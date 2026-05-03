@@ -435,14 +435,10 @@ function PersistentPlayerBar({
 				ref={audioRef}
 				src={audioSrc}
 				preload="none"
-				crossOrigin="anonymous"
+				crossOrigin={streamDef?.type !== "podcast" ? "anonymous" : undefined}
 				onPlay={handlePlay}
 				onPause={handlePause}
 			/>
-			{/* type icon — 💃🏾 for radio, 🗣️ for podcast */}
-			<span className="cdn-pp__icon" aria-hidden="true">
-				{streamDef?.type === "podcast" ? "🗣️" : "💃🏾"}
-			</span>
 			{/* skip — left of meta */}
 			<button
 				type="button"
@@ -526,6 +522,10 @@ function PersistentPlayerBar({
 						) : null}
 					</span>
 				)}
+			</span>
+			{/* type icon — 💃🏾 radio / 🗣️ podcast — sits left of play button */}
+			<span className="cdn-pp__icon" aria-hidden="true">
+				{streamDef?.type === "podcast" ? "🗣️" : "💃🏾"}
 			</span>
 			{showFailedUI && (
 				<button
