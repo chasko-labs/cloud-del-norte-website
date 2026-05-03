@@ -82,6 +82,28 @@ describe("deckForLocale", () => {
 		expect(aideas?.sub).toBe("Software Engineering");
 	});
 
+	it("REGAIN card carries Christian Perez + Altivum sub", () => {
+		const deck = deckForLocale("us");
+		const all = [...deck.primary, ...deck.carousel];
+		const regain = all.find((c) => c.title.includes("REGAIN"));
+		expect(regain).toBeDefined();
+		expect(regain?.author).toBe("Christian Perez");
+		expect(regain?.sub).toBe("Founder & CEO | Altivum® Inc.");
+		expect(regain?.url).toMatch(/aideas-finalist-regain/);
+	});
+
+	it("OpenClaw card carries Maria Encinar + Community Geek sub", () => {
+		const deck = deckForLocale("us");
+		const all = [...deck.primary, ...deck.carousel];
+		const openclaw = all.find((c) => c.title.includes("OpenClaw"));
+		expect(openclaw).toBeDefined();
+		expect(openclaw?.author).toBe("Maria Encinar");
+		expect(openclaw?.sub).toBe(
+			"Community Geek leading the AWS User Group program",
+		);
+		expect(openclaw?.url).toMatch(/openclaw-on-aws/);
+	});
+
 	it("returns 4 primary + 3 carousel cards for es-MX (7 total)", () => {
 		const deck = deckForLocale("mx");
 		expect(deck.primary).toHaveLength(4);
