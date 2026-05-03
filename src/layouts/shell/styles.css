@@ -1817,3 +1817,40 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])::-webki
 		filter: initial;
 	}
 }
+
+/* ── Audio reactivity — Phase C ──────────────────────────────────────────
+   Moon flux beat-flash; US flag stars treble brightness; MX flag bass wave.
+   All gated on cdn-stream-playing. prefers-reduced-motion guards on every
+   transform/filter block below. */
+
+/* Phase C — moon flux beat-flash */
+.cdn-stream-playing .cdn-svg-moon {
+	filter: drop-shadow(0 0 calc(3px + var(--cdn-flux, 0) * 10px) rgba(200, 220, 255, calc(0.5 + var(--cdn-flux, 0) * 0.4)))
+		brightness(calc(1 + var(--cdn-flux, 0) * 0.3));
+}
+@media (prefers-reduced-motion: reduce) {
+	.cdn-stream-playing .cdn-svg-moon {
+		filter: initial;
+	}
+}
+
+/* Phase C — us flag stars treble brightness */
+.cdn-stream-playing .cdn-svg-flag--us .cdn-svg-flag__stars circle {
+	filter: brightness(calc(1 + var(--cdn-treble, 0) * 0.6));
+}
+@media (prefers-reduced-motion: reduce) {
+	.cdn-stream-playing .cdn-svg-flag--us .cdn-svg-flag__stars circle {
+		filter: initial;
+	}
+}
+
+/* Phase C — mx flag bass wave exaggeration */
+.cdn-stream-playing .cdn-svg-flag--mx {
+	transform: scaleX(calc(1 + var(--cdn-bass, 0) * 0.04));
+	transform-origin: left center;
+}
+@media (prefers-reduced-motion: reduce) {
+	.cdn-stream-playing .cdn-svg-flag--mx {
+		transform: initial;
+	}
+}
