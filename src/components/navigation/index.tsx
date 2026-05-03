@@ -7,6 +7,7 @@ import SideNavigation, {
 import { useEffect, useMemo, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
+import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
 import Weather from "../weather";
 import "./liora.css";
 
@@ -76,64 +77,9 @@ function scheduleIdle(fn: () => void): void {
 	}
 }
 
-// ISO 3166-1 alpha-2 → regional-indicator pair → flag emoji.
-// 65 (charCode 'A') → 0x1F1E6 (regional indicator A) requires offset 127397.
-function countryToFlag(code: string): string {
-	if (!/^[A-Za-z]{2}$/.test(code)) return "";
-	return code
-		.toUpperCase()
-		.split("")
-		.map((c) => String.fromCodePoint(127397 + c.charCodeAt(0)))
-		.join("");
-}
-
-// Common ISO codes → display country names. Falls back to the raw country
-// code if not in this map. Keeps bundle slim vs shipping a full ISO 3166 dict.
-const COUNTRY_NAME: Record<string, string> = {
-	US: "USA",
-	MX: "Mexico",
-	CA: "Canada",
-	GB: "the UK",
-	DE: "Germany",
-	FR: "France",
-	ES: "Spain",
-	BR: "Brazil",
-	JP: "Japan",
-	IN: "India",
-	AU: "Australia",
-	NZ: "New Zealand",
-	IE: "Ireland",
-	IT: "Italy",
-	NL: "the Netherlands",
-	SE: "Sweden",
-	NO: "Norway",
-	DK: "Denmark",
-	FI: "Finland",
-	PL: "Poland",
-	RU: "Russia",
-	UA: "Ukraine",
-	CN: "China",
-	KR: "Korea",
-	TH: "Thailand",
-	VN: "Vietnam",
-	ID: "Indonesia",
-	PH: "the Philippines",
-	TR: "Turkey",
-	GR: "Greece",
-	IL: "Israel",
-	SA: "Saudi Arabia",
-	AE: "the UAE",
-	EG: "Egypt",
-	NG: "Nigeria",
-	ZA: "South Africa",
-	KE: "Kenya",
-	AR: "Argentina",
-	CL: "Chile",
-	CO: "Colombia",
-	PE: "Peru",
-	VE: "Venezuela",
-	PK: "Pakistan",
-};
+// Visitor IP-geo cache + fetch lives in src/utils/visitor.ts so Shell can
+// share the same single fetch for auto-locale detection. VisitorInfo's
+// greeting field carries the localized country display name.
 
 // Native-language welcome by visitor country. Missing entries fall back to
 // the locale-default greeting ("welcome" for us, "qué onda" for mx).
@@ -165,59 +111,6 @@ const GREETING_BY_COUNTRY: Record<string, string> = {
 	EG: "salaam",
 	GR: "yassas",
 };
-
-interface VisitorInfo {
-	ip: string;
-	country: string;
-	greeting: string;
-	flag: string;
-}
-
-const VISITOR_CACHE_KEY = "cdn.visitor.v2";
-const VISITOR_TTL_MS = 24 * 60 * 60 * 1000;
-
-async function loadVisitorInfo(): Promise<VisitorInfo | null> {
-	try {
-		const cached = localStorage.getItem(VISITOR_CACHE_KEY);
-		if (cached) {
-			const parsed = JSON.parse(cached) as {
-				ts: number;
-				data: VisitorInfo;
-			};
-			if (Date.now() - parsed.ts < VISITOR_TTL_MS) {
-				return parsed.data;
-			}
-		}
-	} catch {
-		// fall through to fetch
-	}
-	try {
-		const res = await fetch("https://ipinfo.io/json", {
-			headers: { accept: "application/json" },
-		});
-		if (!res.ok) return null;
-		const data = (await res.json()) as { ip?: string; country?: string };
-		if (!data.ip || !data.country) return null;
-		const code = data.country.toUpperCase();
-		const info: VisitorInfo = {
-			ip: data.ip,
-			country: code,
-			greeting: COUNTRY_NAME[code] ?? code,
-			flag: countryToFlag(code),
-		};
-		try {
-			localStorage.setItem(
-				VISITOR_CACHE_KEY,
-				JSON.stringify({ ts: Date.now(), data: info }),
-			);
-		} catch {
-			// localStorage disabled — non-fatal
-		}
-		return info;
-	} catch {
-		return null;
-	}
-}
 
 function LioraFrame() {
 	const { t, locale } = useTranslation();
