@@ -262,12 +262,13 @@ a.cdn-pp__label--donate:focus-visible {
 	opacity: 0.55;
 }
 
+/* retrying/error text — muted station-tinted, not system-red.
+   The player already communicates state via the retry button; no need
+   for a loud color to dominate the page. */
 .cdn-pp__eyebrow--warn {
-	color: var(--cdn-status-warning, #d97706);
-}
-
-.awsui-dark-mode .cdn-pp__eyebrow--warn {
-	color: var(--cdn-status-warning, #fbbf24);
+	color: var(--station-primary-mode, var(--cdn-color-text-medium, #5a3a1e));
+	opacity: 0.7;
+	font-style: italic;
 }
 
 /* error row */
@@ -282,17 +283,15 @@ a.cdn-pp__label--donate:focus-visible {
 }
 
 .cdn-pp__error-text {
-	color: var(--cdn-status-error, #dc2626);
+	color: var(--station-primary-mode, var(--cdn-color-text-medium, #5a3a1e));
+	opacity: 0.65;
+	font-style: italic;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 	max-width: none;
 	font-size: var(--cdn-text-sm, 0.75rem);
 	font-weight: var(--cdn-weight-semibold, 600);
-}
-
-.awsui-dark-mode .cdn-pp__error-text {
-	color: var(--cdn-status-error, #f87171);
 }
 
 /* ==========================================================================
@@ -339,20 +338,26 @@ a.cdn-pp__label--donate:focus-visible {
 	outline-offset: 2px;
 }
 
-/* retry — same shape as skip */
+/* retry — same shape as skip, station-tinted instead of amber */
 .cdn-pp__btn--retry {
 	width: 28px;
 	height: 28px;
 	border-radius: 6px;
-	border: 1px solid rgba(139, 90, 43, 0.28);
-	background: rgba(139, 90, 43, 0.06);
-	color: var(--cdn-status-warning, #d97706);
+	border: 1px solid rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
+	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.06);
+	color: var(--station-primary-mode, var(--cdn-color-text-muted, #4a2818));
 	font-size: 0.9rem;
+	opacity: 0.7;
+}
+
+.awsui-dark-mode .cdn-pp__btn--retry {
+	color: rgba(240, 240, 240, 0.55);
 }
 
 .cdn-pp__btn--retry:hover {
-	background: rgba(139, 90, 43, 0.12);
-	border-color: rgba(139, 90, 43, 0.5);
+	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.14);
+	border-color: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.42);
+	opacity: 1;
 }
 
 /* play — circle, station-bordered, transparent fill */
@@ -492,7 +497,9 @@ a.cdn-pp__label--donate:focus-visible {
 	}
 }
 
-/* Mobile (<=600px) — same layout, slightly tighter */
+/* Mobile (<=600px) — same layout, slightly tighter.
+   Sub-row stacks vertically: line 2 = track title, line 3 = geo.
+   Sep hidden when stacked. */
 @media (max-width: 600px) {
 	.cdn-player-slot {
 		margin-bottom: 8px;
@@ -508,6 +515,19 @@ a.cdn-pp__label--donate:focus-visible {
 	}
 	.cdn-pp__label {
 		font-size: var(--cdn-text-sm, 0.75rem);
+	}
+	/* 3-line layout: track on line 2, geo on line 3 */
+	.cdn-pp__sub {
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 1px;
+	}
+	.cdn-pp__track-text,
+	.cdn-pp__now-playing-link {
+		order: -1;
+	}
+	.cdn-pp__sep {
+		display: none;
 	}
 	.cdn-pp__btn--play,
 	.cdn-pp__btn--resume,

@@ -25,13 +25,12 @@
 	contain: paint;
 }
 
-/* Desktop placement — bryan v0.0.0090: silhouette feels too far right on
-   wide viewports where the side-nav (with liora) consumes the left
-   portion. Shift left ~15vw so the peaks hover over the content area
-   instead of the right margin. Mobile is untouched (it reads "perfect"). */
+/* Desktop placement — silhouette shifted left so peaks hover over content
+   area, not the right margin. Mobile untouched (reads "perfect").
+   v0.0.0090: -15vw. v0.0.0125: additional -35px per user review. */
 @media (min-width: 768px) {
 	.franklin-overlay {
-		transform: translateX(-15vw);
+		transform: translateX(calc(-15vw - 35px));
 	}
 }
 
