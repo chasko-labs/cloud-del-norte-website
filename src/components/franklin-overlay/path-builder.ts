@@ -235,17 +235,18 @@ export const STAR_INNER_RATIO = 0.32;
 // clockwise rotation from the prior orientation.
 export const STAR_ROTATION_DEG = -11;
 const STAR_ROTATION_RAD = (STAR_ROTATION_DEG * Math.PI) / 180;
-/** Bulb-tip radius — fraction of outer radius. ~18% reads as a discrete
- *  pinpoint at the v0.0.0104 humble-landmark scale (radius 9 → bulb r ≈ 1.6
- *  in viewBox units, on par with the canvas-2D background star sizes). */
-export const STAR_BULB_RADIUS_RATIO = 0.18;
+/** Bulb-tip radius — fraction of outer radius. Halved to 9% (was 18%) so the
+ *  outer arm pinpoints are 50% smaller in rest state. Center bulb is decoupled
+ *  and held at its prior absolute size via STAR_CENTER_BULB_RADIUS_RATIO. */
+export const STAR_BULB_RADIUS_RATIO = 0.09;
 /** Number of outer-arm bulbs. Five points = a star shape; one bulb per
  *  arm tip cycles ON in rotation via CSS keyframe phase offsets. */
 export const STAR_BULB_COUNT = 5;
-/** v0.0.0113 — center bulb radius is 1/3 the outer-arm bulb radius. Joins
- *  the same staggered cycle as a 6th slot so it pulses with the others but
- *  never in sync with any single arm. */
-export const STAR_CENTER_BULB_RADIUS_RATIO = STAR_BULB_RADIUS_RATIO / 3;
+/** Center bulb radius — fixed at 1/3 of the PRE-halved outer bulb ratio
+ *  (0.18 / 3 = 0.06) so the center stays unchanged while the outer bulbs
+ *  shrink. Decoupled from STAR_BULB_RADIUS_RATIO so further outer-bulb
+ *  tweaks do not accidentally resize the center. */
+export const STAR_CENTER_BULB_RADIUS_RATIO = 0.06;
 
 /** Compute the (x,y) of a star vertex i ∈ [0..9] given centre + outerRadius.
  *  Even indices = outer arms; odd = inner notches. v0.0.0104 dropped the
