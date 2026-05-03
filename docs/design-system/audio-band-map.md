@@ -45,6 +45,7 @@ vocals, guitars, keys — the main body of sound
 | cloudscape container rim | `body.cdn-stream-playing [class*="awsui_root_variant-default_"]` — `styles/tokens.css` (Phase B) | same mid-pulse outer glow layered over `--cdn-card-rim-light` | dark only | n/a |
 | liora LED group 5–8 | `body.cdn-stream-playing .liora-led:nth-child(n+5):nth-child(-n+8)` — `navigation/liora.css` | `liora-led-cycle-mid` at 1.5s — medium-tempo brand palette rotation on middle 4 EQ LEDs | yes | yes |
 | liora head nod | `.liora-canvas` — `navigation/liora.css` | `translate: 0 calc(var(--cdn-mid,0)*-6px)` at 0.9s period — avatar bobs up on each snare/vocal hit | yes | yes |
+| flag wave speed | `.cdn-stream-playing .cdn-svg-flag--mx stripe/emblem`, `.cdn-stream-playing .cdn-svg-flag--us .stripes-h rect` — `shell/styles.css` (Phase D) | `animation-duration: calc(3.6s / (1 + mid*1.5))` — wave speeds up from 3.6s to 1.44s at full mid; both MX stripes and US horizontal stripes coupled | yes | yes |
 
 ## treble ( > 4 khz )
 
@@ -71,6 +72,7 @@ transient detector — fires on beat hits and sudden energy changes
 | beat detection | `canvas.ts` render loop — `lib/background-viz/canvas.ts` | `beatFired` bool passed to 2d renderer each frame; used to trigger particle/flash events in the background-viz starfield | yes | yes |
 | moon flux beat-flash | `.cdn-stream-playing .cdn-svg-moon` — `shell/styles.css` (Phase C) | `drop-shadow(0 0 calc(3px + flux*10px) ...)` + `brightness(calc(1 + flux*0.3))` — moon halo ignites 3→13px and brightens on beat onset | yes | yes |
 | liora crt scan-line opacity | `.cdn-stream-playing .liora-panel-wrap::before` — `liora-panel/styles.css` (Phase C) | `opacity: calc(0.65 + flux*0.12)` — scan-line overlay base 0.65, surges to 0.77 on transients, making phosphor sweep more visible on beats | yes | yes |
+| weather shimmer speed | `body.cdn-stream-playing #top-nav::after` — `shell/styles.css` (Phase D) | `animation-duration: calc(24s * max(0.25, 1 - flux*0.75))` — sweep accelerates from 24s to 6s at peak flux; both speeds readable as a shimmer | yes | yes |
 
 ---
 
@@ -78,9 +80,7 @@ transient detector — fires on beat hits and sudden energy changes
 
 elements with animation that could be connected to a band but aren't yet:
 
-- flag wave (`cdn-flag-wave-v` / `cdn-flag-wave-h`) — 3.6s time-based stripe wave speed on us flag horizontal stripes (mx flag wave exaggeration wired to bass via scaleX in Phase C)
-- auth card shimmer — `cdn-auth-card` surface has no audio var coupling
-- weather shimmer (`cdn-shimmer` on `#top-nav::after`) — 24s time-based sweep, independent of any band
+- auth card shimmer — `cdn-auth-card` surface has no audio var coupling. auth is a separate Vite build target (`src/sites/auth/`); `canvas.ts` and the audio band css vars only run in the main shell, so coupling is not available unless the auth layout is folded into the shell build.
 
 ---
 

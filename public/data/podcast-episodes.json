@@ -1,0 +1,23 @@
+{
+  "rustacean_station": {
+    "title": "Hopp with Costa Alexoglou and Iason Paraskevopoulos",
+    "subtitle": "Allen Wyma talks with Costa Alexoglou and Iason Paraskevopoulos, creators of Hopp, a tool that enables remote pair progr",
+    "display": "Hopp with Costa Alexoglou and Iason Paraskevopoulos — Allen Wyma talks with Costa Alexoglou and Iason Paraskevopoulos, creators of Hopp, a tool "
+  },
+  "syntax_fm": {
+    "title": "1000: Syntax Episode 1,000!",
+    "subtitle": "Wes and Scott celebrate 1000 episodes of Syntax, reflecting on how the podcast started, the team behind it, memorable mo",
+    "display": "1000: Syntax Episode 1,000! — Wes and Scott celebrate 1000 episodes of Syntax, reflecting on how the podcast started, th"
+  },
+  "talk_python": {
+    "title": "#546: Self hosting apps for Python people",
+    "subtitle": "The cloud is convenient until it isn't. You upload your photos, sync your contacts, click through the cookie banners. Th",
+    "display": "#546: Self hosting apps for Python people — The cloud is convenient until it isn't. You upload your photos, sync your contacts, click "
+  },
+  "aws_podcast": {
+    "title": "#754: Accelerating healthcare decisions with agents",
+    "subtitle": "In this episode of the AWS Podcast, you'll hear how Cohere Health®, uses Amazon Bedrock AgentCore to",
+    "display": "#754: Accelerating healthcare decisions with agents — In this episode of the AWS Podcast, you'll hear how Cohere Health®, uses Amazon Bedrock Ag"
+  },
+  "aws_developers_podcast": null
+}

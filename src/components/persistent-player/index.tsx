@@ -54,6 +54,9 @@ function PersistentPlayerBar({
 	const [nowPlaying, setNowPlaying] = useState<string | null>(null);
 	const [rssAudioUrl, setRssAudioUrl] = useState<string | null>(null);
 	const [streamHealth, setStreamHealth] = useState<StreamHealth>("ok");
+	// build-time podcast episode cache — populated once from /data/podcast-episodes.json.
+	// used as fallback when live RSS fetch is CORS-blocked in the browser.
+	const episodeCacheRef = useRef<Record<string, string | null> | null>(null);
 	// debounce + retry timers — refs so cleanup can clear them across renders
 	// without accidentally triggering re-renders or stale captures
 	const errorTimerRef = useRef<number | null>(null);
@@ -79,6 +82,20 @@ function PersistentPlayerBar({
 		onPlayStateChangeRef.current = onPlayStateChange;
 	}, [onPlayStateChange]);
 
+	// Load build-time podcast episode cache once on mount.
+	// Populated by scripts/fetch-feeds.mjs → public/data/podcast-episodes.json.
+	useEffect(() => {
+		fetch("/data/podcast-episodes.json")
+			.then((r) => (r.ok ? r.json() : null))
+			.then((data: Record<string, { display?: string } | null> | null) => {
+				if (!data) return;
+				episodeCacheRef.current = Object.fromEntries(
+					Object.entries(data).map(([k, v]) => [k, v?.display ?? null]),
+				);
+			})
+			.catch(() => {});
+	}, []);
+
 	const fetchMeta = useCallback(() => {
 		if (!streamDef) return;
 		// stations without a now-playing endpoint (uam_radio, concepto_radial)
@@ -96,13 +113,14 @@ function PersistentPlayerBar({
 	}, [streamDef]);
 
 	// podcast title refresh — best-effort RSS fetch for episode title + enclosure URL.
-	// RSS fetch is CORS-blocked from the browser for most feeds; silently ignored.
+	// CORS-blocked feeds fall back to build-time episode cache (podcast-episodes.json).
 	// When the enclosure URL differs from the hardcoded stationUrl, rssAudioUrl
 	// overrides the audio src so the latest episode plays automatically.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: state.stationKey is the reset trigger
 	useEffect(() => {
 		if (streamDef?.type !== "podcast" || !streamDef.rssFeedUrl) return;
 		setRssAudioUrl(null); // reset on station change
+		const capturedKey = state.stationKey;
 		fetch(streamDef.rssFeedUrl)
 			.then((r) => (r.ok ? r.text() : null))
 			.then((xml) => {
@@ -129,7 +147,11 @@ function PersistentPlayerBar({
 					setRssAudioUrl(encUrl);
 				}
 			})
-			.catch(() => {});
+			.catch(() => {
+				// CORS-blocked — use build-time cache as fallback display string
+				const cached = episodeCacheRef.current?.[capturedKey];
+				if (cached) setNowPlaying(cached);
+			});
 	}, [state.stationKey]);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: state.stationKey is the reset trigger; effect body intentionally only resets state
