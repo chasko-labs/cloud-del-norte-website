@@ -1,19 +1,20 @@
 /* ==========================================================================
    Weather card — branded panel that lives below liora in the side-nav drawer
    so the left column reaches the footer on mobile (Bryan v0.0.0069: gap was
-   awkward). Pulls Open-Meteo data for el paso (lat 31.7619, lon -106.4850),
-   caches 10 min in localStorage so subsequent renders are instant.
+   awkward). Pulls Open-Meteo data, caches 10 min in localStorage so subsequent
+   renders are instant.
 
-   Visual: warm cream/amber craft panel in light mode; deep navy with violet
-   trim in dark mode. Stacked F/C temps separated by a stylish hairline rule.
-   Tomorrow row reserves precip% real estate so the row doesn't reflow on
-   dry days.
+   v0.0.0074:
+   - city + temp typography matches the CLOUD DEL NORTE breadcrumb h1 —
+     Cinzel display serif + amber-gold gradient text-fill (light) /
+     violet-lavender gradient (dark) + drop-shadow halo + 12s shimmer
+   - weather glyph (sun/cloud/storm) tinted to brand palette + dances to the
+     bassline via --cdn-bass when body.cdn-stream-playing is set
+   - card itself is a <button> — tap or swipe rotates through 6 cities
+     (el paso, ruidoso, santa fe, south padre, creel, paquimé)
    ========================================================================== */
 
 .cdn-weather {
-	/* horizontal margin gives the card breathing room from the drawer edge.
-	   matches liora-frame max-width (424px) but with side padding on the
-	   row above so the card sits within the same gutter. */
 	margin: 16px 14px 24px;
 	max-width: 424px;
 	padding: 16px 20px 14px;
@@ -25,10 +26,30 @@
 	flex-direction: column;
 	gap: 10px;
 	contain: layout style;
-	/* Cascade fade-in: head (cloud + el paso) at 0s, body at 0.18s, tomorrow
-	   at 0.36s. Component returns null until data is ready (see index.tsx)
-	   so the cascade only fires on the real card, never on a placeholder. */
 	will-change: transform, opacity;
+	/* override default <button> chrome — we paint our own card surface.
+	   Use longhands (no `font: inherit`) so the font-family declared above
+	   stays load-bearing without a shorthand reset. */
+	border: none;
+	background: none;
+	font-size: inherit;
+	font-weight: inherit;
+	color: inherit;
+	text-align: inherit;
+	cursor: pointer;
+	-webkit-appearance: none;
+	appearance: none;
+	user-select: none;
+	-webkit-touch-callout: none;
+}
+
+.cdn-weather:focus-visible {
+	outline: 2px solid var(--cdn-aws-orange, #ff9900);
+	outline-offset: 3px;
+}
+
+.awsui-dark-mode .cdn-weather:focus-visible {
+	outline-color: var(--cdn-violet, #9060f0);
 }
 
 .cdn-weather__head,
@@ -99,42 +120,98 @@
 	color: var(--cdn-lavender, #d7c7ee);
 }
 
-/* Loading state — quieter card while data is in flight */
-.cdn-weather--loading {
-	min-height: 92px;
-	justify-content: center;
-	align-items: center;
-}
-
 /* ── Header row — city + condition glyph ────────────────────────────────── */
 .cdn-weather__head {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: 8px;
+	gap: 10px;
 }
 
-/* "EL PASO" — uses the same Cinzel display serif as the CLOUD DEL NORTE
-   breadcrumb so the card reads as a sister branded element. Cinzel is
-   already loaded by the breadcrumb h1 — no extra @import needed. */
+/* "el paso" — full breadcrumb-h1 treatment. Cinzel display serif, gradient
+   text-fill (amber-gold light / violet-lavender dark), drop-shadow halo,
+   12s shimmer animation. Reads as a sister branded element to CLOUD DEL
+   NORTE rather than a utility label. */
 .cdn-weather__city {
 	font-family: Cinzel, "Cinzel Decorative", "Times New Roman", Georgia, serif;
-	font-size: 16px;
-	font-weight: 600;
-	letter-spacing: 0.08em;
+	font-weight: 700;
+	font-size: 22px;
+	letter-spacing: 0.06em;
 	text-transform: uppercase;
-	opacity: 0.92;
+	background-image: linear-gradient(
+		90deg,
+		#8b5a2b 0%,
+		#ff9900 50%,
+		#8b5a2b 100%
+	);
+	background-size: 200% 100%;
+	background-position: 0% 50%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+	display: inline-block;
+	filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
+		drop-shadow(0 0 6px rgba(255, 153, 0, 0.36));
+	animation: cdn-weather-shimmer 12s ease-in-out infinite;
+	line-height: 1;
 }
 
+.awsui-dark-mode .cdn-weather__city {
+	background-image: linear-gradient(
+		90deg,
+		#9060f0 0%,
+		#d7c7ee 50%,
+		#9060f0 100%
+	);
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.55))
+		drop-shadow(0 0 8px rgba(144, 96, 240, 0.55));
+}
+
+@keyframes cdn-weather-shimmer {
+	0%,
+	100% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-weather__city {
+		animation: none;
+	}
+}
+
+/* Weather glyph — brand-tinted, dances to --cdn-bass when stream is playing.
+   Idle scale = 1, full bass = scale 1.18 + amplified glow. Transitions are
+   short so the glyph "pumps" on the beat instead of slewing slowly. */
 .cdn-weather__glyph {
-	font-size: 22px;
+	font-size: 26px;
 	line-height: 1;
+	transform-origin: center;
+	transform: scale(calc(1 + var(--cdn-bass, 0) * 0.18));
+	filter: drop-shadow(0 0 calc(2px + var(--cdn-bass, 0) * 6px) currentColor)
+		drop-shadow(0 0 calc(6px + var(--cdn-bass, 0) * 12px) currentColor);
+	transition:
+		transform 0.12s ease-out,
+		filter 0.12s ease-out;
 }
 
-.cdn-weather__hint {
-	font-size: 22px;
-	line-height: 1;
-	opacity: 0.55;
+:root:not(.awsui-dark-mode) .cdn-weather__glyph {
+	color: var(--cdn-aws-orange, #ff9900);
+}
+
+.awsui-dark-mode .cdn-weather__glyph {
+	color: var(--cdn-lavender, #d7c7ee);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-weather__glyph {
+		transform: none;
+		transition: none;
+	}
 }
 
 /* ── Now row — stacked temps + metrics ──────────────────────────────────── */
@@ -144,8 +221,9 @@
 	gap: 18px;
 }
 
-/* Temperature stack — Cinzel matches the "CLOUD DEL NORTE" breadcrumb
-   wordmark formatting. Reads as a sister element to the page header. */
+/* Temperature stack — Cinzel matches the breadcrumb wordmark. Slightly
+   smaller than the city label per Bryan v0.0.0073 ask — city wears the
+   crown, temp supports. */
 .cdn-weather__temp {
 	display: flex;
 	flex-direction: column;
@@ -157,8 +235,30 @@
 }
 
 .cdn-weather__temp-f {
-	font-size: 28px;
+	font-size: 24px;
 	letter-spacing: 0.02em;
+	background-image: linear-gradient(
+		90deg,
+		#8b5a2b 0%,
+		#ff9900 50%,
+		#8b5a2b 100%
+	);
+	background-size: 200% 100%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+	filter: drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22));
+}
+
+.awsui-dark-mode .cdn-weather__temp-f {
+	background-image: linear-gradient(
+		90deg,
+		#9060f0 0%,
+		#d7c7ee 50%,
+		#9060f0 100%
+	);
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
 }
 
 /* Stylish hairline rule between F + C readouts. light: warm amber gradient;
@@ -192,8 +292,8 @@
 }
 
 .cdn-weather__temp-c {
-	font-size: 18px;
-	opacity: 0.72;
+	font-size: 17px;
+	opacity: 0.78;
 }
 
 .cdn-weather__deg {
@@ -245,7 +345,7 @@
 	opacity: 0.7;
 }
 
-/* ── Tomorrow row — labeled compact summary ─────────────────────────────── */
+/* ── Tomorrow row ───────────────────────────────────────────────────────── */
 .cdn-weather__tomorrow {
 	display: grid;
 	grid-template-columns: auto 1fr auto;
@@ -296,8 +396,6 @@
 	opacity: 0.78;
 }
 
-/* Reserve real estate for precip% — empty span keeps the right column at a
-   fixed width so the row doesn't reflow on dry days. */
 .cdn-weather__tomorrow-precip {
 	min-width: 36px;
 	text-align: right;
@@ -311,4 +409,37 @@
 
 .awsui-dark-mode .cdn-weather__tomorrow-precip {
 	color: var(--cdn-violet, #9060f0);
+}
+
+/* ── Carousel dots — show position + advertise that the card is rotatable */
+.cdn-weather__dots {
+	display: flex;
+	justify-content: center;
+	gap: 5px;
+	padding-top: 4px;
+}
+
+.cdn-weather__dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	transition:
+		background-color 0.25s ease,
+		transform 0.25s ease;
+}
+
+:root:not(.awsui-dark-mode) .cdn-weather__dot {
+	background: rgba(139, 90, 43, 0.32);
+}
+:root:not(.awsui-dark-mode) .cdn-weather__dot--active {
+	background: var(--cdn-aws-orange, #ff9900);
+	transform: scale(1.35);
+}
+
+.awsui-dark-mode .cdn-weather__dot {
+	background: rgba(144, 96, 240, 0.32);
+}
+.awsui-dark-mode .cdn-weather__dot--active {
+	background: var(--cdn-violet, #9060f0);
+	transform: scale(1.35);
 }
