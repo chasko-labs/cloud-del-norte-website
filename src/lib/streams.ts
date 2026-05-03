@@ -628,14 +628,15 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	// ── Podcasts ────────────────────────────────────────────────────────────
-	// type:"podcast" entries resolve audio URL from rssFeedUrl at play time.
-	// parseMeta receives a DOMDocument (metaFormat:"rss") — extracts latest
-	// episode title from the first <item><title>.
+	// url = direct episode mp3 (playable immediately, no RSS fetch needed).
+	// rssFeedUrl = RSS feed for background title refresh (browser CORS may block;
+	// player falls back silently to the hardcoded url when fetch fails).
+	// Update url periodically as episodes rotate.
 	{
 		key: "rustacean_station",
 		type: "podcast",
-		url: "https://rustacean-station.org/feed.xml", // overridden at play time from rssFeedUrl
-		rssFeedUrl: "https://rustacean-station.org/feed.xml",
+		url: "https://dts.podtrac.com/redirect.mp3/audio.rustacean-station.org/file/rustacean-station/2026-02-27-hopp.mp3",
+		rssFeedUrl: "https://rustacean-station.org/podcast.rss",
 		label: "rustacean station",
 		location: { city: "distributed", region: "open source", country: "global" },
 		colors: {
@@ -656,8 +657,8 @@ export const STREAMS: StreamDef[] = [
 	{
 		key: "syntax_fm",
 		type: "podcast",
-		url: "https://feed.syntax.fm/rss",
-		rssFeedUrl: "https://feed.syntax.fm/rss",
+		url: "https://traffic.megaphone.fm/FSI9958347805.mp3",
+		rssFeedUrl: "https://feeds.megaphone.fm/FSI1483080183",
 		label: "syntax.fm",
 		location: { city: "distributed", region: "web dev", country: "global" },
 		colors: {
@@ -678,7 +679,7 @@ export const STREAMS: StreamDef[] = [
 	{
 		key: "talk_python",
 		type: "podcast",
-		url: "https://talkpython.fm/episodes/rss",
+		url: "https://talkpython.fm/episodes/download/546/self-hosting-apps-for-python-people.mp3",
 		rssFeedUrl: "https://talkpython.fm/episodes/rss",
 		label: "talk python to me",
 		location: { city: "Portland", region: "Oregon", country: "USA" },
@@ -698,20 +699,18 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	{
-		key: "aws_developers_podcast",
+		key: "screaming_in_the_cloud",
 		type: "podcast",
-		// podtrac redirect — may return 403; player fails gracefully
-		url: "https://dts.podtrac.com/redirect.mp3/aws-podcast.s3.amazonaws.com/awsdevelopers/AWS_Developers_Podcast.xml",
-		rssFeedUrl:
-			"https://dts.podtrac.com/redirect.mp3/aws-podcast.s3.amazonaws.com/awsdevelopers/AWS_Developers_Podcast.xml",
-		label: "aws developers podcast",
-		location: { city: "Seattle", region: "Washington", country: "USA" },
+		url: "https://dts.podtrac.com/redirect.mp3/media.transistor.fm/41391d7a/34028eaa.mp3",
+		rssFeedUrl: "https://feeds.transistor.fm/screaming-in-the-cloud",
+		label: "screaming in the cloud",
+		location: { city: "San Francisco", region: "California", country: "USA" },
 		colors: {
-			primary: "#FF9900",
-			secondary: "#232F3E",
-			accent: "#faf7f0",
-			primaryLight: "#ffb84d",
-			primaryDark: "#cc7700",
+			primary: "#00A8E1",
+			secondary: "#FF6B35",
+			accent: "#1a1a1a",
+			primaryLight: "#1ab8f0",
+			primaryDark: "#0080b0",
 		},
 		parseMeta(data) {
 			const doc = data as Document;
@@ -724,7 +723,7 @@ export const STREAMS: StreamDef[] = [
 	{
 		key: "aws_bites",
 		type: "podcast",
-		url: "https://anchor.fm/s/6a3312a0/podcast/rss",
+		url: "https://d3ctxlq1ktw2nl.cloudfront.net/staging/2026-2-5/419350002-44100-2-d983932023608.mp3",
 		rssFeedUrl: "https://anchor.fm/s/6a3312a0/podcast/rss",
 		label: "aws bites",
 		location: { city: "Cork", region: "Munster", country: "Ireland" },
@@ -746,7 +745,7 @@ export const STREAMS: StreamDef[] = [
 	{
 		key: "logicast",
 		type: "podcast",
-		url: "https://feed.podbean.com/logicast/feed.xml",
+		url: "https://mcdn.podbean.com/mf/web/46c8s4x5etxep5ns/s5ep16.mp3",
 		rssFeedUrl: "https://feed.podbean.com/logicast/feed.xml",
 		label: "logicast aws news",
 		location: { city: "London", region: "England", country: "UK" },
@@ -768,7 +767,7 @@ export const STREAMS: StreamDef[] = [
 	{
 		key: "rust_in_production",
 		type: "podcast",
-		url: "https://letscast.fm/podcasts/rust-in-production-82281512/feed",
+		url: "https://letscast.fm/media/public/938e6879-4aff-480d-8772-d0e0967725c5.mp3",
 		rssFeedUrl: "https://letscast.fm/podcasts/rust-in-production-82281512/feed",
 		label: "rust in production",
 		location: { city: "Düsseldorf", region: "NRW", country: "Germany" },
