@@ -426,7 +426,10 @@
 		"inProgress": "En Progreso",
 		"inReview": "En Revisión",
 		"done": "Hecho",
-		"emptyColumn": "Sin tareas"
+		"emptyColumn": "Aún sin tareas",
+		"subtitle": "Lo que el grupo está construyendo, en cinco etapas",
+		"legendLabel": "Etapas",
+		"totalLabel": "tareas"
 	},
 	"maintenanceCalendar": {
 		"breadcrumb": "Calendario de Mantenimiento",

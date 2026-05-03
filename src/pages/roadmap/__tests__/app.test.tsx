@@ -89,6 +89,9 @@ vi.mock("../../../hooks/useTranslation", () => ({
 				"roadmap.inReview": "In Review",
 				"roadmap.done": "Done",
 				"roadmap.emptyColumn": "No items",
+				"roadmap.subtitle": "What the user group is building, in five stages",
+				"roadmap.legendLabel": "Stages",
+				"roadmap.totalLabel": "items",
 			};
 			return translations[key] ?? key;
 		},
@@ -132,12 +135,16 @@ describe("Roadmap page", () => {
 
 	describe("board columns", () => {
 		it("renders all 5 column headers", () => {
+			// Stage labels appear twice each: once in the legend nav, once
+			// in the column header. getAllByText returns >= 2 per stage.
 			render(<App />);
-			expect(screen.getByText("Idea")).toBeTruthy();
-			expect(screen.getByText("To Do")).toBeTruthy();
-			expect(screen.getByText("In Progress")).toBeTruthy();
-			expect(screen.getByText("In Review")).toBeTruthy();
-			expect(screen.getByText("Done")).toBeTruthy();
+			expect(screen.getAllByText("Idea").length).toBeGreaterThanOrEqual(1);
+			expect(screen.getAllByText("To Do").length).toBeGreaterThanOrEqual(1);
+			expect(screen.getAllByText("In Progress").length).toBeGreaterThanOrEqual(
+				1,
+			);
+			expect(screen.getAllByText("In Review").length).toBeGreaterThanOrEqual(1);
+			expect(screen.getAllByText("Done").length).toBeGreaterThanOrEqual(1);
 		});
 
 		it("renders cards in Idea column", () => {
