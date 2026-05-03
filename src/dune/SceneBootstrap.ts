@@ -135,7 +135,7 @@ export function mountDuneSceneOnCanvas(
 	const audio = new AudioAdapter({ reducedMotion });
 	const atmosphere = new Atmosphere(scene);
 	const skybox = new Skybox(scene);
-	const ground = new DuneGround(scene);
+	const ground = new DuneGround(scene, { reducedMotion });
 	// Camera-locked horizon haze billboard. Sells the White Sands haze that
 	// scene fog alone can't deliver against a bounded mesh — alpha-blended quad
 	// parented to the camera so it always reads as horizon haze regardless of

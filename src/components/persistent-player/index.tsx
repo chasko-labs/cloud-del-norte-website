@@ -299,6 +299,66 @@ function PersistentPlayerBar({
 			} as React.CSSProperties)
 		: undefined;
 
+	// v0.0.0084 — promote the station palette vars to :root so OUTSIDE the
+	// .cdn-pp subtree (Volunteer pill, hamburger / info Cloudscape toggles in
+	// the AppLayout chrome) the audio-reactive ring rules in
+	// cdn-glass-streaks.css can resolve --station-primary-rgb instead of
+	// falling back to the static aws-orange / lavender. Without this the
+	// v0.0.0066 audio-reactive trigger rings always wore the same fallback
+	// color regardless of which station was playing — visually broken
+	useEffect(() => {
+		const root = document.documentElement;
+		if (!streamDef) {
+			root.style.removeProperty("--station-primary");
+			root.style.removeProperty("--station-primary-rgb");
+			root.style.removeProperty("--station-secondary");
+			root.style.removeProperty("--station-secondary-rgb");
+			root.style.removeProperty("--station-accent");
+			root.style.removeProperty("--station-primary-light");
+			root.style.removeProperty("--station-primary-light-rgb");
+			root.style.removeProperty("--station-primary-dark");
+			root.style.removeProperty("--station-primary-dark-rgb");
+			return;
+		}
+		root.style.setProperty("--station-primary", streamDef.colors.primary);
+		root.style.setProperty(
+			"--station-primary-rgb",
+			hexToRgbTuple(streamDef.colors.primary),
+		);
+		root.style.setProperty("--station-secondary", streamDef.colors.secondary);
+		root.style.setProperty(
+			"--station-secondary-rgb",
+			hexToRgbTuple(streamDef.colors.secondary),
+		);
+		root.style.setProperty("--station-accent", streamDef.colors.accent);
+		const primaryLight =
+			streamDef.colors.primaryLight ?? streamDef.colors.primary;
+		const primaryDark =
+			streamDef.colors.primaryDark ?? streamDef.colors.primary;
+		root.style.setProperty("--station-primary-light", primaryLight);
+		root.style.setProperty(
+			"--station-primary-light-rgb",
+			hexToRgbTuple(primaryLight),
+		);
+		root.style.setProperty("--station-primary-dark", primaryDark);
+		root.style.setProperty(
+			"--station-primary-dark-rgb",
+			hexToRgbTuple(primaryDark),
+		);
+		return () => {
+			// only clear on unmount — station change replaces in place above
+			root.style.removeProperty("--station-primary");
+			root.style.removeProperty("--station-primary-rgb");
+			root.style.removeProperty("--station-secondary");
+			root.style.removeProperty("--station-secondary-rgb");
+			root.style.removeProperty("--station-accent");
+			root.style.removeProperty("--station-primary-light");
+			root.style.removeProperty("--station-primary-light-rgb");
+			root.style.removeProperty("--station-primary-dark");
+			root.style.removeProperty("--station-primary-dark-rgb");
+		};
+	}, [streamDef]);
+
 	// surface state derivations — keeps JSX readable and centralizes the
 	// "what gets shown in the eyebrow / track row" decision tree:
 	//   1. failed   → red error message + retry button (auto-retry exhausted)

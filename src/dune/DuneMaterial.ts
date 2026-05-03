@@ -41,9 +41,19 @@ import {
 	DEFAULT_FIELD_COMPOSITION,
 	GYPSUM_WASH_STRENGTH,
 	GYPSUM_WASH_THRESHOLD,
+	MIGRATION_BASS_SWAY,
+	MIGRATION_PLAYING_BOOST,
 	MIGRATION_SPEED_MULTIPLIER,
 	RIPPLE_AMPLITUDE,
 	RIPPLE_FREQUENCY,
+	SPARKLE_COLOR_AMBER,
+	SPARKLE_COLOR_AWS_ORANGE,
+	SPARKLE_COLOR_LAVENDER,
+	SPARKLE_COLOR_VIOLET,
+	SPARKLE_SPEED_PLAYING,
+	SPARKLE_SPEED_REDUCED,
+	SPARKLE_SPEED_REDUCED_PLAYING,
+	SPARKLE_SPEED_SILENT,
 } from "./white-sands-features.js";
 
 const SHADER_NAME = "duneDisplaceV2";
@@ -88,6 +98,14 @@ uniform float barchanAmp;
 uniform float transverseAmp;
 uniform float parabolicAmp;
 uniform float migrationSpeed;
+// v0.0.0082: stream-playing gates a 3x drift boost + bass-coupled sway so
+// dunes roll harder in sync with the bassline. streamPlaying is 0.0 when
+// silent, 1.0 when body.cdn-stream-playing is set. migrationBoost is the
+// multiplier applied to drift while playing (typically MIGRATION_PLAYING_BOOST).
+// bassSway scales the bass-coupled additive drift.
+uniform float streamPlaying;
+uniform float migrationBoost;
+uniform float bassSway;
 varying vec2 vUV;
 varying float vHeight;
 varying vec3 vNormal;
@@ -173,9 +191,15 @@ float duneHeight(vec2 p, float drift) {
 void main(void) {
   vec2 p = position.xz;
   // Migration: drift advances time. migrationSpeed uniform pushes ~3x faster
-  // than the original 0.012 baseline so the pattern flow reads on the 90s
-  // timeOfDay loop. midLevel still gates audio reactivity bonus.
-  float drift = time * (0.012 * migrationSpeed + midLevel * 0.012);
+  // than the original 0.012 baseline. v0.0.0082: when streamPlaying, multiply
+  // by migrationBoost (default 3x → effective 9x baseline) AND add bass-
+  // coupled sway so dunes lurch with each bass hit. Eye reads as dunes
+  // rolling aggressively in sync with the bassline rather than throbbing
+  // in place. midLevel kept as a small reactivity term for non-bass content.
+  float baseDrift = 0.012 * migrationSpeed;
+  float playingBoost = mix(1.0, migrationBoost, streamPlaying);
+  float bassPush = bassLevel * bassSway * streamPlaying;
+  float drift = time * (baseDrift * playingBoost + midLevel * 0.012 + bassPush);
   float warpA = vnoise(p * 0.07 + vec2(drift * 0.5, 0.0));
   float warpB = vnoise(p * 0.07 + vec2(0.0, drift * 0.5));
   vec2 pWarp = p + (vec2(warpA, warpB) - 0.5) * 0.4;
@@ -241,12 +265,24 @@ varying float vRegionGypsum;
 uniform float time;
 uniform vec3 sunDir;
 uniform float fluxLevel;
+uniform float bassLevel;
 uniform float midLevel;
+uniform float trebleLevel;
 uniform float logoPulse; // [-1, 1], slow 24s sinusoid
 uniform float rippleFreq;
 uniform float rippleAmp;
 uniform float gypsumWash;
 uniform float gypsumThresh;
+// v0.0.0082 — sparkle speed scalar + brand palette + streamPlaying gate.
+// sparkleSpeed quarters the glint refresh rate when silent (Bryan: "slow
+// waaayyy down, distracting") and boosts past 1.0 when music plays. Palette
+// is mixed by mid/treble for the "go nuts with theme colors" mode.
+uniform float sparkleSpeed;
+uniform float streamPlaying;
+uniform vec3 sparkleColAmber;
+uniform vec3 sparkleColAwsOrange;
+uniform vec3 sparkleColViolet;
+uniform vec3 sparkleColLavender;
 // Palette uniforms — pre-mixed JS-side from the 4-quadrant phase weights
 // (see dune-colors.ts). Removes ~20 vec3 muls per fragment.
 uniform vec3 shadowCol;
@@ -321,29 +357,57 @@ void main(void) {
   // Modulated by noise so they're not perfectly periodic. Tint lit-side only.
   // Visible on flat-ish ridge tops where light grazes; gated by ridgeFlatness
   // so the troughs don't get rippled.
+  //
+  // v0.0.0082: previously static. Now phase-drifts at time * sparkleSpeed *
+  // 0.6 — so silent state crawls (0.25 * 0.6 = 0.15 rad/s, eye barely
+  // notices) and playing state moves visibly (1.5 * 0.6 = 0.9 rad/s).
   float rippleNoise = fragNoise(vUV * 60.0);
-  float ripple = sin(vUV.x * rippleFreq + rippleNoise * 6.28);
+  float rippleTime = time * sparkleSpeed * 0.6;
+  float ripple = sin(vUV.x * rippleFreq + rippleNoise * 6.28 + rippleTime);
   ripple = ripple * 0.5 + 0.5; // [0, 1]
   ripple = smoothstep(0.4, 0.9, ripple);
-  dune += vec3(rippleAmp) * ripple * lambert * ridgeFlatness;
+  // Bass-coupled amplitude bump when playing — ripples brighten/dim with each
+  // bass hit, eye reads as the surface "breathing" with the bassline.
+  float rippleAmpDyn = rippleAmp * (1.0 + bassLevel * streamPlaying * 1.2);
+  dune += vec3(rippleAmpDyn) * ripple * lambert * ridgeFlatness;
 
   // Sparkle — sparse glints on sunlit ridge tops. Threshold 0.992 (was 0.985)
-  // → ~50% fewer glints. Tint mixes 0.5 toward lavender (was 0.3) so the
-  // brand violet axis reads in the highlights. Brightness modulated by
-  // logoPulse so the field "twinkles in chorus" with the bulb.
+  // → ~50% fewer glints. Brightness modulated by logoPulse so the field
+  // "twinkles in chorus" with the bulb.
+  //
+  // v0.0.0082 — Bryan: silent state was distracting; playing state should
+  // "go nuts with theme colors & in sync to our audio APIs":
+  //   - Quantisation rate scaled by sparkleSpeed: silent 2*0.25=0.5Hz (glint
+  //     recompose every 2s), playing 2*1.5=3Hz (lively).
+  //   - Brightness scaled by (1 + bass*streamPlaying*1.4) — sparkles amp
+  //     up to 2.4x on a heavy bass hit, dimming back to base on rest.
+  //   - Tint cycles brand palette amber → aws-orange → violet → lavender
+  //     driven by mid + treble band amplitudes (mid picks the warm vs cool
+  //     pair; treble picks within the pair). Idle (no audio): defaults to
+  //     the original cream→lavender mix so silent state still reads brand.
   //
   // Sampling: 64×64 blue-noise lookup (luminance only). Tile via fract() at
-  // 12.5x density so each tile covers ~1/12 of the dune ground UV. floor()
-  // on time*2 ticks the lookup at 2Hz so glints flicker rather than crawl,
-  // implemented by adding a quantised time offset to the UV.
-  vec2 sparkleUV = warpedUV * 12.5 + vec2(floor(time * 2.0) * 0.137, 0.0);
+  // 12.5x density so each tile covers ~1/12 of the dune ground UV.
+  vec2 sparkleUV = warpedUV * 12.5
+    + vec2(floor(time * 2.0 * sparkleSpeed) * 0.137, 0.0);
   float sparkleHash = texture2D(blueNoise, fract(sparkleUV)).r;
   float sparkle = step(0.992, sparkleHash) * pow8(ridgeFlatness) * lambert;
-  vec3 sparkleTint = mix(vec3(1.0, 0.96, 0.86), vec3(0.84, 0.78, 0.96), 0.5);
+
+  // Sparkle tint — silent default is cream→lavender 50% mix (matches
+  // pre-v0.0.0082 behaviour). Playing path: 4-color palette mix, mid picks
+  // warm-vs-cool axis, treble picks within the axis.
+  vec3 sparkleSilent = mix(vec3(1.0, 0.96, 0.86), vec3(0.84, 0.78, 0.96), 0.5);
+  vec3 warmMix = mix(sparkleColAmber, sparkleColAwsOrange, clamp(trebleLevel * 1.5, 0.0, 1.0));
+  vec3 coolMix = mix(sparkleColViolet, sparkleColLavender, clamp(trebleLevel * 1.5, 0.0, 1.0));
+  vec3 sparklePlaying = mix(warmMix, coolMix, clamp(midLevel * 1.5, 0.0, 1.0));
+  vec3 sparkleTint = mix(sparkleSilent, sparklePlaying, streamPlaying);
+
   // logoPulse [-1, 1] → [0.7, 1.3] envelope; sparkles brighten/dim by ±30%
   // over a 24s cycle. Subtle, but matches the bulb-keyframe rhythm.
   float pulseEnv = 1.0 + logoPulse * 0.3;
-  lighting += sparkleTint * sparkle * 0.35 * pulseEnv;
+  // Bass amplification — only fires when playing. Caps at +140%.
+  float bassEnv = 1.0 + bassLevel * streamPlaying * 1.4;
+  lighting += sparkleTint * sparkle * 0.35 * pulseEnv * bassEnv;
 
   // Paper grain — tiny noise on screen-space coords.
   float grain = (fract(sin(dot(gl_FragCoord.xy, vec2(12.9898, 78.233))) * 43758.5453) - 0.5) * 0.012;
@@ -402,9 +466,16 @@ export interface DuneMaterialUpdateContext {
 	audio: AudioLevels;
 }
 
+export interface DuneMaterialOptions {
+	/** When true, sparkle path uses SPARKLE_SPEED_REDUCED (silent) /
+	 *  SPARKLE_SPEED_REDUCED_PLAYING (playing). prefers-reduced-motion gate. */
+	reducedMotion?: boolean;
+}
+
 export class DuneMaterial {
 	readonly material: ShaderMaterial;
 	private readonly blueNoise: RawTexture;
+	private readonly reducedMotion: boolean;
 
 	// Scratch tuples reused per frame to avoid GC pressure on a hot path.
 	private readonly shadowScratch: [number, number, number] = [0, 0, 0];
@@ -417,8 +488,16 @@ export class DuneMaterial {
 	private readonly sunTintColor = new Color3(0, 0, 0);
 	private readonly horizonColor = new Color3(0, 0, 0);
 	private readonly rimColor = new Color3(0, 0, 0);
+	// v0.0.0082 — sparkle palette Color3 instances (constructed once).
+	// Declarations only; assigned in the constructor below where the imported
+	// SPARKLE_COLOR_* tuples are unpacked into Color3.
+	private sparkleAmberColor!: Color3;
+	private sparkleAwsColor!: Color3;
+	private sparkleVioletColor!: Color3;
+	private sparkleLavenderColor!: Color3;
 
-	constructor(scene: Scene) {
+	constructor(scene: Scene, options: DuneMaterialOptions = {}) {
+		this.reducedMotion = options.reducedMotion === true;
 		ensureRegistered();
 		this.material = new ShaderMaterial(
 			"dune-mat",
@@ -434,6 +513,7 @@ export class DuneMaterial {
 					"sunDir",
 					"bassLevel",
 					"midLevel",
+					"trebleLevel",
 					"fluxLevel",
 					"logoPulse",
 					"shadowCol",
@@ -451,6 +531,15 @@ export class DuneMaterial {
 					"rippleAmp",
 					"gypsumWash",
 					"gypsumThresh",
+					// v0.0.0082 — sparkle / migration audio reactivity
+					"sparkleSpeed",
+					"streamPlaying",
+					"migrationBoost",
+					"bassSway",
+					"sparkleColAmber",
+					"sparkleColAwsOrange",
+					"sparkleColViolet",
+					"sparkleColLavender",
 				],
 				samplers: ["blueNoise"],
 			},
@@ -463,6 +552,7 @@ export class DuneMaterial {
 		this.material.setFloat("time", 0);
 		this.material.setFloat("bassLevel", 0);
 		this.material.setFloat("midLevel", 0);
+		this.material.setFloat("trebleLevel", 0);
 		this.material.setFloat("fluxLevel", 0);
 		this.material.setFloat("logoPulse", 0);
 		// White Sands constants — set once, never change per-frame. Pulled from
@@ -483,6 +573,39 @@ export class DuneMaterial {
 		this.material.setFloat("rippleAmp", RIPPLE_AMPLITUDE);
 		this.material.setFloat("gypsumWash", GYPSUM_WASH_STRENGTH);
 		this.material.setFloat("gypsumThresh", GYPSUM_WASH_THRESHOLD);
+		// v0.0.0082 — silent state defaults. sparkleSpeed flips per frame in
+		// update() based on streamPlaying + reducedMotion. migrationBoost +
+		// bassSway are constants pulled from white-sands-features.ts.
+		this.material.setFloat("sparkleSpeed", SPARKLE_SPEED_SILENT);
+		this.material.setFloat("streamPlaying", 0);
+		this.material.setFloat("migrationBoost", MIGRATION_PLAYING_BOOST);
+		this.material.setFloat("bassSway", MIGRATION_BASS_SWAY);
+		// Sparkle palette — Color3 uniforms set once. The shader picks per-
+		// fragment via mid + treble band amplitudes (see FRAGMENT_SOURCE).
+		this.sparkleAmberColor = new Color3(
+			SPARKLE_COLOR_AMBER[0],
+			SPARKLE_COLOR_AMBER[1],
+			SPARKLE_COLOR_AMBER[2],
+		);
+		this.sparkleAwsColor = new Color3(
+			SPARKLE_COLOR_AWS_ORANGE[0],
+			SPARKLE_COLOR_AWS_ORANGE[1],
+			SPARKLE_COLOR_AWS_ORANGE[2],
+		);
+		this.sparkleVioletColor = new Color3(
+			SPARKLE_COLOR_VIOLET[0],
+			SPARKLE_COLOR_VIOLET[1],
+			SPARKLE_COLOR_VIOLET[2],
+		);
+		this.sparkleLavenderColor = new Color3(
+			SPARKLE_COLOR_LAVENDER[0],
+			SPARKLE_COLOR_LAVENDER[1],
+			SPARKLE_COLOR_LAVENDER[2],
+		);
+		this.material.setColor3("sparkleColAmber", this.sparkleAmberColor);
+		this.material.setColor3("sparkleColAwsOrange", this.sparkleAwsColor);
+		this.material.setColor3("sparkleColViolet", this.sparkleVioletColor);
+		this.material.setColor3("sparkleColLavender", this.sparkleLavenderColor);
 		this.applyPhase({ midday: 1, lateAft: 0, dusk: 0, morning: 0 });
 	}
 
@@ -496,8 +619,30 @@ export class DuneMaterial {
 		this.material.setVector3("sunDir", animation.sunDir);
 		this.material.setFloat("bassLevel", audio.bass);
 		this.material.setFloat("midLevel", audio.mid);
+		this.material.setFloat("trebleLevel", audio.treble);
 		this.material.setFloat("fluxLevel", audio.flux);
 		this.material.setFloat("logoPulse", animation.logoPulse);
+		// v0.0.0082 — sparkle / migration audio reactivity. Speed flips per
+		// streamPlaying state. reducedMotion path: SILENT → 0 (drops sparkle
+		// entirely via the step() threshold becoming unreachable when
+		// sparkleSpeed=0 the floor() of time*0 stays constant so the sparkle
+		// pattern freezes; the pulse term is the only motion left and that
+		// stays gated by logoPulse which AnimationController already freezes
+		// in reduced motion). PLAYING → SPARKLE_SPEED_REDUCED_PLAYING for a
+		// damped pulse without strobe risk.
+		const playing = audio.streamPlaying ? 1 : 0;
+		let sparkleSpeed: number;
+		if (this.reducedMotion) {
+			sparkleSpeed = audio.streamPlaying
+				? SPARKLE_SPEED_REDUCED_PLAYING
+				: SPARKLE_SPEED_REDUCED;
+		} else {
+			sparkleSpeed = audio.streamPlaying
+				? SPARKLE_SPEED_PLAYING
+				: SPARKLE_SPEED_SILENT;
+		}
+		this.material.setFloat("sparkleSpeed", sparkleSpeed);
+		this.material.setFloat("streamPlaying", playing);
 		this.applyPhase(animation.phaseWeights);
 	}
 

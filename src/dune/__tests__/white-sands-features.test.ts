@@ -10,10 +10,20 @@ import {
 	HAZE_BAND_MID_OPACITY,
 	HAZE_BAND_TOP_OPACITY,
 	isValidComposition,
+	MIGRATION_BASS_SWAY,
+	MIGRATION_PLAYING_BOOST,
 	MIGRATION_SPEED_MULTIPLIER,
 	RIPPLE_AMPLITUDE,
 	RIPPLE_FREQUENCY,
 	regionWeights,
+	SPARKLE_COLOR_AMBER,
+	SPARKLE_COLOR_AWS_ORANGE,
+	SPARKLE_COLOR_LAVENDER,
+	SPARKLE_COLOR_VIOLET,
+	SPARKLE_SPEED_PLAYING,
+	SPARKLE_SPEED_REDUCED,
+	SPARKLE_SPEED_REDUCED_PLAYING,
+	SPARKLE_SPEED_SILENT,
 	WIND_DIR,
 } from "../white-sands-features.js";
 
@@ -63,6 +73,108 @@ describe("white-sands-features constants", () => {
 		expect(HAZE_BAND_BOTTOM_OPACITY).toBeLessThan(HAZE_BAND_MID_OPACITY);
 		expect(HAZE_BAND_TOP_OPACITY).toBeGreaterThanOrEqual(0);
 		expect(HAZE_BAND_MID_OPACITY).toBeLessThanOrEqual(1);
+	});
+});
+
+describe("v0.0.0082 sparkle speed tunables", () => {
+	it("silent sparkle speed is roughly quartered (Bryan: slow waaayyy down)", () => {
+		// Spec: ~0.25 of baseline 1.0. Accept 0.15-0.35 for mild future tweaks.
+		expect(SPARKLE_SPEED_SILENT).toBeGreaterThanOrEqual(0.15);
+		expect(SPARKLE_SPEED_SILENT).toBeLessThanOrEqual(0.35);
+	});
+
+	it("playing sparkle speed restores or boosts past baseline (go nuts)", () => {
+		// Bryan: "go nuts" when music plays. Boost ≥ 1.0, cap ≤ 2.5 so it
+		// stays inside epileptic-safe strobe rates at typical pulse env.
+		expect(SPARKLE_SPEED_PLAYING).toBeGreaterThanOrEqual(1.0);
+		expect(SPARKLE_SPEED_PLAYING).toBeLessThanOrEqual(2.5);
+	});
+
+	it("playing sparkle speed exceeds silent by ≥4x (audio-reactivity contract)", () => {
+		// Quartered silent → 4x ratio is the visual contract. Accept ≥ 4
+		// (currently 1.5/0.25 = 6x).
+		expect(SPARKLE_SPEED_PLAYING / SPARKLE_SPEED_SILENT).toBeGreaterThanOrEqual(
+			4,
+		);
+	});
+
+	it("reduced-motion silent sparkle speed is 0 (drops sparkle entirely)", () => {
+		// prefers-reduced-motion silent path: no sparkle motion. The shader's
+		// floor(time*0) = 0 freezes the sparkle pattern.
+		expect(SPARKLE_SPEED_REDUCED).toBe(0);
+	});
+
+	it("reduced-motion playing sparkle speed is dampened but non-zero", () => {
+		// Subtle pulse allowed when streamPlaying even under reduced-motion;
+		// must stay below the silent-non-reduced rate so we never strobe.
+		expect(SPARKLE_SPEED_REDUCED_PLAYING).toBeGreaterThan(0);
+		expect(SPARKLE_SPEED_REDUCED_PLAYING).toBeLessThan(
+			SPARKLE_SPEED_SILENT * 2,
+		);
+	});
+});
+
+describe("v0.0.0082 migration audio-reactivity tunables", () => {
+	it("MIGRATION_PLAYING_BOOST is ~3x (dunes roll more aggressively)", () => {
+		// Bryan: dunes should roll "more aggressively" in sync with the
+		// bassline. Spec value 3x; accept 2-5x.
+		expect(MIGRATION_PLAYING_BOOST).toBeGreaterThanOrEqual(2);
+		expect(MIGRATION_PLAYING_BOOST).toBeLessThanOrEqual(5);
+	});
+
+	it("MIGRATION_BASS_SWAY is small but non-zero (per-hit lurch)", () => {
+		// Additive drift contribution per unit bass. Above ~0.1 the dunes
+		// would jolt visibly between frames; 0 would silence the bass coupling.
+		expect(MIGRATION_BASS_SWAY).toBeGreaterThan(0);
+		expect(MIGRATION_BASS_SWAY).toBeLessThan(0.1);
+	});
+
+	it("effective playing migration outpaces silent baseline by ~3x or more", () => {
+		// silent: MIGRATION_SPEED_MULTIPLIER  | playing: MIGRATION_SPEED_MULTIPLIER * MIGRATION_PLAYING_BOOST
+		const silent = MIGRATION_SPEED_MULTIPLIER;
+		const playing = MIGRATION_SPEED_MULTIPLIER * MIGRATION_PLAYING_BOOST;
+		expect(playing / silent).toBeGreaterThanOrEqual(3);
+	});
+});
+
+describe("v0.0.0082 sparkle palette (brand colors)", () => {
+	const palette = [
+		["amber", SPARKLE_COLOR_AMBER],
+		["aws-orange", SPARKLE_COLOR_AWS_ORANGE],
+		["violet", SPARKLE_COLOR_VIOLET],
+		["lavender", SPARKLE_COLOR_LAVENDER],
+	] as const;
+
+	for (const [name, rgb] of palette) {
+		it(`${name} is a valid 0..1 RGB triple`, () => {
+			expect(rgb).toHaveLength(3);
+			for (const channel of rgb) {
+				expect(channel).toBeGreaterThanOrEqual(0);
+				expect(channel).toBeLessThanOrEqual(1);
+				expect(Number.isFinite(channel)).toBe(true);
+			}
+		});
+	}
+
+	it("amber and aws-orange are warm (R > B)", () => {
+		expect(SPARKLE_COLOR_AMBER[0]).toBeGreaterThan(SPARKLE_COLOR_AMBER[2]);
+		expect(SPARKLE_COLOR_AWS_ORANGE[0]).toBeGreaterThan(
+			SPARKLE_COLOR_AWS_ORANGE[2],
+		);
+	});
+
+	it("violet and lavender are cool (B > R)", () => {
+		expect(SPARKLE_COLOR_VIOLET[2]).toBeGreaterThan(SPARKLE_COLOR_VIOLET[0]);
+		expect(SPARKLE_COLOR_LAVENDER[2]).toBeGreaterThan(
+			SPARKLE_COLOR_LAVENDER[0],
+		);
+	});
+
+	it("aws-orange matches AWS brand #ff9900 within rounding", () => {
+		// 1.0, 0.6, 0.0 — verifies palette entry stays in sync with AWS brand.
+		expect(SPARKLE_COLOR_AWS_ORANGE[0]).toBeCloseTo(1.0, 2);
+		expect(SPARKLE_COLOR_AWS_ORANGE[1]).toBeCloseTo(0.6, 2);
+		expect(SPARKLE_COLOR_AWS_ORANGE[2]).toBeCloseTo(0.0, 2);
 	});
 });
 
