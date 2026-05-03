@@ -445,6 +445,27 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	max-height: calc(100vh - 56px);
 }
 
+/* v0.0.0110 — left nav drawer parity with right tools panel
+   Bryan: "scroll bar for the left side menu must be hidden? allow that
+   to be viewable / usable so we can get to the bottom of the left menu,
+   just as we can with the right info panel".
+   Root cause: right panel had viewport-agnostic overflow-y:auto +
+   max-height:calc(100vh - 56px); left nav only had equivalent inside
+   @media (max-width:1080px). On desktop the inner content-container
+   forced overflow-y:scroll (line ~1517) but its parent had no bounded
+   height, so the bar tracked page-scroll, not nav-scroll. Mirror the
+   tools-panel rule onto the nav drawer. Excludes the navigation-toggle
+   hamburger and any *-toggle/container shells. */
+nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
+[class*="awsui_navigation__drawer"],
+[class*="awsui_navigation-container"] [class*="awsui_drawer-content"] {
+	overflow-y: auto !important;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
+	touch-action: pan-y;
+	max-height: calc(100vh - 56px);
+}
+
 /* Outer Cloudscape chrome — defanged from opaque to TRANSPARENT in both modes.
    Light: was #ede5d4 to mask Cloudscape's default white.
    Dark:  Cloudscape applies its own dark layout-bg by default; we want the
@@ -997,19 +1018,17 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 }
 
 /* ── MOON ─────────────────────────────────────────────────────────────────
-   v0.0.0069 — date-driven moon phase. Replaces the prior crescent + star
-   sidekick which Bryan flagged as too close to the Islamic crescent-and-
-   star symbol. Two stacked discs: a lit moon disc + a shadow disc whose
-   horizontal offset (computed in MoonSvg from the synodic phase of TODAY)
-   models the lunar terminator. Phases cycle naturally over 29.5 days. */
+   v0.0.0109 — stylized crescent (Material/Hero icon style). Replaces six
+   prior date-driven phase-math iterations (v0.0.0069 → v0.0.0107) which
+   all rendered as a near-full disc against the violet halo. Bryan called
+   it "sun" five times running. Single fat-crescent path, concave inner
+   boundary, no astronomical accuracy. Glow drop-shadows trimmed so the
+   crescent silhouette dominates instead of dissolving into purple haze. */
 
 .cdn-svg-moon {
 	overflow: visible;
 	transform-origin: center;
 	transition: filter 0.3s ease;
-	/* visible "shine" — moon's halo + scale breathe in unison so the icon
-	   reads as alive even at thin-crescent phases. v0.0.0078 (bryan: "no
-	   animation"): the prior fill-only breathe was too subtle to spot. */
 	animation: cdn-moon-shine 6s ease-in-out infinite;
 }
 
@@ -1017,30 +1036,17 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	fill: #ede5d4; /* cream — lit lunar surface */
 }
 
-.cdn-svg-moon__crater {
-	fill: rgba(139, 90, 43, 0.28); /* faint amber speckle on the lit area */
-}
-
-/* outline — paints only at new moon when the whole disc is masked away,
-   so the icon stays clickable + visible. Subtle lavender ring. */
-.cdn-svg-moon__outline {
-	stroke: rgba(215, 199, 238, 0.55);
-	stroke-width: 1;
-}
-
 @keyframes cdn-moon-shine {
 	0%,
 	100% {
-		filter: drop-shadow(0 0 2px rgba(215, 199, 238, 0.7))
-			drop-shadow(0 0 6px rgba(144, 96, 240, 0.45))
-			drop-shadow(0 0 14px rgba(144, 96, 240, 0.22));
+		filter: drop-shadow(0 0 1px rgba(215, 199, 238, 0.55))
+			drop-shadow(0 0 3px rgba(144, 96, 240, 0.32));
 		transform: scale(1);
 	}
 	50% {
-		filter: drop-shadow(0 0 3px rgba(215, 199, 238, 0.95))
-			drop-shadow(0 0 10px rgba(144, 96, 240, 0.7))
-			drop-shadow(0 0 22px rgba(144, 96, 240, 0.42));
-		transform: scale(1.06);
+		filter: drop-shadow(0 0 1.5px rgba(215, 199, 238, 0.75))
+			drop-shadow(0 0 5px rgba(144, 96, 240, 0.5));
+		transform: scale(1.04);
 	}
 }
 
@@ -1053,9 +1059,8 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 [class*="utility-wrapper"]
 	a[class*="top-navigation"]:has(.cdn-celestial-toggle--moon):hover
 	.cdn-svg-moon {
-	filter: drop-shadow(0 0 3px rgba(215, 199, 238, 1))
-		drop-shadow(0 0 10px rgba(144, 96, 240, 0.85))
-		drop-shadow(0 0 22px rgba(144, 96, 240, 0.5));
+	filter: drop-shadow(0 0 2px rgba(215, 199, 238, 0.95))
+		drop-shadow(0 0 6px rgba(144, 96, 240, 0.7));
 }
 
 /* ── FLAGS — shared base ─────────────────────────────────────────────────
