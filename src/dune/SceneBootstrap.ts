@@ -127,21 +127,24 @@ export function mountDuneSceneOnCanvas(
 	scene.clearColor = new Color4(0.929, 0.898, 0.831, 1.0); // #ede5d4
 
 	// alpha -π/3: camera in -X/-Z quadrant, looking toward +origin.
-	// beta 1.38 ≈ 79° from vertical (was 1.1 ≈ 63°, "moon lander").
-	//   Higher beta lowers the horizon line — dunes stretch away from viewer,
-	//   street-level standing-on-dunes feel vs top-down aerial.
-	// target -5 X: shifts view leftward to pull the 60u mesh left edge into
-	//   frame. Camera is at ~(+20, y, -35) so -X closes the lower-left gap
-	//   without overshooting the right side (right edge still well inside 30u).
+	// beta 1.52 ≈ 87° from vertical (was 1.38 ≈ 79°, still "street-level").
+	//   Near-horizontal view + target.y=-3 tilts gaze slightly downward so
+	//   terrain fills ~75% of viewport and the horizon sits at roughly 25%
+	//   from top — just above the first content card when frosted player is
+	//   visible. fov 0.6→0.65 widens the vertical angle to show more terrain.
+	// target -5 X: shifts view leftward (closes lower-left gap).
+	// target -3 Y: combined with near-horizontal beta, the camera looks
+	//   slightly below the ground plane so terrain fills the upper portion
+	//   of the fixed canvas, dunes visible through the frosted player slot.
 	const camera = new ArcRotateCamera(
 		"dune-cam",
 		-Math.PI / 3,
-		1.38,
+		1.52,
 		CAMERA_RADIUS_BASE,
-		new Vector3(-5, 0, 0),
+		new Vector3(-5, -3, 0),
 		scene,
 	);
-	camera.fov = 0.6;
+	camera.fov = 0.65;
 	camera.inputs.clear();
 	const cameraAlphaBase = camera.alpha;
 

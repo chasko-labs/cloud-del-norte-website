@@ -33,14 +33,10 @@
 	);
 }
 
-/* slot — reserves vertical space, stacking context above awsui scrolling-bg.
-   v0.0.0131 — sticky: locks below the top-nav once the breadcrumb scrolls off.
-   The visual-refresh-toolbar AppLayout uses body scroll (no inner overflow
-   container), so position:sticky works against the viewport. top:56px clears
-   the sticky #top-nav bar (48px min-height + 2px border + ~6px clearance).
-   Background fills the stripe so scrolling content doesn't show through.
-   z-index:100 sits above awsui grid content (z-index:1) but well below the
-   tools-toggle / toolbar layer (z-index:830-1000). */
+/* slot — frosted glass strip. Sticky below top-nav; dune canvas shows through.
+   backdrop-filter composites against the fixed dune scene underneath.
+   v0.0.0131 — sticky: locks below top-nav once breadcrumb scrolls off.
+   z-index:100 sits above awsui grid content but below tools-toggle layer. */
 .cdn-player-slot {
 	display: block;
 	width: 100%;
@@ -49,14 +45,17 @@
 	position: sticky;
 	top: 56px;
 	z-index: 100;
-	background: #ede5d4;
-	/* light mode: a warm hairline shadow separates the slot from page content */
-	box-shadow: 0 2px 8px -2px rgba(139, 90, 43, 0.1);
+	background: rgba(237, 229, 212, 0.88);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border-bottom: 1px solid rgba(139, 90, 43, 0.12);
 }
 
 .awsui-dark-mode .cdn-player-slot {
-	background: #0a0c14;
-	box-shadow: none;
+	background: rgba(10, 12, 20, 0.85);
+	backdrop-filter: blur(12px);
+	-webkit-backdrop-filter: blur(12px);
+	border-bottom: none;
 }
 
 .cdn-pp {
@@ -73,13 +72,9 @@
 	position: relative;
 	z-index: 1;
 
-	/* no card — subtle station-tinted radial from the right (play button side).
-	   light mode uses 0.10 opacity for visible warmth on cream without going card-heavy. */
-	background: radial-gradient(
-		ellipse at right center,
-		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.1) 0%,
-		transparent 68%
-	);
+	/* light mode: transparent — let frosted glass slot show through.
+	   the circular button is the sole visual anchor. */
+	background: transparent;
 	border: none;
 	border-radius: 0;
 	box-shadow: none;
@@ -96,21 +91,16 @@
 	left: 0;
 	right: 0;
 	height: 1px;
-	/* light mode: warm amber anchor at left fading to station tint at right.
-	   gives the streak a sepia ground that harmonizes with cream. */
-	background: linear-gradient(
-		to right,
-		rgba(139, 90, 43, 0.12),
-		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.28) 50%,
-		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.18) 100%
-	);
+	/* barely-there hairline — ink notation, not a gradient announcement */
+	background: rgba(139, 90, 43, 0.08);
 	pointer-events: none;
 }
 
 .awsui-dark-mode .cdn-pp {
+	/* dark mode: subtle station tint from the right */
 	background: radial-gradient(
 		ellipse at right center,
-		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.1) 0%,
+		rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.08) 0%,
 		transparent 68%
 	);
 	color: var(--cdn-color-text-high, rgba(240, 240, 240, 0.87));
@@ -152,7 +142,8 @@
 	line-height: 1.2;
 	flex-shrink: 0;
 	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
-	text-shadow: var(--cdn-text-shadow-light, 0 1px 2px rgba(74, 40, 24, 0.18));
+	/* light mode: no text-shadow on cream — ink on parchment needs no lift */
+	text-shadow: none;
 }
 
 .awsui-dark-mode .cdn-pp__label {
@@ -307,9 +298,7 @@ a.cdn-pp__label--donate:focus-visible {
 	opacity: 0.7;
 }
 
-/* retrying/error text — muted station-tinted, not system-red.
-   The player already communicates state via the retry button; no need
-   for a loud color to dominate the page. */
+/* retrying/error text — muted station-tinted, not system-red. */
 .cdn-pp__eyebrow--warn {
 	color: var(--station-primary-mode, var(--cdn-color-text-medium, #5a3a1e));
 	opacity: 0.7;
@@ -357,16 +346,16 @@ a.cdn-pp__label--donate:focus-visible {
 		box-shadow 0.2s ease;
 }
 
-/* skip — small rounded rect, preview the next station's color.
-   light mode: visible amber border + warm cream fill so it reads as a control
-   on cream background, not as a ghost shape. */
+/* skip — light mode: completely borderless ghost. icon in warm muted brown,
+   part of the typographic flow rather than a distinct UI control.
+   dark mode: station-tinted border retained for legibility on navy. */
 .cdn-pp__btn--skip {
 	width: 28px;
 	height: 28px;
 	border-radius: 6px;
-	border: 1px solid rgba(139, 90, 43, 0.32);
-	background: rgba(139, 90, 43, 0.06);
-	color: var(--cdn-color-text-muted, #4a2818);
+	border: none;
+	background: transparent;
+	color: rgba(139, 90, 43, 0.55);
 	font-size: 0.85rem;
 }
 
@@ -383,8 +372,9 @@ a.cdn-pp__label--donate:focus-visible {
 }
 
 :root:not(.awsui-dark-mode) .cdn-pp__btn--skip:hover {
-	background: rgba(139, 90, 43, 0.12);
-	border-color: rgba(139, 90, 43, 0.48);
+	background: rgba(139, 90, 43, 0.07);
+	border-color: transparent;
+	color: rgba(139, 90, 43, 0.75);
 }
 
 .cdn-pp__btn--skip:focus-visible {
@@ -392,20 +382,24 @@ a.cdn-pp__label--donate:focus-visible {
 	outline-offset: 2px;
 }
 
-/* seek — 15s rewind/ff for podcasts, same shape as skip */
+/* seek — 15s rewind/ff for podcasts.
+   light mode: borderless ghost matching skip — part of the typographic flow.
+   dark mode: station-tinted border retained for legibility on navy. */
 .cdn-pp__btn--seek {
 	width: 28px;
 	height: 28px;
 	border-radius: 6px;
-	border: 1px solid rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
-	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.06);
-	color: var(--cdn-color-text-muted, #4a2818);
+	border: none;
+	background: transparent;
+	color: rgba(139, 90, 43, 0.55);
 	font-size: 0.65rem;
 	font-weight: 700;
 	letter-spacing: -0.02em;
 }
 
 .awsui-dark-mode .cdn-pp__btn--seek {
+	border: 1px solid rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
+	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.06);
 	color: rgba(240, 240, 240, 0.65);
 }
 
@@ -415,20 +409,26 @@ a.cdn-pp__label--donate:focus-visible {
 	transform: scale(1.08);
 }
 
+:root:not(.awsui-dark-mode) .cdn-pp__btn--seek:hover {
+	background: rgba(139, 90, 43, 0.07);
+	border-color: transparent;
+	color: rgba(139, 90, 43, 0.75);
+}
+
 .cdn-pp__btn--seek:focus-visible {
 	outline: 2px solid var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	outline-offset: 2px;
 }
 
-/* retry — same shape as skip.
-   light mode: amber-bordered to stay integrated on cream. */
+/* retry — light mode: borderless ghost matching skip/seek — typographic flow.
+   dark mode: station-tinted border retained. */
 .cdn-pp__btn--retry {
 	width: 28px;
 	height: 28px;
 	border-radius: 6px;
-	border: 1px solid rgba(139, 90, 43, 0.32);
-	background: rgba(139, 90, 43, 0.06);
-	color: var(--cdn-color-text-muted, #4a2818);
+	border: none;
+	background: transparent;
+	color: rgba(139, 90, 43, 0.55);
 	font-size: 0.9rem;
 	opacity: 0.75;
 }
@@ -446,11 +446,15 @@ a.cdn-pp__label--donate:focus-visible {
 }
 
 :root:not(.awsui-dark-mode) .cdn-pp__btn--retry:hover {
-	background: rgba(139, 90, 43, 0.12);
-	border-color: rgba(139, 90, 43, 0.48);
+	background: rgba(139, 90, 43, 0.07);
+	border-color: transparent;
+	color: rgba(139, 90, 43, 0.75);
+	opacity: 1;
 }
 
-/* play — circle, station-bordered, transparent fill */
+/* play — circle, station-bordered, transparent fill.
+   light mode: 1.5px border — present but not heavy; the ONLY element with
+   visual weight on the cream surface. */
 .cdn-pp__btn--play,
 .cdn-pp__btn--resume {
 	width: 36px;
@@ -460,6 +464,11 @@ a.cdn-pp__label--donate:focus-visible {
 	background: transparent;
 	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	font-size: 13px;
+}
+
+:root:not(.awsui-dark-mode) .cdn-pp__btn--play,
+:root:not(.awsui-dark-mode) .cdn-pp__btn--resume {
+	border-width: 1.5px;
 }
 
 .cdn-pp__btn--play:hover,
@@ -477,46 +486,49 @@ a.cdn-pp__label--donate:focus-visible {
 	outline-offset: 3px;
 }
 
-/* stop — circle, pulsing glow + spinning conic spotlight.
+/* ==========================================================================
+   Stop button (music) — circle, pulsing glow + spinning conic spotlight.
    Audio-reactive: --cdn-mid shifts the ring radius each frame.
-   --cdn-band is set from --cdn-mid so cdn-ravy-ring-mid can read it.
-   Dark mode: station-primary glow (navy bg absorbs intensity).
-   Light mode: separate @keyframes below keep glow subtle on cream. */
+   Dark mode: tight 1-2px ring at idle — refined, not strobing.
+   Light mode: transparent fill, animation: none — ink-on-parchment stop circle.
+   ========================================================================== */
 @keyframes cdn-pp-pulse {
 	0%,
 	100% {
 		box-shadow:
-			0 0 0 calc(2px + var(--cdn-mid, 0) * 3px)
-			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22),
-			0 0 calc(8px + var(--cdn-mid, 0) * 8px)
-			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.28);
+			0 0 0 calc(1px + var(--cdn-mid, 0) * 2px)
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.18),
+			0 0 calc(4px + var(--cdn-mid, 0) * 5px)
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.18);
 	}
 	50% {
 		box-shadow:
-			0 0 0 calc(5px + var(--cdn-mid, 0) * 3px)
-			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.34),
-			0 0 calc(16px + var(--cdn-mid, 0) * 8px)
-			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.44);
+			0 0 0 calc(2px + var(--cdn-mid, 0) * 2px)
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.26),
+			0 0 calc(8px + var(--cdn-mid, 0) * 5px)
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.28);
 	}
 }
 
-/* light mode pulse — warm amber ring at half the intensity so it reads as
-   a gentle breathing accent on cream rather than a station-color strobe. */
-@keyframes cdn-pp-pulse-light {
+/* podcast voice-breath — monotone, mid-band only. single color,
+   pulses to speech energy so podcast vs music are visually distinct. */
+@keyframes cdn-pp-podcast-breath {
 	0%,
 	100% {
-		box-shadow:
-			0 0 0 calc(2px + var(--cdn-mid, 0) * 2px)
-			rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.14),
-			0 0 calc(6px + var(--cdn-mid, 0) * 6px)
-			rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.16);
+		box-shadow: 0 0 0 calc(1px + var(--cdn-mid, 0) * 2px)
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.14);
+		border-color: rgba(
+			var(--station-primary-mode-rgb, 144, 96, 240),
+			calc(0.45 + var(--cdn-mid, 0) * 0.25)
+		);
 	}
 	50% {
-		box-shadow:
-			0 0 0 calc(4px + var(--cdn-mid, 0) * 2px)
-			rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.2),
-			0 0 calc(12px + var(--cdn-mid, 0) * 6px)
-			rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.24);
+		box-shadow: 0 0 0 calc(2px + var(--cdn-mid, 0) * 3px)
+			rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.24);
+		border-color: rgba(
+			var(--station-primary-mode-rgb, 144, 96, 240),
+			calc(0.65 + var(--cdn-mid, 0) * 0.25)
+		);
 	}
 }
 
@@ -536,23 +548,22 @@ a.cdn-pp__label--donate:focus-visible {
 		cdn-ravy-ring-mid 1.6s linear infinite;
 }
 
-/* light mode stop — warm cream fill + station border.
-   solid orange fill on cream is garish; this keeps the circle as a visual
-   anchor (strong border + station-tinted hover) without the paint-blob look.
-   animation-name override must come after .cdn-pp__btn--stop to win cascade. */
+/* light mode stop — transparent fill, thin border (1.5px), no pulse ring.
+   The circle is the page's sole visual anchor: ink on parchment. */
 :root:not(.awsui-dark-mode) .cdn-pp__btn--stop {
-	background: rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.1);
+	background: transparent;
 	color: var(--station-primary-mode, #d97b00);
-	border-width: 2.5px;
-	animation-name: cdn-pp-pulse-light, cdn-ravy-ring-mid;
+	border-width: 1.5px;
+	animation: none;
 }
 
 :root:not(.awsui-dark-mode) .cdn-pp__btn--stop:hover {
-	background: rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.18);
+	background: rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.1);
 	transform: scale(1.06);
 }
 
-/* spinning conic spotlight — same pattern as hamburger/info chrome buttons */
+/* spinning conic spotlight — music only (stop button class).
+   dark mode: opacity 0.18 + band*0.45 — more refined, less electric. */
 .cdn-pp__btn--stop::after {
 	content: "";
 	pointer-events: none;
@@ -577,7 +588,7 @@ a.cdn-pp__label--donate:focus-visible {
 		transparent 360deg
 	);
 	mix-blend-mode: screen;
-	opacity: calc(0.25 + var(--cdn-band, 0) * 0.65);
+	opacity: calc(0.18 + var(--cdn-band, 0) * 0.45);
 	filter: blur(2px);
 	z-index: 0;
 	animation: 3.2s linear infinite cdn-ravy-spotlight-spin;
@@ -592,11 +603,17 @@ a.cdn-pp__label--donate:focus-visible {
 	outline-offset: 3px;
 }
 
-/* light mode — overlay blend + reduced base opacity so the conic shimmer
-   reads as a polish detail, not a glare flare on the cream-fill circle. */
+/* light mode conic — multiply blend so shimmer reads as ink swirling,
+   not electric glow. very low opacity: (0.12 + band*0.22). */
 :root:not(.awsui-dark-mode) .cdn-pp__btn--stop::after {
-	mix-blend-mode: overlay;
-	opacity: calc(0.18 + var(--cdn-band, 0) * 0.35);
+	mix-blend-mode: multiply;
+	opacity: calc(0.12 + var(--cdn-band, 0) * 0.22);
+}
+
+/* podcast playing — monotone breath on the pause/resume circle.
+   body.cdn-podcast-playing is added by the player when isPodcast && playing. */
+body.cdn-podcast-playing .cdn-pp__btn--resume {
+	animation: cdn-pp-podcast-breath 2.8s ease-in-out infinite;
 }
 
 /* album art — reserved for Phase 2 parseMetaRich */
@@ -616,6 +633,9 @@ a.cdn-pp__label--donate:focus-visible {
 	.cdn-pp__btn--stop::after {
 		animation: none;
 	}
+	body.cdn-podcast-playing .cdn-pp__btn--resume {
+		animation: none;
+	}
 	.cdn-pp__btn--play:hover,
 	.cdn-pp__btn--stop:hover,
 	.cdn-pp__btn--skip:hover,
@@ -627,18 +647,15 @@ a.cdn-pp__label--donate:focus-visible {
 	}
 }
 
-/* Mobile (<=688px) — Cloudscape AppLayout shows a sticky breadcrumb toolbar
-   (~56px) below #top-nav (56px). The player slot must stick at 112px so it
-   clears both bars instead of hiding behind the breadcrumb. */
+/* Mobile (<=688px) — sticky breadcrumb toolbar (~56px) below #top-nav (56px).
+   Player slot sticks at 112px to clear both bars. */
 @media (max-width: 688px) {
 	.cdn-player-slot {
 		top: 112px;
 	}
 }
 
-/* Mobile (<=600px) — same layout, slightly tighter.
-   Sub-row stacks vertically: line 2 = track title, line 3 = geo.
-   Sep hidden when stacked. */
+/* Mobile (<=600px) — tighter layout. */
 @media (max-width: 600px) {
 	.cdn-player-slot {
 		margin-bottom: 8px;

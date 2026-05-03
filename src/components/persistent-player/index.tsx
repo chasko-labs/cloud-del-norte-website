@@ -255,11 +255,13 @@ function PersistentPlayerBar({
 		if (!audio) return;
 		const onPlay = () => {
 			document.body.classList.add("cdn-stream-playing");
+			if (isPodcast) document.body.classList.add("cdn-podcast-playing");
 			setPlaying(true);
 			onPlayStateChangeRef.current?.(true);
 		};
 		const onStopEvt = () => {
 			document.body.classList.remove("cdn-stream-playing");
+			document.body.classList.remove("cdn-podcast-playing");
 			setPlaying(false);
 			onPlayStateChangeRef.current?.(false);
 		};
@@ -273,6 +275,7 @@ function PersistentPlayerBar({
 			audio.removeEventListener("ended", onStopEvt);
 			audio.removeEventListener("emptied", onStopEvt);
 			document.body.classList.remove("cdn-stream-playing");
+			document.body.classList.remove("cdn-podcast-playing");
 		};
 	}, [isPodcast]);
 

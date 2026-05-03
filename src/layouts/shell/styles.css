@@ -1897,3 +1897,37 @@ nav[class*="awsui_navigation_"]:not(
 		animation-duration: calc(24s * max(0.25, 1 - var(--cdn-flux, 0) * 0.75));
 	}
 }
+
+/* ==========================================================================
+   Mobile toggle pair — persistent on scroll (≤688px)
+
+   When body.cdn-scrolled fires (window.scrollY > 80, set in shell/index.tsx),
+   the Cloudscape mobile-toolbar scrolls off-screen with the top-nav.
+   Fix both toggles to the bottom-left so the user can always open nav/tools.
+
+   Selectors:
+   - [class*="awsui_navigation-toggle_"] — hamburger button; testutil class
+     placed on the InternalButton root inside mobile-toolbar-nav.
+   - [class*="awsui_drawers-trigger_"] — each trigger button element inside
+     DrawersMobileTriggers (the ⓘ / tools button); placed by drawers.js on
+     the TriggerButton root.
+
+   Layout: two buttons sit at bottom:16px, left:16px and left:64px (48px
+   button width + 16px gap). z-index:300 clears the main content stack but
+   stays below the AppLayout drawers (z-index ~1000).
+   ========================================================================== */
+@media (max-width: 688px) {
+	body.cdn-scrolled [class*="awsui_navigation-toggle_"] {
+		position: fixed;
+		bottom: 16px;
+		left: 16px;
+		z-index: 300;
+	}
+
+	body.cdn-scrolled [class*="awsui_drawers-trigger_"] {
+		position: fixed;
+		bottom: 16px;
+		left: 64px;
+		z-index: 300;
+	}
+}

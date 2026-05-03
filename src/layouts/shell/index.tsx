@@ -361,6 +361,21 @@ function ShellContent({
 		};
 	}, [toolsOpen]);
 
+	// cdn-scrolled body class — drives the fixed-position mobile toggle pair.
+	// Threshold 80px gives one clear scroll gesture before the class fires;
+	// removes cleanly when back near top so the toggles return to normal flow.
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+		const onScroll = () => {
+			document.body.classList.toggle("cdn-scrolled", window.scrollY > 80);
+		};
+		window.addEventListener("scroll", onScroll, { passive: true });
+		return () => {
+			window.removeEventListener("scroll", onScroll);
+			document.body.classList.remove("cdn-scrolled");
+		};
+	}, []);
+
 	// s6 — Volunteer pill horizontal alignment under the breadcrumb's last
 	// item ("Feed" on /feed, "Roadmap" on /roadmap, etc.). The pill is the
 	// Cloudscape awsui_info_ link, restyled in cdn-glass-streaks.css. Its
