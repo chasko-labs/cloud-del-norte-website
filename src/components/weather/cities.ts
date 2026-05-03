@@ -18,7 +18,7 @@ export interface City {
 	readonly timezone: string;
 }
 
-export const CITIES: City[] = [
+const ALL_CITIES: City[] = [
 	{
 		key: "el_paso",
 		label: "el paso",
@@ -65,3 +65,22 @@ export const CITIES: City[] = [
 		timezone: "America/Chihuahua",
 	},
 ];
+
+/**
+ * Fisher-Yates shuffle — pure function, returns a new array. Bryan v0.0.0076:
+ * "have the order of the cities randomize on load so a different city is
+ * featured each load - but the sequence will need to be the same after
+ * loading so that the scrolling is sensical". The shuffle runs ONCE at
+ * module load; CITIES is captured as a const so all consumers (Weather
+ * component, dot indicator, swipe handlers) see the same stable order.
+ */
+function shuffle<T>(arr: readonly T[]): T[] {
+	const out = arr.slice();
+	for (let i = out.length - 1; i > 0; i--) {
+		const j = Math.floor(Math.random() * (i + 1));
+		[out[i], out[j]] = [out[j], out[i]];
+	}
+	return out;
+}
+
+export const CITIES: City[] = shuffle(ALL_CITIES);

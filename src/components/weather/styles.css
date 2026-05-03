@@ -90,33 +90,45 @@
 	}
 }
 
-/* ── Light mode — warm cream craft card ─────────────────────────────────── */
+/* ── Light mode — glassmorphic warm cream ───────────────────────────────── */
 :root:not(.awsui-dark-mode) .cdn-weather {
 	background: linear-gradient(
 		178deg,
-		rgba(250, 247, 240, 0.94) 0%,
-		rgba(244, 234, 215, 0.92) 100%
+		rgba(250, 247, 240, 0.55) 0%,
+		rgba(244, 234, 215, 0.48) 100%
 	);
-	border: 1.5px solid rgba(139, 90, 43, 0.42);
+	backdrop-filter: blur(14px) saturate(1.18);
+	-webkit-backdrop-filter: blur(14px) saturate(1.18);
+	/* Visible edge via layered shadow — was a single 1.5px solid border that
+	   disappeared against the cream nav. Now a 1px inner ring of warm amber
+	   plus an outer drop shadow defines the card silhouette without
+	   competing with the brand chrome. */
+	border: 1px solid rgba(139, 90, 43, 0.28);
 	box-shadow:
-		0 6px 20px -6px rgba(80, 50, 20, 0.32),
-		0 1px 3px rgba(80, 50, 20, 0.18),
-		inset 0 1px 0 rgba(255, 255, 255, 0.6);
+		0 0 0 1px rgba(255, 153, 0, 0.18),
+		0 8px 24px -8px rgba(80, 50, 20, 0.28),
+		0 1px 3px rgba(80, 50, 20, 0.14),
+		inset 0 1px 0 rgba(255, 255, 255, 0.45),
+		inset 0 -1px 0 rgba(139, 90, 43, 0.18);
 	color: var(--cdn-amber, #8b5a2b);
 }
 
-/* ── Dark mode — deep navy panel + violet trim ──────────────────────────── */
+/* ── Dark mode — glassmorphic navy with violet rim ──────────────────────── */
 .awsui-dark-mode .cdn-weather {
 	background: linear-gradient(
 		178deg,
-		rgba(28, 34, 48, 0.92) 0%,
-		rgba(20, 16, 48, 0.88) 100%
+		rgba(28, 34, 48, 0.55) 0%,
+		rgba(20, 16, 48, 0.5) 100%
 	);
-	border: 1.5px solid rgba(144, 96, 240, 0.52);
+	backdrop-filter: blur(14px) saturate(1.2);
+	-webkit-backdrop-filter: blur(14px) saturate(1.2);
+	border: 1px solid rgba(144, 96, 240, 0.32);
 	box-shadow:
-		0 6px 22px -6px rgba(0, 0, 0, 0.62),
-		0 1px 3px rgba(0, 0, 0, 0.42),
-		inset 0 1px 0 rgba(144, 96, 240, 0.22);
+		0 0 0 1px rgba(144, 96, 240, 0.2),
+		0 8px 26px -8px rgba(0, 0, 0, 0.52),
+		0 1px 3px rgba(0, 0, 0, 0.35),
+		inset 0 1px 0 rgba(215, 199, 238, 0.22),
+		inset 0 -1px 0 rgba(144, 96, 240, 0.22);
 	color: var(--cdn-lavender, #d7c7ee);
 }
 
@@ -185,26 +197,43 @@
 }
 
 /* Weather glyph — brand-tinted, dances to --cdn-bass when stream is playing.
-   Idle scale = 1, full bass = scale 1.18 + amplified glow. Transitions are
-   short so the glyph "pumps" on the beat instead of slewing slowly. */
+   Idle scale = 1, full bass = scale 1.18 + amplified glow. Bryan v0.0.0076:
+   dark-mode glow was overpowering against the lavender at full alpha. The
+   glyph itself is now 0.78 alpha so it bleeds into the card, and the glow
+   uses rgba (not currentColor) at lower alpha so it doesn't dominate. */
 .cdn-weather__glyph {
 	font-size: 26px;
 	line-height: 1;
 	transform-origin: center;
 	transform: scale(calc(1 + var(--cdn-bass, 0) * 0.18));
-	filter: drop-shadow(0 0 calc(2px + var(--cdn-bass, 0) * 6px) currentColor)
-		drop-shadow(0 0 calc(6px + var(--cdn-bass, 0) * 12px) currentColor);
+	opacity: 0.78;
 	transition:
 		transform 0.12s ease-out,
-		filter 0.12s ease-out;
+		filter 0.12s ease-out,
+		opacity 0.18s ease-out;
 }
 
 :root:not(.awsui-dark-mode) .cdn-weather__glyph {
 	color: var(--cdn-aws-orange, #ff9900);
+	filter: drop-shadow(
+			0 0 calc(2px + var(--cdn-bass, 0) * 5px) rgba(255, 153, 0, 0.42)
+		)
+		drop-shadow(
+			0 0 calc(6px + var(--cdn-bass, 0) * 10px) rgba(255, 153, 0, 0.22)
+		);
 }
 
 .awsui-dark-mode .cdn-weather__glyph {
 	color: var(--cdn-lavender, #d7c7ee);
+	/* dark-mode glow softened — was 6px+8px @ full alpha which whitewashed
+	   the cloud icon. Now smaller blur radii + low alpha so the glow reads
+	   as ambient bleed, not a halo. */
+	filter: drop-shadow(
+			0 0 calc(2px + var(--cdn-bass, 0) * 4px) rgba(215, 199, 238, 0.32)
+		)
+		drop-shadow(
+			0 0 calc(5px + var(--cdn-bass, 0) * 8px) rgba(144, 96, 240, 0.2)
+		);
 }
 
 @media (prefers-reduced-motion: reduce) {
