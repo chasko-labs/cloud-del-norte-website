@@ -13,7 +13,7 @@ import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
 import { clearMediaSession, setMediaSession } from "../../lib/media-session";
 import { clearPlayerState, savePlayerState } from "../../lib/player-persist";
-import { hexToRgbTuple, type StreamDef } from "../../lib/streams";
+import { formatGeo, hexToRgbTuple, type StreamDef } from "../../lib/streams";
 import { STREAMS } from "../../lib/streams-order";
 import {
 	applyLocale,
@@ -312,6 +312,24 @@ function KruxPlayer() {
 			>
 				{nowPlaying[stream.key] ?? ""}
 			</span>
+			{stream.donateUrl && (
+				<a
+					className="feed-krux__donate"
+					href={stream.donateUrl}
+					target="_blank"
+					rel="noreferrer"
+					aria-label={`donate to ${stream.label}`}
+				>
+					<span className="feed-krux__donate-line">
+						donate to {stream.label}
+					</span>
+					{stream.latitude !== undefined && stream.longitude !== undefined && (
+						<span className="feed-krux__donate-geo">
+							{formatGeo(stream.latitude, stream.longitude)}
+						</span>
+					)}
+				</a>
+			)}
 			{/* biome-ignore lint/a11y/useMediaCaption: live radio stream — no caption track available */}
 			<audio
 				ref={audioRef}

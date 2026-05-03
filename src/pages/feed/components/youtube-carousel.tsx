@@ -29,8 +29,7 @@ export default function YoutubeCarousel() {
 							loading="lazy"
 							src={`https://www.youtube.com/embed/${videoId}`}
 							title={`${t("feedPage.youtubeFeaturedVideo")} ${current + 1} ${t("feedPage.articleAriaConnector")} ${VIDEO_IDS.length}`}
-							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-							allowFullScreen
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
 						/>
 					</div>
 				</div>

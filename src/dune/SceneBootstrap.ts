@@ -23,7 +23,15 @@ import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
 import { Engine } from "@babylonjs/core/Engines/engine";
 import { Color4 } from "@babylonjs/core/Maths/math.color";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
+import { Logger } from "@babylonjs/core/Misc/logger";
 import { Scene } from "@babylonjs/core/scene";
+
+// Silence Babylon's INFO-level banner ("BJS - [hh:mm:ss]: Babylon.js v9.x.x -
+// WebGL2 - Parallel shader compilation") + capability prints. We keep
+// warnings + errors so real engine problems still surface in the console.
+// Bit field: WarningLogLevel (2) | ErrorLogLevel (4) = 6. Set at module load
+// time so the gate is in place BEFORE any `new Engine(...)` call below.
+Logger.LogLevels = Logger.WarningLogLevel | Logger.ErrorLogLevel;
 
 import {
 	AnimationController,

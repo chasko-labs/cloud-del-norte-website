@@ -10,6 +10,21 @@ import { useTranslation } from "../../hooks/useTranslation";
 import Weather from "../weather";
 import "./liora.css";
 
+// Silence the dynamically-loaded liora-embed bundle's [gestureQueue]
+// console.info chatter (30+ lines per gesture.glb load). We can't edit the
+// vendor bundle directly, so install a console.info filter at module load
+// BEFORE mountLioraPanel runs. Only swallow messages whose first arg starts
+// with "[gestureQueue]" — every other info call passes through unchanged.
+// Not restored: gestureQueue calls fire across the panel lifetime.
+if (typeof console !== "undefined") {
+	const originalInfo = console.info.bind(console);
+	console.info = (...args: unknown[]) => {
+		const first = args[0];
+		if (typeof first === "string" && first.startsWith("[gestureQueue]")) return;
+		originalInfo(...args);
+	};
+}
+
 // Translation fallback — useTranslation's t() returns the key string itself
 // when a key is missing from the locale JSON. Wrap calls so a default text
 // is shown instead of the literal "liora.welcomeGreeting" leaking to the UI.

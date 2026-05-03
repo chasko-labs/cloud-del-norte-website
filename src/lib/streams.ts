@@ -41,6 +41,15 @@ export interface StreamDef {
 	 * donation channel (e.g. fully institution-funded mexican student radio)
 	 */
 	readonly donateUrl?: string;
+	/**
+	 * approximate broadcast-region latitude (decimal degrees, +N / -S). paired
+	 * with longitude so the feed player can render a clickable geo line beneath
+	 * the station name as part of the donate target. omit alongside donateUrl
+	 * when the station has no donation channel
+	 */
+	readonly latitude?: number;
+	/** approximate broadcast-region longitude (decimal degrees, +E / -W) */
+	readonly longitude?: number;
 	/** parses metaUrl response into "song — artist" string. omit alongside metaUrl */
 	parseMeta?(data: unknown): string | null;
 }
@@ -52,6 +61,9 @@ export const STREAMS: StreamDef[] = [
 		label: "krux 91.5",
 		metaUrl: "https://kruxstream.nmsu.edu/status-json.xsl",
 		donateUrl: "https://nmsufoundation.org/givenow/KRUX.html",
+		// NMSU Las Cruces, NM — Milton Hall studios on the main campus
+		latitude: 32.281,
+		longitude: -106.748,
 		// nmsu brand book — https://brand.nmsu.edu/colors/
 		// primary: aggie crimson; secondary: mesilla valley sunset (orange);
 		// accent: warm cream (replaces banned #fff)
@@ -77,6 +89,9 @@ export const STREAMS: StreamDef[] = [
 		label: "kexp 90.3",
 		metaUrl: "https://api.kexp.org/v2/plays/?limit=1&format=json",
 		donateUrl: "https://www.kexp.org/donate/",
+		// KEXP Gathering Space — Seattle Center, WA
+		latitude: 47.61,
+		longitude: -122.342,
 		// kexp brand book — https://cargocollective.com/jonisdelicious/KEXP-Brand-Book
 		// primary: buttercup yellow; secondary: mona lisa coral; accent: thunder near-black
 		colors: {
@@ -118,6 +133,9 @@ export const STREAMS: StreamDef[] = [
 			"https://api.composer.nprstations.org/v1/widget/5182a3cce1c805df63015f16/now?format=json&style=v2&show_song=true",
 		metaFormat: "json",
 		donateUrl: "https://www.ksfr.org/donate",
+		// SFCC studios — Santa Fe, NM
+		latitude: 35.687,
+		longitude: -105.938,
 		// SFCC official brand: turquoise PMS 326 + maroon PMS 484. Replaces the
 		// v0.0.0065 UNM-cherry placeholder once bryan supplied the SFCC guide.
 		colors: {
@@ -156,6 +174,9 @@ export const STREAMS: StreamDef[] = [
 		url: "https://streams.kut.org/4428_192.mp3?aw_0_1st.playerid=kutx-free",
 		label: "kutx 98.9",
 		donateUrl: "https://www.kutx.org/donate",
+		// KUT/KUTX studios — UT Austin campus, TX
+		latitude: 30.275,
+		longitude: -97.741,
 		// NPR Composer widget id 50ef24ebe1c8a1369593d032 sniffed from kutx.org
 		// homepage; CORS open (Access-Control-Allow-Origin: *)
 		metaUrl:
@@ -331,4 +352,19 @@ export function hexToRgbTuple(hex: string): string {
 	const g = Number.parseInt(h.slice(2, 4), 16);
 	const b = Number.parseInt(h.slice(4, 6), 16);
 	return `${r}, ${g}, ${b}`;
+}
+
+/**
+ * Format a (lat, lon) decimal pair into a human-readable cardinal string.
+ * Example: formatGeo(35.687, -105.938) -> "35.69°N, 105.94°W"
+ *
+ * Two decimal places gives ~1.1 km of precision at the equator — enough to
+ * point at a campus or studio without surfacing exact rooftop coordinates.
+ * Sign convention: positive lat = north, positive lon = east. Magnitudes
+ * are rendered absolute alongside an N/S or E/W cardinal letter.
+ */
+export function formatGeo(lat: number, lon: number): string {
+	const latCard = lat >= 0 ? "N" : "S";
+	const lonCard = lon >= 0 ? "E" : "W";
+	return `${Math.abs(lat).toFixed(2)}°${latCard}, ${Math.abs(lon).toFixed(2)}°${lonCard}`;
 }
