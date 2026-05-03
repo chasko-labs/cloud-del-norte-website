@@ -47,49 +47,78 @@
 	fill: #030310;
 }
 
-/* El Paso Star — composite CDN logo-star landmark. Bryan v0.0.0103: "if
-   your going to handraw instead of directly leveraging our logo then ditch
-   the orange and only use the purples whites & violets used in the logo".
-   Palette purified to violet / lavender / white only — no aws-orange:
-     • cdn-violet  #9060f0 → body (the slim 5-arm starburst silhouette)
-     • white       #ffffff → core (the bright centre, where logo arm overlaps)
-     • cdn-lavender #d7c7ee → peer bulb tips at each arm end
-     • white       #ffffff → hero bulb (the focal accent — brightest spot)
-   The wrapping <g class="franklin-overlay__star"> hosts the violet drop-shadow
-   glow chain so the whole composite halos as one cool moonlit unit. */
+/* El Paso Star — humble lightbulb landmark (v0.0.0104).
+   Bryan: "the bulbs on your star look cartoonish ... center shouldn't be
+   solid white. its just a lightbulb it shouldnt be much different than the
+   stars behind the mountain". The whole composite sits at opacity 0.55 so it
+   joins the visual hierarchy WITH the canvas-2D background twinkles in
+   dark.ts (which sit at 0.18-0.63 opacity), not above them. Soft violet halo
+   replaces the prior bright glow — moonlit, not headlight. */
 .franklin-overlay__star {
-	/* Cool violet drop-shadow stack — replaces the prior warm orange halo
-	   per bryan's "purples whites & violets only" call. */
-	filter: drop-shadow(0 0 4px rgba(144, 96, 240, 0.85))
-		drop-shadow(0 0 12px rgba(215, 199, 238, 0.55));
+	opacity: 0.55;
+	/* Soft violet halo — alpha 0.3 (was 0.85 in v0.0.0103). Single 4px ring,
+	   no second outer ring. Lets the bulbs themselves do the focal work as
+	   they cycle, rather than the whole composite glowing as one. */
+	filter: drop-shadow(0 0 3px rgba(144, 96, 240, 0.3));
 }
 
-/* Body — cdn-violet 5-arm slim starburst. The brand mark is violet-dominant
-   (#9B5CF4 cdn-arm in logo-svg). #9060f0 matches the dune palette cdn-violet
-   token used elsewhere. */
+/* Body — slim violet 5-arm star silhouette. NO solid centre per Bryan
+   ("center shouldn't be solid white"); the star's inner notches form a
+   natural cutout that reads through to the mountain behind. */
 .franklin-overlay__star-body {
 	fill: #9060f0;
 }
 
-/* Core — pure white concentric inner star. Reads as the bright centre that
-   glows through the violet body silhouette. */
-.franklin-overlay__star-core {
-	fill: #ffffff;
-}
-
-/* Bulb tips — 5 cdn-lavender pinpoints at each outer arm end. Matches the
-   brand mark's lavender bulb tips (#A064FA in logo-svg .cdn-bulb fills). */
+/* Bulb tips — 5 lavender pinpoints at each outer arm tip. Baseline opacity
+   (0.35) reads as "off / dim" — the keyframe below ramps each bulb up to
+   1.0 at its phase offset and back down. With 5 bulbs cycling at 1/5 phase
+   each, ~1 bulb is bright at any given moment. Period 5s = ~1s per bulb. */
 .franklin-overlay__star-bulb {
 	fill: #d7c7ee;
+	opacity: 0.35;
+	animation: franklin-bulb-cycle 5s linear infinite;
 }
 
-/* Hero bulb — focal accent at the elongated upper-right arm tip. Pure white
-   so it reads as the brightest spot, echoing cdn-bulb-tip-hero. The geometry
-   already enlarges this bulb 1.5× via STAR_HERO_BULB_SCALE. */
-.franklin-overlay__star-bulb--hero {
-	fill: #ffffff;
+@keyframes franklin-bulb-cycle {
+	/* The bulb spends most of its cycle dim (0.35) and briefly peaks at 1.0
+	   around its 0% mark. Each per-index class shifts the phase so the
+	   peaks land sequentially around the star. */
+	0% {
+		opacity: 1;
+	}
+	15% {
+		opacity: 0.45;
+	}
+	100% {
+		opacity: 0.35;
+	}
 }
 
-/* prefers-reduced-motion: the overlay is already static (no animation or
- * transition declared above), so the media query is documentation-only — no
- * additional rules needed. Future motion additions must be wrapped here. */
+/* Per-bulb phase offset — negative animation-delay so bulb N starts already
+   N/5 of the way through the cycle. Result: at any t, exactly one bulb is
+   near peak; the others sit at 0.35-0.45. Mirrors the real El Paso Star
+   bulbs blinking in rotation around the points of the star. */
+.franklin-overlay__star-bulb--c0 {
+	animation-delay: 0s;
+}
+.franklin-overlay__star-bulb--c1 {
+	animation-delay: -1s;
+}
+.franklin-overlay__star-bulb--c2 {
+	animation-delay: -2s;
+}
+.franklin-overlay__star-bulb--c3 {
+	animation-delay: -3s;
+}
+.franklin-overlay__star-bulb--c4 {
+	animation-delay: -4s;
+}
+
+/* prefers-reduced-motion — hold all bulbs at the dim baseline so the
+   composite reads as a quiet static landmark. No cycle = no flicker. */
+@media (prefers-reduced-motion: reduce) {
+	.franklin-overlay__star-bulb {
+		animation: none;
+		opacity: 0.55;
+	}
+}
