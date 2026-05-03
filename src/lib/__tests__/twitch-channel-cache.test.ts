@@ -48,7 +48,9 @@ describe("twitch-channel-cache", () => {
 	});
 
 	it("offline response caches { live: false } and skips a second fetch", async () => {
-		const fetchMock = vi.fn().mockResolvedValue(fakeResponse(200, offlineBody()));
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(fakeResponse(200, offlineBody()));
 
 		const a = await probeTwitchLive(CHANNEL, fetchMock);
 		const b = await probeTwitchLive(CHANNEL, fetchMock);
@@ -140,7 +142,9 @@ describe("twitch-channel-cache", () => {
 	});
 
 	it("posts the UseLive operation with channelLogin lowercased", async () => {
-		const fetchMock = vi.fn().mockResolvedValue(fakeResponse(200, offlineBody()));
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(fakeResponse(200, offlineBody()));
 		await probeTwitchLive("AwsOnAir", fetchMock);
 		const [url, init] = fetchMock.mock.calls[0];
 		expect(String(url)).toBe("https://gql.twitch.tv/gql");
@@ -153,7 +157,9 @@ describe("twitch-channel-cache", () => {
 	});
 
 	it("caches per-channel — clearing one does not evict the other", async () => {
-		const fetchMock = vi.fn().mockResolvedValue(fakeResponse(200, offlineBody()));
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(fakeResponse(200, offlineBody()));
 		await probeTwitchLive(CHANNEL, fetchMock);
 		await probeTwitchLive(OTHER, fetchMock);
 		expect(fetchMock).toHaveBeenCalledTimes(2);
@@ -167,7 +173,9 @@ describe("twitch-channel-cache", () => {
 	});
 
 	it("cache key is case-insensitive on channelId", async () => {
-		const fetchMock = vi.fn().mockResolvedValue(fakeResponse(200, offlineBody()));
+		const fetchMock = vi
+			.fn()
+			.mockResolvedValue(fakeResponse(200, offlineBody()));
 		await probeTwitchLive("AWS", fetchMock);
 		await probeTwitchLive("aws", fetchMock);
 		expect(fetchMock).toHaveBeenCalledTimes(1);
