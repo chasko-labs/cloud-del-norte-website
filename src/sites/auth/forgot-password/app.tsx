@@ -4,7 +4,6 @@
 import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
-import Container from "@cloudscape-design/components/container";
 import Form from "@cloudscape-design/components/form";
 import FormField from "@cloudscape-design/components/form-field";
 import Input from "@cloudscape-design/components/input";
@@ -122,7 +121,7 @@ function ForgotPasswordForm() {
 
 	if (phase === "done") {
 		return (
-			<Container>
+			<div className="cdn-auth-form-inner">
 				<SpaceBetween size="m">
 					<Alert type="success">
 						Password updated — you can now sign in with your new password.
@@ -133,13 +132,13 @@ function ForgotPasswordForm() {
 						</Link>
 					</Box>
 				</SpaceBetween>
-			</Container>
+			</div>
 		);
 	}
 
 	if (phase === "reset") {
 		return (
-			<Container>
+			<div className="cdn-auth-form-inner">
 				<form
 					onSubmit={(e) => {
 						void handleReset(e);
@@ -201,12 +200,12 @@ function ForgotPasswordForm() {
 						Back — request new code
 					</Link>
 				</Box>
-			</Container>
+			</div>
 		);
 	}
 
 	return (
-		<Container>
+		<div className="cdn-auth-form-inner">
 			<form
 				onSubmit={(e) => {
 					void handleRequestCode(e);
@@ -252,7 +251,7 @@ function ForgotPasswordForm() {
 					{t("auth.forgotPassword.backToSignIn")}
 				</Link>
 			</Box>
-		</Container>
+		</div>
 	);
 }
 

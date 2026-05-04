@@ -3,7 +3,6 @@
 
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
-import Container from "@cloudscape-design/components/container";
 import Form from "@cloudscape-design/components/form";
 import FormField from "@cloudscape-design/components/form-field";
 import Input from "@cloudscape-design/components/input";
@@ -94,7 +93,7 @@ function LoginForm() {
 	}
 
 	return (
-		<Container>
+		<div className="cdn-auth-form-inner">
 			<form
 				onSubmit={(e) => {
 					void handleSubmit(e);
@@ -160,7 +159,7 @@ function LoginForm() {
 					<Link href="/signup/index.html">{t("auth.login.noAccount")}</Link>
 				</SpaceBetween>
 			</Box>
-		</Container>
+		</div>
 	);
 }
 

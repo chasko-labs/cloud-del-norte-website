@@ -162,6 +162,18 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 	margin-bottom: 32px;
 }
 
+/* ── Auth form inner — replaces Cloudscape Container on login/verify/forgot ─
+   cdn-auth-form-inner provides padding without the Cloudscape Container's
+   white background chrome. Form actions (submit button row) and Form root
+   also need transparency overrides since Container no longer acts as a visual
+   shell — those live below in the Container chrome section. */
+.cdn-auth-form-inner {
+	padding: 24px;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+
 /* ── Page header band — Cinzel wordmark + per-page context ───────────────────
    Rendered above .cdn-auth-card. Wordmark sits smaller than the breadcrumb h1
    (~1.4rem clamp) so it reads as a host signature rather than competing with
@@ -435,6 +447,32 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 /* Wizard renders without a Container, so add equivalent padding when wrapped */
 .cdn-auth-card > [class*="awsui_wizard"] {
 	padding: 24px;
+}
+
+/* Form component root + actions footer — suppress the white panel background.
+   awsui_actions_ is the submit-button row inside <Form>; without this it
+   renders a white bar across the bottom of the glass card. */
+.cdn-auth-card [class*="awsui_form_"],
+.cdn-auth-card [class*="awsui_form-layout"] {
+	background: transparent !important;
+}
+
+.cdn-auth-card [class*="awsui_actions_"],
+.cdn-auth-card [class*="awsui_form_"] > div:last-child {
+	background: transparent !important;
+	border-top: none !important;
+}
+
+/* Input fields — warm cream semi-transparent so they sit inside the glass card
+   rather than appearing as opaque white boxes floating on top of it. */
+.cdn-auth-card [class*="awsui_input-container_"],
+.cdn-auth-card [class*="awsui_input_"]:not([class*="awsui_input-container_"]) {
+	background-color: rgba(237, 229, 212, 0.45) !important;
+}
+
+.awsui-dark-mode .cdn-auth-card [class*="awsui_input-container_"],
+.awsui-dark-mode .cdn-auth-card [class*="awsui_input_"]:not([class*="awsui_input-container_"]) {
+	background-color: rgba(28, 34, 48, 0.55) !important;
 }
 
 /* ==========================================================================
