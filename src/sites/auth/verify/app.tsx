@@ -4,7 +4,6 @@
 import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
-import Container from "@cloudscape-design/components/container";
 import Form from "@cloudscape-design/components/form";
 import FormField from "@cloudscape-design/components/form-field";
 import Link from "@cloudscape-design/components/link";
@@ -111,19 +110,19 @@ function VerifyForm() {
 
 	if (done) {
 		return (
-			<Container>
+			<div className="cdn-auth-form-inner">
 				<SpaceBetween size="m">
 					<Alert type="success">Email confirmed — you can now sign in.</Alert>
 					<Box textAlign="center">
 						<Link href="/login/index.html">Sign in</Link>
 					</Box>
 				</SpaceBetween>
-			</Container>
+			</div>
 		);
 	}
 
 	return (
-		<Container>
+		<div className="cdn-auth-form-inner">
 			<form
 				onSubmit={(e) => {
 					void handleSubmit(e);
@@ -180,7 +179,7 @@ function VerifyForm() {
 			<Box margin={{ top: "m" }} textAlign="center">
 				<Link href="/login/index.html">Back to sign in</Link>
 			</Box>
-		</Container>
+		</div>
 	);
 }
 
