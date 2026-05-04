@@ -133,6 +133,9 @@ export interface StreamDef {
 	 * instead of leaving an empty row
 	 */
 	readonly metaFallback?: StreamMetaFallback;
+	/** when true, stream is excluded from the shuffle order. use for temporarily
+	 *  broken streams (DNS failures, unreachable endpoints). remove to restore. */
+	readonly hidden?: true;
 	/** parses metaUrl response into "song — artist" string. omit alongside metaUrl */
 	parseMeta?(data: unknown): string | null;
 	/**
@@ -692,8 +695,9 @@ export const STREAMS: StreamDef[] = [
 		// but browser fetch() with Origin header may succeed. Episode audio
 		// resolves from the RSS enclosure once the RSS fetch succeeds.
 		// Note: go-aws.com DNS was SERVFAIL as of 2026-05-03 — episode audio
-		// will fail until that resolves; rssAudioUrl updates when RSS is accessible.
+		// will fail until that resolves. hidden: true removes from shuffle until fixed.
 		key: "aws_developers_podcast",
+		hidden: true,
 		type: "podcast",
 		url: "https://op3.dev/e/dts.podtrac.com/redirect.mp3/developers.podcast.go-aws.com/media/176.mp3",
 		rssFeedUrl:

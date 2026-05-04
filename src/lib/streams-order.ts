@@ -21,7 +21,7 @@
 import { STREAMS as CANONICAL_STREAMS, type StreamDef } from "./streams";
 
 function shuffleOnce(arr: readonly StreamDef[]): StreamDef[] {
-	const copy = [...arr];
+	const copy = arr.filter((s) => !s.hidden);
 	// Fisher-Yates in-place, O(n)
 	for (let i = copy.length - 1; i > 0; i--) {
 		const j = Math.floor(Math.random() * (i + 1));

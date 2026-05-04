@@ -1,0 +1,97 @@
+/* plans page — pipeline steps + cost table */
+
+.cdn-plans-pipeline {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.cdn-plans-step {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	padding: 10px 14px;
+	background: var(--cdn-cream-light, rgba(237, 229, 212, 0.25));
+	border-left: 3px solid var(--cdn-amber, #d4871a);
+	border-radius: 0 6px 6px 0;
+	font-size: 0.875rem;
+	line-height: 1.5;
+}
+
+.awsui-dark-mode .cdn-plans-step {
+	background: rgba(237, 229, 212, 0.06);
+}
+
+.cdn-plans-step-num {
+	flex-shrink: 0;
+	width: 22px;
+	height: 22px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: var(--cdn-amber, #d4871a);
+	color: #fff;
+	border-radius: 50%;
+	font-size: 0.75rem;
+	font-weight: 700;
+	margin-top: 1px;
+}
+
+/* cost table */
+.cdn-plans-cost-table {
+	display: grid;
+	grid-template-columns: 1fr 2fr auto;
+	gap: 0;
+	border: 1px solid var(--color-border-divider-default);
+	border-radius: 8px;
+	overflow: hidden;
+	font-size: 0.875rem;
+}
+
+.cdn-plans-cost-row {
+	display: contents;
+}
+
+.cdn-plans-cost-row > span {
+	padding: 8px 14px;
+	border-bottom: 1px solid var(--color-border-divider-default);
+}
+
+.cdn-plans-cost-row:last-child > span {
+	border-bottom: none;
+}
+
+.cdn-plans-cost-header > span {
+	font-weight: 700;
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	background: var(--color-background-container-header);
+}
+
+.cdn-plans-cost-total > span {
+	font-weight: 700;
+	background: var(--cdn-cream-light, rgba(237, 229, 212, 0.2));
+}
+
+.cdn-plans-cost-total > span:last-child {
+	color: var(--cdn-amber, #d4871a);
+}
+
+/* backlog items */
+.cdn-plans-backlog-item {
+	padding: 14px 16px;
+	border-left: 3px solid var(--color-border-status-error);
+	background: rgba(var(--color-background-status-error), 0.04);
+	border-radius: 0 6px 6px 0;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.cdn-plans-backlog-meta {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}

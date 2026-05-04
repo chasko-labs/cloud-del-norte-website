@@ -50,6 +50,7 @@ export default defineConfig({
 					__dirname,
 					"./src/pages/dune-test/index.html",
 				),
+				plans: resolve(__dirname, "./src/pages/plans/index.html"),
 			},
 			output: {
 				// split BabylonJS + Cloudscape into long-lived named chunks so
