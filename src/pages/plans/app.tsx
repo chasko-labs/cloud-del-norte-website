@@ -1,4 +1,3 @@
-import Badge from "@cloudscape-design/components/badge";
 import Box from "@cloudscape-design/components/box";
 import ColumnLayout from "@cloudscape-design/components/column-layout";
 import Container from "@cloudscape-design/components/container";
@@ -7,7 +6,6 @@ import ExpandableSection from "@cloudscape-design/components/expandable-section"
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import StatusIndicator from "@cloudscape-design/components/status-indicator";
 import Tabs from "@cloudscape-design/components/tabs";
 import TextContent from "@cloudscape-design/components/text-content";
 import { useEffect, useState } from "react";
@@ -653,272 +651,77 @@ function AgentsTab() {
 	);
 }
 
-// ── backlog tab ───────────────────────────────────────────────────────────────
+// ── github tab ────────────────────────────────────────────────────────────────
 
-type Priority = "critical" | "in-progress" | "open";
-
-interface BacklogItem {
-	id: string;
-	title: string;
-	priority: Priority;
-	files: string;
-	summary: string;
-}
-
-const BACKLOG: BacklogItem[] = [
-	{
-		id: "S1",
-		title: "liora-tube-off flash rate",
-		priority: "critical",
-		files: "src/components/liora-panel/styles.css:1607",
-		summary:
-			"FIXED 2026-05-04. extended 1.1s/5-cycle to 3.5s/2-cycle. max rate now ~1.8 Hz (was 6.5 Hz). WCAG 2.3.1 compliant.",
-	},
-	{
-		id: "S2",
-		title: "sparkle speed cap",
-		priority: "critical",
-		files: "src/dune/white-sands-features.ts:89",
-		summary:
-			"FIXED 2026-05-04. SPARKLE_SPEED_PLAYING 1.5 → 1.0 (~2 Hz, safe margin under 3 Hz threshold).",
-	},
-	{
-		id: "A1",
-		title: "side panels bleed into footer",
-		priority: "open",
-		files: "src/layouts/shell/styles.css",
-		summary:
-			"left nav bleeds into player/footer. right tools panel ends awkwardly above footer. add padding-bottom on navigation-container and tools-container equal to player height (~72px) + footer height (~48px).",
-	},
-	{
-		id: "A2",
-		title: "login page UX rethink",
-		priority: "open",
-		files: "src/sites/auth/_layout/index.tsx, styles.css",
-		summary:
-			"cloudscape form feels enterprise on a music app. three design alternatives documented: 'the postcard' (full-bleed dune, form as dark overlay strip), 'the command console' (dark glass, monospace), 'the desert entry' (no card, float form over tinted dune). near-term quick fix: raise card opacity to 0.72 + hide persistent player on auth pages.",
-	},
-	{
-		id: "B1",
-		title: "next button falls off screen on long titles",
-		priority: "open",
-		files: "src/components/persistent-player/styles.css",
-		summary:
-			"skip button needs flex-shrink: 0 in a right-anchored container. title area gets flex: 1 1 auto with min-width: 0. optionally add marquee scroll on long titles via scrollWidth > clientWidth detection.",
-	},
-	{
-		id: "B2",
-		title: "next station info under skip button",
-		priority: "open",
-		files: "src/components/persistent-player/index.tsx",
-		summary:
-			"under >>| button: show call sign / 4-letter key of next podcast + '&next' text so the 't' of 'next' aligns with '|' in >>|. derive nextStation from STREAMS array using same modulo as skipStation().",
-	},
-	{
-		id: "B3",
-		title: "scroll position lost on station skip",
-		priority: "open",
-		files: "src/components/persistent-player/index.tsx",
-		summary:
-			"navigating to next station scrolls page to top. capture window.scrollY before skip, restore after station mount. or use audio.focus({ preventScroll: true }).",
-	},
-	{
-		id: "C1",
-		title: "aws developers podcast broken",
-		priority: "open",
-		files: "src/lib/streams.ts:696, src/lib/streams-order.ts",
-		summary:
-			"go-aws.com DNS was SERVFAIL 2026-05-03. hidden: true added to stream entry; filtered in streams-order.ts shuffle. restore by removing hidden: true when DNS resolves.",
-	},
-	{
-		id: "C2",
-		title: "add aws latam podcast",
-		priority: "open",
-		files: "src/lib/streams.ts",
-		summary:
-			"verify the AWS LATAM podcast RSS feed URL before adding. add new entry following existing aws_podcast pattern. slot after last Spanish-language podcast entry.",
-	},
-	{
-		id: "D1",
-		title: "podcast resume position",
-		priority: "open",
-		files: "src/lib/player-persist.ts, src/components/persistent-player/index.tsx",
-		summary:
-			"extend PersistedPlayerState with podcastCurrentTime + podcastEpisodeUrl. save on timeupdate (throttled 5s). restore on loadedmetadata. use localStorage (not sessionStorage) for podcasts. clear on explicit episode skip.",
-	},
-	{
-		id: "E1",
-		title: "podcast player visual energy",
-		priority: "open",
-		files: "src/components/persistent-player/",
-		summary:
-			"podcast audio is monotone — audio-reactive CSS vars barely move. add: circular episode-art badge (40×40px) in transparent-left zone, time-ring progress (conic-gradient on currentTime/duration), tactile button feedback (scale(0.94) + overshoot easing on :active), waveform freeze-frame bars (cosmetic slow-breathe animation).",
-	},
-	{
-		id: "F1",
-		title: "donate label lowercase",
-		priority: "open",
-		files: "src/components/persistent-player/styles.css",
-		summary:
-			"source already renders '· donate' in lowercase. if live page shows 'DONATE', check for text-transform: uppercase on .cdn-pp__label-donate.",
-	},
-	{
-		id: "G1",
-		title: "dune too bouncy",
-		priority: "open",
-		files: "src/dune/white-sands-features.ts",
-		summary:
-			"MIGRATION_SPEED_MULTIPLIER = 3.0 may read as too aggressive. propose 1.5. fog, rim light, and phase-color transitions should do the visual work — not fast vertex displacement.",
-	},
-	{
-		id: "G2",
-		title: "sun stays still until music plays",
-		priority: "open",
-		files: "src/dune/AnimationController.ts",
-		summary:
-			"gate timeSeconds increment on isPlaying signal. when idle, freeze sun position and palette. resume on play. requires new signal path into AnimationController.update().",
-	},
-	{
-		id: "H1",
-		title: "liora console LED beat spec",
-		priority: "open",
-		files: "src/components/liora-panel/styles.css, index.tsx",
-		summary:
-			"LEDs fire every 4th beat alternating between 4 lights. requires JS-side beat detection from src/lib/background-viz/beat.ts → CSS var --cdn-beat-count → class toggle on each 4th beat.",
-	},
-	{
-		id: "H2",
-		title: "liora name typography — 70s retro",
-		priority: "open",
-		files: "src/components/liora-panel/styles.css",
-		summary:
-			"bold/condensed/italic 70s fonts: Cooper Black, Helvetica Condensed, ITC Serif Gothic, Kompakt. load via @font-face or CDN. test all four; confirm with bryan before shipping.",
-	},
-	{
-		id: "I1",
-		title: "name scroll fade-off character",
-		priority: "open",
-		files: "src/components/liora-panel/styles.css:2367",
-		summary:
-			"characters should fade transparent as they pass the right edge, not clip hard. use mask-image: linear-gradient(to right, transparent 0%, black 8%, black 85%, transparent 100%) on the scroll container.",
-	},
-	{
-		id: "J1",
-		title: "audio viz too much treble",
-		priority: "open",
-		files: "src/dune/DuneMaterial.ts, src/lib/background-viz/",
-		summary:
-			"for podcast mode: apply low-pass filter or reduce treble band weight before writing --cdn-treble. bass-driven shadows and slow ripples should dominate. moon rocks to baseline when podcast playing.",
-	},
-	{
-		id: "K1",
-		title: "dancer + speaker + radio tower icons",
-		priority: "open",
-		files: "src/components/ (new)",
-		summary:
-			"dancer: 24×32 SVG silhouette, thin brand-violet stroke, CSS sway animation. speaker: microphone-over-headphones composite. radio tower: Franklin Mountains ridge (jagged precambrian, 7192ft peak at upper-right), skinny mast, 3–4 crossbars, 0.5 Hz blink at tip. cross-reference franklin-overlay/path-builder.ts for existing ridge geometry.",
-	},
-];
-
-function BacklogTab() {
-	const byCritical = BACKLOG.filter((i) => i.priority === "critical");
-	const byOpen = BACKLOG.filter((i) => i.priority === "open");
-
-	const priorityLabel: Record<Priority, string> = {
-		critical: "critical",
-		"in-progress": "in progress",
-		open: "open",
-	};
-	const priorityType: Record<
-		Priority,
-		"error" | "in-progress" | "pending"
-	> = {
-		critical: "error",
-		"in-progress": "in-progress",
-		open: "pending",
-	};
-
+function GithubTab() {
 	return (
-		<SpaceBetween size="l">
-			{byCritical.length > 0 && (
-				<Container
-					header={
-						<Header
-							variant="h2"
-							counter={`(${byCritical.length})`}
-							description="wcag 2.3.1 / epilepsy foundation — <3 Hz flash threshold"
-						>
-							<StatusIndicator type="error">safety — critical</StatusIndicator>
-						</Header>
-					}
+		<Container
+			header={
+				<Header
+					variant="h2"
+					description="issues, prs, and project tracking live on github — single source of truth"
 				>
-					<SpaceBetween size="s">
-						{byCritical.map((item) => (
-							<div key={item.id} className="cdn-plans-backlog-item">
-								<div className="cdn-plans-backlog-meta">
-									<Badge color="red">{item.id}</Badge>
-									<StatusIndicator type={priorityType[item.priority]}>
-										{priorityLabel[item.priority]}
-									</StatusIndicator>
-									<Box variant="code" fontSize="body-s">
-										{item.files}
-									</Box>
-								</div>
-								<Box variant="h4">{item.title}</Box>
-								<TextContent>
-									<p>{item.summary}</p>
-								</TextContent>
-							</div>
-						))}
-					</SpaceBetween>
-				</Container>
-			)}
-
-			<Container
-				header={
-					<Header
-						variant="h2"
-						counter={`(${byOpen.length})`}
-						description="prioritized by user impact — tackle in order"
-					>
-						open items
-					</Header>
-				}
-			>
+					github
+				</Header>
+			}
+		>
+			<ColumnLayout columns={2} variant="text-grid">
 				<SpaceBetween size="s">
-					{byOpen.map((item) => (
-						<ExpandableSection
-							key={item.id}
-							headerText={
-								<SpaceBetween size="s" direction="horizontal">
-									<Badge
-										color={
-											item.id.startsWith("A") || item.id.startsWith("B")
-												? "blue"
-												: item.id.startsWith("C") || item.id.startsWith("D")
-													? "green"
-													: "grey"
-										}
-									>
-										{item.id}
-									</Badge>
-									<span>{item.title}</span>
-								</SpaceBetween>
-							}
+					<Box variant="awsui-key-label">repo</Box>
+					<div>
+						<Link
+							href="https://github.com/chasko-labs/cloud-del-norte-website"
+							external
 						>
-							<SpaceBetween size="s">
-								<Box variant="code" fontSize="body-s">
-									{item.files}
-								</Box>
-								<TextContent>
-									<p>{item.summary}</p>
-								</TextContent>
-							</SpaceBetween>
-						</ExpandableSection>
-					))}
+							chasko-labs/cloud-del-norte-website
+						</Link>
+					</div>
+					<div>
+						<Link
+							href="https://github.com/chasko-labs/cloud-del-norte-website/issues"
+							external
+						>
+							open issues
+						</Link>
+					</div>
+					<div>
+						<Link
+							href="https://github.com/chasko-labs/cloud-del-norte-website/pulls"
+							external
+						>
+							pull requests
+						</Link>
+					</div>
 				</SpaceBetween>
-			</Container>
-		</SpaceBetween>
+				<SpaceBetween size="s">
+					<Box variant="awsui-key-label">project board</Box>
+					<div>
+						<Link
+							href="https://github.com/orgs/chasko-labs/projects"
+							external
+						>
+							chasko-labs projects
+						</Link>
+					</div>
+					<div>
+						<Link
+							href="https://github.com/chasko-labs/cloud-del-norte-website/milestones"
+							external
+						>
+							milestones
+						</Link>
+					</div>
+					<div>
+						<Link
+							href="https://github.com/chasko-labs/cloud-del-norte-website/actions"
+							external
+						>
+							ci / actions
+						</Link>
+					</div>
+				</SpaceBetween>
+			</ColumnLayout>
+		</Container>
 	);
 }
 
@@ -926,7 +729,7 @@ function BacklogTab() {
 
 function PlansContent() {
 	useEffect(() => {
-		document.title = "Plans — Cloud Del Norte";
+		document.title = "Website — Cloud Del Norte";
 	}, []);
 
 	return (
@@ -936,7 +739,7 @@ function PlansContent() {
 					variant="h1"
 					description="architecture, agents, and development guide for cloud del norte"
 				>
-					project plans
+					website
 				</Header>
 			}
 		>
@@ -944,7 +747,7 @@ function PlansContent() {
 				tabs={[
 					{ label: "code", id: "code", content: <CodeTab /> },
 					{ label: "agents", id: "agents", content: <AgentsTab /> },
-					{ label: "backlog", id: "backlog", content: <BacklogTab /> },
+					{ label: "github", id: "github", content: <GithubTab /> },
 				]}
 			/>
 		</ContentLayout>
@@ -954,7 +757,7 @@ function PlansContent() {
 function BreadcrumbsContent() {
 	return (
 		<Breadcrumbs
-			active={{ text: "plans", href: "/plans/index.html" }}
+			active={{ text: "website", href: "/plans/index.html" }}
 		/>
 	);
 }
