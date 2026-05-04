@@ -334,7 +334,9 @@ export default function Navigation() {
 
 	const currentPath = location.pathname;
 	const isOnPlans =
-		currentPath.startsWith("/roadmap") || currentPath.startsWith("/theme");
+		currentPath.startsWith("/roadmap") ||
+		currentPath.startsWith("/theme") ||
+		currentPath.startsWith("/plans");
 	const isOnReferences =
 		currentPath.startsWith("/learning") ||
 		currentPath.startsWith("/maintenance-calendar");
@@ -362,6 +364,11 @@ export default function Navigation() {
 			text: t("navigation.resources"),
 			defaultExpanded: isOnPlans,
 			items: [
+				{
+					type: "link",
+					text: t("navigation.plansPage"),
+					href: "/plans/index.html",
+				},
 				{
 					type: "link",
 					text: t("navigation.ugRoadmap"),
