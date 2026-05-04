@@ -78,20 +78,3 @@
 	color: var(--cdn-amber, #d4871a);
 }
 
-/* backlog items */
-.cdn-plans-backlog-item {
-	padding: 14px 16px;
-	border-left: 3px solid var(--color-border-status-error);
-	background: rgba(var(--color-background-status-error), 0.04);
-	border-radius: 0 6px 6px 0;
-	display: flex;
-	flex-direction: column;
-	gap: 6px;
-}
-
-.cdn-plans-backlog-meta {
-	display: flex;
-	align-items: center;
-	flex-wrap: wrap;
-	gap: 8px;
-}
