@@ -86,7 +86,7 @@ export const RIPPLE_AMPLITUDE = 0.018; // tint contribution, lit side only
  * subtle pulse still registers without the strobe risk.
  */
 export const SPARKLE_SPEED_SILENT = 0.25;
-export const SPARKLE_SPEED_PLAYING = 1.5;
+export const SPARKLE_SPEED_PLAYING = 1.0;
 export const SPARKLE_SPEED_REDUCED = 0.0;
 export const SPARKLE_SPEED_REDUCED_PLAYING = 0.4;
 
