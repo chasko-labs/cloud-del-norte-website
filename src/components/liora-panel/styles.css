@@ -1603,40 +1603,27 @@
 		0 0 5px rgba(255, 165, 0, 0.8);
 }
 
-/* tap-3: tube TV shutoff strobe */
+/* tap-3: tube TV shutoff — 2 flash cycles across 3.5s. max rate ~1.8 Hz,
+   well under the 3 Hz epilepsy foundation / WCAG 2.3.1 flash threshold.
+   (old 1.1s/5-cycle version measured 4.5–6.5 Hz on the first two cycles.) */
 @keyframes liora-tube-off {
 	0% {
 		filter: grayscale(0.08) sepia(0.15) saturate(5) hue-rotate(68deg)
 			brightness(1.05) contrast(1.28);
 	}
-	6% {
-		filter: brightness(14) contrast(0) saturate(0);
+	12% {
+		filter: brightness(8) contrast(0) saturate(0);
 	}
-	14% {
-		filter: brightness(0.06);
+	28% {
+		filter: brightness(0.04);
 	}
-	22% {
-		filter: brightness(9) contrast(0) saturate(0);
+	52% {
+		filter: brightness(3) contrast(0) saturate(0);
 	}
-	30% {
-		filter: brightness(0.03);
-	}
-	40% {
-		filter: brightness(5) contrast(0) saturate(0);
-	}
-	50% {
-		filter: brightness(0.02);
-	}
-	62% {
-		filter: brightness(2.5) contrast(0) saturate(0);
-	}
-	74% {
+	70% {
 		filter: brightness(0.01);
 	}
-	86% {
-		filter: brightness(0.8) contrast(0) saturate(0);
-	}
-	95% {
+	88% {
 		filter: brightness(0);
 	}
 	100% {
@@ -1645,7 +1632,7 @@
 }
 
 .liora-bezel.screen-tap-3 .liora-canvas {
-	animation: liora-tube-off 1.1s ease-out forwards;
+	animation: liora-tube-off 3.5s ease-out forwards;
 }
 
 /* ── crt spotlight color — tap state tints the rolling scan band ──────────── */
