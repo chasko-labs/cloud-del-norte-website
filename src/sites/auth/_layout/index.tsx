@@ -78,7 +78,7 @@ export default function AuthLayout({
 				</div>
 				<div className="cdn-card cdn-auth-card cdn-glass">
 					<div className="cdn-auth-form">{children}</div>
-					<span className="cdn-auth-version">auth 0.0.0001</span>
+					<span className="cdn-auth-version">auth 0.0.0002</span>
 				</div>
 			</ContentLayout>
 		</Shell>
