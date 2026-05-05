@@ -372,10 +372,10 @@ function CodeTab() {
 							<SpaceBetween size="xs">
 								<div>
 									SSM Parameter Store at{" "}
-									<code>/heraldstack/shared/</code>
+									<code>/myorg/shared/</code>
 								</div>
 								<div>
-									operator: <code>hs-secret load /heraldstack/shared</code>
+									operator: <code>hs-secret load /myorg/shared</code>
 								</div>
 								<div>CI: x509 cert → RolesAnywhere (no plaintext keys)</div>
 								<div>never .env files, never committed</div>
