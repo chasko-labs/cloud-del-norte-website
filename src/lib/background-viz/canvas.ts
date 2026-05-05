@@ -22,6 +22,7 @@ let rafId: number | null = null;
 let running = false;
 let lowPower = false;
 let firstFrame = true;
+let beatCount = 0;
 
 let staticLightCanvas: OffscreenCanvas | null = null;
 let staticDarkCanvas: OffscreenCanvas | null = null;
@@ -137,6 +138,7 @@ function frame(ts: number): void {
 	const beatBins = getBeatData();
 	const stationKey = getStationKey();
 	const beatFired = detectBeat(ts, beatBins);
+	if (beatFired) beatCount++;
 
 	const w = window.innerWidth;
 	const h = window.innerHeight;
@@ -146,9 +148,16 @@ function frame(ts: number): void {
 	// CSS prop on bass-heavy stations.
 	const bass = getBandBass();
 	const mid = getBandMid();
-	const treble = getBandTreble();
+	let treble = getBandTreble();
 	const centroid = spectralCentroid(visualBins);
 	const flux = spectralFlux(visualBins);
+
+	// Podcast mode: dampen treble (voice sibilance dominates otherwise),
+	// let bass-driven shadows and slow ripples take over the visual.
+	const isPodcastPlaying = document.body.classList.contains("cdn-podcast-playing");
+	if (isPodcastPlaying) {
+		treble *= 0.3;
+	}
 
 	const root = document.documentElement.style;
 	root.setProperty("--cdn-bass", bass.toFixed(3));
@@ -156,6 +165,14 @@ function frame(ts: number): void {
 	root.setProperty("--cdn-treble", treble.toFixed(3));
 	root.setProperty("--cdn-centroid", centroid.toFixed(3));
 	root.setProperty("--cdn-flux", flux.toFixed(3));
+	if (beatFired) {
+		root.setProperty("--cdn-beat-count", String(beatCount));
+		// Cycle LED bank class for liora panel — 4 banks, fire every 4th beat
+		const bank = beatCount % 4;
+		const body = document.body;
+		body.classList.remove("cdn-beat-bank-0", "cdn-beat-bank-1", "cdn-beat-bank-2", "cdn-beat-bank-3");
+		body.classList.add(`cdn-beat-bank-${bank}`);
+	}
 
 	const drawStart = performance.now();
 
