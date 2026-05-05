@@ -25,7 +25,7 @@
    AppLayout renders the breadcrumb slot as a ~40px bar even when empty.
    On auth pages no breadcrumbs are meaningful — collapse it. */
 body.cdn-auth-subdomain [class*="awsui_breadcrumbs"] {
-  display: none !important;
+	display: none !important;
 }
 
 /* ── Make layout background transparent on auth pages ─────────────────────
@@ -36,7 +36,7 @@ body.cdn-auth-subdomain [class*="awsui_breadcrumbs"] {
    full content width (wider than the 480px card). */
 body.cdn-auth-subdomain main[class*="awsui_layout"],
 body.cdn-auth-subdomain [class*="awsui_layout-main"] {
-  background: transparent !important;
+	background: transparent !important;
 }
 
 /* ── Cloudscape design-token nuke — royal blue → brand violet/amber ────────
@@ -171,12 +171,16 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 	max-width: 480px;
 	--cdn-glass-blur: 18px;
 	--cdn-glass-bg: rgba(237, 229, 212, 0.72);
-	box-shadow: 0 4px 24px rgba(34, 22, 8, 0.10), 0 1px 4px rgba(34, 22, 8, 0.06);
+	box-shadow:
+		0 4px 24px rgba(34, 22, 8, 0.1),
+		0 1px 4px rgba(34, 22, 8, 0.06);
 }
 
 .awsui-dark-mode .cdn-auth-card {
 	--cdn-glass-bg: rgba(28, 34, 48, 0.72);
-	box-shadow: 0 4px 32px rgba(0, 0, 0, 0.40), 0 1px 6px rgba(0, 0, 0, 0.20);
+	box-shadow:
+		0 4px 32px rgba(0, 0, 0, 0.4),
+		0 1px 6px rgba(0, 0, 0, 0.2);
 }
 
 /* The ContentLayout renders children directly under awsui_layout — add a top
@@ -376,7 +380,9 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 	box-shadow: 0 0 0 3px rgba(139, 90, 43, 0.22) !important;
 }
 
-.awsui-dark-mode .cdn-auth-card [class*="awsui_button"][class*="variant-primary"],
+.awsui-dark-mode
+	.cdn-auth-card
+	[class*="awsui_button"][class*="variant-primary"],
 .awsui-dark-mode .cdn-auth-card button[class*="variant-primary"] {
 	background: var(--cdn-violet) !important;
 	border-color: var(--cdn-violet) !important;
@@ -497,7 +503,9 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 }
 
 .awsui-dark-mode .cdn-auth-card [class*="awsui_input-container_"],
-.awsui-dark-mode .cdn-auth-card [class*="awsui_input_"]:not([class*="awsui_input-container_"]) {
+.awsui-dark-mode
+	.cdn-auth-card
+	[class*="awsui_input_"]:not([class*="awsui_input-container_"]) {
 	background-color: rgba(28, 34, 48, 0.55) !important;
 }
 
