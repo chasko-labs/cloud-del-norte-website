@@ -1110,6 +1110,16 @@
 
 /* ── powered-by neon link — appears in status slot after short circuit ─────── */
 
+/* Hide "powered by amazon sumerian" text — external embed renders it.
+   Replace with brand-neutral label via CSS content override. */
+.liora-powered-by {
+	font-size: 0;
+}
+.liora-powered-by::after {
+	content: "cloud del norte";
+	font-size: 14px;
+}
+
 .liora-powered-by {
 	position: absolute;
 	bottom: 36px;
