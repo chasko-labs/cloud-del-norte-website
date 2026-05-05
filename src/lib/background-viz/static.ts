@@ -79,9 +79,17 @@ export function buildStaticLight(
 	w: number,
 	h: number,
 	_starPositions: StarPoint[],
-): OffscreenCanvas {
-	const canvas = new OffscreenCanvas(w, h);
-	const ctx = canvas.getContext("2d")!;
+): OffscreenCanvas | null {
+	if (typeof OffscreenCanvas === "undefined") return null;
+	let canvas: OffscreenCanvas;
+	let ctx: OffscreenCanvasRenderingContext2D;
+	try {
+		canvas = new OffscreenCanvas(w, h);
+		ctx = canvas.getContext("2d")!;
+		if (!ctx) return null;
+	} catch {
+		return null;
+	}
 
 	// base cream fill
 	ctx.fillStyle = "#ede5d4";
@@ -118,9 +126,17 @@ export function buildStaticDark(
 	w: number,
 	h: number,
 	starPositions: StarPoint[],
-): OffscreenCanvas {
-	const canvas = new OffscreenCanvas(w, h);
-	const ctx = canvas.getContext("2d")!;
+): OffscreenCanvas | null {
+	if (typeof OffscreenCanvas === "undefined") return null;
+	let canvas: OffscreenCanvas;
+	let ctx: OffscreenCanvasRenderingContext2D;
+	try {
+		canvas = new OffscreenCanvas(w, h);
+		ctx = canvas.getContext("2d")!;
+		if (!ctx) return null;
+	} catch {
+		return null;
+	}
 
 	// base dark fill
 	ctx.fillStyle = "#0a0c14";

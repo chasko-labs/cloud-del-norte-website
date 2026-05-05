@@ -1404,9 +1404,17 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
    z-index:-2 and hide the dunes entirely — the regression fixed in this commit
    (ref: 777c7743 introduced the body selector; removed here).
 
-   Scoped to light mode — dark mode keeps Cloudscape's deep-navy treatment. */
+   Scoped to light mode — dark mode equivalent below. */
 :root:not(.awsui-dark-mode) {
 	background-color: #ede5d4;
+}
+
+/* Dark mode safety net — same stacking-step-1 trick as light mode above.
+   On devices where the canvas-2D starfield fails to mount (old Safari without
+   OffscreenCanvas, GPU-constrained MacBook Air, etc.) this prevents a white
+   bleed-through behind content. Matches the dark.ts base fill (#0a0c14). */
+:root.awsui-dark-mode {
+	background-color: #0a0c14;
 }
 
 /* ── Tighten Cloudscape AppLayout's nav→main gap ──────────────────────────
