@@ -454,6 +454,22 @@ a.cdn-pp__label--donate:focus-visible {
 	outline-offset: 2px;
 }
 
+.cdn-pp__skip-wrap {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	flex-shrink: 0;
+	gap: 2px;
+}
+
+.cdn-pp__next-hint {
+	font-size: 9px;
+	letter-spacing: 0.08em;
+	white-space: nowrap;
+	opacity: 0.5;
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+}
+
 /* seek — 15s rewind/ff for podcasts.
    light mode: borderless ghost matching skip — part of the typographic flow.
    dark mode: station-tinted border retained for legibility on navy. */

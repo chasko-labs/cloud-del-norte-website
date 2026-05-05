@@ -69,6 +69,7 @@ export class AnimationController {
 	private readonly reducedMotion: boolean;
 	private timeSeconds = 0;
 	private cameraAlphaOffset = 0;
+	private playing = false;
 	private readonly sunScratch: Vector3;
 	private readonly state: AnimationState;
 
@@ -94,7 +95,11 @@ export class AnimationController {
 			// only motion sources.
 			return;
 		}
-		this.timeSeconds += deltaSeconds;
+		// Only advance time-of-day (sun, palette) when audio is playing.
+		// Camera breathe + alpha drift continue regardless for ambient life.
+		if (this.playing) {
+			this.timeSeconds += deltaSeconds;
+		}
 		this.cameraAlphaOffset += 0.00004;
 
 		const td = (this.timeSeconds / TIME_OF_DAY_PERIOD_S) % 1;
@@ -130,5 +135,9 @@ export class AnimationController {
 
 	isReducedMotion(): boolean {
 		return this.reducedMotion;
+	}
+
+	setPlaying(playing: boolean): void {
+		this.playing = playing;
 	}
 }

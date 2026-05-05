@@ -168,9 +168,10 @@ export function mountDuneSceneOnCanvas(
 		const delta = (now - lastFrameMs) / 1000;
 		lastFrameMs = now;
 
+		const audioLevels = audio.sample();
+		animation.setPlaying(audioLevels.streamPlaying);
 		animation.update(delta);
 		const animState = animation.getState();
-		const audioLevels = audio.sample();
 
 		// Camera transforms — radius breathe + alpha drift. Reduced motion
 		// freezes both via animation state (alphaOffset stays 0, radius stays

@@ -58,18 +58,21 @@ describe("AnimationController reduced-motion gating", () => {
 describe("AnimationController active state evolution", () => {
 	it("advances timeOfDay over the 90s period", () => {
 		const ac = new AnimationController({ reducedMotion: false });
+		ac.setPlaying(true);
 		ac.update(45); // halfway through the 90s loop
 		expect(ac.getState().timeOfDay).toBeCloseTo(0.5, 3);
 	});
 
 	it("wraps timeOfDay at the period boundary", () => {
 		const ac = new AnimationController({ reducedMotion: false });
+		ac.setPlaying(true);
 		ac.update(90); // full loop
 		expect(ac.getState().timeOfDay).toBeCloseTo(0, 3);
 	});
 
 	it("camera radius oscillates within reduced amplitude (±0.105)", () => {
 		const ac = new AnimationController({ reducedMotion: false });
+		ac.setPlaying(true);
 		// Sweep across one breathe period (24s) at fine steps; collect extremes.
 		let minR = Infinity;
 		let maxR = -Infinity;
@@ -88,6 +91,7 @@ describe("AnimationController active state evolution", () => {
 
 	it("sunDir wobbles within reduced amplitude (≤0.04 from base)", () => {
 		const ac = new AnimationController({ reducedMotion: false });
+		ac.setPlaying(true);
 		// 0.05 Hz, sample over 25s in 0.5s steps → cover full period.
 		let maxDx = 0;
 		let maxDz = 0;

@@ -6,8 +6,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { setMediaSession } from "../../lib/media-session";
 import {
+	clearPodcastResume,
 	loadPlayerState,
+	loadPodcastResume,
 	type PersistedPlayerState,
+	savePodcastResume,
 	savePlayerState,
 } from "../../lib/player-persist";
 import { formatLocation, hexToRgbTuple } from "../../lib/streams";
@@ -279,6 +282,38 @@ function PersistentPlayerBar({
 		};
 	}, [isPodcast]);
 
+	// podcast resume — save position every 5s, restore on loadedmetadata
+	useEffect(() => {
+		const audio = audioRef.current;
+		if (!audio || !isPodcast) return;
+		let lastSave = 0;
+		const onTimeUpdate = () => {
+			const now = Date.now();
+			if (now - lastSave < 5000) return;
+			lastSave = now;
+			const url = rssAudioUrl ?? state.stationUrl;
+			savePodcastResume({
+				stationKey: state.stationKey,
+				episodeUrl: url,
+				currentTime: audio.currentTime,
+			});
+		};
+		const onLoaded = () => {
+			const saved = loadPodcastResume();
+			if (!saved) return;
+			const url = rssAudioUrl ?? state.stationUrl;
+			if (saved.stationKey === state.stationKey && saved.episodeUrl === url && saved.currentTime > 0) {
+				audio.currentTime = saved.currentTime;
+			}
+		};
+		audio.addEventListener("timeupdate", onTimeUpdate);
+		audio.addEventListener("loadedmetadata", onLoaded);
+		return () => {
+			audio.removeEventListener("timeupdate", onTimeUpdate);
+			audio.removeEventListener("loadedmetadata", onLoaded);
+		};
+	}, [isPodcast, rssAudioUrl, state.stationKey, state.stationUrl]);
+
 	// manual retry — user-triggered escape hatch when auto-retry didn't recover.
 	// Resets retry counter and restores primary URL before re-attempting
 	const manualRetry = useCallback(() => {
@@ -521,15 +556,25 @@ function PersistentPlayerBar({
 				onPause={handlePause}
 			/>
 			{/* skip — left of meta */}
-			<button
-				type="button"
-				className="cdn-pp__btn cdn-pp__btn--skip"
-				onClick={() => onSkipStation(1)}
-				aria-label="next station"
-				title="next station"
-			>
-				<span aria-hidden="true">⏭</span>
-			</button>
+			<div className="cdn-pp__skip-wrap">
+				<button
+					type="button"
+					className="cdn-pp__btn cdn-pp__btn--skip"
+					onClick={() => onSkipStation(1)}
+					aria-label="next station"
+					title="next station"
+				>
+					<span aria-hidden="true">⏭</span>
+				</button>
+				<span className="cdn-pp__next-hint" aria-hidden="true">
+					{(() => {
+						const idx = STREAMS.findIndex((s) => s.key === state.stationKey);
+						if (idx < 0) return null;
+						const next = STREAMS[(idx + 1) % STREAMS.length];
+						return `${next.key.slice(0, 4).toUpperCase()} ›`;
+					})()}
+				</span>
+			</div>
 			<span className="cdn-pp__meta">
 				{streamDef?.donateUrl ? (
 					<a
@@ -721,6 +766,8 @@ export default function PersistentPlayer() {
 	// was playing the next station keeps playing; if idle it stays idle.
 	// Both radio and podcast follow the same rule.
 	const handleSkipStation = useCallback((direction: 1 | -1) => {
+		const scrollY = window.scrollY;
+		clearPodcastResume();
 		setState((current) => {
 			if (!current) return current;
 			const idx = STREAMS.findIndex((s) => s.key === current.stationKey);
@@ -736,6 +783,7 @@ export default function PersistentPlayer() {
 			savePlayerState(nextState);
 			return nextState;
 		});
+		requestAnimationFrame(() => window.scrollTo(0, scrollY));
 	}, []);
 
 	const handlePlayStateChange = useCallback((isPlaying: boolean) => {
