@@ -90,8 +90,16 @@ export function renderDark(
 	if (staticCanvas) {
 		ctx.drawImage(staticCanvas, 0, 0);
 	} else {
+		// OffscreenCanvas unavailable (old Safari) — draw base + stars directly.
+		// This path only executes inside renderDark (dark mode gate in renderer.ts).
 		ctx.fillStyle = "#0a0c14";
 		ctx.fillRect(0, 0, w, h);
+		for (const star of starPositions) {
+			ctx.beginPath();
+			ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+			ctx.fillStyle = `rgba(255,255,255,${Math.min(1, star.opacity).toFixed(3)})`;
+			ctx.fill();
+		}
 	}
 
 	const bass = normBand(visualBins, 0, 10);
