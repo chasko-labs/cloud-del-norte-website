@@ -33,7 +33,7 @@ import "./styles.css";
  */
 export default function AuthLayout({
 	children,
-	pageContext: _pageContext,
+	pageContext,
 }: {
 	children: React.ReactNode;
 	pageContext?: string;
@@ -69,6 +69,12 @@ export default function AuthLayout({
 			identityHref="https://clouddelnorte.org/feed/index.html"
 		>
 			<ContentLayout>
+				<div className="cdn-auth-page-header">
+					<h1 className="cdn-auth-wordmark">Cloud Del Norte</h1>
+					<span className="cdn-auth-context">
+						{pageContext || "Cloud Del Norte"}
+					</span>
+				</div>
 				<div className="cdn-card cdn-auth-card cdn-glass">{children}</div>
 			</ContentLayout>
 		</Shell>

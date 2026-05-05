@@ -202,6 +202,33 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 	margin-bottom: 32px;
 }
 
+/* ── Link color nuke — direct class override ─────────────────────────────────
+   Cloudscape v3 wraps link color in a two-level var() fallback:
+   var(--awsui-style-color-default-6b9ypa, var(--color-text-link-default-...))
+   If the outer scoped var is set by any Cloudscape internal mechanism, our
+   token overrides above are bypassed. This direct selector guarantees brand
+   violet on all Link instances in the auth subdomain. Triple :not(#\9) raises
+   specificity to (3,2,0) which beats any Cloudscape internal rule. */
+body.cdn-auth-subdomain:not(#\9):not(#\9):not(#\9)
+[class*="awsui_link_"]:not([class*="variant-top-navigation"]) {
+	color: var(--cdn-purple);
+}
+
+body.cdn-auth-subdomain:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):hover {
+	color: var(--cdn-violet);
+}
+
+body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]) {
+	color: var(--cdn-lavender);
+}
+
+body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):hover {
+	color: var(--cdn-violet);
+}
+
 /* ── Auth form inner — replaces Cloudscape Container on login/verify/forgot ─
    cdn-auth-form-inner provides padding without the Cloudscape Container's
    white background chrome. Form actions (submit button row) and Form root
@@ -222,7 +249,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 .cdn-auth-page-header {
 	max-width: 480px;
 	margin: 0 auto 16px;
-	padding: 12px 8px 12px;
+	padding: 32px 8px 12px;
 	text-align: center;
 	position: relative;
 }
