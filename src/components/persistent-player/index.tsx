@@ -651,6 +651,11 @@ function PersistentPlayerBar({
 					</span>
 				)}
 			</span>
+			{isPodcast && playing && (
+				<div className="cdn-pp__waveform" aria-hidden="true">
+					<span /><span /><span /><span /><span /><span />
+				</div>
+			)}
 			{/* type icon — 💃🏾 radio / 🗣️ podcast — sits left of play button */}
 			<span className="cdn-pp__icon" aria-hidden="true">
 				{streamDef?.type === "podcast" ? "🗣️" : "💃🏾"}

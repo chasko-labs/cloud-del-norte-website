@@ -1775,9 +1775,11 @@ body.cdn-stream-playing.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 .liora-credits-title {
-	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+	font-family: 'Impact', 'Haettenschweiler', 'Arial Narrow Bold', 'Franklin Gothic Bold Condensed', sans-serif;
+	font-style: italic;
+	font-weight: 900;
 	font-size: clamp(32px, 20cqi, 56px);
-	letter-spacing: 0.35em;
+	letter-spacing: 0.25em;
 	text-transform: uppercase;
 	color: #fff;
 	opacity: 0;
