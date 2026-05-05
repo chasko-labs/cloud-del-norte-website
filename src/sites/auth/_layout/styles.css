@@ -28,6 +28,14 @@ body.cdn-auth-subdomain [class*="awsui_breadcrumbs"] {
 	display: none;
 }
 
+/* ── Suppress AppLayout decorative background bar ─────────────────────────
+   Cloudscape renders an empty div.awsui_background_.awsui_has-default-background_
+   as a white strip behind the breadcrumbs/notifications area. On auth pages
+   the wallpaper should show through. */
+body.cdn-auth-subdomain [class*="awsui_background_"][class*="awsui_has-default-background_"] {
+	background-color: transparent !important;
+}
+
 /* ── Make layout background transparent on auth pages ─────────────────────
    Shell styles apply an opaque cream (#ede5d4) background to
    main[class*="awsui_layout"] globally. On auth pages the wallpaper should
