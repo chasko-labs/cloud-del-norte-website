@@ -178,19 +178,26 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
    1.5px warm border, layered shadow, top-edge gradient streak, backdrop blur.
    Hover lift inherited from .cdn-glass. */
 .cdn-auth-card {
-	max-width: 480px;
-	--cdn-glass-blur: 18px;
-	--cdn-glass-bg: rgba(237, 229, 212, 0.72);
+	max-width: clamp(320px, 90vw, 520px);
+	padding: clamp(24px, 5vw, 48px);
+	background: rgba(237, 229, 212, 0.72);
+	border: 1.5px solid rgba(139, 90, 43, 0.28);
+	border-radius: 12px;
+	-webkit-backdrop-filter: blur(18px) saturate(1.1);
+	backdrop-filter: blur(18px) saturate(1.1);
 	box-shadow:
-		0 4px 24px rgba(34, 22, 8, 0.1),
-		0 1px 4px rgba(34, 22, 8, 0.06);
+		0 4px 24px rgba(34, 22, 8, 0.12),
+		0 1px 4px rgba(34, 22, 8, 0.06),
+		inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .awsui-dark-mode .cdn-auth-card {
-	--cdn-glass-bg: rgba(28, 34, 48, 0.72);
+	background: rgba(28, 34, 48, 0.72);
+	border-color: rgba(144, 96, 240, 0.32);
 	box-shadow:
 		0 4px 32px rgba(0, 0, 0, 0.4),
-		0 1px 6px rgba(0, 0, 0, 0.2);
+		0 1px 6px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 /* The ContentLayout renders children directly under awsui_layout — add a top
