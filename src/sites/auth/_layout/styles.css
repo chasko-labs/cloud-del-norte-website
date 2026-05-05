@@ -21,6 +21,19 @@
 @import "../../../styles/tokens.css";
 @import "../../../styles/cdn-glass-streaks.css";
 
+/* ── Suppress empty breadcrumb row on auth pages ──────────────────────────
+   AppLayout renders the breadcrumb slot as a ~40px bar even when empty.
+   On auth pages no breadcrumbs are meaningful — collapse it. */
+body.cdn-auth-subdomain [class*="awsui_breadcrumbs"] {
+  display: none !important;
+}
+
+/* ── Hide persistent player on auth pages ─────────────────────────────────
+   Player slot occupies dead space beside the form card. */
+body.cdn-auth-subdomain .cdn-player-slot {
+  display: none !important;
+}
+
 /* ── Cloudscape design-token nuke — royal blue → brand violet/amber ────────
    Bryan eyes-on (v0.0.0047): "another awful blue" was leaking into the auth
    subdomain via Cloudscape's hardcoded token fallbacks (#006ce0). Class-level
@@ -153,10 +166,12 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 	max-width: 480px;
 	--cdn-glass-blur: 18px;
 	--cdn-glass-bg: rgba(237, 229, 212, 0.72);
+	box-shadow: 0 4px 24px rgba(34, 22, 8, 0.10), 0 1px 4px rgba(34, 22, 8, 0.06);
 }
 
 .awsui-dark-mode .cdn-auth-card {
 	--cdn-glass-bg: rgba(28, 34, 48, 0.72);
+	box-shadow: 0 4px 32px rgba(0, 0, 0, 0.40), 0 1px 6px rgba(0, 0, 0, 0.20);
 }
 
 /* The ContentLayout renders children directly under awsui_layout — add a top
@@ -164,7 +179,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
    12px so the card sits closer under the page-context band, reading as a
    single composition rather than two stacked plates. */
 [class*="awsui_content-layout"] > .cdn-auth-card {
-	margin-top: 12px;
+	margin-top: 0;
 	margin-bottom: 32px;
 }
 
@@ -188,7 +203,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 .cdn-auth-page-header {
 	max-width: 480px;
 	margin: 0 auto 16px;
-	padding: 24px 8px 12px;
+	padding: 12px 8px 12px;
 	text-align: center;
 	position: relative;
 }
