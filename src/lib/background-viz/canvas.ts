@@ -198,6 +198,13 @@ export function initCanvas(): {
 	sizeCanvas();
 	rebuildStatic();
 
+	// Paint an immediate opaque frame so the canvas is never transparent.
+	// On old Safari without OffscreenCanvas, a transparent canvas lets the
+	// :root background bleed through before the rAF loop starts.
+	const w0 = window.innerWidth;
+	const h0 = window.innerHeight;
+	render(ctx, w0, h0, 0, false, new Uint8Array(1024), "", true, staticLightCanvas, staticDarkCanvas, starPositions);
+
 	if (reducedMotion) {
 		// draw one static frame, no rAF
 		const w = window.innerWidth;
