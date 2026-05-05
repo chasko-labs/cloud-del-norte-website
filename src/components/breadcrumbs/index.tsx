@@ -13,7 +13,7 @@ export interface BreadcrumbsProps {
 export default function Breadcrumbs({ active }: BreadcrumbsProps) {
 	const { t } = useTranslation();
 	const items: BreadcrumbGroupProps.Item[] = [
-		{ text: t("breadcrumbs.home"), href: "/home/index.html" },
+		{ text: t("breadcrumbs.home"), href: "/feed/index.html" },
 	];
 	return <BreadcrumbGroup items={[...items, active]} />;
 }
