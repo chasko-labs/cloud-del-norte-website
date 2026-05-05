@@ -151,6 +151,12 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
    Hover lift inherited from .cdn-glass. */
 .cdn-auth-card {
 	max-width: 480px;
+	--cdn-glass-blur: 18px;
+	--cdn-glass-bg: rgba(237, 229, 212, 0.72);
+}
+
+.awsui-dark-mode .cdn-auth-card {
+	--cdn-glass-bg: rgba(28, 34, 48, 0.72);
 }
 
 /* The ContentLayout renders children directly under awsui_layout — add a top

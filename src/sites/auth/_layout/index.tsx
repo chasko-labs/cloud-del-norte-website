@@ -1,7 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import BreadcrumbGroup from "@cloudscape-design/components/breadcrumb-group";
 import ContentLayout from "@cloudscape-design/components/content-layout";
 import type React from "react";
 import { useEffect, useState } from "react";
@@ -34,7 +33,7 @@ import "./styles.css";
  */
 export default function AuthLayout({
 	children,
-	pageContext,
+	pageContext: _pageContext,
 }: {
 	children: React.ReactNode;
 	pageContext?: string;
@@ -48,8 +47,6 @@ export default function AuthLayout({
 			document.body.classList.remove("cdn-auth-subdomain");
 		};
 	}, []);
-
-	const contextLine = pageContext ?? "Cloud Del Norte";
 
 	return (
 		<Shell
@@ -70,17 +67,6 @@ export default function AuthLayout({
 			hideSignInUtility={true}
 			contentType="form"
 			identityHref="https://clouddelnorte.org/feed/index.html"
-			breadcrumbs={
-				<BreadcrumbGroup
-					items={[
-						{
-							text: "Cloud Del Norte",
-							href: "https://clouddelnorte.org/feed/index.html",
-						},
-						{ text: contextLine, href: "" },
-					]}
-				/>
-			}
 		>
 			<ContentLayout>
 				<div className="cdn-card cdn-auth-card cdn-glass">{children}</div>

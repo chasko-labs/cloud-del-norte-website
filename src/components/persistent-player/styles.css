@@ -754,3 +754,6 @@ body.cdn-podcast-playing .cdn-pp__btn--resume {
 		height: 26px;
 	}
 }
+
+/* Hide player on auth subdomain — no audio distraction during sign-up */
+.cdn-auth-subdomain .cdn-player-slot { display: none; }
