@@ -33,7 +33,8 @@ body.cdn-auth-subdomain [class*="awsui_breadcrumbs"] {
    as a white strip behind the breadcrumbs/notifications area. On auth pages
    the wallpaper should show through. :not(#\9) matches specificity trick
    Cloudscape uses internally so we win without !important. */
-body.cdn-auth-subdomain:not(#\9) [class*="awsui_background_"][class*="awsui_has-default-background_"] {
+body.cdn-auth-subdomain:not(#\9)
+[class*="awsui_background_"][class*="awsui_has-default-background_"] {
 	background-color: transparent;
 }
 
