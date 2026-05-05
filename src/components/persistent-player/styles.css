@@ -208,7 +208,10 @@ body.cdn-stream-playing .cdn-player-slot::before {
 	text-transform: uppercase;
 	font-size: var(--cdn-text-base, 0.875rem);
 	line-height: 1.2;
-	flex-shrink: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 100%;
 	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	/* light mode: no text-shadow on cream — ink on parchment needs no lift */
 	text-shadow: none;
@@ -418,6 +421,7 @@ a.cdn-pp__label--donate:focus-visible {
    part of the typographic flow rather than a distinct UI control.
    dark mode: station-tinted border retained for legibility on navy. */
 .cdn-pp__btn--skip {
+	flex-shrink: 0;
 	width: 28px;
 	height: 28px;
 	border-radius: 6px;

@@ -40,7 +40,7 @@ export const WIND_DIR: readonly [number, number] = [1, 0];
  * AND add bass-coupled sway via MIGRATION_BASS_SWAY so dunes roll harder in
  * sync with the bassline.
  */
-export const MIGRATION_SPEED_MULTIPLIER = 3.0;
+export const MIGRATION_SPEED_MULTIPLIER = 1.5;
 
 /**
  * Multiplier applied on top of MIGRATION_SPEED_MULTIPLIER when music is

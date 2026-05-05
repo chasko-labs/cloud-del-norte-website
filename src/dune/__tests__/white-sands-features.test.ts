@@ -42,9 +42,9 @@ describe("white-sands-features constants", () => {
 	});
 
 	it("MIGRATION_SPEED_MULTIPLIER pushes drift faster than baseline", () => {
-		// Bryan: "faster than 10 ft/year for web". Original drift coef was 0.012;
-		// this multiplier scales it. Anything ≥ 1 is valid; we picked 3x.
-		expect(MIGRATION_SPEED_MULTIPLIER).toBeGreaterThanOrEqual(2);
+		// Bryan: "too bouncy at 3.0" — halved to 1.5. Anything ≥ 1 is valid;
+		// dramatic effect comes from fog/light, not fast vertex motion.
+		expect(MIGRATION_SPEED_MULTIPLIER).toBeGreaterThanOrEqual(1);
 		expect(MIGRATION_SPEED_MULTIPLIER).toBeLessThanOrEqual(6);
 	});
 

@@ -443,6 +443,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 	overscroll-behavior: contain;
 	touch-action: pan-y;
 	max-height: calc(100vh - 56px);
+	padding-bottom: 120px;
 }
 
 /* v0.0.0131 — info/tools-toggle disappears past ~1 viewport of scroll.
@@ -479,6 +480,7 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	overscroll-behavior: contain;
 	touch-action: pan-y;
 	max-height: calc(100vh - 56px);
+	padding-bottom: 120px;
 }
 
 /* v0.0.0125 — mobile nav drawer + inner scroller must fit the viewport
