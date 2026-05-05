@@ -121,7 +121,7 @@ describe("projectNextVersion", () => {
 		];
 		const result = projectNextVersion(releases);
 		expect(result).not.toBeNull();
-		expect(result?.projectedDate > "2025-01-01").toBe(true);
+		expect(result!.projectedDate! > "2025-01-01").toBe(true);
 	});
 
 	it('returns announced date with confidence "announced" when announcedDate is provided', () => {
@@ -177,6 +177,6 @@ describe("projectNextLTS", () => {
 		const releases = [REL_2024_01, REL_2024_07, REL_2025_01];
 		const result = projectNextLTS(releases);
 		expect(result).not.toBeNull();
-		expect(result?.projectedDate > "2025-01-01").toBe(true);
+		expect(result!.projectedDate! > "2025-01-01").toBe(true);
 	});
 });
