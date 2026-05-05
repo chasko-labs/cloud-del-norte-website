@@ -409,7 +409,7 @@ function SignupWizard() {
 
 export default function App() {
 	return (
-		<AuthLayout pageContext="Create your account">
+		<AuthLayout pageContext="create your account">
 			<SignupWizard />
 		</AuthLayout>
 	);

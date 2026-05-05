@@ -165,7 +165,7 @@ function LoginForm() {
 
 export default function App() {
 	return (
-		<AuthLayout pageContext="Sign in to Cloud Del Norte">
+		<AuthLayout pageContext="sign in to cloud del norte">
 			<LoginForm />
 		</AuthLayout>
 	);

@@ -257,7 +257,7 @@ function ForgotPasswordForm() {
 
 export default function App() {
 	return (
-		<AuthLayout pageContext="Reset your password">
+		<AuthLayout pageContext="reset your password">
 			<ForgotPasswordForm />
 		</AuthLayout>
 	);

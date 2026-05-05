@@ -21,6 +21,47 @@
 @import "../../../styles/tokens.css";
 @import "../../../styles/cdn-glass-streaks.css";
 
+/* ==========================================================================
+   Auth design tokens — isolated namespace
+
+   Self-contained palette for the auth flow. Avoids inheriting from main site
+   tokens which cause specificity wars with Cloudscape. All auth-specific
+   color references point here.
+   ========================================================================== */
+body.cdn-auth-subdomain {
+	--cdn-auth-accent: #7c5cbf;
+	--cdn-auth-accent-hover: #6a4aad;
+	--cdn-auth-accent-soft: rgba(124, 92, 191, 0.12);
+	--cdn-auth-text: #3d3145;
+	--cdn-auth-text-muted: #6b5f73;
+	--cdn-auth-surface: rgba(255, 252, 248, 0.72);
+	--cdn-auth-border: rgba(124, 92, 191, 0.18);
+	--cdn-auth-input-bg: rgba(255, 252, 248, 0.55);
+	--cdn-auth-input-border: rgba(124, 92, 191, 0.25);
+	--cdn-auth-input-focus: rgba(124, 92, 191, 0.4);
+	--cdn-auth-glow: 0 0 0 3px rgba(124, 92, 191, 0.15);
+	--cdn-auth-btn-bg: #7c5cbf;
+	--cdn-auth-btn-hover: #6a4aad;
+	--cdn-auth-radius: 10px;
+	--cdn-auth-radius-sm: 8px;
+}
+
+body.cdn-auth-subdomain.awsui-dark-mode {
+	--cdn-auth-accent: #a78bfa;
+	--cdn-auth-accent-hover: #c4b5fd;
+	--cdn-auth-accent-soft: rgba(167, 139, 250, 0.12);
+	--cdn-auth-text: #e8e0f0;
+	--cdn-auth-text-muted: #b8afc4;
+	--cdn-auth-surface: rgba(30, 27, 38, 0.78);
+	--cdn-auth-border: rgba(167, 139, 250, 0.2);
+	--cdn-auth-input-bg: rgba(30, 27, 38, 0.6);
+	--cdn-auth-input-border: rgba(167, 139, 250, 0.3);
+	--cdn-auth-input-focus: rgba(167, 139, 250, 0.5);
+	--cdn-auth-glow: 0 0 0 3px rgba(167, 139, 250, 0.2);
+	--cdn-auth-btn-bg: #7c5cbf;
+	--cdn-auth-btn-hover: #a78bfa;
+}
+
 /* ── Suppress empty breadcrumb row on auth pages ──────────────────────────
    AppLayout renders the breadcrumb slot as a ~40px bar even when empty.
    On auth pages no breadcrumbs are meaningful — collapse it. */
@@ -178,16 +219,19 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
    1.5px warm border, layered shadow, top-edge gradient streak, backdrop blur.
    Hover lift inherited from .cdn-glass. */
 .cdn-auth-card {
-	max-width: 480px;
+	max-width: clamp(320px, 90vw, 520px);
+	padding: clamp(24px, 5vw, 48px);
+	border-radius: var(--cdn-auth-radius);
+	backdrop-filter: blur(20px) saturate(1.2);
 	--cdn-glass-blur: 18px;
-	--cdn-glass-bg: rgba(237, 229, 212, 0.72);
+	--cdn-glass-bg: var(--cdn-auth-surface);
 	box-shadow:
 		0 4px 24px rgba(34, 22, 8, 0.1),
 		0 1px 4px rgba(34, 22, 8, 0.06);
 }
 
 .awsui-dark-mode .cdn-auth-card {
-	--cdn-glass-bg: rgba(28, 34, 48, 0.72);
+	--cdn-glass-bg: var(--cdn-auth-surface);
 	box-shadow:
 		0 4px 32px rgba(0, 0, 0, 0.4),
 		0 1px 6px rgba(0, 0, 0, 0.2);
@@ -211,22 +255,22 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
    specificity to (3,2,0) which beats any Cloudscape internal rule. */
 body.cdn-auth-subdomain:not(#\9):not(#\9):not(#\9)
 [class*="awsui_link_"]:not([class*="variant-top-navigation"]) {
-	color: var(--cdn-purple);
+	color: var(--cdn-auth-accent);
 }
 
 body.cdn-auth-subdomain:not(#\9):not(#\9):not(#\9)
 	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):hover {
-	color: var(--cdn-violet);
+	color: var(--cdn-auth-accent-hover);
 }
 
 body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	[class*="awsui_link_"]:not([class*="variant-top-navigation"]) {
-	color: var(--cdn-lavender);
+	color: var(--cdn-auth-accent);
 }
 
 body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):hover {
-	color: var(--cdn-violet);
+	color: var(--cdn-auth-accent-hover);
 }
 
 /* ── Auth form inner — replaces Cloudscape Container on login/verify/forgot ─
@@ -401,8 +445,8 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	.cdn-auth-card
 	[class*="awsui_button"][class*="variant-primary"],
 :root:not(.awsui-dark-mode) .cdn-auth-card button[class*="variant-primary"] {
-	background: var(--cdn-amber);
-	border-color: var(--cdn-amber);
+	background: var(--cdn-auth-btn-bg);
+	border-color: var(--cdn-auth-btn-bg);
 	color: var(--cdn-white);
 }
 
@@ -412,9 +456,9 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 :root:not(.awsui-dark-mode)
 	.cdn-auth-card
 	button[class*="variant-primary"]:hover {
-	background: color-mix(in srgb, var(--cdn-amber) 80%, black 20%);
-	border-color: color-mix(in srgb, var(--cdn-amber) 80%, black 20%);
-	box-shadow: 0 0 0 3px rgba(139, 90, 43, 0.22);
+	background: var(--cdn-auth-btn-hover);
+	border-color: var(--cdn-auth-btn-hover);
+	box-shadow: var(--cdn-auth-glow);
 }
 
 .awsui-dark-mode
@@ -477,11 +521,11 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
    amber outline (which would clip past the rounded input border). */
 
 .cdn-auth-card [class*="awsui_input"]:focus-within {
-	box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.22);
+	box-shadow: var(--cdn-auth-glow);
 }
 
 .awsui-dark-mode .cdn-auth-card [class*="awsui_input"]:focus-within {
-	box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.28);
+	box-shadow: var(--cdn-auth-glow);
 }
 
 /* ── Container chrome on auth page ─────────────────────────────────────────
@@ -536,14 +580,14 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
    rather than appearing as opaque white boxes floating on top of it. */
 .cdn-auth-card [class*="awsui_input-container_"],
 .cdn-auth-card [class*="awsui_input_"]:not([class*="awsui_input-container_"]) {
-	background-color: rgba(237, 229, 212, 0.45);
+	background-color: var(--cdn-auth-input-bg);
 }
 
 .awsui-dark-mode .cdn-auth-card [class*="awsui_input-container_"],
 .awsui-dark-mode
 	.cdn-auth-card
 	[class*="awsui_input_"]:not([class*="awsui_input-container_"]) {
-	background-color: rgba(28, 34, 48, 0.55);
+	background-color: var(--cdn-auth-input-bg);
 }
 
 /* ==========================================================================
@@ -790,13 +834,13 @@ body.cdn-auth-subdomain [data-cdn-dune-fallback] {
    form-control caption rather than fading into the cream plate. Cloudscape
    labels default to grey-700 which loses contrast against our backdrop. */
 .cdn-auth-card [class*="awsui_label_"] {
-	font-weight: 600;
-	color: var(--cdn-color-text, #2c1a0e);
+	font-weight: 500;
+	color: var(--cdn-auth-text);
 	letter-spacing: 0.01em;
 }
 
 .awsui-dark-mode .cdn-auth-card [class*="awsui_label_"] {
-	color: var(--cdn-color-text-high);
+	color: var(--cdn-auth-text);
 }
 
 /* FormField description (the "Hint" line under the label) — softer warm
