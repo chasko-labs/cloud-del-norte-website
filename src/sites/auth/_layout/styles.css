@@ -861,21 +861,14 @@ body.cdn-auth-subdomain [data-cdn-dune-fallback] {
 	color: rgba(215, 199, 238, 0.65) !important;
 }
 
-/* ── Footer pinned to viewport bottom on auth pages ────────────────────────
-   Auth pages have minimal content; without this the footer floats below the
-   AppLayout fold (AppLayout consumes the full viewport height). Fixed bottom
-   keeps it accessible on all viewport sizes. padding-bottom on the card
-   prevents the form from hiding behind the footer on very short viewports. */
+/* ── Footer on auth pages ──────────────────────────────────────────────────
+   Previously position:fixed — caused the form to get stuck behind the footer
+   on short viewports (v0.0.0122 regression). Let the footer flow naturally
+   below content. AppLayout's min-height:100vh ensures it still sits at the
+   bottom on tall viewports without needing position:fixed. */
 body.cdn-auth-subdomain .cdn-footer {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	position: relative;
 	z-index: 150;
 	padding-top: 6px;
 	padding-bottom: 6px;
-}
-
-body.cdn-auth-subdomain [class*="awsui_content-layout"] {
-	padding-bottom: 72px;
 }
