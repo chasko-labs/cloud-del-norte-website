@@ -166,3 +166,17 @@
 .awsui-dark-mode .cdn-auth-form [class*="awsui_error_"] {
 	color: #f87171;
 }
+
+/* ── auth component version ────────────────────────────────────────────── */
+.cdn-auth-version {
+	display: block;
+	text-align: right;
+	font-size: 10px;
+	color: rgba(139, 90, 43, 0.4);
+	margin-top: 12px;
+	letter-spacing: 0.02em;
+}
+
+.awsui-dark-mode .cdn-auth-version {
+	color: rgba(215, 199, 238, 0.3);
+}
