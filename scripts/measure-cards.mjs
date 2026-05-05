@@ -10,6 +10,7 @@
 // usage: node /tmp/measure-cards.mjs [url] [screenshot] [seconds]
 
 import { createRequire } from "node:module";
+
 const require = createRequire(import.meta.url);
 let playwrightPath;
 try {
@@ -35,7 +36,9 @@ const args = [
 const ts = () => new Date().toISOString().slice(11, 23);
 console.log(`[${ts()}] launch chromium`);
 const browser = await chromium.launch({ headless: true, args });
-const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+const context = await browser.newContext({
+	viewport: { width: 1440, height: 900 },
+});
 const page = await context.newPage();
 
 page.on("pageerror", (e) => console.log(`[${ts()}] pageerror: ${e.message}`));
@@ -108,7 +111,9 @@ console.log(`unique class signatures: ${byCard.size}`);
 console.log("\nevent timeline (t=ms since install):");
 for (const ev of events) {
 	const head = ev.cls.length > 55 ? `${ev.cls.slice(0, 52)}…` : ev.cls;
-	console.log(`  t=${ev.t.toFixed(0).padStart(7)} [${ev.id}] ${ev.w}x${ev.h} ${head}`);
+	console.log(
+		`  t=${ev.t.toFixed(0).padStart(7)} [${ev.id}] ${ev.w}x${ev.h} ${head}`,
+	);
 }
 console.log("");
 
@@ -126,9 +131,13 @@ for (const [id, entry] of byCard.entries()) {
 
 console.log("");
 if (mutating.length === 0) {
-	console.log(`[${ts()}] OK — no card mutated geometry during the ${seconds}s window`);
+	console.log(
+		`[${ts()}] OK — no card mutated geometry during the ${seconds}s window`,
+	);
 } else {
-	console.log(`[${ts()}] MUTATING — ${mutating.length} card class(es) changed size:`);
+	console.log(
+		`[${ts()}] MUTATING — ${mutating.length} card class(es) changed size:`,
+	);
 	for (const m of mutating) {
 		console.log(`  ${m.cls}: ${m.sizes.join(", ")}`);
 	}

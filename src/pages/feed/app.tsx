@@ -3,7 +3,6 @@
 
 import ContentLayout from "@cloudscape-design/components/content-layout";
 import Header from "@cloudscape-design/components/header";
-import Link from "@cloudscape-design/components/link";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";

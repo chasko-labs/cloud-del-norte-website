@@ -123,7 +123,7 @@ function LioraFrame() {
 	const deviceInfo = useMemo(() => detectDeviceInfo(), []);
 	const [stickyZoomed, setStickyZoomed] = useState(false);
 	const [stickyKey, setStickyKey] = useState(0);
-	const [sticky2Fallen, setSticky2Fallen] = useState(false);
+	const [sticky2Fallen, _setSticky2Fallen] = useState(false);
 	const [sticky2Zoomed, setSticky2Zoomed] = useState(false);
 	const [visitor, setVisitor] = useState<VisitorInfo | null>(null);
 

@@ -20,7 +20,7 @@ import React from "react";
  * vi.mock('../../../../layouts/shell', () => createShellMock(4));
  */
 export function createShellMock(importDepth: number) {
-	const contextPath = "../".repeat(importDepth) + "contexts/locale-context";
+	const contextPath = `${"../".repeat(importDepth)}contexts/locale-context`;
 
 	return {
 		default: ({
@@ -50,7 +50,7 @@ export function createShellMock(importDepth: number) {
  * Create standard Navigation mock
  * @param importDepth - Number of "../" needed to reach src/ from test file location
  */
-export function createNavigationMock(importDepth: number) {
+export function createNavigationMock(_importDepth: number) {
 	return {
 		default: () => React.createElement("nav", { "data-testid": "navigation" }),
 	};
@@ -60,7 +60,7 @@ export function createNavigationMock(importDepth: number) {
  * Create standard Breadcrumbs mock that renders active.text for locale testing
  * @param importDepth - Number of "../" needed to reach src/ from test file location
  */
-export function createBreadcrumbsMock(importDepth: number) {
+export function createBreadcrumbsMock(_importDepth: number) {
 	type AnyProps = Record<string, any>;
 
 	return {

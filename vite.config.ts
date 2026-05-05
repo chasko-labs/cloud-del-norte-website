@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import { resolve } from "node:path";
 import react from "@vitejs/plugin-react";
-import { resolve } from "path";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
@@ -46,10 +46,7 @@ export default defineConfig({
 					"./src/pages/auth/callback/index.html",
 				),
 				admin: resolve(__dirname, "./src/pages/admin/index.html"),
-				"dune-test": resolve(
-					__dirname,
-					"./src/pages/dune-test/index.html",
-				),
+				"dune-test": resolve(__dirname, "./src/pages/dune-test/index.html"),
 				plans: resolve(__dirname, "./src/pages/plans/index.html"),
 			},
 			output: {
@@ -94,24 +91,28 @@ export default defineConfig({
 					if (
 						id.includes("node_modules/@cloudscape-design/components/table") ||
 						id.includes("node_modules/@cloudscape-design/components/cards") ||
-						id.includes(
-							"node_modules/@cloudscape-design/collection-hooks",
-						)
+						id.includes("node_modules/@cloudscape-design/collection-hooks")
 					)
 						return "cloudscape-tables";
 					if (
 						id.includes("node_modules/@cloudscape-design/components/form") ||
 						id.includes("node_modules/@cloudscape-design/components/input") ||
 						id.includes("node_modules/@cloudscape-design/components/select") ||
-						id.includes("node_modules/@cloudscape-design/components/textarea") ||
-						id.includes("node_modules/@cloudscape-design/components/checkbox") ||
+						id.includes(
+							"node_modules/@cloudscape-design/components/textarea",
+						) ||
+						id.includes(
+							"node_modules/@cloudscape-design/components/checkbox",
+						) ||
 						id.includes(
 							"node_modules/@cloudscape-design/components/radio-group",
 						)
 					)
 						return "cloudscape-forms";
 					if (
-						id.includes("node_modules/@cloudscape-design/components/app-layout") ||
+						id.includes(
+							"node_modules/@cloudscape-design/components/app-layout",
+						) ||
 						id.includes(
 							"node_modules/@cloudscape-design/components/content-layout",
 						) ||

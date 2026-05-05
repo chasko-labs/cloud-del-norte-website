@@ -11,7 +11,7 @@ import StatusIndicator from "@cloudscape-design/components/status-indicator";
 import type { TableProps } from "@cloudscape-design/components/table";
 import { useTranslation } from "../../../hooks/useTranslation";
 
-const columnDefinitions = (
+const _columnDefinitions = (
 	t: (key: string) => string,
 ): TableProps["columnDefinitions"] => [
 	{ header: t("productionTable.headers.name"), cell: ({ name }) => t(name) },

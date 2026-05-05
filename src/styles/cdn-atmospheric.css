@@ -130,16 +130,11 @@
 	),
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
-		background-color: rgba(
-			237,
-			229,
-			212,
-			var(--cdn-wallpaper-alpha-panel)
-		) !important;
+		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel));
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 	}
 
 	/* Dark mode */
@@ -149,16 +144,11 @@
 	),
 	.cdn-viz-active.awsui-dark-mode
 		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
-		background-color: rgba(
-			10,
-			12,
-			20,
-			var(--cdn-wallpaper-alpha-panel)
-		) !important;
+		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-panel));
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 	}
 
 	/* ── ContentLayout header strip — header tier ─────────────────────────── */
@@ -171,16 +161,11 @@
 		> [class*="awsui_background"]:not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_header-background"]:not(#\9) {
-		background-color: rgba(
-			237,
-			229,
-			212,
-			var(--cdn-wallpaper-alpha-header)
-		) !important;
+		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-header));
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 	}
 
 	/* Dark mode */
@@ -190,16 +175,11 @@
 		[class*="awsui_content-layout"]
 		> [class*="awsui_background"]:not(#\9),
 	.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
-		background-color: rgba(
-			10,
-			12,
-			20,
-			var(--cdn-wallpaper-alpha-header)
-		) !important;
+		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-header));
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 	}
 
 	/* ── Main content area — content tier ────────────────────────────────── */
@@ -207,31 +187,21 @@
 	/* Light mode */
 	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"]:not(#\9) {
-		background-color: rgba(
-			237,
-			229,
-			212,
-			var(--cdn-wallpaper-alpha-content)
-		) !important;
+		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-content));
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 	}
 
 	/* Dark mode */
 	.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"]:not(#\9),
 	.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"]:not(#\9) {
-		background-color: rgba(
-			10,
-			12,
-			20,
-			var(--cdn-wallpaper-alpha-content)
-		) !important;
+		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-content));
 		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate)) !important;
+			saturate(var(--cdn-wallpaper-saturate));
 	}
 }
 
@@ -252,8 +222,8 @@
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 .awsui-dark-mode
@@ -263,8 +233,8 @@
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9),
 .awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* When cdn-viz-active: header strip stays fully transparent — cdn-atmospheric
@@ -286,8 +256,8 @@
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9),
 .cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* ── Drawers container + main outer wrapper — transparent outer ───────────
@@ -296,14 +266,14 @@
    so the wallpaper canvas at z-index:-2 shows through without any opaque shell. */
 :root:not(.awsui-dark-mode) [class*="awsui_drawers-container_"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_main_"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 .awsui-dark-mode [class*="awsui_drawers-container_"]:not(#\9),
 .awsui-dark-mode [class*="awsui_main_"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* ── scrolling-background_ + breadcrumbs_ — top-of-page opaque culprits ──
@@ -319,14 +289,14 @@
 
 :root:not(.awsui-dark-mode) [class*="awsui_scrolling-background_"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 .awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9),
 .awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* ── explicit opt-out ────────────────────────────────────────────────────── */
@@ -334,15 +304,15 @@
    #top-nav, .cdn-footer — any surface that must be fully opaque. */
 
 :root:not(.awsui-dark-mode) .cdn-atmospheric-opaque {
-	background-color: rgb(237, 229, 212) !important;
-	backdrop-filter: none !important;
-	-webkit-backdrop-filter: none !important;
+	background-color: rgb(237, 229, 212);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 .awsui-dark-mode .cdn-atmospheric-opaque {
-	background-color: rgb(10, 12, 20) !important;
-	backdrop-filter: none !important;
-	-webkit-backdrop-filter: none !important;
+	background-color: rgb(10, 12, 20);
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 /* ==========================================================================
@@ -384,8 +354,8 @@
 	[class*="awsui_content-container_"]:not(
 		.liora-frame [class*="awsui_content-container_"]
 	):not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* Light mode — left nav drawer: TRANSLUCENT (dunes bleed through).
@@ -396,14 +366,9 @@
 	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
 		#\9
 	) {
-	background-color: rgba(
-		237,
-		229,
-		212,
-		var(--cdn-wallpaper-alpha-panel, 0.2)
-	) !important;
-	-webkit-backdrop-filter: none !important;
-	backdrop-filter: none !important;
+	background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.2));
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
 }
 
 /* Light mode — right tools panel: TRANSLUCENT (matches left nav now).
@@ -414,22 +379,17 @@
 	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(
 		[class*="awsui_tools-container_"]
 	):not(#\9) {
-	background-color: rgba(
-		237,
-		229,
-		212,
-		var(--cdn-wallpaper-alpha-panel, 0.2)
-	) !important;
-	-webkit-backdrop-filter: none !important;
-	backdrop-filter: none !important;
+	background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel, 0.2));
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
 }
 
 /* Light mode — borders */
 :root:not(.awsui-dark-mode) [class*="awsui_navigation-container_"],
 :root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"],
 :root:not(.awsui-dark-mode) [class*="awsui_tools-container_"] {
-	border-left: none !important;
-	border-right: none !important;
+	border-left: none;
+	border-right: none;
 }
 
 /* Dark mode — outer containers transparent */
@@ -448,8 +408,8 @@
 	[class*="awsui_content-container_"]:not(
 		.liora-frame [class*="awsui_content-container_"]
 	):not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* Dark mode — left nav drawer: TRANSLUCENT (stars/music-viz bleed through). */
@@ -457,14 +417,9 @@
 nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
 	#\9
 ) {
-	background-color: rgba(
-		10,
-		12,
-		32,
-		var(--cdn-wallpaper-alpha-panel, 0.2)
-	) !important;
-	-webkit-backdrop-filter: none !important;
-	backdrop-filter: none !important;
+	background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.2));
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
 }
 
 /* Dark mode — right tools panel: TRANSLUCENT navy. Stars/music-viz through. */
@@ -472,20 +427,15 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
 [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(
 	[class*="awsui_tools-container_"]
 ):not(#\9) {
-	background-color: rgba(
-		10,
-		12,
-		32,
-		var(--cdn-wallpaper-alpha-panel, 0.2)
-	) !important;
-	-webkit-backdrop-filter: none !important;
-	backdrop-filter: none !important;
+	background-color: rgba(10, 12, 32, var(--cdn-wallpaper-alpha-panel, 0.2));
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
 }
 
 /* Dark mode — borders */
 .awsui-dark-mode [class*="awsui_navigation-container_"],
 .awsui-dark-mode nav[class*="awsui_navigation_"],
 .awsui-dark-mode [class*="awsui_tools-container_"] {
-	border-left: none !important;
-	border-right: none !important;
+	border-left: none;
+	border-right: none;
 }

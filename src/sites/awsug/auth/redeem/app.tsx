@@ -5,7 +5,7 @@
 
 import Box from "@cloudscape-design/components/box";
 import Spinner from "@cloudscape-design/components/spinner";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
 	getAuthState,
 	isBanned,

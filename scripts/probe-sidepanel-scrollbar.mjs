@@ -111,8 +111,9 @@ async function shot(width, height, outPath, openMobileNav) {
 	await page.screenshot({ path: outPath, fullPage: false });
 	const navBox = await page.evaluate(() => {
 		const el =
-			document.querySelector('nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])') ||
-			document.querySelector('[class*="awsui_navigation__drawer"]');
+			document.querySelector(
+				'nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"])',
+			) || document.querySelector('[class*="awsui_navigation__drawer"]');
 		if (!el) return null;
 		const r = el.getBoundingClientRect();
 		const cs = getComputedStyle(el);
@@ -124,7 +125,9 @@ async function shot(width, height, outPath, openMobileNav) {
 			canScroll: el.scrollHeight > el.clientHeight,
 		};
 	});
-	console.log(`[${width}x${height}] saved ${outPath}  nav=${JSON.stringify(navBox)}`);
+	console.log(
+		`[${width}x${height}] saved ${outPath}  nav=${JSON.stringify(navBox)}`,
+	);
 	await ctx.close();
 }
 

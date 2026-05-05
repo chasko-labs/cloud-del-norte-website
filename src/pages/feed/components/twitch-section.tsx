@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 import Container from "@cloudscape-design/components/container";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { probeTwitchLive } from "../../../lib/twitch-channel-cache";
 

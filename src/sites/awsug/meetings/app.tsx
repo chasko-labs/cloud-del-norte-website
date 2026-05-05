@@ -8,7 +8,7 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AwsugLayout from "../_layout";
 import { fetchJitsiToken, type JitsiTokenResponse } from "../_shared/api";
 import { type AuthState, isMember, requireAuth } from "../_shared/auth";

@@ -24,7 +24,7 @@ type Phase = "request" | "reset" | "done";
 
 function ForgotPasswordForm() {
 	const { t } = useTranslation();
-	document.title = t("auth.forgotPassword.title") + " — " + t("auth.siteTitle");
+	document.title = `${t("auth.forgotPassword.title")} — ${t("auth.siteTitle")}`;
 
 	const [phase, setPhase] = useState<Phase>("request");
 	const [email, setEmail] = useState("");
@@ -48,7 +48,7 @@ function ForgotPasswordForm() {
 		try {
 			assertNonEmpty(email, t("auth.forgotPassword.emailLabel"));
 		} catch {
-			setEmailError(t("auth.forgotPassword.emailLabel") + " is required");
+			setEmailError(`${t("auth.forgotPassword.emailLabel")} is required`);
 			return;
 		}
 		setLoading(true);
@@ -81,14 +81,14 @@ function ForgotPasswordForm() {
 		try {
 			assertNonEmpty(code, t("auth.forgotPassword.codeLabel"));
 		} catch {
-			setCodeError(t("auth.forgotPassword.codeLabel") + " is required");
+			setCodeError(`${t("auth.forgotPassword.codeLabel")} is required`);
 			valid = false;
 		}
 		try {
 			assertNonEmpty(newPassword, t("auth.forgotPassword.newPasswordLabel"));
 		} catch {
 			setPasswordError(
-				t("auth.forgotPassword.newPasswordLabel") + " is required",
+				`${t("auth.forgotPassword.newPasswordLabel")} is required`,
 			);
 			valid = false;
 		}

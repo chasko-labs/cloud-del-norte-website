@@ -128,8 +128,8 @@ function CodeTab() {
 						<div className="cdn-plans-step">
 							<span className="cdn-plans-step-num">6</span>
 							<span>
-								<strong>vite build —config auth</strong> → <code>lib-auth/</code>{" "}
-								— login, signup, verify, forgot-password
+								<strong>vite build —config auth</strong> →{" "}
+								<code>lib-auth/</code> — login, signup, verify, forgot-password
 							</span>
 						</div>
 						<div className="cdn-plans-step">
@@ -145,8 +145,8 @@ function CodeTab() {
 							babylon.js chunks are split by module path (meshes, materials,
 							shaders, engine…) so only changed chunks invalidate browser cache.
 							HTML files get <code>no-cache</code>; hashed{" "}
-							<code>/assets/*</code> get <code>immutable, max-age=31536000</code>
-							.
+							<code>/assets/*</code> get{" "}
+							<code>immutable, max-age=31536000</code>.
 						</p>
 					</TextContent>
 				</SpaceBetween>
@@ -170,8 +170,8 @@ function CodeTab() {
 								<p>
 									each site gets a private S3 bucket (public access blocked)
 									served exclusively via CloudFront OAC. ACM certificate in
-									us-east-1. Route53 A record. four sites total: main,
-									auth, dev, awsug.
+									us-east-1. Route53 A record. four sites total: main, auth,
+									dev, awsug.
 								</p>
 							</TextContent>
 						</div>
@@ -284,8 +284,8 @@ function CodeTab() {
 					<div>
 						<Box variant="awsui-key-label">AWS Cognito</Box>
 						<div>
-							auth flows (sign-in, sign-up, confirm, forgot/reset). pure SPA
-							— no hosted UI. Cognito APIs called directly from
+							auth flows (sign-in, sign-up, confirm, forgot/reset). pure SPA —
+							no hosted UI. Cognito APIs called directly from
 							auth.clouddelnorte.org.
 						</div>
 					</div>
@@ -293,8 +293,8 @@ function CodeTab() {
 						<Box variant="awsui-key-label">Icecast / Zeno streams</Box>
 						<div>
 							live radio. player sets <code>&lt;audio src&gt;</code> directly.
-							no proxy. stream URLs in <code>src/lib/streams.ts</code>. ~12
-							live stations.
+							no proxy. stream URLs in <code>src/lib/streams.ts</code>. ~12 live
+							stations.
 						</div>
 					</div>
 					<div>
@@ -347,14 +347,13 @@ function CodeTab() {
 						<p>
 							before committing, always run the full sequence:{" "}
 							<code>
-								npm run format:check → npm run lint → npx tsc —noEmit → npm
-								test
+								npm run format:check → npm run lint → npx tsc —noEmit → npm test
 							</code>
 						</p>
 						<p>
 							tests live in <code>src/lib/__tests__/</code>. 400+ tests; all
-							must pass. vitest excludes <code>.claude/worktrees/**</code>{" "}
-							from discovery to avoid stale worktree pollution.
+							must pass. vitest excludes <code>.claude/worktrees/**</code> from
+							discovery to avoid stale worktree pollution.
 						</p>
 					</TextContent>
 					<ColumnLayout columns={2} variant="text-grid">
@@ -371,8 +370,7 @@ function CodeTab() {
 							<Box variant="awsui-key-label">secrets pattern</Box>
 							<SpaceBetween size="xs">
 								<div>
-									SSM Parameter Store at{" "}
-									<code>/myorg/shared/</code>
+									SSM Parameter Store at <code>/myorg/shared/</code>
 								</div>
 								<div>
 									operator: <code>hs-secret load /myorg/shared</code>
@@ -409,34 +407,33 @@ function AgentsTab() {
 							development runs on the{" "}
 							<strong>heraldstack shannon collective</strong> — a multi-agent
 							system on claude code CLI. the main thread plans and routes.
-							subagents execute research, write code, verify visuals, and
-							review PRs. anything taking more than 3 reads or queries is a
-							candidate for agent dispatch.
+							subagents execute research, write code, verify visuals, and review
+							PRs. anything taking more than 3 reads or queries is a candidate
+							for agent dispatch.
 						</p>
 					</TextContent>
 					<ColumnLayout columns={2} variant="text-grid">
 						<div>
 							<Box variant="awsui-key-label">Explore</Box>
 							<div>
-								fast read-only codebase search. use for "where is X defined?"
-								or "which files reference Y?" — not for code review or
-								multi-file analysis.
+								fast read-only codebase search. use for "where is X defined?" or
+								"which files reference Y?" — not for code review or multi-file
+								analysis.
 							</div>
 						</div>
 						<div>
 							<Box variant="awsui-key-label">kerouac-web-researcher</Box>
 							<div>
 								web research. fetches docs, surveys design patterns, returns
-								structured findings. always use before significant new
-								features.
+								structured findings. always use before significant new features.
 							</div>
 						</div>
 						<div>
 							<Box variant="awsui-key-label">liora-headless-verifier</Box>
 							<div>
 								playwright chromium. navigates dev server, captures screenshots
-								at 375/768/1280px. <strong>mandatory for any player change</strong>{" "}
-								before commit.
+								at 375/768/1280px.{" "}
+								<strong>mandatory for any player change</strong> before commit.
 							</div>
 						</div>
 						<div>
@@ -456,8 +453,8 @@ function AgentsTab() {
 						<div>
 							<Box variant="awsui-key-label">orin-github-ops</Box>
 							<div>
-								the sole write agent for github. all push, PR, merge, and
-								issue operations route here. main thread doesn't push directly.
+								the sole write agent for github. all push, PR, merge, and issue
+								operations route here. main thread doesn't push directly.
 							</div>
 						</div>
 					</ColumnLayout>
@@ -484,8 +481,8 @@ function AgentsTab() {
 					<div>
 						<Box variant="awsui-key-label">qdrant-shared (port 8102)</Box>
 						<div>
-							shared project knowledge. semantic search across heraldstack
-							docs and project history.
+							shared project knowledge. semantic search across heraldstack docs
+							and project history.
 						</div>
 					</div>
 					<div>
@@ -495,8 +492,8 @@ function AgentsTab() {
 					<div>
 						<Box variant="awsui-key-label">github MCP</Box>
 						<div>
-							issue, PR, repo operations. used by orin-github-ops for all
-							write operations.
+							issue, PR, repo operations. used by orin-github-ops for all write
+							operations.
 						</div>
 					</div>
 				</ColumnLayout>
@@ -513,10 +510,10 @@ function AgentsTab() {
 					<div>
 						<Box variant="awsui-key-label">post-compact-context-reinject</Box>
 						<div>
-							fires after <code>/compact</code>. re-injects branch, stale
-							branch warnings, and MCP service health into context. critical on
-							long sessions — without it the model loses situational awareness
-							after compaction.
+							fires after <code>/compact</code>. re-injects branch, stale branch
+							warnings, and MCP service health into context. critical on long
+							sessions — without it the model loses situational awareness after
+							compaction.
 						</div>
 					</div>
 					<div>
@@ -550,9 +547,9 @@ function AgentsTab() {
 				<SpaceBetween size="m">
 					<TextContent>
 						<p>
-							agents must produce clean code before reporting a task done.
-							types passing and tests green is necessary but not sufficient —
-							visual changes also require playwright verification.
+							agents must produce clean code before reporting a task done. types
+							passing and tests green is necessary but not sufficient — visual
+							changes also require playwright verification.
 						</p>
 					</TextContent>
 					<div className="cdn-plans-pipeline">
@@ -586,8 +583,8 @@ function AgentsTab() {
 						<div className="cdn-plans-step">
 							<span className="cdn-plans-step-num">5</span>
 							<span>
-								playwright screenshots at 375/768/1280px — for any visual
-								change (delegated to liora-headless-verifier)
+								playwright screenshots at 375/768/1280px — for any visual change
+								(delegated to liora-headless-verifier)
 							</span>
 						</div>
 					</div>
@@ -596,7 +593,10 @@ function AgentsTab() {
 
 			<Container
 				header={
-					<Header variant="h2" description="known pitfalls for agents new to this codebase">
+					<Header
+						variant="h2"
+						description="known pitfalls for agents new to this codebase"
+					>
 						agent footguns
 					</Header>
 				}
@@ -605,7 +605,8 @@ function AgentsTab() {
 					<ExpandableSection headerText="CSS specificity on cloudscape tokens">
 						<TextContent>
 							<p>
-								cloudscape uses obfuscated class names (<code>awsui_button_xyz</code>
+								cloudscape uses obfuscated class names (
+								<code>awsui_button_xyz</code>
 								). our overrides use <code>[class*="awsui_button"]</code>{" "}
 								attribute selectors. adding a new specificity level requires
 								testing it doesn't accidentally lose to a cloudscape base rule.
@@ -618,9 +619,9 @@ function AgentsTab() {
 						<TextContent>
 							<p>
 								<code>public/liora/</code> and <code>public/liora-embed/</code>{" "}
-								are NOT in the repo. S3-managed separately. CI excludes them from{" "}
-								<code>—delete</code> syncs. if liora isn't loading on the dev
-								server, check <code>VITE_LIORA_SCRIPT_URL</code>.
+								are NOT in the repo. S3-managed separately. CI excludes them
+								from <code>—delete</code> syncs. if liora isn't loading on the
+								dev server, check <code>VITE_LIORA_SCRIPT_URL</code>.
 							</p>
 						</TextContent>
 					</ExpandableSection>
@@ -696,10 +697,7 @@ function GithubTab() {
 				<SpaceBetween size="s">
 					<Box variant="awsui-key-label">project board</Box>
 					<div>
-						<Link
-							href="https://github.com/orgs/chasko-labs/projects"
-							external
-						>
+						<Link href="https://github.com/orgs/chasko-labs/projects" external>
 							chasko-labs projects
 						</Link>
 					</div>
@@ -756,9 +754,7 @@ function PlansContent() {
 
 function BreadcrumbsContent() {
 	return (
-		<Breadcrumbs
-			active={{ text: "website", href: "/plans/index.html" }}
-		/>
+		<Breadcrumbs active={{ text: "website", href: "/plans/index.html" }} />
 	);
 }
 

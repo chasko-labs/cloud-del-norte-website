@@ -9,7 +9,7 @@ import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Textarea from "@cloudscape-design/components/textarea";
 import Wizard from "@cloudscape-design/components/wizard";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	AuthError,
@@ -30,7 +30,7 @@ const RESEND_COOLDOWN_SECS = 120;
 
 function SignupWizard() {
 	const { t } = useTranslation();
-	document.title = t("auth.signup.title") + " — " + t("auth.siteTitle");
+	document.title = `${t("auth.signup.title")} — ${t("auth.siteTitle")}`;
 
 	const [activeStepIndex, setActiveStepIndex] = useState(0);
 
@@ -89,17 +89,17 @@ function SignupWizard() {
 		try {
 			assertNonEmpty(email, t("auth.signup.emailLabel"));
 		} catch {
-			errs.email = t("auth.signup.emailLabel") + " is required";
+			errs.email = `${t("auth.signup.emailLabel")} is required`;
 		}
 		try {
 			assertNonEmpty(displayName, t("auth.signup.displayNameLabel"));
 		} catch {
-			errs.displayName = t("auth.signup.displayNameLabel") + " is required";
+			errs.displayName = `${t("auth.signup.displayNameLabel")} is required`;
 		}
 		try {
 			assertNonEmpty(password, t("auth.signup.passwordLabel"));
 		} catch {
-			errs.password = t("auth.signup.passwordLabel") + " is required";
+			errs.password = `${t("auth.signup.passwordLabel")} is required`;
 		}
 		if (password && confirmPassword !== password)
 			errs.confirmPassword = t("auth.signup.passwordMismatch");
@@ -167,7 +167,7 @@ function SignupWizard() {
 		try {
 			assertNonEmpty(code, t("auth.signup.verifyCodeLabel"));
 		} catch {
-			errs.code = t("auth.signup.verifyCodeLabel") + " is required";
+			errs.code = `${t("auth.signup.verifyCodeLabel")} is required`;
 		}
 		if (Object.keys(errs).length > 0) {
 			setStep4Errors(errs);

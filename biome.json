@@ -27,6 +27,9 @@
 				"noAriaHiddenOnFocusable": "warn",
 				"useButtonType": "warn",
 				"useSemanticElements": "warn"
+			},
+			"style": {
+				"noDescendingSpecificity": "warn"
 			}
 		}
 	},

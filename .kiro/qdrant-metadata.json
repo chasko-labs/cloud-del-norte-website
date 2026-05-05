@@ -1,36 +1,36 @@
 {
-  "project_slug": "cloud-del-norte-website",
-  "repo_type": "react-vite",
-  "stack": [],
-  "deploy_targets": [],
-  "kb_families_required": [
-    "frontend/react-vite",
-    "frontend/cloudscape",
-    "frontend/css",
-    "frontend/testing",
-    "governance",
-    "observability",
-    "personas"
-  ],
-  "mcp_overlay_families": [
-    "mcp-devtools",
-    "mcp-aws",
-    "mcp-qdrant",
-    "mcp-observability"
-  ],
-  "governance_tier": "medium",
-  "agents_in_scope": [
-    "poltergeist-liora-moodle-ux",
-    "ghost-liora-css-repair",
-    "ghost-liora-headless-verifier",
-    "ghost-stratia-code-mapper",
-    "ghost-orin-ci-cd",
-    "ghost-ellow-jest-tester",
-    "ghost-ellow-e2e-tester",
-    "ghost-kerouac-research-analyst",
-    "poltergeist-stratia-aws-infra"
-  ],
-  "squad_predecessor": "squad-collective",
-  "bootstrap_timestamp": "2026-05-04T19:37:14Z",
-  "haunting_commit": "3490835d714d353955193309e4e1f33070797fa0"
+	"project_slug": "cloud-del-norte-website",
+	"repo_type": "react-vite",
+	"stack": [],
+	"deploy_targets": [],
+	"kb_families_required": [
+		"frontend/react-vite",
+		"frontend/cloudscape",
+		"frontend/css",
+		"frontend/testing",
+		"governance",
+		"observability",
+		"personas"
+	],
+	"mcp_overlay_families": [
+		"mcp-devtools",
+		"mcp-aws",
+		"mcp-qdrant",
+		"mcp-observability"
+	],
+	"governance_tier": "medium",
+	"agents_in_scope": [
+		"poltergeist-liora-moodle-ux",
+		"ghost-liora-css-repair",
+		"ghost-liora-headless-verifier",
+		"ghost-stratia-code-mapper",
+		"ghost-orin-ci-cd",
+		"ghost-ellow-jest-tester",
+		"ghost-ellow-e2e-tester",
+		"ghost-kerouac-research-analyst",
+		"poltergeist-stratia-aws-infra"
+	],
+	"squad_predecessor": "squad-collective",
+	"bootstrap_timestamp": "2026-05-04T19:37:14Z",
+	"haunting_commit": "3490835d714d353955193309e4e1f33070797fa0"
 }

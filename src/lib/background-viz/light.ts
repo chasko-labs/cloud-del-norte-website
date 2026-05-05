@@ -52,7 +52,7 @@ export function renderLight(
 	stationKey: string,
 	lowPower: boolean,
 	staticCanvas: OffscreenCanvas | null,
-	starPositions: StarPoint[],
+	_starPositions: StarPoint[],
 ): void {
 	// draw static base layer
 	if (staticCanvas) {

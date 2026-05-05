@@ -154,7 +154,9 @@ function frame(ts: number): void {
 
 	// Podcast mode: dampen treble (voice sibilance dominates otherwise),
 	// let bass-driven shadows and slow ripples take over the visual.
-	const isPodcastPlaying = document.body.classList.contains("cdn-podcast-playing");
+	const isPodcastPlaying = document.body.classList.contains(
+		"cdn-podcast-playing",
+	);
 	if (isPodcastPlaying) {
 		treble *= 0.3;
 	}
@@ -170,7 +172,12 @@ function frame(ts: number): void {
 		// Cycle LED bank class for liora panel — 4 banks, fire every 4th beat
 		const bank = beatCount % 4;
 		const body = document.body;
-		body.classList.remove("cdn-beat-bank-0", "cdn-beat-bank-1", "cdn-beat-bank-2", "cdn-beat-bank-3");
+		body.classList.remove(
+			"cdn-beat-bank-0",
+			"cdn-beat-bank-1",
+			"cdn-beat-bank-2",
+			"cdn-beat-bank-3",
+		);
 		body.classList.add(`cdn-beat-bank-${bank}`);
 	}
 
@@ -220,7 +227,19 @@ export function initCanvas(): {
 	// :root background bleed through before the rAF loop starts.
 	const w0 = window.innerWidth;
 	const h0 = window.innerHeight;
-	render(ctx, w0, h0, 0, false, new Uint8Array(1024), "", true, staticLightCanvas, staticDarkCanvas, starPositions);
+	render(
+		ctx,
+		w0,
+		h0,
+		0,
+		false,
+		new Uint8Array(1024),
+		"",
+		true,
+		staticLightCanvas,
+		staticDarkCanvas,
+		starPositions,
+	);
 
 	if (reducedMotion) {
 		// draw one static frame, no rAF

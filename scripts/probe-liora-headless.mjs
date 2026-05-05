@@ -46,7 +46,8 @@ try {
 }
 const { chromium } = await import(playwrightPath);
 
-const targetUrl = process.argv[2] ?? "https://dev.clouddelnorte.org/home/index.html";
+const targetUrl =
+	process.argv[2] ?? "https://dev.clouddelnorte.org/home/index.html";
 const screenshotPath = process.argv[3] ?? "/tmp/headless-liora.png";
 const headlessArg = process.argv[4] ?? "true";
 const WAIT_MS = 15000;
@@ -85,7 +86,9 @@ page.on("pageerror", (err) => {
 	console.log(`[${ts()}] pageerror: ${err.message}`);
 });
 page.on("requestfailed", (req) => {
-	console.log(`[${ts()}] requestfailed: ${req.url()} -- ${req.failure()?.errorText}`);
+	console.log(
+		`[${ts()}] requestfailed: ${req.url()} -- ${req.failure()?.errorText}`,
+	);
 });
 page.on("response", (resp) => {
 	const url = resp.url();
@@ -93,9 +96,11 @@ page.on("response", (resp) => {
 		const status = resp.status();
 		const ct = resp.headers()["content-type"] ?? "";
 		const flag =
-			status >= 400 ? "[ERR]" :
-			(/\.js(\?|$)/i.test(url) && !/javascript|ecmascript|wasm/i.test(ct)) ? "[MIME]" :
-			"";
+			status >= 400
+				? "[ERR]"
+				: /\.js(\?|$)/i.test(url) && !/javascript|ecmascript|wasm/i.test(ct)
+					? "[MIME]"
+					: "";
 		console.log(`[${ts()}] resp ${flag} ${status} ${ct} ${url}`);
 	}
 });

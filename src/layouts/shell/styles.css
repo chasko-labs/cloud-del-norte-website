@@ -45,8 +45,8 @@
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9),
 :root:not(.awsui-dark-mode) [class*="awsui_header-background"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 .awsui-dark-mode
@@ -56,8 +56,8 @@
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9),
 .awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* ENHANCEMENT 5 — Top nav shimmer via ::after pseudo-element
@@ -142,7 +142,7 @@
 		var(--cdn-gradient-nav-start) 0%,
 		var(--cdn-gradient-nav-mid) 50%,
 		var(--cdn-gradient-nav-end) 100%
-	) !important;
+	);
 	border-bottom: 2px solid rgba(144, 96, 240, 0.3);
 	box-shadow:
 		0 4px 20px -4px rgba(0, 0, 0, 0.5),
@@ -161,7 +161,7 @@
    giant whitespace gap between the last content and the footer.
    Override with !important because Cloudscape applies these as inline styles. */
 main[class*="awsui_layout"] {
-	min-block-size: auto !important;
+	min-block-size: auto;
 }
 
 /* Light mode: warm cream fills the layout seam between nav and content containers.
@@ -196,7 +196,7 @@ main[class*="awsui_layout"] {
 				rgba(139, 90, 43, 0.018) 0 2px,
 				transparent 2px 8px
 			),
-			#ede5d4 !important;
+			#ede5d4;
 	background-attachment: fixed, fixed, fixed, scroll;
 	background-size:
 		180% 180%,
@@ -255,7 +255,7 @@ main[class*="awsui_layout"] {
 			rgba(255, 255, 255, 0.012) 0 2px,
 			transparent 2px 5px
 		),
-		#0a0c14 !important;
+		#0a0c14;
 	background-attachment: fixed, fixed, fixed, scroll;
 	background-size:
 		180% 180%,
@@ -286,8 +286,8 @@ main[class*="awsui_layout"] {
 			rgba(48, 0, 106, calc(0.32 + var(--cdn-bass) * 0.1)) 0%,
 			rgba(48, 0, 106, 0) 65%
 		),
-		transparent !important;
-	background-attachment: fixed, fixed, fixed !important;
+		transparent;
+	background-attachment: fixed, fixed, fixed;
 }
 
 /* ── Light mode canvas passthrough ─────────────────────────────────────────
@@ -307,16 +307,16 @@ main[class*="awsui_layout"] {
 			rgba(144, 96, 240, 0.16) 0%,
 			rgba(144, 96, 240, 0) 65%
 		),
-		transparent !important;
-	background-attachment: fixed, fixed, fixed !important;
-	animation: none !important;
+		transparent;
+	background-attachment: fixed, fixed, fixed;
+	animation: none;
 }
 
 .cdn-viz-active:not(.awsui-dark-mode)
 	[class*="awsui_scrolling-background"]:not(#\9),
 .cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_breadcrumbs"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* ── Frosted glass — content header, card headers, nav ─────────────────────
@@ -334,8 +334,8 @@ main[class*="awsui_layout"] {
 	> [class*="awsui_background"]:not(#\9),
 .cdn-viz-active:not(.awsui-dark-mode)
 	[class*="awsui_header-background"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 	backdrop-filter: none;
 	-webkit-backdrop-filter: none;
 }
@@ -347,8 +347,8 @@ main[class*="awsui_layout"] {
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9),
 .cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 	backdrop-filter: none;
 	-webkit-backdrop-filter: none;
 }
@@ -360,11 +360,11 @@ main[class*="awsui_layout"] {
    where text inside became "heavily blurred" (sub-pixel sampling under
    stacked backdrop-filter layers). No useful effect, real cost. Drop it. */
 .cdn-viz-active:not(.awsui-dark-mode) .cdn-card [class*="awsui_header_"] {
-	background: rgb(237, 229, 212) !important;
+	background: rgb(237, 229, 212);
 }
 
 .cdn-viz-active.awsui-dark-mode .cdn-card [class*="awsui_header_"] {
-	background: rgb(10, 12, 20) !important;
+	background: rgb(10, 12, 20);
 }
 
 /* Side nav */
@@ -372,7 +372,7 @@ main[class*="awsui_layout"] {
 .cdn-viz-active:not(.awsui-dark-mode) [class*="side-navigation"],
 .cdn-viz-active:not(.awsui-dark-mode) [class*="navigation__drawer"],
 .cdn-viz-active:not(.awsui-dark-mode) nav[class*="awsui_navigation"] {
-	background: rgba(237, 229, 212, 0.72) !important;
+	background: rgba(237, 229, 212, 0.72);
 	backdrop-filter: blur(14px);
 	-webkit-backdrop-filter: blur(14px);
 }
@@ -381,7 +381,7 @@ main[class*="awsui_layout"] {
 .cdn-viz-active.awsui-dark-mode [class*="side-navigation"],
 .cdn-viz-active.awsui-dark-mode [class*="navigation__drawer"],
 .cdn-viz-active.awsui-dark-mode nav[class*="awsui_navigation"] {
-	background: rgba(10, 12, 20, 0.72) !important;
+	background: rgba(10, 12, 20, 0.72);
 	backdrop-filter: blur(14px);
 	-webkit-backdrop-filter: blur(14px);
 }
@@ -399,22 +399,22 @@ main[class*="awsui_layout"] {
    Moved here so every page picks it up via Shell. */
 .cdn-card [class*="awsui_root"],
 .cdn-card [class*="awsui_content_"] {
-	background: transparent !important;
-	border: none !important;
-	box-shadow: none !important;
+	background: transparent;
+	border: none;
+	box-shadow: none;
 }
 /* header: suppress bg + side/top borders; keep a subtle bottom separator */
 .cdn-card [class*="awsui_header_"] {
-	background: transparent !important;
-	box-shadow: none !important;
-	border-top: none !important;
-	border-left: none !important;
-	border-right: none !important;
-	border-bottom: 1px solid rgba(139, 90, 43, 0.14) !important;
-	padding-bottom: var(--cdn-space-sm, 8px) !important;
+	background: transparent;
+	box-shadow: none;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 1px solid rgba(139, 90, 43, 0.14);
+	padding-bottom: var(--cdn-space-sm, 8px);
 }
 .awsui-dark-mode .cdn-card [class*="awsui_header_"] {
-	border-bottom-color: rgba(144, 96, 240, 0.18) !important;
+	border-bottom-color: rgba(144, 96, 240, 0.18);
 }
 
 /* Mouseover tearing fix on cdn-card containers: Cloudscape Container fires
@@ -424,12 +424,12 @@ main[class*="awsui_layout"] {
    Disable the transition specifically on cdn-card descendants while keeping
    it intact on Containers elsewhere on the page. */
 .cdn-card [class*="awsui_root"] {
-	transition: none !important;
+	transition: none;
 }
 main[class*="awsui_layout"] > [class*="navigation-container"],
 main[class*="awsui_layout"] > [class*="tools-container"],
 main[class*="awsui_layout"] > [class*="content-container"] {
-	block-size: auto !important;
+	block-size: auto;
 }
 
 /* Mobile + small viewport: tools panel needs explicit overflow + touch-action so the
@@ -438,7 +438,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 [class*="awsui_tools_"][class*="awsui_root"],
 [class*="awsui_tools-container"],
 [class*="awsui_tools_"] [class*="awsui_help-panel"] {
-	overflow-y: auto !important;
+	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
 	touch-action: pan-y;
@@ -457,7 +457,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
    since mobile uses position:fixed for the drawers container. */
 @media (min-width: 689px) {
 	[class*="awsui_drawers-container"] {
-		min-block-size: 100% !important;
+		min-block-size: 100%;
 	}
 }
 
@@ -475,7 +475,7 @@ main[class*="awsui_layout"] > [class*="content-container"] {
 nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 [class*="awsui_navigation__drawer"],
 [class*="awsui_navigation-container"] [class*="awsui_drawer-content"] {
-	overflow-y: auto !important;
+	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
 	touch-action: pan-y;
@@ -507,13 +507,13 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
    container fits inside the visible viewport. */
 @media (max-width: 768px) {
 	[class*="awsui_navigation-container_"] {
-		max-height: calc(100dvh - 100px) !important;
+		max-height: calc(100dvh - 100px);
 	}
 	[class*="awsui_navigation_"] [class*="awsui_content-container_"] {
-		max-height: calc(100dvh - 100px) !important;
+		max-height: calc(100dvh - 100px);
 	}
 	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]) {
-		max-height: calc(100dvh - 100px) !important;
+		max-height: calc(100dvh - 100px);
 	}
 }
 
@@ -538,8 +538,8 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 .awsui-dark-mode [class*="side-navigation"],
 .awsui-dark-mode [class*="navigation__drawer"],
 .awsui-dark-mode [class*="awsui_tools-container"] {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* ContentLayout refresh-style header — Cloudscape's newer ContentLayout
@@ -548,20 +548,20 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
    element painting opaque cream at the top of /feed/ above NextMeetup. */
 :root:not(.awsui-dark-mode)
 	[class*="awsui_refresh_"][class*="awsui_header_"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 .awsui-dark-mode [class*="awsui_refresh_"][class*="awsui_header_"]:not(#\9) {
-	background: transparent !important;
-	background-color: transparent !important;
+	background: transparent;
+	background-color: transparent;
 }
 
 /* Mobile AppLayout drawer/panel backgrounds — covers navigation + tools drawers on small screens */
 :root:not(.awsui-dark-mode) [class*="awsui_mobile-bar"],
 :root:not(.awsui-dark-mode) [class*="awsui_drawer"],
 :root:not(.awsui-dark-mode) [class*="awsui_panel-content"] {
-	background: #ede5d4 !important;
-	background-color: #ede5d4 !important;
+	background: #ede5d4;
+	background-color: #ede5d4;
 }
 
 /* v0.0.0071 — mobile side-nav drawer body needs vertical breathing room
@@ -571,7 +571,7 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 @media (max-width: 768px) {
 	[class*="awsui_drawer"] [class*="awsui_drawer-content"],
 	[class*="awsui_drawer-content-container"] {
-		padding-bottom: 32px !important;
+		padding-bottom: 32px;
 		overflow-y: auto;
 		-webkit-overflow-scrolling: touch;
 	}
@@ -592,7 +592,7 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
    .cdn-logo-hero anchors correctly off the sticky parent. */
 
 #top-nav [class*="awsui_header"] {
-	overflow: visible !important;
+	overflow: visible;
 }
 
 .cdn-logo-hero {
@@ -664,11 +664,11 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 /* Nav bar breathing — minimal padding + 48px floor so star never shrinks below
    hamburger size on narrow viewports (clamp min on logo is also 48px) */
 #top-nav [class*="awsui_top-navigation"] {
-	padding-top: 1px !important;
-	padding-bottom: 1px !important;
-	min-height: 48px !important;
+	padding-top: 1px;
+	padding-bottom: 1px;
+	min-height: 48px;
 	/* left padding clears the logo: 14px offset + max logo width (~80px) + 16px gap */
-	padding-left: clamp(70px, 12vw, 110px) !important;
+	padding-left: clamp(70px, 12vw, 110px);
 	box-sizing: border-box;
 }
 
@@ -816,9 +816,9 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 
 #top-nav [class*="utility-button"] button,
 #top-nav [class*="utility-button"] [class*="button-trigger"] {
-	background: transparent !important;
-	border: none !important;
-	box-shadow: none !important;
+	background: transparent;
+	border: none;
+	box-shadow: none;
 }
 
 /* ── Fix: strip leaked container styles from inner <a> elements ──
@@ -828,9 +828,9 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
    square boxes. Override here so only the container keeps those styles. */
 
 #top-nav [class*="top-navigation"] a[class*="top-navigation"] {
-	box-shadow: none !important;
-	border-bottom: none !important;
-	background: transparent !important;
+	box-shadow: none;
+	border-bottom: none;
+	background: transparent;
 }
 
 /* ── Subtle ambient glow on toggle buttons ──
@@ -850,22 +850,22 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	#top-nav
 	[class*="utility-wrapper"]
 	a[class*="top-navigation"] {
-	border-radius: 50% !important;
+	border-radius: 50%;
 	box-shadow:
 		inset 1px 1px 2px rgba(44, 18, 6, 0.32),
 		inset -1px -1px 2px rgba(255, 245, 220, 0.28),
-		0 0 6px 1px rgba(139, 90, 43, 0.12) !important;
+		0 0 6px 1px rgba(139, 90, 43, 0.12);
 }
 
 /* Dark mode: violet outer rim + black inner shadow inset for moonlit recess */
 .awsui-dark-mode #top-nav
 	[class*="utility-wrapper"]
 	a[class*="top-navigation"] {
-	border-radius: 50% !important;
+	border-radius: 50%;
 	box-shadow:
 		inset 1px 1px 3px rgba(0, 0, 0, 0.55),
 		inset -1px -1px 2px rgba(144, 96, 240, 0.25),
-		0 0 8px 1px rgba(144, 96, 240, 0.18) !important;
+		0 0 8px 1px rgba(144, 96, 240, 0.18);
 }
 
 /* THEME TOGGLE — spin/flip on click, gentle pulse on hover */
@@ -976,8 +976,8 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	a[class*="top-navigation"]:has(.cdn-celestial-toggle),
 [class*="utility-wrapper"] a[class*="top-navigation"]:has(.cdn-flag-toggle) {
 	/* Slightly tighter padding so the SVG dominates the halo */
-	padding: 4px 6px !important;
-	display: inline-flex !important;
+	padding: 4px 6px;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	transition:
@@ -1313,16 +1313,16 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	#top-nav
 	[class*="utility-wrapper"]
 	a[class*="top-navigation"]:has(.cdn-flag-toggle) {
-	border-radius: 5px !important;
-	box-shadow: 0 0 8px 3px rgba(139, 90, 43, 0.22) !important;
+	border-radius: 5px;
+	box-shadow: 0 0 8px 3px rgba(139, 90, 43, 0.22);
 }
 
 .awsui-dark-mode
 	#top-nav
 	[class*="utility-wrapper"]
 	a[class*="top-navigation"]:has(.cdn-flag-toggle) {
-	border-radius: 5px !important;
-	box-shadow: 0 0 10px 3px rgba(144, 96, 240, 0.28) !important;
+	border-radius: 5px;
+	box-shadow: 0 0 10px 3px rgba(144, 96, 240, 0.28);
 }
 
 /* ── Breadcrumb link color — palette override ──
@@ -1335,27 +1335,23 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 /* Light mode: palette purple (#5a1f8a) for interactive links */
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumb-group"] a,
 :root:not(.awsui-dark-mode) [class*="breadcrumb-group"] a {
-	color: var(
-		--cdn-purple
-	) !important; /* #5a1f8a — primary interactive, in-palette */
+	color: var(--cdn-purple); /* #5a1f8a — primary interactive, in-palette */
 }
 
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumb-group"] a:hover,
 :root:not(.awsui-dark-mode) [class*="breadcrumb-group"] a:hover {
-	color: var(--cdn-violet) !important; /* #9060f0 — lighter on hover */
+	color: var(--cdn-violet); /* #9060f0 — lighter on hover */
 }
 
 /* Dark mode: palette violet (#9060f0) — AAA contrast on dark navy backgrounds */
 .awsui-dark-mode [class*="awsui_breadcrumb-group"] a,
 .awsui-dark-mode [class*="breadcrumb-group"] a {
-	color: var(--cdn-violet) !important; /* #9060f0 — confirmed in-palette */
+	color: var(--cdn-violet); /* #9060f0 — confirmed in-palette */
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumb-group"] a:hover,
 .awsui-dark-mode [class*="breadcrumb-group"] a:hover {
-	color: var(
-		--cdn-lavender
-	) !important; /* #d7c7ee — lighter lavender on hover */
+	color: var(--cdn-lavender); /* #d7c7ee — lighter lavender on hover */
 }
 
 /* Help panel — leader sections */
@@ -1440,7 +1436,7 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
    right balance: enough breathing room between nav drawer and main column
    without the original gap looking excessive. */
 [class*="awsui_layout_"][class*="awsui_has-content-gap-left_"]:not(#\9) {
-	--awsui-content-gap-left-6b9ypa: 16px !important;
+	--awsui-content-gap-left-6b9ypa: 16px;
 }
 
 @media (min-width: 689px) {
@@ -1448,7 +1444,7 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	   grid level. The 16px breathing room comes from
 	   --awsui-content-gap-left-6b9ypa above, not from grid gaps. */
 	main[class*="awsui_layout_"] {
-		gap: 0 !important;
+		gap: 0;
 	}
 }
 
@@ -1540,8 +1536,8 @@ body {
 /* Buttons — never blur through */
 @supports (backdrop-filter: blur(0)) {
 	button[class*="awsui_button_"] {
-		backdrop-filter: none !important;
-		-webkit-backdrop-filter: none !important;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
 	}
 }
 
@@ -1561,8 +1557,8 @@ body {
 	.liora-canvas,
 	.liora-panel-wrap,
 	.liora-status-bar {
-		backdrop-filter: none !important;
-		-webkit-backdrop-filter: none !important;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
 	}
 }
 
@@ -1591,7 +1587,7 @@ body {
    container with max-height: calc(100vh - 56px) at line ~466) and the inner
    content-container with the always-mounted bar. */
 [class*="awsui_navigation_"] [class*="awsui_content-container_"] {
-	overflow-y: scroll !important;
+	overflow-y: scroll;
 	scrollbar-width: none; /* firefox */
 	-ms-overflow-style: none; /* legacy edge / ie */
 }
@@ -1638,8 +1634,8 @@ nav[class*="awsui_navigation_"]:not(
 	/* #top-nav gets blur reinforcement via .cdn-viz-active rule above —
 	   that's intentional. The rule here is the opt-out for NON-viz-active state. */
 	:not(.cdn-viz-active) #top-nav [class*="top-navigation"] {
-		backdrop-filter: none !important;
-		-webkit-backdrop-filter: none !important;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
 	}
 }
 
@@ -1650,8 +1646,8 @@ nav[class*="awsui_navigation_"]:not(
 
 @supports (backdrop-filter: blur(0)) {
 	.cdn-footer {
-		backdrop-filter: none !important;
-		-webkit-backdrop-filter: none !important;
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
 	}
 }
 

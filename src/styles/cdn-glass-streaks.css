@@ -319,21 +319,21 @@
 	[class*="side-navigation"]
 	[class*="divider"]:not(#\9),
 .awsui-dark-mode [class*="side-navigation"] [class*="divider"]:not(#\9) {
-	border: none !important;
-	height: 2px !important;
+	border: none;
+	height: 2px;
 	border-radius: 1px;
-	margin-block: var(--cdn-space-sm, 8px) !important;
+	margin-block: var(--cdn-space-sm, 8px);
 	opacity: 0.6;
 }
 
 :root:not(.awsui-dark-mode)
 	[class*="side-navigation"]
 	[class*="divider"]:not(#\9) {
-	background: var(--cdn-streak-h-light) !important;
+	background: var(--cdn-streak-h-light);
 }
 
 .awsui-dark-mode [class*="side-navigation"] [class*="divider"]:not(#\9) {
-	background: var(--cdn-streak-h-dark) !important;
+	background: var(--cdn-streak-h-dark);
 }
 
 /* v0.0.0072 — mobile side-nav menu polish. Bryan eyes-on (mobile screenshots):
@@ -355,8 +355,8 @@
 	}
 
 	[class*="side-navigation"] a {
-		padding-block: 10px !important;
-		font-size: 15px !important;
+		padding-block: 10px;
+		font-size: 15px;
 	}
 
 	:root:not(.awsui-dark-mode) [class*="side-navigation"] a[aria-current="page"],
@@ -402,10 +402,10 @@
    the low-alpha bg + faint blur, no decoration. */
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg-breadcrumbs) !important;
-	-webkit-backdrop-filter: blur(6px) saturate(1.05) !important;
-	backdrop-filter: blur(6px) saturate(1.05) !important;
-	box-shadow: none !important;
+	background-color: var(--cdn-glass-bg-breadcrumbs);
+	-webkit-backdrop-filter: blur(6px) saturate(1.05);
+	backdrop-filter: blur(6px) saturate(1.05);
+	box-shadow: none;
 }
 
 /* Force all breadcrumb items visible — never collapse behind a ▼ dropdown.
@@ -418,11 +418,11 @@
 [class*="awsui_breadcrumbs_"] ol[class*="awsui_breadcrumbs"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"]
 	[class*="awsui_breadcrumb-group_"]:not(#\9):not(#\10) {
-	flex-wrap: wrap !important;
+	flex-wrap: wrap;
 }
 
 [class*="awsui_breadcrumbs_"] li:not(#\9):not(#\10) {
-	display: list-item !important;
+	display: list-item;
 }
 
 /* Breadcrumb `>` separator vertical alignment — binary-search:
@@ -434,7 +434,7 @@
    shift overshoots — Bryan v0.0.0070: "very slightly too low on mobile,
    perfect on desktop". 0.15em centers it for the smaller cap height. */
 [class*="awsui_breadcrumbs_"] li [class*="awsui_icon_"]:not(#\9):not(#\10) {
-	vertical-align: middle !important;
+	vertical-align: middle;
 	transform: translateY(0.25em);
 }
 
@@ -460,7 +460,7 @@
 	[class*="awsui_ghost-breadcrumb_"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"]
 	[class*="awsui_breadcrumb-ellipsis_"]:not(#\9):not(#\10) {
-	display: none !important;
+	display: none;
 }
 
 /* Cloudscape Container backing — Bryan eyes-on roadmap v0.0.0053 saw
@@ -472,10 +472,7 @@
 [class*="awsui_container_"]:not([class*="awsui_container-trigger_"]):not(
 		[class*="awsui_split-panel"]
 	):not(#\9):not(#\10) {
-	background-color: var(
-		--cdn-glass-bg-strong,
-		rgba(237, 229, 212, 0.92)
-	) !important;
+	background-color: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.92));
 }
 
 /* On narrow viewports stack the home (CLOUD DEL NORTE) + page-name on
@@ -505,15 +502,15 @@
    visually wraps the page header sandwich. */
 :root:not(.awsui-dark-mode)
 	[class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg-scroll) !important;
-	-webkit-backdrop-filter: blur(8px) saturate(1.05) !important;
-	backdrop-filter: blur(8px) saturate(1.05) !important;
+	background-color: var(--cdn-glass-bg-scroll);
+	-webkit-backdrop-filter: blur(8px) saturate(1.05);
+	backdrop-filter: blur(8px) saturate(1.05);
 }
 
 .awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg-scroll) !important;
-	-webkit-backdrop-filter: blur(8px) saturate(1.05) !important;
-	backdrop-filter: blur(8px) saturate(1.05) !important;
+	background-color: var(--cdn-glass-bg-scroll);
+	-webkit-backdrop-filter: blur(8px) saturate(1.05);
+	backdrop-filter: blur(8px) saturate(1.05);
 }
 
 /* ContentLayout hero strip — wraps the page title ("Feed", "Meetings", etc.).
@@ -527,9 +524,9 @@
 	> [class*="awsui_background"]:not(#\9):not(#\10),
 :root:not(.awsui-dark-mode)
 	[class*="awsui_header-background"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg-ctl-header) !important;
-	-webkit-backdrop-filter: blur(10px) saturate(1.05) !important;
-	backdrop-filter: blur(10px) saturate(1.05) !important;
+	background-color: var(--cdn-glass-bg-ctl-header);
+	-webkit-backdrop-filter: blur(10px) saturate(1.05);
+	backdrop-filter: blur(10px) saturate(1.05);
 }
 
 .awsui-dark-mode
@@ -539,9 +536,9 @@
 	[class*="awsui_content-layout"]
 	> [class*="awsui_background"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_header-background"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg-ctl-header) !important;
-	-webkit-backdrop-filter: blur(10px) saturate(1.05) !important;
-	backdrop-filter: blur(10px) saturate(1.05) !important;
+	background-color: var(--cdn-glass-bg-ctl-header);
+	-webkit-backdrop-filter: blur(10px) saturate(1.05);
+	backdrop-filter: blur(10px) saturate(1.05);
 }
 
 /* main content area — backing behind the feed cards.
@@ -557,7 +554,7 @@
    viewport rather than scrolling with content. */
 :root:not(.awsui-dark-mode) main[class*="awsui_layout_"]:not(#\9):not(#\10),
 :root:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg-content) !important;
+	background-color: var(--cdn-glass-bg-content);
 	background-image:
 		radial-gradient(
 			60% 45% at 25% 15%,
@@ -573,13 +570,13 @@
 			135deg,
 			rgba(139, 90, 43, 0.022) 0 2px,
 			transparent 2px 8px
-		) !important;
-	background-attachment: fixed, fixed, fixed !important;
+		);
+	background-attachment: fixed, fixed, fixed;
 }
 
 .awsui-dark-mode main[class*="awsui_layout_"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_layout-main"]:not(#\9):not(#\10) {
-	background-color: var(--cdn-glass-bg-content) !important;
+	background-color: var(--cdn-glass-bg-content);
 	background-image:
 		radial-gradient(
 			60% 45% at 25% 15%,
@@ -595,8 +592,8 @@
 			135deg,
 			rgba(255, 255, 255, 0.014) 0 2px,
 			transparent 2px 5px
-		) !important;
-	background-attachment: fixed, fixed, fixed !important;
+		);
+	background-attachment: fixed, fixed, fixed;
 }
 
 /* ContentLayout header strip — horizon streak via border-image.
@@ -615,28 +612,28 @@
 :root:not(.awsui-dark-mode)
 	[class*="awsui_has-header_"]
 	> [class*="awsui_background_"]:not(#\9):not(#\10) {
-	border-bottom: 2px solid transparent !important;
-	border-image-source: var(--cdn-streak-h-light) !important;
-	border-image-slice: 0 0 1 0 !important;
-	border-image-width: 0 0 2px 0 !important;
-	border-image-repeat: stretch !important;
+	border-bottom: 2px solid transparent;
+	border-image-source: var(--cdn-streak-h-light);
+	border-image-slice: 0 0 1 0;
+	border-image-width: 0 0 2px 0;
+	border-image-repeat: stretch;
 }
 
 .awsui-dark-mode
 	[class*="awsui_has-header_"]
 	> [class*="awsui_background_"]:not(#\9):not(#\10) {
-	border-bottom: 2px solid transparent !important;
-	border-image-source: var(--cdn-streak-h-dark) !important;
-	border-image-slice: 0 0 1 0 !important;
-	border-image-width: 0 0 2px 0 !important;
-	border-image-repeat: stretch !important;
+	border-bottom: 2px solid transparent;
+	border-image-source: var(--cdn-streak-h-dark);
+	border-image-slice: 0 0 1 0;
+	border-image-width: 0 0 2px 0;
+	border-image-repeat: stretch;
 }
 
 /* Lift the page-title sibling above the bg's backdrop-filter stacking context */
 [class*="awsui_has-header_"]
 	> [class*="awsui_header-wrapper_"]:not(#\9):not(#\10) {
-	position: relative !important;
-	z-index: 1 !important;
+	position: relative;
+	z-index: 1;
 }
 
 /* Bottom streak — sits beneath the breadcrumbs strip as a horizon line */
@@ -693,9 +690,9 @@
 
 /* feed-section-divider — replace hairline with streak gradient */
 .feed-section-divider {
-	border: none !important;
-	height: 2px !important;
-	background: var(--cdn-glass-streak) !important;
+	border: none;
+	height: 2px;
+	background: var(--cdn-glass-streak);
 	border-radius: 1px;
 	opacity: 0.6;
 }
@@ -723,17 +720,17 @@
    ========================================================================== */
 
 [class*="awsui_breadcrumbs_"] li:first-child a {
-	font-family: "Cinzel", Georgia, serif !important;
-	font-weight: 700 !important;
+	font-family: "Cinzel", Georgia, serif;
+	font-weight: 700;
 	/* Lower clamp floor so "CLOUD DEL NORTE" fits the narrow phone column
 	   without truncation. At 360px viewport the previous 1.75rem floor +
 	   0.06em tracking + 6px padding overflowed the breadcrumb strip → the
 	   text rendered "Cloud Del No..." (Bryan v0.0.0058 mobile screenshot).
 	   1.05rem floor clears 360px with a slight margin. */
-	font-size: clamp(1.05rem, 5.2vw, 2.15rem) !important;
-	letter-spacing: 0.06em !important;
-	line-height: 1.1 !important;
-	text-decoration: none !important;
+	font-size: clamp(1.05rem, 5.2vw, 2.15rem);
+	letter-spacing: 0.06em;
+	line-height: 1.1;
+	text-decoration: none;
 	/* Dedicated edge-to-edge gradient for text-fill — solid endpoints so
 	   "CLOUD" and "NORTE" don't fade into the page bg. */
 	background-image: linear-gradient(
@@ -796,7 +793,7 @@
 [class*="awsui_breadcrumbs_"] li:first-child a:focus-visible {
 	transform: scale(1.04);
 	filter: drop-shadow(0 0 8px rgba(255, 153, 0, 0.45));
-	text-decoration: none !important;
+	text-decoration: none;
 }
 
 /* Spanish locale fit — "Nube of the North > Novedades" is ~23% wider than
@@ -807,8 +804,8 @@
    initializeLocale() in src/utils/locale.ts → "es" or "en". */
 @media (max-width: 600px) {
 	html[lang="es"] [class*="awsui_breadcrumbs_"] li:first-child a {
-		font-size: clamp(0.95rem, 4.7vw, 1.95rem) !important;
-		letter-spacing: 0.04em !important;
+		font-size: clamp(0.95rem, 4.7vw, 1.95rem);
+		letter-spacing: 0.04em;
 	}
 	html[lang="es"] [class*="awsui_breadcrumbs_"] li:not(:first-child) {
 		font-size: 0.92em;
@@ -839,7 +836,7 @@
 
 /* Allow breadcrumbs strip to grow vertically for the bigger first item */
 [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
-	min-height: auto !important;
+	min-height: auto;
 }
 
 /* ==========================================================================
@@ -866,12 +863,12 @@
 	[class*="awsui_header-wrapper_"]
 	[class*="awsui_main-main_"]
 	> [class*="awsui_title_"]:not(#\9):not(#\10) {
-	visibility: hidden !important;
-	height: 0 !important;
-	max-height: 0 !important;
-	overflow: hidden !important;
-	margin: 0 !important;
-	padding: 0 !important;
+	visibility: hidden;
+	height: 0;
+	max-height: 0;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
 	pointer-events: none;
 }
 
@@ -898,9 +895,9 @@
 [class*="awsui_header-wrapper_"]
 	[class*="awsui_info_"]
 	[class*="awsui_link"]:not(#\9):not(#\10) {
-	font-size: 0 !important;
-	color: transparent !important;
-	text-decoration: none !important;
+	font-size: 0;
+	color: transparent;
+	text-decoration: none;
 	position: relative;
 	display: inline-flex;
 	align-items: center;
@@ -1047,7 +1044,7 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
    accessible at the right edge as the help-panel entry point on mobile. */
 @media (max-width: 600px) {
 	[class*="awsui_header-wrapper_"] [class*="awsui_info_"]:not(#\9):not(#\10) {
-		display: none !important;
+		display: none;
 	}
 }
 
@@ -1059,8 +1056,8 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
    keeps the slot in flow so the awsui_title_ layout stays calm. */
 @media (min-width: 601px) and (max-width: 1024px) {
 	[class*="awsui_header-wrapper_"] [class*="awsui_info_"]:not(#\9):not(#\10) {
-		opacity: 0 !important;
-		pointer-events: none !important;
+		opacity: 0;
+		pointer-events: none;
 		transform: scale(0.96);
 	}
 }
@@ -1076,12 +1073,12 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 [class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
 	[class*="awsui_has-header_"]
 	> [class*="awsui_background_"]:not(#\9):not(#\10) {
-	background-color: transparent !important;
-	-webkit-backdrop-filter: none !important;
-	backdrop-filter: none !important;
-	border-bottom: none !important;
-	border-image: none !important;
-	box-shadow: none !important;
+	background-color: transparent;
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	border-bottom: none;
+	border-image: none;
+	box-shadow: none;
 }
 
 /* ==========================================================================
@@ -1105,12 +1102,12 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(
 			[class*="awsui_tools-container_"]
 		):not(#\9) {
-		overflow-y: auto !important;
-		-webkit-overflow-scrolling: touch !important;
-		max-height: 100vh !important;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		max-height: 100vh;
 		/* leave room at the bottom so the last section isn't cropped by the
 		   browser chrome (mobile address bar) when scrolled to end */
-		padding-bottom: 96px !important;
+		padding-bottom: 96px;
 	}
 
 	/* Thin branded scrollbar — light + dark mode tints */
@@ -1173,18 +1170,18 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 		var(--cdn-gradient-nav-start) 0%,
 		var(--cdn-gradient-nav-mid) 55%,
 		var(--cdn-gradient-nav-end) 100%
-	) !important;
-	border: 1.5px solid rgba(139, 90, 43, 0.55) !important;
-	color: var(--cdn-cream, #ede5d4) !important;
+	);
+	border: 1.5px solid rgba(139, 90, 43, 0.55);
+	color: var(--cdn-cream, #ede5d4);
 	box-shadow:
 		0 2px 12px rgba(44, 18, 6, 0.32),
 		0 0 0 1px rgba(255, 153, 0, 0.08),
-		inset 0 1px 0 rgba(255, 153, 0, 0.18) !important;
+		inset 0 1px 0 rgba(255, 153, 0, 0.18);
 	transition:
 		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-		filter 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+		filter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 	animation: cdn-tools-toggle-breathe 6s ease-in-out infinite;
 }
 
@@ -1195,14 +1192,14 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 		var(--cdn-gradient-nav-mid) 0%,
 		var(--cdn-gradient-nav-end) 55%,
 		var(--cdn-gradient-nav-start) 100%
-	) !important;
-	border-color: var(--cdn-amber, #8b5a2b) !important;
+	);
+	border-color: var(--cdn-amber, #8b5a2b);
 	transform: scale(1.08);
 	box-shadow:
 		0 6px 22px rgba(44, 18, 6, 0.42),
 		0 0 14px rgba(255, 153, 0, 0.45),
 		0 0 0 2px rgba(255, 153, 0, 0.22),
-		inset 0 1px 0 rgba(255, 153, 0, 0.32) !important;
+		inset 0 1px 0 rgba(255, 153, 0, 0.32);
 	filter: drop-shadow(0 0 6px rgba(255, 153, 0, 0.35));
 }
 
@@ -1211,7 +1208,7 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 	transform: scale(1);
 	box-shadow:
 		inset 0 2px 6px rgba(0, 0, 0, 0.45),
-		0 1px 4px rgba(44, 18, 6, 0.28) !important;
+		0 1px 4px rgba(44, 18, 6, 0.28);
 	filter: none;
 }
 
@@ -1232,10 +1229,10 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)
 	svg
 	path {
-	fill: none !important;
-	stroke: currentColor !important;
-	stroke-width: 1.5 !important;
-	stroke-linecap: round !important;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.5;
+	stroke-linecap: round;
 }
 
 /* Dark mode — deep navy gradient + violet border + lavender icon */
@@ -1245,18 +1242,18 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 		var(--cdn-gradient-nav-start) 0%,
 		var(--cdn-gradient-nav-mid) 50%,
 		var(--cdn-gradient-nav-end) 100%
-	) !important;
-	border: 1.5px solid rgba(144, 96, 240, 0.5) !important;
-	color: var(--cdn-lavender, #d7c7ee) !important;
+	);
+	border: 1.5px solid rgba(144, 96, 240, 0.5);
+	color: var(--cdn-lavender, #d7c7ee);
 	box-shadow:
 		0 4px 18px -2px rgba(0, 0, 0, 0.55),
 		0 0 0 1px rgba(144, 96, 240, 0.12),
-		inset 0 1px 0 rgba(144, 96, 240, 0.28) !important;
+		inset 0 1px 0 rgba(144, 96, 240, 0.28);
 	transition:
 		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-		filter 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+		filter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 	animation: cdn-tools-toggle-breathe-dark 6s ease-in-out infinite;
 }
 
@@ -1266,14 +1263,14 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 		var(--cdn-gradient-nav-mid) 0%,
 		var(--cdn-gradient-nav-end) 50%,
 		var(--cdn-gradient-nav-start) 100%
-	) !important;
-	border-color: var(--cdn-violet, #9060f0) !important;
+	);
+	border-color: var(--cdn-violet, #9060f0);
 	transform: scale(1.08);
 	box-shadow:
 		0 8px 28px -4px rgba(0, 0, 0, 0.6),
 		0 0 18px rgba(144, 96, 240, 0.55),
 		0 0 0 2px rgba(144, 96, 240, 0.28),
-		inset 0 1px 0 rgba(215, 199, 238, 0.4) !important;
+		inset 0 1px 0 rgba(215, 199, 238, 0.4);
 	filter: drop-shadow(0 0 8px rgba(144, 96, 240, 0.5));
 }
 
@@ -1281,16 +1278,16 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 	transform: scale(1);
 	box-shadow:
 		inset 0 2px 6px rgba(0, 0, 0, 0.6),
-		0 1px 4px rgba(0, 0, 0, 0.4) !important;
+		0 1px 4px rgba(0, 0, 0, 0.4);
 	filter: none;
 }
 
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg circle,
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg path {
-	fill: none !important;
-	stroke: currentColor !important;
-	stroke-width: 1.5 !important;
-	stroke-linecap: round !important;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.5;
+	stroke-linecap: round;
 }
 
 /* Ambient breathe — slow pulsing glow ring, 6s cycle. Light mode amber halo;
@@ -1334,8 +1331,8 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 @media (prefers-reduced-motion: reduce) {
 	:root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10),
 	.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-		animation: none !important;
-		transition: none !important;
+		animation: none;
+		transition: none;
 	}
 	:root:not(.awsui-dark-mode)
 		[class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover,
@@ -1359,16 +1356,16 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 		var(--cdn-gradient-nav-start) 0%,
 		var(--cdn-gradient-nav-mid) 55%,
 		var(--cdn-gradient-nav-end) 100%
-	) !important;
-	border: 1px solid rgba(139, 90, 43, 0.4) !important;
-	color: rgba(245, 233, 208, 0.92) !important;
+	);
+	border: 1px solid rgba(139, 90, 43, 0.4);
+	color: rgba(245, 233, 208, 0.92);
 	box-shadow:
 		0 1px 4px rgba(44, 18, 6, 0.32),
-		inset 0 1px 0 rgba(255, 153, 0, 0.18) !important;
+		inset 0 1px 0 rgba(255, 153, 0, 0.18);
 	transition:
 		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.2s ease,
-		border-color 0.2s ease !important;
+		border-color 0.2s ease;
 }
 
 .awsui-dark-mode [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
@@ -1377,16 +1374,16 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 		var(--cdn-gradient-nav-start) 0%,
 		var(--cdn-gradient-nav-mid) 50%,
 		var(--cdn-gradient-nav-end) 100%
-	) !important;
-	border: 1px solid rgba(144, 96, 240, 0.4) !important;
-	color: rgba(215, 199, 238, 0.92) !important;
+	);
+	border: 1px solid rgba(144, 96, 240, 0.4);
+	color: rgba(215, 199, 238, 0.92);
 	box-shadow:
 		0 1px 4px rgba(0, 0, 0, 0.5),
-		inset 0 1px 0 rgba(144, 96, 240, 0.3) !important;
+		inset 0 1px 0 rgba(144, 96, 240, 0.3);
 	transition:
 		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.2s ease,
-		border-color 0.2s ease !important;
+		border-color 0.2s ease;
 }
 
 [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
@@ -1395,24 +1392,24 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 
 :root:not(.awsui-dark-mode)
 	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
-	border-color: rgba(255, 153, 0, 0.55) !important;
+	border-color: rgba(255, 153, 0, 0.55);
 	box-shadow:
 		0 2px 8px rgba(44, 18, 6, 0.42),
 		0 0 12px rgba(255, 153, 0, 0.28),
-		inset 0 1px 0 rgba(255, 153, 0, 0.32) !important;
+		inset 0 1px 0 rgba(255, 153, 0, 0.32);
 }
 
 .awsui-dark-mode [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
-	border-color: rgba(144, 96, 240, 0.65) !important;
+	border-color: rgba(144, 96, 240, 0.65);
 	box-shadow:
 		0 2px 10px rgba(0, 0, 0, 0.55),
 		0 0 14px rgba(144, 96, 240, 0.35),
-		inset 0 1px 0 rgba(144, 96, 240, 0.45) !important;
+		inset 0 1px 0 rgba(144, 96, 240, 0.45);
 }
 
 @media (prefers-reduced-motion: reduce) {
 	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-		transition: none !important;
+		transition: none;
 	}
 	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
 		transform: none;
@@ -1438,12 +1435,12 @@ body.cdn-stream-playing .cdn-volunteer-btn {
 }
 body.cdn-stream-playing [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
 	--cdn-band: var(--cdn-bass, 0);
-	animation: none !important;
+	animation: none;
 }
 body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
 	--cdn-band: var(--cdn-treble, 0);
 	/* freeze the ambient breathe — band amplitude is now the sole signal */
-	animation: none !important;
+	animation: none;
 }
 
 /* Light-mode ring — station-primary fallbacks to aws-orange when no
@@ -1458,13 +1455,13 @@ body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
 	border-color: rgba(
 		var(--station-primary-rgb, 255, 153, 0),
 		calc(0.45 + var(--cdn-band, 0) * 0.4)
-	) !important;
+	);
 	box-shadow:
 		0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
 		rgba(var(--station-primary-rgb, 255, 153, 0), 0.22),
 		0 0 calc(6px + var(--cdn-band, 0) * 10px)
 		rgba(var(--station-primary-rgb, 255, 153, 0), 0.32),
-		inset 0 1px 0 rgba(255, 153, 0, 0.18) !important;
+		inset 0 1px 0 rgba(255, 153, 0, 0.18);
 }
 
 /* Dark-mode ring — same pattern, secondary tint as fallback. The dark-mode
@@ -1479,13 +1476,13 @@ body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
 	border-color: rgba(
 		var(--station-primary-rgb, 144, 96, 240),
 		calc(0.5 + var(--cdn-band, 0) * 0.4)
-	) !important;
+	);
 	box-shadow:
 		0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
 		rgba(var(--station-primary-rgb, 144, 96, 240), 0.28),
 		0 0 calc(6px + var(--cdn-band, 0) * 10px)
 		rgba(var(--station-primary-rgb, 144, 96, 240), 0.4),
-		inset 0 1px 0 rgba(144, 96, 240, 0.32) !important;
+		inset 0 1px 0 rgba(144, 96, 240, 0.32);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -1588,10 +1585,10 @@ body.cdn-stream-playing .cdn-volunteer-btn {
 	animation: 1.6s linear infinite cdn-ravy-ring-mid;
 }
 body.cdn-stream-playing [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-	animation: 3.2s linear infinite cdn-ravy-ring-bass !important;
+	animation: 3.2s linear infinite cdn-ravy-ring-bass;
 }
 body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-	animation: 0.7s linear infinite cdn-ravy-ring-treble !important;
+	animation: 0.7s linear infinite cdn-ravy-ring-treble;
 }
 
 /* Conic-gradient spotlight overlay — uses ::before so we don't trample
@@ -1674,14 +1671,14 @@ body.cdn-stream-playing
 	body.cdn-stream-playing
 		[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
 	body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-		animation: none !important;
+		animation: none;
 	}
 	body.cdn-stream-playing .cdn-volunteer-btn::after,
 	body.cdn-stream-playing
 		[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
 	body.cdn-stream-playing
 		[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
-		display: none !important;
+		display: none;
 	}
 }
 
@@ -1697,12 +1694,12 @@ body.cdn-stream-playing
 :root:not(.awsui-dark-mode)
 	[class*="awsui_breadcrumbs_"]
 	[class*="awsui_separator_"] {
-	color: rgba(139, 90, 43, 0.65) !important;
+	color: rgba(139, 90, 43, 0.65);
 	opacity: 0.75;
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] [class*="awsui_separator_"] {
-	color: rgba(144, 96, 240, 0.72) !important;
+	color: rgba(144, 96, 240, 0.72);
 	opacity: 0.8;
 }
 
@@ -1715,7 +1712,7 @@ body.cdn-stream-playing
 	[class*="awsui_breadcrumbs_"]
 	li:not(:first-child)
 	span:last-child {
-	color: rgba(74, 40, 24, 0.85) !important;
+	color: rgba(74, 40, 24, 0.85);
 	font-weight: 600;
 	letter-spacing: 0.02em;
 }
@@ -1728,7 +1725,7 @@ body.cdn-stream-playing
 	[class*="awsui_breadcrumbs_"]
 	li:not(:first-child)
 	span:last-child {
-	color: rgba(215, 199, 238, 0.88) !important;
+	color: rgba(215, 199, 238, 0.88);
 	font-weight: 600;
 	letter-spacing: 0.02em;
 }
@@ -1747,12 +1744,12 @@ body.cdn-stream-playing
 :root:not(.awsui-dark-mode)
 	[class*="awsui_text_"]
 	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9) {
-	color: var(--cdn-status-info, #6330c8) !important;
+	color: var(--cdn-status-info, #6330c8);
 }
 
 :root:not(.awsui-dark-mode)
 	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9):hover {
-	color: #4a1f9c !important;
+	color: #4a1f9c;
 }
 
 .awsui-dark-mode
@@ -1760,12 +1757,12 @@ body.cdn-stream-playing
 .awsui-dark-mode
 	[class*="awsui_text_"]
 	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9) {
-	color: var(--cdn-lavender, #d7c7ee) !important;
+	color: var(--cdn-lavender, #d7c7ee);
 }
 
 .awsui-dark-mode
 	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9):hover {
-	color: var(--cdn-violet, #9060f0) !important;
+	color: var(--cdn-violet, #9060f0);
 }
 
 /* ==========================================================================
@@ -1781,12 +1778,12 @@ body.cdn-stream-playing
 	.awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
 		filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
 			drop-shadow(0 0 4px rgba(144, 96, 240, 0.32))
-			drop-shadow(0 0 10px rgba(144, 96, 240, 0.14)) !important;
+			drop-shadow(0 0 10px rgba(144, 96, 240, 0.14));
 	}
 	:root:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img {
 		filter: drop-shadow(0 0 2px rgba(139, 90, 43, 0.5))
 			drop-shadow(0 0 5px rgba(201, 162, 63, 0.28))
-			drop-shadow(0 0 12px rgba(201, 162, 63, 0.12)) !important;
+			drop-shadow(0 0 12px rgba(201, 162, 63, 0.12));
 	}
 	/* Tame the breathe keyframe peaks too so the animation stays in budget */
 	@media (prefers-reduced-motion: no-preference) {
@@ -1803,7 +1800,7 @@ body.cdn-stream-playing
 @media (max-width: 480px) {
 	.cdn-logo-hero .cdn-logo-img {
 		filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
-			drop-shadow(0 0 6px rgba(201, 162, 63, 0.18)) !important;
+			drop-shadow(0 0 6px rgba(201, 162, 63, 0.18));
 	}
 }
 

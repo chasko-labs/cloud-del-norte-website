@@ -258,7 +258,7 @@
    Placeholder card — "open slot" dashed border style
    -------------------------------------------------------------------------- */
 .cdn-footer-placeholder {
-	border-style: dashed !important;
+	border-style: dashed;
 	border-width: 2px;
 	border-color: rgba(139, 90, 43, 0.3);
 	opacity: 0.82;
@@ -277,8 +277,8 @@
 		var(--cdn-aws-orange) 30%,
 		#ffb84d 60%,
 		transparent 100%
-	) !important;
-	opacity: 0.45 !important;
+	);
+	opacity: 0.45;
 }
 
 .awsui-dark-mode .cdn-footer-placeholder {
@@ -297,7 +297,7 @@
 		var(--cdn-aws-orange) 30%,
 		#ffb84d 60%,
 		transparent 100%
-	) !important;
+	);
 }
 
 .cdn-footer-placeholder .cdn-footer-card-name {
@@ -326,8 +326,8 @@
 		var(--cdn-gold) 50%,
 		var(--cdn-amber) 75%,
 		transparent 100%
-	) !important;
-	opacity: 0.5 !important;
+	);
+	opacity: 0.5;
 }
 
 .cdn-footer-retired:hover {
@@ -347,8 +347,8 @@
 		var(--cdn-aws-orange) 50%,
 		#c9a23f 75%,
 		transparent 100%
-	) !important;
-	opacity: 0.45 !important;
+	);
+	opacity: 0.45;
 }
 
 /* --------------------------------------------------------------------------

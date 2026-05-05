@@ -132,7 +132,7 @@
 
 .liora-bezel.crack-3 .liora-canvas {
 	pointer-events: none;
-	opacity: 0 !important;
+	opacity: 0;
 }
 
 .liora-panel-wrap {
@@ -469,24 +469,24 @@
 }
 
 .liora-stickynote--flying-out {
-	z-index: 9000 !important;
-	pointer-events: none !important;
-	transform-origin: 50% !important;
-	width: fit-content !important;
-	max-width: clamp(260px, 72vw, 420px) !important;
-	height: fit-content !important;
-	margin: auto !important;
-	padding: 28px 36px 32px !important;
-	font-size: clamp(38px, 10vw, 54px) !important;
+	z-index: 9000;
+	pointer-events: none;
+	transform-origin: 50%;
+	width: fit-content;
+	max-width: clamp(260px, 72vw, 420px);
+	height: fit-content;
+	margin: auto;
+	padding: 28px 36px 32px;
+	font-size: clamp(38px, 10vw, 54px);
 	animation: 0.55s cubic-bezier(0.18, 0.89, 0.32, 1.1) forwards
-		liora-stickynote-flyout !important;
-	position: fixed !important;
-	inset: 0 !important;
+		liora-stickynote-flyout;
+	position: fixed;
+	inset: 0;
 	box-shadow:
 		12px 28px 56px #000000b8,
 		6px 12px 24px #00000080,
 		3px 5px 10px #0000005c,
-		inset 0 -5px 14px #b4821e47 !important;
+		inset 0 -5px 14px #b4821e47;
 }
 
 @keyframes liora-stickynote-flyout {
@@ -859,8 +859,8 @@ body.cdn-stream-playing .liora-canvas.liora-canvas--visible {
 	text-shadow:
 		0 0 4px #9060f08c,
 		0 0 12px #9060f052;
-	animation: none !important;
-	transform: none !important;
+	animation: none;
+	transform: none;
 }
 
 .liora-portal-message {
@@ -1446,10 +1446,10 @@ body.cdn-stream-playing .awsui-dark-mode .liora-bezel {
 	body.cdn-stream-playing .liora-led,
 	body.cdn-stream-playing .liora-led:nth-child(n + 5):nth-child(-n + 8),
 	body.cdn-stream-playing .liora-led:nth-child(n + 9) {
-		animation: none !important;
+		animation: none;
 	}
 	body.cdn-stream-playing .liora-led-display {
-		animation: none !important;
+		animation: none;
 		background-image: radial-gradient(
 			70% 55% at 50% 38%,
 			#121c12e0 0%,
@@ -2081,7 +2081,7 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .liora-led,
 .liora-reconnect-wrap.liora-scene-over
 	.liora-reconnect-btn.liora-skip-shutdown {
 	pointer-events: none;
-	animation: 0.55s ease-in forwards liora-skip-shutdown !important;
+	animation: 0.55s ease-in forwards liora-skip-shutdown;
 }
 
 @keyframes liora-skip-scanline {
@@ -2977,13 +2977,13 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .liora-led,
    classes added by liora-embed.ts at screen-tap-3 setTimeout block.
    important needed because base .liora-led runs led-blink 2.4s infinite */
 .liora-led--credits-steady {
-	animation: none !important;
-	filter: brightness(1.6) !important;
-	opacity: 1 !important;
+	animation: none;
+	filter: brightness(1.6);
+	opacity: 1;
 }
 
 .liora-led--credits-blink {
-	animation: 1.7s steps(2, jump-none) infinite liora-led-credits-blink !important;
+	animation: 1.7s steps(2, jump-none) infinite liora-led-credits-blink;
 }
 
 @keyframes liora-led-credits-blink {
@@ -3010,9 +3010,9 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .liora-led,
 }
 
 .liora-led--credits-dim {
-	animation: none !important;
-	opacity: 0.18 !important;
-	filter: brightness(0.4) !important;
+	animation: none;
+	opacity: 0.18;
+	filter: brightness(0.4);
 }
 
 /* === notes row: holds sticky note 1 (left) and sticky note 2 (right) side by side

@@ -26,7 +26,7 @@ const RESEND_COOLDOWN_SECS = 120;
 
 function VerifyForm() {
 	const { t } = useTranslation();
-	document.title = t("auth.verify.title") + " — " + t("auth.siteTitle");
+	document.title = `${t("auth.verify.title")} — ${t("auth.siteTitle")}`;
 
 	const [email] = useState(
 		() => new URLSearchParams(window.location.search).get("email") ?? "",
@@ -69,7 +69,7 @@ function VerifyForm() {
 		try {
 			assertNonEmpty(code, t("auth.verify.codeLabel"));
 		} catch {
-			setCodeError(t("auth.verify.codeLabel") + " is required");
+			setCodeError(`${t("auth.verify.codeLabel")} is required`);
 			return;
 		}
 		setLoading(true);

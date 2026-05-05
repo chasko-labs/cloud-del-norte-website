@@ -6,7 +6,7 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Icon from "@cloudscape-design/components/icon";
 import Link from "@cloudscape-design/components/link";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import posts from "../../../data/andres-medium.json";
 import { useTranslation } from "../../../hooks/useTranslation";
 

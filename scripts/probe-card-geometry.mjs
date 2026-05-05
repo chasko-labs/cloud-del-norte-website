@@ -26,22 +26,31 @@ try {
 }
 const { chromium } = await import(playwrightPath);
 
-const targetUrl = process.argv[2] ?? "https://dev.clouddelnorte.org/feed/index.html";
+const targetUrl =
+	process.argv[2] ?? "https://dev.clouddelnorte.org/feed/index.html";
 // comma-separated selectors; each is sampled independently every tick
-const selectorArg = process.argv[3] ?? '[data-cdn-card-id="feed-live-hero"],.feed-next-meetup';
-const selectors = selectorArg.split(",").map((s) => s.trim()).filter(Boolean);
+const selectorArg =
+	process.argv[3] ?? '[data-cdn-card-id="feed-live-hero"],.feed-next-meetup';
+const selectors = selectorArg
+	.split(",")
+	.map((s) => s.trim())
+	.filter(Boolean);
 const durationMs = Number(process.argv[4] ?? 30000);
 const intervalMs = Number(process.argv[5] ?? 1000);
 
 console.log(`[probe-card-geometry] url=${targetUrl}`);
 console.log(`[probe-card-geometry] selectors=${selectors.join(" | ")}`);
-console.log(`[probe-card-geometry] duration=${durationMs}ms interval=${intervalMs}ms`);
+console.log(
+	`[probe-card-geometry] duration=${durationMs}ms interval=${intervalMs}ms`,
+);
 
 const browser = await chromium.launch({
 	headless: true,
 	args: ["--autoplay-policy=no-user-gesture-required"],
 });
-const context = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+const context = await browser.newContext({
+	viewport: { width: 1440, height: 900 },
+});
 const page = await context.newPage();
 
 const ts = () => new Date().toISOString().slice(11, 23);

@@ -3,7 +3,7 @@
 
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 const VIDEO_IDS = ["yQNrgpIp1Fs", "WUJUvTu2Qjo", "S2G6eDE4Jok"];

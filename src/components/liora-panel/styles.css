@@ -137,7 +137,7 @@
 
 /* hide canvas entirely when shattered */
 .liora-bezel.crack-3 .liora-canvas {
-	opacity: 0 !important;
+	opacity: 0;
 	pointer-events: none;
 }
 
@@ -500,26 +500,26 @@
    position:fixed centers in viewport so the reader can "pick up and read".
    transform-origin center keeps the scale pivot stable during translate. */
 .liora-stickynote--flying-out {
-	position: fixed !important; /* break out of bezel stacking context */
+	position: fixed; /* break out of bezel stacking context */
 	/* centering via inset + margin so left/top state doesn't matter at fly-in */
-	inset: 0 !important;
-	margin: auto !important;
-	width: fit-content !important;
-	height: fit-content !important;
-	max-width: clamp(260px, 72vw, 420px) !important;
-	padding: 28px 36px 32px !important;
-	font-size: clamp(38px, 10vw, 54px) !important;
-	z-index: 9000 !important;
-	pointer-events: none !important; /* picked up — no further interaction */
+	inset: 0;
+	margin: auto;
+	width: fit-content;
+	height: fit-content;
+	max-width: clamp(260px, 72vw, 420px);
+	padding: 28px 36px 32px;
+	font-size: clamp(38px, 10vw, 54px);
+	z-index: 9000;
+	pointer-events: none; /* picked up — no further interaction */
 	animation: liora-stickynote-flyout 0.55s cubic-bezier(0.18, 0.89, 0.32, 1.1) 1
-		forwards !important;
-	transform-origin: center center !important;
+		forwards;
+	transform-origin: center center;
 	/* heavier drop-shadow sells the "lifted off the wall" read */
 	box-shadow:
 		12px 28px 56px rgba(0, 0, 0, 0.72),
 		6px 12px 24px rgba(0, 0, 0, 0.5),
 		3px 5px 10px rgba(0, 0, 0, 0.36),
-		inset 0 -5px 14px rgba(180, 130, 30, 0.28) !important;
+		inset 0 -5px 14px rgba(180, 130, 30, 0.28);
 }
 
 /* flyout: scale from near-current size up to 5x, translate to center,
@@ -930,8 +930,8 @@
    added when scene enters tap-3 credits sequence; killed by refreshScene. */
 .liora-status-bar.liora-status--credits {
 	color: var(--cdn-violet, #9060f0);
-	animation: none !important;
-	transform: none !important;
+	animation: none;
+	transform: none;
 	text-shadow:
 		0 0 4px rgba(144, 96, 240, 0.55),
 		0 0 12px rgba(144, 96, 240, 0.32);
@@ -1460,21 +1460,23 @@ body.cdn-stream-playing .liora-led {
 	animation: none;
 	opacity: 0.2;
 	filter: brightness(0.32) saturate(0.6) hue-rotate(15deg);
-	transition: opacity 0.15s ease-out, filter 0.15s ease-out;
+	transition:
+		opacity 0.15s ease-out,
+		filter 0.15s ease-out;
 }
 
 /* Bank 0: LEDs 1,5,9 */
-body.cdn-stream-playing.cdn-beat-bank-0 .liora-led:nth-child(4n+1) {
+body.cdn-stream-playing.cdn-beat-bank-0 .liora-led:nth-child(4n + 1) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
 /* Bank 1: LEDs 2,6,10 */
-body.cdn-stream-playing.cdn-beat-bank-1 .liora-led:nth-child(4n+2) {
+body.cdn-stream-playing.cdn-beat-bank-1 .liora-led:nth-child(4n + 2) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
 /* Bank 2: LEDs 3,7,11 */
-body.cdn-stream-playing.cdn-beat-bank-2 .liora-led:nth-child(4n+3) {
+body.cdn-stream-playing.cdn-beat-bank-2 .liora-led:nth-child(4n + 3) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
@@ -1770,12 +1772,26 @@ body.cdn-stream-playing.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	min-height: 0; /* permit flex shrinking below content size */
 	/* fade-off-into-distance: names enter full-opacity from top, fade out at
 	   bottom edge. Retro end-credits / video game aesthetic per HANDOFF i1. */
-	-webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 75%, transparent 100%);
-	mask-image: linear-gradient(to bottom, transparent 0%, black 8%, black 75%, transparent 100%);
+	-webkit-mask-image: linear-gradient(
+		to bottom,
+		transparent 0%,
+		black 8%,
+		black 75%,
+		transparent 100%
+	);
+	mask-image: linear-gradient(
+		to bottom,
+		transparent 0%,
+		black 8%,
+		black 75%,
+		transparent 100%
+	);
 }
 
 .liora-credits-title {
-	font-family: 'Impact', 'Haettenschweiler', 'Arial Narrow Bold', 'Franklin Gothic Bold Condensed', sans-serif;
+	font-family:
+		"Impact", "Haettenschweiler", "Arial Narrow Bold",
+		"Franklin Gothic Bold Condensed", sans-serif;
 	font-style: italic;
 	font-weight: 900;
 	font-size: clamp(32px, 20cqi, 56px);
@@ -2114,7 +2130,7 @@ body.cdn-stream-playing.cdn-beat-bank-3 .liora-led:nth-child(4n) {
    refreshScene fires after the animation completes (~600ms) */
 .liora-reconnect-wrap.liora-scene-over
 .liora-reconnect-btn.liora-skip-shutdown {
-	animation: liora-skip-shutdown 0.55s ease-in forwards !important;
+	animation: liora-skip-shutdown 0.55s ease-in forwards;
 	pointer-events: none;
 }
 

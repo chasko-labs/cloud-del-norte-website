@@ -66,5 +66,5 @@ export function useBasicValidation(): UseBasicValidationResult {
 
 export const BasicValidationContext = createContext<BasicValidationContext>({
 	isFormSubmitted: false,
-	addErrorField: (key, ref) => null,
+	addErrorField: (_key, _ref) => null,
 });

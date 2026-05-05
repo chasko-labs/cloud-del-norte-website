@@ -105,8 +105,8 @@ export default function BuilderCenterCard() {
 		[total],
 	);
 
-	const next = useCallback(() => step(1), [step]);
-	const prev = useCallback(() => step(-1), [step]);
+	const _next = useCallback(() => step(1), [step]);
+	const _prev = useCallback(() => step(-1), [step]);
 
 	useEffect(() => {
 		if (reducedMotion || paused || interactedRef.current) return;

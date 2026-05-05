@@ -95,7 +95,7 @@ describe("projectNextVersion", () => {
 	it('returns confidence "medium" for N=2', () => {
 		const result = projectNextVersion([REL_2024_01, REL_2024_04]);
 		expect(result).not.toBeNull();
-		expect(result!.confidence).toBe("medium");
+		expect(result?.confidence).toBe("medium");
 	});
 
 	it('returns confidence "high" for N≥5 releases', () => {
@@ -108,7 +108,7 @@ describe("projectNextVersion", () => {
 		];
 		const result = projectNextVersion(releases);
 		expect(result).not.toBeNull();
-		expect(result!.confidence).toBe("high");
+		expect(result?.confidence).toBe("high");
 	});
 
 	it("projects a date after the most recent release", () => {
@@ -121,23 +121,23 @@ describe("projectNextVersion", () => {
 		];
 		const result = projectNextVersion(releases);
 		expect(result).not.toBeNull();
-		expect(result!.projectedDate > "2025-01-01").toBe(true);
+		expect(result?.projectedDate > "2025-01-01").toBe(true);
 	});
 
 	it('returns announced date with confidence "announced" when announcedDate is provided', () => {
 		const releases = [REL_2024_01, REL_2024_04];
 		const result = projectNextVersion(releases, "2025-06-15");
 		expect(result).not.toBeNull();
-		expect(result!.confidence).toBe("announced");
-		expect(result!.projectedDate).toBe("2025-06-15");
-		expect(result!.announcedDate).toBe("2025-06-15");
+		expect(result?.confidence).toBe("announced");
+		expect(result?.projectedDate).toBe("2025-06-15");
+		expect(result?.announcedDate).toBe("2025-06-15");
 	});
 
 	it("announcedDate overrides formula even with insufficient history", () => {
 		const result = projectNextVersion([REL_2024_01], "2025-03-01");
 		expect(result).not.toBeNull();
-		expect(result!.confidence).toBe("announced");
-		expect(result!.projectedDate).toBe("2025-03-01");
+		expect(result?.confidence).toBe("announced");
+		expect(result?.projectedDate).toBe("2025-03-01");
 	});
 });
 
@@ -154,29 +154,29 @@ describe("projectNextLTS", () => {
 		const releases = [REL_2024_01, REL_2024_07, REL_2025_01];
 		const result = projectNextLTS(releases);
 		expect(result).not.toBeNull();
-		expect(result!.confidence).toBe("high");
+		expect(result?.confidence).toBe("high");
 	});
 
 	it('would only be "medium" for projectNextVersion with same 3 releases (N=5 window)', () => {
 		const releases = [REL_2024_01, REL_2024_07, REL_2025_01];
 		const result = projectNextVersion(releases);
 		expect(result).not.toBeNull();
-		expect(result!.confidence).toBe("medium");
+		expect(result?.confidence).toBe("medium");
 	});
 
 	it('returns announced date with confidence "announced" when announcedDate is provided', () => {
 		const releases = [REL_2024_01, REL_2024_07];
 		const result = projectNextLTS(releases, "2025-07-01");
 		expect(result).not.toBeNull();
-		expect(result!.confidence).toBe("announced");
-		expect(result!.projectedDate).toBe("2025-07-01");
-		expect(result!.announcedDate).toBe("2025-07-01");
+		expect(result?.confidence).toBe("announced");
+		expect(result?.projectedDate).toBe("2025-07-01");
+		expect(result?.announcedDate).toBe("2025-07-01");
 	});
 
 	it("projects a date after the most recent LTS release", () => {
 		const releases = [REL_2024_01, REL_2024_07, REL_2025_01];
 		const result = projectNextLTS(releases);
 		expect(result).not.toBeNull();
-		expect(result!.projectedDate > "2025-01-01").toBe(true);
+		expect(result?.projectedDate > "2025-01-01").toBe(true);
 	});
 });

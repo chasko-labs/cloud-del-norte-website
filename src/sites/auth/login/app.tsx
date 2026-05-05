@@ -33,7 +33,7 @@ function LoginForm() {
 	const [loading, setLoading] = useState(false);
 	const [submitState, setSubmitState] = useState<SubmitState>("idle");
 
-	document.title = t("auth.login.title") + " — " + t("auth.siteTitle");
+	document.title = `${t("auth.login.title")} — ${t("auth.siteTitle")}`;
 
 	function validate(): boolean {
 		let valid = true;
@@ -42,13 +42,13 @@ function LoginForm() {
 		try {
 			assertNonEmpty(email, t("auth.login.emailLabel"));
 		} catch {
-			setEmailError(t("auth.login.emailLabel") + " is required");
+			setEmailError(`${t("auth.login.emailLabel")} is required`);
 			valid = false;
 		}
 		try {
 			assertNonEmpty(password, t("auth.login.passwordLabel"));
 		} catch {
-			setPasswordError(t("auth.login.passwordLabel") + " is required");
+			setPasswordError(`${t("auth.login.passwordLabel")} is required`);
 			valid = false;
 		}
 		return valid;

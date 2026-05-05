@@ -157,7 +157,7 @@ describe("JitsiEmbed", () => {
 		const { ctor, latest } = installFakeExternalApi();
 		render(<JitsiEmbed roomName="room-close" onClose={onClose} />);
 		await waitFor(() => expect(ctor).toHaveBeenCalled());
-		latest()!.__fire("readyToClose");
+		latest()?.__fire("readyToClose");
 		expect(onClose).toHaveBeenCalledTimes(1);
 	});
 });
