@@ -150,9 +150,53 @@ steps:
       - aws s3 sync s3://awsaerospace.org/liora/ s3://dev.clouddelnorte.org/liora/ --exact-timestamps
       - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/*"
 
+  - name: deploy-dev-auth
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [build]
+    when:
+      - event: [push, manual]
+        branch: dev
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sts get-caller-identity
+      - aws s3 sync lib-auth/ s3://auth.clouddelnorte.org/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib-auth/assets/ s3://auth.clouddelnorte.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws cloudfront create-invalidation --distribution-id ECQ44FO9MBTCY --paths "/*"
+
+  - name: deploy-dev-awsug
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [build]
+    when:
+      - event: [push, manual]
+        branch: dev
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sts get-caller-identity
+      - aws s3 sync lib-awsug/ s3://awsug.clouddelnorte.org/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib-awsug/assets/ s3://awsug.clouddelnorte.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws cloudfront create-invalidation --distribution-id E2QLAWFVIT1AR8 --paths "/*"
+
   - name: notify-dev
     image: alpine:3.20
-    depends_on: [deploy-dev]
+    depends_on: [deploy-dev, deploy-dev-auth, deploy-dev-awsug]
     failure: ignore
     when:
       - event: [push, manual]
@@ -169,7 +213,7 @@ steps:
 
   - name: notify-sns-dev
     image: public.ecr.aws/aws-cli/aws-cli:latest
-    depends_on: [deploy-dev]
+    depends_on: [deploy-dev, deploy-dev-auth, deploy-dev-awsug]
     failure: ignore
     when:
       - event: [push, manual]
