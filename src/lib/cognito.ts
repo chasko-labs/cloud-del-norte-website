@@ -123,10 +123,19 @@ export function decodeToken(jwt: string): Record<string, unknown> {
 
 // ---- Auth actions ----
 
+export interface AuthChallenge {
+	challengeName: string;
+	session: string;
+}
+
+export type SignInResult =
+	| { type: "success" }
+	| { type: "challenge"; challenge: AuthChallenge };
+
 export async function signInWithPassword(
 	email: string,
 	password: string,
-): Promise<void> {
+): Promise<SignInResult> {
 	const result = await cognitoPost("InitiateAuth", {
 		AuthFlow: "USER_PASSWORD_AUTH",
 		ClientId: CLIENT_ID,
@@ -135,6 +144,63 @@ export async function signInWithPassword(
 			PASSWORD: password,
 		},
 	});
+	if (result.ChallengeName) {
+		return {
+			type: "challenge",
+			challenge: {
+				challengeName: result.ChallengeName as string,
+				session: result.Session as string,
+			},
+		};
+	}
+	storeTokens(result);
+	return { type: "success" };
+}
+
+export async function associateSoftwareToken(
+	session: string,
+): Promise<{ secretCode: string; session: string }> {
+	const result = await cognitoPost("AssociateSoftwareToken", {
+		Session: session,
+	});
+	return {
+		secretCode: result.SecretCode as string,
+		session: result.Session as string,
+	};
+}
+
+export async function verifySoftwareToken(
+	session: string,
+	code: string,
+): Promise<string> {
+	const result = await cognitoPost("VerifySoftwareToken", {
+		Session: session,
+		UserCode: sanitize(code, "code"),
+		FriendlyDeviceName: "authenticator",
+	});
+	return (result.Session as string) ?? session;
+}
+
+export async function respondToMfaChallenge(
+	session: string,
+	code: string,
+	challengeName: string,
+): Promise<void> {
+	const result = await cognitoPost("RespondToAuthChallenge", {
+		ClientId: CLIENT_ID,
+		ChallengeName: challengeName,
+		Session: session,
+		ChallengeResponses: {
+			SOFTWARE_TOKEN_MFA_CODE: sanitize(code, "code"),
+			USERNAME: sessionStorage.getItem("cdn.mfaUsername") ?? "",
+		},
+	});
+	if (result.ChallengeName) {
+		throw new AuthError(
+			"Additional challenge required",
+			result.ChallengeName as string,
+		);
+	}
 	storeTokens(result);
 }
 
@@ -149,10 +215,6 @@ export interface SignUpFields {
 }
 
 export async function signUp(fields: SignUpFields): Promise<void> {
-	// only send attributes the user actually filled in. cognito's
-	// `name` attribute (OIDC standard) holds the display name. all
-	// custom: attributes are pool-side optional, so we just skip
-	// them when empty rather than sending empty strings
 	const attrs: Array<{ Name: string; Value: string }> = [
 		{ Name: "email", Value: sanitize(fields.email, "email") },
 		{ Name: "name", Value: sanitize(fields.displayName, "display_name") },
