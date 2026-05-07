@@ -4,7 +4,7 @@
 import ContentLayout from "@cloudscape-design/components/content-layout";
 import Header from "@cloudscape-design/components/header";
 import type React from "react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
 import { useAndresLive } from "../../hooks/useAndresLive";
@@ -29,10 +29,9 @@ import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
 import { FeedAndmore, FeedAwsml } from "./components/feed-section";
 import NextMeetup from "./components/next-meetup";
-import TheZacsShowCarousel from "./components/thezacsshow-carousel";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
-import VBrownBagCarousel from "./components/vbrownbag-carousel";
 import YoutubeCarousel from "./components/youtube-carousel";
+import YouTubeChannelCarousel from "./components/youtube-channel-carousel";
 import "./styles.css";
 
 // builder center top-4 is rendered as its own pinned section (between two hr
@@ -69,6 +68,25 @@ const SECTION_KEYS: SectionKey[] = [
 	"arrowhead",
 	"vbrownbag",
 	"theZacsShow",
+];
+
+const VBROWNBAG_IDS = [
+	"VBROWNBAG_1",
+	"VBROWNBAG_2",
+	"VBROWNBAG_3",
+	"VBROWNBAG_4",
+	"VBROWNBAG_5",
+	"VBROWNBAG_6",
+	"VBROWNBAG_7",
+];
+const ZACSSHOW_IDS = [
+	"ZACSSHOW_1",
+	"ZACSSHOW_2",
+	"ZACSSHOW_3",
+	"ZACSSHOW_4",
+	"ZACSSHOW_5",
+	"ZACSSHOW_6",
+	"ZACSSHOW_7",
 ];
 
 function shuffled<T>(arr: T[]): T[] {
@@ -123,14 +141,22 @@ function AppContent({
 	}, []);
 
 	const { live: andresLive, videoId: andresVideoId } = useAndresLive();
-	const { live: vbrownbagLive } = useChannelLive(
+	const { live: vbrownbagLive, videoId: vbrownbagVideoId } = useChannelLive(
 		"https://www.youtube.com/@vBrownBag/live",
 	);
-	const { live: zacsLive } = useChannelLive(
+	const { live: zacsLive, videoId: zacsVideoId } = useChannelLive(
 		"https://www.youtube.com/@thezacsshowtalkingaws/live",
 	);
 
 	// sections wired with live callbacks — stable because markLive is stable
+	useEffect(() => {
+		markLive("vbrownbag", vbrownbagLive);
+	}, [vbrownbagLive, markLive]);
+
+	useEffect(() => {
+		markLive("theZacsShow", zacsLive);
+	}, [zacsLive, markLive]);
+
 	const sections = useMemo<Partial<Record<SectionKey, React.ReactNode>>>(
 		() => ({
 			youtube: <YoutubeCarousel />,
@@ -150,19 +176,33 @@ function AppContent({
 			awsml: <FeedAwsml />,
 			arrowhead: <ArrowheadNews />,
 			vbrownbag: (
-				<VBrownBagCarousel
-					onLiveChange={(live) => markLive("vbrownbag", live)}
-					onOfflineChange={(off) => markOffline("vbrownbag", off)}
+				<YouTubeChannelCarousel
+					name={t("feedPage.vbrownbagHeader")}
+					channelUrl="https://www.youtube.com/@vBrownBag"
+					videoIds={VBROWNBAG_IDS}
+					live={vbrownbagLive}
+					liveVideoId={vbrownbagVideoId}
 				/>
 			),
 			theZacsShow: (
-				<TheZacsShowCarousel
-					onLiveChange={(live) => markLive("theZacsShow", live)}
-					onOfflineChange={(off) => markOffline("theZacsShow", off)}
+				<YouTubeChannelCarousel
+					name={t("feedPage.theZacsShowHeader")}
+					channelUrl="https://www.youtube.com/@thezacsshowtalkingaws"
+					videoIds={ZACSSHOW_IDS}
+					live={zacsLive}
+					liveVideoId={zacsVideoId}
 				/>
 			),
 		}),
-		[markLive, markOffline],
+		[
+			markLive,
+			markOffline,
+			t,
+			vbrownbagLive,
+			vbrownbagVideoId,
+			zacsLive,
+			zacsVideoId,
+		],
 	);
 
 	// stable shuffle — recomputed only if sections reference changes (it won't)

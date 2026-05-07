@@ -116,7 +116,8 @@
 		"streamKrux": "stream krux",
 		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen.",
 		"vbrownbagHeader": "vBrownBag",
-		"theZacsShowHeader": "the Zac's show"
+		"theZacsShowHeader": "the Zac's show",
+		"visitChannel": "visit channel"
 	},
 	"dashboardPage": {
 		"productionOverview": {
