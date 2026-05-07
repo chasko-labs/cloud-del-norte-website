@@ -883,16 +883,11 @@ body.cdn-auth-subdomain [data-cdn-dune-fallback] {
 }
 
 /* ── Footer on auth pages ──────────────────────────────────────────────────
-   position:fixed caused the form to get stuck behind the footer on short
-   viewports. position:relative caused it to float mid-screen. Use sticky
-   at the bottom of the flex column so it pins to viewport bottom when
-   content is short but scrolls naturally when content is tall. */
-body.cdn-auth-subdomain .cdn-footer {
-	position: sticky;
-	bottom: 0;
-	z-index: 150;
-	padding-top: 6px;
-	padding-bottom: 6px;
+   Non-sticky so it never overlaps the auth card. margin-top:auto pushes it
+   to the bottom of the flex column (see content-wrapper rule below). */
+body.cdn-auth-subdomain:not(#\9):not(#\9) .cdn-footer {
+	position: relative;
+	margin-top: auto;
 }
 
 /* ==========================================================================
@@ -984,4 +979,30 @@ body.cdn-auth-subdomain .cdn-footer {
 
 .awsui-dark-mode .cdn-auth-stepper-actions {
 	border-top-color: rgba(144, 96, 240, 0.15);
+}
+
+/* ==========================================================================
+   Auth responsive layout fixes — footer overlap, centering, overflow
+   ========================================================================== */
+
+body.cdn-auth-subdomain .cdn-player-slot {
+	display: none;
+}
+
+body.cdn-auth-subdomain:not(#\9):not(#\9) [class*="awsui_content-wrapper"] {
+	display: flex;
+	flex-direction: column;
+	min-height: calc(100vh - 48px);
+	min-height: calc(100dvh - 48px);
+}
+
+body.cdn-auth-subdomain:not(#\9) .cdn-auth-card {
+	margin-inline: auto;
+	margin-top: clamp(1rem, 8vh, 5rem);
+	margin-bottom: 2rem;
+	max-width: min(480px, calc(100vw - 2rem));
+}
+
+body.cdn-auth-subdomain {
+	overflow-x: hidden;
 }

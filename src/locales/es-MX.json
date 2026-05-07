@@ -114,7 +114,9 @@
 		"pastMeetupViewEvent": "Ver evento en Meetup →",
 		"infoLinkAriaLabel": "Abrir panel de ayuda",
 		"streamKrux": "escucha krux",
-		"streamKruxFallback": "Tu navegador no soporta audio en vivo. Visita kruxstream.nmsu.edu/KRUX para escuchar."
+		"streamKruxFallback": "Tu navegador no soporta audio en vivo. Visita kruxstream.nmsu.edu/KRUX para escuchar.",
+		"vbrownbagHeader": "vBrownBag",
+		"theZacsShowHeader": "the Zac's show"
 	},
 	"dashboardPage": {
 		"productionOverview": {
