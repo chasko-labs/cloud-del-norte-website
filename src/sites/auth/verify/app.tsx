@@ -185,7 +185,7 @@ function VerifyForm() {
 
 export default function App() {
 	return (
-		<AuthLayout pageContext="verify your email">
+		<AuthLayout pageContext="Verify your email">
 			<VerifyForm />
 		</AuthLayout>
 	);

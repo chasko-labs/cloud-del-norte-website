@@ -12,15 +12,27 @@ import type React from "react";
 import { useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
+	type AuthChallenge,
 	AuthError,
 	assertNonEmpty,
+	associateSoftwareToken,
+	respondToMfaChallenge,
 	signInWithPassword,
+	verifySoftwareToken,
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
 
-type SubmitState = "idle" | "verifying" | "success" | "failed";
+type Step = "credentials" | "mfa-setup" | "mfa-verify";
+
+function redirectWithTokens() {
+	const idToken = sessionStorage.getItem("cdn.idToken") ?? "";
+	const accessToken = sessionStorage.getItem("cdn.accessToken") ?? "";
+	const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
+	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
+	window.location.assign(`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`);
+}
 
 function LoginForm() {
 	const { t } = useTranslation();
@@ -31,7 +43,12 @@ function LoginForm() {
 	const [passwordError, setPasswordError] = useState("");
 	const [formError, setFormError] = useState("");
 	const [loading, setLoading] = useState(false);
-	const [submitState, setSubmitState] = useState<SubmitState>("idle");
+
+	const [step, setStep] = useState<Step>("credentials");
+	const [mfaSession, setMfaSession] = useState("");
+	const [mfaCode, setMfaCode] = useState("");
+	const [totpSecret, setTotpSecret] = useState("");
+	const [challengeName, setChallengeName] = useState("");
 
 	document.title = `${t("auth.login.title")} — ${t("auth.siteTitle")}`;
 
@@ -54,27 +71,19 @@ function LoginForm() {
 		return valid;
 	}
 
-	async function handleSubmit(e: React.FormEvent) {
+	async function handleCredentialsSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		if (!validate()) return;
 		setLoading(true);
-		setSubmitState("verifying");
 		setFormError("");
 		try {
-			await signInWithPassword(email, password);
-			// Pass tokens to awsug via URL fragment; awsug/auth/redeem strips them immediately.
-			const idToken = sessionStorage.getItem("cdn.idToken") ?? "";
-			const accessToken = sessionStorage.getItem("cdn.accessToken") ?? "";
-			const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
-			const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
-			// Brief success flash before redirect — 500ms holds the violet fill +
-			// ✓ check long enough to register, then hand off to awsug/auth/redeem
-			setSubmitState("success");
-			window.setTimeout(() => {
-				window.location.assign(
-					`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
-				);
-			}, 500);
+			sessionStorage.setItem("cdn.mfaUsername", email);
+			const result = await signInWithPassword(email, password);
+			if (result.type === "success") {
+				redirectWithTokens();
+				return;
+			}
+			await handleChallenge(result.challenge);
 		} catch (err) {
 			if (
 				err instanceof AuthError &&
@@ -85,36 +94,153 @@ function LoginForm() {
 			} else {
 				setFormError(t("auth.login.genericError"));
 			}
-			setSubmitState("failed");
 			setLoading(false);
-			// Clear failed state after shake completes so user can resubmit
-			window.setTimeout(() => setSubmitState("idle"), 400);
 		}
+	}
+
+	async function handleChallenge(challenge: AuthChallenge) {
+		setChallengeName(challenge.challengeName);
+		setMfaSession(challenge.session);
+		if (challenge.challengeName === "MFA_SETUP") {
+			const { secretCode, session } = await associateSoftwareToken(
+				challenge.session,
+			);
+			setTotpSecret(secretCode);
+			setMfaSession(session);
+			setStep("mfa-setup");
+		} else {
+			setStep("mfa-verify");
+		}
+		setLoading(false);
+	}
+
+	async function handleMfaSetupSubmit(e: React.FormEvent) {
+		e.preventDefault();
+		setFormError("");
+		setLoading(true);
+		try {
+			const session = await verifySoftwareToken(mfaSession, mfaCode);
+			await respondToMfaChallenge(session, mfaCode, "MFA_SETUP");
+			redirectWithTokens();
+		} catch (err) {
+			setFormError(
+				err instanceof AuthError ? err.message : "Verification failed",
+			);
+			setLoading(false);
+		}
+	}
+
+	async function handleMfaVerifySubmit(e: React.FormEvent) {
+		e.preventDefault();
+		setFormError("");
+		setLoading(true);
+		try {
+			await respondToMfaChallenge(mfaSession, mfaCode, challengeName);
+			redirectWithTokens();
+		} catch (err) {
+			setFormError(
+				err instanceof AuthError ? err.message : "Verification failed",
+			);
+			setLoading(false);
+		}
+	}
+
+	if (step === "mfa-setup") {
+		const otpauthUri = `otpauth://totp/CloudDelNorte:${encodeURIComponent(email)}?secret=${totpSecret}&issuer=CloudDelNorte`;
+		return (
+			<div className="cdn-auth-form-inner">
+				<form
+					onSubmit={(e) => {
+						void handleMfaSetupSubmit(e);
+					}}
+					noValidate
+				>
+					<Form
+						actions={
+							<Button formAction="submit" variant="primary" loading={loading}>
+								Verify & sign in
+							</Button>
+						}
+						errorText={formError || undefined}
+					>
+						<SpaceBetween size="m">
+							<Box variant="p">
+								Set up your authenticator app. Add this secret manually:
+							</Box>
+							<Box variant="code">
+								<span style={{ fontFamily: "monospace", userSelect: "all" }}>
+									{totpSecret}
+								</span>
+							</Box>
+							<Box variant="small">
+								<Link href={otpauthUri} external>
+									Open in authenticator app
+								</Link>
+							</Box>
+							<FormField label="6-digit code from your authenticator">
+								<Input
+									type="text"
+									value={mfaCode}
+									onChange={({ detail }) => setMfaCode(detail.value)}
+									inputMode="numeric"
+									autoFocus
+								/>
+							</FormField>
+						</SpaceBetween>
+					</Form>
+				</form>
+			</div>
+		);
+	}
+
+	if (step === "mfa-verify") {
+		return (
+			<div className="cdn-auth-form-inner">
+				<form
+					onSubmit={(e) => {
+						void handleMfaVerifySubmit(e);
+					}}
+					noValidate
+				>
+					<Form
+						actions={
+							<Button formAction="submit" variant="primary" loading={loading}>
+								Verify & sign in
+							</Button>
+						}
+						errorText={formError || undefined}
+					>
+						<SpaceBetween size="m">
+							<FormField label="6-digit code from your authenticator">
+								<Input
+									type="text"
+									value={mfaCode}
+									onChange={({ detail }) => setMfaCode(detail.value)}
+									inputMode="numeric"
+									autoFocus
+								/>
+							</FormField>
+						</SpaceBetween>
+					</Form>
+				</form>
+			</div>
+		);
 	}
 
 	return (
 		<div className="cdn-auth-form-inner">
 			<form
 				onSubmit={(e) => {
-					void handleSubmit(e);
+					void handleCredentialsSubmit(e);
 				}}
 				noValidate
 			>
 				<Form
 					actions={
 						<SpaceBetween direction="horizontal" size="xs">
-							<span className={`cdn-auth-submit-state ${submitState}`}>
-								<Button formAction="submit" variant="primary" loading={loading}>
-									{submitState === "verifying"
-										? "Verifying with Cognito"
-										: t("auth.login.signInButton")}
-								</Button>
-								{submitState === "success" && (
-									<span className="cdn-auth-success-check" aria-hidden="true">
-										✓
-									</span>
-								)}
-							</span>
+							<Button formAction="submit" variant="primary" loading={loading}>
+								{t("auth.login.signInButton")}
+							</Button>
 						</SpaceBetween>
 					}
 					errorText={formError || undefined}
@@ -165,7 +291,7 @@ function LoginForm() {
 
 export default function App() {
 	return (
-		<AuthLayout pageContext="sign in to cloud del norte">
+		<AuthLayout pageContext="Sign in to Cloud Del Norte">
 			<LoginForm />
 		</AuthLayout>
 	);
