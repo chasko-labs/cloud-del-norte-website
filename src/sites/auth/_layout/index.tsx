@@ -18,6 +18,7 @@ import {
 	type Theme,
 } from "../../../utils/theme";
 import "./styles.css";
+import "./auth-form.css";
 
 /**
  * AuthLayout — host shell for login / signup / verify / forgot-password.
@@ -75,7 +76,9 @@ export default function AuthLayout({
 						{pageContext || "Cloud Del Norte"}
 					</span>
 				</div>
-				<div className="cdn-card cdn-auth-card cdn-glass">{children}</div>
+				<div className="cdn-card cdn-auth-card cdn-auth-form cdn-glass">
+					{children}
+				</div>
 			</ContentLayout>
 		</Shell>
 	);

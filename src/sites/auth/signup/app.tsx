@@ -3,12 +3,12 @@
 
 import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
+import Button from "@cloudscape-design/components/button";
 import FormField from "@cloudscape-design/components/form-field";
 import Input from "@cloudscape-design/components/input";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Textarea from "@cloudscape-design/components/textarea";
-import Wizard from "@cloudscape-design/components/wizard";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
@@ -27,6 +27,25 @@ const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
 /* match verify/app.tsx — 120s gives time to switch to email/authenticator
    apps and back without missing the resend window. was 30s, too short */
 const RESEND_COOLDOWN_SECS = 120;
+
+function StepDots({ current, total }: { current: number; total: number }) {
+	return (
+		<div
+			className="cdn-auth-stepper"
+			role="progressbar"
+			aria-valuenow={current + 1}
+			aria-valuemin={1}
+			aria-valuemax={total}
+		>
+			{Array.from({ length: total }, (_, i) => (
+				<span
+					key={i}
+					className={`cdn-auth-stepper__dot ${i === current ? "cdn-auth-stepper__dot--active" : i < current ? "cdn-auth-stepper__dot--done" : ""}`}
+				/>
+			))}
+		</div>
+	);
+}
 
 function SignupWizard() {
 	const { t } = useTranslation();
@@ -370,39 +389,46 @@ function SignupWizard() {
 		},
 	];
 
-	// Disable wizard submit until all 6 cells filled (only on the verify step).
-	// Submit handler ignores attempts when incomplete — the existing handleSubmit
-	// below still validates so the wire stays unchanged.
-	const submitDisabled =
-		activeStepIndex === 3 && code.replace(/\D/g, "").length < 6;
+	async function handleNextOrSubmit() {
+		if (activeStepIndex === steps.length - 1) {
+			void handleSubmit();
+		} else {
+			void handleNavigate({
+				detail: { requestedStepIndex: activeStepIndex + 1 },
+			});
+		}
+	}
 
 	return (
 		<div className={`cdn-auth-submit-state ${submitState}`}>
-			<Wizard
-				steps={steps}
-				activeStepIndex={activeStepIndex}
-				onNavigate={(e) => {
-					void handleNavigate(e);
-				}}
-				onSubmit={() => {
-					if (submitDisabled) return;
-					void handleSubmit();
-				}}
-				isLoadingNextStep={loading}
-				i18nStrings={{
-					stepNumberLabel: (n) => `Step ${n}`,
-					collapsedStepsLabel: (n, total) => `Step ${n} of ${total}`,
-					navigationAriaLabel: "Signup steps",
-					cancelButton: "Cancel",
-					previousButton: t("auth.signup.backButton"),
-					nextButton: t("auth.signup.nextButton"),
-					submitButton:
-						submitState === "verifying"
-							? "Verifying with Cognito"
-							: t("auth.signup.submitButton"),
-					optional: "optional",
-				}}
-			/>
+			<StepDots current={activeStepIndex} total={steps.length} />
+			<div className="cdn-auth-stepper__title">
+				{steps[activeStepIndex].title}
+			</div>
+			{steps[activeStepIndex].content}
+			<div className="cdn-auth-stepper-actions">
+				{activeStepIndex > 0 && (
+					<Button
+						variant="normal"
+						onClick={() => setActiveStepIndex((s) => s - 1)}
+					>
+						Back
+					</Button>
+				)}
+				<Button
+					variant="primary"
+					onClick={() => {
+						void handleNextOrSubmit();
+					}}
+					loading={loading}
+				>
+					{activeStepIndex === steps.length - 1
+						? submitState === "verifying"
+							? t("auth.signup.verifying")
+							: t("auth.signup.submitButton")
+						: t("auth.signup.nextButton")}
+				</Button>
+			</div>
 		</div>
 	);
 }

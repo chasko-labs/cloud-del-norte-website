@@ -46,7 +46,22 @@ body.cdn-auth-subdomain:not(#\9)
    full content width (wider than the 480px card). */
 body.cdn-auth-subdomain main[class*="awsui_layout"],
 body.cdn-auth-subdomain [class*="awsui_layout-main"] {
-	background: transparent;
+	background: linear-gradient(
+		180deg,
+		rgba(42, 24, 16, 0.04) 0%,
+		rgba(42, 24, 16, 0.12) 40%,
+		rgba(42, 24, 16, 0.06) 100%
+	);
+}
+
+.awsui-dark-mode body.cdn-auth-subdomain main[class*="awsui_layout"],
+.awsui-dark-mode body.cdn-auth-subdomain [class*="awsui_layout-main"] {
+	background: linear-gradient(
+		180deg,
+		rgba(0, 0, 0, 0.1) 0%,
+		rgba(0, 0, 0, 0.2) 40%,
+		rgba(0, 0, 0, 0.1) 100%
+	);
 }
 
 /* ── Cloudscape design-token nuke — royal blue → brand violet/amber ────────
@@ -178,19 +193,23 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
    1.5px warm border, layered shadow, top-edge gradient streak, backdrop blur.
    Hover lift inherited from .cdn-glass. */
 .cdn-auth-card {
-	max-width: 480px;
-	--cdn-glass-blur: 18px;
-	--cdn-glass-bg: rgba(237, 229, 212, 0.72);
+	max-width: 520px;
+	--cdn-glass-blur: 22px;
+	--cdn-glass-bg: rgba(237, 229, 212, 0.58);
+	border: 1.5px solid rgba(139, 90, 43, 0.35);
 	box-shadow:
 		0 4px 24px rgba(34, 22, 8, 0.1),
-		0 1px 4px rgba(34, 22, 8, 0.06);
+		0 1px 4px rgba(34, 22, 8, 0.06),
+		inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .awsui-dark-mode .cdn-auth-card {
-	--cdn-glass-bg: rgba(28, 34, 48, 0.72);
+	--cdn-glass-bg: rgba(28, 34, 48, 0.62);
+	border-color: rgba(144, 96, 240, 0.38);
 	box-shadow:
 		0 4px 32px rgba(0, 0, 0, 0.4),
-		0 1px 6px rgba(0, 0, 0, 0.2);
+		0 1px 6px rgba(0, 0, 0, 0.2),
+		inset 0 1px 0 rgba(144, 96, 240, 0.12);
 }
 
 /* The ContentLayout renders children directly under awsui_layout — add a top
@@ -247,7 +266,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
    the form heading inside the card. Context line below it is the per-page
    "what are you doing here" cue — set in the component via pageContext prop. */
 .cdn-auth-page-header {
-	max-width: 480px;
+	max-width: 520px;
 	margin: 0 auto 16px;
 	padding: 32px 8px 12px;
 	text-align: center;
@@ -513,11 +532,6 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	padding: 24px;
 }
 
-/* Wizard renders without a Container, so add equivalent padding when wrapped */
-.cdn-auth-card > [class*="awsui_wizard"] {
-	padding: 24px;
-}
-
 /* Form component root + actions footer — suppress the white panel background.
    awsui_actions_ is the submit-button row inside <Form>; without this it
    renders a white bar across the bottom of the glass card. */
@@ -772,8 +786,13 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
    ========================================================================== */
 body.cdn-auth-subdomain [data-cdn-dune-canvas="1"],
 body.cdn-auth-subdomain [data-cdn-dune-fallback] {
-	opacity: 0.6;
+	opacity: 0.8;
 	transition: opacity 600ms ease-out;
+}
+
+.awsui-dark-mode body.cdn-auth-subdomain [data-cdn-dune-canvas="1"],
+.awsui-dark-mode body.cdn-auth-subdomain [data-cdn-dune-fallback] {
+	opacity: 0.7;
 }
 
 /* ==========================================================================
@@ -863,54 +882,6 @@ body.cdn-auth-subdomain [data-cdn-dune-fallback] {
 	border-color: rgba(197, 48, 48, 0.32);
 }
 
-/* ==========================================================================
-   Wizard step navigator polish
-
-   The Wizard step strip (Account → Profile → Interests → Verify) has its
-   own chrome that sits above the form content. The token nuke handles the
-   active circle + title color (now violet). These rules tune the connecting
-   line + typography so the strip reads as a coherent brand element.
-   ========================================================================== */
-
-/* Connector line between step circles — Cloudscape paints it as a flat
-   grey hr. Replace with a soft amber gradient so the journey through the
-   wizard reads as a warm path rather than a grey rail. */
-.cdn-auth-card [class*="awsui_navigation_"] > ul > li > hr {
-	border: none;
-	background: linear-gradient(
-		90deg,
-		rgba(139, 90, 43, 0.18) 0%,
-		rgba(139, 90, 43, 0.32) 50%,
-		rgba(139, 90, 43, 0.18) 100%
-	);
-	height: 2px;
-}
-
-.awsui-dark-mode .cdn-auth-card [class*="awsui_navigation_"] > ul > li > hr {
-	background: linear-gradient(
-		90deg,
-		rgba(144, 96, 240, 0.18) 0%,
-		rgba(144, 96, 240, 0.32) 50%,
-		rgba(144, 96, 240, 0.18) 100%
-	);
-}
-
-/* Step number label ("Step 1") — let-spacing + warm tint */
-.cdn-auth-card [class*="awsui_navigation_"] [class*="awsui_number_"] {
-	color: rgba(74, 40, 24, 0.7);
-	font-weight: 600;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	font-size: 0.6875rem;
-}
-
-.awsui-dark-mode
-	.cdn-auth-card
-	[class*="awsui_navigation_"]
-	[class*="awsui_number_"] {
-	color: rgba(215, 199, 238, 0.65);
-}
-
 /* ── Footer on auth pages ──────────────────────────────────────────────────
    position:fixed caused the form to get stuck behind the footer on short
    viewports. position:relative caused it to float mid-screen. Use sticky
@@ -922,4 +893,95 @@ body.cdn-auth-subdomain .cdn-footer {
 	z-index: 150;
 	padding-top: 6px;
 	padding-bottom: 6px;
+}
+
+/* ==========================================================================
+   Dot stepper — replaces Wizard step navigator
+   ========================================================================== */
+
+.cdn-auth-card {
+	--auth-stepper-dot: rgba(139, 90, 43, 0.3);
+	--auth-stepper-active: var(--cdn-amber, #ff9900);
+	--auth-stepper-done: var(--cdn-violet, #9060f0);
+}
+
+.awsui-dark-mode .cdn-auth-card {
+	--auth-stepper-dot: rgba(215, 199, 238, 0.3);
+	--auth-stepper-active: var(--cdn-violet, #9060f0);
+	--auth-stepper-done: var(--cdn-lavender, #d7c7ee);
+}
+
+.cdn-auth-stepper {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	padding: 8px 0 12px;
+}
+
+.cdn-auth-stepper__dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: var(--auth-stepper-dot);
+	transition:
+		transform 200ms ease,
+		background 200ms ease,
+		box-shadow 200ms ease;
+}
+
+.cdn-auth-stepper__dot--active {
+	background: var(--auth-stepper-active);
+	transform: scale(1.3);
+	box-shadow: 0 0 0 4px rgba(255, 153, 0, 0.2);
+}
+
+.awsui-dark-mode .cdn-auth-stepper__dot--active {
+	box-shadow: 0 0 0 4px rgba(144, 96, 240, 0.25);
+}
+
+.cdn-auth-stepper__dot--done {
+	background: var(--auth-stepper-done);
+	position: relative;
+}
+
+.cdn-auth-stepper__dot--done::after {
+	content: "✓";
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 7px;
+	font-weight: 700;
+	color: #fff;
+}
+
+.cdn-auth-stepper__title {
+	font-family: "Cinzel", Georgia, serif;
+	font-style: italic;
+	font-size: 1.05rem;
+	font-weight: 600;
+	text-align: center;
+	letter-spacing: 0.03em;
+	color: var(--cdn-color-text, #2c1a0e);
+	margin-bottom: 16px;
+}
+
+.awsui-dark-mode .cdn-auth-stepper__title {
+	color: var(--cdn-color-text-high, #e8e0f0);
+}
+
+.cdn-auth-stepper-actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12px;
+	padding-top: 16px;
+	margin-top: 16px;
+	border-top: 1px solid rgba(139, 90, 43, 0.12);
+}
+
+.awsui-dark-mode .cdn-auth-stepper-actions {
+	border-top-color: rgba(144, 96, 240, 0.15);
 }

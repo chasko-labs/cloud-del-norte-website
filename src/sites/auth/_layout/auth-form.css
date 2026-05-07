@@ -26,85 +26,209 @@
 	color: rgba(215, 199, 238, 0.85);
 }
 
-/* ── inputs ────────────────────────────────────────────────────────────── */
-.cdn-auth-form:not(#\9) [class*="awsui_input-container_"] {
-	background: rgba(237, 229, 212, 0.4);
-	border: 1.5px solid rgba(139, 90, 43, 0.2);
-	border-radius: 8px;
+/* ── inputs — underline-only treatment ──────────────────────────────── */
+.cdn-auth-form:not(#\9):not(#\9):not(#\9) [class*="awsui_input-container_"] {
+	background: transparent;
+	border: none;
+	border-bottom: 1.5px solid var(--auth-input-border, rgba(139, 90, 43, 0.3));
+	border-radius: 0;
 	min-height: 44px;
 }
 
-.cdn-auth-form:not(#\9) [class*="awsui_input-container_"]:focus-within {
-	border-color: rgba(144, 96, 240, 0.5);
-	box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.12);
-}
-
-.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_input-container_"] {
-	background: rgba(28, 34, 48, 0.5);
-	border-color: rgba(144, 96, 240, 0.25);
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_input-container_"]:focus-within {
+	border-bottom-color: var(--cdn-amber, #ff9900);
+	box-shadow: 0 2px 0 0 rgba(255, 153, 0, 0.4);
 }
 
 .awsui-dark-mode
-	.cdn-auth-form:not(#\9)
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_input-container_"] {
+	background: transparent;
+	border: none;
+	border-bottom: 1.5px solid var(--auth-input-border, rgba(144, 96, 240, 0.35));
+	border-radius: 0;
+}
+
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
 	[class*="awsui_input-container_"]:focus-within {
-	border-color: rgba(167, 139, 250, 0.6);
-	box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+	border-bottom-color: var(--cdn-violet, #9060f0);
+	box-shadow: 0 2px 0 0 rgba(144, 96, 240, 0.5);
 }
 
 .cdn-auth-form:not(#\9) [class*="awsui_input_"] input {
-	padding: 12px 14px;
+	padding: 12px 4px;
+	font-family: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
 	font-size: 15px;
 	color: var(--cdn-color-text, #2c1a0e);
 	background: transparent;
+	border: none;
+	border-radius: 0;
+	outline: none;
+	box-shadow: none;
 }
 
 .awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_input_"] input {
 	color: #e8e0f0;
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	outline: none;
+	box-shadow: none;
 }
 
-/* ── primary button — full width, centered ─────────────────────────────── */
-.cdn-auth-form:not(#\9) [class*="awsui_button"][class*="variant-primary"],
-.cdn-auth-form:not(#\9) button[class*="variant-primary"] {
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_input_"].awsui_input_2rhyz_h3zka_149,
+.cdn-auth-form:not(#\9):not(#\9):not(#\9) input[class*="awsui_input_"] {
+	background: transparent;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+/* ── textarea exception — keeps full subtle border ─────────────────────── */
+.cdn-auth-form:not(#\9) [class*="awsui_textarea"] {
+	background: rgba(237, 229, 212, 0.25);
+	border: 1px solid rgba(139, 90, 43, 0.2);
+	border-radius: 6px;
+}
+
+.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_textarea"] {
+	background: rgba(28, 34, 48, 0.35);
+	border-color: rgba(144, 96, 240, 0.25);
+}
+
+/* ── primary button — gradient, uppercase, full width ──────────────────── */
+
+/* actions container — force full width past cloudscape flex constraints */
+.cdn-auth-form:not(#\9):not(#\9):not(#\9) [class*="awsui_actions_"] {
 	width: 100%;
+}
+.cdn-auth-form:not(#\9):not(#\9):not(#\9) [class*="awsui_actions_"] > * {
+	width: 100%;
+	display: block;
+}
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_actions_"]
+	[class*="awsui_child"] {
+	width: 100%;
+}
+
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_button"][class*="variant-primary"],
+.cdn-auth-form:not(#\9):not(#\9):not(#\9) button[class*="variant-primary"] {
+	width: 100%;
+	display: block;
 	min-height: 44px;
-	border-radius: 8px;
-	font-size: 15px;
-	font-weight: 600;
-	background: var(--cdn-violet, #9060f0);
-	border-color: var(--cdn-violet, #9060f0);
+	border-radius: 6px;
+	font-size: 14px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	background: linear-gradient(135deg, #6b3a10 0%, #8b5a2b 100%);
+	border-color: transparent;
+	color: #fff;
+	transition:
+		transform 120ms ease,
+		box-shadow 120ms ease;
+}
+
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_button"][class*="variant-primary"]:hover,
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	button[class*="variant-primary"]:hover {
+	background: linear-gradient(135deg, #6e4722 0%, #8b5a2b 100%);
+	box-shadow: 0 4px 14px rgba(139, 90, 43, 0.35);
+	transform: translateY(-1px);
+}
+
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_button"][class*="variant-primary"],
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	button[class*="variant-primary"] {
+	width: 100%;
+	display: block;
+	background: linear-gradient(135deg, #7040c0 0%, #9060f0 100%);
+	border-color: transparent;
 	color: #fff;
 }
 
-.cdn-auth-form:not(#\9) [class*="awsui_button"][class*="variant-primary"]:hover,
-.cdn-auth-form:not(#\9) button[class*="variant-primary"]:hover {
-	background: var(--cdn-purple, #5a1f8a);
-	border-color: var(--cdn-purple, #5a1f8a);
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_button"][class*="variant-primary"]:hover,
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	button[class*="variant-primary"]:hover {
+	background: linear-gradient(135deg, #5a30a0 0%, #7040c0 100%);
+	box-shadow: 0 4px 14px rgba(144, 96, 240, 0.4);
+	transform: translateY(-1px);
+}
+
+/* ── primary button inner span — force white text over cloudscape color ── */
+.cdn-auth-form:not(#\9):not(#\9):not(
+		#\9
+	) [class*="awsui_button"][class*="variant-primary"]
+	span,
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	button[class*="variant-primary"]
+	span {
+	color: #fff;
 }
 
 .awsui-dark-mode
-	.cdn-auth-form:not(#\9)
-	[class*="awsui_button"][class*="variant-primary"],
-.awsui-dark-mode .cdn-auth-form:not(#\9) button[class*="variant-primary"] {
-	background: var(--cdn-violet, #9060f0);
-	border-color: var(--cdn-violet, #9060f0);
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_button"][class*="variant-primary"]
+	span,
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	button[class*="variant-primary"]
+	span {
+	color: #fff;
 }
 
-/* ── secondary/normal button ───────────────────────────────────────────── */
-.cdn-auth-form:not(#\9) [class*="awsui_button"][class*="variant-normal"],
-.cdn-auth-form:not(#\9) button[class*="variant-normal"] {
+/* ── secondary/normal button — ghost style ─────────────────────────────── */
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+[class*="awsui_button"][class*="variant-normal"],
+.cdn-auth-form:not(#\9):not(#\9):not(#\9) button[class*="variant-normal"] {
 	background: transparent;
-	border-color: rgba(139, 90, 43, 0.3);
-	color: var(--cdn-color-text-secondary, #5a3a1e);
-	border-radius: 8px;
+	border: none;
+	color: rgba(90, 58, 30, 0.7);
+	border-radius: 6px;
 	min-height: 44px;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	font-size: 13px;
+	font-weight: 600;
+}
+
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_button"][class*="variant-normal"]:hover,
+.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	button[class*="variant-normal"]:hover {
+	background: rgba(139, 90, 43, 0.08);
 }
 
 .awsui-dark-mode
-	.cdn-auth-form:not(#\9)
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
 	[class*="awsui_button"][class*="variant-normal"],
-.awsui-dark-mode .cdn-auth-form:not(#\9) button[class*="variant-normal"] {
-	border-color: rgba(144, 96, 240, 0.3);
-	color: rgba(215, 199, 238, 0.85);
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	button[class*="variant-normal"] {
+	background: transparent;
+	border: none;
+	color: rgba(215, 199, 238, 0.7);
+}
+
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	[class*="awsui_button"][class*="variant-normal"]:hover,
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9):not(#\9):not(#\9)
+	button[class*="variant-normal"]:hover {
+	background: rgba(144, 96, 240, 0.1);
 }
 
 /* ── links ─────────────────────────────────────────────────────────────── */
