@@ -8,6 +8,7 @@ import { useCallback, useMemo, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
 import { useAndresLive } from "../../hooks/useAndresLive";
+import { useChannelLive } from "../../hooks/useChannelLive";
 import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
 import {
@@ -28,7 +29,9 @@ import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
 import { FeedAndmore, FeedAwsml } from "./components/feed-section";
 import NextMeetup from "./components/next-meetup";
+import TheZacsShowCarousel from "./components/thezacsshow-carousel";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
+import VBrownBagCarousel from "./components/vbrownbag-carousel";
 import YoutubeCarousel from "./components/youtube-carousel";
 import "./styles.css";
 
@@ -42,10 +45,18 @@ type SectionKey =
 	| "twitchAwsOnAir"
 	| "andmore"
 	| "awsml"
-	| "arrowhead";
+	| "arrowhead"
+	| "vbrownbag"
+	| "theZacsShow";
 
 // priority order for live hero — first live item wins the top slot
-const LIVE_PRIORITY = ["twitchAwsOnAir", "twitchAws", "andresYoutube"] as const;
+const LIVE_PRIORITY = [
+	"andresYoutube",
+	"theZacsShow",
+	"vbrownbag",
+	"twitchAwsOnAir",
+	"twitchAws",
+] as const;
 type LiveKey = (typeof LIVE_PRIORITY)[number];
 
 // stable shuffled order generated once per page load
@@ -56,6 +67,8 @@ const SECTION_KEYS: SectionKey[] = [
 	"andmore",
 	"awsml",
 	"arrowhead",
+	"vbrownbag",
+	"theZacsShow",
 ];
 
 function shuffled<T>(arr: T[]): T[] {
@@ -110,6 +123,12 @@ function AppContent({
 	}, []);
 
 	const { live: andresLive, videoId: andresVideoId } = useAndresLive();
+	const { live: vbrownbagLive } = useChannelLive(
+		"https://www.youtube.com/@vBrownBag/live",
+	);
+	const { live: zacsLive } = useChannelLive(
+		"https://www.youtube.com/@thezacsshowtalkingaws/live",
+	);
 
 	// sections wired with live callbacks — stable because markLive is stable
 	const sections = useMemo<Partial<Record<SectionKey, React.ReactNode>>>(
@@ -130,6 +149,18 @@ function AppContent({
 			andmore: <FeedAndmore />,
 			awsml: <FeedAwsml />,
 			arrowhead: <ArrowheadNews />,
+			vbrownbag: (
+				<VBrownBagCarousel
+					onLiveChange={(live) => markLive("vbrownbag", live)}
+					onOfflineChange={(off) => markOffline("vbrownbag", off)}
+				/>
+			),
+			theZacsShow: (
+				<TheZacsShowCarousel
+					onLiveChange={(live) => markLive("theZacsShow", live)}
+					onOfflineChange={(off) => markOffline("theZacsShow", off)}
+				/>
+			),
 		}),
 		[markLive, markOffline],
 	);
@@ -142,8 +173,10 @@ function AppContent({
 	const allLiveKeys = useMemo(() => {
 		const s = new Set(liveKeys);
 		if (andresLive) s.add("andresYoutube");
+		if (vbrownbagLive) s.add("vbrownbag");
+		if (zacsLive) s.add("theZacsShow");
 		return s;
-	}, [liveKeys, andresLive]);
+	}, [liveKeys, andresLive, vbrownbagLive, zacsLive]);
 
 	const liveToShow = LIVE_PRIORITY.filter((k) => allLiveKeys.has(k));
 	const gridOrder = shuffledOrder.filter(

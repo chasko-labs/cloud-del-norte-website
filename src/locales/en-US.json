@@ -114,7 +114,9 @@
 		"pastMeetupViewEvent": "View event on Meetup →",
 		"infoLinkAriaLabel": "Open help panel",
 		"streamKrux": "stream krux",
-		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen."
+		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen.",
+		"vbrownbagHeader": "vBrownBag",
+		"theZacsShowHeader": "the Zac's show"
 	},
 	"dashboardPage": {
 		"productionOverview": {
@@ -634,9 +636,10 @@
 			"resendCode": "Resend code",
 			"resendCooldown": "Resend available in {{seconds}}s",
 			"alreadyHaveAccount": "Already applied? Sign in",
-			"nextButton": "Next",
+			"nextButton": "continue",
 			"backButton": "Back",
-			"submitButton": "Submit application",
+			"submitButton": "submit application",
+			"verifying": "verifying…",
 			"emailExists": "An account with this email already exists",
 			"weakPassword": "Password must be 12+ characters with upper, lower, digit, and symbol",
 			"genericError": "Something went wrong. Try again."

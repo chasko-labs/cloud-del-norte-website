@@ -75,7 +75,9 @@ export default function AuthLayout({
 						{pageContext || "Cloud Del Norte"}
 					</span>
 				</div>
-				<div className="cdn-card cdn-auth-card cdn-glass">{children}</div>
+				<div className="cdn-card cdn-auth-card cdn-auth-form cdn-glass">
+					{children}
+				</div>
 			</ContentLayout>
 		</Shell>
 	);
