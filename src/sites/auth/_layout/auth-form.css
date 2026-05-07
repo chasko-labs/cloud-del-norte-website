@@ -1,0 +1,162 @@
+/* auth-form.css — scoped form element styles for the auth flow
+
+   all selectors use :not(#\9) to beat cloudscape's internal specificity.
+*/
+
+/* ── strip cloudscape container chrome ─────────────────────────────────── */
+.cdn-auth-form:not(#\9) [class*="awsui_root"],
+.cdn-auth-form:not(#\9) [class*="awsui_content_"],
+.cdn-auth-form:not(#\9) [class*="awsui_form_"],
+.cdn-auth-form:not(#\9) [class*="awsui_form-layout"],
+.cdn-auth-form:not(#\9) [class*="awsui_actions_"] {
+	background: transparent;
+	border: none;
+	box-shadow: none;
+}
+
+/* ── labels ────────────────────────────────────────────────────────────── */
+.cdn-auth-form:not(#\9) [class*="awsui_label_"] {
+	font-size: 13px;
+	font-weight: 500;
+	color: var(--cdn-color-text-secondary, #5a3a1e);
+	margin-bottom: 6px;
+}
+
+.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_label_"] {
+	color: rgba(215, 199, 238, 0.85);
+}
+
+/* ── inputs ────────────────────────────────────────────────────────────── */
+.cdn-auth-form:not(#\9) [class*="awsui_input-container_"] {
+	background: rgba(237, 229, 212, 0.4);
+	border: 1.5px solid rgba(139, 90, 43, 0.2);
+	border-radius: 8px;
+	min-height: 44px;
+}
+
+.cdn-auth-form:not(#\9) [class*="awsui_input-container_"]:focus-within {
+	border-color: rgba(144, 96, 240, 0.5);
+	box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.12);
+}
+
+.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_input-container_"] {
+	background: rgba(28, 34, 48, 0.5);
+	border-color: rgba(144, 96, 240, 0.25);
+}
+
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9)
+	[class*="awsui_input-container_"]:focus-within {
+	border-color: rgba(167, 139, 250, 0.6);
+	box-shadow: 0 0 0 3px rgba(167, 139, 250, 0.15);
+}
+
+.cdn-auth-form:not(#\9) [class*="awsui_input_"] input {
+	padding: 12px 14px;
+	font-size: 15px;
+	color: var(--cdn-color-text, #2c1a0e);
+	background: transparent;
+}
+
+.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_input_"] input {
+	color: #e8e0f0;
+}
+
+/* ── primary button — full width, centered ─────────────────────────────── */
+.cdn-auth-form:not(#\9) [class*="awsui_button"][class*="variant-primary"],
+.cdn-auth-form:not(#\9) button[class*="variant-primary"] {
+	width: 100%;
+	min-height: 44px;
+	border-radius: 8px;
+	font-size: 15px;
+	font-weight: 600;
+	background: var(--cdn-violet, #9060f0);
+	border-color: var(--cdn-violet, #9060f0);
+	color: #fff;
+}
+
+.cdn-auth-form:not(#\9) [class*="awsui_button"][class*="variant-primary"]:hover,
+.cdn-auth-form:not(#\9) button[class*="variant-primary"]:hover {
+	background: var(--cdn-purple, #5a1f8a);
+	border-color: var(--cdn-purple, #5a1f8a);
+}
+
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9)
+	[class*="awsui_button"][class*="variant-primary"],
+.awsui-dark-mode .cdn-auth-form:not(#\9) button[class*="variant-primary"] {
+	background: var(--cdn-violet, #9060f0);
+	border-color: var(--cdn-violet, #9060f0);
+}
+
+/* ── secondary/normal button ───────────────────────────────────────────── */
+.cdn-auth-form:not(#\9) [class*="awsui_button"][class*="variant-normal"],
+.cdn-auth-form:not(#\9) button[class*="variant-normal"] {
+	background: transparent;
+	border-color: rgba(139, 90, 43, 0.3);
+	color: var(--cdn-color-text-secondary, #5a3a1e);
+	border-radius: 8px;
+	min-height: 44px;
+}
+
+.awsui-dark-mode
+	.cdn-auth-form:not(#\9)
+	[class*="awsui_button"][class*="variant-normal"],
+.awsui-dark-mode .cdn-auth-form:not(#\9) button[class*="variant-normal"] {
+	border-color: rgba(144, 96, 240, 0.3);
+	color: rgba(215, 199, 238, 0.85);
+}
+
+/* ── links ─────────────────────────────────────────────────────────────── */
+.cdn-auth-form:not(#\9) [class*="awsui_link_"] {
+	color: var(--cdn-violet, #9060f0);
+}
+
+.cdn-auth-form:not(#\9) [class*="awsui_link_"]:hover {
+	color: var(--cdn-purple, #5a1f8a);
+}
+
+.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_link_"] {
+	color: var(--cdn-lavender, #d7c7ee);
+}
+
+.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_link_"]:hover {
+	color: var(--cdn-violet, #9060f0);
+}
+
+/* ── description/hint text ─────────────────────────────────────────────── */
+.cdn-auth-form:not(#\9) [class*="awsui_description_"],
+.cdn-auth-form:not(#\9) [class*="awsui_constraint_"] {
+	color: rgba(74, 40, 24, 0.65);
+	font-size: 12.5px;
+}
+
+.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_description_"],
+.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_constraint_"] {
+	color: rgba(215, 199, 238, 0.6);
+}
+
+/* ── error text ────────────────────────────────────────────────────────── */
+.cdn-auth-form:not(#\9) [class*="awsui_error_"] {
+	color: #c53030;
+	font-weight: 500;
+	font-size: 13px;
+}
+
+.awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_error_"] {
+	color: #f87171;
+}
+
+/* ── auth component version ────────────────────────────────────────────── */
+.cdn-auth-version {
+	display: block;
+	text-align: right;
+	font-size: 10px;
+	color: rgba(139, 90, 43, 0.4);
+	margin-top: 12px;
+	letter-spacing: 0.02em;
+}
+
+.awsui-dark-mode .cdn-auth-version {
+	color: rgba(215, 199, 238, 0.3);
+}
