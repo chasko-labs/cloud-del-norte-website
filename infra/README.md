@@ -69,6 +69,15 @@ open the browser devtools console; any `Refused to load` or `Refused to connect`
 - fonts → already allowed via `font-src 'self' data:`
 - `data:` image URIs → already allowed
 
+
+## ses inbound email
+
+receives mail for @clouddelnorte.org and stores in s3 for agent retrieval. see [ses-inbound-email.md](ses-inbound-email.md).
+
+## cognito auth
+
+user pool configuration, MFA setup, admin operations. see [cognito-auth.md](cognito-auth.md).
+
 ## related
 
 issue #91 on this repo tracks the landing + follow-up tightening passes
