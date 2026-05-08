@@ -1,0 +1,27 @@
+# woodpecker ci — device farm browser testing
+# repo: chasko-labs/cloud-del-norte-website
+# runs after build on push to main and on pull requests
+
+depends_on:
+  - ci
+
+when:
+  - event: [push, pull_request]
+    branch: main
+
+steps:
+  - name: device-farm-test
+    image: amazon/aws-cli:2.15.0
+    secrets: [device_farm_role_arn, device_farm_project_arn, device_farm_artifacts_bucket]
+    environment:
+      AWS_ROLE_ARN:
+        from_secret: device_farm_role_arn
+      DEVICE_FARM_PROJECT_ARN:
+        from_secret: device_farm_project_arn
+      DEVICE_FARM_ARTIFACTS_BUCKET:
+        from_secret: device_farm_artifacts_bucket
+    commands:
+      - yum install -y jq
+      - chmod +x .woodpecker/scripts/run-tests.sh .woodpecker/scripts/collect-artifacts.sh
+      - .woodpecker/scripts/run-tests.sh
+      - .woodpecker/scripts/collect-artifacts.sh
