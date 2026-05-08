@@ -1,5 +1,7 @@
 # cloud del norte testing runbook
 
+Browser/device testing infrastructure: [aws-device-farm-infra](https://github.com/chasko-labs/aws-device-farm-infra) (private)
+
 how to test this site end-to-end from rocm-aibox without claude-in-chrome.
 
 ## quick recipe — verify a CSS change visually
