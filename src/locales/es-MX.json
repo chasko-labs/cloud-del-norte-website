@@ -699,6 +699,10 @@
 			"emptyPending": "Sin solicitudes pendientes",
 			"emptyMembers": "Sin miembros",
 			"emptyBanned": "Sin usuarios bloqueados"
+		},
+		"meetings": {
+			"pendingApproval": "tu solicitud está pendiente de aprobación. las reuniones estarán disponibles una vez aprobada.",
+			"createPendingApproval": "tu solicitud está pendiente de aprobación. la creación de reuniones estará disponible una vez aprobada."
 		}
 	},
 	"liora": {

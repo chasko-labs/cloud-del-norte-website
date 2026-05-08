@@ -9,6 +9,7 @@ import Header from "@cloudscape-design/components/header";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import { useEffect, useState } from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
 import AwsugLayout from "../_layout";
 import { fetchJitsiToken, type JitsiTokenResponse } from "../_shared/api";
 import { type AuthState, isMember, requireAuth } from "../_shared/auth";
@@ -86,13 +87,11 @@ function MeetingsContent() {
 }
 
 function MeetingsPage({ auth }: { auth: AuthState }) {
+	const { t } = useTranslation();
 	if (!isMember(auth)) {
 		return (
 			<Container>
-				<Alert type="info">
-					Your application is pending approval. Meetings are available once
-					approved.
-				</Alert>
+				<Alert type="info">{t("awsug.meetings.pendingApproval")}</Alert>
 			</Container>
 		);
 	}

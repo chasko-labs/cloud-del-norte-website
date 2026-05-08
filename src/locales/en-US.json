@@ -699,6 +699,10 @@
 			"emptyPending": "No applications pending",
 			"emptyMembers": "No members",
 			"emptyBanned": "No banned users"
+		},
+		"meetings": {
+			"pendingApproval": "your application is pending approval. meetings are available once approved.",
+			"createPendingApproval": "your application is pending approval. meeting creation is available once approved."
 		}
 	},
 	"liora": {
