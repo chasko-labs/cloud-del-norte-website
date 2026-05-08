@@ -42,10 +42,7 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 		e.preventDefault();
 		setMeetupLinkError("");
 		setFormError("");
-		if (!meetupLink.trim()) {
-			setMeetupLinkError("Meetup link is required");
-			return;
-		}
+
 		setLoading(true);
 		try {
 			const res = await fetch(`${API_BASE}/admin/meetings`, {
@@ -104,6 +101,7 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 					<SpaceBetween size="m">
 						<FormField
 							label="Meetup link"
+							description="optional — add after scheduling the call"
 							errorText={meetupLinkError || undefined}
 						>
 							<Input
