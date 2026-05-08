@@ -303,7 +303,7 @@ the `Shell` layout (`src/layouts/shell/index.tsx`) is wrapped with `AuthProvider
 | hosted UI domain   | `cloud-del-norte.auth.us-west-2.amazoncognito.com`                   |
 | token-exchange API | `https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com/token/jitsi` |
 
-Cognito user pool + Lambda token-exchange infra lives in [`chasko-labs/cloud-del-norte-meet`](https://github.com/chasko-labs/cloud-del-norte-meet) (CDK)
+Cognito user pool + Lambda token-exchange infra lives in [`chasko-labs/cloud-del-norte-meet`](https://github.com/chasko-labs/cloud-del-norte-meet) (CDK, deploys to jitsi-video-hosting account 170473530355)
 
 ### how to maintain
 
