@@ -86,7 +86,12 @@ export function requireAuth(): AuthState {
 	const state = getAuthState();
 	if (!state) {
 		clearTokens();
-		window.location.assign(`${AUTH_ORIGIN}/login/index.html`);
+		const returnTo = encodeURIComponent(
+			window.location.pathname + window.location.search,
+		);
+		window.location.assign(
+			`${AUTH_ORIGIN}/login/index.html?return_to=${returnTo}`,
+		);
 		return null as never;
 	}
 	return state;

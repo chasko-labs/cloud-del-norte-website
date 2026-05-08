@@ -31,7 +31,9 @@ function redirectWithTokens() {
 	const idToken = sessionStorage.getItem("cdn.idToken") ?? "";
 	const accessToken = sessionStorage.getItem("cdn.accessToken") ?? "";
 	const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
-	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
+	const returnTo =
+		new URLSearchParams(window.location.search).get("return_to") ?? "";
+	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
 	window.location.assign(`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`);
 }
 
