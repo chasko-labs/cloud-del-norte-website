@@ -579,8 +579,14 @@ function ShellContent({
 											text: auth.email ?? auth.name ?? "account",
 											description: auth.isModerator ? "moderator" : undefined,
 											iconName: "user-profile",
-											items: [{ id: "signout", text: "sign out" }],
+											items: [
+												{ id: "passkeys", text: "devices & passkeys" },
+												{ id: "signout", text: "sign out" },
+											],
 											onItemClick: (e: { detail: { id: string } }) => {
+												if (e.detail.id === "passkeys") {
+													window.location.assign("https://auth.clouddelnorte.org/passkeys/index.html");
+												}
 												if (e.detail.id === "signout") auth.signOut();
 											},
 										},
