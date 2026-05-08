@@ -57,6 +57,14 @@ high — governance authority, capability matrix edits, cross-collective propaga
 
 # TODO: fill in deploy targets (e.g. s3://awsaerospace.org via woodpecker)
 
+## how to start a session
+
+```bash
+./kiro-chat.sh
+```
+
+launches a tmux session with the project's primary agent. pulls haunting-kiro-cli and runs deploy.sh before attaching.
+
 ## per-project context + scope
 
 - `.kiro/steering/project-context.md` — what this repo is, stack, notable architectural facts
