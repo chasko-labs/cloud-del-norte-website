@@ -7,6 +7,8 @@ const KEY_REFRESH_TOKEN = "cdn.refreshToken";
 const KEY_EXPIRES_AT = "cdn.expiresAt";
 
 const AUTH_ORIGIN = "https://auth.clouddelnorte.org";
+const HOSTED_UI = "https://cloud-del-norte.auth.us-west-2.amazoncognito.com";
+const CLIENT_ID = "57eikmt418ea6vti2f6h0pl74r";
 
 export interface AuthState {
 	email: string;
@@ -28,6 +30,28 @@ export function getIdToken(): string | null {
 
 export function getRefreshToken(): string | null {
 	return sessionStorage.getItem(KEY_REFRESH_TOKEN);
+}
+
+export async function refreshTokens(): Promise<void> {
+	const refresh = getRefreshToken();
+	if (!refresh) throw new Error("no refresh token");
+	const body = new URLSearchParams({
+		grant_type: "refresh_token",
+		client_id: CLIENT_ID,
+		refresh_token: refresh,
+	});
+	const res = await fetch(`${HOSTED_UI}/oauth2/token`, {
+		method: "POST",
+		headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		body: body.toString(),
+	});
+	if (!res.ok) throw new Error(`refresh failed: ${res.status}`);
+	const tokens = (await res.json()) as { id_token: string; access_token: string; refresh_token?: string; expires_in: number };
+	if (!tokens.refresh_token) tokens.refresh_token = refresh;
+	sessionStorage.setItem(KEY_ID_TOKEN, tokens.id_token);
+	sessionStorage.setItem(KEY_ACCESS_TOKEN, tokens.access_token);
+	sessionStorage.setItem(KEY_REFRESH_TOKEN, tokens.refresh_token);
+	sessionStorage.setItem(KEY_EXPIRES_AT, String(Date.now() + tokens.expires_in * 1000));
 }
 
 export function storeTokensFromFragment(

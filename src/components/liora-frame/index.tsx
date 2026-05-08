@@ -130,7 +130,8 @@ export default function LioraFrame() {
 				};
 				if (cancelled) return;
 				await mod.mountLioraPanel(`${origin}/liora`);
-			} catch {
+			} catch (err) {
+				console.warn('[liora-frame] mount failed:', err);
 				canvasEl?.removeAttribute("data-liora-mounted");
 			}
 		}

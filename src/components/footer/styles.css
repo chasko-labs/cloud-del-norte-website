@@ -13,7 +13,7 @@
    -------------------------------------------------------------------------- */
 .cdn-footer {
 	position: relative;
-	padding: var(--cdn-space-xl) var(--cdn-space-lg) var(--cdn-space-lg);
+	padding: var(--cdn-space-s) var(--cdn-space-lg);
 	/* Sandwich pattern — footer mirrors the top-nav's dark mahogany gradient
 	   in light mode so both shoulders frame the cream center. Was a near-white
 	   Cloudscape default that read as a flat seam against the page. */
@@ -120,6 +120,7 @@
 	);
 }
 
+/* DEAD: leader cards moved to info panel */
 /* --------------------------------------------------------------------------
    Responsive grid — 6 leader cards (3 × 2 at desktop)
    -------------------------------------------------------------------------- */
@@ -409,6 +410,12 @@
 
 .awsui-dark-mode .cdn-footer-community {
 	color: var(--cdn-lavender);
+}
+
+.cdn-version {
+	font-size: 11px;
+	opacity: 0.5;
+	margin-top: 4px;
 }
 
 /* "Go Build" call-to-action — gradient text effect */

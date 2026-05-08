@@ -21,17 +21,6 @@ export default function AwsugNavigation() {
 		},
 		{ type: "divider" },
 		{
-			type: "link",
-			text: "meetings",
-			href: `${MAIN}/meetings/index.html`,
-		},
-		{
-			type: "link",
-			text: "community feed",
-			href: `${MAIN}/feed/index.html`,
-		},
-		{ type: "divider" },
-		{
 			type: "section",
 			text: "resources",
 			items: [
