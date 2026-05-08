@@ -15,16 +15,6 @@
 # clouddelnorte.org rebrand. Renaming requires S3 bucket recreation + DNS/CF
 # origin update. Track in a separate issue.
 
-environment:
-  S3_BUCKET_MAIN: awsaerospace.org
-  S3_BUCKET_AUTH: auth.clouddelnorte.org
-  S3_BUCKET_AWSUG: awsug.clouddelnorte.org
-  S3_BUCKET_DEV: dev.clouddelnorte.org
-  CF_DIST_MAIN: ECC3LP1BL2CZS
-  CF_DIST_AUTH: ECQ44FO9MBTCY
-  CF_DIST_AWSUG: E2QLAWFVIT1AR8
-  CF_DIST_DEV: EEHVTUEQ97V0X
-
 when:
   - event: [push, manual]
     branch: [main, dev, "feature/*", "fix/*", "feat/*"]
@@ -65,6 +55,14 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -87,6 +85,14 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -109,6 +115,14 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -134,6 +148,14 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -159,6 +181,14 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -184,6 +214,14 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -226,6 +264,8 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-west-2
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -264,6 +304,8 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-west-2
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
     commands:
       - mkdir -p /root/.aws
       - |
