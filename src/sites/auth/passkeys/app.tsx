@@ -50,7 +50,9 @@ function PasskeyManager() {
 		setSuccess("");
 		try {
 			const options = await startWebAuthnRegistration();
-			const publicKey = (options.CredentialCreationOptions as any).publicKey;
+			let creationOptions = options.CredentialCreationOptions as any;
+			if (typeof creationOptions === "string") creationOptions = JSON.parse(creationOptions);
+			const publicKey = creationOptions.publicKey;
 			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
 			publicKey.user.id = base64urlToBuffer(publicKey.user.id);
 			if (publicKey.excludeCredentials) {
@@ -80,7 +82,9 @@ function PasskeyManager() {
 			setSuccess("passkey registered");
 			void loadCredentials();
 		} catch (err) {
-			setError(err instanceof AuthError ? err.message : "registration failed");
+			const msg = err instanceof Error ? err.message : "registration failed";
+			setError(msg);
+			console.error("passkey registration error:", err);
 		} finally {
 			setRegistering(false);
 		}
