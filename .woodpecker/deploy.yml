@@ -358,3 +358,22 @@ steps:
       - |
         MSG=$$(printf '[CDN prod] %s\nlive: https://clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
         aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"
+
+  # ─── qdrant re-indexing (shared-knowledge) ──────────────────────────────────
+
+  - name: qdrant-reindex
+    image: python:3.12-alpine
+    failure: ignore
+    depends_on: [deploy, deploy-auth, deploy-awsug]
+    when:
+      - event: push
+        branch: main
+    environment:
+      QDRANT_URL: http://192.168.4.53:6333
+      OLLAMA_URL: http://192.168.4.53:11434
+      EMBED_MODEL: nomic-embed-text
+      COLLECTION: shared-knowledge
+    commands:
+      - apk add --no-cache git curl
+      - git clone --depth 1 https://github.com/BryanChasko/haunting-kiro-cli.git /tmp/haunting
+      - git diff HEAD~1 --name-only --diff-filter=ACMR | python3 /tmp/haunting/scripts/qdrant-index.py --repo "$CI_REPO_NAME" --commit "$CI_COMMIT_SHA"
