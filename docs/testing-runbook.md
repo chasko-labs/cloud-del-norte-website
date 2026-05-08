@@ -2,6 +2,36 @@
 
 Browser/device testing infrastructure: [aws-device-farm-infra](https://github.com/chasko-labs/aws-device-farm-infra) (private)
 
+## Testing Architecture
+
+### Local/Immediate: Playwright Headless (ghost-liora-headless-verifier)
+
+- Runs on Mac Mini via Playwright Chromium
+- Use for: quick screenshot capture, layout validation, light/dark mode checks
+- Viewport presets: MacBook Air 1440x900, mobile 375x812, tablet 768x1024
+- Limitation: no WebGL/BabylonJS rendering in headless mode
+- Cost: free, instant
+
+### CI Pipeline: AWS Device Farm (.woodpecker/device-farm.yml)
+
+- Runs on every push to main and on PRs
+- Infrastructure: chasko-labs/aws-device-farm-infra (private repo, Terraform)
+- Desktop Browser Testing grid: Chrome, Firefox, Edge cross-browser
+- Device testing: real Android/iOS devices for responsive validation
+- Artifacts: screenshots, logs, video uploaded to S3 (30-day retention)
+- Cost: ~$0.17/device-minute, budgeted ~$15/month
+- Secrets required: `device_farm_role_arn`, `device_farm_project_arn`, `device_farm_artifacts_bucket`
+
+### When to use which
+
+| Scenario | Tool | Notes |
+| --- | --- | --- |
+| Debugging a visual bug NOW | Playwright headless | Instant, free |
+| Validating a PR across browsers | Device Farm | Automated, in CI |
+| Testing BabylonJS/WebGL scenes | Manual or headed Playwright | Not headless — requires GPU |
+
+---
+
 how to test this site end-to-end from rocm-aibox without claude-in-chrome.
 
 ## quick recipe — verify a CSS change visually
