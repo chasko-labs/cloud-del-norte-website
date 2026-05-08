@@ -8,7 +8,8 @@ import pytest
 from selenium import webdriver
 from selenium.webdriver.remote.webdriver import WebDriver
 
-COGNITO_CLIENT_ID = "57eikmt418ea6vti2f6h0pl74r"
+COGNITO_CLIENT_ID = os.environ.get("COGNITO_CLIENT_ID", "57eikmt418ea6vti2f6h0pl74r")
+COGNITO_USER_POOL_ID = os.environ.get("COGNITO_USER_POOL_ID", "us-west-2_XXXXX")
 COGNITO_ENDPOINT = "https://cognito-idp.us-west-2.amazonaws.com/"
 AUTH_URL = "https://auth.clouddelnorte.org"
 APP_URL = "https://awsug.clouddelnorte.org"

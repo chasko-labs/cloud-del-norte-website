@@ -2,6 +2,27 @@
 
 Comprehensive browser tests covering all user roles, broken links, console errors, auth flows, and API access control.
 
+## Credentials — SSM Parameter Store
+
+Test credentials are stored in AWS SSM Parameter Store and fetched at runtime by the CI pipeline after assuming the OIDC role. No secrets are stored in Woodpecker.
+
+**SSM path prefix:** `/device-farm/test-users/`
+
+| SSM Parameter | Type | Env Var |
+|---|---|---|
+| `/device-farm/test-users/member-email` | String | `TEST_USER_MEMBER_EMAIL` |
+| `/device-farm/test-users/member-password` | SecureString | `TEST_USER_MEMBER_PASSWORD` |
+| `/device-farm/test-users/admin-email` | String | `TEST_USER_ADMIN_EMAIL` |
+| `/device-farm/test-users/admin-password` | SecureString | `TEST_USER_ADMIN_PASSWORD` |
+| `/device-farm/test-users/pending-email` | String | `TEST_USER_PENDING_EMAIL` |
+| `/device-farm/test-users/pending-password` | SecureString | `TEST_USER_PENDING_PASSWORD` |
+| `/device-farm/test-users/banned-email` | String | `TEST_USER_BANNED_EMAIL` |
+| `/device-farm/test-users/banned-password` | SecureString | `TEST_USER_BANNED_PASSWORD` |
+| `/device-farm/test-users/cognito-user-pool-id` | String | `COGNITO_USER_POOL_ID` |
+| `/device-farm/test-users/cognito-client-id` | String | `COGNITO_CLIENT_ID` |
+
+The CI role (`device-farm-ci`) has `ssm:GetParameter`, `ssm:GetParameters`, and `ssm:GetParametersByPath` on `arn:aws:ssm:us-west-2:*:parameter/device-farm/test-users/*`.
+
 ## Environment Variables
 
 | Variable | Description |
@@ -10,6 +31,8 @@ Comprehensive browser tests covering all user roles, broken links, console error
 | `TEST_URL` | App base URL (default: `https://awsug.clouddelnorte.org`) |
 | `TEST_AUTH_URL` | Auth subdomain URL (default: `https://auth.clouddelnorte.org`) |
 | `TEST_API_URL` | API Gateway URL (default: `https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com`) |
+| `COGNITO_USER_POOL_ID` | Cognito User Pool ID (fetched from SSM in CI) |
+| `COGNITO_CLIENT_ID` | Cognito App Client ID (fetched from SSM in CI) |
 | `TEST_USER_MEMBER_EMAIL` | Member test user email |
 | `TEST_USER_MEMBER_PASSWORD` | Member test user password |
 | `TEST_USER_ADMIN_EMAIL` | Admin test user email |
@@ -18,7 +41,6 @@ Comprehensive browser tests covering all user roles, broken links, console error
 | `TEST_USER_PENDING_PASSWORD` | Pending test user password |
 | `TEST_USER_BANNED_EMAIL` | Banned test user email |
 | `TEST_USER_BANNED_PASSWORD` | Banned test user password |
-| `AWS_REGION` | AWS region for Cognito (default: `us-west-2`) |
 
 ## Run Locally
 
@@ -29,15 +51,14 @@ docker run -d -p 4444:4444 selenium/standalone-chrome:latest
 # Install deps
 pip install -r tests/device-farm/requirements.txt
 
-# Export credentials
+# Export credentials (or fetch from SSM if you have AWS access)
+aws ssm get-parameters-by-path --path /device-farm/test-users/ --region us-west-2 --with-decryption
+
+# Or set manually:
 export TEST_USER_MEMBER_EMAIL="member@example.com"
 export TEST_USER_MEMBER_PASSWORD="..."
-export TEST_USER_ADMIN_EMAIL="admin@example.com"
-export TEST_USER_ADMIN_PASSWORD="..."
-export TEST_USER_PENDING_EMAIL="pending@example.com"
-export TEST_USER_PENDING_PASSWORD="..."
-export TEST_USER_BANNED_EMAIL="banned@example.com"
-export TEST_USER_BANNED_PASSWORD="..."
+export COGNITO_USER_POOL_ID="us-west-2_XXXXX"
+export COGNITO_CLIENT_ID="..."
 
 # Run
 pytest tests/device-farm/ -v --junitxml=results.xml
@@ -45,7 +66,7 @@ pytest tests/device-farm/ -v --junitxml=results.xml
 
 ## How Device Farm Runs It
 
-The Woodpecker CI pipeline (`.woodpecker/device-farm.yml`) installs Python deps, sets env vars from secrets, and runs pytest against the Device Farm Selenium Grid.
+The Woodpecker CI pipeline (`.woodpecker/device-farm.yml`) assumes the OIDC role, fetches all test credentials from SSM Parameter Store, then runs pytest against the Device Farm Selenium Grid.
 
 ## Adding Test Users to Cognito
 
