@@ -1,34 +1,38 @@
-<!--
-  project-scope.md template — rendered by bin/kiro-bootstrap into
-  <repo>/.kiro/steering/project-scope.md
-  scope governs what agents in this repo may touch
--->
-
 # project scope — cloud-del-norte-website
 
 ## what this file does
 
-scope governs what agents operating in `cloud-del-norte-website` may touch. this is a constraint document, not an aspirational one — work outside the in-scope table escalates upstream rather than landing here. scope drift in a session is a routing failure, not a coding decision
+scope governs what agents operating in `cloud-del-norte-website` may touch. work outside the in-scope table escalates upstream rather than landing here.
 
 ## in-scope work
 
 | work type | owner agent |
 | --------- | ----------- |
-| TODO      | TODO        |
+| React components + pages (Cloudscape) | poltergeist-harald-cdn-product-owner |
+| Vite config + build pipeline | poltergeist-harald-cdn-product-owner |
+| Vitest unit/integration tests | poltergeist-harald-cdn-product-owner |
+| Device Farm test suite (tests/device-farm/) | ghost-orin-ci-cd |
+| Woodpecker CI pipelines (.woodpecker/) | ghost-orin-ci-cd |
+| CSS/styling fixes | ghost-liora-css-repair |
+| Documentation + content | poltergeist-voss-chasko-author |
 
 ## out-of-scope work
 
 | work type | escalates to |
 | --------- | ------------ |
-| TODO      | TODO         |
+| Cognito/IAM infrastructure changes | chasko-labs/aws-device-farm-infra or haunting-kiro-cli (stratia-aws-infra) |
+| Haunting agent definitions | haunting-kiro-cli repo |
+| Chrome extension work | chrome-extension-moodle-uploader repo |
+| Device Farm infra (Terraform) | chasko-labs/aws-device-farm-infra |
 
 ## escalation patterns
 
 | trigger | route |
 | ------- | ----- |
-| TODO    | TODO  |
-
-(when an agent observes a scope violation: name the violation, identify the receiving repo or collective, dispatch the appropriate cross-repo agent — never inline-fix work that belongs elsewhere)
+| Auth flow broken (Cognito config) | dispatch poltergeist-stratia-aws-infra |
+| Device Farm infra change needed | dispatch to aws-device-farm-infra repo |
+| CI pipeline structural change | ghost-orin-ci-cd |
+| Scope violation detected | name violation, identify receiving repo, dispatch — never inline-fix |
 
 ## the rule in one sentence
 
