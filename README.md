@@ -211,6 +211,8 @@ auth chain: workload x509 cert → IAM RolesAnywhere → `heraldstack-ci-deploy`
 
 pipeline steps: `install` → `build` → `deploy` (main) or `deploy-dev` (dev) → `screenshot-prod` / `screenshot-dev`
 
+Browser/device testing infrastructure: [aws-device-farm-infra](https://github.com/chasko-labs/aws-device-farm-infra) (private)
+
 post-deploy screenshot captures run automatically and are available at predictable URLs — see [docs/ops/ci-screenshots.md](docs/ops/ci-screenshots.md) for the URL pattern and capture matrix.
 
 ### Manual deploy
