@@ -45,7 +45,7 @@ function MeetingsContent() {
 
 	return (
 		<SpaceBetween size="l">
-			<Container header={<Header variant="h1">Meetings</Header>}>
+			<Container header={<Header variant="h1">meetings</Header>}>
 				<SpaceBetween size="m">
 					<Box>
 						Join the active Cloud Del Norte call or check meetup.com for
@@ -66,20 +66,20 @@ function MeetingsContent() {
 								void handleJoinCall();
 							}}
 						>
-							Join call
+							join call
 						</Button>
 						<Button href={MEETUP_URL} target="_blank" iconName="external">
-							View on meetup.com
+							view on meetup.com
 						</Button>
 					</SpaceBetween>
 				</SpaceBetween>
 			</Container>
-			<Container header={<Header variant="h2">Schedule a session</Header>}>
+			<Container header={<Header variant="h2">schedule a session</Header>}>
 				<SpaceBetween size="s">
 					<Box>
 						Organizers can schedule new sessions from the create meeting page.
 					</Box>
-					<Button href="/create-meeting/index.html">Create meeting</Button>
+					<Button href="/create-meeting/index.html">create meeting</Button>
 				</SpaceBetween>
 			</Container>
 		</SpaceBetween>

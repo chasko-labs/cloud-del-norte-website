@@ -46,23 +46,23 @@ function BannedScreen() {
 function MemberHome({ auth }: { auth: AuthState }) {
 	return (
 		<SpaceBetween size="l">
-			<Container header={<Header variant="h1">Welcome back</Header>}>
+			<Container header={<Header variant="h1">welcome back</Header>}>
 				<SpaceBetween size="m">
 					<Box>You have full access to Cloud Del Norte member content.</Box>
 					<SpaceBetween direction="horizontal" size="s">
 						<Button href="/meetings/index.html" variant="primary">
-							Meetings
+							meetings
 						</Button>
-						<Button href="/admin/index.html">Admin panel</Button>
+						<Button href="/admin/index.html">admin panel</Button>
 					</SpaceBetween>
 				</SpaceBetween>
 			</Container>
-			<Container header={<Header variant="h2">Your profile</Header>}>
+			<Container header={<Header variant="h2">your profile</Header>}>
 				<KeyValuePairs
 					columns={2}
 					items={[
-						{ label: "Email", value: auth.email },
-						{ label: "Groups", value: auth.groups.join(", ") || "none" },
+						{ label: "email", value: auth.email },
+						{ label: "groups", value: auth.groups.join(", ") || "none" },
 					]}
 				/>
 			</Container>

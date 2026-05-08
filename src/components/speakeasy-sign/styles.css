@@ -1,0 +1,40 @@
+.speakeasy-sign {
+	display: block;
+	opacity: 0.85;
+	padding: 8px 0;
+}
+
+.awsui-dark-mode .speakeasy-sign {
+	opacity: 0.95;
+}
+
+@keyframes speakeasy-breathe {
+	0%, 100% { filter: brightness(1); }
+	50% { filter: brightness(1.12); }
+}
+
+@keyframes speakeasy-flicker {
+	0%, 9% { opacity: 1; }
+	9.5% { opacity: 0.4; }
+	10% { opacity: 1; }
+	10.5% { opacity: 0.3; }
+	11% { opacity: 0.8; }
+	11.5% { opacity: 1; }
+	100% { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.speakeasy-sign svg {
+		animation: speakeasy-breathe 8s ease-in-out infinite;
+	}
+	.speakeasy-flicker {
+		animation: speakeasy-flicker 7s step-end infinite;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.speakeasy-sign svg,
+	.speakeasy-flicker {
+		animation: none;
+	}
+}

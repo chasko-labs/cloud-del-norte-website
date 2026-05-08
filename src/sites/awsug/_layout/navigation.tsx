@@ -4,47 +4,83 @@
 import SideNavigation, {
 	type SideNavigationProps,
 } from "@cloudscape-design/components/side-navigation";
+import LioraFrame from "../../../components/liora-frame";
+import SpeakeasySign from "../../../components/speakeasy-sign";
 
 const MAIN = "https://clouddelnorte.org";
 
 export default function AwsugNavigation() {
 	const items: SideNavigationProps["items"] = [
-		{ type: "link", text: "Meetings", href: "/meetings/index.html" },
-		{ type: "link", text: "Admin", href: "/admin/index.html" },
+		{
+			type: "section",
+			text: "speakeasy",
+			items: [
+				{ type: "link", text: "meetings", href: "/meetings/index.html" },
+				{ type: "link", text: "admin", href: "/admin/index.html" },
+			],
+		},
+		{ type: "divider" },
+		{
+			type: "link",
+			text: "meetings",
+			href: `${MAIN}/meetings/index.html`,
+		},
+		{
+			type: "link",
+			text: "community feed",
+			href: `${MAIN}/feed/index.html`,
+		},
 		{ type: "divider" },
 		{
 			type: "section",
-			text: "Main site",
-			defaultExpanded: false,
+			text: "resources",
+			items: [
+				{ type: "link", text: "plans", href: `${MAIN}/plans/index.html` },
+				{ type: "link", text: "roadmap", href: `${MAIN}/roadmap/index.html` },
+				{
+					type: "link",
+					text: "design system",
+					href: `${MAIN}/theme/index.html`,
+				},
+			],
+		},
+		{ type: "divider" },
+		{
+			type: "section",
+			text: "learning",
 			items: [
 				{
 					type: "link",
-					text: "Community feed",
-					href: `${MAIN}/feed/index.html`,
+					text: "tech debt countdowns",
+					href: `${MAIN}/maintenance-calendar/index.html`,
 				},
 				{
 					type: "link",
-					text: "Meetup schedule",
-					href: `${MAIN}/meetings/index.html`,
+					text: "api guide",
+					href: `${MAIN}/learning/api/index.html`,
 				},
-				{ type: "link", text: "Roadmap", href: `${MAIN}/roadmap/index.html` },
 			],
 		},
 	];
 
 	return (
-		<SideNavigation
-			activeHref={location.pathname}
-			header={{ href: "/index.html", text: "Cloud Del Norte — Members" }}
-			items={items}
-			onFollow={(event) => {
-				if (event.detail.type === "section-header") return;
-				const href = event.detail.href;
-				if (!event.detail.external && href && href !== "#") {
-					event.preventDefault();
-					window.location.href = href;
-				}
-			}}
-		/>
+		<>
+			<a href="/index.html" style={{ display: "block", textDecoration: "none" }}>
+				<SpeakeasySign />
+			</a>
+			<SideNavigation
+				activeHref={location.pathname}
+				items={items}
+				onFollow={(event) => {
+					if (event.detail.type === "section-header") return;
+					const href = event.detail.href;
+					if (href && href.startsWith("/")) {
+						event.preventDefault();
+						window.location.href = href;
+					}
+				}}
+			/>
+			<LioraFrame />
+		</>
 	);
 }
