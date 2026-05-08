@@ -71,22 +71,22 @@ const SECTION_KEYS: SectionKey[] = [
 ];
 
 const VBROWNBAG_IDS = [
-	"VBROWNBAG_1",
-	"VBROWNBAG_2",
-	"VBROWNBAG_3",
-	"VBROWNBAG_4",
-	"VBROWNBAG_5",
-	"VBROWNBAG_6",
-	"VBROWNBAG_7",
+	"iVXduqAdd_U",
+	"NiBpeKZTv5U",
+	"0VS1EankA_Q",
+	"5UNgsIKRNCg",
+	"qGQYVe62v-A",
+	"55IpRiZcEPg",
+	"HWVMFTPlkNY",
 ];
 const ZACSSHOW_IDS = [
-	"ZACSSHOW_1",
-	"ZACSSHOW_2",
-	"ZACSSHOW_3",
-	"ZACSSHOW_4",
-	"ZACSSHOW_5",
-	"ZACSSHOW_6",
-	"ZACSSHOW_7",
+	"taSmwcqdkQk",
+	"dUMsFQ8y3gM",
+	"z_NbVtbgBJw",
+	"5kHpeVvO7cY",
+	"avjX3QrYkls",
+	"7_wkWQ9rB5I",
+	"6u25GckPhLU",
 ];
 
 function shuffled<T>(arr: T[]): T[] {
