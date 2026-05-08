@@ -77,3 +77,8 @@
 .cdn-plans-cost-total > span:last-child {
 	color: var(--cdn-amber, #d4871a);
 }
+
+/* costs tab — 5-column grid (scoped to avoid breaking the 3-col code tab table) */
+.cdn-costs-tab .cdn-plans-cost-table {
+	grid-template-columns: 1fr 2fr 0.7fr 0.7fr 0.5fr;
+}

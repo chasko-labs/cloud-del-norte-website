@@ -8,6 +8,7 @@ import FormField from "@cloudscape-design/components/form-field";
 import Input from "@cloudscape-design/components/input";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
+import { QRCodeSVG } from "qrcode.react";
 import type React from "react";
 import { useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
@@ -16,6 +17,9 @@ import {
 	AuthError,
 	assertNonEmpty,
 	associateSoftwareToken,
+	base64urlToBuffer,
+	completePasskeyAuth,
+	initiatePasskeyAuth,
 	respondToMfaChallenge,
 	signInWithPassword,
 	verifySoftwareToken,
@@ -30,7 +34,9 @@ function redirectWithTokens() {
 	const idToken = sessionStorage.getItem("cdn.idToken") ?? "";
 	const accessToken = sessionStorage.getItem("cdn.accessToken") ?? "";
 	const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
-	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
+	const returnTo =
+		new URLSearchParams(window.location.search).get("return_to") ?? "";
+	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
 	window.location.assign(`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`);
 }
 
@@ -69,6 +75,39 @@ function LoginForm() {
 			valid = false;
 		}
 		return valid;
+	}
+
+	async function handlePasskeyLogin() {
+		if (!email.trim()) {
+			setEmailError("email is required for passkey login");
+			return;
+		}
+		setLoading(true);
+		setFormError("");
+		try {
+			const { session, credentials } = await initiatePasskeyAuth(email);
+			const publicKey = credentials.publicKey as any;
+			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
+			if (publicKey.allowCredentials) {
+				publicKey.allowCredentials = publicKey.allowCredentials.map(
+					(c: any) => ({
+						...c,
+						id: base64urlToBuffer(c.id),
+					}),
+				);
+			}
+			const assertion = (await navigator.credentials.get({
+				publicKey,
+			})) as PublicKeyCredential;
+			if (!assertion) throw new AuthError("passkey cancelled");
+			await completePasskeyAuth(session, assertion);
+			redirectWithTokens();
+		} catch (err) {
+			setFormError(
+				err instanceof AuthError ? err.message : "passkey login failed",
+			);
+			setLoading(false);
+		}
 	}
 
 	async function handleCredentialsSubmit(e: React.FormEvent) {
@@ -165,7 +204,13 @@ function LoginForm() {
 					>
 						<SpaceBetween size="m">
 							<Box variant="p">
-								Set up your authenticator app. Add this secret manually:
+								Scan this QR code with your authenticator app:
+							</Box>
+							<Box variant="div" textAlign="center">
+								<QRCodeSVG value={otpauthUri} size={180} level="M" />
+							</Box>
+							<Box variant="small" color="text-body-secondary">
+								Or enter this secret manually:
 							</Box>
 							<Box variant="code">
 								<span style={{ fontFamily: "monospace", userSelect: "all" }}>
@@ -285,6 +330,19 @@ function LoginForm() {
 					<Link href="/signup/index.html">{t("auth.login.noAccount")}</Link>
 				</SpaceBetween>
 			</Box>
+			{window.PublicKeyCredential && (
+				<Box margin={{ top: "m" }} textAlign="center">
+					<Button
+						variant="link"
+						onClick={() => {
+							void handlePasskeyLogin();
+						}}
+						loading={loading}
+					>
+						sign in with passkey
+					</Button>
+				</Box>
+			)}
 		</div>
 	);
 }

@@ -193,6 +193,7 @@ body.cdn-stream-playing .cdn-player-slot::before {
 	align-items: flex-end;
 	gap: 4px;
 	min-width: 0;
+	flex: 1 1 auto;
 	overflow: hidden;
 }
 
@@ -305,7 +306,7 @@ a.cdn-pp__label--donate:focus-visible {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: none;
+	max-width: 100%;
 	font-size: var(--cdn-text-sm, 0.75rem);
 }
 
@@ -329,7 +330,7 @@ a.cdn-pp__label--donate:focus-visible {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: none;
+	max-width: 100%;
 	transition: border-bottom-color 0.2s ease;
 }
 
@@ -357,7 +358,7 @@ a.cdn-pp__label--donate:focus-visible {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: none;
+	max-width: 100%;
 }
 
 .awsui-dark-mode .cdn-pp__geo {
@@ -390,7 +391,7 @@ a.cdn-pp__label--donate:focus-visible {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	max-width: none;
+	max-width: 100%;
 	font-size: var(--cdn-text-sm, 0.75rem);
 	font-weight: var(--cdn-weight-semibold, 600);
 }

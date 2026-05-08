@@ -59,7 +59,10 @@ export default function App() {
 			return;
 		}
 
-		window.location.assign("/index.html");
+		const returnTo = params.get("return_to");
+		window.location.assign(
+			returnTo && returnTo.startsWith("/") ? returnTo : "/index.html",
+		);
 	}, []);
 
 	if (error) {

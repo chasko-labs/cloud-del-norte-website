@@ -1,6 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
-import { getIdToken } from "./auth";
+import { getIdToken, refreshTokens } from "./auth";
 
 const API_BASE = "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com";
 
@@ -27,16 +27,29 @@ async function apiRequest(
 	method: string,
 	body?: unknown,
 ): Promise<Response> {
-	const idToken = getIdToken();
-	if (!idToken) throw new Error("not authenticated");
-	return fetch(`${API_BASE}${path}`, {
-		method,
-		headers: {
-			Authorization: `Bearer ${idToken}`,
-			"Content-Type": "application/json",
-		},
-		body: body !== undefined ? JSON.stringify(body) : undefined,
-	});
+	let idToken = getIdToken();
+	if (!idToken) {
+		await refreshTokens();
+		idToken = getIdToken();
+		if (!idToken) throw new Error("not authenticated");
+	}
+	const doFetch = (token: string) =>
+		fetch(`${API_BASE}${path}`, {
+			method,
+			headers: {
+				Authorization: `Bearer ${token}`,
+				"Content-Type": "application/json",
+			},
+			body: body !== undefined ? JSON.stringify(body) : undefined,
+		});
+	const res = await doFetch(idToken);
+	if (res.status === 401) {
+		await refreshTokens();
+		const retryToken = getIdToken();
+		if (!retryToken) throw new Error("not authenticated");
+		return doFetch(retryToken);
+	}
+	return res;
 }
 
 export async function listUsers(

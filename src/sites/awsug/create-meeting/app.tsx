@@ -14,12 +14,14 @@ import Spinner from "@cloudscape-design/components/spinner";
 import Textarea from "@cloudscape-design/components/textarea";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
 import AwsugLayout from "../_layout";
 import { type AuthState, isMember, requireAuth } from "../_shared/auth";
 
 const API_BASE = "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com";
 
 function CreateMeetingForm({ auth }: { auth: AuthState }) {
+	const { t } = useTranslation();
 	const [meetupLink, setMeetupLink] = useState("");
 	const [speakers, setSpeakers] = useState("");
 	const [notes, setNotes] = useState("");
@@ -31,10 +33,7 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 	if (!isMember(auth)) {
 		return (
 			<Container>
-				<Alert type="info">
-					Your application is pending approval. Meeting creation is available
-					once approved.
-				</Alert>
+				<Alert type="info">{t("awsug.meetings.createPendingApproval")}</Alert>
 			</Container>
 		);
 	}
@@ -43,10 +42,7 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 		e.preventDefault();
 		setMeetupLinkError("");
 		setFormError("");
-		if (!meetupLink.trim()) {
-			setMeetupLinkError("Meetup link is required");
-			return;
-		}
+
 		setLoading(true);
 		try {
 			const res = await fetch(`${API_BASE}/admin/meetings`, {
@@ -105,6 +101,7 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 					<SpaceBetween size="m">
 						<FormField
 							label="Meetup link"
+							description="optional — add after scheduling the call"
 							errorText={meetupLinkError || undefined}
 						>
 							<Input

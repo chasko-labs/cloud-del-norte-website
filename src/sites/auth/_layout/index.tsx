@@ -18,7 +18,6 @@ import {
 	type Theme,
 } from "../../../utils/theme";
 import "./styles.css";
-import "./auth-form.css";
 
 /**
  * AuthLayout — host shell for login / signup / verify / forgot-password.

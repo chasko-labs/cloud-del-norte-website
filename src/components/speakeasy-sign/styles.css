@@ -1,40 +1,53 @@
 .speakeasy-sign {
 	display: block;
-	opacity: 0.85;
-	padding: 8px 0;
+	max-width: 140px;
+	padding: 6px 0 2px;
+	opacity: 0.7;
 }
 
 .awsui-dark-mode .speakeasy-sign {
-	opacity: 0.95;
+	opacity: 0.85;
 }
 
-@keyframes speakeasy-breathe {
-	0%, 100% { filter: brightness(1); }
-	50% { filter: brightness(1.12); }
-}
-
-@keyframes speakeasy-flicker {
-	0%, 9% { opacity: 1; }
-	9.5% { opacity: 0.4; }
-	10% { opacity: 1; }
-	10.5% { opacity: 0.3; }
-	11% { opacity: 0.8; }
-	11.5% { opacity: 1; }
-	100% { opacity: 1; }
+@keyframes speakeasy-tube-flicker {
+	0% {
+		filter: brightness(1) saturate(1) hue-rotate(0deg);
+		opacity: 0.85;
+	}
+	28% {
+		filter: brightness(1.05) saturate(1.05) hue-rotate(0deg);
+		opacity: 0.9;
+	}
+	42% {
+		filter: brightness(0.6) saturate(0.7) hue-rotate(-8deg);
+		opacity: 0.55;
+	}
+	48% {
+		filter: brightness(0.85) saturate(0.9) hue-rotate(-3deg);
+		opacity: 0.75;
+	}
+	62% {
+		filter: brightness(1) saturate(1) hue-rotate(0deg);
+		opacity: 0.85;
+	}
+	88% {
+		filter: brightness(0.7) saturate(0.65) hue-rotate(-12deg);
+		opacity: 0.6;
+	}
+	100% {
+		filter: brightness(1) saturate(1) hue-rotate(0deg);
+		opacity: 0.85;
+	}
 }
 
 @media (prefers-reduced-motion: no-preference) {
 	.speakeasy-sign svg {
-		animation: speakeasy-breathe 8s ease-in-out infinite;
-	}
-	.speakeasy-flicker {
-		animation: speakeasy-flicker 7s step-end infinite;
+		animation: speakeasy-tube-flicker 6s linear infinite;
 	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.speakeasy-sign svg,
-	.speakeasy-flicker {
+	.speakeasy-sign svg {
 		animation: none;
 	}
 }
