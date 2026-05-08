@@ -1,8 +1,4 @@
 # woodpecker ci — device farm browser testing
-# infra: https://github.com/chasko-labs/aws-device-farm-infra (private)
-# repo: chasko-labs/cloud-del-norte-website
-# runs after build on push to main and on pull requests
-
 depends_on:
   - ci
 
@@ -12,17 +8,40 @@ when:
 
 steps:
   - name: device-farm-test
-    image: amazon/aws-cli:2.15.0
-    secrets: [device_farm_role_arn, device_farm_project_arn, device_farm_artifacts_bucket]
+    image: python:3.12-slim
+    secrets:
+      - device_farm_grid_url
+      - test_user_member_email
+      - test_user_member_password
+      - test_user_admin_email
+      - test_user_admin_password
+      - test_user_pending_email
+      - test_user_pending_password
+      - test_user_banned_email
+      - test_user_banned_password
     environment:
-      AWS_ROLE_ARN:
-        from_secret: device_farm_role_arn
-      DEVICE_FARM_PROJECT_ARN:
-        from_secret: device_farm_project_arn
-      DEVICE_FARM_ARTIFACTS_BUCKET:
-        from_secret: device_farm_artifacts_bucket
+      DEVICE_FARM_GRID_URL:
+        from_secret: device_farm_grid_url
+      TEST_USER_MEMBER_EMAIL:
+        from_secret: test_user_member_email
+      TEST_USER_MEMBER_PASSWORD:
+        from_secret: test_user_member_password
+      TEST_USER_ADMIN_EMAIL:
+        from_secret: test_user_admin_email
+      TEST_USER_ADMIN_PASSWORD:
+        from_secret: test_user_admin_password
+      TEST_USER_PENDING_EMAIL:
+        from_secret: test_user_pending_email
+      TEST_USER_PENDING_PASSWORD:
+        from_secret: test_user_pending_password
+      TEST_USER_BANNED_EMAIL:
+        from_secret: test_user_banned_email
+      TEST_USER_BANNED_PASSWORD:
+        from_secret: test_user_banned_password
+      TEST_URL: https://awsug.clouddelnorte.org
+      TEST_AUTH_URL: https://auth.clouddelnorte.org
+      TEST_API_URL: https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com
     commands:
-      - yum install -y jq
-      - chmod +x .woodpecker/scripts/run-tests.sh .woodpecker/scripts/collect-artifacts.sh
-      - .woodpecker/scripts/run-tests.sh
-      - .woodpecker/scripts/collect-artifacts.sh
+      - pip install -r tests/device-farm/requirements.txt
+      - pytest tests/device-farm/ --junitxml=results.xml -v
+      - echo "Results saved to results.xml"
