@@ -301,4 +301,122 @@ export async function refreshTokens(): Promise<void> {
 	if (!auth.RefreshToken) auth.RefreshToken = refresh;
 	storeTokens(result);
 }
-// MFA deploy trigger
+// ---- Passkey / WebAuthn ----
+
+export async function startWebAuthnRegistration(): Promise<
+	Record<string, unknown>
+> {
+	const accessToken = getAccessToken();
+	if (!accessToken) throw new AuthError("not authenticated");
+	return cognitoPost("StartWebAuthnRegistration", { AccessToken: accessToken });
+}
+
+export async function completeWebAuthnRegistration(
+	credential: Record<string, unknown>,
+): Promise<void> {
+	const accessToken = getAccessToken();
+	if (!accessToken) throw new AuthError("not authenticated");
+	await cognitoPost("CompleteWebAuthnRegistration", {
+		AccessToken: accessToken,
+		Credential: credential,
+	});
+}
+
+export async function listWebAuthnCredentials(): Promise<
+	Array<Record<string, unknown>>
+> {
+	const accessToken = getAccessToken();
+	if (!accessToken) throw new AuthError("not authenticated");
+	const result = await cognitoPost("ListWebAuthnCredentials", {
+		AccessToken: accessToken,
+	});
+	return (result.Credentials as Array<Record<string, unknown>>) ?? [];
+}
+
+export async function deleteWebAuthnCredential(
+	credentialId: string,
+): Promise<void> {
+	const accessToken = getAccessToken();
+	if (!accessToken) throw new AuthError("not authenticated");
+	await cognitoPost("DeleteWebAuthnCredential", {
+		AccessToken: accessToken,
+		CredentialId: credentialId,
+	});
+}
+
+export async function initiatePasskeyAuth(email: string): Promise<{
+	challengeName: string;
+	session: string;
+	credentials: Record<string, unknown>;
+}> {
+	const result = await cognitoPost("InitiateAuth", {
+		AuthFlow: "USER_AUTH",
+		ClientId: CLIENT_ID,
+		AuthParameters: {
+			USERNAME: sanitize(email, "email"),
+			PREFERRED_CHALLENGE: "WEB_AUTHN",
+		},
+	});
+	return {
+		challengeName: result.ChallengeName as string,
+		session: result.Session as string,
+		credentials: JSON.parse(
+			(result.ChallengeParameters?.CredentialRequestOptions as string) ?? "{}",
+		),
+	};
+}
+
+export async function completePasskeyAuth(
+	session: string,
+	credential: PublicKeyCredential,
+): Promise<void> {
+	const response = credential.response as AuthenticatorAssertionResponse;
+	const result = await cognitoPost("RespondToAuthChallenge", {
+		ClientId: CLIENT_ID,
+		ChallengeName: "WEB_AUTHN",
+		Session: session,
+		ChallengeResponses: {
+			CREDENTIAL: JSON.stringify({
+				id: credential.id,
+				rawId: bufferToBase64url(credential.rawId),
+				type: credential.type,
+				response: {
+					clientDataJSON: bufferToBase64url(response.clientDataJSON),
+					authenticatorData: bufferToBase64url(response.authenticatorData),
+					signature: bufferToBase64url(response.signature),
+					userHandle: response.userHandle
+						? bufferToBase64url(response.userHandle)
+						: null,
+				},
+				authenticatorAttachment: credential.authenticatorAttachment,
+			}),
+		},
+	});
+	if (result.AuthenticationResult) {
+		storeTokens(result);
+	}
+}
+
+// ---- Base64url helpers for WebAuthn ----
+
+function bufferToBase64url(buffer: ArrayBuffer): string {
+	const bytes = new Uint8Array(buffer);
+	let binary = "";
+	for (const byte of bytes) binary += String.fromCharCode(byte);
+	return btoa(binary)
+		.replace(/\+/g, "-")
+		.replace(/\//g, "_")
+		.replace(/=+$/, "");
+}
+
+function base64urlToBuffer(base64url: string): ArrayBuffer {
+	const base64 = base64url.replace(/-/g, "+").replace(/_/g, "/");
+	const pad = base64.length % 4;
+	const padded = pad ? base64 + "=".repeat(4 - pad) : base64;
+	const binary = atob(padded);
+	const bytes = new Uint8Array(binary.length);
+	for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+	return bytes.buffer;
+}
+
+export { base64urlToBuffer };

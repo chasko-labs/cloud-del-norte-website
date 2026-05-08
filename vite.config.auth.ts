@@ -20,6 +20,7 @@ export default defineConfig({
 				login: resolve(__dirname, "./src/sites/auth/login/index.html"),
 				signup: resolve(__dirname, "./src/sites/auth/signup/index.html"),
 				verify: resolve(__dirname, "./src/sites/auth/verify/index.html"),
+				passkeys: resolve(__dirname, "./src/sites/auth/passkeys/index.html"),
 				"forgot-password": resolve(
 					__dirname,
 					"./src/sites/auth/forgot-password/index.html",
