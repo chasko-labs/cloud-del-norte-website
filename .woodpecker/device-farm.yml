@@ -14,8 +14,9 @@ steps:
       TEST_URL: https://awsug.clouddelnorte.org
       TEST_AUTH_URL: https://auth.clouddelnorte.org
       TEST_API_URL: https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com
-    secrets:
-      - device_farm_grid_url
+    environment:
+      DEVICE_FARM_GRID_URL:
+        from_secret: device_farm_grid_url
     commands:
       - pip install awscli -q
       - pip install -r tests/device-farm/requirements.txt
