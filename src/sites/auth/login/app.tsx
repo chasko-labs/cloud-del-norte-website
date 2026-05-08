@@ -20,6 +20,7 @@ import {
 	signInWithPassword,
 	verifySoftwareToken,
 } from "../../../lib/cognito";
+import { QRCodeSVG } from "qrcode.react";
 import AuthLayout from "../_layout";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
@@ -165,7 +166,13 @@ function LoginForm() {
 					>
 						<SpaceBetween size="m">
 							<Box variant="p">
-								Set up your authenticator app. Add this secret manually:
+								Scan this QR code with your authenticator app:
+							</Box>
+							<Box variant="div" textAlign="center">
+								<QRCodeSVG value={otpauthUri} size={180} level="M" />
+							</Box>
+							<Box variant="small" color="text-body-secondary">
+								Or enter this secret manually:
 							</Box>
 							<Box variant="code">
 								<span style={{ fontFamily: "monospace", userSelect: "all" }}>
