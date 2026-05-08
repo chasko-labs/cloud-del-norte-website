@@ -116,7 +116,8 @@
 		"streamKrux": "stream krux",
 		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen.",
 		"vbrownbagHeader": "vBrownBag",
-		"theZacsShowHeader": "the Zac's show"
+		"theZacsShowHeader": "the Zac's show",
+		"visitChannel": "visit channel"
 	},
 	"dashboardPage": {
 		"productionOverview": {
@@ -671,33 +672,37 @@
 	},
 	"awsug": {
 		"pending": {
-			"title": "Application received",
-			"description": "Your application is with the organizers. You'll get an email when approved.",
-			"memberTypeLabel": "How you connect",
-			"locationLabel": "Based in",
-			"topicsLabel": "Topics",
-			"backgroundLabel": "Background"
+			"title": "application received",
+			"description": "your application is with the organizers. you'll get an email when approved.",
+			"memberTypeLabel": "how you connect",
+			"locationLabel": "based in",
+			"topicsLabel": "topics",
+			"backgroundLabel": "background"
 		},
 		"admin": {
-			"title": "Member management",
-			"filterPending": "Pending",
-			"filterMembers": "Members",
-			"filterBanned": "Banned",
-			"colEmail": "Email",
-			"colMemberType": "How they connect",
-			"colLocation": "Based in",
-			"colTopics": "Topics",
-			"colBackground": "Background",
-			"colJoined": "Joined",
-			"colActions": "Actions",
-			"approveButton": "Approve",
-			"banButton": "Ban",
-			"unbanButton": "Unban",
-			"banPopoverTitle": "User banned",
-			"banPopoverBody": "Banned from future sessions. To remove from an active call, join as moderator and use participant controls.",
-			"emptyPending": "No applications pending",
-			"emptyMembers": "No members",
-			"emptyBanned": "No banned users"
+			"title": "member management",
+			"filterPending": "pending",
+			"filterMembers": "members",
+			"filterBanned": "banned",
+			"colEmail": "email",
+			"colMemberType": "how they connect",
+			"colLocation": "based in",
+			"colTopics": "topics",
+			"colBackground": "background",
+			"colJoined": "joined",
+			"colActions": "actions",
+			"approveButton": "approve",
+			"banButton": "ban",
+			"unbanButton": "unban",
+			"banPopoverTitle": "user banned",
+			"banPopoverBody": "banned from future sessions. to remove from an active call, join as moderator and use participant controls.",
+			"emptyPending": "no applications pending",
+			"emptyMembers": "no members",
+			"emptyBanned": "no banned users"
+		},
+		"meetings": {
+			"pendingApproval": "your application is pending approval. meetings are available once approved.",
+			"createPendingApproval": "your application is pending approval. meeting creation is available once approved."
 		}
 	},
 	"liora": {

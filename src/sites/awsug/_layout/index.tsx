@@ -19,6 +19,7 @@ import {
 	type Theme,
 } from "../../../utils/theme";
 import AwsugNavigation from "./navigation";
+import "./styles.css";
 
 export default function AwsugLayout({
 	children,
