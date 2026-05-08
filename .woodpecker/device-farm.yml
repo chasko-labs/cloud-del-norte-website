@@ -9,39 +9,41 @@ when:
 steps:
   - name: device-farm-test
     image: python:3.12-slim
-    secrets:
-      - device_farm_grid_url
-      - test_user_member_email
-      - test_user_member_password
-      - test_user_admin_email
-      - test_user_admin_password
-      - test_user_pending_email
-      - test_user_pending_password
-      - test_user_banned_email
-      - test_user_banned_password
     environment:
-      DEVICE_FARM_GRID_URL:
-        from_secret: device_farm_grid_url
-      TEST_USER_MEMBER_EMAIL:
-        from_secret: test_user_member_email
-      TEST_USER_MEMBER_PASSWORD:
-        from_secret: test_user_member_password
-      TEST_USER_ADMIN_EMAIL:
-        from_secret: test_user_admin_email
-      TEST_USER_ADMIN_PASSWORD:
-        from_secret: test_user_admin_password
-      TEST_USER_PENDING_EMAIL:
-        from_secret: test_user_pending_email
-      TEST_USER_PENDING_PASSWORD:
-        from_secret: test_user_pending_password
-      TEST_USER_BANNED_EMAIL:
-        from_secret: test_user_banned_email
-      TEST_USER_BANNED_PASSWORD:
-        from_secret: test_user_banned_password
+      AWS_REGION: us-west-2
       TEST_URL: https://awsug.clouddelnorte.org
       TEST_AUTH_URL: https://auth.clouddelnorte.org
       TEST_API_URL: https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com
+    secrets:
+      - device_farm_grid_url
     commands:
+      - pip install awscli -q
       - pip install -r tests/device-farm/requirements.txt
+
+      # Assume OIDC role
+      - |
+        CREDS=$(aws sts assume-role-with-web-identity \
+          --role-arn "$CI_OIDC_ROLE_ARN" \
+          --role-session-name "device-farm-ci" \
+          --web-identity-token "$CI_OIDC_TOKEN" \
+          --query 'Credentials' --output json)
+        export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | python -c "import sys,json;print(json.load(sys.stdin)['AccessKeyId'])")
+        export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | python -c "import sys,json;print(json.load(sys.stdin)['SecretAccessKey'])")
+        export AWS_SESSION_TOKEN=$(echo "$CREDS" | python -c "import sys,json;print(json.load(sys.stdin)['SessionToken'])")
+
+      # Fetch test credentials from SSM Parameter Store
+      - |
+        export DEVICE_FARM_GRID_URL=$(aws ssm get-parameter --name '/device-farm/test-users/grid-url' --region us-west-2 --query 'Parameter.Value' --output text 2>/dev/null || echo "$DEVICE_FARM_GRID_URL")
+        export TEST_USER_MEMBER_EMAIL=$(aws ssm get-parameter --name '/device-farm/test-users/member-email' --region us-west-2 --query 'Parameter.Value' --output text)
+        export TEST_USER_MEMBER_PASSWORD=$(aws ssm get-parameter --name '/device-farm/test-users/member-password' --region us-west-2 --with-decryption --query 'Parameter.Value' --output text)
+        export TEST_USER_ADMIN_EMAIL=$(aws ssm get-parameter --name '/device-farm/test-users/admin-email' --region us-west-2 --query 'Parameter.Value' --output text)
+        export TEST_USER_ADMIN_PASSWORD=$(aws ssm get-parameter --name '/device-farm/test-users/admin-password' --region us-west-2 --with-decryption --query 'Parameter.Value' --output text)
+        export TEST_USER_PENDING_EMAIL=$(aws ssm get-parameter --name '/device-farm/test-users/pending-email' --region us-west-2 --query 'Parameter.Value' --output text)
+        export TEST_USER_PENDING_PASSWORD=$(aws ssm get-parameter --name '/device-farm/test-users/pending-password' --region us-west-2 --with-decryption --query 'Parameter.Value' --output text)
+        export TEST_USER_BANNED_EMAIL=$(aws ssm get-parameter --name '/device-farm/test-users/banned-email' --region us-west-2 --query 'Parameter.Value' --output text)
+        export TEST_USER_BANNED_PASSWORD=$(aws ssm get-parameter --name '/device-farm/test-users/banned-password' --region us-west-2 --with-decryption --query 'Parameter.Value' --output text)
+        export COGNITO_USER_POOL_ID=$(aws ssm get-parameter --name '/device-farm/test-users/cognito-user-pool-id' --region us-west-2 --query 'Parameter.Value' --output text)
+        export COGNITO_CLIENT_ID=$(aws ssm get-parameter --name '/device-farm/test-users/cognito-client-id' --region us-west-2 --query 'Parameter.Value' --output text)
+
       - pytest tests/device-farm/ --junitxml=results.xml -v
       - echo "Results saved to results.xml"
