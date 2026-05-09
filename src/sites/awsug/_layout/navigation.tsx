@@ -11,14 +11,8 @@ const MAIN = "https://clouddelnorte.org";
 
 export default function AwsugNavigation() {
 	const items: SideNavigationProps["items"] = [
-		{
-			type: "section",
-			text: "speakeasy",
-			items: [
-				{ type: "link", text: "meetings", href: "/meetings/index.html" },
-				{ type: "link", text: "admin", href: "/admin/index.html" },
-			],
-		},
+		{ type: "link", text: "meetings", href: "/meetings/index.html" },
+		{ type: "link", text: "admin", href: "/admin/index.html" },
 		{ type: "divider" },
 		{
 			type: "section",

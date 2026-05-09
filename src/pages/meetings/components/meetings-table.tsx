@@ -192,7 +192,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 							)}
 							actions={
 								<SpaceBetween size="xs" direction="horizontal">
-									{auth.isModerator && (
+									{auth.isAuthenticated && auth.isModerator && (
 										<Button
 											variant="primary"
 											onClick={() => {
@@ -210,18 +210,22 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 											instant meet
 										</Button>
 									)}
-									<Button
-										disabled={collectionProps.selectedItems?.length === 0}
-									>
-										{t("meetings.editButton")}
-									</Button>
-									<Button
-										disabled={collectionProps.selectedItems?.length === 0}
-										href="/create-meeting/index.html"
-										variant="primary"
-									>
-										{t("meetings.createButton")}
-									</Button>
+									{auth.isAuthenticated && (
+										<>
+											<Button
+												disabled={collectionProps.selectedItems?.length === 0}
+											>
+												{t("meetings.editButton")}
+											</Button>
+											<Button
+												disabled={collectionProps.selectedItems?.length === 0}
+												href="/create-meeting/index.html"
+												variant="primary"
+											>
+												{t("meetings.createButton")}
+											</Button>
+										</>
+									)}
 								</SpaceBetween>
 							}
 						>

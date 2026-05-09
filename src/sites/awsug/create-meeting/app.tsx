@@ -73,7 +73,21 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 			<Container>
 				<SpaceBetween size="m">
 					<Alert type="success">Meeting created.</Alert>
-					<Button href="/meetings/index.html">Back to meetings</Button>
+					<SpaceBetween direction="horizontal" size="xs">
+						<Button href="/meetings/index.html">Back to meetings</Button>
+						<Button
+							variant="primary"
+							onClick={() => {
+								window.open(
+									"https://meet.clouddelnorte.org",
+									"_blank",
+									"noopener",
+								);
+							}}
+						>
+							join call
+						</Button>
+					</SpaceBetween>
 				</SpaceBetween>
 			</Container>
 		);
