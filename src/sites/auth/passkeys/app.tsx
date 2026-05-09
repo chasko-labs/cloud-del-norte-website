@@ -51,7 +51,8 @@ function PasskeyManager() {
 		try {
 			const options = await startWebAuthnRegistration();
 			let creationOptions = options.CredentialCreationOptions as any;
-			if (typeof creationOptions === "string") creationOptions = JSON.parse(creationOptions);
+			if (typeof creationOptions === "string")
+				creationOptions = JSON.parse(creationOptions);
 			const publicKey = creationOptions.publicKey;
 			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
 			publicKey.user.id = base64urlToBuffer(publicKey.user.id);

@@ -46,12 +46,20 @@ export async function refreshTokens(): Promise<void> {
 		body: body.toString(),
 	});
 	if (!res.ok) throw new Error(`refresh failed: ${res.status}`);
-	const tokens = (await res.json()) as { id_token: string; access_token: string; refresh_token?: string; expires_in: number };
+	const tokens = (await res.json()) as {
+		id_token: string;
+		access_token: string;
+		refresh_token?: string;
+		expires_in: number;
+	};
 	if (!tokens.refresh_token) tokens.refresh_token = refresh;
 	sessionStorage.setItem(KEY_ID_TOKEN, tokens.id_token);
 	sessionStorage.setItem(KEY_ACCESS_TOKEN, tokens.access_token);
 	sessionStorage.setItem(KEY_REFRESH_TOKEN, tokens.refresh_token);
-	sessionStorage.setItem(KEY_EXPIRES_AT, String(Date.now() + tokens.expires_in * 1000));
+	sessionStorage.setItem(
+		KEY_EXPIRES_AT,
+		String(Date.now() + tokens.expires_in * 1000),
+	);
 }
 
 export function storeTokensFromFragment(

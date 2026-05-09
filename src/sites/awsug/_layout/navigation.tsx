@@ -54,7 +54,10 @@ export default function AwsugNavigation() {
 
 	return (
 		<>
-			<a href="/index.html" style={{ display: "block", textDecoration: "none" }}>
+			<a
+				href="/index.html"
+				style={{ display: "block", textDecoration: "none" }}
+			>
 				<SpeakeasySign />
 			</a>
 			<SideNavigation

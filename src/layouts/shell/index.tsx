@@ -585,7 +585,9 @@ function ShellContent({
 											],
 											onItemClick: (e: { detail: { id: string } }) => {
 												if (e.detail.id === "passkeys") {
-													window.location.assign("https://auth.clouddelnorte.org/passkeys/index.html");
+													window.location.assign(
+														"https://auth.clouddelnorte.org/passkeys/index.html",
+													);
 												}
 												if (e.detail.id === "signout") auth.signOut();
 											},

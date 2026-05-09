@@ -724,13 +724,24 @@ function GithubTab() {
 	);
 }
 
-
 // ── costs tab ─────────────────────────────────────────────────────────────────
 
 function CostsTab() {
 	const [data, setData] = useState<{
-		meta: { lastUpdated: string; periodStart: string; periodEnd: string; totalMonthlyCost: number; accounts: number };
-		services: { name: string; purpose: string; monthlyCost: number; dailyAverage: number; trend: string }[];
+		meta: {
+			lastUpdated: string;
+			periodStart: string;
+			periodEnd: string;
+			totalMonthlyCost: number;
+			accounts: number;
+		};
+		services: {
+			name: string;
+			purpose: string;
+			monthlyCost: number;
+			dailyAverage: number;
+			trend: string;
+		}[];
 	} | null>(null);
 	const [error, setError] = useState("");
 	const [loading, setLoading] = useState(true);
@@ -742,15 +753,32 @@ function CostsTab() {
 				return r.json();
 			})
 			.then(setData)
-			.catch(() => setError("We couldn\u2019t load cost data right now. This updates daily \u2014 check back in a bit."))
+			.catch(() =>
+				setError(
+					"We couldn\u2019t load cost data right now. This updates daily \u2014 check back in a bit.",
+				),
+			)
 			.finally(() => setLoading(false));
 	}, []);
 
-	if (loading) return <Box padding="l" textAlign="center"><Spinner size="large" /></Box>;
-	if (error) return <Container><Box variant="p" color="text-status-error">{error}</Box></Container>;
+	if (loading)
+		return (
+			<Box padding="l" textAlign="center">
+				<Spinner size="large" />
+			</Box>
+		);
+	if (error)
+		return (
+			<Container>
+				<Box variant="p" color="text-status-error">
+					{error}
+				</Box>
+			</Container>
+		);
 	if (!data) return null;
 
-	const stale = Date.now() - new Date(data.meta.lastUpdated).getTime() > 172800000;
+	const stale =
+		Date.now() - new Date(data.meta.lastUpdated).getTime() > 172800000;
 
 	return (
 		<div className="cdn-costs-tab">
@@ -770,14 +798,16 @@ function CostsTab() {
 						<TextContent>
 							<p>
 								Cloud Del Norte runs on AWS. This page shows exactly what we
-								spend \u2014 updated daily, no rounding, no hiding. We\u2019re a community
-								user group, not a company. If you\u2019re curious what it actually
-								costs to keep a community platform online, here it is.
+								spend \u2014 updated daily, no rounding, no hiding. We\u2019re a
+								community user group, not a company. If you\u2019re curious what
+								it actually costs to keep a community platform online, here it
+								is.
 							</p>
 						</TextContent>
 						{stale && (
 							<Box variant="p" color="text-status-warning">
-								Heads up \u2014 this data is a couple days old. The daily update may have hit a snag.
+								Heads up \u2014 this data is a couple days old. The daily update
+								may have hit a snag.
 							</Box>
 						)}
 						<div className="cdn-plans-cost-table">
@@ -796,7 +826,13 @@ function CostsTab() {
 										<span>{s.purpose}</span>
 										<span>${s.monthlyCost.toFixed(2)}</span>
 										<span>${s.dailyAverage.toFixed(2)}</span>
-										<span>{s.trend === "up" ? "\u2191" : s.trend === "down" ? "\u2193" : "\u2192"}</span>
+										<span>
+											{s.trend === "up"
+												? "\u2191"
+												: s.trend === "down"
+													? "\u2193"
+													: "\u2192"}
+										</span>
 									</div>
 								))}
 							<div className="cdn-plans-cost-row cdn-plans-cost-total">
@@ -808,19 +844,19 @@ function CostsTab() {
 							</div>
 						</div>
 						<Box variant="small" color="text-body-secondary">
-							Last updated: {new Date(data.meta.lastUpdated).toLocaleDateString()} \u00b7 Period: {data.meta.periodStart} \u2192 {data.meta.periodEnd}
+							Last updated:{" "}
+							{new Date(data.meta.lastUpdated).toLocaleDateString()} \u00b7
+							Period: {data.meta.periodStart} \u2192 {data.meta.periodEnd}
 						</Box>
 					</SpaceBetween>
 				</Container>
-				<Container
-					header={<Header variant="h2">why we share this</Header>}
-				>
+				<Container header={<Header variant="h2">why we share this</Header>}>
 					<TextContent>
 						<p>
 							We run on community trust, not NDAs. Showing our costs keeps us
-							honest \u2014 you can see exactly where money goes and hold us to it.
-							If an open-source project asks for your time, you deserve to know
-							what it costs to keep the lights on.
+							honest \u2014 you can see exactly where money goes and hold us to
+							it. If an open-source project asks for your time, you deserve to
+							know what it costs to keep the lights on.
 						</p>
 					</TextContent>
 				</Container>

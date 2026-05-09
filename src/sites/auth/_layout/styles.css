@@ -986,7 +986,7 @@ body.cdn-auth-subdomain:not(#\9):not(#\9) .cdn-footer {
    ========================================================================== */
 
 body.cdn-auth-subdomain .cdn-player-slot {
-	display: none;
+	display: none !important;
 }
 
 body.cdn-auth-subdomain:not(#\9):not(#\9) [class*="awsui_content-wrapper"] {
@@ -1005,4 +1005,34 @@ body.cdn-auth-subdomain:not(#\9) .cdn-auth-card {
 
 body.cdn-auth-subdomain {
 	overflow-x: hidden;
+}
+
+/* ==========================================================================
+   Logo hero containment — prevent star/SVG from filling viewport
+
+   The .cdn-logo-hero is position:absolute inside #top-nav (sticky). On auth
+   pages, reinforce the size constraint and force cdn-star-logo hidden so a
+   container-query mismatch or specificity race cannot blow the logo to
+   full-viewport size.
+   ========================================================================== */
+body.cdn-auth-subdomain .cdn-logo-hero {
+	width: clamp(48px, 8vw, 80px);
+	height: clamp(48px, 8vw, 80px);
+	overflow: hidden;
+}
+
+body.cdn-auth-subdomain .cdn-logo-hero cdn-star-logo {
+	display: none !important;
+}
+
+/* ==========================================================================
+   Wallpaper stacking — ensure canvases stay behind content
+
+   Wallpaper canvases (background-viz + dune) are appended to <body> with
+   position:fixed and negative z-index. Reinforce that the #root content
+   sits above them by establishing a stacking context on #root.
+   ========================================================================== */
+body.cdn-auth-subdomain #root {
+	position: relative;
+	z-index: 0;
 }
