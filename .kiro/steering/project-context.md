@@ -1,30 +1,37 @@
-<!--
-  project-context.md template — rendered by bin/kiro-bootstrap into
-  <repo>/.kiro/steering/project-context.md
-  authored once at bootstrap, hand-edited as the project evolves
--->
-
 # project context — cloud-del-norte-website
 
 ## what this repo is
 
-cloud-del-norte-website is a `react-vite` repo in the heraldstack. specific purpose, audience, and runtime surface live in the project-specific facts section below — bootstrap fills in the type-derived defaults; the human author owns everything below the divider
+cloud-del-norte-website is a React + Vite SPA for the Cloud Del Norte community college CS program website. Deployed to AWS (S3 + CloudFront). Authenticated via Cognito on a dedicated auth subdomain.
 
 ## stack
 
-# TODO: list stack components (e.g. hugo, papermod-derived theme, woodpecker)
+- React 18 + Vite
+- AWS Cloudscape Design System (UI components)
+- Amazon Cognito (auth — hosted UI on auth subdomain, token flow via redirect)
+- Vitest (unit/integration tests)
+- Woodpecker CI (build, deploy, device-farm testing)
+- S3 + CloudFront (hosting)
 
 ## deploy targets
 
-# TODO: fill in deploy targets (e.g. s3://awsaerospace.org via woodpecker)
+- Production: S3 bucket via Woodpecker pipeline on main merge
+- Preview: per-branch deploys on PR (CloudFront invalidation)
 
----
+## testing infrastructure
+
+- **Device Farm integration**: `.woodpecker/device-farm.yml` — runs cross-browser/device tests on AWS Device Farm
+- **Test suite**: `tests/device-farm/` — pytest-based tests (auth flows, broken links, console errors, API access)
+- **Credentials**: SSM Parameter Store at `/device-farm/test-users/*`
+- **Infra repo**: `chasko-labs/aws-device-farm-infra` (Terraform for Device Farm project + device pools)
 
 ## notable architectural facts
 
-# TODO: document architectural facts (account-routing, deploy-exclusions, cross-repo runtime contracts)
-
-(this section is human-authored. fill in: account-routing rules, cross-account artifact splits, runtime quirks, deploy-exclusion rules, repo-internal subscope conventions, anything an agent needs to know to operate correctly here that is NOT in the repo-type doc)
+- Auth subdomain pattern: Cognito hosted UI on `auth.{domain}`, token exchange via redirect back to app
+- Token flow: authorization code grant → token endpoint → access/id/refresh tokens stored in session
+- Vitest runs in CI on every PR; Device Farm runs on main merge
+- Cloudscape components are the only permitted UI library — no MUI, no Tailwind
+- Static assets in `public/` are deployed as-is to S3 root
 
 ## the rule in one sentence
 

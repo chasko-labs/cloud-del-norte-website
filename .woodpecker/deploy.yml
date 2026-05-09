@@ -11,9 +11,13 @@
 # mounts come from woodpecker-agent env WOODPECKER_BACKEND_DOCKER_VOLUMES
 # (~/code/heraldstack/heraldstack-infra/docker-compose.yml)
 
+# TODO: S3_BUCKET_MAIN is 'awsaerospace.org' — legacy name from before the
+# clouddelnorte.org rebrand. Renaming requires S3 bucket recreation + DNS/CF
+# origin update. Track in a separate issue.
+
 when:
   - event: [push, manual]
-    branch: [main, dev]
+    branch: [main, dev, "feature/*", "fix/*", "feat/*"]
     path:
       include:
         - src/**
@@ -30,23 +34,17 @@ when:
 steps:
   - name: install
     image: node:22-slim
-    when:
-      - event: [push, manual]
-        branch: [main, dev]
     commands:
       - npm ci --no-audit --no-fund
 
   - name: build
     image: node:22-slim
     depends_on: [install]
-    when:
-      - event: [push, manual]
-        branch: [main, dev]
     commands:
-      # generate releases.generated.json before build — file is gitignored, must be
-      # produced at ci time. generator degrades gracefully when GITHUB_TOKEN is absent.
       - node scripts/fetch-releases.mjs
       - npm run build
+
+  # ─── production deploys (main branch) ───────────────────────────────────────
 
   - name: deploy
     image: public.ecr.aws/aws-cli/aws-cli:latest
@@ -57,9 +55,15 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      # wire an aws profile that resolves its creds via the mounted
-      # workload cert + rolesanywhere — no plaintext keys anywhere
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -68,13 +72,9 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      # liora/* and liora-embed/* are managed separately — exclude from --delete.
-      # Two-pass sync: HTML/non-asset files get no-cache (browsers refetch every
-      # visit, so version bumps land immediately); hashed /assets/ get long
-      # immutable cache (filename hash invalidates them on change).
-      - aws s3 sync lib/ s3://awsaerospace.org/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*" --exclude "assets/*" --cache-control "no-cache"
-      - aws s3 sync lib/assets/ s3://awsaerospace.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
-      - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/*"
+      - aws s3 sync lib/ s3://$S3_BUCKET_MAIN/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*" --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib/assets/ s3://$S3_BUCKET_MAIN/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_MAIN --paths "/*"
 
   - name: deploy-auth
     image: public.ecr.aws/aws-cli/aws-cli:latest
@@ -85,6 +85,14 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -94,9 +102,9 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib-auth/ s3://auth.clouddelnorte.org/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
-      - aws s3 sync lib-auth/assets/ s3://auth.clouddelnorte.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
-      - aws cloudfront create-invalidation --distribution-id ECQ44FO9MBTCY --paths "/*"
+      - aws s3 sync lib-auth/ s3://$S3_BUCKET_AUTH/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib-auth/assets/ s3://$S3_BUCKET_AUTH/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_AUTH --paths "/*"
 
   - name: deploy-awsug
     image: public.ecr.aws/aws-cli/aws-cli:latest
@@ -107,6 +115,14 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -116,19 +132,30 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib-awsug/ s3://awsug.clouddelnorte.org/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
-      - aws s3 sync lib-awsug/assets/ s3://awsug.clouddelnorte.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
-      - aws cloudfront create-invalidation --distribution-id E2QLAWFVIT1AR8 --paths "/*"
+      - aws s3 sync lib-awsug/ s3://$S3_BUCKET_AWSUG/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib-awsug/assets/ s3://$S3_BUCKET_AWSUG/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_AWSUG --paths "/*"
+
+  # ─── dev preview deploys (non-main branches) ────────────────────────────────
 
   - name: deploy-dev
     image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [build]
     when:
       - event: [push, manual]
-        branch: dev
+        branch:
+          exclude: main
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -138,27 +165,88 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      # liora/* and liora-embed/* are managed out-of-band on prod (see main deploy
-      # exclude). dev would otherwise wipe them via --delete and headless verifiers
-      # see SPA-fallback HTML for liora-embed.js (text/html MIME, module import fail).
-      # exclude from build sync, then mirror liora assets from prod bucket so dev
-      # serves the same liora-embed bundle.
-      # Two-pass sync: HTML/non-asset gets no-cache, /assets/ gets long immutable.
-      - aws s3 sync lib/ s3://dev.clouddelnorte.org/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*" --exclude "assets/*" --cache-control "no-cache"
-      - aws s3 sync lib/assets/ s3://dev.clouddelnorte.org/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
-      - aws s3 sync s3://awsaerospace.org/liora-embed/ s3://dev.clouddelnorte.org/liora-embed/ --exact-timestamps
-      - aws s3 sync s3://awsaerospace.org/liora/ s3://dev.clouddelnorte.org/liora/ --exact-timestamps
-      - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/*"
+      - aws s3 sync lib/ s3://$S3_BUCKET_DEV/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*" --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib/assets/ s3://$S3_BUCKET_DEV/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws s3 sync s3://$S3_BUCKET_MAIN/liora-embed/ s3://$S3_BUCKET_DEV/liora-embed/ --exact-timestamps
+      - aws s3 sync s3://$S3_BUCKET_MAIN/liora/ s3://$S3_BUCKET_DEV/liora/ --exact-timestamps
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_DEV --paths "/*"
 
-  # --- screenshot pipeline (dev) ---
-  # split into capture + upload: playwright image lacks aws-cli/signing_helper
+  - name: deploy-dev-auth
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [build]
+    when:
+      - event: [push, manual]
+        branch:
+          exclude: main
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sts get-caller-identity
+      # TODO: create S3 bucket + CF distribution for dev-auth.clouddelnorte.org
+      # For now, deploy to $S3_BUCKET_DEV/auth/ prefix as a preview path
+      - aws s3 sync lib-auth/ s3://$S3_BUCKET_DEV/auth-preview/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib-auth/assets/ s3://$S3_BUCKET_DEV/auth-preview/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_DEV --paths "/auth-preview/*"
+
+  - name: deploy-dev-awsug
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [build]
+    when:
+      - event: [push, manual]
+        branch:
+          exclude: main
+    environment:
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_AUTH: auth.clouddelnorte.org
+      S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
+      CF_DIST_AUTH: ECQ44FO9MBTCY
+      CF_DIST_AWSUG: E2QLAWFVIT1AR8
+      CF_DIST_DEV: EEHVTUEQ97V0X
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - aws sts get-caller-identity
+      # TODO: create S3 bucket + CF distribution for dev-awsug.clouddelnorte.org
+      # For now, deploy to $S3_BUCKET_DEV/awsug-preview/ prefix as a preview path
+      - aws s3 sync lib-awsug/ s3://$S3_BUCKET_DEV/awsug-preview/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib-awsug/assets/ s3://$S3_BUCKET_DEV/awsug-preview/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_DEV --paths "/awsug-preview/*"
+
+  # ─── screenshot pipeline (dev) ──────────────────────────────────────────────
+
   - name: screenshot-capture-dev
     image: mcr.microsoft.com/playwright:v1.49.0-jammy
     depends_on: [deploy-dev]
     failure: ignore
     when:
       - event: [push, manual]
-        branch: dev
+        branch:
+          exclude: main
     commands:
       - sleep 60
       - npm ci --no-audit --no-fund
@@ -171,10 +259,13 @@ steps:
     failure: ignore
     when:
       - event: [push, manual]
-        branch: dev
+        branch:
+          exclude: main
     environment:
       AWS_DEFAULT_REGION: us-west-2
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_DEV: dev.clouddelnorte.org
+      CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - mkdir -p /root/.aws
       - |
@@ -184,11 +275,12 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync screenshots/ s3://dev.clouddelnorte.org/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable"
-      - aws s3 sync screenshots/ s3://dev.clouddelnorte.org/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete
-      - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/_ci/screenshots/latest/*"
+      - aws s3 sync screenshots/ s3://$S3_BUCKET_DEV/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable"
+      - aws s3 sync screenshots/ s3://$S3_BUCKET_DEV/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_DEV --paths "/_ci/screenshots/latest/*"
 
-  # --- screenshot pipeline (prod) ---
+  # ─── screenshot pipeline (prod) ─────────────────────────────────────────────
+
   - name: screenshot-capture-prod
     image: mcr.microsoft.com/playwright:v1.49.0-jammy
     depends_on: [deploy]
@@ -212,6 +304,8 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-west-2
       AWS_PROFILE: ci-deploy
+      S3_BUCKET_MAIN: awsaerospace.org
+      CF_DIST_MAIN: ECC3LP1BL2CZS
     commands:
       - mkdir -p /root/.aws
       - |
@@ -221,9 +315,11 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync screenshots/ s3://awsaerospace.org/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable"
-      - aws s3 sync screenshots/ s3://awsaerospace.org/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete
-      - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/_ci/screenshots/latest/*"
+      - aws s3 sync screenshots/ s3://$S3_BUCKET_MAIN/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable"
+      - aws s3 sync screenshots/ s3://$S3_BUCKET_MAIN/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete
+      - aws cloudfront create-invalidation --distribution-id $CF_DIST_MAIN --paths "/_ci/screenshots/latest/*"
+
+  # ─── notifications ──────────────────────────────────────────────────────────
 
   - name: notify-dev
     image: alpine:3.20
@@ -231,7 +327,8 @@ steps:
     failure: ignore
     when:
       - event: [push, manual]
-        branch: dev
+        branch:
+          exclude: main
     commands:
       - apk add --no-cache curl
       - |
@@ -248,7 +345,8 @@ steps:
     failure: ignore
     when:
       - event: [push, manual]
-        branch: dev
+        branch:
+          exclude: main
     environment:
       AWS_DEFAULT_REGION: us-west-2
       AWS_PROFILE: ci-deploy
@@ -302,3 +400,22 @@ steps:
       - |
         MSG=$$(printf '[CDN prod] %s\nlive: https://clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
         aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"
+
+  # ─── qdrant re-indexing (shared-knowledge) ──────────────────────────────────
+
+  - name: qdrant-reindex
+    image: python:3.12-alpine
+    failure: ignore
+    depends_on: [deploy, deploy-auth, deploy-awsug]
+    when:
+      - event: push
+        branch: main
+    environment:
+      QDRANT_URL: http://192.168.4.53:6333
+      OLLAMA_URL: http://192.168.4.53:11434
+      EMBED_MODEL: nomic-embed-text
+      COLLECTION: shared-knowledge
+    commands:
+      - apk add --no-cache git curl
+      - git clone --depth 1 https://github.com/BryanChasko/haunting-kiro-cli.git /tmp/haunting
+      - git diff HEAD~1 --name-only --diff-filter=ACMR | python3 /tmp/haunting/scripts/qdrant-index.py --repo "$CI_REPO_NAME" --commit "$CI_COMMIT_SHA"

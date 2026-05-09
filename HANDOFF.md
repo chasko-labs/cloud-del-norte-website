@@ -1,8 +1,62 @@
 # cloud del norte — handoff plan
 
-**date:** 2026-05-03  
-**branch:** dev → main  
-**last commit:** fix(auth+player+dune): remove wordmark artifact, amber button, transparent player, NE camera
+**date:** 2026-05-08  
+**branch:** main (dev recreated fresh)  
+**last commit:** 7d528ed feat: token refresh, nav cleanup, player overflow, footer, speakeasy redesign, costs tab, home dashboard  
+**deploy:** 3f8c98e5 (empty commit trigger) — woodpecker firing to all three targets
+
+---
+
+## completed 2026-05-08
+
+- token refresh fix shipped (`_shared/auth.ts`, `api.ts`) — all speakeasy buttons functional post-deploy
+- nav cleanup — removed duplicate links
+- css fixes: player overflow, footer bleed, speakeasy sign (purple neon matching logo)
+- liora frame logs errors instead of swallowing silently
+- costs tab added to plans page with lambda backend ready in `infra/`
+- ses domain verification started (account 211125425201, us-west-2)
+- git reconciled — both machines on main head, dev branch fresh
+- nova act working on aibox (recipe in session memory)
+
+---
+
+## priority queue (next session)
+
+### p0 — dkim cname records (unblocks signups)
+
+**blocker:** SSO tokens expired on all three profiles. cannot reach AWS APIs from this machine.  
+**what's needed:**
+1. `aws sso login --profile aerospaceug-admin`
+2. `aws sesv2 get-email-identity --email-identity clouddelnorte.org --region us-west-2 --profile aerospaceug-admin` → extract 3 DKIM CNAME tokens
+3. add the 3 CNAMEs at the **DNS registrar** (not Route53 — the registrar for clouddelnorte.org)
+4. wait for propagation, then verify: `aws sesv2 get-email-identity` shows `DkimAttributes.Status: SUCCESS`
+5. switch cognito user pool email config to `EmailSendingAccount=DEVELOPER` with `SourceArn` pointing to the SES identity
+6. request SES production access (out of sandbox)
+
+**SES identity location:** account 211125425201, region us-west-2, domain clouddelnorte.org  
+**cognito pool:** account 170473530355, us-west-2, pool us-west-2_cyPQF4F3r
+
+### p1 — deploy cost-aggregator lambda + cross-account iam
+
+**files ready:** `infra/lambda/cost-aggregator/index.mjs`, `infra/iam/cost-reader-policy.json`, `infra/eventbridge/daily-cost-rule.json`  
+**steps:**
+1. create lambda function `cost-aggregator` in account 170473530355, us-east-1
+2. create IAM role `cost-reader-cross-account` in accounts 211125425201 and 946179428633 with `infra/iam/cost-reader-policy.json`
+3. create EventBridge rule from `infra/eventbridge/daily-cost-rule.json`
+4. tag bryanchasko.com resources in account 946179428633 with `project=bryanchasko-com` so they're excluded from CDN cost reporting
+
+### p2 — nova act authenticated audit (PR #140)
+
+infra works. needs auth tokens injected so nova can see the logged-in view.  
+options: login-first flow in the recipe, or browser auth injection (cookie/localStorage seeding).
+
+### p3 — dependabot alerts
+
+two branches exist (`flatted-3.4.2`, `picomatch-2.3.2`) but both are stale — created against old package.json structure. will conflict on merge. likely need closing and re-running dependabot, or manual version bumps in current package.json. five total alerts reported.
+
+### p4 — pdf link (resolved)
+
+`https://arrowheadcenter.nmsu.edu/park/Soundstage-DB-RFP.pdf` returns HTTP 200, last-modified 2026-04-30. link is live. no action needed.
 
 ---
 

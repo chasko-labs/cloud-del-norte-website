@@ -13,8 +13,8 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
-import { STREAMS } from "../../lib/streams";
 import { loadPlayerState } from "../../lib/player-persist";
+import { STREAMS } from "../../lib/streams";
 import AwsugLayout from "./_layout";
 import {
 	type AuthState,
