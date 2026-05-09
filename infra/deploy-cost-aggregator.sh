@@ -40,7 +40,7 @@ INLINE_POLICY=$(cat <<'EOF'
   "Statement": [
     {"Effect": "Allow", "Action": ["ce:GetCostAndUsage","ce:GetCostForecast"], "Resource": "*"},
     {"Effect": "Allow", "Action": "sts:AssumeRole", "Resource": ["arn:aws:iam::211125425201:role/cost-reader-cross-account","arn:aws:iam::946179428633:role/cost-reader-cross-account"]},
-    {"Effect": "Allow", "Action": "s3:PutObject", "Resource": "arn:aws:s3:::clouddelnorte.org/data/costs/*"}
+    {"Effect": "Allow", "Action": "s3:PutObject", "Resource": "arn:aws:s3:::awsaerospace.org/data/costs/*"}
   ]
 }
 EOF

@@ -78,7 +78,7 @@ const ACCOUNTS = [
 	},
 ];
 
-const BUCKET = "clouddelnorte.org";
+const BUCKET = "awsaerospace.org";
 const s3 = new S3Client({ region: "us-east-1" });
 const sts = new STSClient({});
 
@@ -165,7 +165,7 @@ export async function handler() {
 	let totalMonthlyCost = 0;
 
 	for (const [svc, cost] of Object.entries(currentCosts)) {
-		if (cost < 0.01) continue;
+		if (cost <= 0) continue;
 		const mapped = SERVICE_MAP[svc] || {
 			name: svc,
 			purpose: "AWS infrastructure",
@@ -183,8 +183,8 @@ export async function handler() {
 		services.push({
 			name: mapped.name,
 			purpose: mapped.purpose,
-			monthlyCost: Math.round(cost * 100) / 100,
-			dailyAverage: Math.round((cost / 30) * 100) / 100,
+			monthlyCost: Math.round(cost * 10000) / 10000,
+			dailyAverage: Math.round((cost / 30) * 10000) / 10000,
 			trend,
 		});
 	}
@@ -196,7 +196,7 @@ export async function handler() {
 			lastUpdated: now.toISOString(),
 			periodStart: currentStart,
 			periodEnd: end,
-			totalMonthlyCost: Math.round(totalMonthlyCost * 100) / 100,
+			totalMonthlyCost: Math.round(totalMonthlyCost * 10000) / 10000,
 			accounts: ACCOUNTS.length,
 		},
 		services,
