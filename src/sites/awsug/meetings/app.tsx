@@ -33,10 +33,9 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 		try {
 			const tokenData = await fetchJitsiToken();
 			setJitsiToken(tokenData);
-			if (win) win.location.href =
-				`https://${tokenData.domain}?jwt=${tokenData.token}`
-			);
-		} catch (err) {
+			if (win)
+				win.location.href = `https://${tokenData.domain}?jwt=${tokenData.token}`;
+
 			if (err instanceof Error && err.message === "banned") {
 				if (win) win.close();
 				setJoinError("Your account does not have access to join calls.");
