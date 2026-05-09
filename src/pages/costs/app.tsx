@@ -156,16 +156,6 @@ function CostsTab() {
 						</Box>
 					</SpaceBetween>
 				</Container>
-				<Container header={<Header variant="h2">why we share this</Header>}>
-					<TextContent>
-						<p>
-							We run on community trust, not NDAs. Showing our costs keeps us
-							honest \u2014 you can see exactly where money goes and hold us to
-							it. If an open-source project asks for your time, you deserve to
-							know what it costs to keep the lights on.
-						</p>
-					</TextContent>
-				</Container>
 			</SpaceBetween>
 		</div>
 	);
