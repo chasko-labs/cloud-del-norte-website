@@ -301,3 +301,93 @@ export async function refreshTokens(): Promise<void> {
 	if (!auth.RefreshToken) auth.RefreshToken = refresh;
 	storeTokens(result);
 }
+
+// ---- Passkey / WebAuthn helpers ----
+
+/** Decode a base64url string to an ArrayBuffer (for WebAuthn challenge/credential IDs). */
+export function base64urlToBuffer(base64url: string): ArrayBuffer {
+	let b = base64url.replace(/-/g, "+").replace(/_/g, "/");
+	const pad = b.length % 4;
+	if (pad) b += "=".repeat(4 - pad);
+	const binary = atob(b);
+	const bytes = new Uint8Array(binary.length);
+	for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+	return bytes.buffer;
+}
+
+/** Encode an ArrayBuffer to base64url. */
+function bufferToBase64url(buffer: ArrayBuffer): string {
+	const bytes = new Uint8Array(buffer);
+	let binary = "";
+	for (const b of bytes) binary += String.fromCharCode(b);
+	return btoa(binary)
+		.replace(/\+/g, "-")
+		.replace(/\//g, "_")
+		.replace(/=+$/, "");
+}
+
+/**
+ * Initiate passkey (WebAuthn) authentication via Cognito USER_AUTH flow.
+ * Returns the session token and credential request options for navigator.credentials.get().
+ */
+export async function initiatePasskeyAuth(
+	email: string,
+): Promise<{ session: string; credentials: CredentialRequestOptions }> {
+	const result = await cognitoPost("InitiateAuth", {
+		AuthFlow: "USER_AUTH",
+		ClientId: CLIENT_ID,
+		AuthParameters: {
+			USERNAME: sanitize(email, "email"),
+			PREFERRED_CHALLENGE: "WEB_AUTHN",
+		},
+	});
+	if (result.ChallengeName !== "WEB_AUTHN") {
+		throw new AuthError(
+			`Expected WEB_AUTHN challenge, got ${result.ChallengeName}`,
+		);
+	}
+	const params = result.ChallengeParameters as Record<string, string>;
+	const credentials = JSON.parse(
+		params.CREDENTIAL_REQUEST_OPTIONS,
+	) as CredentialRequestOptions;
+	return { session: result.Session as string, credentials };
+}
+
+/**
+ * Complete passkey authentication by sending the credential assertion to Cognito.
+ */
+export async function completePasskeyAuth(
+	session: string,
+	assertion: PublicKeyCredential,
+): Promise<void> {
+	const response = assertion.response as AuthenticatorAssertionResponse;
+	const credential = {
+		id: assertion.id,
+		type: assertion.type,
+		rawId: bufferToBase64url(assertion.rawId),
+		response: {
+			authenticatorData: bufferToBase64url(response.authenticatorData),
+			clientDataJSON: bufferToBase64url(response.clientDataJSON),
+			signature: bufferToBase64url(response.signature),
+		},
+		authenticatorAttachment:
+			(assertion as unknown as { authenticatorAttachment?: string })
+				.authenticatorAttachment ?? null,
+	};
+	const result = await cognitoPost("RespondToAuthChallenge", {
+		ClientId: CLIENT_ID,
+		ChallengeName: "WEB_AUTHN",
+		Session: session,
+		ChallengeResponses: {
+			USERNAME: sessionStorage.getItem("cdn.mfaUsername") ?? "",
+			CREDENTIAL: JSON.stringify(credential),
+		},
+	});
+	if (result.ChallengeName) {
+		throw new AuthError(
+			"Additional challenge required after passkey",
+			result.ChallengeName as string,
+		);
+	}
+	storeTokens(result);
+}

@@ -7,7 +7,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
 	root: resolve(__dirname, "src/sites/auth"),
-	publicDir: resolve(__dirname, "public"),
+	publicDir: resolve(__dirname, "src/sites/auth/public"),
 	plugins: [react()],
 	server: {
 		port: 8081,
