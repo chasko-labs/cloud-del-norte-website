@@ -16,7 +16,7 @@ import type React from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import AwsugLayout from "../_layout";
-import { type AuthState, isMember, requireAuth } from "../_shared/auth";
+import { type AuthState, isModerator, requireAuth } from "../_shared/auth";
 
 const API_BASE = "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com";
 
@@ -30,7 +30,7 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 	const [loading, setLoading] = useState(false);
 	const [done, setDone] = useState(false);
 
-	if (!isMember(auth)) {
+	if (!isModerator(auth)) {
 		return (
 			<Container>
 				<Alert type="info">{t("awsug.meetings.createPendingApproval")}</Alert>

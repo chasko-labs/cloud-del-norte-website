@@ -12,11 +12,16 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import AwsugLayout from "../_layout";
 import { fetchJitsiToken, type JitsiTokenResponse } from "../_shared/api";
-import { type AuthState, isMember, requireAuth } from "../_shared/auth";
+import {
+	type AuthState,
+	isMember,
+	isModerator,
+	requireAuth,
+} from "../_shared/auth";
 
 const MEETUP_URL = "https://www.meetup.com/cloud-del-norte/";
 
-function MeetingsContent() {
+function MeetingsContent({ auth }: { auth: AuthState }) {
 	const [jitsiToken, setJitsiToken] = useState<JitsiTokenResponse | null>(null);
 	const [joining, setJoining] = useState(false);
 	const [joinError, setJoinError] = useState("");
@@ -74,14 +79,16 @@ function MeetingsContent() {
 					</SpaceBetween>
 				</SpaceBetween>
 			</Container>
-			<Container header={<Header variant="h2">schedule a session</Header>}>
-				<SpaceBetween size="s">
-					<Box>
-						Organizers can schedule new sessions from the create meeting page.
-					</Box>
-					<Button href="/create-meeting/index.html">create meeting</Button>
-				</SpaceBetween>
-			</Container>
+			{isModerator(auth) && (
+				<Container header={<Header variant="h2">schedule a session</Header>}>
+					<SpaceBetween size="s">
+						<Box>
+							Organizers can schedule new sessions from the create meeting page.
+						</Box>
+						<Button href="/create-meeting/index.html">create meeting</Button>
+					</SpaceBetween>
+				</Container>
+			)}
 		</SpaceBetween>
 	);
 }
@@ -95,7 +102,7 @@ function MeetingsPage({ auth }: { auth: AuthState }) {
 			</Container>
 		);
 	}
-	return <MeetingsContent />;
+	return <MeetingsContent auth={auth} />;
 }
 
 function MeetingsWithLayout() {

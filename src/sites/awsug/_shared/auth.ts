@@ -133,6 +133,10 @@ export function isMember(state: AuthState): boolean {
 	return state.groups.includes("members");
 }
 
+export function isModerator(state: AuthState): boolean {
+	return state.groups.includes("moderators");
+}
+
 export function isBanned(state: AuthState): boolean {
 	return state.groups.includes("banned");
 }
