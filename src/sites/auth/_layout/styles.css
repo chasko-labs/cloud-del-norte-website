@@ -195,7 +195,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 .cdn-auth-card {
 	max-width: 520px;
 	--cdn-glass-blur: 22px;
-	--cdn-glass-bg: rgba(237, 229, 212, 0.58);
+	--cdn-glass-bg: rgba(237, 229, 212, 0.72);
 	border: 1.5px solid rgba(139, 90, 43, 0.35);
 	box-shadow:
 		0 4px 24px rgba(34, 22, 8, 0.1),
@@ -204,7 +204,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 }
 
 .awsui-dark-mode .cdn-auth-card {
-	--cdn-glass-bg: rgba(28, 34, 48, 0.62);
+	--cdn-glass-bg: rgba(28, 34, 48, 0.75);
 	border-color: rgba(144, 96, 240, 0.38);
 	box-shadow:
 		0 4px 32px rgba(0, 0, 0, 0.4),
@@ -786,13 +786,13 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
    ========================================================================== */
 body.cdn-auth-subdomain [data-cdn-dune-canvas="1"],
 body.cdn-auth-subdomain [data-cdn-dune-fallback] {
-	opacity: 0.8;
+	opacity: 0.65;
 	transition: opacity 600ms ease-out;
 }
 
 .awsui-dark-mode body.cdn-auth-subdomain [data-cdn-dune-canvas="1"],
 .awsui-dark-mode body.cdn-auth-subdomain [data-cdn-dune-fallback] {
-	opacity: 0.7;
+	opacity: 0.55;
 }
 
 /* ==========================================================================
