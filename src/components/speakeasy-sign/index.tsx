@@ -2,7 +2,7 @@ import "./styles.css";
 
 export default function SpeakeasySign() {
 	return (
-		<div className="speakeasy-sign" aria-label="speakeasy">
+		<div className="speakeasy-sign" role="region" aria-label="speakeasy">
 			<svg
 				viewBox="0 0 120 24"
 				xmlns="http://www.w3.org/2000/svg"
@@ -10,8 +10,19 @@ export default function SpeakeasySign() {
 				aria-hidden="true"
 			>
 				<defs>
-					<filter id="speakeasy-tube" x="-50%" y="-50%" width="200%" height="200%" colorInterpolationFilters="sRGB">
-						<feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="tight" />
+					<filter
+						id="speakeasy-tube"
+						x="-50%"
+						y="-50%"
+						width="200%"
+						height="200%"
+						colorInterpolationFilters="sRGB"
+					>
+						<feGaussianBlur
+							in="SourceGraphic"
+							stdDeviation="1.5"
+							result="tight"
+						/>
 						<feGaussianBlur in="SourceGraphic" stdDeviation="4" result="wide" />
 						<feMerge>
 							<feMergeNode in="wide" />

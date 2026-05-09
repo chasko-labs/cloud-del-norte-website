@@ -361,8 +361,8 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 		challengeName: result.ChallengeName as string,
 		session: result.Session as string,
 		credentials: JSON.parse(
-			((result.ChallengeParameters as Record<string, string> | undefined)
-				?.CredentialRequestOptions) ?? "{}",
+			(result.ChallengeParameters as Record<string, string> | undefined)
+				?.CredentialRequestOptions ?? "{}",
 		),
 	};
 }

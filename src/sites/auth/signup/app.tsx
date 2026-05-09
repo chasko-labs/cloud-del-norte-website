@@ -37,9 +37,9 @@ function StepDots({ current, total }: { current: number; total: number }) {
 			aria-valuemin={1}
 			aria-valuemax={total}
 		>
-			{Array.from({ length: total }, (_, i) => (
+			{Array.from({ length: total }, (_, i) => `step-dot-${i}`).map((id, i) => (
 				<span
-					key={i}
+					key={id}
 					className={`cdn-auth-stepper__dot ${i === current ? "cdn-auth-stepper__dot--active" : i < current ? "cdn-auth-stepper__dot--done" : ""}`}
 				/>
 			))}

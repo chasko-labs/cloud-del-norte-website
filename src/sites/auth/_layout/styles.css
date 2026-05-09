@@ -992,7 +992,6 @@ body.cdn-auth-subdomain .cdn-player-slot {
 body.cdn-auth-subdomain:not(#\9):not(#\9) [class*="awsui_content-wrapper"] {
 	display: flex;
 	flex-direction: column;
-	min-height: calc(100vh - 48px);
 	min-height: calc(100dvh - 48px);
 }
 

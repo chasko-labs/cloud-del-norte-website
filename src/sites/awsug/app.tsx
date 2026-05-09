@@ -13,8 +13,8 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
-import { STREAMS } from "../../lib/streams";
 import { loadPlayerState } from "../../lib/player-persist";
+import { STREAMS } from "../../lib/streams";
 import AwsugLayout from "./_layout";
 import {
 	type AuthState,
@@ -26,7 +26,9 @@ import {
 function PendingScreen(_: { auth: AuthState }) {
 	const { t } = useTranslation();
 	return (
-		<Container header={<Header variant="h1">{t("awsug.pending.title")}</Header>}>
+		<Container
+			header={<Header variant="h1">{t("awsug.pending.title")}</Header>}
+		>
 			<SpaceBetween size="m">
 				<Alert type="info">{t("awsug.pending.description")}</Alert>
 			</SpaceBetween>
@@ -63,7 +65,9 @@ function firstName(email: string): string {
 }
 
 function MemberHome({ auth }: { auth: AuthState }) {
-	const [meetup, setMeetup] = useState<NextMeetup | null | "loading">("loading");
+	const [meetup, setMeetup] = useState<NextMeetup | null | "loading">(
+		"loading",
+	);
 	const player = loadPlayerState();
 	const visibleStreams = STREAMS.filter((s) => !s.hidden);
 
@@ -120,7 +124,9 @@ function MemberHome({ auth }: { auth: AuthState }) {
 						</SpaceBetween>
 					) : (
 						<SpaceBetween size="s">
-							<Box color="text-body-secondary">No upcoming event scheduled.</Box>
+							<Box color="text-body-secondary">
+								No upcoming event scheduled.
+							</Box>
 							<Link href="https://www.meetup.com/cloud-del-norte/" external>
 								check meetup.com for upcoming events
 							</Link>

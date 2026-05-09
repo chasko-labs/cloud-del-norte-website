@@ -104,16 +104,16 @@ function CostsTab() {
 						<TextContent>
 							<p>
 								Cloud Del Norte runs on AWS. This page shows exactly what we
-								spend \u2014 updated daily, no rounding, no hiding. We\u2019re
-								a community user group, not a company. If you\u2019re curious
-								what it actually costs to keep a community platform online,
-								here it is.
+								spend \u2014 updated daily, no rounding, no hiding. We\u2019re a
+								community user group, not a company. If you\u2019re curious what
+								it actually costs to keep a community platform online, here it
+								is.
 							</p>
 						</TextContent>
 						{stale && (
 							<Box variant="p" color="text-status-warning">
-								Heads up \u2014 this data is a couple days old. The daily
-								update may have hit a snag.
+								Heads up \u2014 this data is a couple days old. The daily update
+								may have hit a snag.
 							</Box>
 						)}
 						<div className="cdn-plans-cost-table">
@@ -160,9 +160,9 @@ function CostsTab() {
 					<TextContent>
 						<p>
 							We run on community trust, not NDAs. Showing our costs keeps us
-							honest \u2014 you can see exactly where money goes and hold us
-							to it. If an open-source project asks for your time, you deserve
-							to know what it costs to keep the lights on.
+							honest \u2014 you can see exactly where money goes and hold us to
+							it. If an open-source project asks for your time, you deserve to
+							know what it costs to keep the lights on.
 						</p>
 					</TextContent>
 				</Container>
@@ -195,9 +195,7 @@ function CostsContent() {
 }
 
 function BreadcrumbsContent() {
-	return (
-		<Breadcrumbs active={{ text: "costs", href: "/costs/index.html" }} />
-	);
+	return <Breadcrumbs active={{ text: "costs", href: "/costs/index.html" }} />;
 }
 
 export default function App() {
