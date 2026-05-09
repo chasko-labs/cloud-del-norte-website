@@ -38,15 +38,13 @@ function CostsTab() {
 			lastUpdated: string;
 			periodStart: string;
 			periodEnd: string;
-			totalMonthlyCost: number;
+			grandTotal: number;
 			accounts: number;
 		};
 		services: {
 			name: string;
 			purpose: string;
-			monthlyCost: number;
-			dailyAverage: number;
-			trend: string;
+			totalCost: number;
 		}[];
 	} | null>(null);
 	const [error, setError] = useState("");
@@ -93,8 +91,8 @@ function CostsTab() {
 					header={
 						<Header
 							variant="h2"
-							description="updated daily from 3 AWS accounts"
-							counter={`$${data.meta.totalMonthlyCost.toFixed(2)}/mo`}
+							description="6-month view from 3 AWS accounts"
+							counter={`$${data.meta.grandTotal.toFixed(2)}/mo`}
 						>
 							what it costs to run this
 						</Header>
@@ -120,32 +118,24 @@ function CostsTab() {
 							<div className="cdn-plans-cost-row cdn-plans-cost-header">
 								<span>what</span>
 								<span>what it does for you</span>
-								<span>last 30 days</span>
-								<span>per day</span>
-								<span>direction</span>
+								<span>6-month total</span>
 							</div>
 							{data.services
-								.sort((a, b) => b.monthlyCost - a.monthlyCost)
+								.sort((a, b) => b.totalCost - a.totalCost)
 								.map((s) => (
 									<div key={s.name} className="cdn-plans-cost-row">
 										<span>{s.name}</span>
 										<span>{s.purpose}</span>
-										<span>${s.monthlyCost.toFixed(2)}</span>
-										<span>${s.dailyAverage.toFixed(2)}</span>
-										<span>
-											{s.trend === "up"
-												? "\u2191"
-												: s.trend === "down"
-													? "\u2193"
-													: "\u2192"}
-										</span>
+										<span>${s.totalCost.toFixed(2)}</span>
+										<span>${s.purpose}</span>
+										<span>{s.purpose}</span>
 									</div>
 								))}
 							<div className="cdn-plans-cost-row cdn-plans-cost-total">
 								<span>total</span>
 								<span />
-								<span>${data.meta.totalMonthlyCost.toFixed(2)}</span>
-								<span>${(data.meta.totalMonthlyCost / 30).toFixed(2)}</span>
+								<span>${data.meta.grandTotal.toFixed(2)}</span>
+								<span>${(data.meta.grandTotal / 6).toFixed(2)}</span>
 								<span />
 							</div>
 						</div>
