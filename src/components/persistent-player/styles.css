@@ -232,6 +232,16 @@ a.cdn-pp__label--donate {
 			transparent
 		);
 	transition: border-bottom-color 0.2s ease;
+	max-width: 100%;
+	min-width: 0;
+	overflow: hidden;
+}
+
+.cdn-pp__label-text {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	min-width: 0;
 }
 
 a.cdn-pp__label--donate:hover,
@@ -256,6 +266,8 @@ a.cdn-pp__label--donate:focus-visible {
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
 	opacity: 0.75;
+	flex-shrink: 0;
+	white-space: nowrap;
 }
 
 /* sub-row — track on line 2, geo on line 3; column on all widths */

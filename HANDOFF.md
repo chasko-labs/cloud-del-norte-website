@@ -65,6 +65,8 @@ two branches exist (`flatted-3.4.2`, `picomatch-2.3.2`) but both are stale — c
 > fix these before any public demo. the epilepsy foundation guideline is <3 Hz for flashing content.
 > wcag 2.3.1 (general flash threshold) applies at 3 flashes per second over any 10-degree visual field.
 
+**2026-05-10 audit status:**
+
 ### 1. `liora-tube-off` animation — confirmed violation
 
 **file:** `src/components/liora-panel/styles.css:1607`  
@@ -73,16 +75,22 @@ two branches exist (`flatted-3.4.2`, `picomatch-2.3.2`) but both are stale — c
 **fix:** extend total duration to ≥3s so each cycle is ≥333ms. reduce number of flash cycles from 5 to 2 max.  
 suggested rewrite: 0% bright → 40% dark → 70% dim → 100% black. remove intermediate peaks at 22%, 40%, 62%.
 
+✅ LANDED in d3235841 — rewritten to 3.5s duration, 2 flash cycles (bright→dark at 12-28%, second at 52-70%). Max rate ~1.8 Hz.
+
 ### 2. `liora-tube-off` color — amber on charcoal (no red-on-blue, but verify)
 
 check that no bright frames combine dominant red + bright blue simultaneously (WCAG 2.3.1 pair threshold 1cd/m²).  
 current keyframes use `saturate(0)` — grayscale — so no color pair violation. safe.
+
+✅ AUDITED — no violation found. No dominant red (#cc0000+) or bright blue (#0000ff+) anywhere in src/. liora-tube-off uses saturate(0) (grayscale). Station palette transitions use smooth CSS custom property transitions, no simultaneous red+blue strobes on play/pause/skip.
 
 ### 3. dune sparkle rate at `SPARKLE_SPEED_PLAYING`
 
 **file:** `src/dune/white-sands-features.ts:88-90`  
 `SPARKLE_SPEED_PLAYING = 1.5` — sparkles at ~3 Hz when music plays. borderline.  
 **fix:** drop to 1.0 (≈2 Hz). the visual difference is minimal; the safety margin is not.
+
+✅ LANDED in d3235841 — SPARKLE_SPEED_PLAYING = 1.0, MIGRATION_SPEED_MULTIPLIER = 1.5. Both at spec.
 
 ### 4. dancing animations / strobe on station start/stop/skip
 
@@ -91,6 +99,8 @@ user reports: "dancing animations = random fast strobe"
 `name-flash` at 0.65s is a one-shot forward-fill — not repeating, likely safe  
 `shatter-flash` at 0.95s is a one-shot — safe  
 **action:** audit for any `.cdn-stream-playing` body class transitions that fire repeating flicker effects. strobe must only fire once on start/stop/skip, never loop.
+
+✅ AUDITED — no violation found. name-flash (0.65s one-shot forwards) and shatter-flash (0.95s one-shot forwards) are safe. No cdn-pp__boom class exists. Beat-bank LED cycling fires every 4th beat (~1.3-2s/bank at typical BPM) via 0.15s opacity transition — not a flash. cdn-pp-pulse (2s infinite) is a subtle box-shadow breathe. No infinite strobe animations fire on station start/stop/skip.
 
 ---
 
