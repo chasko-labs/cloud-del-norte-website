@@ -164,7 +164,7 @@ function frame(ts: number): void {
 	const root = document.documentElement.style;
 	root.setProperty("--cdn-bass", bass.toFixed(3));
 	root.setProperty("--cdn-mid", mid.toFixed(3));
-	root.setProperty("--cdn-treble", treble.toFixed(3));
+	root.setProperty("--cdn-treble", (treble * 0.4).toFixed(3));
 	root.setProperty("--cdn-centroid", centroid.toFixed(3));
 	root.setProperty("--cdn-flux", flux.toFixed(3));
 	if (beatFired) {

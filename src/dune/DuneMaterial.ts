@@ -417,8 +417,8 @@ void main(void) {
   // pre-v0.0.0082 behaviour). Playing path: 4-color palette mix, mid picks
   // warm-vs-cool axis, treble picks within the axis.
   vec3 sparkleSilent = mix(vec3(1.0, 0.96, 0.86), vec3(0.84, 0.78, 0.96), 0.5);
-  vec3 warmMix = mix(sparkleColAmber, sparkleColAwsOrange, clamp(trebleLevel * 1.5, 0.0, 1.0));
-  vec3 coolMix = mix(sparkleColViolet, sparkleColLavender, clamp(trebleLevel * 1.5, 0.0, 1.0));
+  vec3 warmMix = mix(sparkleColAmber, sparkleColAwsOrange, clamp(trebleLevel * 0.75, 0.0, 1.0));
+  vec3 coolMix = mix(sparkleColViolet, sparkleColLavender, clamp(trebleLevel * 0.75, 0.0, 1.0));
   vec3 sparklePlaying = mix(warmMix, coolMix, clamp(midLevel * 1.5, 0.0, 1.0));
   vec3 sparkleTint = mix(sparkleSilent, sparklePlaying, streamPlaying);
 
