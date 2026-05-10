@@ -2026,7 +2026,9 @@ body.cdn-stream-playing.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 		0 0 3px #fff,
 		0 0 9px rgba(225, 185, 255, 0.95),
 		0 0 20px rgba(190, 130, 255, 0.7),
-		0 0 40px rgba(165, 105, 255, 0.4);
+		0 0 40px rgba(165, 105, 255, 0.4),
+		1px 0 0 rgba(255, 100, 100, 0.3),
+		-1px 0 0 rgba(100, 100, 255, 0.3);
 	line-height: 1.25;
 }
 
