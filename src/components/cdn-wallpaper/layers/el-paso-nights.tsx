@@ -67,5 +67,32 @@ export function ElPasoNightsLayer(): ReactElement {
 		};
 	}, []);
 
-	return <FranklinOverlay />;
+	return (
+		<>
+			<div
+				aria-hidden="true"
+				style={{
+					position: "fixed",
+					inset: 0,
+					zIndex: -3,
+					backgroundColor: "#0a0c14",
+					backgroundImage: [
+						"radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.8), transparent)",
+						"radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.6), transparent)",
+						"radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.7), transparent)",
+						"radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.5), transparent)",
+						"radial-gradient(1px 1px at 85% 35%, rgba(255,255,255,0.9), transparent)",
+						"radial-gradient(1px 1px at 15% 90%, rgba(255,255,255,0.6), transparent)",
+						"radial-gradient(1px 1px at 60% 45%, rgba(255,255,255,0.7), transparent)",
+						"radial-gradient(1px 1px at 90% 15%, rgba(255,255,255,0.5), transparent)",
+						"radial-gradient(1.5px 1.5px at 25% 40%, rgba(255,255,255,0.9), transparent)",
+						"radial-gradient(1.5px 1.5px at 75% 55%, rgba(255,255,255,0.8), transparent)",
+						"radial-gradient(1px 1px at 40% 75%, rgba(255,255,255,0.6), transparent)",
+						"radial-gradient(1px 1px at 5% 50%, rgba(255,255,255,0.7), transparent)",
+					].join(", "),
+				}}
+			/>
+			<FranklinOverlay />
+		</>
+	);
 }

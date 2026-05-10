@@ -214,6 +214,14 @@
 	--color-background-table-header-hdjxos: #ede8db; /* warm amber — matches container header */
 }
 
+/* Global white→cream safety net: any Cloudscape component that uses
+   --color-background-container-content (their default white surface)
+   gets cream instead. This catches components we haven't individually overridden. */
+:root:not(.awsui-dark-mode) {
+	--color-background-container-content-6b9ypa: #ede5d4;
+	--color-background-layout-main-6b9ypa: #ede5d4;
+}
+
 /* --------------------------------------------------------------------------
    Dark mode overrides  (Cloudscape adds .awsui-dark-mode to <html>)
    -------------------------------------------------------------------------- */

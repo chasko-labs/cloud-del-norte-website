@@ -465,7 +465,7 @@
    -------------------------------------------------------------------------- */
 @media print {
 	.cdn-footer {
-		background: #fff;
+		background: #ede5d4;
 		border-top: 1px solid #ccc;
 		box-shadow: none;
 	}
