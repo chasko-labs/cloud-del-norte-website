@@ -4,6 +4,7 @@
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
+import { LazyEmbed } from "../../../components/lazy-embed";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 export default function AndresYoutubeLive({
@@ -36,7 +37,7 @@ export default function AndresYoutubeLive({
 				<div className="feed-carousel">
 					<div className="feed-carousel__viewport">
 						<div className="feed-carousel__frame">
-							<iframe
+							<LazyEmbed
 								src={`https://www.youtube.com/embed/${videoId}?autoplay=0`}
 								title={t("feedPage.andresYoutubeLiveTitle")}
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"

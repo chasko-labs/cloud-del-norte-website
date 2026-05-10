@@ -2,6 +2,7 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import { useState } from "react";
+import { LazyEmbed } from "../../../components/lazy-embed";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 interface Props {
@@ -51,8 +52,7 @@ export default function YouTubeChannelCarousel({
 			<div className="feed-carousel">
 				<div className="feed-carousel__viewport">
 					<div className="feed-carousel__frame">
-						<iframe
-							loading="lazy"
+						<LazyEmbed
 							src={`https://www.youtube.com/embed/${embedId}`}
 							title={`${name} ${current + 1} / ${videoIds.length}`}
 							allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
