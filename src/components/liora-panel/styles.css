@@ -5,7 +5,7 @@
    replace with @font-face + woff2 in /public/fonts/ before next prod cut.
    - JetBrains Mono: console + credits, replaces retro-pixel VT323 (off-brand)
    - Caveat: sticky note handwriting (unchanged) */
-@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap");
 
 /* ── CRT phosphor terminal — glassmorphism bezel + green phosphor screen ────
    outer bezel: cdn-card glassmorphism variant (liora-bezel)
@@ -1789,9 +1789,7 @@ body.cdn-stream-playing.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 .liora-credits-title {
-	font-family:
-		"Impact", "Haettenschweiler", "Arial Narrow Bold",
-		"Franklin Gothic Bold Condensed", sans-serif;
+	font-family: "Alfa Slab One", "Cooper Black", "Rockwell Extra Bold", serif;
 	font-style: italic;
 	font-weight: 900;
 	font-size: clamp(32px, 20cqi, 56px);
