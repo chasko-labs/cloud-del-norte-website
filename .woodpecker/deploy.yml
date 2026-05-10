@@ -11,7 +11,7 @@
 # mounts come from woodpecker-agent env WOODPECKER_BACKEND_DOCKER_VOLUMES
 # (~/code/heraldstack/heraldstack-infra/docker-compose.yml)
 
-# TODO: S3_BUCKET_MAIN is 'awsaerospace.org' — legacy name from before the
+# S3_BUCKET_MAIN migrated from 'awsaerospace.org' to 'clouddelnorte.org' on 2026-05-10
 # clouddelnorte.org rebrand. Renaming requires S3 bucket recreation + DNS/CF
 # origin update. Track in a separate issue.
 
@@ -62,7 +62,7 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
-      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_MAIN: clouddelnorte.org
       S3_BUCKET_AUTH: auth.clouddelnorte.org
       S3_BUCKET_AWSUG: awsug.clouddelnorte.org
       S3_BUCKET_DEV: dev.clouddelnorte.org
@@ -92,7 +92,7 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
-      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_MAIN: clouddelnorte.org
       S3_BUCKET_AUTH: auth.clouddelnorte.org
       S3_BUCKET_AWSUG: awsug.clouddelnorte.org
       S3_BUCKET_DEV: dev.clouddelnorte.org
@@ -122,7 +122,7 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
-      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_MAIN: clouddelnorte.org
       S3_BUCKET_AUTH: auth.clouddelnorte.org
       S3_BUCKET_AWSUG: awsug.clouddelnorte.org
       S3_BUCKET_DEV: dev.clouddelnorte.org
@@ -155,7 +155,7 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
-      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_MAIN: clouddelnorte.org
       S3_BUCKET_AUTH: auth.clouddelnorte.org
       S3_BUCKET_AWSUG: awsug.clouddelnorte.org
       S3_BUCKET_DEV: dev.clouddelnorte.org
@@ -188,7 +188,7 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
-      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_MAIN: clouddelnorte.org
       S3_BUCKET_AUTH: auth.clouddelnorte.org
       S3_BUCKET_AWSUG: awsug.clouddelnorte.org
       S3_BUCKET_DEV: dev.clouddelnorte.org
@@ -221,7 +221,7 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-east-1
       AWS_PROFILE: ci-deploy
-      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_MAIN: clouddelnorte.org
       S3_BUCKET_AUTH: auth.clouddelnorte.org
       S3_BUCKET_AWSUG: awsug.clouddelnorte.org
       S3_BUCKET_DEV: dev.clouddelnorte.org
@@ -311,7 +311,7 @@ steps:
     environment:
       AWS_DEFAULT_REGION: us-west-2
       AWS_PROFILE: ci-deploy
-      S3_BUCKET_MAIN: awsaerospace.org
+      S3_BUCKET_MAIN: clouddelnorte.org
       CF_DIST_MAIN: ECC3LP1BL2CZS
     commands:
       - mkdir -p /root/.aws

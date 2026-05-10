@@ -77,7 +77,7 @@ const ACCOUNTS = [
 	},
 ];
 
-const BUCKET = "awsaerospace.org";
+const BUCKET = "clouddelnorte.org";
 const s3 = new S3Client({ region: "us-east-1" });
 const sts = new STSClient({});
 
