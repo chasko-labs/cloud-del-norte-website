@@ -72,11 +72,15 @@ export default function Navigation() {
 					text: t("navigation.plansPage"),
 					href: "/plans/index.html",
 				},
-				{
-					type: "link",
-					text: t("navigation.costs"),
-					href: "/costs/index.html",
-				},
+				...(import.meta.env.DEV
+					? [
+							{
+								type: "link" as const,
+								text: t("navigation.costs"),
+								href: "/costs/index.html",
+							},
+						]
+					: []),
 				{
 					type: "link",
 					text: t("navigation.ugRoadmap"),
