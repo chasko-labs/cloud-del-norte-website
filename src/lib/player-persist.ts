@@ -7,6 +7,10 @@ export interface PersistedPlayerState {
 	stationLabel: string;
 	/** absent for stations with no now-playing endpoint */
 	metaUrl?: string;
+	/** last known playback position for podcast episodes (seconds) */
+	podcastCurrentTime?: number;
+	/** enclosure URL of the episode whose position is saved */
+	podcastEpisodeUrl?: string;
 }
 
 const KEY = "cdn:player:v1";
@@ -20,15 +24,29 @@ export interface PodcastResumeState {
 
 export function savePlayerState(state: PersistedPlayerState): void {
 	try {
-		sessionStorage.setItem(KEY, JSON.stringify(state));
+		localStorage.setItem(KEY, JSON.stringify(state));
 	} catch {
-		// sessionStorage unavailable — non-fatal
+		// localStorage unavailable — non-fatal
 	}
 }
 
 export function clearPlayerState(): void {
 	try {
-		sessionStorage.removeItem(KEY);
+		localStorage.removeItem(KEY);
+	} catch {
+		// non-fatal
+	}
+}
+
+/** Clears only the podcast resume fields, preserving station selection. */
+export function clearPodcastPosition(): void {
+	try {
+		const raw = localStorage.getItem(KEY);
+		if (!raw) return;
+		const state = JSON.parse(raw) as PersistedPlayerState;
+		delete state.podcastCurrentTime;
+		delete state.podcastEpisodeUrl;
+		localStorage.setItem(KEY, JSON.stringify(state));
 	} catch {
 		// non-fatal
 	}
@@ -36,7 +54,7 @@ export function clearPlayerState(): void {
 
 export function loadPlayerState(): PersistedPlayerState | null {
 	try {
-		const raw = sessionStorage.getItem(KEY);
+		const raw = localStorage.getItem(KEY);
 		if (!raw) return null;
 		return JSON.parse(raw) as PersistedPlayerState;
 	} catch {

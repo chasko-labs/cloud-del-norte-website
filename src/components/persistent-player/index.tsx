@@ -6,12 +6,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { setMediaSession } from "../../lib/media-session";
 import {
-	clearPodcastResume,
+	clearPodcastPosition,
 	loadPlayerState,
-	loadPodcastResume,
 	type PersistedPlayerState,
 	savePlayerState,
-	savePodcastResume,
 } from "../../lib/player-persist";
 import { formatLocation, hexToRgbTuple } from "../../lib/streams";
 import { STREAMS } from "../../lib/streams-order";
@@ -282,41 +280,52 @@ function PersistentPlayerBar({
 		};
 	}, [isPodcast]);
 
-	// podcast resume — save position every 5s, restore on loadedmetadata
+	// podcast resume — save position every 5s (throttled via ref), restore on loadedmetadata
+	const lastSaveRef = useRef<number>(0);
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio || !isPodcast) return;
-		let lastSave = 0;
 		const onTimeUpdate = () => {
 			const now = Date.now();
-			if (now - lastSave < 5000) return;
-			lastSave = now;
+			if (now - lastSaveRef.current < 5000) return;
+			lastSaveRef.current = now;
 			const url = rssAudioUrl ?? state.stationUrl;
-			savePodcastResume({
+			savePlayerState({
 				stationKey: state.stationKey,
-				episodeUrl: url,
-				currentTime: audio.currentTime,
+				stationUrl: state.stationUrl,
+				stationLabel: state.stationLabel,
+				metaUrl: state.metaUrl,
+				podcastCurrentTime: audio.currentTime,
+				podcastEpisodeUrl: url,
 			});
 		};
 		const onLoaded = () => {
-			const saved = loadPodcastResume();
+			const saved = loadPlayerState();
 			if (!saved) return;
 			const url = rssAudioUrl ?? state.stationUrl;
 			if (
-				saved.stationKey === state.stationKey &&
-				saved.episodeUrl === url &&
-				saved.currentTime > 0
+				saved.podcastEpisodeUrl === url &&
+				(saved.podcastCurrentTime ?? 0) > 0
 			) {
-				audio.currentTime = saved.currentTime;
+				audio.currentTime = saved.podcastCurrentTime as number;
 			}
 		};
 		audio.addEventListener("timeupdate", onTimeUpdate);
 		audio.addEventListener("loadedmetadata", onLoaded);
+		audio.addEventListener("ended", clearPodcastPosition);
 		return () => {
 			audio.removeEventListener("timeupdate", onTimeUpdate);
 			audio.removeEventListener("loadedmetadata", onLoaded);
+			audio.removeEventListener("ended", clearPodcastPosition);
 		};
-	}, [isPodcast, rssAudioUrl, state.stationKey, state.stationUrl]);
+	}, [
+		isPodcast,
+		rssAudioUrl,
+		state.stationKey,
+		state.stationUrl,
+		state.stationLabel,
+		state.metaUrl,
+	]);
 
 	// manual retry — user-triggered escape hatch when auto-retry didn't recover.
 	// Resets retry counter and restores primary URL before re-attempting
@@ -781,7 +790,7 @@ export default function PersistentPlayer() {
 	// Both radio and podcast follow the same rule.
 	const handleSkipStation = useCallback((direction: 1 | -1) => {
 		const scrollY = window.scrollY;
-		clearPodcastResume();
+		clearPodcastPosition();
 		setState((current) => {
 			if (!current) return current;
 			const idx = STREAMS.findIndex((s) => s.key === current.stationKey);
