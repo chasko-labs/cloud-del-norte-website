@@ -165,3 +165,29 @@
 		filter: initial;
 	}
 }
+
+.franklin-overlay__tower {
+	color: rgba(180, 180, 200, 0.7);
+}
+
+.franklin-overlay__beacon {
+	fill: #ff3030;
+	animation: franklin-beacon-pulse 2s ease-in-out infinite;
+}
+
+@keyframes franklin-beacon-pulse {
+	0%,
+	100% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.franklin-overlay__beacon {
+		animation: none;
+		opacity: 0.5;
+	}
+}

@@ -73,6 +73,47 @@ export function FranklinOverlay(): ReactElement | null {
 				    logo-star geometry un-mirrored. */}
 				<g transform={`scale(-1, 1) translate(-${VIEWBOX_WIDTH}, 0)`}>
 					<path d={SILHOUETTE_PATH} className="franklin-overlay__silhouette" />
+					{/* Radio tower — north-franklin peak: authored x=240, svgY=5 */}
+					<g className="franklin-overlay__tower">
+						<line
+							x1={240}
+							y1={5}
+							x2={240}
+							y2={-15}
+							stroke="currentColor"
+							strokeWidth="1.2"
+						/>
+						<line
+							x1={236}
+							y1={5 - 20 * 0.3}
+							x2={244}
+							y2={5 - 20 * 0.3}
+							stroke="currentColor"
+							strokeWidth="0.8"
+						/>
+						<line
+							x1={237}
+							y1={5 - 20 * 0.6}
+							x2={243}
+							y2={5 - 20 * 0.6}
+							stroke="currentColor"
+							strokeWidth="0.8"
+						/>
+						<line
+							x1={238}
+							y1={5 - 20 * 0.85}
+							x2={242}
+							y2={5 - 20 * 0.85}
+							stroke="currentColor"
+							strokeWidth="0.8"
+						/>
+						<circle
+							cx={240}
+							cy={-15}
+							r="2"
+							className="franklin-overlay__beacon"
+						/>
+					</g>
 				</g>
 				{/* El Paso Star — humble lightbulb landmark (v0.0.0104). Two layers:
 				      • star-body  → slim violet 5-arm star at opacity 0.55 (no
