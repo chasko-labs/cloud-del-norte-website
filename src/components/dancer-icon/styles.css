@@ -1,0 +1,18 @@
+.cdn-dancer-icon {
+	color: var(--cdn-violet, #9060f0);
+}
+
+.cdn-dancer-icon--sway {
+	animation: cdn-dancer-sway 3s ease-in-out infinite;
+	transform-origin: center bottom;
+}
+
+@keyframes cdn-dancer-sway {
+	0%,
+	100% {
+		transform: rotate(-3deg);
+	}
+	50% {
+		transform: rotate(3deg);
+	}
+}
