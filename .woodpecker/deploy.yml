@@ -37,11 +37,18 @@ steps:
     commands:
       - npm ci --no-audit --no-fund
 
-  - name: build
+  - name: typecheck
     image: node:22-slim
     depends_on: [install]
+    failure: fail
     commands:
       - node scripts/fetch-releases.mjs
+      - npx tsc --noEmit
+
+  - name: build
+    image: node:22-slim
+    depends_on: [typecheck]
+    commands:
       - npm run build
 
   # ─── production deploys (main branch) ───────────────────────────────────────
