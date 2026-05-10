@@ -4,6 +4,7 @@
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { DancerIcon } from "../dancer-icon";
+import { PodcastIcon } from "../podcast-icon";
 import { useTranslation } from "../../hooks/useTranslation";
 import { setMediaSession } from "../../lib/media-session";
 import {
@@ -675,6 +676,7 @@ function PersistentPlayerBar({
 				</span>
 			)}
 			{playing && streamDef?.type === "radio" && <DancerIcon animate />}
+			{playing && streamDef?.type === "podcast" && <PodcastIcon />}
 			{/* type icon — 💃🏾 radio / 🗣️ podcast — sits left of play button */}
 			<span className="cdn-pp__icon" aria-hidden="true">
 				{streamDef?.type === "podcast" ? "🗣️" : "💃🏾"}
