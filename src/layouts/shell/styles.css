@@ -429,7 +429,14 @@ main[class*="awsui_layout"] {
 main[class*="awsui_layout"] > [class*="navigation-container"],
 main[class*="awsui_layout"] > [class*="tools-container"],
 main[class*="awsui_layout"] > [class*="content-container"] {
-	block-size: auto;
+	block-size: auto !important;
+}
+
+/* Side panels: clear persistent player (~72px) + footer (~48px) so panels
+   don't bleed under or leave dead space above the footer. */
+main[class*="awsui_layout"] > [class*="navigation-container"],
+main[class*="awsui_layout"] > [class*="tools-container"] {
+	padding-bottom: 120px;
 }
 
 /* Mobile + small viewport: tools panel needs explicit overflow + touch-action so the
