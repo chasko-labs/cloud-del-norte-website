@@ -1322,7 +1322,10 @@
 		color-mix(in srgb, currentColor 60%, #1a0c00) 55%,
 		rgba(2, 1, 0, 0.9) 100%
 	);
-	animation: led-blink 2.4s linear infinite;
+	opacity: 0.3;
+	transition:
+		opacity 0.15s ease-out,
+		filter 0.15s ease-out;
 }
 
 /* glass refraction highlight — small white reflection spot on the bulb envelope */
@@ -1453,35 +1456,26 @@
 		0 0 6px rgba(255, 153, 0, 0.22);
 }
 
-/* ── Beat-driven LED banks — when stream is playing, override continuous
-   animation with beat-synced firing. 4 banks of 3 LEDs each, cycling every
-   4th beat. Transition gives the incandescent warm-up/cool-down feel. */
-body.cdn-stream-playing .liora-led {
-	animation: none;
-	opacity: 0.2;
-	filter: brightness(0.32) saturate(0.6) hue-rotate(15deg);
-	transition:
-		opacity 0.15s ease-out,
-		filter 0.15s ease-out;
-}
+/* ── Beat-driven LED banks — 4 banks of 3 LEDs each, cycling every 4th beat.
+   Fires unconditionally (no cdn-stream-playing gate). */
 
 /* Bank 0: LEDs 1,5,9 */
-body.cdn-stream-playing.cdn-beat-bank-0 .liora-led:nth-child(4n + 1) {
+body.cdn-beat-bank-0 .liora-led:nth-child(4n + 1) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
 /* Bank 1: LEDs 2,6,10 */
-body.cdn-stream-playing.cdn-beat-bank-1 .liora-led:nth-child(4n + 2) {
+body.cdn-beat-bank-1 .liora-led:nth-child(4n + 2) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
 /* Bank 2: LEDs 3,7,11 */
-body.cdn-stream-playing.cdn-beat-bank-2 .liora-led:nth-child(4n + 3) {
+body.cdn-beat-bank-2 .liora-led:nth-child(4n + 3) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
 /* Bank 3: LEDs 4,8,12 */
-body.cdn-stream-playing.cdn-beat-bank-3 .liora-led:nth-child(4n) {
+body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
