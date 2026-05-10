@@ -80,13 +80,9 @@ const VBROWNBAG_IDS = [
 	"HWVMFTPlkNY",
 ];
 const ZACSSHOW_IDS = [
-	"taSmwcqdkQk",
-	"dUMsFQ8y3gM",
-	"z_NbVtbgBJw",
-	"5kHpeVvO7cY",
-	"avjX3QrYkls",
-	"7_wkWQ9rB5I",
-	"6u25GckPhLU",
+	// @thezacsshowtalkingaws — verified 2026-05-10 per issue #143. Previous 7 IDs were mislabeled (showed bytebytego content).
+	"12uEpU3FG-I",
+	"iRVGyQ9LA8Q",
 ];
 
 function shuffled<T>(arr: T[]): T[] {
