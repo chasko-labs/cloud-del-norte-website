@@ -70,12 +70,18 @@ const COPY = {
 		unreachableHeader: "Unable to connect",
 		unreachableBody: "The meeting room may be unavailable.",
 		retryButton: "Retry",
+		permBlockedHeader: "Camera or microphone access blocked",
+		permBlockedBody:
+			"Click the lock icon in your browser's address bar to allow access, then refresh.",
 	},
 	"es-MX": {
 		coldStart: "La sala se está iniciando, por favor espere…",
 		unreachableHeader: "No se puede conectar",
 		unreachableBody: "La sala de reuniones puede no estar disponible.",
 		retryButton: "Reintentar",
+		permBlockedHeader: "Acceso a cámara o micrófono bloqueado",
+		permBlockedBody:
+			"Haga clic en el icono de candado en la barra de direcciones para permitir acceso, luego actualice.",
 	},
 } as const;
 
@@ -88,9 +94,26 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 	const [status, setStatus] = useState<Status>("loading");
 	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [retryKey, setRetryKey] = useState(0);
+	const [permBlocked, setPermBlocked] = useState(false);
 
 	const locale = getLocale();
 	const t = COPY[locale];
+
+	// FP-012: detect denied camera/mic permissions on mount; graceful no-op if API unavailable
+	useEffect(() => {
+		if (!navigator.permissions) return;
+		Promise.all([
+			navigator.permissions.query({ name: "camera" as PermissionName }),
+			navigator.permissions.query({ name: "microphone" as PermissionName }),
+		])
+			.then(([cam, mic]) => {
+				if (cam.state === "denied" || mic.state === "denied")
+					setPermBlocked(true);
+			})
+			.catch(() => {
+				// Safari may throw — do nothing
+			});
+	}, []);
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: retryKey is an intentional re-run trigger
 	useEffect(() => {
@@ -229,6 +252,15 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 						<Box variant="p">requesting access token…</Box>
 					</SpaceBetween>
 				</Box>
+			)}
+			{permBlocked && (
+				<Alert
+					type="warning"
+					statusIconAriaLabel="Warning"
+					header={t.permBlockedHeader}
+				>
+					{t.permBlockedBody}
+				</Alert>
 			)}
 			<div ref={hostRef} data-testid="jitsi-iframe-host" />
 		</Box>

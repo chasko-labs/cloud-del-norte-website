@@ -179,7 +179,11 @@
 			"coldStart": "La sala se está iniciando, por favor espere…",
 			"unreachableHeader": "No se puede conectar",
 			"unreachableBody": "La sala de reuniones puede no estar disponible.",
-			"retryButton": "Reintentar"
+			"retryButton": "Reintentar",
+			"permissionBlocked": {
+				"header": "Acceso a cámara o micrófono bloqueado",
+				"body": "Haga clic en el icono de candado en la barra de direcciones para permitir acceso, luego actualice."
+			}
 		},
 		"breadcrumb": "Juntas",
 		"header": "juntas",

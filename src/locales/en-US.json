@@ -179,7 +179,11 @@
 			"coldStart": "Meeting room is starting up, please wait…",
 			"unreachableHeader": "Unable to connect",
 			"unreachableBody": "The meeting room may be unavailable.",
-			"retryButton": "Retry"
+			"retryButton": "Retry",
+			"permissionBlocked": {
+				"header": "Camera or microphone access blocked",
+				"body": "Click the lock icon in your browser's address bar to allow access, then refresh."
+			}
 		},
 		"breadcrumb": "Meetings",
 		"header": "meetings",
