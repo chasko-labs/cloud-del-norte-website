@@ -121,15 +121,27 @@ export default function FionaFrame() {
 			canvasEl?.setAttribute("data-fiona-mounted", "1");
 			try {
 				const origin = window.location.origin;
+				const envSrc = import.meta.env.VITE_FIONA_SCRIPT_URL as
+					| string
+					| undefined;
+				const envBase = import.meta.env.VITE_FIONA_ASSET_BASE as
+					| string
+					| undefined;
+				const src = envSrc
+					? envSrc.replace(/^https:\/\/[^/]+/, origin)
+					: `${origin}/fiona-embed/fiona-embed.js`;
+				const base = envBase
+					? envBase.replace(/^https:\/\/[^/]+/, origin)
+					: `${origin}/fiona`;
 				const mod = (await (
 					Function("u", "return import(u)") as (
 						u: string,
 					) => Promise<{ mountFionaPanel: (base: string) => Promise<void> }>
-				)(`${origin}/fiona-embed/fiona-embed.js`)) as {
+				)(src)) as {
 					mountFionaPanel: (base: string) => Promise<void>;
 				};
 				if (cancelled) return;
-				await mod.mountFionaPanel(`${origin}/fiona`);
+				await mod.mountFionaPanel(base);
 			} catch (err) {
 				console.warn("[fiona-frame] mount failed:", err);
 				canvasEl?.removeAttribute("data-fiona-mounted");
