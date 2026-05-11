@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: MIT-0
 
 import ContentLayout from "@cloudscape-design/components/content-layout";
+import HelpPanel from "@cloudscape-design/components/help-panel";
+import Tabs from "@cloudscape-design/components/tabs";
 import type React from "react";
 import { useState } from "react";
 import Shell from "../../../layouts/shell";
@@ -18,8 +20,26 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../../utils/theme";
+import { SpeakerForm } from "../components/speaker-form";
 import AwsugNavigation from "./navigation";
 import "./styles.css";
+
+function ToolsPanel() {
+	return (
+		<HelpPanel header={<h2>Community</h2>}>
+			<Tabs
+				tabs={[
+					{ id: "info", label: "Info", content: <HelpPanelHome /> },
+					{
+						id: "speak",
+						label: "Speak",
+						content: <SpeakerForm />,
+					},
+				]}
+			/>
+		</HelpPanel>
+	);
+}
 
 export default function AwsugLayout({
 	children,
@@ -44,7 +64,7 @@ export default function AwsugLayout({
 				setStoredLocale(l);
 			}}
 			navigation={<AwsugNavigation />}
-			tools={<HelpPanelHome />}
+			tools={<ToolsPanel />}
 			identityHref="https://clouddelnorte.org/feed/index.html"
 		>
 			<ContentLayout>{children}</ContentLayout>
