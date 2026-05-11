@@ -236,6 +236,97 @@ describe("JitsiEmbed", () => {
 		expect(container.querySelector("button")).not.toBeNull();
 	});
 
+	// FP-012: permission-denied alert
+	it("FP-012: shows warning alert when camera permission is denied", async () => {
+		Object.defineProperty(navigator, "permissions", {
+			value: {
+				query: vi.fn((desc: { name: string }) => {
+					const state = desc.name === "camera" ? "denied" : "granted";
+					return Promise.resolve({ state });
+				}),
+			},
+			configurable: true,
+		});
+
+		const { fetchJitsiToken } = await import("../../../../lib/jitsi-token");
+		(fetchJitsiToken as ReturnType<typeof vi.fn>).mockResolvedValue({
+			token: "tok",
+			domain: "meet.clouddelnorte.org",
+			expiresAt: Math.floor(Date.now() / 1000) + 3600,
+		});
+		installFakeExternalApi();
+		const { container } = render(<JitsiEmbed roomName="room-perm" />);
+
+		// Flush the permissions Promise.all microtasks
+		await act(async () => {
+			await Promise.resolve();
+			await Promise.resolve();
+		});
+
+		expect(container.textContent).toMatch(
+			/Camera or microphone access blocked/i,
+		);
+
+		delete (navigator as { permissions?: unknown }).permissions;
+	});
+
+	it("FP-012: no permission alert when both permissions are granted", async () => {
+		Object.defineProperty(navigator, "permissions", {
+			value: {
+				query: vi.fn(() => Promise.resolve({ state: "granted" })),
+			},
+			configurable: true,
+		});
+
+		const { fetchJitsiToken } = await import("../../../../lib/jitsi-token");
+		(fetchJitsiToken as ReturnType<typeof vi.fn>).mockResolvedValue({
+			token: "tok",
+			domain: "meet.clouddelnorte.org",
+			expiresAt: Math.floor(Date.now() / 1000) + 3600,
+		});
+		installFakeExternalApi();
+		const { container } = render(<JitsiEmbed roomName="room-perm-ok" />);
+
+		// Give the permissions promise time to resolve
+		await act(async () => {
+			await Promise.resolve();
+		});
+
+		expect(container.textContent).not.toMatch(
+			/Camera or microphone access blocked/i,
+		);
+
+		delete (navigator as { permissions?: unknown }).permissions;
+	});
+
+	it("FP-012: no permission alert when navigator.permissions throws (Safari fallback)", async () => {
+		Object.defineProperty(navigator, "permissions", {
+			value: {
+				query: vi.fn(() => Promise.reject(new Error("not supported"))),
+			},
+			configurable: true,
+		});
+
+		const { fetchJitsiToken } = await import("../../../../lib/jitsi-token");
+		(fetchJitsiToken as ReturnType<typeof vi.fn>).mockResolvedValue({
+			token: "tok",
+			domain: "meet.clouddelnorte.org",
+			expiresAt: Math.floor(Date.now() / 1000) + 3600,
+		});
+		installFakeExternalApi();
+		const { container } = render(<JitsiEmbed roomName="room-perm-safari" />);
+
+		await act(async () => {
+			await Promise.resolve();
+		});
+
+		expect(container.textContent).not.toMatch(
+			/Camera or microphone access blocked/i,
+		);
+
+		delete (navigator as { permissions?: unknown }).permissions;
+	});
+
 	// FP-013: retry button resets state
 	it("FP-013: retry button re-mounts the embed", async () => {
 		const { fetchJitsiToken } = await import("../../../../lib/jitsi-token");
