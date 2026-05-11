@@ -122,6 +122,8 @@ describe("translation coverage", () => {
 			"feedPage.pastMeetupSpeaker2Name", // proper name
 			"feedPage.pastMeetupSpeaker3Name", // proper name
 			"feedPage.pastMeetupSpeaker4Name", // proper name
+			"auth.login.mfaSetup.googleIos", // "Google Authenticator (iOS)" - proper product name
+			"auth.login.mfaSetup.googleAndroid", // "Google Authenticator (Android)" - proper product name
 		]);
 
 		// Helper to get value by dot-notation key

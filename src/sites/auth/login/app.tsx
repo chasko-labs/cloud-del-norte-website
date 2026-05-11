@@ -1,6 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
 import Form from "@cloudscape-design/components/form";
@@ -203,6 +204,29 @@ function LoginForm() {
 						errorText={formError || undefined}
 					>
 						<SpaceBetween size="m">
+							<Alert type="info" header={t("auth.login.mfaSetup.alertHeader")}>
+								<SpaceBetween size="xs">
+									<Box variant="p">{t("auth.login.mfaSetup.description")}</Box>
+									<Box variant="p">
+										{t("auth.login.mfaSetup.downloadLabel")}{" "}
+										<Link
+											external
+											href="https://apps.apple.com/app/google-authenticator/id388497605"
+										>
+											{t("auth.login.mfaSetup.googleIos")}
+										</Link>
+										{", "}
+										<Link
+											external
+											href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2"
+										>
+											{t("auth.login.mfaSetup.googleAndroid")}
+										</Link>
+										{", "}
+										{t("auth.login.mfaSetup.otherOptions")}
+									</Box>
+								</SpaceBetween>
+							</Alert>
 							<Box variant="p">
 								Scan this QR code with your authenticator app:
 							</Box>
@@ -339,7 +363,7 @@ function LoginForm() {
 						}}
 						loading={loading}
 					>
-						sign in with passkey
+						{t("auth.login.passkeyButton")}
 					</Button>
 				</Box>
 			)}
@@ -349,7 +373,7 @@ function LoginForm() {
 
 export default function App() {
 	return (
-		<AuthLayout pageContext="Sign in to Cloud Del Norte">
+		<AuthLayout pageContextKey="auth.login.pageContext">
 			<LoginForm />
 		</AuthLayout>
 	);

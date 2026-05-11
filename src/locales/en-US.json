@@ -601,14 +601,24 @@
 		"siteTitle": "Cloud Del Norte",
 		"login": {
 			"title": "Sign in",
+			"pageContext": "Sign in to Cloud Del Norte",
 			"emailLabel": "Email",
 			"emailPlaceholder": "you@example.com",
 			"passwordLabel": "Password",
 			"signInButton": "Sign in",
+			"passkeyButton": "Sign in with passkey",
 			"forgotPassword": "Forgot password?",
 			"noAccount": "New here? Apply to join",
 			"invalidCredentials": "Email or password is incorrect",
-			"genericError": "Something went wrong. Try again."
+			"genericError": "Something went wrong. Try again.",
+			"mfaSetup": {
+				"alertHeader": "Get an authenticator app",
+				"description": "An authenticator app generates 6-digit codes to verify your sign-ins.",
+				"downloadLabel": "Download:",
+				"googleIos": "Google Authenticator (iOS)",
+				"googleAndroid": "Google Authenticator (Android)",
+				"otherOptions": "Microsoft Authenticator, or Authy."
+			}
 		},
 		"signup": {
 			"title": "Apply to join",
@@ -699,7 +709,8 @@
 			"banPopoverBody": "banned from future sessions. to remove from an active call, join as moderator and use participant controls.",
 			"emptyPending": "no applications pending",
 			"emptyMembers": "no members",
-			"emptyBanned": "no banned users"
+			"emptyBanned": "no banned users",
+			"moderatorAccessRequired": "This page requires moderator access."
 		},
 		"meetings": {
 			"pendingApproval": "your application is pending approval. meetings are available once approved.",

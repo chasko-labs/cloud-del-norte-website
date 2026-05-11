@@ -21,7 +21,7 @@ import {
 	listUsers,
 	unbanUser,
 } from "../_shared/api";
-import { type AuthState, isMember, requireAuth } from "../_shared/auth";
+import { type AuthState, isModerator, requireAuth } from "../_shared/auth";
 
 type TabFilter = "pending" | "members" | "banned";
 
@@ -312,6 +312,7 @@ function AdminPanel() {
 }
 
 function AdminWithLayout() {
+	const { t } = useTranslation();
 	const [auth, setAuth] = useState<AuthState | null>(null);
 
 	useEffect(() => {
@@ -326,14 +327,11 @@ function AdminWithLayout() {
 		);
 	}
 
-	if (!isMember(auth)) {
+	if (!isModerator(auth)) {
 		return (
 			<AwsugLayout>
 				<Container>
-					<Alert type="info">
-						Admin access requires member approval. Your application is still
-						pending.
-					</Alert>
+					<Alert type="info">{t("awsug.admin.moderatorAccessRequired")}</Alert>
 				</Container>
 			</AwsugLayout>
 		);

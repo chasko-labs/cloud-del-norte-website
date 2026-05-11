@@ -601,14 +601,24 @@
 		"siteTitle": "Nube del Norte",
 		"login": {
 			"title": "Iniciar sesión",
+			"pageContext": "Iniciar sesión en Nube del Norte",
 			"emailLabel": "Correo electrónico",
 			"emailPlaceholder": "tu@ejemplo.com",
 			"passwordLabel": "Contraseña",
 			"signInButton": "Entrar",
+			"passkeyButton": "Iniciar sesión con clave de acceso",
 			"forgotPassword": "¿Olvidaste tu contraseña?",
 			"noAccount": "¿Primera vez? Solicita unirte",
 			"invalidCredentials": "Correo o contraseña incorrectos",
-			"genericError": "Algo salió mal. Intenta de nuevo."
+			"genericError": "Algo salió mal. Intenta de nuevo.",
+			"mfaSetup": {
+				"alertHeader": "Consigue una app autenticadora",
+				"description": "Una app autenticadora genera códigos de 6 dígitos para verificar tus inicios de sesión.",
+				"downloadLabel": "Descarga:",
+				"googleIos": "Google Authenticator (iOS)",
+				"googleAndroid": "Google Authenticator (Android)",
+				"otherOptions": "Microsoft Authenticator o Authy."
+			}
 		},
 		"signup": {
 			"title": "Solicitar membresía",
@@ -699,7 +709,8 @@
 			"banPopoverBody": "Bloqueado de sesiones futuras. Para remover de una llamada activa, únete como moderador y usa los controles de participantes.",
 			"emptyPending": "Sin solicitudes pendientes",
 			"emptyMembers": "Sin miembros",
-			"emptyBanned": "Sin usuarios bloqueados"
+			"emptyBanned": "Sin usuarios bloqueados",
+			"moderatorAccessRequired": "Esta página requiere acceso de moderador."
 		},
 		"meetings": {
 			"pendingApproval": "tu solicitud está pendiente de aprobación. las reuniones estarán disponibles una vez aprobada.",
