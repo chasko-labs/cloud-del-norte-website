@@ -426,3 +426,4 @@ steps:
       - apk add --no-cache git curl
       - git clone --depth 1 https://github.com/BryanChasko/haunting-kiro-cli.git /tmp/haunting
       - git diff HEAD~1 --name-only --diff-filter=ACMR | python3 /tmp/haunting/scripts/qdrant-index.py --repo "$CI_REPO_NAME" --commit "$CI_COMMIT_SHA"
+
