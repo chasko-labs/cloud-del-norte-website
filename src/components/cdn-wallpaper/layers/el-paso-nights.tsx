@@ -71,6 +71,7 @@ export function ElPasoNightsLayer(): ReactElement {
 		<>
 			<div
 				aria-hidden="true"
+				className="cdn-stars-skeleton"
 				style={{
 					position: "fixed",
 					inset: 0,

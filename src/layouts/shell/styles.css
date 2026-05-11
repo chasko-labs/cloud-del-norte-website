@@ -1910,3 +1910,11 @@ nav[class*="awsui_navigation_"]:not(
 		animation-duration: calc(24s * max(0.25, 1 - var(--cdn-flux, 0) * 0.75));
 	}
 }
+
+/* Stars skeleton — dark mode only */
+.cdn-stars-skeleton {
+	display: none;
+}
+.awsui-dark-mode .cdn-stars-skeleton {
+	display: block;
+}
