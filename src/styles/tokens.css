@@ -129,25 +129,8 @@
 		border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
 		filter 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-	/* ---------- Cloudscape light mode token overrides — sepia/cream palette ----------
-     Token names confirmed from node_modules/@cloudscape-design/design-tokens/index.scss.
-     Only overriding :root (light mode). Dark mode (.awsui-dark-mode) is untouched. */
-	--color-background-layout-main-5ilwcb: #f4f1fa; /* pale lavender — creates ground for warm cream cards */
-	--color-background-container-content-6u8rvp: #ede5d4; /* warm cream — floats clearly on lavender ground */
-	--color-background-container-header-gs3mbe: #ede5d4; /* noticeably richer amber than card surface */
-	--color-background-input-default-ifz5bb: #fdfcf8; /* near-white warm — reads as interactive */
-	--color-text-body-default-vvtq8u: #2c1a0e; /* deep warm brown — excellent contrast on cream */
-	--color-text-heading-default-izpp46: #1a0f05; /* darker warm brown — headings anchor content */
-	--color-border-divider-default-nr68jt: rgba(
-		139,
-		90,
-		43,
-		0.18
-	); /* warm amber divider */
-	/* surfaces that default to pure #ffffff — warm-tinted to prevent jarring white pops */
-	--color-background-card-p5vrq0: #faf7f0; /* Cloudscape Card component → match container content */
-	--color-background-popover-e20fy8: #fefcf8; /* PieChart detail popover, tooltips → near-white warm */
-	--color-background-dropdown-item-default-qmc033: #fdfcf8; /* dropdown/select menu items */
+	/* Cloudscape light-mode token overrides moved to :root:not(.awsui-dark-mode) block below
+	   to avoid !important bleeding into dark mode. See that block for the actual overrides. */
 
 	/* ---------- Warm shadow system — light mode ---------- */
 	--cdn-shadow-container-light:
@@ -210,8 +193,34 @@
 		0.7
 	); /* warm cream highlight, text-clip */
 
-	/* ---------- Table header visual weight — light mode ---------- */
-	--color-background-table-header-hdjxos: #ede8db; /* warm amber — matches container header */
+	/* Table header token moved to :root:not(.awsui-dark-mode) block below */
+}
+
+/* --------------------------------------------------------------------------
+   Cloudscape light mode token overrides — sepia/cream palette
+   --------------------------------------------------------------------------
+   Cloudscape v3 declares ALL light-mode tokens on `body` (not :root).
+   Our overrides must target `body` with !important to win the cascade.
+   html:not(.awsui-dark-mode) scopes to light mode only (.awsui-dark-mode
+   lives on <html>).
+   -------------------------------------------------------------------------- */
+html:not(.awsui-dark-mode) body {
+	--color-background-layout-main-5ilwcb: #f4f1fa !important;
+	--color-background-container-content-6u8rvp: #ede5d4 !important;
+	--color-background-container-header-gs3mbe: #ede5d4 !important;
+	--color-background-layout-panel-content-xto15e: #ede5d4 !important;
+	--color-background-input-default-ifz5bb: #fdfcf8 !important;
+	--color-background-control-default-4jb21l: #fdfcf8 !important;
+	--color-text-body-default-vvtq8u: #2c1a0e !important;
+	--color-text-heading-default-izpp46: #1a0f05 !important;
+	--color-border-divider-default-nr68jt: rgba(139, 90, 43, 0.18) !important;
+	--color-background-card-p5vrq0: #faf7f0 !important;
+	--color-background-popover-e20fy8: #fefcf8 !important;
+	--color-background-dropdown-item-default-qmc033: #fdfcf8 !important;
+	--color-background-button-normal-default-7f99mv: #fdfcf8 !important;
+	--color-background-button-normal-disabled-hl039l: #fdfcf8 !important;
+	--color-background-segment-default-b0r494: #fdfcf8 !important;
+	--color-background-table-header-hdjxos: #ede8db !important;
 }
 
 /* --------------------------------------------------------------------------
