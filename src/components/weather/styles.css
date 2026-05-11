@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Weather card — branded panel that lives below liora in the side-nav drawer
+   Weather card — branded panel that lives below fiona in the side-nav drawer
    so the left column reaches the footer on mobile (Bryan v0.0.0069: gap was
    awkward). Pulls Open-Meteo data, caches 10 min in localStorage so subsequent
    renders are instant.

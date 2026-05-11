@@ -251,7 +251,7 @@ function CodeTab() {
 							<div>runs on push to main or dev</div>
 							<div>auth chain: x509 cert → RolesAnywhere → deploy role</div>
 							<div>two-pass sync: HTML (no-cache) + assets (immutable)</div>
-							<div>liora/* excluded from —delete</div>
+							<div>fiona/* excluded from —delete</div>
 							<div>ntfy.sh + SNS on completion</div>
 						</SpaceBetween>
 					</div>
@@ -430,7 +430,7 @@ function AgentsTab() {
 							</div>
 						</div>
 						<div>
-							<Box variant="awsui-key-label">liora-headless-verifier</Box>
+							<Box variant="awsui-key-label">fiona-headless-verifier</Box>
 							<div>
 								playwright chromium. navigates dev server, captures screenshots
 								at 375/768/1280px.{" "}
@@ -585,7 +585,7 @@ function AgentsTab() {
 							<span className="cdn-plans-step-num">5</span>
 							<span>
 								playwright screenshots at 375/768/1280px — for any visual change
-								(delegated to liora-headless-verifier)
+								(delegated to fiona-headless-verifier)
 							</span>
 						</div>
 					</div>
@@ -616,13 +616,13 @@ function AgentsTab() {
 							</p>
 						</TextContent>
 					</ExpandableSection>
-					<ExpandableSection headerText="liora assets are out-of-band">
+					<ExpandableSection headerText="fiona assets are out-of-band">
 						<TextContent>
 							<p>
-								<code>public/liora/</code> and <code>public/liora-embed/</code>{" "}
+								<code>public/fiona/</code> and <code>public/fiona-embed/</code>{" "}
 								are NOT in the repo. S3-managed separately. CI excludes them
-								from <code>—delete</code> syncs. if liora isn't loading on the
-								dev server, check <code>VITE_LIORA_SCRIPT_URL</code>.
+								from <code>—delete</code> syncs. if fiona isn't loading on the
+								dev server, check <code>VITE_FIONA_SCRIPT_URL</code>.
 							</p>
 						</TextContent>
 					</ExpandableSection>

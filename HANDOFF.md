@@ -2,7 +2,7 @@
 
 **date:** 2026-05-10  
 **branch:** main (dev recreated fresh)  
-**last commit:** ee9ae468 feat(liora): LED beat-sync via cdn-beat-bank classes  
+**last commit:** ee9ae468 feat(fiona): LED beat-sync via cdn-beat-bank classes  
 **deploy:** 3f8c98e5 (empty commit trigger) — woodpecker firing to all three targets
 
 ---
@@ -12,7 +12,7 @@
 - token refresh fix shipped (`_shared/auth.ts`, `api.ts`) — all speakeasy buttons functional post-deploy
 - nav cleanup — removed duplicate links
 - css fixes: player overflow, footer bleed, speakeasy sign (purple neon matching logo)
-- liora frame logs errors instead of swallowing silently
+- fiona frame logs errors instead of swallowing silently
 - costs tab added to plans page with lambda backend ready in `infra/`
 - ses domain verification started (account 211125425201, us-west-2)
 - git reconciled — both machines on main head, dev branch fresh
@@ -33,7 +33,7 @@
 - g2: sun idle freeze — ALREADY IMPLEMENTED (setPlaying in AnimationController)
 - h1: LED beat-sync — SHIPPED (ee9ae468)
 - h2: powered-by text — ALREADY HIDDEN (prior session)
-- h3: liora typography — Alfa Slab One (6fec7b46)
+- h3: fiona typography — Alfa Slab One (6fec7b46)
 - i1: name scroll fade + chromatic aberration — SHIPPED (0c5394b6)
 - j1: treble dampening — SHIPPED (b7e37013)
 - k1: dancer icon — SHIPPED (685405e2, 6bfcce7c)
@@ -96,22 +96,22 @@ two branches exist (`flatted-3.4.2`, `picomatch-2.3.2`) but both are stale — c
 
 **2026-05-10 audit status:**
 
-### 1. `liora-tube-off` animation — confirmed violation
+### 1. `fiona-tube-off` animation — confirmed violation
 
-**file:** `src/components/liora-panel/styles.css:1607`  
-**animation:** `@keyframes liora-tube-off` — runs at 1.1s, 5 bright-dark flash cycles  
+**file:** `src/components/fiona-panel/styles.css:1607`  
+**animation:** `@keyframes fiona-tube-off` — runs at 1.1s, 5 bright-dark flash cycles  
 **measured rate:** first pair ~6.5 Hz, second ~5.7 Hz, third ~4.5 Hz, fourth ~3.8 Hz — all exceed 3 Hz  
 **fix:** extend total duration to ≥3s so each cycle is ≥333ms. reduce number of flash cycles from 5 to 2 max.  
 suggested rewrite: 0% bright → 40% dark → 70% dim → 100% black. remove intermediate peaks at 22%, 40%, 62%.
 
 ✅ LANDED in d3235841 — rewritten to 3.5s duration, 2 flash cycles (bright→dark at 12-28%, second at 52-70%). Max rate ~1.8 Hz.
 
-### 2. `liora-tube-off` color — amber on charcoal (no red-on-blue, but verify)
+### 2. `fiona-tube-off` color — amber on charcoal (no red-on-blue, but verify)
 
 check that no bright frames combine dominant red + bright blue simultaneously (WCAG 2.3.1 pair threshold 1cd/m²).  
 current keyframes use `saturate(0)` — grayscale — so no color pair violation. safe.
 
-✅ AUDITED — no violation found. No dominant red (#cc0000+) or bright blue (#0000ff+) anywhere in src/. liora-tube-off uses saturate(0) (grayscale). Station palette transitions use smooth CSS custom property transitions, no simultaneous red+blue strobes on play/pause/skip.
+✅ AUDITED — no violation found. No dominant red (#cc0000+) or bright blue (#0000ff+) anywhere in src/. fiona-tube-off uses saturate(0) (grayscale). Station palette transitions use smooth CSS custom property transitions, no simultaneous red+blue strobes on play/pause/skip.
 
 ### 3. dune sparkle rate at `SPARKLE_SPEED_PLAYING`
 
@@ -124,7 +124,7 @@ current keyframes use `saturate(0)` — grayscale — so no color pair violation
 ### 4. dancing animations / strobe on station start/stop/skip
 
 user reports: "dancing animations = random fast strobe"  
-**find in:** `src/components/liora-panel/styles.css` — `name-flash`, `shatter-flash`, any class applied on station change  
+**find in:** `src/components/fiona-panel/styles.css` — `name-flash`, `shatter-flash`, any class applied on station change  
 `name-flash` at 0.65s is a one-shot forward-fill — not repeating, likely safe  
 `shatter-flash` at 0.95s is a one-shot — safe  
 **action:** audit for any `.cdn-stream-playing` body class transitions that fire repeating flicker effects. strobe must only fire once on start/stop/skip, never loop.
@@ -315,34 +315,34 @@ export const MIGRATION_BASS_SWAY = 0.08;       // was whatever — reduce bass-l
 
 ---
 
-## h — liora
+## h — fiona
 
 ### h1. console lights — spec
 
 **current:** LED blink at `led-blink 2.4s linear infinite` — fires continuously.  
 **user spec:** lights fire every 4th beat alternating between 4 lights; strobe fires only on station start/stop/skip.  
-**file:** `src/components/liora-panel/styles.css:1315`, `src/components/liora-panel/index.tsx`  
+**file:** `src/components/fiona-panel/styles.css:1315`, `src/components/fiona-panel/index.tsx`  
 
 **approach:**
 - strobe (tap-3 tube-off): keep as-is but fix Hz (see critical section above). it already fires only on tap sequence, not continuously.
-- LED beat: requires JS-side beat detection signal from `src/lib/background-viz/beat.ts`. pipe `beatCount` into liora panel via a CSS var `--cdn-beat-count` written on each beat detection. CSS `:has` or JS class toggle flips which of the 4 LEDs is "active" on beat 0, 4, 8, 12 (every 4th beat).
+- LED beat: requires JS-side beat detection signal from `src/lib/background-viz/beat.ts`. pipe `beatCount` into fiona panel via a CSS var `--cdn-beat-count` written on each beat detection. CSS `:has` or JS class toggle flips which of the 4 LEDs is "active" on beat 0, 4, 8, 12 (every 4th beat).
 
-### h2. liora "powered by amazon sumerian" text
+### h2. fiona "powered by amazon sumerian" text
 
-**location:** the text comes from the external `liora-embed.js` bundle (loaded from `VITE_LIORA_SCRIPT_URL`), not from source code in this repo. the text is rendered inside `.liora-panel-wrap` by the embed script.  
+**location:** the text comes from the external `fiona-embed.js` bundle (loaded from `VITE_LIORA_SCRIPT_URL`), not from source code in this repo. the text is rendered inside `.fiona-panel-wrap` by the embed script.  
 **fix options:**
 - override via CSS `content` replacement (fragile — depends on pseudo-elements)
-- modify the liora-embed source (if accessible)
-- overlay with CSS to hide the element: `.liora-sumerian-credit { display: none; }` and use a new adjacent element for the new label
+- modify the fiona-embed source (if accessible)
+- overlay with CSS to hide the element: `.fiona-sumerian-credit { display: none; }` and use a new adjacent element for the new label
 - confirm the exact element selector from the rendered DOM via devtools before deciding approach
 
-### h3. liora name typography
+### h3. fiona name typography
 
 **user spec:** bold/condensed/italic 70s retro — Cooper Black, Helvetica Condensed, ITC Serif Gothic, Kompakt  
-**file:** `src/components/liora-panel/styles.css` — `.liora-title` or equivalent selector  
+**file:** `src/components/fiona-panel/styles.css` — `.fiona-title` or equivalent selector  
 **approach:**
 - load Cooper Black via `@font-face` or Google Fonts / Adobe Fonts CDN
-- apply to `.liora-panel-wrap [class*="liora-title"]` or wherever the "LIORA" name renders
+- apply to `.fiona-panel-wrap [class*="fiona-title"]` or wherever the "LIORA" name renders
 - test: all four named faces. pick two finalists, show screenshots, confirm with bryan
 
 ---
@@ -353,7 +353,7 @@ export const MIGRATION_BASS_SWAY = 0.08;       // was whatever — reduce bass-l
 
 **user spec:** "blend end credits / retro video game aesthetic." reference: Babylon.js playground DK9140#3 (https://playground.babylonjs.com/#DK9140#3)  
 **current behavior:** character fade at end of name scroll may have been lost in a recent refactor.  
-**file:** `src/components/liora-panel/styles.css:2367-2372`  
+**file:** `src/components/fiona-panel/styles.css:2367-2372`  
 **approach:**
 - the scroll should have characters enter full-opacity from left, drift right, and fade to 0 as they pass the right edge (not clip to invisible suddenly)
 - use `mask-image: linear-gradient(to right, transparent 0%, black 8%, black 85%, transparent 100%)` on the scroll container to handle both the entry and exit fade
@@ -377,7 +377,7 @@ export const MIGRATION_BASS_SWAY = 0.08;       // was whatever — reduce bass-l
 
 ### k1. dancer icon
 
-**spec:** custom SVG silhouette of a dancer (feminine form, arms raised, flowing movement). used in the persistent player or liora panel to represent radio/music state.  
+**spec:** custom SVG silhouette of a dancer (feminine form, arms raised, flowing movement). used in the persistent player or fiona panel to represent radio/music state.  
 **file location:** `src/components/` — new file, e.g. `dancer-icon/index.tsx` wrapping an inline SVG  
 **approach:** sketch a 24×24 or 32×32 viewBox silhouette. thin lines, no fill — brand violet stroke. provide both a static and an animating (swaying) variant using CSS `@keyframes`.
 

@@ -8,7 +8,7 @@
 //
 // w24 v0.0.0098 originally placed these under the LEFT side-navigation
 // drawer; w24 v0.0.0104 moved them to the right help panel under the
-// organizer's section because they were blocking Liora.
+// organizer's section because they were blocking Fiona.
 
 import "./side-panel-card.css";
 

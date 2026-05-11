@@ -297,10 +297,10 @@
 	gap: var(--cdn-space-sm);
 }
 
-/* ---------- Liora panel ---------- */
-/* All liora-* + #liora-* + injected-DOM rules (bezel, panel-wrap, shimmer,
+/* ---------- Fiona panel ---------- */
+/* All fiona-* + #fiona-* + injected-DOM rules (bezel, panel-wrap, shimmer,
    status bar, LED display, ticker, powered-by, credits, reconnect, cracks,
-   shatter, scene-over) are owned by src/components/navigation/liora.css —
+   shatter, scene-over) are owned by src/components/navigation/fiona.css —
    the prod theme bundle. Rules previously here were an older legacy design
    whose ID-selector specificity was overriding the prod theme. */
 

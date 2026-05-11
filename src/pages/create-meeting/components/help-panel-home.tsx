@@ -11,7 +11,7 @@ import SidePanelCard, { type SidePanelCardItem } from "./side-panel-card";
 // Per-organizer article card stacks rendered under each leader inside the
 // "organizer's section" (Group organizers heading). Moved here from
 // src/components/navigation in v0.0.0104 — the floating <nav> on the LEFT
-// side panel was covering Liora.
+// side panel was covering Fiona.
 //
 // "wayne -> arrowhead" is intentionally redundant with the feed's
 // ArrowheadNews carousel — Bryan ask: keep it in BOTH places.
@@ -235,7 +235,7 @@ export const HelpPanelHome = () => {
 				<hr className="hp-divider" />
 
 				{/* Global community — glass plate with cool sapphire echo
-				    of Liora's stickynote-2 visitor flag */}
+				    of Fiona's stickynote-2 visitor flag */}
 				<div className="cdn-glass hp-glass-body hp-glass-body--global">
 					<h4 className="hp-sub-heading">
 						{t("helpPanel.globalCommunityHeader")}

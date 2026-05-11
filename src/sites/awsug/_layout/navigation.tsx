@@ -4,7 +4,7 @@
 import SideNavigation, {
 	type SideNavigationProps,
 } from "@cloudscape-design/components/side-navigation";
-import LioraFrame from "../../../components/liora-frame";
+import FionaFrame from "../../../components/fiona-frame";
 import SpeakeasySign from "../../../components/speakeasy-sign";
 
 const MAIN = "https://clouddelnorte.org";
@@ -66,7 +66,7 @@ export default function AwsugNavigation() {
 					}
 				}}
 			/>
-			<LioraFrame />
+			<FionaFrame />
 		</>
 	);
 }

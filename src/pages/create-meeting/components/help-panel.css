@@ -15,7 +15,7 @@
        sites and AWS Hero; default pill stays amber/lavender.
      - Divider hairline removed in favor of section margin breathing room
        (heading + space carries the chapter break, no competing line).
-     - Global community plate echoes Liora stickynote-2's cool sapphire
+     - Global community plate echoes Fiona stickynote-2's cool sapphire
        inset (visitor-flag accent) tying back to user-location signal.
      - Panel header h2 ("volunteers wanted") gets Cinzel + streak underline
        to mirror breadcrumb-home hero treatment.
@@ -458,7 +458,7 @@ a:focus-visible > .hp-social-pill--brand {
 }
 
 /* --------------------------------------------------------------------------
-   Global community plate — echoes Liora stickynote-2's cool sapphire inset
+   Global community plate — echoes Fiona stickynote-2's cool sapphire inset
    (the visitor-flag color signal). Ties the panel's bottom CTA back to the
    "you are here" stickynote up top via a shared cool accent.
    -------------------------------------------------------------------------- */

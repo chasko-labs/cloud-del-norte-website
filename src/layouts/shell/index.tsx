@@ -459,7 +459,7 @@ function ShellContent({
 	//   - skip if user has explicitly toggled (locked in)
 	//   - skip if current locale is already mx (nothing to do)
 	// Reads the shared visitor cache first (zero network cost on second load),
-	// falls back to loadVisitorInfo() which dedupes with LioraFrame's call.
+	// falls back to loadVisitorInfo() which dedupes with FionaFrame's call.
 	useEffect(() => {
 		if (typeof window === "undefined") return;
 		if (getStoredLocale() !== null) return;

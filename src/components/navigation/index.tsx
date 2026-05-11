@@ -6,19 +6,19 @@ import SideNavigation, {
 } from "@cloudscape-design/components/side-navigation";
 import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
-import LioraFrame from "../liora-frame";
-import "./liora.css";
+import FionaFrame from "../fiona-frame";
+import "./fiona.css";
 
 // w24 v0.0.0098 added contributor article cards (andres / bryan / wayne) here
 // as a floating <nav> sibling to SideNavigation. v0.0.0104 moved them to the
 // right help panel (HelpPanelHome) because the floating block was covering
-// Liora. The card component itself now lives at
+// Fiona. The card component itself now lives at
 // src/pages/create-meeting/components/side-panel-card.tsx.
 
-// Silence the dynamically-loaded liora-embed bundle's [gestureQueue]
+// Silence the dynamically-loaded fiona-embed bundle's [gestureQueue]
 // console.info chatter (30+ lines per gesture.glb load). We can't edit the
 // vendor bundle directly, so install a console.info filter at module load
-// BEFORE mountLioraPanel runs. Only swallow messages whose first arg starts
+// BEFORE mountFionaPanel runs. Only swallow messages whose first arg starts
 // with "[gestureQueue]" — every other info call passes through unchanged.
 // Not restored: gestureQueue calls fire across the panel lifetime.
 if (typeof console !== "undefined") {
@@ -168,7 +168,7 @@ export default function Navigation() {
 					}
 				}}
 			/>
-			<LioraFrame />
+			<FionaFrame />
 		</>
 	);
 }

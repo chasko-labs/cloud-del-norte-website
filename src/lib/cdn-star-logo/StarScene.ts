@@ -9,7 +9,7 @@
 // MutationObserver removed: the star sits in the nav surface which never changes
 // regardless of page-level light/dark toggle.
 //
-// Animation vocabulary mirrors liora led-blink: filament cool/warm curve
+// Animation vocabulary mirrors fiona led-blink: filament cool/warm curve
 // (bright → dim with hue drift → cold floor → warm back up), per-bulb
 // phase offsets baked per category index, independent cycles per category.
 // Cycles slowed ~50% vs. prior version: slower heartbeat, not strobe.
@@ -68,7 +68,7 @@ const CATEGORY_RHYTHM: Record<
 	center: { cycleFrames: 100, minEmissive: 1.0, maxEmissive: 1.0 },
 };
 
-// Per-category phase offsets as fractions of cycle (mirrors liora nth-child delays)
+// Per-category phase offsets as fractions of cycle (mirrors fiona nth-child delays)
 const PHASE_OFFSETS: Record<BulbCategory, number[]> = {
 	tip: [0.0, 0.18, 0.4, 0.6, 0.8],
 	center: [0.0],
@@ -325,7 +325,7 @@ export class StarScene {
 	}
 
 	// ── Per-bulb animation ────────────────────────────────────────────────────
-	// Keyframe curve matches liora led-blink stop points:
+	// Keyframe curve matches fiona led-blink stop points:
 	//   0%: bright → 28%: hold → 42%: dim → 62%: cold floor → 78%: warming → 100%: bright
 	// Phase offset applied as fractional frame start via beginAnimation `from`.
 	// Arm scale-shimmer removed — contributed to blob at small CSS size.

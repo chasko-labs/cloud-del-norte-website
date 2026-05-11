@@ -17,7 +17,7 @@
 
    Explicit opt-out:
    - .cdn-atmospheric-opaque forces fully opaque bg + no blur. Use for any
-     surface that must not expose the wallpaper (cards, buttons, liora, nav, footer).
+     surface that must not expose the wallpaper (cards, buttons, fiona, nav, footer).
    ========================================================================== */
 
 /* Shared base — isolation context so backdrop-filter applies to the element's
@@ -300,7 +300,7 @@
 }
 
 /* ── explicit opt-out ────────────────────────────────────────────────────── */
-/* Use on: .cdn-card, buttons, .liora-bezel/.liora-canvas/.liora-panel-wrap,
+/* Use on: .cdn-card, buttons, .fiona-bezel/.fiona-canvas/.fiona-panel-wrap,
    #top-nav, .cdn-footer — any surface that must be fully opaque. */
 
 :root:not(.awsui-dark-mode) .cdn-atmospheric-opaque {
@@ -327,8 +327,8 @@
    Inner nav drawer + tools panel → atmospheric panel-tier (0.88 alpha + blur).
    Border lines on nav/tools removed — kills visible vertical gap lines.
 
-   Exclusion: .liora-frame [class*="awsui_content-container_"] stays untouched.
-   Cards, buttons, Liora, top-nav, footer untouched per existing opaque rules.
+   Exclusion: .fiona-frame [class*="awsui_content-container_"] stays untouched.
+   Cards, buttons, Fiona, top-nav, footer untouched per existing opaque rules.
    ========================================================================== */
 
 /* Wallpaper-through-chrome rules — FLAT (un-nested) so the rolldown CSS
@@ -352,7 +352,7 @@
 :root:not(.awsui-dark-mode) [class*="awsui_scrolling-background_"]:not(#\9),
 :root:not(.awsui-dark-mode)
 	[class*="awsui_content-container_"]:not(
-		.liora-frame [class*="awsui_content-container_"]
+		.fiona-frame [class*="awsui_content-container_"]
 	):not(#\9) {
 	background: transparent;
 	background-color: transparent;
@@ -406,7 +406,7 @@
 .awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9),
 .awsui-dark-mode
 	[class*="awsui_content-container_"]:not(
-		.liora-frame [class*="awsui_content-container_"]
+		.fiona-frame [class*="awsui_content-container_"]
 	):not(#\9) {
 	background: transparent;
 	background-color: transparent;

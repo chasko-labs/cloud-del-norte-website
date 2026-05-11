@@ -26,8 +26,8 @@ function buildDeviceInfo(): string {
 	return `os:${os}  ${w}×${h}`;
 }
 
-interface LioraEmbedModule {
-	mountLioraPanel: (assetBase: string) => Promise<void>;
+interface FionaEmbedModule {
+	mountFionaPanel: (assetBase: string) => Promise<void>;
 }
 
 function scheduleIdle(fn: () => void): void {
@@ -38,7 +38,7 @@ function scheduleIdle(fn: () => void): void {
 	}
 }
 
-export function LioraPanel() {
+export function FionaPanel() {
 	const deviceInfo = useMemo(() => buildDeviceInfo(), []);
 	// sticky note interaction — tiny by default, zoom + replay handwriting on click.
 	// stickyKey forces React to re-mount the element so the clip-path keyframes
@@ -49,7 +49,7 @@ export function LioraPanel() {
 	const [stickyKey, setStickyKey] = useState(0);
 	const handleStickyToggle = () => {
 		// bail if the bezel is in a tap state — embed handles fly-out in that path
-		const bezel = document.querySelector(".liora-bezel");
+		const bezel = document.querySelector(".fiona-bezel");
 		if (
 			bezel instanceof HTMLElement &&
 			(bezel.classList.contains("screen-tap-1") ||
@@ -66,16 +66,16 @@ export function LioraPanel() {
 		let drawerObserver: ResizeObserver | null = null;
 
 		// Use origin-relative URLs at runtime so dev.clouddelnorte.org loads from
-		// its own liora-embed.js rather than the production domain baked into env vars.
-		const envSrc = import.meta.env.VITE_LIORA_SCRIPT_URL as string | undefined;
-		const envBase = import.meta.env.VITE_LIORA_ASSET_BASE as string | undefined;
+		// its own fiona-embed.js rather than the production domain baked into env vars.
+		const envSrc = import.meta.env.VITE_FIONA_SCRIPT_URL as string | undefined;
+		const envBase = import.meta.env.VITE_FIONA_ASSET_BASE as string | undefined;
 		const origin = window.location.origin;
 		const src = envSrc
 			? envSrc.replace(/^https:\/\/[^/]+/, origin)
-			: `${origin}/liora-embed/liora-embed.js`;
+			: `${origin}/fiona-embed/fiona-embed.js`;
 		const base = envBase
 			? envBase.replace(/^https:\/\/[^/]+/, origin)
-			: `${origin}/liora`;
+			: `${origin}/fiona`;
 
 		function doMount() {
 			if (cancelled) return;
@@ -83,9 +83,9 @@ export function LioraPanel() {
 				try {
 					const mod = (await import(
 						/* @vite-ignore */ src
-					)) as LioraEmbedModule;
+					)) as FionaEmbedModule;
 					if (cancelled) return;
-					await mod.mountLioraPanel(base);
+					await mod.mountFionaPanel(base);
 				} catch {
 					// mount failure — shimmer stays as permanent panel fill
 				}
@@ -98,7 +98,7 @@ export function LioraPanel() {
 			// BabylonJS creates a degenerate context when given a zero-size canvas.
 			// Defer until the drawer opens and the canvas gets real dimensions.
 			const canvas = document.getElementById(
-				"liora-canvas",
+				"fiona-canvas",
 			) as HTMLCanvasElement | null;
 			if (canvas && canvas.clientWidth === 0) {
 				drawerObserver = new ResizeObserver(() => {
@@ -133,37 +133,37 @@ export function LioraPanel() {
 	}, []);
 
 	return (
-		<div className="liora-frame">
-			<div className="liora-bezel">
-				<div className="liora-panel-wrap">
+		<div className="fiona-frame">
+			<div className="fiona-bezel">
+				<div className="fiona-panel-wrap">
 					<div
-						id="liora-shimmer"
-						className="liora-placeholder"
+						id="fiona-shimmer"
+						className="fiona-placeholder"
 						aria-hidden="true"
 					>
-						<span className="liora-placeholder-label">
+						<span className="fiona-placeholder-label">
 							modem connecting
-							<span className="liora-block-stream">
-								<span className="liora-block">▓</span>
-								<span className="liora-block">▓</span>
-								<span className="liora-block">▓</span>
+							<span className="fiona-block-stream">
+								<span className="fiona-block">▓</span>
+								<span className="fiona-block">▓</span>
+								<span className="fiona-block">▓</span>
 							</span>
 						</span>
 					</div>
 					<canvas
-						id="liora-canvas"
-						className="liora-canvas"
+						id="fiona-canvas"
+						className="fiona-canvas"
 						aria-hidden="true"
 						tabIndex={-1}
 					/>
 				</div>
 				<div
-					id="liora-status-bar"
-					className="liora-status-bar liora-status--green"
+					id="fiona-status-bar"
+					className="fiona-status-bar fiona-status--green"
 					aria-hidden="true"
 				>
-					<span id="liora-device-info">{deviceInfo}</span>
-					<span id="liora-sys-status"> SYS:▓▓▓</span>
+					<span id="fiona-device-info">{deviceInfo}</span>
+					<span id="fiona-sys-status"> SYS:▓▓▓</span>
 				</div>
 			</div>
 			{/* sticky note — physical-paper note TAPED to the bottom edge of the
@@ -176,21 +176,21 @@ export function LioraPanel() {
 			<button
 				key={stickyKey}
 				type="button"
-				className={`liora-stickynote${stickyZoomed ? " liora-stickynote--zoomed" : ""}`}
+				className={`fiona-stickynote${stickyZoomed ? " fiona-stickynote--zoomed" : ""}`}
 				onClick={handleStickyToggle}
 				aria-label={
 					stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
 				}
 			>
-				<span className="liora-stickynote-line liora-stickynote-line-1">
+				<span className="fiona-stickynote-line fiona-stickynote-line-1">
 					non load
 				</span>
-				<span className="liora-stickynote-line liora-stickynote-line-2">
+				<span className="fiona-stickynote-line fiona-stickynote-line-2">
 					bearing
 				</span>
-				<span className="liora-stickynote-sig">- ^.^</span>
+				<span className="fiona-stickynote-sig">- ^.^</span>
 			</button>
-			{/* scene-over "skip credits" button is appended into the bezel by liora-embed.ts
+			{/* scene-over "skip credits" button is appended into the bezel by fiona-embed.ts
 			    at credits-time; this frame slot is reserved for future stage chrome */}
 		</div>
 	);

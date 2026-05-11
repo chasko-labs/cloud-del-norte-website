@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 // Shared visitor IP-geo source. Single fetch per page load even when both
-// LioraFrame (sticky note 2 greeting) and Shell (auto-locale detection) call
+// FionaFrame (sticky note 2 greeting) and Shell (auto-locale detection) call
 // loadVisitorInfo() concurrently — module-level promise dedupes. 24h
 // localStorage cache survives across page loads.
 

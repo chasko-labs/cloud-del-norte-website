@@ -247,7 +247,7 @@ function PersistentPlayerBar({
 		};
 	}, [isPodcast]);
 
-	// stream-playing body class — gates audio-reactive UI (liora head sway,
+	// stream-playing body class — gates audio-reactive UI (fiona head sway,
 	// LED bands, dark-mode bursts) so the visualizers freeze when the user
 	// stops the stream. --cdn-bass / --cdn-mid / --cdn-treble naturally drop
 	// to silence on pause but the keyframes still tick; a body-class toggle

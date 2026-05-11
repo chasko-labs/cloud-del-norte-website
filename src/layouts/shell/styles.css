@@ -491,7 +491,7 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 }
 
 /* v0.0.0125 — mobile nav drawer + inner scroller must fit the viewport
-   Bryan eyes-on at 375×667: opening the drawer renders Liora + Weather
+   Bryan eyes-on at 375×667: opening the drawer renders Fiona + Weather
    below the fold. Probe found awsui_navigation-container is position:fixed
    with top:50px and computed height ≈727px → bottom sits ~110px BELOW the
    viewport edge. Inner awsui_content-container scrolls (overflow:scroll
@@ -500,7 +500,7 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
    max scrollTop.
    Fix: clamp the fixed nav-container + the inner content-container to
    the visible viewport on small screens so the inner scroller can pan
-   the full Liora→Weather stack into view. Uses dvh (dynamic viewport
+   the full Fiona→Weather stack into view. Uses dvh (dynamic viewport
    height) so iOS Safari's collapsing URL bar doesn't leave a gap.
    100vh fallback first for browsers without dvh.
 
@@ -1548,22 +1548,22 @@ body {
 	}
 }
 
-/* Liora panel — fully opaque (the entire panel including bezel, canvas, status bar) */
-.liora-bezel,
-.liora-canvas,
-.liora-panel-wrap,
-.liora-status-bar {
+/* Fiona panel — fully opaque (the entire panel including bezel, canvas, status bar) */
+.fiona-bezel,
+.fiona-canvas,
+.fiona-panel-wrap,
+.fiona-status-bar {
 	/* These elements render inside the side navigation tools context.
-	   Ensure no wallpaper bleed-through — the liora experience relies on
+	   Ensure no wallpaper bleed-through — the fiona experience relies on
 	   its own dark surface rendering. */
 	isolation: isolate;
 }
 
 @supports (backdrop-filter: blur(0)) {
-	.liora-bezel,
-	.liora-canvas,
-	.liora-panel-wrap,
-	.liora-status-bar {
+	.fiona-bezel,
+	.fiona-canvas,
+	.fiona-panel-wrap,
+	.fiona-status-bar {
 		backdrop-filter: none;
 		-webkit-backdrop-filter: none;
 	}

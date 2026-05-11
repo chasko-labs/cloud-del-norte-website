@@ -3,8 +3,8 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-	readonly VITE_LIORA_SCRIPT_URL: string | undefined;
-	readonly VITE_LIORA_ASSET_BASE: string | undefined;
+	readonly VITE_FIONA_SCRIPT_URL: string | undefined;
+	readonly VITE_FIONA_ASSET_BASE: string | undefined;
 }
 
 interface ImportMeta {

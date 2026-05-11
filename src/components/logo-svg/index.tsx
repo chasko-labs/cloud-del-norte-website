@@ -21,7 +21,7 @@
 import type { SVGProps } from "react";
 
 const STYLES = `
-  /* cdn-bulb-blink — liora-LED rhythm (src/components/navigation/liora.css L2436-2468).
+  /* cdn-bulb-blink — fiona-LED rhythm (src/components/navigation/fiona.css L2436-2468).
      6-stop keyframe: bright plateau (0-28%) → cooling dim with hue drift (42%) →
      cold floor (62%) → warming back (78%) → bright (100%). Filament metaphor:
      desaturate + hue-rotate as it cools, NOT a flat opacity pulse.
@@ -53,7 +53,7 @@ const STYLES = `
       filter: url(#cdn-bulb-glow) drop-shadow(0 0 3px #c8a0ff) saturate(1) hue-rotate(0deg);
     }
   }
-  /* Arm rhythm — slower call-and-response below the bulbs. Same 6-stop liora
+  /* Arm rhythm — slower call-and-response below the bulbs. Same 6-stop fiona
      vocabulary but stretched (longer durations on the elements) and shallower
      dim floor (arms are large fills, full dim looks like a flicker out).
      Opacity removed from this keyframe — .cdn-arm opacity is now driven by
@@ -123,7 +123,7 @@ const STYLES = `
   }
   @media (prefers-reduced-motion: no-preference) {
     /* Default duration; per-element style="animation-duration:Xs" overrides
-       (12 independent durations 1.5s-3.4s, mirrors liora .liora-led:nth-child rhythm). */
+       (12 independent durations 1.5s-3.4s, mirrors fiona .fiona-led:nth-child rhythm). */
     .cdn-bulb { animation: cdn-bulb-blink 2.4s linear infinite; }
     .cdn-arm  { animation: cdn-arm-blink 5.5s linear infinite; }
     /* Hero tip rides the same 2.5s cycle so it lands on the breathe-peak
@@ -137,8 +137,8 @@ const STYLES = `
     .cdn-bulb { transform: scale(1); }
   }
   /* Light-mode override — SVG is inlined so :root:not(.awsui-dark-mode) selectors
-     resolve against host theme class (not OS prefers-color-scheme). Mirrors liora
-     light-mode override (liora.css L1049-1055) — lower opacity floor, tighter halo. */
+     resolve against host theme class (not OS prefers-color-scheme). Mirrors fiona
+     light-mode override (fiona.css L1049-1055) — lower opacity floor, tighter halo. */
   :root:not(.awsui-dark-mode) .cdn-bulb { opacity: 0.85; animation-name: cdn-bulb-blink-light; }
   @keyframes cdn-bulb-blink-light {
       0%   { opacity: 0.85; filter: url(#cdn-bulb-glow) drop-shadow(0 0 1.5px #c8a0ff) saturate(1) hue-rotate(0deg); }

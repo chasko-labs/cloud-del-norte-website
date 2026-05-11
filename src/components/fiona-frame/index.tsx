@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
 import Weather from "../weather";
-import "../navigation/liora.css";
+import "../navigation/fiona.css";
 
 function withFallback(value: string, key: string, fallback: string): string {
 	return value === key ? fallback : value;
@@ -76,7 +76,7 @@ const GREETING_BY_COUNTRY: Record<string, string> = {
 	GR: "yassas",
 };
 
-export default function LioraFrame() {
+export default function FionaFrame() {
 	const { t, locale } = useTranslation();
 	const deviceInfo = useMemo(() => detectDeviceInfo(), []);
 	const [stickyZoomed, setStickyZoomed] = useState(false);
@@ -89,14 +89,14 @@ export default function LioraFrame() {
 	const greetingPrefix =
 		locale === "mx"
 			? withFallback(
-					t("liora.welcomeGreeting"),
-					"liora.welcomeGreeting",
+					t("fiona.welcomeGreeting"),
+					"fiona.welcomeGreeting",
 					"qué onda",
 				)
 			: (GREETING_BY_COUNTRY[countryCode] ??
 				withFallback(
-					t("liora.welcomeGreeting"),
-					"liora.welcomeGreeting",
+					t("fiona.welcomeGreeting"),
+					"fiona.welcomeGreeting",
 					"welcome",
 				));
 
@@ -116,30 +116,30 @@ export default function LioraFrame() {
 
 		async function mount() {
 			if (cancelled) return;
-			const canvasEl = document.getElementById("liora-canvas");
-			if (canvasEl?.dataset.lioraMounted === "1") return;
-			canvasEl?.setAttribute("data-liora-mounted", "1");
+			const canvasEl = document.getElementById("fiona-canvas");
+			if (canvasEl?.dataset.fionaMounted === "1") return;
+			canvasEl?.setAttribute("data-fiona-mounted", "1");
 			try {
 				const origin = window.location.origin;
 				const mod = (await (
 					Function("u", "return import(u)") as (
 						u: string,
-					) => Promise<{ mountLioraPanel: (base: string) => Promise<void> }>
-				)(`${origin}/liora-embed/liora-embed.js`)) as {
-					mountLioraPanel: (base: string) => Promise<void>;
+					) => Promise<{ mountFionaPanel: (base: string) => Promise<void> }>
+				)(`${origin}/fiona-embed/fiona-embed.js`)) as {
+					mountFionaPanel: (base: string) => Promise<void>;
 				};
 				if (cancelled) return;
-				await mod.mountLioraPanel(`${origin}/liora`);
+				await mod.mountFionaPanel(`${origin}/fiona`);
 			} catch (err) {
-				console.warn("[liora-frame] mount failed:", err);
-				canvasEl?.removeAttribute("data-liora-mounted");
+				console.warn("[fiona-frame] mount failed:", err);
+				canvasEl?.removeAttribute("data-fiona-mounted");
 			}
 		}
 
 		function tryMount() {
 			if (cancelled) return;
 			const canvas = document.getElementById(
-				"liora-canvas",
+				"fiona-canvas",
 			) as HTMLCanvasElement | null;
 			if (canvas && canvas.clientWidth === 0) {
 				observer = new ResizeObserver(() => {
@@ -174,46 +174,46 @@ export default function LioraFrame() {
 	}, []);
 
 	return (
-		<div className="liora-frame">
-			<div className="liora-bezel">
-				<div className="liora-panel-wrap">
+		<div className="fiona-frame">
+			<div className="fiona-bezel">
+				<div className="fiona-panel-wrap">
 					<div
-						id="liora-shimmer"
-						className="liora-placeholder"
+						id="fiona-shimmer"
+						className="fiona-placeholder"
 						aria-hidden="true"
 					>
-						<span className="liora-placeholder-label">
+						<span className="fiona-placeholder-label">
 							modem connecting
-							<span className="liora-block-stream">
-								<span className="liora-block">▓</span>
-								<span className="liora-block">▓</span>
-								<span className="liora-block">▓</span>
+							<span className="fiona-block-stream">
+								<span className="fiona-block">▓</span>
+								<span className="fiona-block">▓</span>
+								<span className="fiona-block">▓</span>
 							</span>
 						</span>
 					</div>
 					<canvas
-						id="liora-canvas"
-						className="liora-canvas"
+						id="fiona-canvas"
+						className="fiona-canvas"
 						aria-hidden="true"
 						tabIndex={-1}
 					/>
 				</div>
 				<div
-					id="liora-status-bar"
-					className="liora-status-bar liora-status--green"
+					id="fiona-status-bar"
+					className="fiona-status-bar fiona-status--green"
 					aria-hidden="true"
 				>
-					<span id="liora-device-info">{deviceInfo}</span>
-					<span id="liora-sys-status"> SYS:▓▓▓</span>
+					<span id="fiona-device-info">{deviceInfo}</span>
+					<span id="fiona-sys-status"> SYS:▓▓▓</span>
 				</div>
 			</div>
-			<div className="liora-notes-row">
+			<div className="fiona-notes-row">
 				<button
 					key={stickyKey}
 					type="button"
-					className={`liora-stickynote${stickyZoomed ? " liora-stickynote--zoomed" : ""}`}
+					className={`fiona-stickynote${stickyZoomed ? " fiona-stickynote--zoomed" : ""}`}
 					onClick={() => {
-						const bezel = document.querySelector(".liora-bezel");
+						const bezel = document.querySelector(".fiona-bezel");
 						if (
 							bezel instanceof HTMLElement &&
 							(bezel.classList.contains("screen-tap-1") ||
@@ -228,25 +228,25 @@ export default function LioraFrame() {
 						stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
 					}
 				>
-					<span className="liora-stickynote-line liora-stickynote-line-1">
+					<span className="fiona-stickynote-line fiona-stickynote-line-1">
 						{withFallback(
-							t("liora.stickynoteLine1"),
-							"liora.stickynoteLine1",
+							t("fiona.stickynoteLine1"),
+							"fiona.stickynoteLine1",
 							locale === "mx" ? "no aguanta" : "non load",
 						)}
 					</span>
-					<span className="liora-stickynote-line liora-stickynote-line-2">
+					<span className="fiona-stickynote-line fiona-stickynote-line-2">
 						{withFallback(
-							t("liora.stickynoteLine2"),
-							"liora.stickynoteLine2",
+							t("fiona.stickynoteLine2"),
+							"fiona.stickynoteLine2",
 							locale === "mx" ? "nada" : "bearing",
 						)}
 					</span>
-					<span className="liora-stickynote-sig">- ^.^</span>
+					<span className="fiona-stickynote-sig">- ^.^</span>
 				</button>
 				<button
 					type="button"
-					className={`liora-stickynote-2${sticky2Fallen ? " liora-stickynote-2--fallen" : ""}${sticky2Zoomed ? " liora-stickynote-2--zoomed" : ""}`}
+					className={`fiona-stickynote-2${sticky2Fallen ? " fiona-stickynote-2--fallen" : ""}${sticky2Zoomed ? " fiona-stickynote-2--zoomed" : ""}`}
 					aria-expanded={sticky2Zoomed}
 					aria-label={
 						visitor
@@ -258,17 +258,17 @@ export default function LioraFrame() {
 						setSticky2Zoomed((v) => !v);
 					}}
 				>
-					<span className="liora-stickynote-2-line">
+					<span className="fiona-stickynote-2-line">
 						{sticky2Zoomed ? getTimeOfDayGreeting(locale) : greetingPrefix},{" "}
 						{visitor?.greeting ?? ""}
 					</span>
 					{visitor?.flag ? (
-						<span className="liora-stickynote-2-flag" aria-hidden="true">
+						<span className="fiona-stickynote-2-flag" aria-hidden="true">
 							{visitor.flag}
 						</span>
 					) : null}
 					{visitor?.ip ? (
-						<span className="liora-stickynote-2-ip">{visitor.ip}</span>
+						<span className="fiona-stickynote-2-ip">{visitor.ip}</span>
 					) : null}
 				</button>
 			</div>

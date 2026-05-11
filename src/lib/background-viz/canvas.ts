@@ -169,7 +169,7 @@ function frame(ts: number): void {
 	root.setProperty("--cdn-flux", flux.toFixed(3));
 	if (beatFired) {
 		root.setProperty("--cdn-beat-count", String(beatCount));
-		// Cycle LED bank class for liora panel — 4 banks, fire every 4th beat
+		// Cycle LED bank class for fiona panel — 4 banks, fire every 4th beat
 		const bank = beatCount % 4;
 		const body = document.body;
 		body.classList.remove(

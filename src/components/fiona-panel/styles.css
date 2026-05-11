@@ -8,8 +8,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap");
 
 /* ── CRT phosphor terminal — glassmorphism bezel + green phosphor screen ────
-   outer bezel: cdn-card glassmorphism variant (liora-bezel)
-   inner screen: green phosphor CRT (liora-panel-wrap)
+   outer bezel: cdn-card glassmorphism variant (fiona-bezel)
+   inner screen: green phosphor CRT (fiona-panel-wrap)
    crack states: crack-1 (chip) → crack-2 (crack) → crack-3 (shatter)
    tap states: screen-tap-1 (gold) → screen-tap-2 (orange) → screen-tap-3 (strobe off)
    ───────────────────────────────────────────────────────────────────────── */
@@ -17,7 +17,7 @@
 /* ── outer bezel — glassmorphism card variant ────────────────────────────── */
 
 /* outer frame — caps the monitor at one stable size and provides layout slot for scene-over below */
-.liora-frame {
+.fiona-frame {
 	position: relative;
 	width: 100%;
 	max-width: 424px; /* caps bezel at 424px wide → screen at 400×300 — keeps monitor a stable 4:3 across viewport widths */
@@ -31,7 +31,7 @@
 /* default = LIGHT mode — cream/beige early-computer plastic
    references: VT-100, IBM 5151 MDA, original Mac, Macintosh II — warm beige
    plastic body with brown vent grille + recessed indicator panel below */
-.liora-bezel {
+.fiona-bezel {
 	position: relative;
 	display: block;
 	width: 100%;
@@ -60,7 +60,7 @@
 }
 
 /* vent grille — IBM 5151 / Mac II horizontal ventilation slats above the screen */
-.liora-bezel::before {
+.fiona-bezel::before {
 	content: "";
 	position: absolute;
 	top: 6px;
@@ -82,7 +82,7 @@
 }
 
 /* monitor depth ring — inner bevel shadow */
-.liora-bezel::after {
+.fiona-bezel::after {
 	content: "";
 	position: absolute;
 	inset: 0;
@@ -103,9 +103,9 @@
 	}
 }
 
-/* ── crack overlay — injected by embed into .liora-bezel ─────────────────── */
+/* ── crack overlay — injected by embed into .fiona-bezel ─────────────────── */
 
-.liora-crack-overlay {
+.fiona-crack-overlay {
 	position: absolute;
 	inset: 0;
 	border-radius: 12px;
@@ -118,32 +118,32 @@
 }
 
 /* crack-1: single chip — thick amber stroke + bright core line */
-.liora-crack-overlay.crack-1 {
+.fiona-crack-overlay.crack-1 {
 	opacity: 1;
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='340'%3E%3Cpolyline points='310,30 318,48 305,52 322,70' stroke='%23ffaa00' stroke-width='4' fill='none' stroke-opacity='0.95'/%3E%3Cpolyline points='310,30 318,48 305,52 322,70' stroke='%23fffde0' stroke-width='1.4' fill='none' stroke-opacity='0.65'/%3E%3Ccircle cx='316' cy='46' r='7' fill='%23ffaa00' fill-opacity='0.5'/%3E%3Ccircle cx='316' cy='46' r='3' fill='%23fffde0' fill-opacity='0.9'/%3E%3C/svg%3E");
 }
 
 /* crack-2: larger crack, extends toward center */
-.liora-crack-overlay.crack-2 {
+.fiona-crack-overlay.crack-2 {
 	opacity: 1;
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='340'%3E%3Cpolyline points='310,30 318,48 305,52 322,70 308,88 328,110' stroke='%23ffaa00' stroke-width='4' fill='none' stroke-opacity='0.95'/%3E%3Cpolyline points='310,30 318,48 305,52 322,70 308,88 328,110' stroke='%23fffde0' stroke-width='1.5' fill='none' stroke-opacity='0.55'/%3E%3Cpolyline points='318,48 335,55 330,66' stroke='%23ffaa00' stroke-width='2.5' fill='none' stroke-opacity='0.8'/%3E%3Ccircle cx='316' cy='46' r='8' fill='%23ffaa00' fill-opacity='0.45'/%3E%3Ccircle cx='316' cy='46' r='3' fill='%23fffde0' fill-opacity='0.9'/%3E%3Ccircle cx='322' cy='70' r='4' fill='%23ffaa00' fill-opacity='0.4'/%3E%3C/svg%3E");
 }
 
 /* crack-3: shatter — radial web across full face, screen goes dark */
-.liora-crack-overlay.crack-3 {
+.fiona-crack-overlay.crack-3 {
 	opacity: 1;
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='340'%3E%3Cpolyline points='310,30 318,48 305,52 322,70 308,88 328,110 310,140 295,170' stroke='%23ffaa00' stroke-width='4.5' fill='none' stroke-opacity='0.9'/%3E%3Cpolyline points='310,30 318,48 305,52 322,70 308,88 328,110 310,140 295,170' stroke='%23fffde0' stroke-width='1.5' fill='none' stroke-opacity='0.5'/%3E%3Cpolyline points='318,48 340,55 360,48 380,60' stroke='%23ffaa00' stroke-width='3' fill='none' stroke-opacity='0.7'/%3E%3Cpolyline points='322,70 345,80 370,95 395,105' stroke='%23ffaa00' stroke-width='3' fill='none' stroke-opacity='0.65'/%3E%3Cpolyline points='308,88 280,100 250,95 220,110' stroke='%23ffaa00' stroke-width='2.5' fill='none' stroke-opacity='0.6'/%3E%3Cpolyline points='328,110 355,130 385,140' stroke='%23ffaa00' stroke-width='2.5' fill='none' stroke-opacity='0.6'/%3E%3Ccircle cx='316' cy='46' r='10' fill='%23ffaa00' fill-opacity='0.45'/%3E%3Ccircle cx='316' cy='46' r='4' fill='%23fffde0' fill-opacity='0.95'/%3E%3Ccircle cx='322' cy='70' r='5' fill='%23ffaa00' fill-opacity='0.35'/%3E%3Ccircle cx='328' cy='110' r='5' fill='%23ffaa00' fill-opacity='0.3'/%3E%3Crect x='0' y='0' width='400' height='340' fill='%23080600' fill-opacity='0.82'/%3E%3C/svg%3E");
 }
 
 /* hide canvas entirely when shattered */
-.liora-bezel.crack-3 .liora-canvas {
+.fiona-bezel.crack-3 .fiona-canvas {
 	opacity: 0;
 	pointer-events: none;
 }
 
 /* ── CRT screen — inner panel ─────────────────────────────────────────────── */
 
-.liora-panel-wrap {
+.fiona-panel-wrap {
 	position: relative;
 	width: 100%;
 	aspect-ratio: 4 / 3;
@@ -161,7 +161,7 @@
 }
 
 /* warm-up shimmer — dark green sweep, screen powering on */
-.liora-placeholder {
+.fiona-placeholder {
 	position: absolute;
 	inset: 0;
 	display: flex;
@@ -175,12 +175,12 @@
 		#050607 100%
 	);
 	background-size: 400% 400%;
-	animation: liora-shimmer 3s ease-in-out infinite;
+	animation: fiona-shimmer 3s ease-in-out infinite;
 }
 
 /* loading-state label — fades when the canvas turns visible
    (Jake Smeester principle: hosts take a few seconds to load — communicate it) */
-.liora-placeholder-label {
+.fiona-placeholder-label {
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(11px, 4cqi, 16px);
 	letter-spacing: 0.18em;
@@ -189,12 +189,12 @@
 	text-shadow:
 		0 0 4px rgba(34, 197, 94, 0.55),
 		0 0 12px rgba(34, 197, 94, 0.3);
-	animation: liora-loading-pulse 1.6s ease-in-out infinite alternate;
+	animation: fiona-loading-pulse 1.6s ease-in-out infinite alternate;
 	pointer-events: none;
 	user-select: none;
 }
 
-@keyframes liora-loading-pulse {
+@keyframes fiona-loading-pulse {
 	0% {
 		opacity: 0.55;
 		letter-spacing: 0.18em;
@@ -206,19 +206,19 @@
 }
 
 /* sticky note — physical paper TAPED to the bottom edge of the monitor console,
-   hangs DOWN below the bezel into .liora-frame's free space. zero overlap with
+   hangs DOWN below the bezel into .fiona-frame's free space. zero overlap with
    the screen or any bezel chrome.
    - tap-1: gentle sway
    - tap-2: harder shake → tape rips → note falls down + fades
    - tap-3: shatter dismiss (fallback if user reaches tap-3 before tap-2 ran) */
-.liora-stickynote {
+.fiona-stickynote {
 	position: absolute;
 	top: 100%;
 	left: 18px;
 	margin-top: 4px;
 	z-index: 30;
 	/* TINY default — ~25% of v3 size. width hugs longest line; click to zoom up
-	   to a readable scale (.liora-stickynote--zoomed). zoom replays the
+	   to a readable scale (.fiona-stickynote--zoomed). zoom replays the
 	   handwriting via React key remount */
 	width: fit-content;
 	min-width: 22px;
@@ -268,7 +268,7 @@
 	flex-direction: column;
 	gap: 4px;
 	opacity: 0;
-	animation: liora-stickynote-fadein 0.6s ease 1.4s forwards;
+	animation: fiona-stickynote-fadein 0.6s ease 1.4s forwards;
 	transition:
 		transform 0.7s cubic-bezier(0.32, 0.04, 0.6, 1),
 		opacity 0.55s ease,
@@ -279,7 +279,7 @@
    plastic, the lower half overlaps the top of the sticky note. rips up
    off the bezel on tap-2 via the stickynote-tape-rip keyframe.
    vertical fiber pattern via repeating-linear-gradient = scotch-tape grain */
-.liora-stickynote::before {
+.fiona-stickynote::before {
 	content: "";
 	position: absolute;
 	top: -8px;
@@ -302,7 +302,7 @@
 	z-index: 1;
 }
 
-.liora-stickynote-line {
+.fiona-stickynote-line {
 	display: block;
 	overflow: hidden;
 	white-space: nowrap;
@@ -314,16 +314,16 @@
 		0 0.2px 0 rgba(60, 40, 18, 0.32);
 }
 
-.liora-stickynote-line-1 {
-	animation: liora-handwrite 0.65s steps(8, end) 2.1s forwards;
+.fiona-stickynote-line-1 {
+	animation: fiona-handwrite 0.65s steps(8, end) 2.1s forwards;
 }
 
-.liora-stickynote-line-2 {
-	animation: liora-handwrite 0.55s steps(7, end) 2.85s forwards;
+.fiona-stickynote-line-2 {
+	animation: fiona-handwrite 0.55s steps(7, end) 2.85s forwards;
 }
 
-.liora-stickynote-line,
-.liora-stickynote-sig {
+.fiona-stickynote-line,
+.fiona-stickynote-sig {
 	display: block;
 	overflow: hidden;
 	white-space: nowrap;
@@ -333,7 +333,7 @@
 /* legacy single-line rule retired — line-1 + line-2 take precedence */
 
 /* signature — sig has its own ink texture identical to body ink */
-.liora-stickynote-sig {
+.fiona-stickynote-sig {
 	font-size: 1.15em;
 	margin-left: 4px;
 	color: #5a3a14;
@@ -341,7 +341,7 @@
 	overflow: hidden;
 	white-space: nowrap;
 	clip-path: inset(0 100% 0 0);
-	animation: liora-handwrite 0.55s steps(5, end) 3.6s forwards;
+	animation: fiona-handwrite 0.55s steps(5, end) 3.6s forwards;
 	text-shadow:
 		0 0 0.4px rgba(80, 50, 18, 0.55),
 		0 0.2px 0 rgba(100, 65, 25, 0.3);
@@ -353,12 +353,12 @@
    shadow sells the "picked up to read" depth. pointer-events:auto so a second
    click dismisses back to the taped position. handwriting replays because React
    bumps the `key` on each toggle (remount). */
-.liora-stickynote.liora-stickynote--zoomed {
-	/* stays inside .liora-frame (position:relative, no overflow) — anchored to the
+.fiona-stickynote.fiona-stickynote--zoomed {
+	/* stays inside .fiona-frame (position:relative, no overflow) — anchored to the
 	   bezel rather than escaping to viewport. lifts up and slightly right so the
 	   note hovers over the monitor screen face, not the viewport top-center. */
 	position: absolute;
-	/* top 15% places the note in the upper third of .liora-frame, overlapping the
+	/* top 15% places the note in the upper third of .fiona-frame, overlapping the
 	   bezel face. left 52% + translate(-20%) shifts it slightly right of center —
 	   over the screen, not the left bezel rail. */
 	top: 15%;
@@ -414,21 +414,21 @@
    overflow:hidden is required for the clip-path handwrite animation, but by
    the time the user clicks to zoom that animation has already completed.
    visible here prevents the right edge of "bearing" from disappearing. */
-.liora-stickynote.liora-stickynote--zoomed .liora-stickynote-line,
-.liora-stickynote.liora-stickynote--zoomed .liora-stickynote-line-1,
-.liora-stickynote.liora-stickynote--zoomed .liora-stickynote-line-2 {
+.fiona-stickynote.fiona-stickynote--zoomed .fiona-stickynote-line,
+.fiona-stickynote.fiona-stickynote--zoomed .fiona-stickynote-line-1,
+.fiona-stickynote.fiona-stickynote--zoomed .fiona-stickynote-line-2 {
 	overflow: visible;
 	white-space: nowrap;
 }
 
-.liora-stickynote.liora-stickynote--zoomed .liora-stickynote-sig {
+.fiona-stickynote.fiona-stickynote--zoomed .fiona-stickynote-sig {
 	font-size: 1.2em;
 	margin-left: 6px;
 }
 
 /* tape stays visually attached to the top of the note even when fixed-positioned.
    reads as "the note was peeled partway off — tape still clinging" */
-.liora-stickynote.liora-stickynote--zoomed::before {
+.fiona-stickynote.fiona-stickynote--zoomed::before {
 	width: 28px;
 	height: 11px;
 	top: -8px;
@@ -437,7 +437,7 @@
 
 /* note swings into rest below the bezel — pivots from the tape attachment point.
    slight overshoot + settle so it reads as "taped and hung" rather than "popped in" */
-@keyframes liora-stickynote-fadein {
+@keyframes fiona-stickynote-fadein {
 	0% {
 		opacity: 0;
 		transform: rotate(-22deg) translateY(-14px) scale(0.86);
@@ -452,7 +452,7 @@
 	}
 }
 
-@keyframes liora-handwrite {
+@keyframes fiona-handwrite {
 	from {
 		clip-path: inset(0 100% 0 0);
 	}
@@ -467,39 +467,39 @@
 
    fly-out override: clicking the note itself while swaying or falling cancels
    the fall and sends the note flying to 5x zoom (picked up by the reader).
-   JS in liora-embed.ts manages .liora-stickynote--flying-out on the element.
+   JS in fiona-embed.ts manages .fiona-stickynote--flying-out on the element.
 
-   pointer-events during sway + fall: the .liora-bezel.screen-tap-1 and
+   pointer-events during sway + fall: the .fiona-bezel.screen-tap-1 and
    .screen-tap-2 selectors set pointer-events:auto directly on the note. ─────── */
 
 /* tap-1: gentle pendulum sway. note stays attached — tape holds. */
-/* ~ sibling combinator: .liora-stickynote is a sibling of .liora-bezel, both
-   children of .liora-frame — descendant selector ( ) would never match */
-/* opacity:1 is required: the sway animation overrides liora-stickynote-fadein,
+/* ~ sibling combinator: .fiona-stickynote is a sibling of .fiona-bezel, both
+   children of .fiona-frame — descendant selector ( ) would never match */
+/* opacity:1 is required: the sway animation overrides fiona-stickynote-fadein,
    which had fill-mode:forwards locking opacity at 1. without this explicit
    declaration the element's base opacity:0 re-applies and the note disappears */
-.liora-bezel.screen-tap-1 ~ .liora-stickynote {
+.fiona-bezel.screen-tap-1 ~ .fiona-stickynote {
 	opacity: 1;
-	animation: liora-stickynote-sway 0.72s cubic-bezier(0.36, 0.07, 0.19, 0.97) 2
+	animation: fiona-stickynote-sway 0.72s cubic-bezier(0.36, 0.07, 0.19, 0.97) 2
 		forwards;
 	pointer-events: auto; /* receive fly-out click during sway */
 }
 
 /* tap-2: harder swing then tape rips + note falls. one-shot. */
-.liora-bezel.screen-tap-2 ~ .liora-stickynote {
-	animation: liora-stickynote-ripfall 1.05s cubic-bezier(0.42, 0, 0.78, 1) 1
+.fiona-bezel.screen-tap-2 ~ .fiona-stickynote {
+	animation: fiona-stickynote-ripfall 1.05s cubic-bezier(0.42, 0, 0.78, 1) 1
 		forwards;
 	pointer-events: auto; /* receive fly-out click mid-fall */
 }
 
-.liora-bezel.screen-tap-2 ~ .liora-stickynote::before {
-	animation: liora-stickynote-tape-rip 0.42s ease-in 1 forwards;
+.fiona-bezel.screen-tap-2 ~ .fiona-stickynote::before {
+	animation: fiona-stickynote-tape-rip 0.42s ease-in 1 forwards;
 }
 
 /* fly-out — cancels any running fall; note zooms to 5x toward camera.
    position:fixed centers in viewport so the reader can "pick up and read".
    transform-origin center keeps the scale pivot stable during translate. */
-.liora-stickynote--flying-out {
+.fiona-stickynote--flying-out {
 	position: fixed; /* break out of bezel stacking context */
 	/* centering via inset + margin so left/top state doesn't matter at fly-in */
 	inset: 0;
@@ -511,7 +511,7 @@
 	font-size: clamp(38px, 10vw, 54px);
 	z-index: 9000;
 	pointer-events: none; /* picked up — no further interaction */
-	animation: liora-stickynote-flyout 0.55s cubic-bezier(0.18, 0.89, 0.32, 1.1) 1
+	animation: fiona-stickynote-flyout 0.55s cubic-bezier(0.18, 0.89, 0.32, 1.1) 1
 		forwards;
 	transform-origin: center center;
 	/* heavier drop-shadow sells the "lifted off the wall" read */
@@ -525,7 +525,7 @@
 /* flyout: scale from near-current size up to 5x, translate to center,
    then hold at rest so the reader can actually read the note.
    perspective gives a z-depth feel matching the 3d name flyout pattern. */
-@keyframes liora-stickynote-flyout {
+@keyframes fiona-stickynote-flyout {
 	0% {
 		opacity: 0.9;
 		transform: perspective(600px) scale(0.55) translateY(40px);
@@ -542,7 +542,7 @@
 
 /* sway — pendulum pivot from the tape attachment point at top-center.
    two swings: left jerk then settle, mimics a physical bump from the other side */
-@keyframes liora-stickynote-sway {
+@keyframes fiona-stickynote-sway {
 	0% {
 		transform: rotate(-4.5deg) translateY(0);
 	}
@@ -566,7 +566,7 @@
 	}
 }
 
-@keyframes liora-stickynote-ripfall {
+@keyframes fiona-stickynote-ripfall {
 	0% {
 		transform: rotate(-4.5deg) translateY(0);
 		opacity: 1;
@@ -600,7 +600,7 @@
 	}
 }
 
-@keyframes liora-stickynote-tape-rip {
+@keyframes fiona-stickynote-tape-rip {
 	0% {
 		opacity: 0.62;
 		transform: translateX(-50%) rotate(2deg);
@@ -618,7 +618,7 @@
 /* shatter dismiss — fallback only fires if tap-3 reached without tap-2 fall
    having disposed the note (e.g. note was intercepted by fly-out, so it is
    already gone from the bezel by the time tap-3 fires). no-op in normal flow */
-.liora-bezel.screen-tap-3 ~ .liora-stickynote {
+.fiona-bezel.screen-tap-3 ~ .fiona-stickynote {
 	transform: rotate(-32deg) translate(-22px, 60px) scale(0.92);
 	opacity: 0;
 	filter: blur(1.5px);
@@ -630,7 +630,7 @@
 
 /* dark mode — same translucent paper, slightly darker base so the back-light
    bleed reads against navy chrome instead of disappearing into it */
-.awsui-dark-mode .liora-stickynote {
+.awsui-dark-mode .fiona-stickynote {
 	background: linear-gradient(
 		135deg,
 		rgba(232, 218, 110, 0.78) 0%,
@@ -649,16 +649,16 @@
    users see SOMETHING dangling without having to read it. desktop layout
    unchanged so the full hung-paper effect still works at wider drawers.
 
-   note: at 390px viewport width, zero .liora-* elements are visible — this is
-   intentional. liora-panel renders inside Cloudscape AppLayout's navigation
+   note: at 390px viewport width, zero .fiona-* elements are visible — this is
+   intentional. fiona-panel renders inside Cloudscape AppLayout's navigation
    slot; the drawer defaults to closed below 688px (shell/index.tsx L62).
    the widget exists in the DOM but is off-canvas until the user opens the drawer.
    no CSS display:none is responsible — do not add one to "fix" it. */
 @media (pointer: coarse), (max-width: 600px) {
-	.liora-stickynote {
+	.fiona-stickynote {
 		transform: rotate(-4.5deg) translateY(-34px);
 	}
-	.liora-stickynote::before {
+	.fiona-stickynote::before {
 		/* tape moves with the note — stays attached to its top edge */
 		top: -10px;
 	}
@@ -666,30 +666,30 @@
 
 /* modem-connecting block stream — staggered ▓ blocks instead of dots.
    3 blocks fade in one-at-a-time then reset for an "INSERT COIN" arcade rhythm */
-.liora-block-stream {
+.fiona-block-stream {
 	display: inline-flex;
 	gap: 3px;
 	margin-left: 6px;
 	vertical-align: baseline;
 }
 
-.liora-block {
+.fiona-block {
 	display: inline-block;
 	opacity: 0;
-	animation: liora-block-cycle 1.8s ease-in-out infinite;
+	animation: fiona-block-cycle 1.8s ease-in-out infinite;
 }
 
-.liora-block:nth-child(1) {
+.fiona-block:nth-child(1) {
 	animation-delay: 0s;
 }
-.liora-block:nth-child(2) {
+.fiona-block:nth-child(2) {
 	animation-delay: 0.4s;
 }
-.liora-block:nth-child(3) {
+.fiona-block:nth-child(3) {
 	animation-delay: 0.8s;
 }
 
-@keyframes liora-block-cycle {
+@keyframes fiona-block-cycle {
 	0%,
 	90%,
 	100% {
@@ -701,13 +701,13 @@
 	}
 }
 
-.liora-placeholder.liora-placeholder--hidden {
+.fiona-placeholder.fiona-placeholder--hidden {
 	opacity: 0;
 	pointer-events: none;
 	transition: opacity 0.6s ease;
 }
 
-@keyframes liora-shimmer {
+@keyframes fiona-shimmer {
 	0% {
 		background-position: 0% 0%;
 	}
@@ -722,7 +722,7 @@
 /* phosphor filter — grayscale + sepia desaturate slightly; saturate(1.8) retains
    luminance separation between skin/hair/clothing; hue-rotate(68deg) tilts toward
    classic phosphor green without destroying tonal detail */
-.liora-canvas {
+.fiona-canvas {
 	position: absolute;
 	inset: 0;
 	width: 100%;
@@ -735,12 +735,12 @@
 		brightness(0.92) contrast(1.15);
 }
 
-.liora-canvas.liora-canvas--visible {
+.fiona-canvas.fiona-canvas--visible {
 	opacity: 1;
 }
 
 /* scanlines + rolling phosphor sweep — classic CRT horizontal scroll */
-.liora-panel-wrap::before {
+.fiona-panel-wrap::before {
 	content: "";
 	position: absolute;
 	inset: 0;
@@ -769,7 +769,7 @@
 }
 
 /* screen vignette + glare — deeper tunnel-vision edge, two glare hotspots */
-.liora-panel-wrap::after {
+.fiona-panel-wrap::after {
 	content: "";
 	position: absolute;
 	inset: 0;
@@ -845,7 +845,7 @@
 
 /* ── status bar — dynamic device telemetry ────────────────────────────────── */
 
-.liora-status-bar {
+.fiona-status-bar {
 	position: absolute;
 	bottom: 30px;
 	left: 12px;
@@ -872,8 +872,8 @@
 		opacity 0.5s ease;
 }
 
-#liora-device-info,
-#liora-sys-status {
+#fiona-device-info,
+#fiona-sys-status {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
@@ -882,23 +882,23 @@
 }
 
 /* tap 0: phosphor terminal green */
-.liora-status-bar.liora-status--green {
+.fiona-status-bar.fiona-status--green {
 	color: rgba(34, 197, 94, 0.82);
 }
 
 /* tap 1: cdn-gold warning */
-.liora-status-bar.liora-status--yellow {
+.fiona-status-bar.fiona-status--yellow {
 	color: rgba(201, 162, 63, 0.9);
 }
 
 /* tap 2: aws orange */
-.liora-status-bar.liora-status--orange {
+.fiona-status-bar.fiona-status--orange {
 	color: rgba(255, 153, 0, 0.95);
 	animation: led-critical 0.8s ease-in-out infinite alternate;
 }
 
 /* tap 3: cdn-aws-orange short-circuit */
-.liora-status-bar.liora-status--short-circuit {
+.fiona-status-bar.fiona-status--short-circuit {
 	color: rgba(255, 153, 0, 0.9);
 	animation:
 		led-critical 0.35s ease-in-out infinite alternate,
@@ -922,13 +922,13 @@
 	}
 }
 
-.liora-status-bar.liora-status--hidden {
+.fiona-status-bar.fiona-status--hidden {
 	opacity: 0;
 }
 
 /* end-credits status mode — calm cdn-violet, no flashing.
    added when scene enters tap-3 credits sequence; killed by refreshScene. */
-.liora-status-bar.liora-status--credits {
+.fiona-status-bar.fiona-status--credits {
 	color: var(--cdn-violet, #9060f0);
 	animation: none;
 	transform: none;
@@ -939,7 +939,7 @@
 
 /* ── portal broken message — overlaid on CRT screen after shatter ─────────── */
 
-.liora-portal-message {
+.fiona-portal-message {
 	position: absolute;
 	inset: 0;
 	display: flex;
@@ -965,7 +965,7 @@
 	filter: drop-shadow(0 0 14px rgba(144, 96, 240, 0.9));
 }
 
-@keyframes liora-message-out {
+@keyframes fiona-message-out {
 	0% {
 		opacity: 1;
 	}
@@ -992,12 +992,12 @@
 	}
 }
 
-.liora-portal-message--out {
-	animation: liora-message-out 0.8s ease-out forwards;
+.fiona-portal-message--out {
+	animation: fiona-message-out 0.8s ease-out forwards;
 }
 
 /* typewriter char — each letter sequences in with its own animation-delay */
-.liora-char {
+.fiona-char {
 	opacity: 0;
 	animation: char-in 0.04s ease forwards;
 }
@@ -1010,19 +1010,19 @@
 
 /* ── reconnect UI — appears after portal message flickers out ─────────────── */
 
-@keyframes liora-reconnect-fadein {
+@keyframes fiona-reconnect-fadein {
 	to {
 		opacity: 1;
 	}
 }
 
-@keyframes liora-icon-spin {
+@keyframes fiona-icon-spin {
 	to {
 		transform: rotate(360deg);
 	}
 }
 
-@keyframes liora-icon-shimmer {
+@keyframes fiona-icon-shimmer {
 	from {
 		border-color: rgba(220, 170, 255, 0.85);
 		box-shadow: 0 0 10px rgba(144, 96, 240, 0.65);
@@ -1035,7 +1035,7 @@
 	}
 }
 
-@keyframes liora-text-shimmer {
+@keyframes fiona-text-shimmer {
 	from {
 		color: rgba(255, 230, 255, 0.92);
 		text-shadow: 0 0 8px rgba(144, 96, 240, 0.75);
@@ -1048,7 +1048,7 @@
 	}
 }
 
-.liora-reconnect-wrap {
+.fiona-reconnect-wrap {
 	position: absolute;
 	inset: 0;
 	display: flex;
@@ -1059,30 +1059,30 @@
 	z-index: 12;
 	pointer-events: none;
 	opacity: 0;
-	animation: liora-reconnect-fadein 0.5s ease forwards;
+	animation: fiona-reconnect-fadein 0.5s ease forwards;
 	filter: drop-shadow(0 0 14px rgba(144, 96, 240, 0.75));
 }
 
-.liora-reconnect-icon {
+.fiona-reconnect-icon {
 	width: 44px;
 	height: 44px;
 	border: 2px dashed rgba(240, 200, 255, 0.95);
 	border-radius: 50%;
 	animation:
-		liora-icon-spin 3s linear infinite,
-		liora-icon-shimmer 1.6s ease-in-out infinite alternate;
+		fiona-icon-spin 3s linear infinite,
+		fiona-icon-shimmer 1.6s ease-in-out infinite alternate;
 }
 
-.liora-reconnect-label {
+.fiona-reconnect-label {
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 18px;
 	letter-spacing: 0.14em;
 	text-transform: uppercase;
 	color: rgba(255, 245, 255, 1);
-	animation: liora-text-shimmer 1.6s ease-in-out infinite alternate;
+	animation: fiona-text-shimmer 1.6s ease-in-out infinite alternate;
 }
 
-.liora-reconnect-btn {
+.fiona-reconnect-btn {
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 16px;
 	letter-spacing: 0.12em;
@@ -1097,10 +1097,10 @@
 	transition:
 		background 0.2s ease,
 		border-color 0.2s ease;
-	animation: liora-text-shimmer 1.6s ease-in-out 0.3s infinite alternate;
+	animation: fiona-text-shimmer 1.6s ease-in-out 0.3s infinite alternate;
 }
 
-.liora-reconnect-btn:hover {
+.fiona-reconnect-btn:hover {
 	background: rgba(144, 96, 240, 0.22);
 	border-color: rgba(255, 220, 255, 1);
 	text-shadow:
@@ -1112,15 +1112,15 @@
 
 /* Hide "powered by amazon sumerian" text — external embed renders it.
    Replace with brand-neutral label via CSS content override. */
-.liora-powered-by {
+.fiona-powered-by {
 	font-size: 0;
 }
-.liora-powered-by::after {
+.fiona-powered-by::after {
 	content: "cloud del norte";
 	font-size: 14px;
 }
 
-.liora-powered-by {
+.fiona-powered-by {
 	position: absolute;
 	bottom: 36px;
 	left: 14px;
@@ -1143,7 +1143,7 @@
 	z-index: 20;
 }
 
-.liora-powered-by:hover {
+.fiona-powered-by:hover {
 	text-shadow:
 		0 0 6px #9060f0,
 		0 0 14px rgba(144, 96, 240, 0.5);
@@ -1252,7 +1252,7 @@
 /* ── mini LED display — cosmetic glass panel where buttons were ───────────── */
 
 /* indicator panel — UNIVAC-style bank of blinking LEDs in a recessed glass strip */
-.liora-led-display {
+.fiona-led-display {
 	position: absolute;
 	bottom: 4px;
 	left: 8px;
@@ -1285,7 +1285,7 @@
 }
 
 /* light mode — recess gets a warm brown frame to read as a plastic indicator panel set into the beige body */
-:root:not(.awsui-dark-mode) .liora-led-display {
+:root:not(.awsui-dark-mode) .fiona-led-display {
 	border-color: #6e5326;
 	border-top-color: #4d3a18;
 	box-shadow:
@@ -1302,7 +1302,7 @@
    cathode glow concentrated at one electrode rather than uniform-LED diffusion.
    palette: theme tokens only — warm aws-orange / gold / amber dominate per NE-type tradition,
    with violet + lavender accents pulled from the cdn brand for variety */
-.liora-led {
+.fiona-led {
 	width: 8px;
 	height: 8px;
 	border-radius: 50%;
@@ -1329,7 +1329,7 @@
 }
 
 /* glass refraction highlight — small white reflection spot on the bulb envelope */
-.liora-led::before {
+.fiona-led::before {
 	content: "";
 	position: absolute;
 	top: 14%;
@@ -1385,62 +1385,62 @@
 
 /* per-lamp color (theme palette only) + asymmetric cadence — UNIVAC bank rhythm.
    currentColor drives the gradient mid-zone so each lamp reads with its theme hue */
-.liora-led:nth-child(1) {
+.fiona-led:nth-child(1) {
 	color: var(--cdn-aws-orange, #ff9900);
 	animation-duration: 2.3s;
 	animation-delay: 0s;
 }
-.liora-led:nth-child(2) {
+.fiona-led:nth-child(2) {
 	color: var(--cdn-violet, #9060f0);
 	animation-duration: 1.7s;
 	animation-delay: 0.4s;
 }
-.liora-led:nth-child(3) {
+.fiona-led:nth-child(3) {
 	color: var(--cdn-gold, #c9a23f);
 	animation-duration: 3.1s;
 	animation-delay: 0.8s;
 }
-.liora-led:nth-child(4) {
+.fiona-led:nth-child(4) {
 	color: var(--cdn-aws-orange, #ff9900);
 	animation-duration: 2s;
 	animation-delay: 1.3s;
 }
-.liora-led:nth-child(5) {
+.fiona-led:nth-child(5) {
 	color: var(--cdn-amber, #8b5a2b);
 	animation-duration: 2.7s;
 	animation-delay: 0.2s;
 }
-.liora-led:nth-child(6) {
+.fiona-led:nth-child(6) {
 	color: var(--cdn-lavender, #d7c7ee);
 	animation-duration: 1.5s;
 	animation-delay: 0.7s;
 }
-.liora-led:nth-child(7) {
+.fiona-led:nth-child(7) {
 	color: var(--cdn-aws-orange, #ff9900);
 	animation-duration: 3.4s;
 	animation-delay: 1.8s;
 }
-.liora-led:nth-child(8) {
+.fiona-led:nth-child(8) {
 	color: var(--cdn-gold, #c9a23f);
 	animation-duration: 1.9s;
 	animation-delay: 1s;
 }
-.liora-led:nth-child(9) {
+.fiona-led:nth-child(9) {
 	color: var(--cdn-violet, #9060f0);
 	animation-duration: 2.5s;
 	animation-delay: 0.5s;
 }
-.liora-led:nth-child(10) {
+.fiona-led:nth-child(10) {
 	color: var(--cdn-aws-orange, #ff9900);
 	animation-duration: 1.8s;
 	animation-delay: 1.1s;
 }
-.liora-led:nth-child(11) {
+.fiona-led:nth-child(11) {
 	color: var(--cdn-amber, #8b5a2b);
 	animation-duration: 2.9s;
 	animation-delay: 0.3s;
 }
-.liora-led:nth-child(12) {
+.fiona-led:nth-child(12) {
 	color: var(--cdn-gold, #c9a23f);
 	animation-duration: 2.1s;
 	animation-delay: 0.9s;
@@ -1448,7 +1448,7 @@
 
 /* light mode — dim the lamps' ambient halo so they read as "ambient supervisory bank"
    rather than competing with the bright cream bezel */
-:root:not(.awsui-dark-mode) .liora-led {
+:root:not(.awsui-dark-mode) .fiona-led {
 	opacity: 0.85;
 	box-shadow:
 		0 0 0 1.5px rgba(20, 12, 4, 0.9),
@@ -1460,28 +1460,28 @@
    Fires unconditionally (no cdn-stream-playing gate). */
 
 /* Bank 0: LEDs 1,5,9 */
-body.cdn-beat-bank-0 .liora-led:nth-child(4n + 1) {
+body.cdn-beat-bank-0 .fiona-led:nth-child(4n + 1) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
 /* Bank 1: LEDs 2,6,10 */
-body.cdn-beat-bank-1 .liora-led:nth-child(4n + 2) {
+body.cdn-beat-bank-1 .fiona-led:nth-child(4n + 2) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
 /* Bank 2: LEDs 3,7,11 */
-body.cdn-beat-bank-2 .liora-led:nth-child(4n + 3) {
+body.cdn-beat-bank-2 .fiona-led:nth-child(4n + 3) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
 /* Bank 3: LEDs 4,8,12 */
-body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
+body.cdn-beat-bank-3 .fiona-led:nth-child(4n) {
 	opacity: 1;
 	filter: brightness(1.05) saturate(1) hue-rotate(0deg);
 }
 
 /* power LED — left edge indicator */
-.liora-led-display::before {
+.fiona-led-display::before {
 	content: "";
 	position: absolute;
 	top: 50%;
@@ -1498,7 +1498,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* led strip light-bar — horizontal emitter along top PCB edge */
-.liora-led-display::after {
+.fiona-led-display::after {
 	content: "";
 	position: absolute;
 	top: -1px;
@@ -1538,7 +1538,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 /* these must appear before the tap-state overrides so tap states win on ties */
 
 /* dark mode: navy/purple glass bezel — restores the deep CRT chassis aesthetic */
-.awsui-dark-mode .liora-bezel {
+.awsui-dark-mode .fiona-bezel {
 	border: 1.5px solid rgba(48, 38, 78, 0.78);
 	border-top: 2px solid rgba(110, 92, 158, 0.78);
 	border-bottom: 3px solid rgba(8, 4, 14, 1);
@@ -1571,7 +1571,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* dark mode: top accent — restore the original purple→orange brand sweep, no vent slats */
-.awsui-dark-mode .liora-bezel::before {
+.awsui-dark-mode .fiona-bezel::before {
 	top: 0;
 	left: 0;
 	right: 0;
@@ -1591,7 +1591,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 
 /* dark mode: bevel ring — sculpted polished-chrome-ish inner edges, more
    pronounced than the light mode bevel so dark gets equal 80s-hardware flair */
-.awsui-dark-mode .liora-bezel::after {
+.awsui-dark-mode .fiona-bezel::after {
 	box-shadow:
 		inset 0 0 0 1px rgba(220, 200, 255, 0.12),
 		inset 0 1px 0 rgba(255, 255, 255, 0.08),
@@ -1601,7 +1601,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* dark mode: CRT screen — violet outer glow + punchy phosphor border */
-.awsui-dark-mode .liora-panel-wrap {
+.awsui-dark-mode .fiona-panel-wrap {
 	box-shadow:
 		inset 0 0 0 2px rgba(0, 220, 70, 0.4),
 		inset 0 0 40px rgba(0, 0, 0, 0.88),
@@ -1613,11 +1613,11 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 /* ── tap state overrides — AFTER dark-mode rules so they win on specificity ties */
 
 /* tap-1: gold phosphor — punchy warm shift */
-.liora-bezel.screen-tap-1 .liora-canvas {
+.fiona-bezel.screen-tap-1 .fiona-canvas {
 	filter: grayscale(0.06) sepia(0.45) saturate(5.5) hue-rotate(22deg)
 		brightness(1.15) contrast(1.32);
 }
-.liora-bezel.screen-tap-1 .liora-panel-wrap {
+.fiona-bezel.screen-tap-1 .fiona-panel-wrap {
 	box-shadow:
 		inset 0 0 0 2px rgba(210, 168, 60, 0.55),
 		inset 0 0 38px rgba(0, 0, 0, 0.88),
@@ -1627,11 +1627,11 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* tap-2: aws orange phosphor — maximum warmth */
-.liora-bezel.screen-tap-2 .liora-canvas {
+.fiona-bezel.screen-tap-2 .fiona-canvas {
 	filter: grayscale(0.04) sepia(0.55) saturate(6) hue-rotate(5deg)
 		brightness(1.2) contrast(1.35);
 }
-.liora-bezel.screen-tap-2 .liora-panel-wrap {
+.fiona-bezel.screen-tap-2 .fiona-panel-wrap {
 	box-shadow:
 		inset 0 0 0 2px rgba(255, 153, 0, 0.6),
 		inset 0 0 38px rgba(0, 0, 0, 0.88),
@@ -1643,7 +1643,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 /* tap-3: tube TV shutoff — 2 flash cycles across 3.5s. max rate ~1.8 Hz,
    well under the 3 Hz epilepsy foundation / WCAG 2.3.1 flash threshold.
    (old 1.1s/5-cycle version measured 4.5–6.5 Hz on the first two cycles.) */
-@keyframes liora-tube-off {
+@keyframes fiona-tube-off {
 	0% {
 		filter: grayscale(0.08) sepia(0.15) saturate(5) hue-rotate(68deg)
 			brightness(1.05) contrast(1.28);
@@ -1668,19 +1668,19 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-.liora-bezel.screen-tap-3 .liora-canvas {
-	animation: liora-tube-off 3.5s ease-out forwards;
+.fiona-bezel.screen-tap-3 .fiona-canvas {
+	animation: fiona-tube-off 3.5s ease-out forwards;
 }
 
 /* ── crt spotlight color — tap state tints the rolling scan band ──────────── */
 
 /* tap 1: gold/amber phosphor sweep */
-.liora-bezel.screen-tap-1 .liora-panel-wrap::before {
+.fiona-bezel.screen-tap-1 .fiona-panel-wrap::before {
 	filter: hue-rotate(-80deg) brightness(1.12);
 }
 
 /* tap 2: aws orange phosphor sweep */
-.liora-bezel.screen-tap-2 .liora-panel-wrap::before {
+.fiona-bezel.screen-tap-2 .fiona-panel-wrap::before {
 	filter: hue-rotate(-100deg) brightness(1.18);
 }
 
@@ -1696,7 +1696,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-.liora-bezel.screen-tap-3 .liora-panel-wrap::before {
+.fiona-bezel.screen-tap-3 .fiona-panel-wrap::before {
 	animation:
 		crt-roll 8s linear infinite,
 		crt-alert-hue 0.88s step-end infinite;
@@ -1736,7 +1736,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 
 /* ── end credits screen ──────────────────────────────────────────────────── */
 
-.liora-credits {
+.fiona-credits {
 	position: absolute;
 	/* 60px bottom clears LED display (48px) + 4px gap + 8px margin */
 	inset: 10px 10px 60px;
@@ -1758,7 +1758,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* clipping viewport for the names scroll — keeps the crawl inside the screen, never bleeds into subtitle or LED area */
-.liora-credits-scroll-window {
+.fiona-credits-scroll-window {
 	position: relative;
 	flex: 1 1 auto;
 	width: 100%;
@@ -1782,7 +1782,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	);
 }
 
-.liora-credits-title {
+.fiona-credits-title {
 	font-family: "Alfa Slab One", "Cooper Black", "Rockwell Extra Bold", serif;
 	font-style: italic;
 	font-weight: 900;
@@ -1806,7 +1806,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	line-height: 1;
 }
 
-.liora-credits-subtitle {
+.fiona-credits-subtitle {
 	position: relative;
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 15px;
@@ -1814,7 +1814,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	text-transform: uppercase;
 	color: rgba(255, 240, 255, 0.97);
 	opacity: 0;
-	animation: liora-reconnect-fadein 0.6s ease 2.2s forwards;
+	animation: fiona-reconnect-fadein 0.6s ease 2.2s forwards;
 	margin-bottom: 5px;
 	text-align: center;
 	line-height: 1.35;
@@ -1829,7 +1829,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 /* alternating subtitle — "thank you to the" types in / holds / fades →
    "AMAZON SUMERIAN TEAM" types in / holds / fades → loop forever.
    both lines stack absolutely so they share the same visual slot */
-.liora-credits-sub-line {
+.fiona-credits-sub-line {
 	display: block;
 	position: absolute;
 	left: 50%;
@@ -1840,20 +1840,20 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	clip-path: inset(0 100% 0 0);
 }
 
-.liora-credits-sub-thanks {
+.fiona-credits-sub-thanks {
 	/* cycle-a: 14s — thanks line reveal → "thank you" alone glow → hide
 	   glow overlay fires on the same clock so the gold beat lands at 27-44% ≈ 3s */
 	animation:
-		liora-credits-sub-cycle-a 14s ease-in-out 2.4s infinite,
-		liora-thanks-glow 14s ease-in-out 2.4s infinite;
+		fiona-credits-sub-cycle-a 14s ease-in-out 2.4s infinite,
+		fiona-thanks-glow 14s ease-in-out 2.4s infinite;
 }
 
-.liora-credits-sub-team {
+.fiona-credits-sub-team {
 	/* cycle-b: 14s — team line hidden for first 51%, then reveals + holds */
-	animation: liora-credits-sub-cycle-b 14s ease-in-out 2.4s infinite;
+	animation: fiona-credits-sub-cycle-b 14s ease-in-out 2.4s infinite;
 }
 
-@keyframes liora-credits-sub-cycle-a {
+@keyframes fiona-credits-sub-cycle-a {
 	/* 0-11%: clip-path reveal (≈1.54s). 11-47%: fully visible — "the" + "to" fade
 	   within this window via their own keyframes; "thank you" alone from ~27%.
 	   47-50%: opacity out. 51-100%: hidden, letting cycle-b take the slot.
@@ -1885,7 +1885,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-@keyframes liora-credits-sub-cycle-b {
+@keyframes fiona-credits-sub-cycle-b {
 	/* 0-51%: hidden while cycle-a owns the slot.
 	   51-62%: clip-path reveal (≈1.54s). 62-95%: fully visible — "TEAM" fades
 	   via its own keyframe at 67-71%, "AMAZON SUMERIAN" alone from 71% ≈ 3.4s.
@@ -1922,32 +1922,32 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
    team  line: reveal at 52% → "TEAM" fades 67-71% → "AMAZON SUMERIAN"
                alone 71-95% ≈ 3.4s → line fades 95-100%
    inline-block keeps each word's layout box stable so siblings don't reflow */
-.liora-credits-word-the,
-.liora-credits-word-to,
-.liora-credits-word-team {
+.fiona-credits-word-the,
+.fiona-credits-word-to,
+.fiona-credits-word-team {
 	display: inline-block;
 }
 
 /* leading gap between "SUMERIAN" and "TEAM" — inline-block strips textContent
    leading space, so the gap must come from padding instead */
-.liora-credits-word-team {
+.fiona-credits-word-team {
 	padding-left: 0.3em;
 }
 
-.liora-credits-word-the {
-	animation: liora-word-the-fade 14s ease-in-out 2.4s infinite;
+.fiona-credits-word-the {
+	animation: fiona-word-the-fade 14s ease-in-out 2.4s infinite;
 }
 
-.liora-credits-word-to {
-	animation: liora-word-to-fade 14s ease-in-out 2.4s infinite;
+.fiona-credits-word-to {
+	animation: fiona-word-to-fade 14s ease-in-out 2.4s infinite;
 }
 
-.liora-credits-word-team {
-	animation: liora-word-team-fade 14s ease-in-out 2.4s infinite;
+.fiona-credits-word-team {
+	animation: fiona-word-team-fade 14s ease-in-out 2.4s infinite;
 }
 
 /* "the" fades 18-22% of the 14s cycle — staggered first, "to" follows */
-@keyframes liora-word-the-fade {
+@keyframes fiona-word-the-fade {
 	0%,
 	18% {
 		opacity: 1;
@@ -1959,7 +1959,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* "to" fades 22-27% — leaves "thank you" alone 27-47% ≈ 2.94s of gold-glow hold */
-@keyframes liora-word-to-fade {
+@keyframes fiona-word-to-fade {
 	0%,
 	22% {
 		opacity: 1;
@@ -1971,7 +1971,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* "TEAM" fades 67-71% — leaves AMAZON SUMERIAN alone 71-95% ≈ 3.36s */
-@keyframes liora-word-team-fade {
+@keyframes fiona-word-team-fade {
 	0%,
 	67% {
 		opacity: 1;
@@ -1984,7 +1984,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 
 /* "thank you" gold glow — rest state is a faint warm shimmer so the peak-entry
    transition at 30% feels continuous, not a sudden flash; peak is full aws-orange */
-@keyframes liora-thanks-glow {
+@keyframes fiona-thanks-glow {
 	0%,
 	25% {
 		text-shadow:
@@ -2008,7 +2008,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-.liora-credits-name {
+.fiona-credits-name {
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 18px;
 	letter-spacing: 0.1em;
@@ -2026,11 +2026,11 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	line-height: 1.25;
 }
 
-/* ── scene-over indicator — sits below the bezel inside .liora-frame ─────── */
+/* ── scene-over indicator — sits below the bezel inside .fiona-frame ─────── */
 
 /* "skip credits" wrap sits INSIDE the bezel at the bottom strip, beneath the
    powered-by ticker. retro game-over arcade vibe */
-.liora-reconnect-wrap.liora-scene-over {
+.fiona-reconnect-wrap.fiona-scene-over {
 	position: absolute;
 	inset: auto;
 	bottom: 6px;
@@ -2047,7 +2047,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	filter: none;
 }
 
-.liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn {
+.fiona-reconnect-wrap.fiona-scene-over .fiona-reconnect-btn {
 	pointer-events: auto;
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 13px;
@@ -2093,8 +2093,8 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 		100% 6px,
 		100% 100%;
 	animation:
-		liora-skip-scanline 2.4s linear infinite,
-		liora-skip-pulse 1.8s ease-in-out infinite alternate;
+		fiona-skip-scanline 2.4s linear infinite,
+		fiona-skip-pulse 1.8s ease-in-out infinite alternate;
 	transition:
 		transform 0.18s cubic-bezier(0.2, 0.85, 0.4, 1.1),
 		filter 0.18s ease,
@@ -2102,13 +2102,13 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* hover — glitch wobble + chromatic-aberration text-shadow, faster scanline */
-.liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn:hover {
+.fiona-reconnect-wrap.fiona-scene-over .fiona-reconnect-btn:hover {
 	color: #fff;
 	transform: scale(1.04);
 	animation:
-		liora-skip-scanline 0.9s linear infinite,
-		liora-skip-glitch 0.32s steps(2, end) infinite,
-		liora-skip-pulse 1.2s ease-in-out infinite alternate;
+		fiona-skip-scanline 0.9s linear infinite,
+		fiona-skip-glitch 0.32s steps(2, end) infinite,
+		fiona-skip-pulse 1.2s ease-in-out infinite alternate;
 	text-shadow:
 		-1.5px 0 0 rgba(255, 50, 50, 0.85),
 		1.5px 0 0 rgba(80, 200, 255, 0.85),
@@ -2120,15 +2120,15 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 		inset 0 0 14px rgba(255, 153, 0, 0.32);
 }
 
-/* power-down — JS adds .liora-skip-shutdown when the button is clicked, then
+/* power-down — JS adds .fiona-skip-shutdown when the button is clicked, then
    refreshScene fires after the animation completes (~600ms) */
-.liora-reconnect-wrap.liora-scene-over
-.liora-reconnect-btn.liora-skip-shutdown {
-	animation: liora-skip-shutdown 0.55s ease-in forwards;
+.fiona-reconnect-wrap.fiona-scene-over
+.fiona-reconnect-btn.fiona-skip-shutdown {
+	animation: fiona-skip-shutdown 0.55s ease-in forwards;
 	pointer-events: none;
 }
 
-@keyframes liora-skip-scanline {
+@keyframes fiona-skip-scanline {
 	from {
 		background-position:
 			0 0,
@@ -2141,7 +2141,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-@keyframes liora-skip-pulse {
+@keyframes fiona-skip-pulse {
 	0% {
 		box-shadow:
 			0 0 6px rgba(255, 153, 0, 0.5),
@@ -2156,7 +2156,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-@keyframes liora-skip-glitch {
+@keyframes fiona-skip-glitch {
 	0% {
 		transform: translateX(0) scale(1.04);
 	}
@@ -2175,7 +2175,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* CRT power-off: flash bright, collapse vertical to a thin horizontal line, fade */
-@keyframes liora-skip-shutdown {
+@keyframes fiona-skip-shutdown {
 	0% {
 		filter: brightness(1) saturate(1);
 		transform: scale(1, 1);
@@ -2204,7 +2204,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* dark mode — violet trim instead of aws-orange, cooler pop against navy chrome */
-.awsui-dark-mode .liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn {
+.awsui-dark-mode .fiona-reconnect-wrap.fiona-scene-over .fiona-reconnect-btn {
 	color: var(--cdn-violet, #9060f0);
 	border-color: var(--cdn-violet, #9060f0);
 	box-shadow:
@@ -2217,8 +2217,8 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 .awsui-dark-mode
-	.liora-reconnect-wrap.liora-scene-over
-	.liora-reconnect-btn:hover {
+	.fiona-reconnect-wrap.fiona-scene-over
+	.fiona-reconnect-btn:hover {
 	color: #fff;
 	box-shadow:
 		0 0 10px rgba(144, 96, 240, 0.85),
@@ -2226,18 +2226,18 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 		inset 0 0 14px rgba(144, 96, 240, 0.32);
 }
 
-.liora-reconnect-wrap.liora-scene-over .liora-reconnect-icon {
+.fiona-reconnect-wrap.fiona-scene-over .fiona-reconnect-icon {
 	width: 20px;
 	height: 20px;
 	border-width: 1.5px;
 }
 
-.liora-reconnect-wrap.liora-scene-over .liora-reconnect-label {
+.fiona-reconnect-wrap.fiona-scene-over .fiona-reconnect-label {
 	font-size: 12px;
 	letter-spacing: 0.12em;
 }
 
-.liora-reconnect-wrap.liora-scene-over .liora-reconnect-btn {
+.fiona-reconnect-wrap.fiona-scene-over .fiona-reconnect-btn {
 	font-size: 13px;
 	letter-spacing: 0.12em;
 	padding: 4px 12px;
@@ -2248,7 +2248,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 
 /* ── credits name fly-out — tap/click-and-hold on a name ────────────────── */
 
-.liora-credits-name {
+.fiona-credits-name {
 	pointer-events: auto; /* override parent pointer-events:none for hold detection */
 }
 
@@ -2263,7 +2263,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-.liora-name-flyout {
+.fiona-name-flyout {
 	position: fixed;
 	z-index: 9999;
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
@@ -2284,13 +2284,13 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	transition: opacity 0.2s ease;
 }
 
-.liora-name-flyout--out {
+.fiona-name-flyout--out {
 	opacity: 0;
 }
 
 /* ── dynamic crack points — positioned SVG at tap coordinates ────────────── */
 
-.liora-crack-point {
+.fiona-crack-point {
 	position: absolute;
 	transform: translate(-50%, -50%);
 	pointer-events: none;
@@ -2313,7 +2313,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-.liora-crack-point.liora-crack-burst {
+.fiona-crack-point.fiona-crack-burst {
 	animation: crack-burst 0.55s ease-out forwards;
 }
 
@@ -2334,7 +2334,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 
 /* ── shatter flash — full-bezel white burst on tap 3 ────────────────────── */
 
-.liora-shatter-flash {
+.fiona-shatter-flash {
 	position: absolute;
 	inset: 0;
 	border-radius: 10px;
@@ -2400,7 +2400,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-.liora-credits-names-grid {
+.fiona-credits-names-grid {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -2417,13 +2417,13 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	animation: names-crawl 32s linear 8s infinite;
 }
 
-.liora-credits-names-row {
+.fiona-credits-names-row {
 	display: block;
 	width: 100%;
 	text-align: center;
 }
 
-.liora-credits-names-row .liora-credits-name {
+.fiona-credits-names-row .fiona-credits-name {
 	display: block;
 	width: 100%;
 	text-align: center;
@@ -2431,21 +2431,21 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 
 /* ── PWR LED color states — green default, gold tap-1, red tap-2, violet tap-3 ── */
 
-.liora-bezel.screen-tap-1 .liora-led-display::before {
+.fiona-bezel.screen-tap-1 .fiona-led-display::before {
 	background: var(--cdn-gold, #c9a23f);
 	box-shadow:
 		0 0 3px var(--cdn-gold, #c9a23f),
 		0 0 8px rgba(201, 162, 63, 0.65);
 }
 
-.liora-bezel.screen-tap-2 .liora-led-display::before {
+.fiona-bezel.screen-tap-2 .fiona-led-display::before {
 	background: #ef4444;
 	box-shadow:
 		0 0 3px #ef4444,
 		0 0 8px rgba(239, 68, 68, 0.65);
 }
 
-.liora-bezel.screen-tap-3 .liora-led-display::before {
+.fiona-bezel.screen-tap-3 .fiona-led-display::before {
 	background: var(--cdn-violet, #9060f0);
 	box-shadow:
 		0 0 3px var(--cdn-violet, #9060f0),
@@ -2455,13 +2455,13 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 /* ── LED row dynamic states ──────────────────────────────────────────────── */
 
 /* fade out the indicator LEDs once the powered-by ticker takes visual focus */
-.liora-bezel--ticker-active .liora-led {
+.fiona-bezel--ticker-active .fiona-led {
 	opacity: 0.05;
 	transition: opacity 0.7s ease;
 }
 
 /* freeze the blink + dim the LEDs at tap-3 so the inline scene-over text reads */
-.liora-bezel.screen-tap-3 .liora-led {
+.fiona-bezel.screen-tap-3 .fiona-led {
 	animation: none;
 	opacity: 0.22;
 	transition: opacity 0.4s ease;
@@ -2469,15 +2469,15 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 
 /* ── inline scene-over (lives inside the status bar at tap-3) ────────────── */
 
-.liora-status-bar.liora-sys-scene-over,
-#liora-sys-status.liora-sys-scene-over {
+.fiona-status-bar.fiona-sys-scene-over,
+#fiona-sys-status.fiona-sys-scene-over {
 	display: inline-flex;
 	align-items: center;
 	gap: 6px;
 	pointer-events: auto;
 }
 
-.liora-reconnect-icon--inline {
+.fiona-reconnect-icon--inline {
 	display: inline-block;
 	width: 14px;
 	height: 14px;
@@ -2488,15 +2488,15 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 		filter 0.35s ease,
 		animation-duration 0.35s ease;
 	animation:
-		liora-icon-spin 3s linear infinite,
-		liora-icon-shimmer 1.6s ease-in-out infinite alternate;
+		fiona-icon-spin 3s linear infinite,
+		fiona-icon-shimmer 1.6s ease-in-out infinite alternate;
 	vertical-align: middle;
 	transform-origin: center;
 	will-change: transform;
 	flex-shrink: 0;
 }
 
-.liora-reconnect-label--inline {
+.fiona-reconnect-label--inline {
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: inherit;
 	letter-spacing: 0.12em;
@@ -2511,25 +2511,25 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 
 /* hover: 3D push-out — perspective + translateZ + scale.
    slows the spin via a longer-duration animation override */
-.liora-sys-scene-over:hover .liora-reconnect-icon--inline {
+.fiona-sys-scene-over:hover .fiona-reconnect-icon--inline {
 	transform: perspective(180px) translateZ(14px) scale(1.45);
 	filter: drop-shadow(0 0 6px rgba(255, 153, 0, 0.6))
 		drop-shadow(0 0 14px rgba(144, 96, 240, 0.5));
 	animation:
-		liora-icon-spin 9s linear infinite,
-		liora-icon-shimmer 1.6s ease-in-out infinite alternate;
+		fiona-icon-spin 9s linear infinite,
+		fiona-icon-shimmer 1.6s ease-in-out infinite alternate;
 }
 
-.liora-sys-scene-over:hover .liora-reconnect-label--inline {
+.fiona-sys-scene-over:hover .fiona-reconnect-label--inline {
 	color: var(--cdn-aws-orange, #ff9900);
 	text-shadow:
 		0 0 6px rgba(255, 153, 0, 0.7),
 		0 0 14px rgba(255, 153, 0, 0.5);
 }
 
-/* ── popout interaction — liora title, "amazon sumerian" span, each name ── */
+/* ── popout interaction — fiona title, "amazon sumerian" span, each name ── */
 
-.liora-credits-popout {
+.fiona-credits-popout {
 	cursor: pointer;
 	pointer-events: auto;
 	user-select: none;
@@ -2551,7 +2551,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
    it was tinting the orange purple at the edges. inline-block enables transforms.
    history: 75761f87 white-stroke removed; f3a3b431 inside-stroke discontinued;
    db4c8813 added 8-dir 0.5px outline (insufficient — this commit thickens). */
-.liora-credits-amzn {
+.fiona-credits-amzn {
 	display: inline-block;
 	color: var(--cdn-aws-orange, #ff9900);
 	font-weight: 400;
@@ -2574,10 +2574,10 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 		0 0 4px rgba(255, 220, 110, 0.7),
 		0 0 10px rgba(255, 153, 0, 0.55),
 		0 2px 0 rgba(0, 0, 24, 0.7);
-	animation: liora-amzn-shimmer 1.4s ease-in-out infinite alternate;
+	animation: fiona-amzn-shimmer 1.4s ease-in-out infinite alternate;
 }
 
-@keyframes liora-amzn-shimmer {
+@keyframes fiona-amzn-shimmer {
 	0% {
 		text-shadow:
 			1.2px 0 0 #000,
@@ -2611,9 +2611,9 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* hover on a credits-name: pop forward + scale + brighter glow + pause scroll.
-   the :has(.liora-credits-name:hover) rule below pauses the grid; this rule
+   the :has(.fiona-credits-name:hover) rule below pauses the grid; this rule
    gives the hovered name itself the zoom-toward-camera treatment */
-.liora-credits-name:hover {
+.fiona-credits-name:hover {
 	transform: perspective(420px) translateZ(60px) scale(1.4);
 	z-index: 30;
 	color: #fff;
@@ -2629,9 +2629,9 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* exiting state — element grows large + fades into background as the
-   "skip credits?" prompt takes its place. liora-embed.ts adds this class
+   "skip credits?" prompt takes its place. fiona-embed.ts adds this class
    on tap; the prompt overlay appears alongside */
-.liora-credits-popout.liora-popped--exiting {
+.fiona-credits-popout.fiona-popped--exiting {
 	transform: perspective(420px) translateZ(80px) scale(1.7);
 	opacity: 0;
 	filter: drop-shadow(0 0 24px rgba(255, 153, 0, 0.5)) blur(2px);
@@ -2643,21 +2643,21 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	z-index: 180;
 }
 
-/* hover-slow scroll — only when a name is hovered. liora title + "amazon sumerian"
+/* hover-slow scroll — only when a name is hovered. fiona title + "amazon sumerian"
    hover does NOT pause the scroll (their selectors are excluded from :has).
    ALSO pause when the prompt is open — names freeze while bryan decides */
-.liora-credits-names-grid:has(.liora-credits-name:hover) {
+.fiona-credits-names-grid:has(.fiona-credits-name:hover) {
 	animation-play-state: paused;
 }
 
-.liora-credits-prompt-active .liora-credits-names-grid {
+.fiona-credits-prompt-active .fiona-credits-names-grid {
 	animation-play-state: paused;
 }
 
 /* skip-credits prompt — appears when a popout element is tapped.
    "skip credits?" + yes (left) / no (right) buttons centered in the credits area.
    retro arcade game-over feel matches the bottom-bezel skip-credits button */
-.liora-credits-prompt {
+.fiona-credits-prompt {
 	position: absolute;
 	top: 50%;
 	left: 50%;
@@ -2701,11 +2701,11 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	-webkit-user-select: none;
 	opacity: 0;
 	animation:
-		liora-credits-prompt-in 0.32s cubic-bezier(0.2, 0.85, 0.4, 1.1) forwards,
-		liora-skip-scanline 2.2s linear infinite;
+		fiona-credits-prompt-in 0.32s cubic-bezier(0.2, 0.85, 0.4, 1.1) forwards,
+		fiona-skip-scanline 2.2s linear infinite;
 }
 
-@keyframes liora-credits-prompt-in {
+@keyframes fiona-credits-prompt-in {
 	0% {
 		opacity: 0;
 		transform: translate(-50%, -50%) scale(0.6);
@@ -2716,11 +2716,11 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-.liora-credits-prompt.liora-credits-prompt--exit {
-	animation: liora-credits-prompt-out 0.26s ease forwards;
+.fiona-credits-prompt.fiona-credits-prompt--exit {
+	animation: fiona-credits-prompt-out 0.26s ease forwards;
 }
 
-@keyframes liora-credits-prompt-out {
+@keyframes fiona-credits-prompt-out {
 	0% {
 		opacity: 1;
 		transform: translate(-50%, -50%) scale(1);
@@ -2731,7 +2731,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	}
 }
 
-.liora-credits-prompt-q {
+.fiona-credits-prompt-q {
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: clamp(15px, 5cqi, 19px);
 	letter-spacing: 0.18em;
@@ -2743,12 +2743,12 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	white-space: nowrap;
 }
 
-.liora-credits-prompt-actions {
+.fiona-credits-prompt-actions {
 	display: flex;
 	gap: 14px;
 }
 
-.liora-credits-prompt-btn {
+.fiona-credits-prompt-btn {
 	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
 	font-size: 14px;
 	letter-spacing: 0.22em;
@@ -2774,7 +2774,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 	min-width: 64px;
 }
 
-.liora-credits-prompt-btn:hover {
+.fiona-credits-prompt-btn:hover {
 	color: #fff;
 	transform: scale(1.06);
 	box-shadow:
@@ -2789,7 +2789,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* the no button leans cooler — visually different from yes so the choice reads */
-.liora-credits-prompt-no {
+.fiona-credits-prompt-no {
 	color: var(--cdn-violet, #9060f0);
 	border-color: var(--cdn-violet, #9060f0);
 	box-shadow:
@@ -2800,7 +2800,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 		0 0 10px rgba(144, 96, 240, 0.55);
 }
 
-.liora-credits-prompt-no:hover {
+.fiona-credits-prompt-no:hover {
 	box-shadow:
 		0 0 10px rgba(144, 96, 240, 0.85),
 		0 0 22px rgba(144, 96, 240, 0.5),
@@ -2809,7 +2809,7 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 
 /* dark mode — entire prompt uses violet trim instead of aws-orange so it
    reads consistently with the dark-mode skip-credits button */
-.awsui-dark-mode .liora-credits-prompt {
+.awsui-dark-mode .fiona-credits-prompt {
 	border-color: var(--cdn-violet, #9060f0);
 	box-shadow:
 		0 0 14px rgba(144, 96, 240, 0.6),
@@ -2817,8 +2817,8 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 		inset 0 0 14px rgba(144, 96, 240, 0.22);
 }
 
-.awsui-dark-mode .liora-credits-prompt-q,
-.awsui-dark-mode .liora-credits-prompt-yes {
+.awsui-dark-mode .fiona-credits-prompt-q,
+.awsui-dark-mode .fiona-credits-prompt-yes {
 	color: var(--cdn-violet, #9060f0);
 	border-color: var(--cdn-violet, #9060f0);
 	text-shadow:
@@ -2827,17 +2827,17 @@ body.cdn-beat-bank-3 .liora-led:nth-child(4n) {
 }
 
 /* ── Audio reactivity — Phase C ──────────────────────────────────────────
-   Liora CRT scan-line flux coupling. Base opacity 0.65 keeps scanlines
+   Fiona CRT scan-line flux coupling. Base opacity 0.65 keeps scanlines
    readable at rest; flux pushes up to 0.77 on beat onset.
-   .liora-panel-wrap::before is the rolling-scan pseudo-element (crt-roll).
-   No liora-crt-overlay class exists — selector targets the actual element. */
+   .fiona-panel-wrap::before is the rolling-scan pseudo-element (crt-roll).
+   No fiona-crt-overlay class exists — selector targets the actual element. */
 
-/* Phase C — liora crt scan-line flux coupling */
-.cdn-stream-playing .liora-panel-wrap::before {
+/* Phase C — fiona crt scan-line flux coupling */
+.cdn-stream-playing .fiona-panel-wrap::before {
 	opacity: calc(0.65 + var(--cdn-flux, 0) * 0.12);
 }
 @media (prefers-reduced-motion: reduce) {
-	.cdn-stream-playing .liora-panel-wrap::before {
+	.cdn-stream-playing .fiona-panel-wrap::before {
 		opacity: initial;
 	}
 }
