@@ -409,6 +409,21 @@ export const MIGRATION_BASS_SWAY = 0.08;       // was whatever — reduce bass-l
 
 ---
 
+## infrastructure dependencies
+
+### heraldstack-agent-identity (terraform)
+
+- repo: chasko-labs/heraldstack-agent-identity
+- provides: agent email identity, SES inbound email → S3, IAM role for Cognito admin ops
+- agent email pattern: `heraldstack+cloud-del-norte-website-{version}@clouddelnorte.org`
+- SES inbound: s3://heraldstack-agent-mail/inbound/
+- IAM role: scoped to cognito pool us-west-2_cyPQF4F3r
+- SSM params: /heraldstack/identity/cloud-del-norte-website/*
+- cognito service account: heraldstack@clouddelnorte.org (sub: e8716360-c081-708a-1211-3234508e71d2, groups: members + moderators)
+- cognito service account password: AWS Secrets Manager `cloud-del-norte/heraldstack-cognito-pw-nuPFyW` (account 170473530355)
+
+---
+
 ## appendix — ux research findings
 
 ### login page critique (2026-05-03)
