@@ -1,5 +1,6 @@
 import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
+import Button from "@cloudscape-design/components/button";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import { useEffect, useRef, useState } from "react";
@@ -50,16 +51,57 @@ function loadJitsiScript(domain: string): Promise<void> {
 	});
 }
 
-type Status = "loading" | "connecting" | "live" | "error";
+type Status =
+	| "loading"
+	| "connecting"
+	| "cold-start"
+	| "live"
+	| "error"
+	| "unreachable";
+
+// Detect locale from <html lang> attribute; fall back to en-US.
+function getLocale(): "en-US" | "es-MX" {
+	return document.documentElement.lang === "es-MX" ? "es-MX" : "en-US";
+}
+
+const COPY = {
+	"en-US": {
+		coldStart: "Meeting room is starting up, please wait…",
+		unreachableHeader: "Unable to connect",
+		unreachableBody: "The meeting room may be unavailable.",
+		retryButton: "Retry",
+	},
+	"es-MX": {
+		coldStart: "La sala se está iniciando, por favor espere…",
+		unreachableHeader: "No se puede conectar",
+		unreachableBody: "La sala de reuniones puede no estar disponible.",
+		retryButton: "Reintentar",
+	},
+} as const;
+
+const COLD_START_MS = 5_000;
+const UNREACHABLE_MS = 90_000;
 
 export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const apiRef = useRef<any>(null);
 	const [status, setStatus] = useState<Status>("loading");
 	const [errorMsg, setErrorMsg] = useState<string>("");
+	const [retryKey, setRetryKey] = useState(0);
 
+	const locale = getLocale();
+	const t = COPY[locale];
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: retryKey is an intentional re-run trigger
 	useEffect(() => {
 		let cancelled = false;
+		let coldTimer: ReturnType<typeof setTimeout> | null = null;
+		let unreachableTimer: ReturnType<typeof setTimeout> | null = null;
+
+		const clearTimers = () => {
+			if (coldTimer !== null) clearTimeout(coldTimer);
+			if (unreachableTimer !== null) clearTimeout(unreachableTimer);
+		};
 
 		(async () => {
 			try {
@@ -74,6 +116,17 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 				if (!hostRef.current) throw new Error("embed host node missing");
 
 				setStatus("connecting");
+
+				// FP-009: after 5s without videoConferenceJoined, show cold-start message
+				coldTimer = setTimeout(() => {
+					if (!cancelled) setStatus("cold-start");
+				}, COLD_START_MS);
+
+				// FP-013: after 90s without videoConferenceJoined, surface unreachable error
+				unreachableTimer = setTimeout(() => {
+					if (!cancelled) setStatus("unreachable");
+				}, UNREACHABLE_MS);
+
 				const api: any = new window.JitsiMeetExternalAPI(domain, {
 					roomName,
 					jwt: token,
@@ -92,7 +145,10 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 				});
 
 				api.addListener("videoConferenceJoined", () => {
-					if (!cancelled) setStatus("live");
+					if (!cancelled) {
+						clearTimers();
+						setStatus("live");
+					}
 				});
 				api.addListener("readyToClose", () => {
 					if (!cancelled) onClose?.();
@@ -101,6 +157,7 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 				apiRef.current = api;
 			} catch (err) {
 				if (cancelled) return;
+				clearTimers();
 				if (err instanceof BannedUserError) {
 					setErrorMsg("your account is banned from meetings.");
 				} else {
@@ -114,6 +171,7 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 
 		return () => {
 			cancelled = true;
+			clearTimers();
 			try {
 				apiRef.current?.dispose?.();
 			} catch {
@@ -121,7 +179,7 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 			}
 			apiRef.current = null;
 		};
-	}, [roomName, onClose]);
+	}, [roomName, onClose, retryKey]);
 
 	if (status === "error") {
 		return (
@@ -131,17 +189,44 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 		);
 	}
 
+	if (status === "unreachable") {
+		return (
+			<Alert
+				type="error"
+				statusIconAriaLabel="Error"
+				header={t.unreachableHeader}
+				action={
+					<Button onClick={() => setRetryKey((k) => k + 1)}>
+						{t.retryButton}
+					</Button>
+				}
+			>
+				{t.unreachableBody}
+			</Alert>
+		);
+	}
+
 	return (
 		<Box>
-			{status !== "live" && (
+			{(status === "connecting" || status === "cold-start") && (
 				<Box padding={{ vertical: "m" }} textAlign="center">
 					<SpaceBetween size="s" alignItems="center">
 						<Spinner size="large" />
-						<Box variant="p">
-							{status === "loading"
-								? "requesting access token…"
-								: "connecting to meeting…"}
-						</Box>
+						{status === "cold-start" ? (
+							<Alert type="info" statusIconAriaLabel="Info">
+								{t.coldStart}
+							</Alert>
+						) : (
+							<Box variant="p">connecting to meeting…</Box>
+						)}
+					</SpaceBetween>
+				</Box>
+			)}
+			{status === "loading" && (
+				<Box padding={{ vertical: "m" }} textAlign="center">
+					<SpaceBetween size="s" alignItems="center">
+						<Spinner size="large" />
+						<Box variant="p">requesting access token…</Box>
 					</SpaceBetween>
 				</Box>
 			)}

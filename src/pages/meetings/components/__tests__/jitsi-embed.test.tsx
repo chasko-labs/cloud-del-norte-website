@@ -1,4 +1,4 @@
-import { render, waitFor } from "@testing-library/react";
+import { act, render, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 class ResizeObserverMock {
@@ -57,6 +57,7 @@ function installFakeExternalApi(): {
 
 describe("JitsiEmbed", () => {
 	beforeEach(async () => {
+		vi.useFakeTimers();
 		// Remove any prior-loaded script tag between tests.
 		document
 			.querySelectorAll("script[data-cdn-jitsi]")
@@ -68,6 +69,7 @@ describe("JitsiEmbed", () => {
 	});
 
 	afterEach(() => {
+		vi.useRealTimers();
 		delete (window as unknown as { JitsiMeetExternalAPI?: unknown })
 			.JitsiMeetExternalAPI;
 	});
@@ -159,5 +161,112 @@ describe("JitsiEmbed", () => {
 		await waitFor(() => expect(ctor).toHaveBeenCalled());
 		latest()?.__fire("readyToClose");
 		expect(onClose).toHaveBeenCalledTimes(1);
+	});
+
+	// FP-009: cold-start message after 5s
+	it("FP-009: shows cold-start message after 5s without videoConferenceJoined", async () => {
+		const { fetchJitsiToken } = await import("../../../../lib/jitsi-token");
+		(fetchJitsiToken as ReturnType<typeof vi.fn>).mockResolvedValue({
+			token: "tok",
+			domain: "meet.clouddelnorte.org",
+			expiresAt: Math.floor(Date.now() / 1000) + 3600,
+		});
+		installFakeExternalApi();
+		const { container } = render(<JitsiEmbed roomName="room-cold" />);
+
+		// Wait for API to be instantiated (connecting state)
+		await waitFor(() => {
+			expect(container.textContent).toMatch(/connecting/i);
+		});
+
+		// Advance past 5s cold-start threshold
+		await act(async () => {
+			vi.advanceTimersByTime(5_001);
+		});
+
+		expect(container.textContent).toMatch(
+			/Meeting room is starting up, please wait/i,
+		);
+	});
+
+	// FP-009: no cold-start message if videoConferenceJoined fires before 5s
+	it("FP-009: no cold-start message when join fires before 5s (happy path)", async () => {
+		const { fetchJitsiToken } = await import("../../../../lib/jitsi-token");
+		(fetchJitsiToken as ReturnType<typeof vi.fn>).mockResolvedValue({
+			token: "tok",
+			domain: "meet.clouddelnorte.org",
+			expiresAt: Math.floor(Date.now() / 1000) + 3600,
+		});
+		const { latest } = installFakeExternalApi();
+		const { container } = render(<JitsiEmbed roomName="room-fast" />);
+
+		await waitFor(() => expect(latest()).not.toBeNull());
+
+		// Fire join before 5s
+		latest()?.__fire("videoConferenceJoined");
+
+		await act(async () => {
+			vi.advanceTimersByTime(5_001);
+		});
+
+		expect(container.textContent).not.toMatch(/starting up/i);
+	});
+
+	// FP-013: unreachable error after 90s
+	it("FP-013: shows unreachable error with retry button after 90s", async () => {
+		const { fetchJitsiToken } = await import("../../../../lib/jitsi-token");
+		(fetchJitsiToken as ReturnType<typeof vi.fn>).mockResolvedValue({
+			token: "tok",
+			domain: "meet.clouddelnorte.org",
+			expiresAt: Math.floor(Date.now() / 1000) + 3600,
+		});
+		installFakeExternalApi();
+		const { container } = render(<JitsiEmbed roomName="room-unreachable" />);
+
+		await waitFor(() => {
+			expect(container.textContent).toMatch(/connecting/i);
+		});
+
+		await act(async () => {
+			vi.advanceTimersByTime(90_001);
+		});
+
+		expect(container.textContent).toMatch(/Unable to connect/i);
+		expect(container.textContent).toMatch(/meeting room may be unavailable/i);
+		expect(container.querySelector("button")).not.toBeNull();
+	});
+
+	// FP-013: retry button resets state
+	it("FP-013: retry button re-mounts the embed", async () => {
+		const { fetchJitsiToken } = await import("../../../../lib/jitsi-token");
+		(fetchJitsiToken as ReturnType<typeof vi.fn>).mockResolvedValue({
+			token: "tok",
+			domain: "meet.clouddelnorte.org",
+			expiresAt: Math.floor(Date.now() / 1000) + 3600,
+		});
+		installFakeExternalApi();
+		const { container } = render(<JitsiEmbed roomName="room-retry" />);
+
+		await waitFor(() => {
+			expect(container.textContent).toMatch(/connecting/i);
+		});
+
+		await act(async () => {
+			vi.advanceTimersByTime(90_001);
+		});
+
+		expect(container.textContent).toMatch(/Unable to connect/i);
+
+		const retryBtn = container.querySelector("button");
+		expect(retryBtn).not.toBeNull();
+
+		await act(async () => {
+			retryBtn?.click();
+		});
+
+		// After retry, should be back in loading/connecting state
+		await waitFor(() => {
+			expect(container.textContent).not.toMatch(/Unable to connect/i);
+		});
 	});
 });
