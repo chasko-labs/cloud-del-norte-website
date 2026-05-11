@@ -175,6 +175,12 @@
 		"segmentAriaRoleDescription": "Segmento"
 	},
 	"meetings": {
+		"connection": {
+			"coldStart": "La sala se está iniciando, por favor espere…",
+			"unreachableHeader": "No se puede conectar",
+			"unreachableBody": "La sala de reuniones puede no estar disponible.",
+			"retryButton": "Reintentar"
+		},
 		"breadcrumb": "Juntas",
 		"header": "juntas",
 		"createButton": "Crear junta",
@@ -599,6 +605,11 @@
 	},
 	"auth": {
 		"siteTitle": "Nube del Norte",
+		"sessionExpired": {
+			"title": "Su sesión ha expirado",
+			"body": "Por favor inicie sesión nuevamente para continuar.",
+			"loginButton": "Iniciar sesión"
+		},
 		"login": {
 			"title": "Iniciar sesión",
 			"pageContext": "Iniciar sesión en Nube del Norte",

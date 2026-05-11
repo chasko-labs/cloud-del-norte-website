@@ -175,6 +175,12 @@
 		"segmentAriaRoleDescription": "Segment"
 	},
 	"meetings": {
+		"connection": {
+			"coldStart": "Meeting room is starting up, please wait…",
+			"unreachableHeader": "Unable to connect",
+			"unreachableBody": "The meeting room may be unavailable.",
+			"retryButton": "Retry"
+		},
 		"breadcrumb": "Meetings",
 		"header": "meetings",
 		"createButton": "Create meeting",
@@ -599,6 +605,11 @@
 	},
 	"auth": {
 		"siteTitle": "Cloud Del Norte",
+		"sessionExpired": {
+			"title": "Your session has expired",
+			"body": "Please log in again to continue.",
+			"loginButton": "Log in"
+		},
 		"login": {
 			"title": "Sign in",
 			"pageContext": "Sign in to Cloud Del Norte",

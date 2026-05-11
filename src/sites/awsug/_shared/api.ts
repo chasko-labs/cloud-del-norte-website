@@ -1,5 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
+import { showSessionExpired } from "../../../components/session-expired-modal";
 import { getIdToken, refreshTokens } from "./auth";
 
 const API_BASE = "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com";
@@ -29,9 +30,17 @@ async function apiRequest(
 ): Promise<Response> {
 	let idToken = getIdToken();
 	if (!idToken) {
-		await refreshTokens();
+		try {
+			await refreshTokens();
+		} catch {
+			showSessionExpired();
+			throw new Error("session expired");
+		}
 		idToken = getIdToken();
-		if (!idToken) throw new Error("not authenticated");
+		if (!idToken) {
+			showSessionExpired();
+			throw new Error("session expired");
+		}
 	}
 	const doFetch = (token: string) =>
 		fetch(`${API_BASE}${path}`, {
@@ -44,10 +53,23 @@ async function apiRequest(
 		});
 	const res = await doFetch(idToken);
 	if (res.status === 401) {
-		await refreshTokens();
+		try {
+			await refreshTokens();
+		} catch {
+			showSessionExpired();
+			throw new Error("session expired");
+		}
 		const retryToken = getIdToken();
-		if (!retryToken) throw new Error("not authenticated");
-		return doFetch(retryToken);
+		if (!retryToken) {
+			showSessionExpired();
+			throw new Error("session expired");
+		}
+		const retryRes = await doFetch(retryToken);
+		if (retryRes.status === 401) {
+			showSessionExpired();
+			throw new Error("session expired");
+		}
+		return retryRes;
 	}
 	return res;
 }

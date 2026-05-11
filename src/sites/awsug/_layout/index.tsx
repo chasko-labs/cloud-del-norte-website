@@ -6,6 +6,7 @@ import HelpPanel from "@cloudscape-design/components/help-panel";
 import Tabs from "@cloudscape-design/components/tabs";
 import type React from "react";
 import { useState } from "react";
+import { SessionExpiredModal } from "../../../components/session-expired-modal";
 import Shell from "../../../layouts/shell";
 import { HelpPanelHome } from "../../../pages/create-meeting/components/help-panel-home";
 import {
@@ -68,6 +69,7 @@ export default function AwsugLayout({
 			identityHref="https://clouddelnorte.org/feed/index.html"
 		>
 			<ContentLayout>{children}</ContentLayout>
+			<SessionExpiredModal />
 		</Shell>
 	);
 }
