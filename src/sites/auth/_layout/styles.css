@@ -195,7 +195,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 .cdn-auth-card {
 	max-width: 520px;
 	--cdn-glass-blur: 22px;
-	--cdn-glass-bg: rgba(237, 229, 212, 0.72);
+	--cdn-glass-bg: rgba(237, 229, 212, 0.82);
 	border: 1.5px solid rgba(139, 90, 43, 0.35);
 	box-shadow:
 		0 4px 24px rgba(34, 22, 8, 0.1),
@@ -204,7 +204,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 }
 
 .awsui-dark-mode .cdn-auth-card {
-	--cdn-glass-bg: rgba(28, 34, 48, 0.75);
+	--cdn-glass-bg: rgba(28, 34, 48, 0.88);
 	border-color: rgba(144, 96, 240, 0.38);
 	box-shadow:
 		0 4px 32px rgba(0, 0, 0, 0.4),
@@ -1022,6 +1022,31 @@ body.cdn-auth-subdomain .cdn-logo-hero {
 
 body.cdn-auth-subdomain .cdn-logo-hero cdn-star-logo {
 	display: none !important;
+}
+
+/* ==========================================================================
+   Command console variant — monospace inputs + underline-only chrome
+
+   Replaces the full-border rounded input boxes with a terminal-style
+   underline-only treatment. Monospace font stack (JetBrains Mono → Fira Code
+   → SF Mono → system monospace) on inputs and labels reinforces the
+   command-console aesthetic that matches the site's dark glass + amber palette.
+   ========================================================================== */
+
+body.cdn-auth-subdomain [class*="awsui_input"] input,
+body.cdn-auth-subdomain [class*="awsui_input-container"] {
+	font-family: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+	border: none;
+	border-bottom: 1.5px solid var(--cdn-amber, #e8a040);
+	border-radius: 0;
+	background: transparent;
+}
+
+body.cdn-auth-subdomain [class*="awsui_label_"] {
+	font-family: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+	font-size: 0.8rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
 }
 
 /* ==========================================================================
