@@ -1,8 +1,8 @@
 # cloud del norte — handoff plan
 
-**date:** 2026-05-08  
+**date:** 2026-05-10  
 **branch:** main (dev recreated fresh)  
-**last commit:** 7d528ed feat: token refresh, nav cleanup, player overflow, footer, speakeasy redesign, costs tab, home dashboard  
+**last commit:** ee9ae468 feat(liora): LED beat-sync via cdn-beat-bank classes  
 **deploy:** 3f8c98e5 (empty commit trigger) — woodpecker firing to all three targets
 
 ---
@@ -17,6 +17,35 @@
 - ses domain verification started (account 211125425201, us-west-2)
 - git reconciled — both machines on main head, dev branch fresh
 - nova act working on aibox (recipe in session memory)
+
+---
+
+## completed 2026-05-10 evening sprint
+
+- a1: side panel bleed into footer — FIXED (b3599c90)
+- b1: skip button overflow — FIXED (a170f8e6, prior session)
+- b2: next station info under skip — SHIPPED (prior session)
+- b3: scroll position lost on skip — FIXED (prior session)
+- c1: aws developers podcast DNS — RESOLVED (DNS working)
+- d1: podcast resume position — SHIPPED (PR #152, ca3c5ad7)
+- e1: player visual energy — tactile buttons (dad164e6) + waveform bars (c4feb83b)
+- g1: photosensitivity violations — FIXED (a170f8e6, prior session)
+- g2: sun idle freeze — ALREADY IMPLEMENTED (setPlaying in AnimationController)
+- h1: LED beat-sync — SHIPPED (ee9ae468)
+- h2: powered-by text — ALREADY HIDDEN (prior session)
+- h3: liora typography — Alfa Slab One (6fec7b46)
+- i1: name scroll fade + chromatic aberration — SHIPPED (0c5394b6)
+- j1: treble dampening — SHIPPED (b7e37013)
+- k1: dancer icon — SHIPPED (685405e2, 6bfcce7c)
+- k2+k4: podcast icon — SHIPPED (c2de7cd7)
+- k3: radio tower on franklin — SHIPPED (1e5811a2)
+- bucket migration (awsaerospace.org → clouddelnorte.org) — COMPLETE (d98f96d1)
+- costs page hidden from prod — SHIPPED (e4e9a55e)
+- hamburger jump fix — SHIPPED (19ef9a62)
+- stars dark mode skeleton — SHIPPED (19ef9a62)
+- #fff→cream enforcement — SHIPPED (19ef9a62)
+- lazy-load video embeds — SHIPPED (095261f6)
+- fast-xml-builder security dep — MERGED (PR #141)
 
 ---
 
