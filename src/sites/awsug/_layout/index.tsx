@@ -21,6 +21,7 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../../utils/theme";
+import { PendingApprovalBanner } from "../components/pending-approval-banner";
 import { SpeakerForm } from "../components/speaker-form";
 import AwsugNavigation from "./navigation";
 import "./styles.css";
@@ -68,6 +69,7 @@ export default function AwsugLayout({
 			tools={<ToolsPanel />}
 			identityHref="https://clouddelnorte.org/feed/index.html"
 		>
+			<PendingApprovalBanner />
 			<ContentLayout>{children}</ContentLayout>
 			<SessionExpiredModal />
 		</Shell>
