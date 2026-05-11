@@ -18,10 +18,31 @@ export function SpeakerForm() {
 	const [dates, setDates] = useState("");
 	const [email, setEmail] = useState("");
 	const [submitted, setSubmitted] = useState(false);
+	const [error, setError] = useState<string | null>(null);
 
-	function handleSubmit(e: React.FormEvent) {
+	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
-		setSubmitted(true);
+		setError(null);
+		try {
+			const res = await fetch(
+				"https://mxaqohnri6hrozflfbwb7b72by0mrhcy.lambda-url.us-west-2.on.aws/proposals",
+				{
+					method: "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({
+						name,
+						topic,
+						description,
+						preferredDates: dates,
+						email,
+					}),
+				},
+			);
+			if (!res.ok) throw new Error(`Submit failed: ${res.status}`);
+			setSubmitted(true);
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Submission failed");
+		}
 	}
 
 	if (submitted) {
@@ -42,6 +63,7 @@ export function SpeakerForm() {
 				}
 			>
 				<SpaceBetween size="m">
+					{error && <Alert type="error">{error}</Alert>}
 					<FormField label="Your name">
 						<Input
 							value={name}
