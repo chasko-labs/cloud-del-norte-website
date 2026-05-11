@@ -624,6 +624,8 @@
 			"genericError": "Algo salió mal. Intenta de nuevo.",
 			"mfaSetup": {
 				"alertHeader": "Consigue una app autenticadora",
+				"hostageHeader": "No cierres esta pestaña",
+				"hostageBody": "No cierres esta pestaña hasta completar la configuración. Si no puedes terminar, contacta a heraldstack@clouddelnorte.org para recuperar tu cuenta.",
 				"description": "Una app autenticadora genera códigos de 6 dígitos para verificar tus inicios de sesión.",
 				"downloadLabel": "Descarga:",
 				"googleIos": "Google Authenticator (iOS)",
@@ -644,6 +646,7 @@
 			"displayNamePlaceholder": "p. ej. Alex de Las Cruces",
 			"passwordLabel": "Contraseña",
 			"passwordHint": "12+ caracteres con mayúsculas, minúsculas y número — símbolos opcionales",
+			"passwordPolicy": "Mínimo 12 caracteres con mayúsculas, minúsculas, números y símbolos.",
 			"confirmPasswordLabel": "Confirmar contraseña",
 			"passwordMismatch": "Las contraseñas no coinciden",
 			"memberTypeLabel": "¿Cómo te conectas con Cloud Del Norte? (opcional)",
@@ -693,6 +696,11 @@
 		}
 	},
 	"awsug": {
+		"pendingApproval": {
+			"header": "Tu cuenta está pendiente de aprobación.",
+			"body": "Un administrador revisará tu solicitud. Este es un proceso manual, así que por favor espera un momento.",
+			"noRelogin": "Verás nuevas funciones desbloquearse aquí una vez aprobado — sin necesidad de volver a iniciar sesión."
+		},
 		"pending": {
 			"title": "Solicitud recibida",
 			"description": "Tu solicitud está con los organizadores. Recibirás un correo cuando sea aprobada.",

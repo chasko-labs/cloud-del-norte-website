@@ -204,6 +204,12 @@ function LoginForm() {
 						errorText={formError || undefined}
 					>
 						<SpaceBetween size="m">
+							<Alert
+								type="warning"
+								header={t("auth.login.mfaSetup.hostageHeader")}
+							>
+								{t("auth.login.mfaSetup.hostageBody")}
+							</Alert>
 							<Alert type="info" header={t("auth.login.mfaSetup.alertHeader")}>
 								<SpaceBetween size="xs">
 									<Box variant="p">{t("auth.login.mfaSetup.description")}</Box>

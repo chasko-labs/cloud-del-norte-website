@@ -272,6 +272,7 @@ function SignupWizard() {
 					<FormField
 						label={t("auth.signup.passwordLabel")}
 						description={t("auth.signup.passwordHint")}
+						constraintText={t("auth.signup.passwordPolicy")}
 						errorText={step1Errors.password ?? undefined}
 					>
 						<SpaceBetween size="xs">
