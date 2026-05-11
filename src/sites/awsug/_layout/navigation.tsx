@@ -6,14 +6,26 @@ import SideNavigation, {
 } from "@cloudscape-design/components/side-navigation";
 import FionaFrame from "../../../components/fiona-frame";
 import SpeakeasySign from "../../../components/speakeasy-sign";
+import { getAuthState } from "../_shared/auth";
 
 const MAIN = "https://clouddelnorte.org";
 
 export default function AwsugNavigation() {
-	const items: SideNavigationProps["items"] = [
-		{ type: "link", text: "meetings", href: "/meetings/index.html" },
-		{ type: "link", text: "admin", href: "/admin/index.html" },
-		{ type: "divider" },
+	const auth = getAuthState();
+	const isPending = !auth || auth.groups.length === 0;
+
+	const allItems: SideNavigationProps["items"] = [
+		...(!isPending
+			? [
+					{
+						type: "link" as const,
+						text: "meetings",
+						href: "/meetings/index.html",
+					},
+					{ type: "link" as const, text: "admin", href: "/admin/index.html" },
+					{ type: "divider" as const },
+				]
+			: []),
 		{
 			type: "section",
 			text: "resources",
@@ -56,11 +68,11 @@ export default function AwsugNavigation() {
 			</a>
 			<SideNavigation
 				activeHref={location.pathname}
-				items={items}
+				items={allItems}
 				onFollow={(event) => {
 					if (event.detail.type === "section-header") return;
 					const href = event.detail.href;
-					if (href && href.startsWith("/")) {
+					if (href?.startsWith("/")) {
 						event.preventDefault();
 						window.location.href = href;
 					}

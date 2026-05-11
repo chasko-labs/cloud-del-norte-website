@@ -22,6 +22,7 @@ import {
 const MEETUP_URL = "https://www.meetup.com/cloud-del-norte/";
 
 function MeetingsContent({ auth }: { auth: AuthState }) {
+	const { t } = useTranslation();
 	const [jitsiToken, setJitsiToken] = useState<JitsiTokenResponse | null>(null);
 	const [joining, setJoining] = useState(false);
 	const [joinError, setJoinError] = useState("");
@@ -38,7 +39,12 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 		} catch (err) {
 			if (err instanceof Error && err.message === "banned") {
 				if (win) win.close();
-				setJoinError("Your account does not have access to join calls.");
+				// 403 from the API — pending users (groups=[]) also get 403
+				if (auth.groups.length === 0) {
+					setJoinError(t("awsug.meetings.pendingJoinError"));
+				} else {
+					setJoinError("Your account does not have access to join calls.");
+				}
 			} else {
 				if (win) win.close();
 				setJoinError("Failed to get call token. Try again.");

@@ -733,7 +733,8 @@
 		},
 		"meetings": {
 			"pendingApproval": "your application is pending approval. meetings are available once approved.",
-			"createPendingApproval": "your application is pending approval. meeting creation is available once approved."
+			"createPendingApproval": "your application is pending approval. meeting creation is available once approved.",
+			"pendingJoinError": "Your account is pending admin approval. You'll be able to join meetings once approved."
 		}
 	},
 	"fiona": {

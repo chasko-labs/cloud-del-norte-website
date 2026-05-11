@@ -47,26 +47,64 @@ function StepDots({ current, total }: { current: number; total: number }) {
 	);
 }
 
+const WIZARD_STORAGE_KEY = "cdn-signup-wizard-state";
+
+interface WizardPersistedState {
+	activeStepIndex: number;
+	email: string;
+	displayName: string;
+	memberType: string;
+	location: string;
+	topics: string;
+	background: string;
+}
+
+function loadWizardState(): WizardPersistedState | null {
+	try {
+		const raw = sessionStorage.getItem(WIZARD_STORAGE_KEY);
+		if (!raw) return null;
+		return JSON.parse(raw) as WizardPersistedState;
+	} catch {
+		return null;
+	}
+}
+
+function saveWizardState(state: WizardPersistedState): void {
+	try {
+		sessionStorage.setItem(WIZARD_STORAGE_KEY, JSON.stringify(state));
+	} catch {
+		// best effort
+	}
+}
+
+function clearWizardState(): void {
+	sessionStorage.removeItem(WIZARD_STORAGE_KEY);
+}
+
 function SignupWizard() {
 	const { t } = useTranslation();
 	document.title = `${t("auth.signup.title")} — ${t("auth.siteTitle")}`;
 
-	const [activeStepIndex, setActiveStepIndex] = useState(0);
+	const saved = loadWizardState();
+
+	const [activeStepIndex, setActiveStepIndex] = useState(
+		saved?.activeStepIndex ?? 0,
+	);
 
 	// step 1 — only required fields per ux: email, password, display name
-	const [email, setEmail] = useState("");
-	const [displayName, setDisplayName] = useState("");
+	const [email, setEmail] = useState(saved?.email ?? "");
+	const [displayName, setDisplayName] = useState(saved?.displayName ?? "");
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 
 	// step 2 — optional now (not required to advance)
-	const [memberType, setMemberType] = useState("");
-	const [location, setLocation] = useState("");
+	const [memberType, setMemberType] = useState(saved?.memberType ?? "");
+	const [location, setLocation] = useState(saved?.location ?? "");
 
 	// step 3
-	const [topics, setTopics] = useState("");
-	const [background, setBackground] = useState("");
+	const [topics, setTopics] = useState(saved?.topics ?? "");
+	const [background, setBackground] = useState(saved?.background ?? "");
 
 	// step 4
 	const [code, setCode] = useState("");
@@ -89,6 +127,27 @@ function SignupWizard() {
 		},
 		[],
 	);
+
+	// FP-007: persist non-sensitive wizard state on every change
+	useEffect(() => {
+		saveWizardState({
+			activeStepIndex,
+			email,
+			displayName,
+			memberType,
+			location,
+			topics,
+			background,
+		});
+	}, [
+		activeStepIndex,
+		email,
+		displayName,
+		memberType,
+		location,
+		topics,
+		background,
+	]);
 
 	function startCooldown() {
 		setCooldown(RESEND_COOLDOWN_SECS);
@@ -204,6 +263,7 @@ function SignupWizard() {
 			const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
 			const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
 			setSubmitState("success");
+			clearWizardState();
 			window.setTimeout(() => {
 				window.location.assign(
 					`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,

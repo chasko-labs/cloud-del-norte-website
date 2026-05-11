@@ -733,7 +733,8 @@
 		},
 		"meetings": {
 			"pendingApproval": "tu solicitud está pendiente de aprobación. las reuniones estarán disponibles una vez aprobada.",
-			"createPendingApproval": "tu solicitud está pendiente de aprobación. la creación de reuniones estará disponible una vez aprobada."
+			"createPendingApproval": "tu solicitud está pendiente de aprobación. la creación de reuniones estará disponible una vez aprobada.",
+			"pendingJoinError": "Su cuenta está pendiente de aprobación del administrador. Podrá unirse a reuniones una vez aprobada."
 		}
 	},
 	"fiona": {
