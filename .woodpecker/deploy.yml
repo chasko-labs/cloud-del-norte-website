@@ -7,7 +7,7 @@
 #   heraldstack ci workload cert at /workload.{crt,key}
 #   aws_signing_helper at /usr/local/bin/aws_signing_helper
 #   → rolesanywhere ci-profile → heraldstack-ci-deploy role
-#   → s3 rw awsaerospace.org (bucket) + cloudfront invalidate ECC3LP1BL2CZS (clouddelnorte.org)
+#   → s3 rw clouddelnorte.org (bucket) + cloudfront invalidate ECC3LP1BL2CZS
 # mounts come from woodpecker-agent env WOODPECKER_BACKEND_DOCKER_VOLUMES
 # (~/code/heraldstack/heraldstack-infra/docker-compose.yml)
 
@@ -37,6 +37,13 @@ steps:
     commands:
       - npm ci --no-audit --no-fund
 
+  - name: biome
+    image: node:22-slim
+    depends_on: [install]
+    failure: fail
+    commands:
+      - npx biome ci --diagnostic-level=error src/
+
   - name: typecheck
     image: node:22-slim
     depends_on: [install]
@@ -47,7 +54,7 @@ steps:
 
   - name: build
     image: node:22-slim
-    depends_on: [typecheck]
+    depends_on: [biome, typecheck]
     commands:
       - npm run build
 
