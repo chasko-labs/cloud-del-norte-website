@@ -37,7 +37,11 @@ export async function fetchJitsiToken(): Promise<JitsiTokenResponse> {
 	if (cached && cached.expiresAt * 1000 > Date.now() + 30_000) return cached;
 
 	let idToken = getIdToken();
-	if (!idToken) throw new Error("not authenticated");
+	if (!idToken) {
+		await refreshTokens();
+		idToken = getIdToken();
+		if (!idToken) throw new Error("not authenticated");
+	}
 
 	let res = await requestToken(idToken);
 
