@@ -263,7 +263,7 @@ steps:
           exclude: main
     commands:
       - sleep 60
-      - npm ci --no-audit --no-fund
+      - npm ci --no-audit --no-fund --include=dev
       - mkdir -p screenshots
       - node scripts/ci-screenshot.mjs https://dev.clouddelnorte.org screenshots
 
@@ -304,7 +304,7 @@ steps:
         branch: main
     commands:
       - sleep 60
-      - npm ci --no-audit --no-fund
+      - npm ci --no-audit --no-fund --include=dev
       - mkdir -p screenshots
       - node scripts/ci-screenshot.mjs https://clouddelnorte.org screenshots
 

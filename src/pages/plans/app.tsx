@@ -6,8 +6,8 @@ import ExpandableSection from "@cloudscape-design/components/expandable-section"
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import Tabs from "@cloudscape-design/components/tabs";
 import Spinner from "@cloudscape-design/components/spinner";
+import Tabs from "@cloudscape-design/components/tabs";
 import TextContent from "@cloudscape-design/components/text-content";
 import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";

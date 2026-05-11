@@ -3,8 +3,6 @@
 
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { DancerIcon } from "../dancer-icon";
-import { PodcastIcon } from "../podcast-icon";
 import { useTranslation } from "../../hooks/useTranslation";
 import { setMediaSession } from "../../lib/media-session";
 import {
@@ -15,6 +13,8 @@ import {
 } from "../../lib/player-persist";
 import { formatLocation, hexToRgbTuple } from "../../lib/streams";
 import { STREAMS } from "../../lib/streams-order";
+import { DancerIcon } from "../dancer-icon";
+import { PodcastIcon } from "../podcast-icon";
 import "./styles.css";
 
 const POLL_MS = 30_000;
