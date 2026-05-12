@@ -75,31 +75,11 @@ CSP drift between repo (`infra/cloudfront-security-headers.json`) and live Cloud
 
 ## priority queue (next session)
 
-### p0 — FP-017 harness re-confirmation
+### p0 — #162 phantom-nav fix
 
-Nova Act reload-survival fix dispatched. Once harness passes full cycle (pending→approved→reload→nav-update), FP-017 is fully closed.
+Defense in depth: hide admin nav link for non-moderators + render denial card on direct /admin nav + moderator-only create-meeting gate. Product decision confirmed. Implementation in this sprint.
 
-### p1 — FP-019 Lambda half (cdk deploy)
-
-commit 58a13c4 in cloud-del-norte-meet. Needs `cdk deploy` by Bryan (DKIM now SUCCESS or still pending — check first).
-
-### p2 — watch DKIM flip to SUCCESS
-
-poll: `aws sesv2 get-email-identity --email-identity clouddelnorte.org --region us-west-2 --profile aerospaceug-admin`
-
-once DkimStatus = SUCCESS:
-1. dispatch to cloud-del-norte-meet repo → implement FP-019 Lambda half (admin-update-user + SES.SendEmail + feature flag per design doc section 4.1)
-2. switch Cognito pool email mode to DEVELOPER with noreply@clouddelnorte.org
-3. request SES production access (exit sandbox)
-
-### p3 — exploratory test with member-only user
-
-use chrome-devtools MCP against live site, logged in as cdn-member-only-test@clouddelnorte.org (member-only, not moderator):
-- validate FP-014: admin nav hidden from non-moderators
-- validate FP-016: pending-user nav filtering
-- prior tests couldn't cover these — all test users were moderators
-
-### p4 — open creative/ux items (unchanged)
+### p1 — open creative/ux items
 
 - a2: login page full ux rethink
 - c2: add AWS LATAM podcast RSS feed
@@ -107,7 +87,11 @@ use chrome-devtools MCP against live site, logged in as cdn-member-only-test@clo
 - k4: headphones-over-microphone composite icon
 - l: animated records rethink — "waveform disc" concept
 
-### p5 — dependabot
+### p2 — Device Farm CI integration
+
+infra provisioned in `infra/`. woodpecker-cli token config on AIBOX pending. Once configured, real Android/iOS device matrix runs in CI alongside Nova Act Chromium validation.
+
+### p3 — dependabot
 
 0 open alerts (all 4 closed last session).
 
@@ -135,8 +119,8 @@ use chrome-devtools MCP against live site, logged in as cdn-member-only-test@clo
 
 ### friction point status
 
-- 16 of 19 shipped (unchanged)
-- FP-019: DESIGNED + UI-HALF-SHIPPED. Lambda half blocked on DKIM SUCCESS.
+- 16 of 19 shipped (unchanged at time of wave 1)
+- FP-019: SHIPPED 2026-05-12. Lambda half deployed (a6970d2 in cloud-del-norte-meet, SEND_APPROVAL_EMAIL=true).
 - FP-014: triage false alarm resolved — confirmed shipped in ab10ba7b.
 
 ---
@@ -224,7 +208,7 @@ token refresh fix, nav cleanup, CSS fixes (player overflow, footer, speakeasy ne
 | FP-005 | S3 | ACCEPTED | sessionStorage cleared on tab close — every new tab = full login. acceptable trade-off. |
 | FP-006 | S3 | ACCEPTED | MFA every session — no remember-device. security trade-off for casual users. |
 | FP-017 | S2 | RESOLVED | CSP drift was root cause. Client logic correct (4f2f268b + dfe2ed9d). CloudFront CSP fixed. Nova Act harness PASS. |
-| FP-019 | S3 | DESIGNED + UI-HALF-SHIPPED | UI toast in e8750570. Lambda half: 58a13c4 in cloud-del-norte-meet, needs cdk deploy by Bryan. |
+| FP-019 | S3 | SHIPPED | admin-approve lambda sends SES welcome email on group-add. SEND_APPROVAL_EMAIL=true live in 170473530355 us-west-2. Evidence: a6970d2 in cloud-del-norte-meet, SES MessageId 2e740433-7b36-49d7-8a2f-6485d73b708a, chasko-labs/cloud-del-norte-meet#18 closed. |
 | FP-021 | S2 | RESOLVED | awsug meetings 'join call' actually joins Jitsi. Fix chain: 58a85d08 (in-modal embed) + 53e18cb9 (test verdict) + 0cf54d7a (CSP script-src/connect-src). 2-user Nova Act PASS 2026-05-12T16:23Z. Issue #160 closed. |
 
 ### open creative/ux items
@@ -238,6 +222,48 @@ token refresh fix, nav cleanup, CSS fixes (player overflow, footer, speakeasy ne
 ### deploy cost-aggregator lambda + cross-account iam
 
 files ready in `infra/lambda/cost-aggregator/`, `infra/iam/`, `infra/eventbridge/`. needs Bryan's SSO for deployment.
+
+---
+
+## UI/UX Test Harnesses
+
+### Nova Act (controlled Chromium, two-user concurrent)
+
+Pattern: `scripts/nova-act/fp014-016-member-only-validation.py`
+
+- SSM-backed credentials (no creds in scripts, pulled at runtime from `/cloud-del-norte/test/*`)
+- Playwright Chromium driven by Nova Act SDK (Amazon Nova model, us-east-1, account 946179428633)
+- Two concurrent sessions via ThreadPoolExecutor — moderator + member exercise the same flow simultaneously
+- Verdict gate: script exits non-zero on FAIL, screenshots captured to `scripts/nova-act/output/`
+- Local screenshot artifacts committed to S3 at `clouddelnorte.org/screenshots/nova-act/`
+
+2-user validation PASS 2026-05-12T16:23Z:
+- moderator (heraldstack@clouddelnorte.org, moderator=true): recording + livestream + screen-share features confirmed
+- member (heraldstack-test-member@clouddelnorte.org, moderator=false): screen-share only confirmed
+- both iframe-attached to meet.clouddelnorte.org/cloud-del-norte-awsug with valid JWTs
+- evidence log: `scripts/nova-act/output/2user-postcsp-20260512T1619Z.log`
+- screenshots (all HTTP 200):
+  - https://clouddelnorte.org/screenshots/nova-act/MOD-post-click-20260512T1619Z.png
+  - https://clouddelnorte.org/screenshots/nova-act/MOD-post-settle-20260512T1619Z.png
+  - https://clouddelnorte.org/screenshots/nova-act/MEM-post-click-20260512T1619Z.png
+  - https://clouddelnorte.org/screenshots/nova-act/MEM-post-settle-20260512T1619Z.png
+  - https://clouddelnorte.org/screenshots/nova-act/fp014-nav-member-only-20260512T1927Z.png
+  - https://clouddelnorte.org/screenshots/nova-act/fp014-admin-direct-20260512T1927Z.png
+
+### Device Farm (real device matrix)
+
+Infra provisioned in `infra/` (2026-05-07). Next-tier validation: real Android/iOS device matrix to pair with Nova Act's controlled Chromium.
+
+Open item: woodpecker-cli token config on AIBOX not done. Not yet running in CI. Once configured, Device Farm runs as a CI step alongside Nova Act for full coverage: controlled browser (Nova Act) + real device (Device Farm).
+
+---
+
+## open issues
+
+| issue | status | notes |
+|-------|--------|-------|
+| #157 | quiescent | Woodpecker death-loop — SQLite locked state on chasko-labs/chrome-extension-moodle-uploader. Documented, not blocking website deploys (manual deploy script works). |
+| #162 | in-progress | phantom-nav — /admin/index.html blank for non-moderators + create-meeting access level. Fix: hide admin nav link for non-mods + denial card on direct /admin + moderator-only create-meeting. |
 
 ---
 

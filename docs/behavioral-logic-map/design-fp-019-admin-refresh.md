@@ -1,6 +1,6 @@
 # FP-019 Design: Admin Force-Refresh & Approval Notification Tool
 
-**Status:** Design — ready for implementation dispatch
+**Status:** Shipped 2026-05-12 — SES welcome email on group-add live (SEND_APPROVAL_EMAIL=true, cloud-del-norte-meet a6970d2)
 **Sprint:** S3
 **Author:** ghost-stratia-code-mapper
 **Date:** 2026-05-11

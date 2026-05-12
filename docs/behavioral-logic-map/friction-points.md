@@ -14,7 +14,7 @@
 
 ## Progress
 
-> 16 of 19 original items shipped · 1 mitigated (FP-002) · 1 UI-half-shipped (FP-019) · 1 new finding (FP-020) · 1 accepted (FP-006)
+> 17 of 19 original items shipped · 1 mitigated (FP-002) · 1 new finding (FP-020) · 1 accepted (FP-006)
 
 ## Status Values
 
@@ -76,7 +76,9 @@
 >
 > **Lessons learned**: CSP drift between repo (`infra/cloudfront-security-headers.json`) and live CloudFront caused three false-failure cycles. Repo must be source of truth, applied via automation — not manually edited on CloudFront console.
 | FP-018 | S3 | Member | Permission denied on admin page | User expects helpful message | "Admin access requires member approval. Your application is still pending." — confusing wording (says "member approval" when it means "moderator access") | Misleading error copy | Confirmed |
-| FP-019 | S3 | Admin | Approves user, user reports "still blocked" | Admin expects approval = instant access | Must tell user to re-login. No "force refresh" mechanism. No way to message the user. | Admin has no tool to resolve this without out-of-band communication | Confirmed |
+| FP-019 | S3 | Admin | Approves user, user reports "still blocked" | Admin expects approval = instant access | Must tell user to re-login. No "force refresh" mechanism. No way to message the user. | Admin has no tool to resolve this without out-of-band communication | Shipped |
+
+> **FP-019 Resolution 2026-05-12**: admin-approve lambda in cloud-del-norte-meet repo (a6970d2) now sends SES welcome email on group-add. SEND_APPROVAL_EMAIL=true live in 170473530355 us-west-2. SES MessageId 2e740433-7b36-49d7-8a2f-6485d73b708a confirmed. chasko-labs/cloud-del-norte-meet#18 closed. User receives email notification on approval — no out-of-band communication needed.
 
 ---
 
@@ -116,7 +118,7 @@
 - [x] On next page load: token refresh picks up new group (no manual re-login) — confirmed via Nova Act ~37s post-approval
 - [ ] "Pending" message includes "an admin will review your request"
 - [ ] Estimated wait time or "you'll receive an email when approved"
-- [ ] After admin approves: user receives email notification
+- [x] After admin approves: user receives email notification — FP-019 SHIPPED 2026-05-12 (SES welcome email on group-add)
 
 ### 3. FP-014 (S2): PHANTOM_NAVIGATION
 **Fix:** Add `isModerator` check to navigation component. Hide "admin" for non-moderators.
@@ -145,6 +147,7 @@
 
 | Date | Script | Commit | Result |
 |------|--------|--------|--------|
+| 2026-05-12 | `scripts/nova-act/fp014-016-member-only-validation.py` (2-user) | 0cf54d7a | PASS — moderator + member iframe-attached, FP-014 nav-hide confirmed, FP-019 SES email confirmed |
 | 2026-05-12 | `scripts/nova-act/nav-filter-validation.py` | c5efcd6d | 4/4 PASS |
 | 2026-05-12 | `scripts/nova-act/signup-flow-validation.py` | 5f38096b | 3/4 PASS (FP-020 discovered) |
 | 2026-05-12 | FP-017 post-CSP-fix (manual Nova Act) | dfe2ed9d + CSP fix | INCONCLUSIVE — reload fires ~37s post-approval, harness didn't survive reload (test-infra issue) |
