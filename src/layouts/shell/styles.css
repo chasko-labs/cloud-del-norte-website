@@ -462,9 +462,10 @@ main[class*="awsui_layout"] > [class*="tools-container"] {
    page length. min-block-size:100% overrides the 100vh cap without
    fighting the inline custom-property calc. Scoped to desktop (≥689px)
    since mobile uses position:fixed for the drawers container. */
+/* restored post-fc3edc19 — load-bearing for logged-in tools-toggle visibility on scroll */
 @media (min-width: 689px) {
 	[class*="awsui_drawers-container"] {
-		min-block-size: 100%;
+		min-block-size: 100% !important;
 	}
 }
 
@@ -1493,6 +1494,7 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
    Pairs with body { min-height: 100vh } — that ensures scrollHeight stays
    ≥ viewport, this ensures scrollbar visibility never depends on the
    comparison. Belt-and-suspenders. */
+/* restored post-fc3edc19 — load-bearing for logged-in scrollbar stability + viewport fill */
 html {
 	overflow-y: scroll;
 }
