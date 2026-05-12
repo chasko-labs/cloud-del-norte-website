@@ -160,8 +160,9 @@
    Since Footer renders OUTSIDE AppLayout, this viewport-fill behavior creates a
    giant whitespace gap between the last content and the footer.
    Override with !important because Cloudscape applies these as inline styles. */
+/* restored post-fc3edc19 — load-bearing for logged-in footer gap elimination */
 main[class*="awsui_layout"] {
-	min-block-size: auto;
+	min-block-size: auto !important;
 }
 
 /* Light mode: warm cream fills the layout seam between nav and content containers.
@@ -442,10 +443,11 @@ main[class*="awsui_layout"] > [class*="tools-container"] {
 /* Mobile + small viewport: tools panel needs explicit overflow + touch-action so the
    help-panel content scrolls/drags. Cloudscape's tools drawer otherwise locks the
    inner panel when content exceeds viewport on touch devices. */
+/* restored post-fc3edc19 — load-bearing for logged-in tools panel scroll */
 [class*="awsui_tools_"][class*="awsui_root"],
 [class*="awsui_tools-container"],
 [class*="awsui_tools_"] [class*="awsui_help-panel"] {
-	overflow-y: auto;
+	overflow-y: auto !important;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
 	touch-action: pan-y;
@@ -1917,5 +1919,8 @@ nav[class*="awsui_navigation_"]:not(
 	display: none;
 }
 .awsui-dark-mode .cdn-stars-skeleton {
+	display: block;
+}
+eleton {
 	display: block;
 }
