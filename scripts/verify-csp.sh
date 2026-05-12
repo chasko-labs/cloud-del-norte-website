@@ -36,11 +36,17 @@ require jq
 AWSUG_POLICY_ID="ef81b3a7-9f54-4871-9d45-0864456d843b"
 
 # ── Required domain whitelist (awsug only) ───────────────────────────────────
-# awsug connect-src MUST include these three endpoints (Cognito + API Gateway)
+# awsug script-src MUST include Jitsi external_api.js origin
+AWSUG_SCRIPT_SRC_REQUIRED=(
+  "https://meet.clouddelnorte.org"
+)
+# awsug connect-src MUST include Cognito + API Gateway + Jitsi XHR + WebSocket
 AWSUG_CONNECT_SRC_REQUIRED=(
   "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com"
   "https://cognito-idp.us-west-2.amazonaws.com"
   "https://cloud-del-norte.auth.us-west-2.amazoncognito.com"
+  "https://meet.clouddelnorte.org"
+  "wss://meet.clouddelnorte.org"
 )
 # awsug frame-src MUST include Jitsi meet endpoint
 AWSUG_FRAME_SRC_REQUIRED=(
@@ -102,6 +108,9 @@ else
 
   # 2. Required whitelist check
   echo "  Checking awsug required whitelist…"
+  for domain in "${AWSUG_SCRIPT_SRC_REQUIRED[@]}"; do
+    check_domain_in_directive "${LIVE_CSP}" "script-src" "${domain}"
+  done
   for domain in "${AWSUG_CONNECT_SRC_REQUIRED[@]}"; do
     check_domain_in_directive "${LIVE_CSP}" "connect-src" "${domain}"
   done
