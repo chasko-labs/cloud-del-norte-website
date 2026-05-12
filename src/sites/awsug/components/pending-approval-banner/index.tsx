@@ -9,15 +9,15 @@ import { useGroupMembership } from "../../_shared/use-group-membership";
 /**
  * Global pending-approval banner (FP-003 + FP-017).
  * Renders only when the user is logged in with no Cognito group membership.
- * Disappears automatically once the silent token refresh detects group assignment.
+ * When silent token refresh detects group assignment, a hard reload fires and
+ * this component re-mounts with fresh auth state (banner gone).
  */
 export function PendingApprovalBanner() {
 	const { t } = useTranslation();
-	const hasGroups = useGroupMembership();
+	useGroupMembership();
 
-	// Not logged in or already has groups — render nothing
 	const auth = getAuthState();
-	if (!auth || hasGroups) return null;
+	if (!auth || (auth.groups.length ?? 0) > 0) return null;
 
 	return (
 		<Alert type="info" header={t("awsug.pendingApproval.header")}>
