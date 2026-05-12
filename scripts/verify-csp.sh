@@ -145,6 +145,30 @@ if echo "${SCRIPT_SRC}" | grep -qF "'unsafe-eval'"; then
 else
   pass "awsug: script-src clean (no unsafe-eval)"
 fi
+
+# 6. worker-src must allow 'self' (BabylonJS may spawn workers for shader
+#    compilation in future engine versions; default-src 'self' covers this
+#    today but an explicit worker-src 'self' is defense-in-depth).
+#    If worker-src is absent, browsers fall back to default-src — check that
+#    default-src at minimum contains 'self'.
+WORKER_SRC="$(extract_directive "${LIVE_CSP}" "worker-src")"
+DEFAULT_SRC="$(extract_directive "${LIVE_CSP}" "default-src")"
+if [[ -n "${WORKER_SRC}" ]]; then
+  if echo "${WORKER_SRC}" | grep -qF "'self'"; then
+    pass "awsug: worker-src contains 'self' (BabylonJS workers allowed)"
+  else
+    fail "awsug: worker-src present but missing 'self' — BabylonJS workers blocked"
+    echo "       live worker-src: ${WORKER_SRC}"
+  fi
+else
+  # No explicit worker-src — falls back to default-src.
+  if echo "${DEFAULT_SRC}" | grep -qF "'self'"; then
+    pass "awsug: worker-src absent, default-src 'self' covers BabylonJS workers"
+  else
+    fail "awsug: worker-src absent and default-src missing 'self' — BabylonJS workers may be blocked"
+    echo "       live default-src: ${DEFAULT_SRC:-<empty>}"
+  fi
+fi
 echo ""
 
 # ── Nova Act screenshot URL reachability ─────────────────────────────────────
