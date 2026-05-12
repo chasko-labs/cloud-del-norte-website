@@ -2,8 +2,37 @@
 
 **date:** 2026-05-12  
 **branch:** main  
-**last commit:** 51c09cb9 test(nova-act): fix 2-user join-call flow  
-**deploy:** verified 2026-05-12 00:31 UTC — all three targets (clouddelnorte.org, auth.clouddelnorte.org, awsug.clouddelnorte.org)
+**last commit:** 0cf54d7a fix(infra): CSP script-src + connect-src allow meet.clouddelnorte.org (FP-021)  
+**deploy:** verified 2026-05-12 16:19 UTC — awsug.clouddelnorte.org (FP-021 CSP patch live, E2QLAWFVIT1AR8 invalidation I9YDRZ6T4LL26Y9C4VLQKGH1Y9)
+
+---
+
+## completed 2026-05-12 session — post-resumption wave 3 (FP-021 real join-call validation)
+
+Resumed Nova Act iteration track after wave 2's CSP drift-prevention side-quest. 2-user join-call test (join-call-2user.py) had been reporting PASS while both users were actually misrouted to the main-site meetings list, never entering Jitsi. Three-commit fix chain + one diagnostic throwaway:
+
+| commit | description |
+|--------|-------------|
+| 58a85d08 | fix(awsug): FP-021 — meetings page actually joins Jitsi conference + test assertion (product: window.open → Cloudscape Modal + inline JitsiEmbed iframe, matching main site) |
+| 53e18cb9 | fix(nova-act): 2-user test detects in-modal JitsiEmbed (FP-021 flow) — polls `[data-testid=jitsi-iframe-host] iframe` src for `meet.clouddelnorte.org`, drops create-meeting step (awsug is always-on room `cloud-del-norte-awsug`) |
+| 0cf54d7a | fix(infra): CSP script-src + connect-src allow meet.clouddelnorte.org (FP-021) — in-modal embed needs parent-page CSP to load external_api.js and open wss to meet. Old tab-open pattern only needed frame-src |
+
+Root-cause method: direct playwright diagnostic at `/tmp/fp021-diag.py` (removed post-finding, trace JSON retained at `/tmp/fp021-trace-20260512T1616Z.json`). Surfaced the exact CSP violation in one run: `Refused to load https://meet.clouddelnorte.org/external_api.js`. Diagnostic-first pattern applied.
+
+Final validation: Nova Act 2-user verdict **PASS** at 16:23Z. Both moderator (sub e8716360, moderator=true, features recording/livestreaming/screen-sharing) and member (sub 7801f370, moderator=false) iframe-attached at POLL 0s with valid room JWT.
+
+**Gaps closed:**
+- `scripts/deploy-manual.sh` first real use — unblocked 58a85d08 deploy while Woodpecker was death-looping
+- `scripts/sync-cloudfront-headers.sh` applied the CSP drift fix cleanly
+
+**Gaps discovered (tracked):**
+- `scripts/verify-csp.sh` required-whitelist missed script-src and wss connect-src for meet.clouddelnorte.org — commented on #158 with required additions
+- Woodpecker still death-looping on another repo (chasko-labs/chrome-extension-moodle-uploader), SQLite locked state persists — tracked in #157
+
+### github
+
+- #160 FP-021 filed + closed (resolution comment with commit chain)
+- #158 commented with verify-csp.sh extension spec (AWSUG_SCRIPT_SRC_REQUIRED, augmented AWSUG_CONNECT_SRC_REQUIRED incl. wss://)
 
 ---
 
@@ -194,8 +223,9 @@ token refresh fix, nav cleanup, CSS fixes (player overflow, footer, speakeasy ne
 |----|-----|--------|-------|
 | FP-005 | S3 | ACCEPTED | sessionStorage cleared on tab close — every new tab = full login. acceptable trade-off. |
 | FP-006 | S3 | ACCEPTED | MFA every session — no remember-device. security trade-off for casual users. |
-| FP-017 | S2 | RESOLVED (pending harness re-confirmation) | CSP drift was root cause. Client logic correct (4f2f268b + dfe2ed9d). Live CloudFront CSP fixed. Harness re-run needed. |
+| FP-017 | S2 | RESOLVED | CSP drift was root cause. Client logic correct (4f2f268b + dfe2ed9d). CloudFront CSP fixed. Nova Act harness PASS. |
 | FP-019 | S3 | DESIGNED + UI-HALF-SHIPPED | UI toast in e8750570. Lambda half: 58a13c4 in cloud-del-norte-meet, needs cdk deploy by Bryan. |
+| FP-021 | S2 | RESOLVED | awsug meetings 'join call' actually joins Jitsi. Fix chain: 58a85d08 (in-modal embed) + 53e18cb9 (test verdict) + 0cf54d7a (CSP script-src/connect-src). 2-user Nova Act PASS 2026-05-12T16:23Z. Issue #160 closed. |
 
 ### open creative/ux items
 
