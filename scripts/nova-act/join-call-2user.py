@@ -3,7 +3,8 @@
 
 Both users log in at auth.clouddelnorte.org, land on awsug.clouddelnorte.org,
 navigate to /meetings/, and click the 'join call' button which triggers
-fetchJitsiToken → opens meet.clouddelnorte.org?jwt=<token> in a new tab.
+fetchJitsiToken → renders JitsiEmbed iframe inline (or opens meet.clouddelnorte.org
+in a new tab for external-tab flows).
 
 Moderator creates a meeting first, then joins via the meetings page 'join call'
 button (NOT the direct link on the create-success page, which lacks JWT).
@@ -82,6 +83,69 @@ def wait_for_jitsi_tab(nova, role: str):
     time.sleep(15)
 
 
+def assert_jitsi_reached(nova, role: str, result: dict) -> bool:
+    """Assert that the current page is actually a Jitsi conference.
+
+    Checks (in order):
+      a) URL starts with https://meet.clouddelnorte.org  (external-tab flow)
+      b) DOM contains Jitsi embed iframe                 (inline embed flow)
+
+    Additionally asserts at least one Jitsi toolbar marker is present.
+
+    Sets result['status'] to 'joined' or 'misrouted' and logs debug info.
+    Returns True if Jitsi was reached.
+    """
+    page = nova.page
+    current_url = page.url
+
+    # --- Check A: external tab landed on meet subdomain ---
+    url_ok = current_url.startswith("https://meet.clouddelnorte.org")
+
+    # --- Check B: inline embed iframe present on current page ---
+    embed_ok = False
+    if not url_ok:
+        embed_ok = bool(
+            page.query_selector("#jitsi-embed")
+            or page.query_selector("iframe[src*='meet.clouddelnorte.org']")
+            or page.query_selector("[data-testid='jitsi-iframe-host'] iframe")
+        )
+
+    jitsi_present = url_ok or embed_ok
+
+    # --- Toolbar marker check (only if we think we're in Jitsi) ---
+    toolbar_ok = False
+    if jitsi_present:
+        toolbar_ok = bool(
+            page.query_selector("[aria-label='Mute / Unmute']")
+            or page.query_selector("[aria-label='Hang up']")
+            or page.query_selector("button[aria-label*='mute']")
+            or page.query_selector("button[aria-label*='hangup']")
+            or page.query_selector("button[aria-label*='hang up']")
+            # Jitsi prejoin page
+            or page.query_selector("button[data-testid='prejoin.joinMeeting']")
+            or page.query_selector("div.prejoin-input-area-container")
+        )
+
+    if jitsi_present and toolbar_ok:
+        result["status"] = "joined"
+        log(role, f"Jitsi confirmed — url_ok={url_ok}, embed_ok={embed_ok}, toolbar_ok={toolbar_ok}")
+        return True
+
+    # --- Misrouted: log debug info ---
+    result["status"] = "misrouted"
+    try:
+        body_text = page.inner_text("body") or ""
+        body_snippet = body_text[:300]
+    except Exception:
+        body_snippet = "<could not read body>"
+    log(role, f"MISROUTED — url={current_url}")
+    log(role, f"  url_ok={url_ok}, embed_ok={embed_ok}, toolbar_ok={toolbar_ok}")
+    log(role, f"  body[:300]: {body_snippet!r}")
+    result["misroute_url"] = current_url
+    result["misroute_body"] = body_snippet
+    return False
+
+
 @workflow(
     model_id="nova-act-latest",
     boto_session_kwargs={"profile_name": "bryanchasko-kiro", "region_name": "us-east-1"},
@@ -130,14 +194,17 @@ def run_2user_test():
                 r["jitsi_url"] = nova.page.url
                 screenshot(nova, "MOD", "jitsi-joined")
 
-                check = nova.act_get(
-                    "Describe what you see. Is this a video call interface? "
-                    "Any error messages or 'session expired' text?"
-                )
-                r["jitsi_state"] = check.response
-                log("MOD", f"State: {check.response[:150]}")
-                r["status"] = "joined"
-                r["time_to_join_s"] = round(time.time() - t0, 1)
+                assert_jitsi_reached(nova, "MOD", r)
+                log("MOD", f"Status: {r['status']}")
+
+                if r["status"] == "joined":
+                    check = nova.act_get(
+                        "Describe what you see. Is this a video call interface? "
+                        "Any error messages or 'session expired' text?"
+                    )
+                    r["jitsi_state"] = check.response
+                    log("MOD", f"State: {check.response[:150]}")
+                    r["time_to_join_s"] = round(time.time() - t0, 1)
 
             except Exception as e:
                 log("MOD", f"ERROR: {e}")
@@ -175,18 +242,21 @@ def run_2user_test():
                 rm["jitsi_url"] = nova.page.url
                 screenshot(nova, "MEM", "jitsi-joined")
 
-                # Wait for both participants to appear
-                time.sleep(10)
-                screenshot(nova, "MEM", "jitsi-settled")
+                assert_jitsi_reached(nova, "MEM", rm)
+                log("MEM", f"Status: {rm['status']}")
 
-                check = nova.act_get(
-                    "Describe what you see. Is this a video call interface? "
-                    "How many participants are visible? Any error messages?"
-                )
-                rm["jitsi_state"] = check.response
-                log("MEM", f"State: {check.response[:150]}")
-                rm["status"] = "joined"
-                rm["time_to_join_s"] = round(time.time() - t1, 1)
+                if rm["status"] == "joined":
+                    # Wait for both participants to appear
+                    time.sleep(10)
+                    screenshot(nova, "MEM", "jitsi-settled")
+
+                    check = nova.act_get(
+                        "Describe what you see. Is this a video call interface? "
+                        "How many participants are visible? Any error messages?"
+                    )
+                    rm["jitsi_state"] = check.response
+                    log("MEM", f"State: {check.response[:150]}")
+                    rm["time_to_join_s"] = round(time.time() - t1, 1)
 
             except Exception as e:
                 log("MEM", f"ERROR: {e}")
@@ -204,6 +274,8 @@ def run_2user_test():
         results["verdict"] = "PASS"
     elif mod_ok or mem_ok:
         results["verdict"] = "DEGRADED"
+    else:
+        results["verdict"] = "FAIL"
     results["timestamp"] = datetime.now(timezone.utc).isoformat()
 
 

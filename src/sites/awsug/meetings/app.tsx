@@ -6,12 +6,13 @@ import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
+import Modal from "@cloudscape-design/components/modal";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
+import JitsiEmbed from "../../../pages/meetings/components/jitsi-embed";
 import AwsugLayout from "../_layout";
-import { fetchJitsiToken, type JitsiTokenResponse } from "../_shared/api";
 import {
 	type AuthState,
 	isMember,
@@ -20,39 +21,11 @@ import {
 } from "../_shared/auth";
 
 const MEETUP_URL = "https://www.meetup.com/cloud-del-norte/";
+const ROOM_NAME = "cloud-del-norte-awsug";
 
 function MeetingsContent({ auth }: { auth: AuthState }) {
 	const { t } = useTranslation();
-	const [jitsiToken, setJitsiToken] = useState<JitsiTokenResponse | null>(null);
-	const [joining, setJoining] = useState(false);
-	const [joinError, setJoinError] = useState("");
-
-	async function handleJoinCall() {
-		const win = window.open("", "_blank");
-		setJoining(true);
-		setJoinError("");
-		try {
-			const tokenData = await fetchJitsiToken();
-			setJitsiToken(tokenData);
-			if (win)
-				win.location.href = `https://${tokenData.domain}?jwt=${tokenData.token}`;
-		} catch (err) {
-			if (err instanceof Error && err.message === "banned") {
-				if (win) win.close();
-				// 403 from the API — pending users (groups=[]) also get 403
-				if (auth.groups.length === 0) {
-					setJoinError(t("awsug.meetings.pendingJoinError"));
-				} else {
-					setJoinError("Your account does not have access to join calls.");
-				}
-			} else {
-				if (win) win.close();
-				setJoinError("Failed to get call token. Try again.");
-			}
-		} finally {
-			setJoining(false);
-		}
-	}
+	const [inCall, setInCall] = useState(false);
 
 	return (
 		<SpaceBetween size="l">
@@ -62,21 +35,8 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 						Join the active Cloud Del Norte call or check meetup.com for
 						upcoming events.
 					</Box>
-					{joinError && <Alert type="error">{joinError}</Alert>}
-					{jitsiToken && (
-						<Alert type="success">
-							Call token generated — if the window did not open, click Join
-							again.
-						</Alert>
-					)}
 					<SpaceBetween direction="horizontal" size="s">
-						<Button
-							variant="primary"
-							loading={joining}
-							onClick={() => {
-								void handleJoinCall();
-							}}
-						>
+						<Button variant="primary" onClick={() => setInCall(true)}>
 							join call
 						</Button>
 						<Button href={MEETUP_URL} target="_blank" iconName="external">
@@ -95,6 +55,15 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 					</SpaceBetween>
 				</Container>
 			)}
+			<Modal
+				visible={inCall}
+				onDismiss={() => setInCall(false)}
+				size="max"
+				header="Cloud Del Norte — live call"
+				closeAriaLabel="leave meeting"
+			>
+				<JitsiEmbed roomName={ROOM_NAME} onClose={() => setInCall(false)} />
+			</Modal>
 		</SpaceBetween>
 	);
 }
