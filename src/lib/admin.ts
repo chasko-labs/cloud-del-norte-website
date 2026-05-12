@@ -8,6 +8,10 @@ export interface AdminUser {
 	status: string;
 	groups: string[];
 	createdAt: string;
+	memberType?: string;
+	location?: string;
+	topics?: string;
+	background?: string;
 }
 
 export interface ListUsersResponse {
