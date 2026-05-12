@@ -7,10 +7,13 @@ import SideNavigation, {
 import FionaFrame from "../../../components/fiona-frame";
 import SpeakeasySign from "../../../components/speakeasy-sign";
 import { getAuthState, isModerator } from "../_shared/auth";
+import { useGroupMembership } from "../_shared/use-group-membership";
 
 const MAIN = "https://clouddelnorte.org";
 
 export default function AwsugNavigation() {
+	// useGroupMembership drives re-render when silent refresh picks up group assignment
+	useGroupMembership();
 	const auth = getAuthState();
 	const isPending = !auth || auth.groups.length === 0;
 	const isMod = auth ? isModerator(auth) : false;
