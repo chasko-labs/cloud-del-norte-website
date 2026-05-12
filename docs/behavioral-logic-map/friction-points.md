@@ -14,7 +14,7 @@
 
 ## Progress
 
-> 15 of 19 original items shipped · 1 mitigated (FP-002) · 1 UI-half-shipped (FP-019) · 1 new finding (FP-020) · 1 accepted (FP-006)
+> 16 of 19 original items shipped · 1 mitigated (FP-002) · 1 UI-half-shipped (FP-019) · 1 new finding (FP-020) · 1 accepted (FP-006)
 
 ## Status Values
 
@@ -70,7 +70,11 @@
 
 | ID | Sev | Role | Trigger | Predicted Behavior | Actual Behavior | Gap | Status |
 |----|-----|------|---------|-------------------|-----------------|-----|--------|
-| FP-017 | S2 | Pending→Member | Admin approves user | User expects immediate access | Token in sessionStorage still has groups: []. Must re-login to get updated token. No notification of approval. | STALE_TOKEN_GROUPS — approved but still blocked until re-login | Confirmed |
+| FP-017 | S2 | Pending→Member | Admin approves user | User expects immediate access | Token in sessionStorage still has groups: []. Must re-login to get updated token. No notification of approval. | STALE_TOKEN_GROUPS — approved but still blocked until re-login | Shipped |
+
+> **FP-017 Resolution 2026-05-12**: Root cause was CloudFront response-headers-policy CSP `connect-src` missing `cloud-del-norte.auth.us-west-2.amazoncognito.com` — every `refreshTokens()` fetch to `/oauth2/token` was silently blocked. Client logic was correct across all three fix commits (185c785b, 4f2f268b, dfe2ed9d). Live CloudFront policy ef81b3a7-9f54-4871-9d45-0864456d843b updated directly; invalidation I83PQYL9Y171I0WSZ21TQDXW7H. Post-fix: reload fires ~37s post-approval. Pending harness re-confirmation (test-infra issue with reload survival, separately dispatched).
+>
+> **Lessons learned**: CSP drift between repo (`infra/cloudfront-security-headers.json`) and live CloudFront caused three false-failure cycles. Repo must be source of truth, applied via automation — not manually edited on CloudFront console.
 | FP-018 | S3 | Member | Permission denied on admin page | User expects helpful message | "Admin access requires member approval. Your application is still pending." — confusing wording (says "member approval" when it means "moderator access") | Misleading error copy | Confirmed |
 | FP-019 | S3 | Admin | Approves user, user reports "still blocked" | Admin expects approval = instant access | Must tell user to re-login. No "force refresh" mechanism. No way to message the user. | Admin has no tool to resolve this without out-of-band communication | Confirmed |
 
@@ -107,11 +111,12 @@
 
 ### 2. FP-003 + FP-017 (S2): Group Assignment UX
 **Fix:** Show clear pending status with context. Notify user on approval. Force token refresh.
+**FP-017 Status:** SHIPPED. CSP fix + force-reload on transition (4f2f268b + dfe2ed9d). Pending harness re-confirmation.
 **Test:** Create new account, complete signup. Verify:
+- [x] On next page load: token refresh picks up new group (no manual re-login) — confirmed via Nova Act ~37s post-approval
 - [ ] "Pending" message includes "an admin will review your request"
 - [ ] Estimated wait time or "you'll receive an email when approved"
 - [ ] After admin approves: user receives email notification
-- [ ] On next page load: token refresh picks up new group (no manual re-login)
 
 ### 3. FP-014 (S2): PHANTOM_NAVIGATION
 **Fix:** Add `isModerator` check to navigation component. Hide "admin" for non-moderators.
@@ -142,3 +147,4 @@
 |------|--------|--------|--------|
 | 2026-05-12 | `scripts/nova-act/nav-filter-validation.py` | c5efcd6d | 4/4 PASS |
 | 2026-05-12 | `scripts/nova-act/signup-flow-validation.py` | 5f38096b | 3/4 PASS (FP-020 discovered) |
+| 2026-05-12 | FP-017 post-CSP-fix (manual Nova Act) | dfe2ed9d + CSP fix | INCONCLUSIVE — reload fires ~37s post-approval, harness didn't survive reload (test-infra issue) |

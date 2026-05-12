@@ -7,7 +7,84 @@
 
 ---
 
-## completed 2026-05-12 session — post-resumption (FP-019 UI half + nova act + infra)
+## completed 2026-05-12 session — post-resumption wave 2 (FP-017 root-cause + CSP fix)
+
+### root-cause discovery
+
+FP-017 (stale token groups after admin approval) was listed as shipped via 185c785b. Nova Act validation on 2026-05-12 surfaced it as FAIL. Three fix commits attempted — all had correct client logic:
+
+| commit | approach |
+|--------|----------|
+| 185c785b | hook without Hub subscription |
+| 4f2f268b | hook with Hub subscription listener |
+| dfe2ed9d | force-reload on pending→member transition |
+
+Deep diagnostics revealed the real root cause: **CloudFront response-headers-policy CSP `connect-src` was missing `cloud-del-norte.auth.us-west-2.amazoncognito.com`**. Every `refreshTokens()` fetch to `/oauth2/token` was silently blocked at the CSP layer. The repo file `infra/cloudfront-security-headers.json` had the correct directive — live CloudFront had drifted from it.
+
+### infra fix applied
+
+| item | value |
+|------|-------|
+| policy ID | ef81b3a7-9f54-4871-9d45-0864456d843b |
+| ETag after update | E3UN6WX5RRO2AG |
+| invalidation | I83PQYL9Y171I0WSZ21TQDXW7H |
+| validation | Nova Act confirmed reload fires ~37s post-approval. Session ended INCONCLUSIVE (harness didn't survive reload — separate test-infra issue, dispatched). |
+
+### commits to keep
+
+| commit | description |
+|--------|-------------|
+| 4f2f268b | fix(awsug): FP-017 — Hub subscription listener for token refresh |
+| dfe2ed9d | fix(awsug): FP-017 — force-reload on pending→member transition |
+| TBD (solan) | infra: reconcile cloudfront-security-headers.json CSP with live policy |
+
+### lessons learned
+
+CSP drift between repo (`infra/cloudfront-security-headers.json`) and live CloudFront caused three false-failure cycles. Repo must be source of truth, applied via automation — not manually edited on CloudFront console.
+
+---
+
+## priority queue (next session)
+
+### p0 — FP-017 harness re-confirmation
+
+Nova Act reload-survival fix dispatched. Once harness passes full cycle (pending→approved→reload→nav-update), FP-017 is fully closed.
+
+### p1 — FP-019 Lambda half (cdk deploy)
+
+commit 58a13c4 in cloud-del-norte-meet. Needs `cdk deploy` by Bryan (DKIM now SUCCESS or still pending — check first).
+
+### p2 — watch DKIM flip to SUCCESS
+
+poll: `aws sesv2 get-email-identity --email-identity clouddelnorte.org --region us-west-2 --profile aerospaceug-admin`
+
+once DkimStatus = SUCCESS:
+1. dispatch to cloud-del-norte-meet repo → implement FP-019 Lambda half (admin-update-user + SES.SendEmail + feature flag per design doc section 4.1)
+2. switch Cognito pool email mode to DEVELOPER with noreply@clouddelnorte.org
+3. request SES production access (exit sandbox)
+
+### p3 — exploratory test with member-only user
+
+use chrome-devtools MCP against live site, logged in as cdn-member-only-test@clouddelnorte.org (member-only, not moderator):
+- validate FP-014: admin nav hidden from non-moderators
+- validate FP-016: pending-user nav filtering
+- prior tests couldn't cover these — all test users were moderators
+
+### p4 — open creative/ux items (unchanged)
+
+- a2: login page full ux rethink
+- c2: add AWS LATAM podcast RSS feed
+- e2: podcast player icon redesign
+- k4: headphones-over-microphone composite icon
+- l: animated records rethink — "waveform disc" concept
+
+### p5 — dependabot
+
+0 open alerts (all 4 closed last session).
+
+---
+
+## completed 2026-05-12 session — post-resumption wave 1 (FP-019 UI half + nova act + infra) (archive)
 
 ### commits landed
 
@@ -109,38 +186,6 @@ token refresh fix, nav cleanup, CSS fixes (player overflow, footer, speakeasy ne
 
 ---
 
-## priority queue (next session)
-
-### p0 — watch DKIM flip to SUCCESS
-
-poll: `aws sesv2 get-email-identity --email-identity clouddelnorte.org --region us-west-2 --profile aerospaceug-admin`
-
-once DkimStatus = SUCCESS:
-1. dispatch to cloud-del-norte-meet repo → implement FP-019 Lambda half (admin-update-user + SES.SendEmail + feature flag per design doc section 4.1)
-2. switch Cognito pool email mode to DEVELOPER with noreply@clouddelnorte.org
-3. request SES production access (exit sandbox)
-
-### p1 — exploratory test with member-only user
-
-use chrome-devtools MCP against live site, logged in as cdn-member-only-test@clouddelnorte.org (member-only, not moderator):
-- validate FP-014: admin nav hidden from non-moderators
-- validate FP-016: pending-user nav filtering
-- prior tests couldn't cover these — all test users were moderators
-
-### p2 — open creative/ux items (unchanged)
-
-- a2: login page full ux rethink
-- c2: add AWS LATAM podcast RSS feed
-- e2: podcast player icon redesign
-- k4: headphones-over-microphone composite icon
-- l: animated records rethink — "waveform disc" concept
-
-### p3 — dependabot
-
-0 open alerts (all 4 closed last session).
-
----
-
 ## remaining backlog
 
 ### friction points
@@ -149,7 +194,8 @@ use chrome-devtools MCP against live site, logged in as cdn-member-only-test@clo
 |----|-----|--------|-------|
 | FP-005 | S3 | ACCEPTED | sessionStorage cleared on tab close — every new tab = full login. acceptable trade-off. |
 | FP-006 | S3 | ACCEPTED | MFA every session — no remember-device. security trade-off for casual users. |
-| FP-019 | S3 | DESIGNED + UI-HALF-SHIPPED | UI toast in e8750570. Lambda half blocked on DKIM SUCCESS. design doc at docs/behavioral-logic-map/design-fp-019-admin-refresh.md |
+| FP-017 | S2 | RESOLVED (pending harness re-confirmation) | CSP drift was root cause. Client logic correct (4f2f268b + dfe2ed9d). Live CloudFront CSP fixed. Harness re-run needed. |
+| FP-019 | S3 | DESIGNED + UI-HALF-SHIPPED | UI toast in e8750570. Lambda half: 58a13c4 in cloud-del-norte-meet, needs cdk deploy by Bryan. |
 
 ### open creative/ux items
 
