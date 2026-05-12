@@ -12,12 +12,19 @@
 | S3 | Medium | User notices friction but recovers without help | Fix in next sprint |
 | S4 | Low | Minor annoyance, no impact on task completion | Backlog |
 
+## Progress
+
+> 15 of 19 original items shipped · 1 mitigated (FP-002) · 1 UI-half-shipped (FP-019) · 1 new finding (FP-020) · 1 accepted (FP-006)
+
 ## Status Values
 
 | Status | Meaning |
 |--------|---------|
 | Confirmed | Verified via source code audit |
 | Accepted | Known friction, intentional (e.g., MFA is a security requirement) |
+| Shipped | Fix deployed and validated |
+| Mitigated | Partial fix deployed — reduces severity but does not fully resolve |
+| Filed-Not-Designed | Issue filed, no design or implementation yet |
 
 ---
 
@@ -28,7 +35,9 @@
 | ID | Sev | Role | Trigger | Predicted Behavior | Actual Behavior | Gap | Status |
 |----|-----|------|---------|-------------------|-----------------|-----|--------|
 | FP-001 | S1 | Guest | MFA_SETUP screen | User expects guidance | QR code + raw secret + otpauth:// link. No help text, no "what is this?", no app store links. | User doesn't know what an authenticator app is or where to get one | Confirmed |
-| FP-002 | S1 | Guest | MFA_SETUP abandonment | User wants to skip/defer | No escape. Account created but MFA not configured = account permanently locked out. No admin contact shown. | MFA_HOSTAGE — no recovery without admin Cognito console access | Confirmed |
+| FP-002 | S1 | Guest | MFA_SETUP abandonment | User wants to skip/defer | No escape. Account created but MFA not configured = account permanently locked out. No admin contact shown. | MFA_HOSTAGE — no recovery without admin Cognito console access | Mitigated |
+
+> **FP-002 Validation 2026-05-12** (Nova Act script `scripts/nova-act/signup-flow-validation.py`): commit e110d311 added a warning Alert with support contact but no escape button. Real fix dispatch in-flight (solan) to add a "set up later" button with Modal confirmation. Supersedes e110d311.
 | FP-003 | S2 | Guest | Post-signup state | User expects immediate access | cognito:groups = []. "pending approval" on meetings. "moderator access required" on admin. No ETA, no notification. | GROUP_ASSIGNMENT_LIMBO — unknown wait, no status updates | Confirmed |
 | FP-004 | S3 | Guest | Password policy | User enters simple password | Rejected. Policy: 12+ chars, upper+lower+numbers+symbols. Not shown before first attempt. | Policy revealed only on failure | Confirmed |
 | FP-005 | S3 | All | Tab close → re-open | User expects to stay logged in | sessionStorage cleared. Full re-auth (email + password + MFA) required. | Every new tab = full login ceremony | Confirmed |
@@ -53,6 +62,9 @@
 | FP-014 | S2 | Member/Pending | "Admin" nav item | User sees it, assumes they have access | Clicks → page loads → inline "moderator access required" alert. No redirect. | PHANTOM_NAVIGATION — nav promises access user doesn't have | Confirmed |
 | FP-015 | S2 | All | Silent token expiry | Token expires during session | No "session expired" prompt. Next API call fails. withRetry() attempts refresh once. If fails: error alert, no re-login flow. | SILENT_AUTH_FAILURE — no graceful degradation | Confirmed |
 | FP-016 | S3 | Pending | Full nav visible | User just signed up, sees everything | All nav items visible. Most pages show "pending" or denial messages. Mixed signals: "I'm logged in but can't do anything." | Confusing permission landscape for new users | Confirmed |
+| FP-020 | S2 | Pending | Signup redirect → nav render | Fresh signup user expects filtered nav matching pending state | cdn-pending-test (admin-created, zero groups) sees correctly filtered nav; fresh signup→confirm→login user sees FULL nav despite same zero-groups pending state | PENDING_NAV_RACE — race condition between token claims propagation and nav render, or signup-wizard sessionStorage (FP-007 fix) confusing auth state | Filed-Not-Designed |
+
+> **FP-020** Observed 2026-05-12 during Nova Act signup-flow-validation (run 5f38096b). GitHub issue: #\<TBD\> (orin filing). Related: FP-016, FP-017, FP-003. Fix direction: `navigation.tsx` should require groups array to be non-empty AND present before showing members-only items, OR add a sentinel loading state.
 
 ### Permissions Flow
 
@@ -69,7 +81,7 @@
 | Severity | Count | Flows Affected |
 |----------|-------|----------------|
 | S1 (Critical) | 2 | Auth (MFA onboarding) |
-| S2 (High) | 9 | Auth (1), Join Call (4), Navigation (2), Permissions (2) |
+| S2 (High) | 10 | Auth (1), Join Call (4), Navigation (3), Permissions (2) |
 | S3 (Medium) | 7 | Auth (4), Join Call (1), Navigation (1), Permissions (1) |
 | S4 (Low) | 1 | Auth (passkey translation) |
 
@@ -77,7 +89,7 @@
 
 | Role | S1 | S2 | S3 | S4 | Total |
 |------|----|----|----|----|-------|
-| Guest/Pending | 2 | 3 | 3 | 1 | 9 |
+| Guest/Pending | 2 | 4 | 3 | 1 | 10 |
 | Member | 0 | 2 | 2 | 0 | 4 |
 | Admin | 0 | 0 | 1 | 0 | 1 |
 | All (any role) | 0 | 4 | 1 | 0 | 5 |
@@ -121,3 +133,12 @@
 - [ ] Modal appears: "Your session has expired. Please log in again."
 - [ ] "Log in" button redirects to auth.clouddelnorte.org/login/ with returnTo preserved
 - [ ] No cryptic error message shown instead
+
+---
+
+## Validation Runs
+
+| Date | Script | Commit | Result |
+|------|--------|--------|--------|
+| 2026-05-12 | `scripts/nova-act/nav-filter-validation.py` | c5efcd6d | 4/4 PASS |
+| 2026-05-12 | `scripts/nova-act/signup-flow-validation.py` | 5f38096b | 3/4 PASS (FP-020 discovered) |
