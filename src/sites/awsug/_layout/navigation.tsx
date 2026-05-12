@@ -6,13 +6,14 @@ import SideNavigation, {
 } from "@cloudscape-design/components/side-navigation";
 import FionaFrame from "../../../components/fiona-frame";
 import SpeakeasySign from "../../../components/speakeasy-sign";
-import { getAuthState } from "../_shared/auth";
+import { getAuthState, isModerator } from "../_shared/auth";
 
 const MAIN = "https://clouddelnorte.org";
 
 export default function AwsugNavigation() {
 	const auth = getAuthState();
 	const isPending = !auth || auth.groups.length === 0;
+	const isMod = auth ? isModerator(auth) : false;
 
 	const allItems: SideNavigationProps["items"] = [
 		...(!isPending
@@ -22,10 +23,12 @@ export default function AwsugNavigation() {
 						text: "meetings",
 						href: "/meetings/index.html",
 					},
-					{ type: "link" as const, text: "admin", href: "/admin/index.html" },
-					{ type: "divider" as const },
 				]
 			: []),
+		...(isMod
+			? [{ type: "link" as const, text: "admin", href: "/admin/index.html" }]
+			: []),
+		...(!isPending || isMod ? [{ type: "divider" as const }] : []),
 		{
 			type: "section",
 			text: "resources",
