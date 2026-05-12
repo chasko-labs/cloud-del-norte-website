@@ -315,8 +315,21 @@ function AdminPanel() {
 	);
 }
 
-function AdminWithLayout() {
+function AccessDenied() {
 	const { t } = useTranslation();
+	return (
+		<Container>
+			<SpaceBetween size="m">
+				<Alert type="warning">
+					{t("awsug.admin.moderatorAccessRequired")}
+				</Alert>
+				<Button href="/meetings/index.html">go to meetings</Button>
+			</SpaceBetween>
+		</Container>
+	);
+}
+
+function AdminWithLayout() {
 	const [auth, setAuth] = useState<AuthState | null>(null);
 
 	useEffect(() => {
@@ -334,14 +347,7 @@ function AdminWithLayout() {
 	if (!isModerator(auth)) {
 		return (
 			<AwsugLayout>
-				<Container>
-					<SpaceBetween size="m">
-						<Alert type="warning">
-							{t("awsug.admin.moderatorAccessRequired")}
-						</Alert>
-						<Button href="/meetings/index.html">go to meetings</Button>
-					</SpaceBetween>
-				</Container>
+				<AccessDenied />
 			</AwsugLayout>
 		);
 	}
