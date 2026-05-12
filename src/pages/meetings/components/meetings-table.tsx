@@ -210,7 +210,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 											instant meet
 										</Button>
 									)}
-									{auth.isAuthenticated && (
+									{auth.isAuthenticated && auth.isModerator && (
 										<>
 											<Button
 												disabled={collectionProps.selectedItems?.length === 0}

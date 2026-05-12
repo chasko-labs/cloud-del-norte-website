@@ -110,6 +110,23 @@ function renderWithAuth(state: AuthState) {
 	);
 }
 
+describe("VariationsTable — Create Meeting button visibility", () => {
+	it('moderator sees the "Create meeting" button', () => {
+		renderWithAuth(authState({ isModerator: true }));
+		expect(screen.getByText("meetings.createButton")).toBeInTheDocument();
+	});
+
+	it('non-moderator does not see the "Create meeting" button', () => {
+		renderWithAuth(authState({ isModerator: false }));
+		expect(screen.queryByText("meetings.createButton")).not.toBeInTheDocument();
+	});
+
+	it('unauthenticated user does not see the "Create meeting" button', () => {
+		renderWithAuth(authState({ isAuthenticated: false, isModerator: false }));
+		expect(screen.queryByText("meetings.createButton")).not.toBeInTheDocument();
+	});
+});
+
 describe("VariationsTable — instant meet button visibility", () => {
 	beforeEach(() => {
 		// Stub crypto.getRandomValues for deterministic room names in tests
