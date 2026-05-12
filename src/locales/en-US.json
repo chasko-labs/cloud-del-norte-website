@@ -738,7 +738,7 @@
 			"emptyPending": "no applications pending",
 			"emptyMembers": "no members",
 			"emptyBanned": "no banned users",
-			"moderatorAccessRequired": "This page requires moderator access.",
+			"moderatorAccessRequired": "You don't have access to the admin area. This area is for moderators only.",
 			"approveSuccess": "Approved {{email}} — welcome email sent.",
 			"approveSuccessNoEmail": "Approved. Email notification unavailable."
 		},

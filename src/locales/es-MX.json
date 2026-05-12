@@ -738,7 +738,7 @@
 			"emptyPending": "Sin solicitudes pendientes",
 			"emptyMembers": "Sin miembros",
 			"emptyBanned": "Sin usuarios bloqueados",
-			"moderatorAccessRequired": "Esta página requiere acceso de moderador.",
+			"moderatorAccessRequired": "No tienes acceso al área de administración. Esta área es solo para moderadores.",
 			"approveSuccess": "{{email}} aprobado/a y notificado/a por correo.",
 			"approveSuccessNoEmail": "Usuario aprobado. Notificación por correo no disponible."
 		},

@@ -335,7 +335,12 @@ function AdminWithLayout() {
 		return (
 			<AwsugLayout>
 				<Container>
-					<Alert type="info">{t("awsug.admin.moderatorAccessRequired")}</Alert>
+					<SpaceBetween size="m">
+						<Alert type="warning">
+							{t("awsug.admin.moderatorAccessRequired")}
+						</Alert>
+						<Button href="/meetings/index.html">go to meetings</Button>
+					</SpaceBetween>
 				</Container>
 			</AwsugLayout>
 		);
