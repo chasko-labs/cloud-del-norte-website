@@ -733,7 +733,9 @@
 			"emptyPending": "no applications pending",
 			"emptyMembers": "no members",
 			"emptyBanned": "no banned users",
-			"moderatorAccessRequired": "This page requires moderator access."
+			"moderatorAccessRequired": "This page requires moderator access.",
+			"approveSuccess": "Approved {{email}} — welcome email sent.",
+			"approveSuccessNoEmail": "Approved. Email notification unavailable."
 		},
 		"meetings": {
 			"pendingApproval": "your application is pending approval. meetings are available once approved.",

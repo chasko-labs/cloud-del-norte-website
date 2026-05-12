@@ -733,7 +733,9 @@
 			"emptyPending": "Sin solicitudes pendientes",
 			"emptyMembers": "Sin miembros",
 			"emptyBanned": "Sin usuarios bloqueados",
-			"moderatorAccessRequired": "Esta página requiere acceso de moderador."
+			"moderatorAccessRequired": "Esta página requiere acceso de moderador.",
+			"approveSuccess": "{{email}} aprobado/a y notificado/a por correo.",
+			"approveSuccessNoEmail": "Usuario aprobado. Notificación por correo no disponible."
 		},
 		"meetings": {
 			"pendingApproval": "tu solicitud está pendiente de aprobación. las reuniones estarán disponibles una vez aprobada.",

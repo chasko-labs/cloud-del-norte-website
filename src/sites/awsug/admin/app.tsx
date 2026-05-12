@@ -66,7 +66,11 @@ function UserTable({
 		setSuccessMsg("");
 		try {
 			await approveUser(user.sub);
-			setSuccessMsg(`${user.email} approved`);
+			setSuccessMsg(
+				user.email
+					? t("awsug.admin.approveSuccess").replace("{{email}}", user.email)
+					: t("awsug.admin.approveSuccessNoEmail"),
+			);
 			void load();
 			onAction();
 		} catch {
