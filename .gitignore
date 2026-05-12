@@ -13,3 +13,6 @@ src/data/releases.generated.json
 *.tsbuildinfo
 coverage/
 .eslintcache
+
+# Nova Act test output (ephemeral)
+scripts/nova-act/output/
