@@ -320,9 +320,7 @@ function AccessDenied() {
 	return (
 		<Container>
 			<SpaceBetween size="m">
-				<Alert type="warning">
-					{t("awsug.admin.moderatorAccessRequired")}
-				</Alert>
+				<Alert type="warning">{t("awsug.admin.moderatorAccessRequired")}</Alert>
 				<Button href="/meetings/index.html">go to meetings</Button>
 			</SpaceBetween>
 		</Container>
