@@ -28,7 +28,7 @@ OUTPUT_DIR = Path(__file__).parent / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
 TS = datetime.now(timezone.utc).strftime("%Y%m%dT%H%MZ")
 LOG_PATH = OUTPUT_DIR / f"fp017-token-refresh-{TS}.log"
-SCENARIO_TIMEOUT = 180
+SCENARIO_TIMEOUT = 300
 
 POOL_ID = "us-west-2_cyPQF4F3r"
 GROUP_NAME = "members"
@@ -171,33 +171,99 @@ def run_fp017():
 
                 # Step 3: Admin approval (while session is open)
                 log("ADMIN", "Adding user to 'members' group...")
-                t_approval = time.time()
+                t_start = time.time()
+                t_approval = t_start
                 add_to_group()
-                approval_ts = datetime.now(timezone.utc).isoformat()
-                log("ADMIN", f"admin-add-user-to-group done at {approval_ts}")
+                elapsed_ms = int((time.time() - t_start) * 1000)
+                log("ADMIN", f"admin-add-user-to-group done — {elapsed_ms}ms since scenario start marker")
 
-                # Step 4: Wait for silent poll (60s + 5s buffer)
-                wait_seconds = 65
-                log("WAIT", f"Waiting {wait_seconds}s for silent token refresh poll...")
-                time.sleep(wait_seconds)
+                # Step 4: Poll for nav change (keeps session alive, detects reload)
+                POLL_INTERVAL = 5
+                POLL_TIMEOUT = 75
+                log("POLL", f"Polling every {POLL_INTERVAL}s for up to {POLL_TIMEOUT}s...")
+                baseline_url = nova.page.url
+                detected_reload = False
+                ever_saw_meetings = False
+                links_after = []
 
-                # Observe nav after poll
-                links_after = get_nav_links(nova)
-                log("NAV", f"After-approval links: {links_after[:20]}")
+                # Exception types/messages caused by window.location.reload()
+                _RELOAD_MSGS = ("Execution context was destroyed", "Navigation was prevented", "Target closed", "target closed")
+
+                def _is_reload_error(exc: Exception) -> bool:
+                    msg = str(exc)
+                    return any(m in msg for m in _RELOAD_MSGS)
+
+                elapsed = 0
+                while elapsed < POLL_TIMEOUT:
+                    time.sleep(POLL_INTERVAL)
+                    elapsed = round(time.time() - t_approval, 1)
+                    try:
+                        current_url = nova.page.url
+                        links_after = get_nav_links(nova)
+                    except Exception as poll_exc:
+                        if not _is_reload_error(poll_exc):
+                            raise
+                        detected_reload = True
+                        log("POLL", f"[POLL {elapsed}s] reload detected, re-attaching...")
+                        time.sleep(3)
+                        try:
+                            nova.page.wait_for_load_state("domcontentloaded")
+                        except Exception:
+                            pass
+                        try:
+                            current_url = nova.page.url
+                            links_after = get_nav_links(nova)
+                        except Exception:
+                            log("POLL", f"[POLL {elapsed}s] re-query failed, will retry next interval")
+                            continue
+
+                    has_meetings = "meetings" in links_after
+                    if has_meetings:
+                        ever_saw_meetings = True
+                    url_changed = current_url != baseline_url
+                    log("POLL", f"[POLL {elapsed}s] url={current_url}, has_meetings={has_meetings}")
+
+                    if url_changed and not detected_reload:
+                        detected_reload = True
+                        log("POLL", f"Reload detected at {elapsed}s (url changed)")
+                    if has_meetings:
+                        log("POLL", f"'meetings' link appeared at {elapsed}s")
+                        break
+
+                # Final post-loop observation
+                try:
+                    links_after = get_nav_links(nova)
+                except Exception as final_exc:
+                    if _is_reload_error(final_exc):
+                        log("POLL", "Final observation hit reload — waiting 3s...")
+                        time.sleep(3)
+                        try:
+                            nova.page.wait_for_load_state("domcontentloaded")
+                            links_after = get_nav_links(nova)
+                        except Exception:
+                            pass
+                if "meetings" in links_after:
+                    ever_saw_meetings = True
 
                 # Screenshot after
                 after_path = str(OUTPUT_DIR / f"fp017-after-approval-{TS}.png")
-                nova.page.screenshot(path=after_path)
+                try:
+                    nova.page.screenshot(path=after_path)
+                except Exception:
+                    log("SCR", "Screenshot failed (page may have reloaded)")
                 log("SCR", f"After: {after_path}")
 
                 # Verdict
                 timing_s = round(time.time() - t_approval, 1)
-                if is_member_nav(links_after):
+                if ever_saw_meetings:
                     result = "PASS"
-                    log("VERDICT", f"FP-017 PASS — nav updated to member view in {timing_s}s")
+                    log("VERDICT", f"FP-017 PASS — nav updated to member view in {timing_s}s (reload_detected={detected_reload})")
+                elif not detected_reload:
+                    result = "FAIL"
+                    log("VERDICT", f"FP-017 FAIL — nav still pending after {timing_s}s, no reload observed. Links: {links_after[:15]}")
                 else:
                     result = "FAIL"
-                    log("VERDICT", f"FP-017 FAIL — nav still pending after {timing_s}s. Links: {links_after[:15]}")
+                    log("VERDICT", f"FP-017 FAIL — reload observed but 'meetings' never appeared in {timing_s}s. Links: {links_after[:15]}")
 
     except ScenarioTimeout:
         log("ERR", "TIMEOUT")
