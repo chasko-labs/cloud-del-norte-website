@@ -1743,6 +1743,7 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .fiona-led,
 	.fiona-canvas {
 		animation: none;
 		transform: none;
+		opacity: 1;
 	}
 	/* Bryan ask 2026-05-02: skip the entrance fade for console + stickies
 	   under reduced-motion. Click-to-cover state still works — that's a
