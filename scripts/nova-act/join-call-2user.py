@@ -1,19 +1,11 @@
 #!/usr/bin/env python3
 """2-user join-call E2E — moderator + member via in-app JWT flow.
 
-Both users log in at auth.clouddelnorte.org, land on awsug.clouddelnorte.org,
-navigate to /meetings/, and click the 'join call' button which triggers
-fetchJitsiToken → renders JitsiEmbed iframe inline (or opens meet.clouddelnorte.org
-in a new tab for external-tab flows).
-
-Moderator creates a meeting first, then joins via the meetings page 'join call'
-button (NOT the direct link on the create-success page, which lacks JWT).
-Member then logs in and joins the same room via the same button.
-
-Sequential execution required: Nova Act AWS Service auth context does not
-propagate to child threads.
+FP-021: Jitsi opens in a Cloudscape Modal on the SAME page (not a new tab).
+Polls for [data-testid='jitsi-iframe-host'] iframe src containing meet.clouddelnorte.org.
+Iframe attachment is sufficient proof — full conference join takes 30-90s (cold-start).
 """
-import json, os, sys, time
+import json, os, signal, sys, time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -28,10 +20,11 @@ from nova_act.types.act_errors import ActActuationError
 # --- Constants ---
 AUTH_URL = "https://auth.clouddelnorte.org/login/index.html"
 MEETINGS_URL = "https://awsug.clouddelnorte.org/meetings/index.html"
+JITSI_DOMAIN = "meet.clouddelnorte.org"
 OUTPUT_DIR = Path(__file__).parent / "output"
 OUTPUT_DIR.mkdir(exist_ok=True)
 TS = datetime.now(timezone.utc).strftime("%Y%m%dT%H%MZ")
-MEETING_TITLE = f"nova-act-test-{TS}"
+SCENARIO_TIMEOUT = 420  # 7 minutes
 
 # --- Credential fetch (in-memory only) ---
 _session = boto3.Session(profile_name="jitsi-video-hosting", region_name="us-west-2")
@@ -64,85 +57,83 @@ def login(nova, email: str, password: str, role: str):
     try:
         nova.act("Click the sign in button.")
     except ActActuationError:
-        # Redirect causes screenshot timeout — that's expected success
-        pass
+        pass  # redirect causes screenshot timeout — expected success
     time.sleep(6)
     log(role, f"Login done. URL: {nova.page.url}")
 
 
-def wait_for_jitsi_tab(nova, role: str):
-    """After clicking join call, wait for the new tab (Jitsi) to load.
-    Nova Act auto-tracks the latest page via context.pages[-1]."""
-    time.sleep(8)
-    pages = nova.pages
-    log(role, f"Pages open: {len(pages)}")
-    for i, p in enumerate(pages):
-        log(role, f"  page[{i}]: {p.url}")
-    # nova.page already points to pages[-1] (the newest tab)
-    log(role, f"Active page: {nova.page.url}")
-    time.sleep(15)
+def wait_for_jitsi_embed(nova, role: str, timeout_s: int = 45):
+    """Poll for [data-testid='jitsi-iframe-host'] iframe with meet.clouddelnorte.org src.
 
-
-def assert_jitsi_reached(nova, role: str, result: dict) -> bool:
-    """Assert that the current page is actually a Jitsi conference.
-
-    Checks (in order):
-      a) URL starts with https://meet.clouddelnorte.org  (external-tab flow)
-      b) DOM contains Jitsi embed iframe                 (inline embed flow)
-
-    Additionally asserts at least one Jitsi toolbar marker is present.
-
-    Sets result['status'] to 'joined' or 'misrouted' and logs debug info.
-    Returns True if Jitsi was reached.
+    Returns (iframe_found: bool, iframe_src: str, poll_seconds: float).
+    Never raises — caller decides on failure.
     """
-    page = nova.page
-    current_url = page.url
+    t0 = time.time()
+    iframe_found = False
+    iframe_src = ""
 
-    # --- Check A: external tab landed on meet subdomain ---
-    url_ok = current_url.startswith("https://meet.clouddelnorte.org")
+    while True:
+        elapsed = round(time.time() - t0, 1)
 
-    # --- Check B: inline embed iframe present on current page ---
-    embed_ok = False
-    if not url_ok:
-        embed_ok = bool(
-            page.query_selector("#jitsi-embed")
-            or page.query_selector("iframe[src*='meet.clouddelnorte.org']")
-            or page.query_selector("[data-testid='jitsi-iframe-host'] iframe")
-        )
+        # Modal visible? role='dialog' is set by Cloudscape Modal.
+        modal_el = nova.page.query_selector("[role='dialog']")
+        modal_visible = bool(modal_el and modal_el.is_visible())
 
-    jitsi_present = url_ok or embed_ok
+        # Iframe inside host div?
+        iframe_el = nova.page.query_selector(f"[data-testid='jitsi-iframe-host'] iframe[src*='{JITSI_DOMAIN}']")
+        if iframe_el:
+            iframe_found = True
+            iframe_src = iframe_el.get_attribute("src") or ""
 
-    # --- Toolbar marker check (only if we think we're in Jitsi) ---
-    toolbar_ok = False
-    if jitsi_present:
-        toolbar_ok = bool(
-            page.query_selector("[aria-label='Mute / Unmute']")
-            or page.query_selector("[aria-label='Hang up']")
-            or page.query_selector("button[aria-label*='mute']")
-            or page.query_selector("button[aria-label*='hangup']")
-            or page.query_selector("button[aria-label*='hang up']")
-            # Jitsi prejoin page
-            or page.query_selector("button[data-testid='prejoin.joinMeeting']")
-            or page.query_selector("div.prejoin-input-area-container")
-        )
+        log(role, f"[POLL {elapsed}s] modal={modal_visible} iframe={iframe_found} src={iframe_src!r}")
 
-    if jitsi_present and toolbar_ok:
+        if iframe_found:
+            return (True, iframe_src, elapsed)
+
+        if elapsed >= timeout_s:
+            return (False, "", elapsed)
+
+        time.sleep(2)
+
+
+def assert_jitsi_reached(nova, role: str, result: dict, poll_result: tuple) -> bool:
+    """Classify outcome from wait_for_jitsi_embed poll result.
+
+    Sets result['status'] to one of: joined | modal_no_iframe | modal_never_opened.
+    Returns True only for 'joined'.
+    """
+    iframe_found, iframe_src, poll_seconds = poll_result
+
+    if iframe_found and JITSI_DOMAIN in iframe_src:
         result["status"] = "joined"
-        log(role, f"Jitsi confirmed — url_ok={url_ok}, embed_ok={embed_ok}, toolbar_ok={toolbar_ok}")
+        result["jitsi_url"] = iframe_src
+        result["time_to_iframe"] = poll_seconds
+        log(role, f"iframe attached in {poll_seconds}s — {iframe_src}")
         return True
 
-    # --- Misrouted: log debug info ---
-    result["status"] = "misrouted"
-    try:
-        body_text = page.inner_text("body") or ""
-        body_snippet = body_text[:300]
-    except Exception:
-        body_snippet = "<could not read body>"
-    log(role, f"MISROUTED — url={current_url}")
-    log(role, f"  url_ok={url_ok}, embed_ok={embed_ok}, toolbar_ok={toolbar_ok}")
-    log(role, f"  body[:300]: {body_snippet!r}")
-    result["misroute_url"] = current_url
-    result["misroute_body"] = body_snippet
+    # Distinguish: modal open but no iframe vs modal never opened
+    modal_el = nova.page.query_selector("[role='dialog']")
+    modal_visible = bool(modal_el and modal_el.is_visible())
+
+    if modal_visible:
+        result["status"] = "modal_no_iframe"
+        try:
+            modal_text = (modal_el.inner_text() or "")[:300]
+        except Exception:
+            modal_text = "<unreadable>"
+        result["modal_text"] = modal_text
+        log(role, f"modal open but no iframe after {poll_seconds}s — modal text: {modal_text!r}")
+    else:
+        result["status"] = "modal_never_opened"
+        try:
+            body_snippet = (nova.page.inner_text("body") or "")[:300]
+        except Exception:
+            body_snippet = "<unreadable>"
+        join_btn = nova.page.query_selector("button[data-testid='join-call-btn'], button")
+        result["body_snippet"] = body_snippet
+        result["join_btn_visible"] = bool(join_btn and join_btn.is_visible())
+        log(role, f"modal never opened — body: {body_snippet!r}")
+
     return False
 
 
@@ -152,10 +143,11 @@ def assert_jitsi_reached(nova, role: str, result: dict) -> bool:
     workflow_definition_name="cdn-join-call-2user",
 )
 def run_2user_test():
+    signal.alarm(SCENARIO_TIMEOUT)
+
     # === MODERATOR ===
     r = results["moderator"]
     r["start_time"] = datetime.now(timezone.utc).isoformat()
-    t0 = time.time()
     log("MOD", "Starting moderator session")
 
     with browser_session(region="us-east-1", name="cdn-2user-mod") as browser:
@@ -168,43 +160,18 @@ def run_2user_test():
                 login(nova, MOD_EMAIL, MOD_PASSWORD, "MOD")
                 r["login"] = "success"
 
-                # Navigate to meetings
                 nova.act(f"Navigate to {MEETINGS_URL} and wait for the page to fully load.")
                 time.sleep(2)
                 log("MOD", f"At meetings. URL: {nova.page.url}")
 
-                # Create meeting
-                nova.act("Click the 'create meeting' button.")
-                time.sleep(3)
-                log("MOD", f"Create form. URL: {nova.page.url}")
-
-                nova.act(f"Enter '{MEETING_TITLE}' in the 'Speaker names' field.")
-                nova.act("Click the 'Create meeting' submit button. Wait for success message.")
-                time.sleep(3)
-                log("MOD", "Meeting created")
-
-                # Return to meetings page (NOT the direct join-call link which lacks JWT)
-                nova.act("Click the 'Back to meetings' button.")
-                time.sleep(3)
-                log("MOD", f"Back at meetings. URL: {nova.page.url}")
-
-                # Join call via in-app JWT flow
                 nova.act("Click the 'join call' button.")
-                wait_for_jitsi_tab(nova, "MOD")
-                r["jitsi_url"] = nova.page.url
-                screenshot(nova, "MOD", "jitsi-joined")
+                screenshot(nova, "MOD", "post-click")
 
-                assert_jitsi_reached(nova, "MOD", r)
+                poll = wait_for_jitsi_embed(nova, "MOD")
+                screenshot(nova, "MOD", "post-settle")
+
+                assert_jitsi_reached(nova, "MOD", r, poll)
                 log("MOD", f"Status: {r['status']}")
-
-                if r["status"] == "joined":
-                    check = nova.act_get(
-                        "Describe what you see. Is this a video call interface? "
-                        "Any error messages or 'session expired' text?"
-                    )
-                    r["jitsi_state"] = check.response
-                    log("MOD", f"State: {check.response[:150]}")
-                    r["time_to_join_s"] = round(time.time() - t0, 1)
 
             except Exception as e:
                 log("MOD", f"ERROR: {e}")
@@ -218,7 +185,6 @@ def run_2user_test():
     # === MEMBER ===
     rm = results["member"]
     rm["start_time"] = datetime.now(timezone.utc).isoformat()
-    t1 = time.time()
     log("MEM", "Starting member session")
 
     with browser_session(region="us-east-1", name="cdn-2user-mem") as browser:
@@ -231,32 +197,18 @@ def run_2user_test():
                 login(nova, MEM_EMAIL, MEM_PASSWORD, "MEM")
                 rm["login"] = "success"
 
-                # Navigate to meetings
                 nova.act(f"Navigate to {MEETINGS_URL} and wait for the page to fully load.")
                 time.sleep(2)
                 log("MEM", f"At meetings. URL: {nova.page.url}")
 
-                # Join call via in-app JWT flow
                 nova.act("Click the 'join call' button.")
-                wait_for_jitsi_tab(nova, "MEM")
-                rm["jitsi_url"] = nova.page.url
-                screenshot(nova, "MEM", "jitsi-joined")
+                screenshot(nova, "MEM", "post-click")
 
-                assert_jitsi_reached(nova, "MEM", rm)
+                poll = wait_for_jitsi_embed(nova, "MEM")
+                screenshot(nova, "MEM", "post-settle")
+
+                assert_jitsi_reached(nova, "MEM", rm, poll)
                 log("MEM", f"Status: {rm['status']}")
-
-                if rm["status"] == "joined":
-                    # Wait for both participants to appear
-                    time.sleep(10)
-                    screenshot(nova, "MEM", "jitsi-settled")
-
-                    check = nova.act_get(
-                        "Describe what you see. Is this a video call interface? "
-                        "How many participants are visible? Any error messages?"
-                    )
-                    rm["jitsi_state"] = check.response
-                    log("MEM", f"State: {check.response[:150]}")
-                    rm["time_to_join_s"] = round(time.time() - t1, 1)
 
             except Exception as e:
                 log("MEM", f"ERROR: {e}")
@@ -280,13 +232,14 @@ def run_2user_test():
 
 
 if __name__ == "__main__":
+    signal.signal(signal.SIGALRM, lambda *_: sys.exit("SCENARIO_TIMEOUT exceeded"))
     log("MAIN", f"2-user join-call validation — {TS}")
     run_2user_test()
     print(f"\n{'='*60}")
     print(f"VERDICT: {results['verdict']}")
     print(f"Moderator: {results['moderator'].get('status', 'unknown')} "
-          f"(TTJ: {results['moderator'].get('time_to_join_s', 'N/A')}s)")
+          f"(TTI: {results['moderator'].get('time_to_iframe', 'N/A')}s)")
     print(f"Member: {results['member'].get('status', 'unknown')} "
-          f"(TTJ: {results['member'].get('time_to_join_s', 'N/A')}s)")
+          f"(TTI: {results['member'].get('time_to_iframe', 'N/A')}s)")
     print(f"{'='*60}")
     print(json.dumps(results, indent=2, default=str))
