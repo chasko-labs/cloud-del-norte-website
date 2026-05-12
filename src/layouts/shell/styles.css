@@ -1612,8 +1612,7 @@ body {
 nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 [class*="awsui_navigation__drawer"],
 [class*="awsui_navigation-container"] [class*="awsui_drawer-content"],
-[class*="awsui_drawer"] [class*="awsui_drawer-content"],
-[class*="awsui_drawer-content-container"] {
+[class*="awsui_navigation-container"] [class*="awsui_drawer-content-container"] {
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 }
@@ -1623,8 +1622,8 @@ nav[class*="awsui_navigation_"]:not(
 [class*="awsui_navigation__drawer"]::-webkit-scrollbar,
 [class*="awsui_navigation-container"]
 	[class*="awsui_drawer-content"]::-webkit-scrollbar,
-[class*="awsui_drawer"] [class*="awsui_drawer-content"]::-webkit-scrollbar,
-[class*="awsui_drawer-content-container"]::-webkit-scrollbar {
+[class*="awsui_navigation-container"]
+	[class*="awsui_drawer-content-container"]::-webkit-scrollbar {
 	display: none;
 	width: 0;
 	height: 0;

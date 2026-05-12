@@ -821,7 +821,7 @@ body.cdn-stream-playing .cdn-pp__waveform {
 	width: 3px;
 	background: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 	border-radius: 1px;
-	animation: cdn-waveform-breathe 2s ease-in-out infinite alternate;
+	animation: cdn-waveform-breathe 3s ease-in-out infinite alternate;
 }
 
 .cdn-pp__waveform > span:nth-child(1) {
