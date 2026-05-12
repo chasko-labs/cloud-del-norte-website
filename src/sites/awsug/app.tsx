@@ -96,7 +96,9 @@ function MemberHome({ auth }: { auth: AuthState }) {
 						join a call
 					</Button>
 					{isMod && <Button href="/admin/index.html">admin panel</Button>}
-					<Button href="/create-meeting/index.html">create meeting</Button>
+					{isMod && (
+						<Button href="/create-meeting/index.html">create meeting</Button>
+					)}
 				</SpaceBetween>
 			</Container>
 
