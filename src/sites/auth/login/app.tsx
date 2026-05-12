@@ -8,6 +8,7 @@ import Form from "@cloudscape-design/components/form";
 import FormField from "@cloudscape-design/components/form-field";
 import Input from "@cloudscape-design/components/input";
 import Link from "@cloudscape-design/components/link";
+import Modal from "@cloudscape-design/components/modal";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { QRCodeSVG } from "qrcode.react";
 import type React from "react";
@@ -56,6 +57,7 @@ function LoginForm() {
 	const [mfaCode, setMfaCode] = useState("");
 	const [totpSecret, setTotpSecret] = useState("");
 	const [challengeName, setChallengeName] = useState("");
+	const [cancelModalVisible, setCancelModalVisible] = useState(false);
 
 	document.title = `${t("auth.login.title")} — ${t("auth.siteTitle")}`;
 
@@ -185,10 +187,45 @@ function LoginForm() {
 		}
 	}
 
+	function handleCancelConfirm() {
+		[
+			"cdn.idToken",
+			"cdn.accessToken",
+			"cdn.refreshToken",
+			"cdn.mfaUsername",
+		].forEach((k) => {
+			sessionStorage.removeItem(k);
+			localStorage.removeItem(k);
+		});
+		window.location.assign("https://auth.clouddelnorte.org/index.html");
+	}
+
 	if (step === "mfa-setup") {
 		const otpauthUri = `otpauth://totp/CloudDelNorte:${encodeURIComponent(email)}?secret=${totpSecret}&issuer=CloudDelNorte`;
 		return (
 			<div className="cdn-auth-form-inner">
+				<Modal
+					visible={cancelModalVisible}
+					onDismiss={() => setCancelModalVisible(false)}
+					header={t("auth.login.mfaSetup.cancelConfirmTitle")}
+					footer={
+						<Box float="right">
+							<SpaceBetween direction="horizontal" size="xs">
+								<Button variant="link" onClick={handleCancelConfirm}>
+									{t("auth.login.mfaSetup.cancelConfirmYes")}
+								</Button>
+								<Button
+									variant="primary"
+									onClick={() => setCancelModalVisible(false)}
+								>
+									{t("auth.login.mfaSetup.cancelConfirmStay")}
+								</Button>
+							</SpaceBetween>
+						</Box>
+					}
+				>
+					{t("auth.login.mfaSetup.cancelConfirmBody")}
+				</Modal>
 				<form
 					onSubmit={(e) => {
 						void handleMfaSetupSubmit(e);
@@ -197,9 +234,18 @@ function LoginForm() {
 				>
 					<Form
 						actions={
-							<Button formAction="submit" variant="primary" loading={loading}>
-								Verify & sign in
-							</Button>
+							<SpaceBetween direction="horizontal" size="xs">
+								<Button
+									variant="link"
+									onClick={() => setCancelModalVisible(true)}
+									formAction="none"
+								>
+									{t("auth.login.mfaSetup.cancelButton")}
+								</Button>
+								<Button formAction="submit" variant="primary" loading={loading}>
+									Verify & sign in
+								</Button>
+							</SpaceBetween>
 						}
 						errorText={formError || undefined}
 					>

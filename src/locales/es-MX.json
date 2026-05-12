@@ -634,7 +634,12 @@
 				"downloadLabel": "Descarga:",
 				"googleIos": "Google Authenticator (iOS)",
 				"googleAndroid": "Google Authenticator (Android)",
-				"otherOptions": "Microsoft Authenticator o Authy."
+				"otherOptions": "Microsoft Authenticator o Authy.",
+				"cancelButton": "configurar después",
+				"cancelConfirmTitle": "¿cancelar configuración de MFA?",
+				"cancelConfirmBody": "puedes completar el MFA la próxima vez que inicies sesión. tu cuenta sigue activa.",
+				"cancelConfirmStay": "quedarme aquí",
+				"cancelConfirmYes": "sí, cancelar"
 			}
 		},
 		"signup": {
