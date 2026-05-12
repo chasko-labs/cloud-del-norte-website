@@ -1,6 +1,16 @@
 #!/usr/bin/env bash
 # scripts/verify-csp.sh
-# CI gate: verify live CloudFront CSP matches infra/cloudfront-security-headers.json
+#
+# This script validates CSP for the awsug subdomain only.
+#
+# main and auth subdomains have their own (simpler) CSP requirements not yet
+# captured in this repo. Per-subdomain CSP config is follow-up work tracked
+# in issue #158.
+#
+# When main/auth CSP is formalized, extend this script with their respective
+# required-whitelists and repo file comparisons.
+#
+# CI gate: verify live awsug CloudFront CSP matches infra/cloudfront-security-headers.json
 # and that required domains are present in the correct directives.
 #
 # Exits 0 if clean, exits 1 on any drift or missing required domain.
@@ -22,13 +32,10 @@ require() { command -v "$1" >/dev/null || { echo >&2 "ERROR: missing dependency:
 require aws
 require jq
 
-# ── Distribution → Response Headers Policy ID map ───────────────────────────
-# source of truth: .woodpecker/deploy.yml
-CF_DIST_MAIN="ECC3LP1BL2CZS"
-CF_DIST_AUTH="ECQ44FO9MBTCY"
-CF_DIST_AWSUG="E2QLAWFVIT1AR8"
+# ── awsug policy ID (source of truth: .woodpecker/deploy.yml) ───────────────
+AWSUG_POLICY_ID="ef81b3a7-9f54-4871-9d45-0864456d843b"
 
-# ── Required domain whitelist (hard-coded, clearly labelled) ─────────────────
+# ── Required domain whitelist (awsug only) ───────────────────────────────────
 # awsug connect-src MUST include these three endpoints (Cognito + API Gateway)
 AWSUG_CONNECT_SRC_REQUIRED=(
   "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com"
@@ -43,50 +50,28 @@ AWSUG_FRAME_SRC_REQUIRED=(
 # ── Helpers ──────────────────────────────────────────────────────────────────
 ERRORS=0
 
-fail() {
-  echo "  FAIL: $*"
-  ERRORS=$((ERRORS + 1))
-}
-
-pass() {
-  echo "  ok:   $*"
-}
-
-get_policy_id_for_dist() {
-  local dist_id="$1"
-  aws cloudfront get-distribution-config \
-    --id "${dist_id}" \
-    --query 'DistributionConfig.DefaultCacheBehavior.ResponseHeadersPolicyId' \
-    --output text 2>/dev/null
-}
+fail() { echo "  FAIL: $*"; ERRORS=$((ERRORS + 1)); }
+pass() { echo "  ok:   $*"; }
 
 get_live_csp() {
-  local policy_id="$1"
   aws cloudfront get-response-headers-policy \
-    --id "${policy_id}" \
+    --id "$1" \
     --query 'ResponseHeadersPolicy.ResponseHeadersPolicyConfig.SecurityHeadersConfig.ContentSecurityPolicy.ContentSecurityPolicy' \
     --output text 2>/dev/null
 }
 
 extract_directive() {
-  local csp="$1"
-  local directive="$2"
-  # Extract value of a named directive from a CSP string
-  echo "${csp}" | grep -oP "(?<=${directive} )[^;]+" || true
+  echo "${1}" | grep -oP "(?<=${2} )[^;]+" || true
 }
 
 check_domain_in_directive() {
-  local csp="$1"
-  local directive="$2"
-  local domain="$3"
-  local label="$4"
   local value
-  value="$(extract_directive "${csp}" "${directive}")"
-  if echo "${value}" | grep -qF "${domain}"; then
-    pass "${label}: ${directive} contains ${domain}"
+  value="$(extract_directive "${1}" "${2}")"
+  if echo "${value}" | grep -qF "${3}"; then
+    pass "awsug: ${2} contains ${3}"
   else
-    fail "${label}: ${directive} MISSING ${domain}"
-    echo "       live ${directive}: ${value:-<empty>}"
+    fail "awsug: ${2} MISSING ${3}"
+    echo "       live ${2}: ${value:-<empty>}"
   fi
 }
 
@@ -96,75 +81,35 @@ echo "Repo CSP (source of truth):"
 echo "  ${REPO_CSP}"
 echo ""
 
-# ── Discover policy IDs ──────────────────────────────────────────────────────
-echo "Fetching policy IDs from distributions…"
-POLICY_MAIN="$(get_policy_id_for_dist "${CF_DIST_MAIN}")"
-POLICY_AUTH="$(get_policy_id_for_dist "${CF_DIST_AUTH}")"
-POLICY_AWSUG="$(get_policy_id_for_dist "${CF_DIST_AWSUG}")"
+# ── awsug policy check ───────────────────────────────────────────────────────
+echo "Checking awsug (policy ${AWSUG_POLICY_ID})…"
+LIVE_CSP="$(get_live_csp "${AWSUG_POLICY_ID}")"
 
-echo "  main  (${CF_DIST_MAIN}): policy=${POLICY_MAIN}"
-echo "  auth  (${CF_DIST_AUTH}): policy=${POLICY_AUTH}"
-echo "  awsug (${CF_DIST_AWSUG}): policy=${POLICY_AWSUG}"
-echo ""
-
-# Deduplicate: if all three share the same policy id, check once
-declare -A CHECKED_POLICIES=()
-
-check_policy() {
-  local label="$1"
-  local policy_id="$2"
-  local is_awsug="${3:-false}"
-
-  if [[ -z "${policy_id}" || "${policy_id}" == "None" ]]; then
-    fail "${label}: no response headers policy attached to distribution"
-    return
-  fi
-
-  # Skip if already checked this policy id (shared policy)
-  if [[ -n "${CHECKED_POLICIES[${policy_id}]+_}" && "${is_awsug}" == "false" ]]; then
-    echo "  ${label}: policy ${policy_id} already verified (shared) — skipping"
-    return
-  fi
-  CHECKED_POLICIES["${policy_id}"]=1
-
-  echo "Checking ${label} (policy ${policy_id})…"
-  local live_csp
-  live_csp="$(get_live_csp "${policy_id}")"
-
-  if [[ -z "${live_csp}" || "${live_csp}" == "None" ]]; then
-    fail "${label}: could not fetch live CSP"
-    return
-  fi
-
+if [[ -z "${LIVE_CSP}" || "${LIVE_CSP}" == "None" ]]; then
+  fail "awsug: could not fetch live CSP"
+else
   # 1. Drift check: live must match repo
-  if [[ "${live_csp}" == "${REPO_CSP}" ]]; then
-    pass "${label}: live CSP matches repo"
+  if [[ "${LIVE_CSP}" == "${REPO_CSP}" ]]; then
+    pass "awsug: live CSP matches repo"
   else
-    fail "${label}: live CSP DRIFTS from repo"
+    fail "awsug: live CSP DRIFTS from repo"
     echo "       repo: ${REPO_CSP}"
-    echo "       live: ${live_csp}"
-    # Show token-level diff if diff is available
+    echo "       live: ${LIVE_CSP}"
     if command -v diff >/dev/null; then
-      diff <(echo "${REPO_CSP}" | tr ';' '\n') <(echo "${live_csp}" | tr ';' '\n') || true
+      diff <(echo "${REPO_CSP}" | tr ';' '\n') <(echo "${LIVE_CSP}" | tr ';' '\n') || true
     fi
   fi
 
-  # 2. awsug-specific required domain checks
-  if [[ "${is_awsug}" == "true" ]]; then
-    echo "  Checking awsug required whitelist…"
-    for domain in "${AWSUG_CONNECT_SRC_REQUIRED[@]}"; do
-      check_domain_in_directive "${live_csp}" "connect-src" "${domain}" "awsug"
-    done
-    for domain in "${AWSUG_FRAME_SRC_REQUIRED[@]}"; do
-      check_domain_in_directive "${live_csp}" "frame-src" "${domain}" "awsug"
-    done
-  fi
-  echo ""
-}
-
-check_policy "main"  "${POLICY_MAIN}"  "false"
-check_policy "auth"  "${POLICY_AUTH}"  "false"
-check_policy "awsug" "${POLICY_AWSUG}" "true"
+  # 2. Required whitelist check
+  echo "  Checking awsug required whitelist…"
+  for domain in "${AWSUG_CONNECT_SRC_REQUIRED[@]}"; do
+    check_domain_in_directive "${LIVE_CSP}" "connect-src" "${domain}"
+  done
+  for domain in "${AWSUG_FRAME_SRC_REQUIRED[@]}"; do
+    check_domain_in_directive "${LIVE_CSP}" "frame-src" "${domain}"
+  done
+fi
+echo ""
 
 # ── Result ───────────────────────────────────────────────────────────────────
 echo "────────────────────────────────────────"

@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
 # scripts/sync-cloudfront-headers.sh
-# Apply infra/cloudfront-security-headers.json to all managed CloudFront
-# response-headers-policies. Idempotent — no-ops when already in sync.
+#
+# Applies infra/cloudfront-security-headers.json to the awsug CloudFront
+# response-headers-policy ONLY. Idempotent — no-ops when already in sync.
+#
+# NOTE: main and auth subdomains are intentionally out of scope here.
+# Their CSP requirements are simpler and not yet captured in this repo.
+# Per-subdomain CSP config is follow-up work tracked in issue #158.
 #
 # Usage:
 #   AWS_PROFILE=aerospaceug-admin ./scripts/sync-cloudfront-headers.sh
@@ -24,24 +29,13 @@ require() { command -v "$1" >/dev/null || { echo >&2 "ERROR: missing dependency:
 require aws
 require jq
 
-# ── Distribution map ─────────────────────────────────────────────────────────
+# ── awsug only ───────────────────────────────────────────────────────────────
 # source of truth: .woodpecker/deploy.yml
-CF_DIST_MAIN="ECC3LP1BL2CZS"
-CF_DIST_AUTH="ECQ44FO9MBTCY"
-CF_DIST_AWSUG="E2QLAWFVIT1AR8"
-
-DISTRIBUTIONS=("${CF_DIST_MAIN}" "${CF_DIST_AUTH}" "${CF_DIST_AWSUG}")
-DIST_LABELS=("main" "auth" "awsug")
+AWSUG_DIST_ID="E2QLAWFVIT1AR8"
+AWSUG_POLICY_ID="ef81b3a7-9f54-4871-9d45-0864456d843b"
 
 # ── Repo source-of-truth CSP ─────────────────────────────────────────────────
 REPO_CSP="$(jq -r '.SecurityHeadersConfig.ContentSecurityPolicy.ContentSecurityPolicy' "${POLICY_FILE}")"
-
-get_policy_id_for_dist() {
-  aws cloudfront get-distribution-config \
-    --id "$1" \
-    --query 'DistributionConfig.DefaultCacheBehavior.ResponseHeadersPolicyId' \
-    --output text 2>/dev/null
-}
 
 get_live_csp() {
   aws cloudfront get-response-headers-policy \
@@ -59,14 +53,11 @@ build_update_config() {
   tmp_dir="$(mktemp -d)"
   trap 'rm -rf "${tmp_dir}"' RETURN
 
-  # Fetch current full config to preserve Name/Comment/CustomHeaders
   aws cloudfront get-response-headers-policy \
     --id "${policy_id}" \
     --query 'ResponseHeadersPolicy.ResponseHeadersPolicyConfig' \
     --output json >"${tmp_dir}/current.json"
 
-  # Merge: take SecurityHeadersConfig + CustomHeadersConfig from repo file,
-  # keep Name/Comment from current live config
   jq -s '
     .[0] as $current |
     .[1] as $repo |
@@ -82,68 +73,41 @@ build_update_config() {
   ' "${tmp_dir}/current.json" "${POLICY_FILE}"
 }
 
-# ── Main loop ────────────────────────────────────────────────────────────────
-declare -A SYNCED_POLICIES=()
-UPDATED_DISTS=()
+# ── Sync awsug ───────────────────────────────────────────────────────────────
+live_csp="$(get_live_csp "${AWSUG_POLICY_ID}")"
 
-for i in "${!DISTRIBUTIONS[@]}"; do
-  dist_id="${DISTRIBUTIONS[$i]}"
-  label="${DIST_LABELS[$i]}"
-
-  policy_id="$(get_policy_id_for_dist "${dist_id}")"
-  if [[ -z "${policy_id}" || "${policy_id}" == "None" ]]; then
-    echo "WARN: ${label} (${dist_id}): no response headers policy attached — skipping"
-    continue
-  fi
-
-  # Skip if we already processed this policy id (shared policy)
-  if [[ -n "${SYNCED_POLICIES[${policy_id}]+_}" ]]; then
-    echo "${label} (${dist_id}): policy ${policy_id} already synced — skipping"
-    continue
-  fi
-  SYNCED_POLICIES["${policy_id}"]=1
-
-  live_csp="$(get_live_csp "${policy_id}")"
-
-  if [[ "${live_csp}" == "${REPO_CSP}" ]]; then
-    echo "${label} (${dist_id}): already in sync"
-    continue
-  fi
-
-  echo "${label} (${dist_id}): DRIFT DETECTED"
+if [[ "${live_csp}" == "${REPO_CSP}" ]]; then
+  echo "awsug (${AWSUG_DIST_ID}): already in sync"
+else
+  echo "awsug (${AWSUG_DIST_ID}): DRIFT DETECTED"
   echo "  repo: ${REPO_CSP}"
   echo "  live: ${live_csp}"
 
   if [[ "${DRY_RUN}" == "true" ]]; then
-    echo "  [dry-run] would update policy ${policy_id} and invalidate ${dist_id}"
-    continue
+    echo "  [dry-run] would update policy ${AWSUG_POLICY_ID} and invalidate ${AWSUG_DIST_ID}"
+  else
+    echo "  Updating policy ${AWSUG_POLICY_ID}…"
+    etag="$(aws cloudfront get-response-headers-policy --id "${AWSUG_POLICY_ID}" --query 'ETag' --output text)"
+    update_config="$(build_update_config "${AWSUG_POLICY_ID}")"
+
+    aws cloudfront update-response-headers-policy \
+      --id "${AWSUG_POLICY_ID}" \
+      --if-match "${etag}" \
+      --response-headers-policy-config "${update_config}" >/dev/null
+
+    echo "  Policy updated. Creating invalidation for ${AWSUG_DIST_ID}…"
+    aws cloudfront create-invalidation \
+      --distribution-id "${AWSUG_DIST_ID}" \
+      --paths "/*" \
+      --query 'Invalidation.Id' \
+      --output text
   fi
-
-  echo "  Updating policy ${policy_id}…"
-  etag="$(aws cloudfront get-response-headers-policy --id "${policy_id}" --query 'ETag' --output text)"
-  update_config="$(build_update_config "${policy_id}")"
-
-  aws cloudfront update-response-headers-policy \
-    --id "${policy_id}" \
-    --if-match "${etag}" \
-    --response-headers-policy-config "${update_config}" >/dev/null
-
-  echo "  Policy updated. Creating invalidation for ${dist_id}…"
-  aws cloudfront create-invalidation \
-    --distribution-id "${dist_id}" \
-    --paths "/*" \
-    --query 'Invalidation.Id' \
-    --output text
-
-  UPDATED_DISTS+=("${dist_id}")
-done
+fi
 
 echo "────────────────────────────────────────"
 if [[ "${DRY_RUN}" == "true" ]]; then
   echo "dry-run complete — no changes applied"
-elif [[ "${#UPDATED_DISTS[@]}" -eq 0 ]]; then
-  echo "✓ all policies already in sync"
 else
-  echo "✓ updated ${#UPDATED_DISTS[@]} distribution(s): ${UPDATED_DISTS[*]}"
-  echo "  CloudFront propagation takes 5-15 minutes."
+  echo "✓ sync complete"
+  echo "  (main/auth intentionally out of scope — see issue #158)"
 fi
