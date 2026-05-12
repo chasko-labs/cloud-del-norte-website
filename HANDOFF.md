@@ -1,13 +1,41 @@
 # cloud del norte — handoff plan
 
-**date:** 2026-05-11  
+**date:** 2026-05-12  
 **branch:** main  
-**last commit:** aec2cfba test(meetings): FP-012 test coverage  
-**deploy:** verified 2026-05-11 20:43 UTC — all three targets (clouddelnorte.org, auth.clouddelnorte.org, awsug.clouddelnorte.org)
+**last commit:** 51c09cb9 test(nova-act): fix 2-user join-call flow  
+**deploy:** verified 2026-05-12 00:31 UTC — all three targets (clouddelnorte.org, auth.clouddelnorte.org, awsug.clouddelnorte.org)
 
 ---
 
-## completed 2026-05-11 session — friction-point sprint (16/19 shipped)
+## completed 2026-05-12 session — post-resumption (FP-019 UI half + nova act + infra)
+
+### commits landed
+
+| commit | description |
+|--------|-------------|
+| e8750570 | feat(awsug,admin): FP-019 — display approved user email in success toast (UI half; Lambda+SES half in cloud-del-norte-meet repo, blocked on DKIM) |
+| 51c09cb9 | test(nova-act): fix 2-user join-call flow — use in-app JWT exchange not direct meet nav (moderator + member both reach Jitsi via join-call button + JWT token exchange) |
+| ab10ba7b | fix(awsug): FP-014 actually hide admin nav from non-moderators — confirms isMod gate present in navigation.tsx (triage false alarm resolved) |
+| b5c299e1 | test(nova-act): fix start-meeting prompt (superseded by 51c09cb9) |
+| 6a7e26b2 | test(nova-act): 2-user join-call validation for 16 FPs (superseded by 51c09cb9) |
+
+### infra state changes
+
+| item | status | details |
+|------|--------|---------|
+| DKIM (clouddelnorte.org, us-west-2, acct 211125425201) | PENDING | flipped from FAILED→PENDING via `verify-domain-dkim` + `verify-domain-identity` nudges. root cause: SES stuck on stale HOST_NOT_FOUND from 2026-05-10T19:48Z. DNS correct (all 3 CNAMEs resolve via 8.8.8.8). SES will re-poll → SUCCESS within hours. |
+| bucket #150 + epic #144 | CLOSED | orin dispatch, GitHub comments posted. awsaerospace.org S3 returns 404/NoSuchBucket. CloudFront ECC3LP1BL2CZS serves from S3-clouddelnorte-org. zero Route53 aliases remain. migration done. |
+| cognito test user (member-only) | CREATED | cdn-member-only-test@clouddelnorte.org, sub c8b16350-1091-703f-5ed9-1ed91a6bf9d2, groups=members ONLY. pw in SSM /cloud-del-norte/test/member-only-user-password (acct 170473530355, us-west-2). fills gap: existing test users are all moderators, can't validate FP-014/FP-016. |
+
+### friction point status
+
+- 16 of 19 shipped (unchanged)
+- FP-019: DESIGNED + UI-HALF-SHIPPED. Lambda half blocked on DKIM SUCCESS.
+- FP-014: triage false alarm resolved — confirmed shipped in ab10ba7b.
+
+---
+
+## completed 2026-05-11 session — friction-point sprint (16/19 shipped) (archive)
 
 source registry: docs/behavioral-logic-map/friction-points.md
 
@@ -47,7 +75,7 @@ source registry: docs/behavioral-logic-map/friction-points.md
 |----|--------|-------------|
 | FP-008 | e110d311 | "sign in with passkey" translated via i18n t() function |
 
-### also landed this session
+### also landed that session
 
 - 433fcf1b docs: behavioral logic map — mental models, decision trees, friction registry (12 files, 1738 insertions)
 
@@ -83,39 +111,33 @@ token refresh fix, nav cleanup, CSS fixes (player overflow, footer, speakeasy ne
 
 ## priority queue (next session)
 
-### p0 — dkim cnames (unblocks signups)
+### p0 — watch DKIM flip to SUCCESS
 
-SSO expired during 2026-05-11 session — Stratia dispatch blocked on Bryan's interactive `aws sso login`. DKIM CNAMEs resolving in Route53 but SES still shows FAILED (stale poll). Once SES auto-verifies, switch Cognito to DEVELOPER email mode.
+poll: `aws sesv2 get-email-identity --email-identity clouddelnorte.org --region us-west-2 --profile aerospaceug-admin`
 
-monitoring window for #150 bucket deletion expires 2026-05-12.
+once DkimStatus = SUCCESS:
+1. dispatch to cloud-del-norte-meet repo → implement FP-019 Lambda half (admin-update-user + SES.SendEmail + feature flag per design doc section 4.1)
+2. switch Cognito pool email mode to DEVELOPER with noreply@clouddelnorte.org
+3. request SES production access (exit sandbox)
 
-**what's needed:**
-1. `aws sso login --profile aerospaceug-admin`
-2. verify SES DKIM status: `aws sesv2 get-email-identity --email-identity clouddelnorte.org --region us-west-2 --profile aerospaceug-admin`
-3. if still FAILED: re-check 3 DKIM CNAMEs in Route53 zone Z045487217Y9179MTBU2Q
-4. once SUCCESS: switch cognito user pool email config to `EmailSendingAccount=DEVELOPER`
+### p1 — exploratory test with member-only user
 
-### p1 — FP-019 admin force-refresh tool
+use chrome-devtools MCP against live site, logged in as cdn-member-only-test@clouddelnorte.org (member-only, not moderator):
+- validate FP-014: admin nav hidden from non-moderators
+- validate FP-016: pending-user nav filtering
+- prior tests couldn't cover these — all test users were moderators
 
-design doc: docs/behavioral-logic-map/design-fp-019-admin-refresh.md  
-implementation scope: admin Lambda + UI button to force token refresh for a specific user. eliminates out-of-band "please re-login" communication after group approval.
+### p2 — open creative/ux items (unchanged)
 
-### p2 — exploratory test via chrome-devtools MCP
+- a2: login page full ux rethink
+- c2: add AWS LATAM podcast RSS feed
+- e2: podcast player icon redesign
+- k4: headphones-over-microphone composite icon
+- l: animated records rethink — "waveform disc" concept
 
-validate the 16 FPs shipped this session against live site:
-- signup flow (FP-001 + FP-002 + FP-004 + FP-007)
-- session-expired modal (FP-011 + FP-015)
-- pending-approval banner + nav filtering (FP-003 + FP-016 + FP-017)
-- Jitsi messaging (FP-009 + FP-013)
-- admin nav hidden for non-moderators (FP-014)
+### p3 — dependabot
 
-### p3 — #150 bucket deletion
-
-48h monitoring window expired 2026-05-12. pending SSO refresh to execute deletion of awsaerospace.org bucket.
-
-### p4 — cognito DEVELOPER email mode
-
-switch once DKIM verifies. then request SES production access (out of sandbox).
+0 open alerts (all 4 closed last session).
 
 ---
 
@@ -127,7 +149,7 @@ switch once DKIM verifies. then request SES production access (out of sandbox).
 |----|-----|--------|-------|
 | FP-005 | S3 | ACCEPTED | sessionStorage cleared on tab close — every new tab = full login. acceptable trade-off. |
 | FP-006 | S3 | ACCEPTED | MFA every session — no remember-device. security trade-off for casual users. |
-| FP-019 | S3 | DESIGNED-NOT-IMPLEMENTED | admin force-refresh tool. design doc at docs/behavioral-logic-map/design-fp-019-admin-refresh.md |
+| FP-019 | S3 | DESIGNED + UI-HALF-SHIPPED | UI toast in e8750570. Lambda half blocked on DKIM SUCCESS. design doc at docs/behavioral-logic-map/design-fp-019-admin-refresh.md |
 
 ### open creative/ux items
 
@@ -141,10 +163,6 @@ switch once DKIM verifies. then request SES production access (out of sandbox).
 
 files ready in `infra/lambda/cost-aggregator/`, `infra/iam/`, `infra/eventbridge/`. needs Bryan's SSO for deployment.
 
-### dependabot alerts
-
-five total. stale branches (`flatted-3.4.2`, `picomatch-2.3.2`) need closing and re-running against current package.json.
-
 ---
 
 ## infrastructure dependencies
@@ -157,8 +175,17 @@ five total. stale branches (`flatted-3.4.2`, `picomatch-2.3.2`) need closing and
 - SES inbound: s3://heraldstack-agent-mail/inbound/
 - IAM role: scoped to cognito pool us-west-2_cyPQF4F3r
 - SSM params: /heraldstack/identity/cloud-del-norte-website/*
-- cognito service account: heraldstack@clouddelnorte.org (sub: e8716360-c081-708a-1211-3234508e71d2, groups: members + moderators)
-- cognito service account password: AWS Secrets Manager `cloud-del-norte/heraldstack-cognito-pw-nuPFyW` (account 170473530355)
+
+### cognito test users (user pool us-west-2_cyPQF4F3r, account 170473530355)
+
+two tiers of test identity:
+
+| tier | users | groups | password location |
+|------|-------|--------|-------------------|
+| moderators | heraldstack@clouddelnorte.org (sub e8716360-c081-708a-1211-3234508e71d2), bryanj+clouddelnorte@abstractspacecraft.com, smoketest | members + moderators | Secrets Manager `cloud-del-norte/heraldstack-cognito-pw-nuPFyW`, SSM `/cloud-del-norte/test/smoketest-user-password` |
+| members-only | cdn-member-only-test@clouddelnorte.org (sub c8b16350-1091-703f-5ed9-1ed91a6bf9d2) | members | SSM `/cloud-del-norte/test/member-only-user-password` |
+
+members-only tier created 2026-05-12 for FP-014/FP-016 nav-filter validation. email in SSM `/cloud-del-norte/test/member-only-user-email`.
 
 ---
 
