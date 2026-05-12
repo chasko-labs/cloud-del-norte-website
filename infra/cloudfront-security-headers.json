@@ -17,7 +17,7 @@
 		},
 		"ContentSecurityPolicy": {
 			"Override": true,
-			"ContentSecurityPolicy": "default-src 'self'; script-src 'self' https://meet.clouddelnorte.org; connect-src 'self' https://cloud-del-norte.auth.us-west-2.amazoncognito.com https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://meet.clouddelnorte.org; frame-src https://meet.clouddelnorte.org https://cloud-del-norte.auth.us-west-2.amazoncognito.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.gravatar.com; font-src 'self' data:"
+			"ContentSecurityPolicy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://www.gravatar.com; object-src 'none'; frame-ancestors 'none'; frame-src https://meet.clouddelnorte.org"
 		}
 	},
 	"CustomHeadersConfig": {
