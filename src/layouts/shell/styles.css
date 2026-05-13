@@ -163,6 +163,7 @@
 /* restored post-fc3edc19 — load-bearing for logged-in footer gap elimination */
 main[class*="awsui_layout"] {
 	min-block-size: auto !important;
+	block-size: auto !important;
 }
 
 /* Light mode: warm cream fills the layout seam between nav and content containers.
@@ -467,7 +468,11 @@ main[class*="awsui_layout"] > [class*="tools-container"] {
 /* restored post-fc3edc19 — load-bearing for logged-in tools-toggle visibility on scroll */
 @media (min-width: 689px) {
 	[class*="awsui_drawers-container"] {
-		min-block-size: 100% !important;
+		/* align-self:stretch fills the grid row without forcing the grid track
+		   to grow beyond content height. Replaces min-block-size:100% which
+		   caused viewport-fill on short-content pages (AWSUG home gap). */
+		align-self: stretch;
+		min-block-size: 0 !important;
 	}
 }
 
@@ -1649,9 +1654,13 @@ nav[class*="awsui_navigation_"]:not(
 	}
 }
 
-/* Footer — opaque */
+/* Footer — opaque, must paint above the page cream background.
+   position:relative + z-index ensures the footer's dark mahogany gradient
+   renders visibly even when AppLayout's cream background extends below content. */
 .cdn-footer {
 	isolation: isolate;
+	position: relative;
+	z-index: 1;
 }
 
 @supports (backdrop-filter: blur(0)) {
