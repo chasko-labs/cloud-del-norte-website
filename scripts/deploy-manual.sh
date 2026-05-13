@@ -28,10 +28,17 @@ CF_DIST_DEV="EEHVTUEQ97V0X"
 # ── Args ──────────────────────────────────────────────────────────────────────
 TARGET="${1:-}"
 SKIP_BUILD=false
-[[ "${2:-}" == "--skip-build" ]] && SKIP_BUILD=true
+DRY_RUN=false
+shift || true
+for arg in "$@"; do
+  case "${arg}" in
+    --skip-build) SKIP_BUILD=true ;;
+    --dry-run)    DRY_RUN=true ;;
+  esac
+done
 
 usage() {
-  echo "Usage: $0 <main|auth|awsug|dev> [--skip-build]" >&2
+  echo "Usage: $0 <main|auth|awsug|dev> [--skip-build] [--dry-run]" >&2
   exit 1
 }
 
@@ -94,10 +101,19 @@ echo "✓ ${LIB_PATH}/index.html exists"
 echo ""
 
 # ── S3 sync ───────────────────────────────────────────────────────────────────
+if [[ "${DRY_RUN}" == "true" ]]; then
+  echo "[dry-run] Would sync ${LIB_PATH}/ → s3://${BUCKET}/"
+  echo "[dry-run] Would invalidate distribution ${DIST}"
+  echo "=== deploy-manual dry-run complete ==="
+  exit 0
+fi
+
 echo "Syncing non-asset files (no-cache)…"
 aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/" \
   --delete \
   --exclude "assets/*" \
+  --exclude "liora/*" \
+  --exclude "liora-embed/*" \
   --cache-control "no-cache"
 
 echo ""
@@ -117,7 +133,29 @@ INVALIDATION_ID="$(aws cloudfront create-invalidation \
   --output text)"
 
 echo "✓ Invalidation created: ${INVALIDATION_ID}"
-echo "  Propagation takes 5-15 minutes."
-echo "  Check status: aws cloudfront get-invalidation --distribution-id ${DIST} --id ${INVALIDATION_ID}"
+echo "  Waiting for invalidation to complete…"
+aws cloudfront wait invalidation-completed \
+  --distribution-id "${DIST}" \
+  --id "${INVALIDATION_ID}"
+echo "✓ Invalidation complete."
+
+# ── Deploy log ────────────────────────────────────────────────────────────────
+DEPLOY_LOG="${REPO_ROOT}/.deploy.log"
+COMMIT_SHA="$(git -C "${REPO_ROOT}" rev-parse --short HEAD 2>/dev/null || echo "unknown")"
+echo "$(date -u +%Y-%m-%dT%H:%M:%SZ) target=${TARGET} bucket=${BUCKET} dist=${DIST} commit=${COMMIT_SHA} invalidation=${INVALIDATION_ID}" >> "${DEPLOY_LOG}"
+echo "✓ Logged to ${DEPLOY_LOG}"
+
+# ── Verify ────────────────────────────────────────────────────────────────────
+case "${TARGET}" in
+  main)  VERIFY_URL="https://clouddelnorte.org/" ;;
+  auth)  VERIFY_URL="https://auth.clouddelnorte.org/" ;;
+  awsug) VERIFY_URL="https://awsug.clouddelnorte.org/" ;;
+  dev)   VERIFY_URL="https://dev.clouddelnorte.org/" ;;
+esac
+
+echo ""
+echo "Verifying deploy landed…"
+LAST_MOD="$(curl -sI "${VERIFY_URL}" | grep -i last-modified || echo "(no last-modified header)")"
+echo "  ${VERIFY_URL} → ${LAST_MOD}"
 echo ""
 echo "=== deploy-manual complete ==="
