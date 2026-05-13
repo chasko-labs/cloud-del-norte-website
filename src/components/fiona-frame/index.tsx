@@ -136,12 +136,12 @@ export default function FionaFrame() {
 				const mod = (await (
 					Function("u", "return import(u)") as (
 						u: string,
-					) => Promise<{ mountFionaPanel: (base: string) => Promise<void> }>
+					) => Promise<{ mountLioraPanel: (base: string) => Promise<void> }>
 				)(src)) as {
-					mountFionaPanel: (base: string) => Promise<void>;
+					mountLioraPanel: (base: string) => Promise<void>;
 				};
 				if (cancelled) return;
-				await mod.mountFionaPanel(base);
+				await mod.mountLioraPanel(base);
 			} catch (err) {
 				console.warn("[fiona-frame] mount failed:", err);
 				canvasEl?.removeAttribute("data-fiona-mounted");
