@@ -124,6 +124,16 @@ aws s3 sync "${LIB_PATH}/assets/" "s3://${BUCKET}/assets/" \
 
 echo ""
 
+# ── Liora/Fiona vendor assets (awsug only) ───────────────────────────────────
+# The awsug bucket needs liora-embed/ and liora/ from the main bucket.
+# These are vendor assets built by chasko-labs/sumerian-hosts, not by this repo.
+if [[ "${TARGET}" == "awsug" ]]; then
+  echo ""
+  echo "Syncing liora vendor assets from main bucket…"
+  aws s3 sync "s3://${S3_BUCKET_MAIN}/liora-embed/" "s3://${BUCKET}/liora-embed/"
+  aws s3 sync "s3://${S3_BUCKET_MAIN}/liora/" "s3://${BUCKET}/liora/"
+fi
+
 # ── CloudFront invalidation ───────────────────────────────────────────────────
 echo "Creating CloudFront invalidation for ${DIST}…"
 INVALIDATION_ID="$(aws cloudfront create-invalidation \
