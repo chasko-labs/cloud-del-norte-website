@@ -258,6 +258,17 @@ Open item: woodpecker-cli token config on AIBOX not done. Not yet running in CI.
 
 ---
 
+## deploy
+
+Full procedure: [`docs/runbooks/deploy-procedure.md`](docs/runbooks/deploy-procedure.md)
+
+Quick reference:
+- **Normal:** push to main → Woodpecker auto-deploys all 3 subdomains
+- **Manual fallback:** `./scripts/deploy-manual.sh <main|auth|awsug|dev> [--skip-build] [--dry-run]`
+- **Triage:** `docker ps --filter "name=heraldstack-woodpecker"` on rocm-aibox
+
+---
+
 ## open issues
 
 | issue | status | notes |
