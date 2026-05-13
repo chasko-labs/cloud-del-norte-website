@@ -1,23 +1,4 @@
-/* awsug area — transparent chrome so wallpaper shows through */
-
-:root:not(.awsui-dark-mode) [class*="navigation-container"]:not(#\9),
-:root:not(.awsui-dark-mode) [class*="side-navigation"]:not(#\9) {
-	background: transparent;
-	background-color: transparent;
-}
-
-:root:not(.awsui-dark-mode) [class*="awsui_content-layout"]:not(#\9),
-:root:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9) {
-	background-color: transparent;
-}
-
-.awsui-dark-mode [class*="navigation-container"]:not(#\9),
-.awsui-dark-mode [class*="side-navigation"]:not(#\9) {
-	background: transparent;
-	background-color: transparent;
-}
-
-.awsui-dark-mode [class*="awsui_content-layout"]:not(#\9),
-.awsui-dark-mode [class*="awsui_layout-main"]:not(#\9) {
-	background-color: transparent;
-}
+/* awsug area — transparent chrome so wallpaper shows through.
+   shell/styles.css already sets navigation-container, side-navigation,
+   awsui_layout-main, and awsui_content-layout to transparent (with !important
+   on layout-main). No additional overrides needed here. */
