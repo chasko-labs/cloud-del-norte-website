@@ -133,11 +133,7 @@ export default function FionaFrame() {
 				const base = envBase
 					? envBase.replace(/^https:\/\/[^/]+/, origin)
 					: `${origin}/fiona`;
-				const mod = (await (
-					Function("u", "return import(u)") as (
-						u: string,
-					) => Promise<{ mountLioraPanel: (base: string) => Promise<void> }>
-				)(src)) as {
+				const mod = (await import(/* @vite-ignore */ src)) as {
 					mountLioraPanel: (base: string) => Promise<void>;
 				};
 				if (cancelled) return;
