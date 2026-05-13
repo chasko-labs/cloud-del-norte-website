@@ -67,7 +67,7 @@ export default function AwsugLayout({
 			}}
 			navigation={<AwsugNavigation />}
 			tools={<ToolsPanel />}
-			identityHref="https://clouddelnorte.org/feed/index.html"
+			identityHref="/"
 		>
 			<PendingApprovalBanner />
 			<ContentLayout>{children}</ContentLayout>
