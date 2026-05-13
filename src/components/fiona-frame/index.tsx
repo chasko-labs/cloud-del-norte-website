@@ -116,9 +116,9 @@ export default function FionaFrame() {
 
 		async function mount() {
 			if (cancelled) return;
-			const canvasEl = document.getElementById("fiona-canvas");
-			if (canvasEl?.dataset.fionaMounted === "1") return;
-			canvasEl?.setAttribute("data-fiona-mounted", "1");
+			const canvasEl = document.getElementById("liora-canvas");
+			if (canvasEl?.dataset.lioraMounted === "1") return;
+			canvasEl?.setAttribute("data-liora-mounted", "1");
 			try {
 				const origin = window.location.origin;
 				const envSrc = import.meta.env.VITE_FIONA_SCRIPT_URL as
@@ -140,14 +140,14 @@ export default function FionaFrame() {
 				await mod.mountLioraPanel(base);
 			} catch (err) {
 				console.warn("[fiona-frame] mount failed:", err);
-				canvasEl?.removeAttribute("data-fiona-mounted");
+				canvasEl?.removeAttribute("data-liora-mounted");
 			}
 		}
 
 		function tryMount() {
 			if (cancelled) return;
 			const canvas = document.getElementById(
-				"fiona-canvas",
+				"liora-canvas",
 			) as HTMLCanvasElement | null;
 			if (canvas && canvas.clientWidth === 0) {
 				observer = new ResizeObserver(() => {
@@ -182,46 +182,46 @@ export default function FionaFrame() {
 	}, []);
 
 	return (
-		<div className="fiona-frame">
-			<div className="fiona-bezel">
-				<div className="fiona-panel-wrap">
+		<div className="liora-frame">
+			<div className="liora-bezel">
+				<div className="liora-panel-wrap">
 					<div
-						id="fiona-shimmer"
-						className="fiona-placeholder"
+						id="liora-shimmer"
+						className="liora-placeholder"
 						aria-hidden="true"
 					>
-						<span className="fiona-placeholder-label">
+						<span className="liora-placeholder-label">
 							modem connecting
-							<span className="fiona-block-stream">
-								<span className="fiona-block">▓</span>
-								<span className="fiona-block">▓</span>
-								<span className="fiona-block">▓</span>
+							<span className="liora-block-stream">
+								<span className="liora-block">▓</span>
+								<span className="liora-block">▓</span>
+								<span className="liora-block">▓</span>
 							</span>
 						</span>
 					</div>
 					<canvas
-						id="fiona-canvas"
-						className="fiona-canvas"
+						id="liora-canvas"
+						className="liora-canvas"
 						aria-hidden="true"
 						tabIndex={-1}
 					/>
 				</div>
 				<div
-					id="fiona-status-bar"
-					className="fiona-status-bar fiona-status--green"
+					id="liora-status-bar"
+					className="liora-status-bar liora-status--green"
 					aria-hidden="true"
 				>
-					<span id="fiona-device-info">{deviceInfo}</span>
-					<span id="fiona-sys-status"> SYS:▓▓▓</span>
+					<span id="liora-device-info">{deviceInfo}</span>
+					<span id="liora-sys-status"> SYS:▓▓▓</span>
 				</div>
 			</div>
-			<div className="fiona-notes-row">
+			<div className="liora-notes-row">
 				<button
 					key={stickyKey}
 					type="button"
-					className={`fiona-stickynote${stickyZoomed ? " fiona-stickynote--zoomed" : ""}`}
+					className={`liora-stickynote${stickyZoomed ? " liora-stickynote--zoomed" : ""}`}
 					onClick={() => {
-						const bezel = document.querySelector(".fiona-bezel");
+						const bezel = document.querySelector(".liora-bezel");
 						if (
 							bezel instanceof HTMLElement &&
 							(bezel.classList.contains("screen-tap-1") ||
@@ -236,25 +236,25 @@ export default function FionaFrame() {
 						stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
 					}
 				>
-					<span className="fiona-stickynote-line fiona-stickynote-line-1">
+					<span className="liora-stickynote-line liora-stickynote-line-1">
 						{withFallback(
 							t("fiona.stickynoteLine1"),
 							"fiona.stickynoteLine1",
 							locale === "mx" ? "no aguanta" : "non load",
 						)}
 					</span>
-					<span className="fiona-stickynote-line fiona-stickynote-line-2">
+					<span className="liora-stickynote-line liora-stickynote-line-2">
 						{withFallback(
 							t("fiona.stickynoteLine2"),
 							"fiona.stickynoteLine2",
 							locale === "mx" ? "nada" : "bearing",
 						)}
 					</span>
-					<span className="fiona-stickynote-sig">- ^.^</span>
+					<span className="liora-stickynote-sig">- ^.^</span>
 				</button>
 				<button
 					type="button"
-					className={`fiona-stickynote-2${sticky2Fallen ? " fiona-stickynote-2--fallen" : ""}${sticky2Zoomed ? " fiona-stickynote-2--zoomed" : ""}`}
+					className={`liora-stickynote-2${sticky2Fallen ? " liora-stickynote-2--fallen" : ""}${sticky2Zoomed ? " liora-stickynote-2--zoomed" : ""}`}
 					aria-expanded={sticky2Zoomed}
 					aria-label={
 						visitor
@@ -266,17 +266,17 @@ export default function FionaFrame() {
 						setSticky2Zoomed((v) => !v);
 					}}
 				>
-					<span className="fiona-stickynote-2-line">
+					<span className="liora-stickynote-2-line">
 						{sticky2Zoomed ? getTimeOfDayGreeting(locale) : greetingPrefix},{" "}
 						{visitor?.greeting ?? ""}
 					</span>
 					{visitor?.flag ? (
-						<span className="fiona-stickynote-2-flag" aria-hidden="true">
+						<span className="liora-stickynote-2-flag" aria-hidden="true">
 							{visitor.flag}
 						</span>
 					) : null}
 					{visitor?.ip ? (
-						<span className="fiona-stickynote-2-ip">{visitor.ip}</span>
+						<span className="liora-stickynote-2-ip">{visitor.ip}</span>
 					) : null}
 				</button>
 			</div>
