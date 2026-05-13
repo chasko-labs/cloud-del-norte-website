@@ -72,7 +72,7 @@ export function ElPasoNightsLayer(): ReactElement {
 
 	return (
 		<>
-			{theme === "dark" && (
+			{theme === "el-paso-nights" && (
 				<div
 					aria-hidden="true"
 					className="cdn-stars-skeleton"
