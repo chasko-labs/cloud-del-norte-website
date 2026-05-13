@@ -81,8 +81,13 @@ echo "    AWS_PROFILE=${AWS_PROFILE}"
 echo ""
 
 # ── Build ─────────────────────────────────────────────────────────────────────
-if [[ "${SKIP_BUILD}" == "false" ]]; then
-  echo "Running npm run build…"
+if [[ "${SKIP_BUILD}" == "true" ]]; then
+  echo "⚠️  WARNING: CAUTION: deploying existing build output without rebuilding."
+  echo "   Only use if you just ran npm run build."
+  echo ""
+else
+  echo "Cleaning ${LIB_DIR}/ and running npm run build…"
+  rm -rf "${REPO_ROOT}/${LIB_DIR}"
   npm run build --prefix "${REPO_ROOT}"
   echo ""
 fi

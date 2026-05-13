@@ -16,6 +16,7 @@ export default defineConfig({
 	},
 	build: {
 		outDir: resolve(__dirname, "./lib"),
+		emptyOutDir: true,
 		// floor after manualChunks split:
 		//   babylon-shaders ~599kB    GLSL source strings; cannot fragment further
 		//   cloudscape-core ~560kB    DS primitives bundle; intentional cohesion
