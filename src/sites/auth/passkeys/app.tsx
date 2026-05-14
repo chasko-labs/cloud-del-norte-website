@@ -5,6 +5,7 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
+import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 import {
 	AuthError,
@@ -26,6 +27,7 @@ function PasskeyManager() {
 	const [registering, setRegistering] = useState(false);
 	const [error, setError] = useState("");
 	const [success, setSuccess] = useState("");
+	const [step, setStep] = useState<1 | 2>(1);
 
 	async function loadCredentials() {
 		try {
@@ -175,6 +177,7 @@ function PasskeyManager() {
 						};
 			await completeWebAuthnRegistration(credentialData);
 			setSuccess("device added");
+			setStep(2);
 			try {
 				const idToken = sessionStorage.getItem("cdn.id_token");
 				if (idToken) {
@@ -220,82 +223,122 @@ function PasskeyManager() {
 	return (
 		<div className="cdn-passkeys-wrap">
 			<SpaceBetween size="l">
-				<Container
-					header={
-						<Header
-							variant="h1"
-							actions={
-								<SpaceBetween direction="horizontal" size="xs">
-									<Button
-										onClick={() => {
-											void handleRegister();
-										}}
-										loading={registering}
-										iconName="add-plus"
-									>
-										add passkey
-									</Button>
-									<Button
-										onClick={() => {
-											void handleAddDevice();
-										}}
-										loading={registering}
-										variant="normal"
-										iconName="status-positive"
-									>
-										add device
-									</Button>
-								</SpaceBetween>
-							}
-						>
-							passwordless sign in
-						</Header>
-					}
-				>
-					<SpaceBetween size="m">
-						{error && <Alert type="error">{error}</Alert>}
-						{success && <Alert type="success">{success}</Alert>}
-						<Box>
-							sign in with biometrics (face id, fingerprint, windows hello) or
-							add another device.
-						</Box>
-						{credentials.length === 0 ? (
-							<Box color="text-status-inactive">
-								no passkeys registered. add one to enable biometric sign-in.
+				{step === 2 && (
+					<Container
+						header={
+							<Header variant="h1">step 2: sign in on your device</Header>
+						}
+					>
+						<SpaceBetween size="l" alignItems="center">
+							<Alert type="success">device added successfully</Alert>
+							<Box textAlign="center">
+								<QRCodeSVG
+									value="https://auth.clouddelnorte.org/login/index.html"
+									size={200}
+									style={{
+										borderRadius: "12px",
+										border: "3px solid var(--cdn-violet, #9060f0)",
+									}}
+								/>
 							</Box>
-						) : (
-							credentials.map((cred) => (
-								<Box
-									key={cred.CredentialId as string}
-									padding="s"
-									variant="div"
-								>
-									<SpaceBetween
-										direction="horizontal"
-										size="s"
-										alignItems="center"
-									>
-										<Box variant="code">
-											{(cred.FriendlyCredentialName as string) ||
-												(cred.CredentialId as string).slice(0, 12)}
-										</Box>
-										<Box color="text-status-inactive" fontSize="body-s">
-											created{" "}
-											{new Date(cred.CreatedAt as string).toLocaleDateString()}
-										</Box>
+							<Box
+								textAlign="center"
+								color="text-status-inactive"
+								fontSize="body-s"
+							>
+								scan with your phone — your passkey will be offered
+								automatically
+							</Box>
+							<Button variant="link" onClick={() => setStep(1)}>
+								← back to devices
+							</Button>
+						</SpaceBetween>
+					</Container>
+				)}
+				{step === 1 && (
+					<Container
+						header={
+							<Header
+								variant="h1"
+								actions={
+									<SpaceBetween direction="horizontal" size="xs">
 										<Button
-											variant="icon"
-											iconName="remove"
 											onClick={() => {
-												void handleDelete(cred.CredentialId as string);
+												void handleRegister();
 											}}
-										/>
+											loading={registering}
+											iconName="add-plus"
+										>
+											add passkey
+										</Button>
+										<Button
+											onClick={() => {
+												void handleAddDevice();
+											}}
+											loading={registering}
+											variant="normal"
+											iconName="status-positive"
+										>
+											add device
+										</Button>
 									</SpaceBetween>
+								}
+							>
+								passwordless sign in
+							</Header>
+						}
+					>
+						<SpaceBetween size="m">
+							{error && <Alert type="error">{error}</Alert>}
+							{success && <Alert type="success">{success}</Alert>}
+							<Box>
+								sign in with biometrics (face id, fingerprint, windows hello) or
+								add another device.
+							</Box>
+							{credentials.length === 0 ? (
+								<Box color="text-status-inactive">
+									no passkeys registered. add one to enable biometric sign-in.
 								</Box>
-							))
-						)}
-					</SpaceBetween>
-				</Container>
+							) : (
+								credentials.map((cred) => {
+									const created = cred.CreatedAt;
+									const date =
+										typeof created === "number"
+											? new Date(created * 1000)
+											: new Date(created as string);
+									return (
+										<Box
+											key={cred.CredentialId as string}
+											padding="s"
+											variant="div"
+										>
+											<SpaceBetween
+												direction="horizontal"
+												size="s"
+												alignItems="center"
+											>
+												<Box variant="code">
+													{(cred.FriendlyCredentialName as string) ||
+														(cred.CredentialId as string).slice(0, 12)}
+												</Box>
+												<Box color="text-status-inactive" fontSize="body-s">
+													created {date.toLocaleDateString()}
+												</Box>
+												<Button
+													variant="icon"
+													iconName="remove"
+													onClick={() => {
+														void handleDelete(cred.CredentialId as string);
+													}}
+												/>
+											</SpaceBetween>
+										</Box>
+									);
+								})
+							)}
+						</SpaceBetween>
+					</Container>
+				)}
 				<Box textAlign="center" padding="l">
 					<SpaceBetween direction="horizontal" size="m" alignItems="center">
 						<Button variant="link" href="https://awsug.clouddelnorte.org/">
