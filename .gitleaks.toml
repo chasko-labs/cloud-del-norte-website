@@ -1,0 +1,5 @@
+[allowlist]
+paths = [
+  "scripts/nova-act/output/",
+  "test-results/"
+]
