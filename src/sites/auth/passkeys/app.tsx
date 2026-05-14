@@ -101,6 +101,16 @@ function PasskeyManager() {
 						};
 			await completeWebAuthnRegistration(credentialData);
 			setSuccess("passkey registered");
+			try {
+				const idToken = sessionStorage.getItem("cdn.id_token");
+				if (idToken) {
+					const payload = JSON.parse(atob(idToken.split(".")[1]));
+					if (payload.email)
+						localStorage.setItem("cdn.passkey_email", payload.email);
+				}
+			} catch {
+				/* non-fatal */
+			}
 			void loadCredentials();
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : "registration failed";
@@ -164,6 +174,16 @@ function PasskeyManager() {
 						};
 			await completeWebAuthnRegistration(credentialData);
 			setSuccess("device added");
+			try {
+				const idToken = sessionStorage.getItem("cdn.id_token");
+				if (idToken) {
+					const payload = JSON.parse(atob(idToken.split(".")[1]));
+					if (payload.email)
+						localStorage.setItem("cdn.passkey_email", payload.email);
+				}
+			} catch {
+				/* non-fatal */
+			}
 			void loadCredentials();
 		} catch (err) {
 			const msg = err instanceof Error ? err.message : "failed to add device";

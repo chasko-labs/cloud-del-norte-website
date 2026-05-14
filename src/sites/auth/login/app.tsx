@@ -44,7 +44,9 @@ function redirectWithTokens() {
 
 function LoginForm() {
 	const { t } = useTranslation();
-	const [email, setEmail] = useState("");
+	const [email, setEmail] = useState(
+		() => localStorage.getItem("cdn.passkey_email") ?? "",
+	);
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [emailError, setEmailError] = useState("");
@@ -81,14 +83,16 @@ function LoginForm() {
 	}
 
 	async function handlePasskeyLogin() {
-		if (!email.trim()) {
+		const passkeyEmail =
+			email.trim() || localStorage.getItem("cdn.passkey_email") || "";
+		if (!passkeyEmail) {
 			setEmailError("email is required for passkey login");
 			return;
 		}
 		setLoading(true);
 		setFormError("");
 		try {
-			const { session, credentials } = await initiatePasskeyAuth(email);
+			const { session, credentials } = await initiatePasskeyAuth(passkeyEmail);
 			const publicKey = credentials.publicKey as any;
 			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
 			if (publicKey.allowCredentials) {
