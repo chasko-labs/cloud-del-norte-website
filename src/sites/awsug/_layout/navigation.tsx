@@ -15,7 +15,8 @@ export default function AwsugNavigation() {
 	// useGroupMembership drives re-render when silent refresh picks up group assignment
 	useGroupMembership();
 	const auth = getAuthState();
-	const isPending = !auth || auth.groups.length === 0;
+	const groups = auth?.groups;
+	const isPending = !auth || !groups?.length || !groups.includes("members");
 	const isMod = auth ? isModerator(auth) : false;
 
 	const allItems: SideNavigationProps["items"] = [
