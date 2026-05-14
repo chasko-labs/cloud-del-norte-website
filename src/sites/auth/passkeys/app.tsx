@@ -58,9 +58,8 @@ function PasskeyManager() {
 				);
 			if (typeof creationOptions === "string")
 				creationOptions = JSON.parse(creationOptions);
-			const publicKey = creationOptions.publicKey;
-			if (!publicKey || !publicKey.challenge)
-				throw new AuthError("Invalid WebAuthn response — missing challenge");
+			// Cognito returns the publicKey options directly (no .publicKey wrapper)
+			const publicKey = creationOptions.publicKey ?? creationOptions;
 			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
 			publicKey.user.id = base64urlToBuffer(publicKey.user.id);
 			if (publicKey.excludeCredentials) {
