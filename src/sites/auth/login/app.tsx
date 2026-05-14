@@ -12,7 +12,7 @@ import Modal from "@cloudscape-design/components/modal";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { QRCodeSVG } from "qrcode.react";
 import type React from "react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	type AuthChallenge,
@@ -47,6 +47,7 @@ function LoginForm() {
 	const [email, setEmail] = useState(
 		() => localStorage.getItem("cdn.passkey_email") ?? "",
 	);
+	const passkeyAutoRef = useRef(false);
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [emailError, setEmailError] = useState("");
@@ -115,6 +116,14 @@ function LoginForm() {
 			);
 			setLoading(false);
 		}
+	}
+
+	// Auto-trigger passkey if user has one registered
+	if (!passkeyAutoRef.current && localStorage.getItem("cdn.passkey_email")) {
+		passkeyAutoRef.current = true;
+		setTimeout(() => {
+			void handlePasskeyLogin();
+		}, 600);
 	}
 
 	async function handleCredentialsSubmit(e: React.FormEvent) {
@@ -382,6 +391,7 @@ function LoginForm() {
 								placeholder={t("auth.login.emailPlaceholder")}
 								autoFocus
 								inputMode="email"
+								autoComplete="username webauthn"
 							/>
 						</FormField>
 						<FormField
