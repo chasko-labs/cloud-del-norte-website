@@ -1,0 +1,31 @@
+{
+	"Name": "cdn-auth-security-headers",
+	"SecurityHeadersConfig": {
+		"XSSProtection": {
+			"Override": true,
+			"Protection": true,
+			"ModeBlock": true
+		},
+		"FrameOptions": {
+			"Override": true,
+			"FrameOption": "DENY"
+		},
+		"ReferrerPolicy": {
+			"Override": true,
+			"ReferrerPolicy": "strict-origin-when-cross-origin"
+		},
+		"ContentSecurityPolicy": {
+			"Override": true,
+			"ContentSecurityPolicy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https://cognito-idp.us-west-2.amazonaws.com https://ipinfo.io https://api.zeno.fm https://api.kexp.org; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://www.gravatar.com; object-src 'none'; frame-ancestors 'none'; media-src 'none'"
+		},
+		"ContentTypeOptions": {
+			"Override": true
+		},
+		"StrictTransportSecurity": {
+			"Override": true,
+			"IncludeSubdomains": true,
+			"Preload": true,
+			"AccessControlMaxAgeSec": 63072000
+		}
+	}
+}
