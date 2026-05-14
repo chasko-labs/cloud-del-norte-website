@@ -111,6 +111,68 @@ function PasskeyManager() {
 		}
 	}
 
+	async function handleAddDevice() {
+		setRegistering(true);
+		setError("");
+		setSuccess("");
+		try {
+			const options = await startWebAuthnRegistration();
+			let creationOptions = (options.CredentialCreationOptions ??
+				(options as any).credentialCreationOptions) as any;
+			if (!creationOptions) throw new AuthError("WebAuthn not available");
+			if (typeof creationOptions === "string")
+				creationOptions = JSON.parse(creationOptions);
+			const publicKey = creationOptions.publicKey ?? creationOptions;
+			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
+			publicKey.user.id = base64urlToBuffer(publicKey.user.id);
+			if (publicKey.excludeCredentials) {
+				publicKey.excludeCredentials = publicKey.excludeCredentials.map(
+					(c: any) => ({ ...c, id: base64urlToBuffer(c.id) }),
+				);
+			}
+			// Force cross-platform — triggers QR code for phone/tablet
+			publicKey.authenticatorSelection = {
+				...publicKey.authenticatorSelection,
+				authenticatorAttachment: "cross-platform",
+			};
+			const credential = (await navigator.credentials.create({
+				publicKey,
+			})) as PublicKeyCredential;
+			if (!credential) throw new AuthError("registration cancelled");
+			const attestation =
+				credential.response as AuthenticatorAttestationResponse;
+			const credentialData =
+				typeof (credential as any).toJSON === "function"
+					? (credential as any).toJSON()
+					: {
+							id: credential.id,
+							rawId: bufferToBase64url(credential.rawId),
+							type: credential.type,
+							response: {
+								clientDataJSON: bufferToBase64url(attestation.clientDataJSON),
+								attestationObject: bufferToBase64url(
+									attestation.attestationObject,
+								),
+								transports:
+									typeof attestation.getTransports === "function"
+										? attestation.getTransports()
+										: [],
+							},
+							authenticatorAttachment:
+								credential.authenticatorAttachment ?? "cross-platform",
+							clientExtensionResults: credential.getClientExtensionResults(),
+						};
+			await completeWebAuthnRegistration(credentialData);
+			setSuccess("device added");
+			void loadCredentials();
+		} catch (err) {
+			const msg = err instanceof Error ? err.message : "failed to add device";
+			setError(msg);
+		} finally {
+			setRegistering(false);
+		}
+	}
+
 	async function handleDelete(credentialId: string) {
 		try {
 			await deleteWebAuthnCredential(credentialId);
@@ -141,18 +203,30 @@ function PasskeyManager() {
 					<Header
 						variant="h1"
 						actions={
-							<Button
-								onClick={() => {
-									void handleRegister();
-								}}
-								loading={registering}
-								iconName="add-plus"
-							>
-								add passkey
-							</Button>
+							<SpaceBetween direction="horizontal" size="xs">
+								<Button
+									onClick={() => {
+										void handleRegister();
+									}}
+									loading={registering}
+									iconName="add-plus"
+								>
+									add passkey
+								</Button>
+								<Button
+									onClick={() => {
+										void handleAddDevice();
+									}}
+									loading={registering}
+									variant="normal"
+									iconName="status-positive"
+								>
+									add device
+								</Button>
+							</SpaceBetween>
 						}
 					>
-						passkeys
+						passwordless sign in
 					</Header>
 				}
 			>
@@ -160,8 +234,8 @@ function PasskeyManager() {
 					{error && <Alert type="error">{error}</Alert>}
 					{success && <Alert type="success">{success}</Alert>}
 					<Box>
-						use passkeys to sign in with biometrics (face id, fingerprint,
-						windows hello) instead of a password.
+						sign in with biometrics (face id, fingerprint, windows hello) or add
+						another device.
 					</Box>
 					{credentials.length === 0 ? (
 						<Box color="text-status-inactive">
