@@ -84,24 +84,61 @@ function LoginForm() {
 	}
 
 	async function handlePasskeyLogin() {
-		const passkeyEmail =
-			email.trim() || localStorage.getItem("cdn.passkey_email") || "";
-		if (!passkeyEmail) {
-			setEmailError("email is required for passkey login");
-			return;
-		}
 		setLoading(true);
 		setFormError("");
+		setEmailError("");
 		try {
+			// Step 1: Try to get a passkey from the browser without specifying allowCredentials
+			// This shows ALL available passkeys for clouddelnorte.org (discoverable credentials)
+			let passkeyEmail =
+				email.trim() || localStorage.getItem("cdn.passkey_email") || "";
+
+			if (!passkeyEmail) {
+				// No email known — try discoverable credential flow
+				// Ask browser to show available passkeys without server round-trip
+				const discoverResult = (await navigator.credentials.get({
+					publicKey: {
+						challenge: crypto.getRandomValues(new Uint8Array(32)),
+						rpId: "clouddelnorte.org",
+						userVerification: "preferred",
+					},
+				})) as PublicKeyCredential | null;
+
+				if (!discoverResult) throw new AuthError("passkey cancelled");
+
+				// Extract email from userHandle (Cognito stores the sub there)
+				const response =
+					discoverResult.response as AuthenticatorAssertionResponse;
+				if (response.userHandle) {
+					// userHandle is the Cognito user sub — we need to look up the email
+					// For now, decode it as UTF-8 in case it's the email directly
+					const decoded = new TextDecoder().decode(response.userHandle);
+					// If it looks like an email, use it; otherwise it's a sub UUID
+					if (decoded.includes("@")) {
+						passkeyEmail = decoded;
+					} else {
+						// It's a sub — we can't use InitiateAuth without email
+						// Fall back to asking for email
+						setEmailError(
+							"please enter your email to complete passkey sign-in",
+						);
+						setLoading(false);
+						return;
+					}
+				} else {
+					setEmailError("please enter your email to complete passkey sign-in");
+					setLoading(false);
+					return;
+				}
+			}
+
+			// Step 2: Now we have the email — do the Cognito flow
 			const { session, credentials } = await initiatePasskeyAuth(passkeyEmail);
-			const publicKey = credentials.publicKey as any;
+			const publicKey = (credentials as any).publicKey ?? credentials;
 			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
 			if (publicKey.allowCredentials) {
 				publicKey.allowCredentials = publicKey.allowCredentials.map(
-					(c: any) => ({
-						...c,
-						id: base64urlToBuffer(c.id),
-					}),
+					(c: any) => ({ ...c, id: base64urlToBuffer(c.id) }),
 				);
 			}
 			const assertion = (await navigator.credentials.get({
