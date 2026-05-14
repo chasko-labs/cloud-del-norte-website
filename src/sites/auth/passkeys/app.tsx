@@ -76,16 +76,30 @@ function PasskeyManager() {
 			if (!credential) throw new AuthError("registration cancelled");
 			const attestation =
 				credential.response as AuthenticatorAttestationResponse;
-			await completeWebAuthnRegistration({
-				id: credential.id,
-				rawId: bufferToBase64url(credential.rawId),
-				type: credential.type,
-				response: {
-					clientDataJSON: bufferToBase64url(attestation.clientDataJSON),
-					attestationObject: bufferToBase64url(attestation.attestationObject),
-				},
-				authenticatorAttachment: credential.authenticatorAttachment,
-			});
+
+			// Use toJSON() if available (WebAuthn L3) — Cognito expects this format
+			const credentialData =
+				typeof (credential as any).toJSON === "function"
+					? (credential as any).toJSON()
+					: {
+							id: credential.id,
+							rawId: bufferToBase64url(credential.rawId),
+							type: credential.type,
+							response: {
+								clientDataJSON: bufferToBase64url(attestation.clientDataJSON),
+								attestationObject: bufferToBase64url(
+									attestation.attestationObject,
+								),
+								transports:
+									typeof attestation.getTransports === "function"
+										? attestation.getTransports()
+										: [],
+							},
+							authenticatorAttachment:
+								credential.authenticatorAttachment ?? "platform",
+							clientExtensionResults: credential.getClientExtensionResults(),
+						};
+			await completeWebAuthnRegistration(credentialData);
 			setSuccess("passkey registered");
 			void loadCredentials();
 		} catch (err) {
