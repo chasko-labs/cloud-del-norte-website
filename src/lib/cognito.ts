@@ -202,6 +202,8 @@ export async function respondToMfaChallenge(
 		);
 	}
 	storeTokens(result);
+	// RC-4: clear MFA username from sessionStorage after successful challenge
+	sessionStorage.removeItem("cdn.mfaUsername");
 }
 
 export interface SignUpFields {

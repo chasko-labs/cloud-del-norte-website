@@ -33,6 +33,13 @@ interface AuthProviderProps {
 const REFRESH_THRESHOLD_RATIO = 0.2;
 const MIN_REFRESH_DELAY_MS = 30_000;
 
+// RC-6 (logout limitation): sessionStorage is origin-scoped. signOut() clears
+// tokens on the current origin only. Other-origin tabs (e.g. awsug.clouddelnorte.org
+// while signed out on clouddelnorte.org) retain their tokens until expiry or tab close.
+// Access token TTL is set to 15 minutes in the Cognito app client to bound this window.
+// Cross-origin logout broadcast via BroadcastChannel/localStorage is intentionally
+// deferred until CSP unsafe-eval is removed (RC-1). See auth-unify-iam-review.md.
+
 function readState(): AuthState {
 	const idToken = getIdToken();
 	if (!idToken) return emptyState();
