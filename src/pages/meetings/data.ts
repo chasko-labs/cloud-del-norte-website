@@ -9,6 +9,20 @@ export interface meeting {
 	// Optional stable jitsi room name. UUID per upcoming event so the URL is
 	// not guessable by zoom-bombers. Past events can leave this empty.
 	roomName?: string;
+	// ISO 8601 date string (YYYY-MM-DD) for the scheduled meeting day.
+	// Required for the Join button to appear — Join is only shown when
+	// scheduledDate matches today in the user's local timezone.
+	scheduledDate?: string;
+	// HH:MM in 24h format, interpreted in America/Denver (El Paso) timezone.
+	// Join window: 30 min before → 60 min after scheduledTime.
+	scheduledTime?: string;
+	roomPassword?: string;
+}
+
+export function generateRoomPassword(len = 6): string {
+	const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+	return Array.from(crypto.getRandomValues(new Uint8Array(len)))
+		.map(b => chars[b % chars.length]).join('');
 }
 
 /*     sold: 5513,
@@ -437,12 +451,30 @@ export const variationsData: meeting[] = [
 			"https://www.linkedin.com/posts/arrowhead-research-park_live-with-restream-powered-by-restream-https-activity-7072729359853260800-0TX3",
 	},
 	{
-		name: "Wednesday Website Work",
+		name: "🌐 Website (co)Work Wednesday",
 		presenters: "Bryan Chasko, Jacob Wright",
 		happened: "false",
 		ondemand: "no",
-		eventlink: "",
-		// Pre-generated stable room name keeps the jitsi URL unguessable.
-		roomName: "wednesday-website-work-c8f21d9b",
+		eventlink: "https://www.meetup.com/awsugclouddelnorte/events/314648333/",
+		scheduledDate: "2026-05-20",
+		scheduledTime: "08:30",
+	},
+	{
+		name: "🌐 Website (co)Work Wednesday",
+		presenters: "Bryan Chasko, Jacob Wright",
+		happened: "false",
+		ondemand: "no",
+		eventlink: "https://www.meetup.com/awsugclouddelnorte/events/314789709/",
+		scheduledDate: "2026-05-27",
+		scheduledTime: "08:30",
+	},
+	{
+		name: "🌐 Website (co)Work Wednesday",
+		presenters: "Bryan Chasko, Jacob Wright",
+		happened: "false",
+		ondemand: "no",
+		eventlink: "https://www.meetup.com/awsugclouddelnorte/events/314789713/",
+		scheduledDate: "2026-06-03",
+		scheduledTime: "08:30",
 	},
 ];

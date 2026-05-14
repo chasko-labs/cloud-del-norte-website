@@ -1,5 +1,9 @@
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import {
+	DynamoDBDocumentClient,
+	PutCommand,
+	ScanCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { randomUUID } from "node:crypto";
 
 const client = DynamoDBDocumentClient.from(new DynamoDBClient({}));
@@ -32,16 +36,32 @@ export async function handler(event) {
 				createdAt: new Date().toISOString(),
 			};
 			await client.send(new PutCommand({ TableName: TABLE, Item: item }));
-			return { statusCode: 201, headers, body: JSON.stringify({ ok: true, id: item.id }) };
+			return {
+				statusCode: 201,
+				headers,
+				body: JSON.stringify({ ok: true, id: item.id }),
+			};
 		}
 
 		if (method === "GET" && path === "/proposals") {
 			const result = await client.send(new ScanCommand({ TableName: TABLE }));
-			return { statusCode: 200, headers, body: JSON.stringify({ proposals: result.Items }) };
+			return {
+				statusCode: 200,
+				headers,
+				body: JSON.stringify({ proposals: result.Items }),
+			};
 		}
 
-		return { statusCode: 404, headers, body: JSON.stringify({ error: "not found" }) };
+		return {
+			statusCode: 404,
+			headers,
+			body: JSON.stringify({ error: "not found" }),
+		};
 	} catch (err) {
-		return { statusCode: 500, headers, body: JSON.stringify({ error: err.message }) };
+		return {
+			statusCode: 500,
+			headers,
+			body: JSON.stringify({ error: err.message }),
+		};
 	}
 }

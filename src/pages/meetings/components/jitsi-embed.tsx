@@ -8,6 +8,7 @@ import { BannedUserError, fetchJitsiToken } from "../../../lib/jitsi-token";
 
 export interface JitsiEmbedProps {
 	roomName: string;
+	roomPassword?: string;
 	onClose?: () => void;
 }
 
@@ -88,7 +89,7 @@ const COPY = {
 const COLD_START_MS = 5_000;
 const UNREACHABLE_MS = 90_000;
 
-export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
+export default function JitsiEmbed({ roomName, roomPassword, onClose }: JitsiEmbedProps) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const apiRef = useRef<any>(null);
 	const [status, setStatus] = useState<Status>("loading");
@@ -115,7 +116,7 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 			});
 	}, []);
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: retryKey is an intentional re-run trigger
+			// biome-ignore lint/correctness/useExhaustiveDependencies: retryKey is an intentional re-run trigger
 	useEffect(() => {
 		let cancelled = false;
 		let coldTimer: ReturnType<typeof setTimeout> | null = null;
@@ -153,6 +154,7 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 				const api: any = new window.JitsiMeetExternalAPI(domain, {
 					roomName,
 					jwt: token,
+					password: roomPassword,
 					parentNode: hostRef.current,
 					width: "100%",
 					height: 640,
@@ -201,6 +203,7 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 					if (!cancelled) {
 						clearTimers();
 						setStatus("live");
+						if (roomPassword) api.executeCommand('password', roomPassword);
 					}
 				});
 				api.addListener("readyToClose", () => {
@@ -232,7 +235,7 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 			}
 			apiRef.current = null;
 		};
-	}, [roomName, onClose, retryKey]);
+	}, [roomName, roomPassword, onClose, retryKey]);
 
 	if (status === "error") {
 		return (

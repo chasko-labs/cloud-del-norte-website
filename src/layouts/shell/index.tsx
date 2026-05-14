@@ -316,6 +316,8 @@ function ShellContent({
 	);
 
 	// Initialize nav state from localStorage OR viewport (Cloudscape breakpoint: 688px)
+	const [signInLabel, setSignInLabel] = useState("sign in");
+
 	const [navOpen, setNavOpen] = useState(() => {
 		const stored = getStoredNavState();
 		if (stored !== null) return stored;
@@ -330,6 +332,14 @@ function ShellContent({
 		},
 		[],
 	);
+
+	useEffect(() => {
+		if (auth.isAuthenticated) return;
+		const id = setInterval(() => {
+			setSignInLabel((prev) => (prev === "sign in" ? "sign up" : "sign in"));
+		}, 4000);
+		return () => clearInterval(id);
+	}, [auth.isAuthenticated]);
 
 	// Wallpaper + cdn-star-logo lifecycle now owned by <CdnWallpaper />.
 	// See src/components/cdn-wallpaper/index.tsx.
@@ -603,9 +613,13 @@ function ShellContent({
 												// though "sign in" is shorter than "more ▼". Force
 												// always visible.
 												disableUtilityCollapse: true,
-												text: "sign in",
+												text: signInLabel,
 												onClick: () => {
-													window.location.assign(AUTH_LOGIN_URL);
+													window.location.assign(
+														signInLabel === "sign up"
+															? AUTH_LOGIN_URL.replace("/login/", "/signup/")
+															: AUTH_LOGIN_URL,
+													);
 												},
 											},
 										]),

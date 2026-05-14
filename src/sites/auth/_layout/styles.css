@@ -100,11 +100,11 @@ body.cdn-auth-subdomain:not(#\9):not(.awsui-dark-mode) {
 	--color-border-input-focused-4z0pgn: var(--cdn-amber);
 	--color-border-item-focused-uk47pl: var(--cdn-amber);
 	--color-background-control-checked-ka7kc2: var(--cdn-violet);
-	--color-background-button-primary-default-vdt0fu: var(--cdn-violet);
-	--color-text-button-normal-default-nzalii: var(--cdn-purple);
-	--color-border-button-normal-default-glqfp1: var(--cdn-purple);
+	--color-background-button-primary-default-vdt0fu: var(--cdn-amber);
+	--color-text-button-normal-default-nzalii: #5a3a14;
+	--color-border-button-normal-default-glqfp1: rgba(90, 58, 20, 0.4);
 	--color-text-status-info-ue8bd2: var(--cdn-purple);
-	--color-text-link-button-normal-default-srprth: var(--cdn-purple);
+	--color-text-link-button-normal-default-srprth: #5a3a14;
 	/* inactive step circle border + title ("About you", "Your interests" before
 	   active) — replace generic grey rgb(101,104,113) with a soft warm-amber
 	   so the step strip reads in palette throughout */
@@ -1001,6 +1001,13 @@ body.cdn-auth-subdomain:not(#\9) .cdn-auth-card {
 	margin-top: clamp(1rem, 8vh, 5rem);
 	margin-bottom: 2rem;
 	max-width: min(480px, calc(100vw - 2rem));
+}
+
+/* Mobile: add inner padding so fields don't touch card edges */
+@media (max-width: 480px) {
+	body.cdn-auth-subdomain:not(#\9) .cdn-auth-card > [class*="awsui_root"] {
+		padding: 16px;
+	}
 }
 
 body.cdn-auth-subdomain {

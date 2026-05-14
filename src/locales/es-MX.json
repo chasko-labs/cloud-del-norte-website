@@ -655,7 +655,7 @@
 			"displayNamePlaceholder": "p. ej. Alex de Las Cruces",
 			"passwordLabel": "Contraseña",
 			"passwordHint": "12+ caracteres con mayúsculas, minúsculas y número — símbolos opcionales",
-			"passwordPolicy": "Mínimo 12 caracteres con mayúsculas, minúsculas, números y símbolos.",
+			"passwordPolicy": "Mínimo 12 caracteres con mayúsculas, minúsculas y números.",
 			"confirmPasswordLabel": "Confirmar contraseña",
 			"passwordMismatch": "Las contraseñas no coinciden",
 			"memberTypeLabel": "¿Cómo te conectas con Cloud Del Norte? (opcional)",
@@ -676,7 +676,7 @@
 			"submitButton": "enviar solicitud",
 			"verifying": "verificando…",
 			"emailExists": "Ya existe una cuenta con este correo",
-			"weakPassword": "La contraseña debe tener 12+ caracteres con mayúsculas, minúsculas, número y símbolo",
+			"weakPassword": "La contraseña debe tener 12+ caracteres con mayúsculas, minúsculas y número",
 			"genericError": "Algo salió mal. Intenta de nuevo."
 		},
 		"verify": {
@@ -698,7 +698,7 @@
 			"codeLabel": "Código de restablecimiento",
 			"codePlaceholder": "Código de 6 dígitos",
 			"newPasswordLabel": "Nueva contraseña",
-			"newPasswordHint": "12+ caracteres — mayúsculas, minúsculas, número, símbolo",
+			"newPasswordHint": "12+ caracteres — mayúsculas, minúsculas, número",
 			"resetButton": "Restablecer",
 			"backToSignIn": "Volver al inicio de sesión",
 			"genericError": "Algo salió mal. Intenta de nuevo."

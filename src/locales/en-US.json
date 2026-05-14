@@ -655,7 +655,7 @@
 			"displayNamePlaceholder": "e.g. Alex from Las Cruces",
 			"passwordLabel": "Password",
 			"passwordHint": "12+ characters with upper, lower, and digit — symbols optional",
-			"passwordPolicy": "At least 12 characters with uppercase, lowercase, numbers, and symbols.",
+			"passwordPolicy": "At least 12 characters with uppercase, lowercase, and numbers.",
 			"confirmPasswordLabel": "Confirm password",
 			"passwordMismatch": "Passwords do not match",
 			"memberTypeLabel": "How do you connect with Cloud Del Norte? (optional)",
@@ -676,7 +676,7 @@
 			"submitButton": "submit application",
 			"verifying": "verifying…",
 			"emailExists": "An account with this email already exists",
-			"weakPassword": "Password must be 12+ characters with upper, lower, digit, and symbol",
+			"weakPassword": "Password must be 12+ characters with upper, lower, and digit",
 			"genericError": "Something went wrong. Try again."
 		},
 		"verify": {
@@ -698,7 +698,7 @@
 			"codeLabel": "Reset code",
 			"codePlaceholder": "6-digit code",
 			"newPasswordLabel": "New password",
-			"newPasswordHint": "12+ characters — upper, lower, digit, symbol",
+			"newPasswordHint": "12+ characters — upper, lower, digit",
 			"resetButton": "Reset password",
 			"backToSignIn": "Back to sign in",
 			"genericError": "Something went wrong. Try again."

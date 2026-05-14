@@ -439,3 +439,12 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
 	border-left: none;
 	border-right: none;
 }
+
+/* ── Dune canvas horizon crop ────────────────────────────────────────────────
+   Scale + shift the dune canvas upward so the bottom mesh edge is pushed
+   below the viewport. Reads as a horizon/landscape view instead of a map
+   floating in space. Light-mode only (dark mode uses a different scene). */
+:root:not(.awsui-dark-mode) [data-cdn-dune-canvas="1"] {
+	transform: scale(1.15) translateY(-6%);
+	transform-origin: center center;
+}

@@ -148,9 +148,9 @@ function LoginForm() {
 			await completePasskeyAuth(session, assertion);
 			redirectWithTokens();
 		} catch (err) {
-			setFormError(
-				err instanceof AuthError ? err.message : "passkey login failed",
-			);
+			const msg = err instanceof AuthError ? err.message : 
+				err instanceof Error ? `passkey error: ${err.message}` : "passkey login failed";
+			setFormError(msg);
 			setLoading(false);
 		}
 	}
@@ -172,6 +172,7 @@ function LoginForm() {
 			sessionStorage.setItem("cdn.mfaUsername", email);
 			const result = await signInWithPassword(email, password);
 			if (result.type === "success") {
+				localStorage.setItem("cdn.passkey_email", email);
 				redirectWithTokens();
 				return;
 			}
@@ -213,6 +214,7 @@ function LoginForm() {
 		try {
 			const session = await verifySoftwareToken(mfaSession, mfaCode);
 			await respondToMfaChallenge(session, mfaCode, "MFA_SETUP");
+			localStorage.setItem("cdn.passkey_email", email);
 			redirectWithTokens();
 		} catch (err) {
 			setFormError(
@@ -228,6 +230,7 @@ function LoginForm() {
 		setLoading(true);
 		try {
 			await respondToMfaChallenge(mfaSession, mfaCode, challengeName);
+			localStorage.setItem("cdn.passkey_email", email);
 			redirectWithTokens();
 		} catch (err) {
 			setFormError(

@@ -1,6 +1,3 @@
-// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
-// SPDX-License-Identifier: MIT-0
-
 import { useCollection } from "@cloudscape-design/collection-hooks";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
@@ -17,6 +14,7 @@ import { type ReactNode, useState } from "react";
 import { useAuth } from "../../../hooks/useAuth";
 import { useTranslation } from "../../../hooks/useTranslation";
 import type { meeting } from "../data";
+import { generateRoomPassword } from "../data";
 import JitsiEmbed from "./jitsi-embed";
 
 function generateInstantRoomName(): string {
@@ -26,6 +24,30 @@ function generateInstantRoomName(): string {
 		"",
 	);
 	return `instant-${hex}`;
+}
+
+/** Join window: opens 30 min before scheduledTime, closes 60 min after.
+ *  If no scheduledTime provided, falls back to all-day on scheduledDate. */
+function isJoinWindowOpen(scheduledDate?: string, scheduledTime?: string): boolean {
+	if (!scheduledDate) return false;
+	const now = new Date();
+	const [y, m, d] = scheduledDate.split("-").map(Number);
+
+	if (!scheduledTime) {
+		// No time specified — allow all day
+		return (
+			now.getFullYear() === y &&
+			now.getMonth() + 1 === m &&
+			now.getDate() === d
+		);
+	}
+
+	const [h, min] = scheduledTime.split(":").map(Number);
+	// Build scheduled datetime in local timezone
+	const scheduled = new Date(y, m - 1, d, h, min, 0);
+	const openAt = new Date(scheduled.getTime() - 30 * 60_000);
+	const closeAt = new Date(scheduled.getTime() + 60 * 60_000);
+	return now >= openAt && now <= closeAt;
 }
 
 const getFilterCounterText = (count = 0, t: (key: string) => string) =>
@@ -42,6 +64,7 @@ const getHeaderCounterText = (
 const columnDefinitions = (
 	t: (key: string) => string,
 	onJoin: (m: meeting) => void,
+	isAuthenticated: boolean,
 ): TableProps<meeting>["columnDefinitions"] => [
 	{
 		header: t("meetings.tableHeaders.meetupTitle"),
@@ -74,17 +97,25 @@ const columnDefinitions = (
 		minWidth: 160,
 	},
 	{
-		// Join column — renders a button only for meetings with a roomName (upcoming events).
+		// Join column — only shown for meetings scheduled today (scheduledDate
+		// matches the user's local calendar day) and with a roomName.
 		id: "join",
 		header: "Join",
-		cell: (m) =>
-			m.roomName ? (
+		cell: (m) => {
+			if (!m.roomName || !isJoinWindowOpen(m.scheduledDate, m.scheduledTime)) return "";
+			if (!isAuthenticated) {
+				return (
+					<Button variant="link" href="https://auth.clouddelnorte.org/login/index.html">
+						sign in to join
+					</Button>
+				);
+			}
+			return (
 				<Button variant="primary" onClick={() => onJoin(m)}>
 					Join
 				</Button>
-			) : (
-				""
-			),
+			);
+		},
 		minWidth: 90,
 	},
 ];
@@ -122,6 +153,10 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 		CollectionPreferencesProps["preferences"]
 	>({ pageSize: 20 });
 	const [activeRoom, setActiveRoom] = useState<meeting | null>(null);
+
+	const hasCallToday = meetings.some(
+		(m) => m.roomName && isJoinWindowOpen(m.scheduledDate, m.scheduledTime),
+	);
 	const {
 		items,
 		filterProps,
@@ -153,13 +188,22 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 		},
 		pagination: { pageSize: preferences?.pageSize },
 		sorting: {
-			defaultState: { sortingColumn: columnDefinitions(t, setActiveRoom)[0] },
+			defaultState: { sortingColumn: columnDefinitions(t, setActiveRoom, auth.isAuthenticated)[0] },
 		},
 		selection: {},
 	});
 
 	return (
 		<>
+			{!hasCallToday && (
+				<Box
+					padding={{ vertical: "s", horizontal: "l" }}
+					color="text-status-inactive"
+					textAlign="center"
+				>
+					No active calls scheduled for today.
+				</Box>
+			)}
 			{/* Wrapper enables horizontal scroll under 720px so the wide
 			    cloudscape table does not push the shell off the viewport on
 			    phones. Desktop is untouched — wrapper is width:100%. */}
@@ -168,7 +212,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 					{...collectionProps}
 					enableKeyboardNavigation={false}
 					items={items}
-					columnDefinitions={columnDefinitions(t, setActiveRoom)}
+					columnDefinitions={columnDefinitions(t, setActiveRoom, auth.isAuthenticated)}
 					stickyHeader={true}
 					resizableColumns={true}
 					variant="full-page"
@@ -197,6 +241,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 											variant="primary"
 											onClick={() => {
 												const roomName = generateInstantRoomName();
+												const roomPassword = generateRoomPassword();
 												setActiveRoom({
 													name: "instant meeting (ask participants to join)",
 													presenters: "",
@@ -204,6 +249,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 													ondemand: "no",
 													eventlink: "",
 													roomName,
+													roomPassword,
 												});
 											}}
 										>
@@ -267,9 +313,15 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 				header={activeRoom?.name ?? ""}
 				closeAriaLabel="close meeting"
 			>
+				{activeRoom?.roomPassword && (
+					<Box variant="small" color="text-body-secondary" margin={{ bottom: "s" }}>
+						room password: <Box variant="code" display="inline">{activeRoom.roomPassword}</Box>
+					</Box>
+				)}
 				{activeRoom?.roomName && (
 					<JitsiEmbed
 						roomName={activeRoom.roomName}
+						roomPassword={activeRoom.roomPassword}
 						onClose={() => setActiveRoom(null)}
 					/>
 				)}

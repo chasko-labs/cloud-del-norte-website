@@ -134,6 +134,7 @@ export async function createMeeting(body: {
 	scheduled_start: string;
 	description: string;
 	duration_minutes: number;
+	invitees?: string[];
 }): Promise<ScheduledMeetingApi> {
 	const res = await apiRequest("/admin/scheduled-meetings", "POST", body);
 	if (!res.ok) throw new Error(`create meeting failed: ${res.status}`);

@@ -124,7 +124,7 @@
 /* Light mode: warm espresso bar — dark mahogany gives the header clear visual presence
    and lets Cloudscape's default white nav text remain readable against the sepia page.
    Frosted glass was removed: cream-on-cream (nav ≈ page) caused near-invisible header. */
-#top-nav [class*="top-navigation"] {
+#top-nav [class*="top-navigation"]:not(#\9) {
 	background: linear-gradient(
 		135deg,
 		var(--cdn-gradient-nav-start) 0%,
@@ -136,7 +136,7 @@
 }
 
 /* Dark mode: deep navy gradient */
-.awsui-dark-mode #top-nav [class*="top-navigation"] {
+.awsui-dark-mode #top-nav [class*="top-navigation"]:not(#\9) {
 	background: linear-gradient(
 		135deg,
 		var(--cdn-gradient-nav-start) 0%,
@@ -174,8 +174,8 @@ main[class*="awsui_layout"] {
    the cream base. Pseudo-elements live on the layout wrapper so they cover the
    full page-content viewport without affecting any descendant's stacking context.
    Honor prefers-reduced-motion: paint the layer but kill the drift animation. */
-:root:not(.awsui-dark-mode) main[class*="awsui_layout"],
-:root:not(.awsui-dark-mode) [class*="awsui_layout-main"] {
+:root:not(.awsui-dark-mode) main[class*="awsui_layout"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9) {
 	background: /* spotlight: warm amber ellipse drifting top-left → bottom-right
 	   alpha 0.12 → 0.04: prior level was overpowering, tinting whole page amber
 	   instead of feeling like cream paper (Bryan: "amber radioactive zone") */
@@ -232,15 +232,15 @@ main[class*="awsui_layout"] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	:root:not(.awsui-dark-mode) main[class*="awsui_layout"] {
+	:root:not(.awsui-dark-mode) main[class*="awsui_layout"]:not(#\9) {
 		/* 28s → 60s: slower drift reads as ambient breath, not active motion */
 		animation: cdn-ambient-drift 60s ease-in-out infinite;
 	}
 }
 
 /* Dark mode: deep navy with violet/indigo spotlights — same architecture */
-.awsui-dark-mode main[class*="awsui_layout"],
-.awsui-dark-mode [class*="awsui_layout-main"] {
+.awsui-dark-mode main[class*="awsui_layout"]:not(#\9),
+.awsui-dark-mode [class*="awsui_layout-main"]:not(#\9) {
 	background:
 		radial-gradient(
 			60% 45% at 25% 15%,
@@ -267,7 +267,7 @@ main[class*="awsui_layout"] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-	.awsui-dark-mode main[class*="awsui_layout"] {
+	.awsui-dark-mode main[class*="awsui_layout"]:not(#\9) {
 		animation: cdn-ambient-drift 28s ease-in-out infinite;
 	}
 }
@@ -275,8 +275,8 @@ main[class*="awsui_layout"] {
 /* When background-viz canvas is mounted, make the dark layout transparent
    so the nebula/star canvas at z-index:-1 shows through.
    cdn-viz-active is added to <html> by canvas.ts, parallel to awsui-dark-mode. */
-.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"],
-.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"] {
+.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"]:not(#\9),
+.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"]:not(#\9) {
 	background:
 		radial-gradient(
 			60% 45% at 25% 15%,
@@ -296,8 +296,8 @@ main[class*="awsui_layout"] {
    When viz-active, the cream static canvas provides the base — make the layout
    transparent so the canvas at z-index:-1 shows through. Suppress the drift
    animation (canvas handles animation). */
-.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"],
-.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"] {
+.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"]:not(#\9),
+.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9) {
 	background:
 		radial-gradient(
 			60% 45% at 25% 15%,
@@ -1938,6 +1938,33 @@ nav[class*="awsui_navigation_"]:not(
 	}
 }
 
+/* ==========================================================================
+   Light-mode readability fixes (v0.0.0135)
+
+   1. Side-nav links: purple (#6330c8) is illegible on cream. Use dark brown.
+   2. Cancel/secondary button text: purple on cream is hard to read.
+   3. Primary button text: ensure white on violet, not black on violet.
+   ========================================================================== */
+
+/* 1. Side-nav links — dark warm brown in light mode */
+:root:not(.awsui-dark-mode) [class*="side-navigation"] a[class*="awsui_link_"] {
+	color: #5a3a14;
+}
+:root:not(.awsui-dark-mode) [class*="side-navigation"] a[class*="awsui_link_"]:hover {
+	color: var(--cdn-aws-orange, #ff9900);
+}
+
+/* 2. Secondary/normal button text — readable brown, not purple */
+:root:not(.awsui-dark-mode) [class*="awsui_button"][class*="variant-normal"]:not(#\9):not(#\10) {
+	color: #5a3a14;
+	border-color: rgba(90, 58, 20, 0.4);
+}
+
+/* 3. Primary button — ensure white text on violet/purple bg */
+:root:not(.awsui-dark-mode) [class*="awsui_button"][class*="variant-primary"]:not(#\9):not(#\10) {
+	color: #fff;
+}
+
 /* Stars skeleton — dark mode only */
 .cdn-stars-skeleton {
 	display: none;
@@ -1949,49 +1976,4 @@ eleton {
 	display: block;
 }
 
-/* ── Fiona peek-out — mobile collapsed-drawer hint badge ─────────────────
-   Visible when the drawer is closed (the mobile-bar is always present on
-   mobile; opening the drawer slides it off-screen with the bar itself).
-   pointer-events: none — hamburger remains the sole tap target.
-   Gated on coarse pointer + narrow viewport to avoid desktop bleed. */
-@media (pointer: coarse), (max-width: 688px) {
-	[class*="awsui_mobile-bar"]::after {
-		content: "▓ fi";
-		position: absolute;
-		/* sits just right of the hamburger (~44px wide) with 4px gap */
-		left: 52px;
-		top: 50%;
-		transform: translateY(-50%);
-		font-family: "JetBrains Mono", "Courier New", Courier, monospace;
-		font-size: 10px;
-		letter-spacing: 0.08em;
-		color: var(--cdn-gold, #c9a23f);
-		text-shadow:
-			0 0 4px rgba(201, 162, 63, 0.7),
-			0 0 10px rgba(255, 153, 0, 0.4);
-		background: linear-gradient(178deg, #ede0c2 0%, #c8b388 100%);
-		border: 1px solid #8b6f3e;
-		border-radius: 3px;
-		padding: 1px 5px;
-		pointer-events: none;
-		opacity: 0.88;
-		z-index: 1201;
-		animation: fiona-peek-pulse 3s ease-in-out infinite;
-	}
-}
 
-@keyframes fiona-peek-pulse {
-	0%,
-	100% {
-		opacity: 0.88;
-	}
-	50% {
-		opacity: 0.55;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	[class*="awsui_mobile-bar"]::after {
-		animation: none;
-	}
-}

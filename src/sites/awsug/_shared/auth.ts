@@ -12,6 +12,7 @@ const CLIENT_ID = "57eikmt418ea6vti2f6h0pl74r";
 
 export interface AuthState {
 	email: string;
+	name?: string;
 	sub: string;
 	groups: string[];
 	idToken: string;
@@ -105,6 +106,7 @@ export function getAuthState(): AuthState | null {
 		const claims = decodeJwt(idToken);
 		return {
 			email: (claims.email as string) ?? "",
+			name: (claims.name as string) || undefined,
 			sub: (claims.sub as string) ?? "",
 			groups: (claims["cognito:groups"] as string[]) ?? [],
 			idToken,
