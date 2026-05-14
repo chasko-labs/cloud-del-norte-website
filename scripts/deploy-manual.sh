@@ -119,6 +119,8 @@ aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/" \
   --exclude "assets/*" \
   --exclude "liora/*" \
   --exclude "liora-embed/*" \
+  --exclude "fiona/*" \
+  --exclude "fiona-embed/*" \
   --cache-control "no-cache"
 
 echo ""
@@ -134,9 +136,9 @@ echo ""
 # These are vendor assets built by chasko-labs/sumerian-hosts, not by this repo.
 if [[ "${TARGET}" == "awsug" ]]; then
   echo ""
-  echo "Syncing liora vendor assets from main bucket…"
-  aws s3 sync "s3://${S3_BUCKET_MAIN}/liora-embed/" "s3://${BUCKET}/liora-embed/"
-  aws s3 sync "s3://${S3_BUCKET_MAIN}/liora/" "s3://${BUCKET}/liora/"
+  echo "Syncing fiona vendor assets from main bucket…"
+  aws s3 sync "s3://${S3_BUCKET_MAIN}/fiona-embed/" "s3://${BUCKET}/fiona-embed/"
+  aws s3 sync "s3://${S3_BUCKET_MAIN}/fiona/" "s3://${BUCKET}/fiona/"
 fi
 
 # ── CloudFront invalidation ───────────────────────────────────────────────────
