@@ -120,9 +120,7 @@ export default function FionaFrame() {
 			if (canvasEl?.dataset.fionaMounted === "1") return;
 			canvasEl?.setAttribute("data-fiona-mounted", "1");
 			try {
-				const origin =
-					(import.meta.env.VITE_FIONA_ORIGIN as string | undefined) ??
-					window.location.origin;
+				const origin = window.location.origin;
 				const envSrc = import.meta.env.VITE_FIONA_SCRIPT_URL as
 					| string
 					| undefined;
