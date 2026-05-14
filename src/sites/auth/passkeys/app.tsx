@@ -16,6 +16,7 @@ import {
 	startWebAuthnRegistration,
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
+import "./styles.css";
 
 function PasskeyManager() {
 	const [credentials, setCredentials] = useState<
@@ -217,80 +218,86 @@ function PasskeyManager() {
 		);
 
 	return (
-		<SpaceBetween size="l">
-			<Container
-				header={
-					<Header
-						variant="h1"
-						actions={
-							<SpaceBetween direction="horizontal" size="xs">
-								<Button
-									onClick={() => {
-										void handleRegister();
-									}}
-									loading={registering}
-									iconName="add-plus"
-								>
-									add passkey
-								</Button>
-								<Button
-									onClick={() => {
-										void handleAddDevice();
-									}}
-									loading={registering}
-									variant="normal"
-									iconName="status-positive"
-								>
-									add device
-								</Button>
-							</SpaceBetween>
-						}
-					>
-						passwordless sign in
-					</Header>
-				}
-			>
-				<SpaceBetween size="m">
-					{error && <Alert type="error">{error}</Alert>}
-					{success && <Alert type="success">{success}</Alert>}
-					<Box>
-						sign in with biometrics (face id, fingerprint, windows hello) or add
-						another device.
-					</Box>
-					{credentials.length === 0 ? (
-						<Box color="text-status-inactive">
-							no passkeys registered. add one to enable biometric sign-in.
-						</Box>
-					) : (
-						credentials.map((cred) => (
-							<Box key={cred.CredentialId as string} padding="s" variant="div">
-								<SpaceBetween
-									direction="horizontal"
-									size="s"
-									alignItems="center"
-								>
-									<Box variant="code">
-										{(cred.FriendlyCredentialName as string) ||
-											(cred.CredentialId as string).slice(0, 12)}
-									</Box>
-									<Box color="text-status-inactive" fontSize="body-s">
-										created{" "}
-										{new Date(cred.CreatedAt as string).toLocaleDateString()}
-									</Box>
+		<div className="cdn-passkeys-wrap">
+			<SpaceBetween size="l">
+				<Container
+					header={
+						<Header
+							variant="h1"
+							actions={
+								<SpaceBetween direction="horizontal" size="xs">
 									<Button
-										variant="icon"
-										iconName="remove"
 										onClick={() => {
-											void handleDelete(cred.CredentialId as string);
+											void handleRegister();
 										}}
-									/>
+										loading={registering}
+										iconName="add-plus"
+									>
+										add passkey
+									</Button>
+									<Button
+										onClick={() => {
+											void handleAddDevice();
+										}}
+										loading={registering}
+										variant="normal"
+										iconName="status-positive"
+									>
+										add device
+									</Button>
 								</SpaceBetween>
+							}
+						>
+							passwordless sign in
+						</Header>
+					}
+				>
+					<SpaceBetween size="m">
+						{error && <Alert type="error">{error}</Alert>}
+						{success && <Alert type="success">{success}</Alert>}
+						<Box>
+							sign in with biometrics (face id, fingerprint, windows hello) or
+							add another device.
+						</Box>
+						{credentials.length === 0 ? (
+							<Box color="text-status-inactive">
+								no passkeys registered. add one to enable biometric sign-in.
 							</Box>
-						))
-					)}
-				</SpaceBetween>
-			</Container>
-		</SpaceBetween>
+						) : (
+							credentials.map((cred) => (
+								<Box
+									key={cred.CredentialId as string}
+									padding="s"
+									variant="div"
+								>
+									<SpaceBetween
+										direction="horizontal"
+										size="s"
+										alignItems="center"
+									>
+										<Box variant="code">
+											{(cred.FriendlyCredentialName as string) ||
+												(cred.CredentialId as string).slice(0, 12)}
+										</Box>
+										<Box color="text-status-inactive" fontSize="body-s">
+											created{" "}
+											{new Date(cred.CreatedAt as string).toLocaleDateString()}
+										</Box>
+										<Button
+											variant="icon"
+											iconName="remove"
+											onClick={() => {
+												void handleDelete(cred.CredentialId as string);
+											}}
+										/>
+									</SpaceBetween>
+								</Box>
+							))
+						)}
+					</SpaceBetween>
+				</Container>
+			</SpaceBetween>
+		</div>
 	);
 }
 

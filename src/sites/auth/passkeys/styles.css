@@ -1,0 +1,280 @@
+/* passwordless sign in — access panel styling */
+
+/* Container override — glass card with gradient border */
+.cdn-passkeys-wrap [class*="awsui_root_"][class*="awsui_variant-default"] {
+	border-radius: 16px;
+	border: 2px solid transparent;
+	background-image:
+		linear-gradient(135deg, #faf7f0 0%, #f5ebd7 100%),
+		linear-gradient(135deg, #8b5a2b 0%, #c9a23f 50%, #9060f0 100%);
+	background-origin: border-box;
+	background-clip: padding-box, border-box;
+	box-shadow:
+		0 8px 32px -8px rgba(90, 31, 138, 0.15),
+		0 2px 8px rgba(139, 90, 43, 0.1),
+		inset 0 1px 0 rgba(255, 255, 255, 0.8);
+	overflow: hidden;
+	position: relative;
+}
+
+.awsui-dark-mode
+	.cdn-passkeys-wrap
+	[class*="awsui_root_"][class*="awsui_variant-default"] {
+	background-image:
+		linear-gradient(135deg, #1c2230 0%, #141030 100%),
+		linear-gradient(135deg, #9060f0 0%, #00d4ff 50%, #9060f0 100%);
+	box-shadow:
+		0 8px 32px -8px rgba(144, 96, 240, 0.3),
+		0 2px 8px rgba(0, 0, 0, 0.4),
+		inset 0 1px 0 rgba(144, 96, 240, 0.2);
+}
+
+/* Animated gradient top accent bar */
+.cdn-passkeys-wrap
+[class*="awsui_root_"][class*="awsui_variant-default"]::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 4px;
+	background: linear-gradient(
+		90deg,
+		#8b5a2b,
+		#c9a23f,
+		#9060f0,
+		#c9a23f,
+		#8b5a2b
+	);
+	background-size: 200% 100%;
+	animation: cdn-passkey-sweep 4s ease-in-out infinite;
+}
+
+.awsui-dark-mode
+	.cdn-passkeys-wrap
+	[class*="awsui_root_"][class*="awsui_variant-default"]::before {
+	background: linear-gradient(
+		90deg,
+		#9060f0,
+		#00d4ff,
+		#9060f0,
+		#00d4ff,
+		#9060f0
+	);
+	background-size: 200% 100%;
+}
+
+@keyframes cdn-passkey-sweep {
+	0%,
+	100% {
+		background-position: 0% center;
+	}
+	50% {
+		background-position: 100% center;
+	}
+}
+
+/* Header — larger, branded typography */
+.cdn-passkeys-wrap [class*="awsui_heading-variant-h1"] {
+	font-family: Cinzel, Georgia, serif;
+	letter-spacing: 0.04em;
+	font-size: 1.5rem;
+	background: linear-gradient(135deg, #8b5a2b 0%, #c9a23f 100%);
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+}
+
+.awsui-dark-mode .cdn-passkeys-wrap [class*="awsui_heading-variant-h1"] {
+	background: linear-gradient(135deg, #d7c7ee 0%, #9060f0 100%);
+	-webkit-background-clip: text;
+	background-clip: text;
+}
+
+/* Buttons — branded with glow */
+.cdn-passkeys-wrap button[class*="awsui_button_"][class*="variant-primary"] {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-gradient-nav-start) 0%,
+		var(--cdn-gradient-nav-mid) 100%
+	) !important;
+	border: 1.5px solid #c9a23f80 !important;
+	box-shadow:
+		0 2px 12px rgba(201, 162, 63, 0.3),
+		inset 0 1px rgba(255, 255, 255, 0.15);
+	transition:
+		transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		box-shadow 0.2s;
+}
+
+.cdn-passkeys-wrap
+	button[class*="awsui_button_"][class*="variant-primary"]:hover {
+	transform: scale(1.04);
+	box-shadow:
+		0 4px 20px rgba(201, 162, 63, 0.5),
+		0 0 12px rgba(144, 96, 240, 0.2),
+		inset 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.awsui-dark-mode
+	.cdn-passkeys-wrap
+	button[class*="awsui_button_"][class*="variant-primary"] {
+	background: linear-gradient(135deg, #9060f0 0%, #6330c8 100%) !important;
+	border: 1.5px solid #9060f080 !important;
+	box-shadow:
+		0 2px 12px rgba(144, 96, 240, 0.4),
+		inset 0 1px rgba(215, 199, 238, 0.2);
+}
+
+.awsui-dark-mode
+	.cdn-passkeys-wrap
+	button[class*="awsui_button_"][class*="variant-primary"]:hover {
+	box-shadow:
+		0 4px 20px rgba(144, 96, 240, 0.6),
+		0 0 16px rgba(0, 212, 255, 0.2),
+		inset 0 1px rgba(215, 199, 238, 0.3);
+}
+
+/* Normal buttons (add device) */
+.cdn-passkeys-wrap button[class*="awsui_button_"][class*="variant-normal"] {
+	border: 1.5px solid #9060f060;
+	transition:
+		transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		box-shadow 0.2s,
+		border-color 0.2s;
+}
+
+.cdn-passkeys-wrap
+	button[class*="awsui_button_"][class*="variant-normal"]:hover {
+	transform: scale(1.04);
+	border-color: #9060f0;
+	box-shadow: 0 2px 12px rgba(144, 96, 240, 0.2);
+}
+
+/* Credential list items — card-like with hover */
+.cdn-passkeys-wrap [class*="awsui_box_"][class*="variant-div"] {
+	border-radius: 10px;
+	background: rgba(237, 229, 212, 0.5);
+	border: 1px solid rgba(139, 90, 43, 0.15);
+	transition:
+		transform 0.2s,
+		box-shadow 0.2s;
+}
+
+.cdn-passkeys-wrap [class*="awsui_box_"][class*="variant-div"]:hover {
+	transform: translateX(4px);
+	box-shadow:
+		-3px 0 0 #c9a23f,
+		0 2px 8px rgba(139, 90, 43, 0.1);
+}
+
+.awsui-dark-mode
+	.cdn-passkeys-wrap
+	[class*="awsui_box_"][class*="variant-div"] {
+	background: rgba(28, 34, 48, 0.6);
+	border-color: rgba(144, 96, 240, 0.15);
+}
+
+.awsui-dark-mode
+	.cdn-passkeys-wrap
+	[class*="awsui_box_"][class*="variant-div"]:hover {
+	box-shadow:
+		-3px 0 0 #9060f0,
+		0 2px 8px rgba(144, 96, 240, 0.15);
+}
+
+/* Fingerprint icon animation on the description text */
+.cdn-passkeys-wrap [class*="awsui_content_"]
+	> [class*="awsui_child_"]:first-child {
+	position: relative;
+	padding-left: 2rem;
+}
+
+.cdn-passkeys-wrap
+	[class*="awsui_content_"]
+	> [class*="awsui_child_"]:first-child::before {
+	content: "🔒";
+	position: absolute;
+	left: 0;
+	top: 50%;
+	transform: translateY(-50%);
+	font-size: 1.2rem;
+	animation: cdn-lock-pulse 3s ease-in-out infinite;
+}
+
+@keyframes cdn-lock-pulse {
+	0%,
+	100% {
+		opacity: 0.7;
+		transform: translateY(-50%) scale(1);
+	}
+	50% {
+		opacity: 1;
+		transform: translateY(-50%) scale(1.1);
+	}
+}
+
+/* Success alert — green glow */
+.cdn-passkeys-wrap [class*="awsui_alert_"][class*="type-success"] {
+	box-shadow: 0 0 16px rgba(22, 163, 74, 0.2);
+	animation: cdn-success-flash 0.6s ease-out;
+}
+
+@keyframes cdn-success-flash {
+	0% {
+		box-shadow: 0 0 0 rgba(22, 163, 74, 0);
+		transform: scale(0.98);
+	}
+	50% {
+		box-shadow: 0 0 24px rgba(22, 163, 74, 0.4);
+	}
+	100% {
+		box-shadow: 0 0 16px rgba(22, 163, 74, 0.2);
+		transform: scale(1);
+	}
+}
+
+/* Error alert — red pulse */
+.cdn-passkeys-wrap [class*="awsui_alert_"][class*="type-error"] {
+	animation: cdn-error-shake 0.4s ease-out;
+}
+
+@keyframes cdn-error-shake {
+	0%,
+	100% {
+		transform: translateX(0);
+	}
+	20% {
+		transform: translateX(-4px);
+	}
+	40% {
+		transform: translateX(4px);
+	}
+	60% {
+		transform: translateX(-2px);
+	}
+	80% {
+		transform: translateX(2px);
+	}
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.cdn-passkeys-wrap [class*="awsui_root_"]::before {
+		animation: none;
+	}
+	.cdn-passkeys-wrap button:hover {
+		transform: none;
+	}
+	.cdn-passkeys-wrap [class*="awsui_box_"]:hover {
+		transform: none;
+	}
+	.cdn-passkeys-wrap
+		[class*="awsui_content_"]
+		> [class*="awsui_child_"]:first-child::before {
+		animation: none;
+	}
+	.cdn-passkeys-wrap [class*="awsui_alert_"] {
+		animation: none;
+	}
+}
