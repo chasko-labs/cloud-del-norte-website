@@ -296,6 +296,23 @@ function PasskeyManager() {
 						)}
 					</SpaceBetween>
 				</Container>
+				<Box textAlign="center" padding="l">
+					<SpaceBetween direction="horizontal" size="m" alignItems="center">
+						<Button variant="link" href="https://awsug.clouddelnorte.org/">
+							← back to members area
+						</Button>
+						<Button
+							variant="link"
+							onClick={() => {
+								sessionStorage.clear();
+								localStorage.removeItem("cdn.passkey_email");
+								window.location.assign("/login/index.html");
+							}}
+						>
+							sign out
+						</Button>
+					</SpaceBetween>
+				</Box>
 			</SpaceBetween>
 		</div>
 	);
