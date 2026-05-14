@@ -238,16 +238,13 @@ function LoginForm() {
 	}
 
 	function handleCancelConfirm() {
-		[
-			"cdn.idToken",
-			"cdn.accessToken",
-			"cdn.refreshToken",
-			"cdn.mfaUsername",
-		].forEach((k) => {
-			sessionStorage.removeItem(k);
-			localStorage.removeItem(k);
-		});
-		window.location.assign("https://auth.clouddelnorte.org/index.html");
+		setCancelModalVisible(false);
+		setStep("credentials");
+		setMfaSession("");
+		setTotpSecret("");
+		setMfaCode("");
+		setFormError("");
+		setLoading(false);
 	}
 
 	if (step === "mfa-setup") {
