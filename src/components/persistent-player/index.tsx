@@ -746,7 +746,7 @@ function PersistentPlayerBar({
 	);
 }
 
-export default function PersistentPlayer() {
+function PersistentPlayerInner() {
 	const [state, setState] = useState<PersistedPlayerState | null>(null);
 	// autoplay reflects whether audio is currently running. set true by
 	// handlePlayStateChange when the audio element fires "playing"; set false
@@ -834,4 +834,14 @@ export default function PersistentPlayer() {
 			onPlayStateChange={handlePlayStateChange}
 		/>
 	);
+}
+
+export default function PersistentPlayer() {
+	if (
+		typeof document !== "undefined" &&
+		document.body.classList.contains("cdn-auth-subdomain")
+	) {
+		return null;
+	}
+	return <PersistentPlayerInner />;
 }
