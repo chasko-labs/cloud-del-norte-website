@@ -29,10 +29,14 @@ body.cdn-auth-subdomain [class*="awsui_breadcrumbs"] {
 }
 
 /* Hide the Cloudscape decorative background strip between nav and content */
-body.cdn-auth-subdomain [class*="awsui_scrolling-background"]:not(#\9),
-body.cdn-auth-subdomain [class*="awsui_has-default-background"]:not(#\9) {
-	background: transparent;
-	background-color: transparent;
+body.cdn-auth-subdomain
+[class*="awsui_scrolling-background"]:not(#\9):not(#\10):not(#\11),
+body.cdn-auth-subdomain
+	[class*="awsui_has-default-background"]:not(#\9):not(#\10):not(#\11) {
+	background: transparent !important;
+	background-color: transparent !important;
+	backdrop-filter: none !important;
+	-webkit-backdrop-filter: none !important;
 }
 
 /* ── Make layout background transparent on auth pages ─────────────────────
