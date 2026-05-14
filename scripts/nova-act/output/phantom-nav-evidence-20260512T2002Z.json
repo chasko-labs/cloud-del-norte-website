@@ -1,0 +1,36 @@
+{
+  "results": {
+    "access_denied_card": "FAIL",
+    "create_meeting_hidden": "PASS"
+  },
+  "evidence": {
+    "nav_items": [
+      {
+        "text": "Show password",
+        "href": ""
+      },
+      {
+        "text": "Forgot password?",
+        "href": "https://auth.clouddelnorte.org/forgot-password/index.html"
+      },
+      {
+        "text": "New here? Apply to join",
+        "href": "https://auth.clouddelnorte.org/signup/index.html"
+      },
+      {
+        "text": "Global AWS User Group Community",
+        "href": "https://www.meetup.com/pro/global-aws-user-group-community/"
+      }
+    ],
+    "create_meeting_found": false,
+    "screenshot_nav": "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/phantom-nav-home-20260512T2002Z.png",
+    "screenshot_admin": "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/phantom-nav-admin-20260512T2002Z.png",
+    "admin_body_text": "",
+    "has_denial_text": false,
+    "has_alert_component": false,
+    "is_blank": true,
+    "admin_dom_snippet": "\n    <div id=\"root\"></div>\n  \n\n"
+  },
+  "timestamp": "20260512T2002Z",
+  "user": "cdn-member-only-test@clouddelnorte.org"
+}

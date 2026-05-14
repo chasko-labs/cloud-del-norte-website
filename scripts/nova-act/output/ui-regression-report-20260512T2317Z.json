@@ -1,0 +1,43 @@
+{
+  "timestamp": "20260512T2317Z",
+  "results": {
+    "symptom_1_lioraframe": "PASS",
+    "symptom_2_layout": "PASS",
+    "symptom_3_sanddune": "PASS"
+  },
+  "evidence": {
+    "screenshots": [
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w375-top-20260512T2317Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w375-bottom-20260512T2317Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w768-top-20260512T2317Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w768-bottom-20260512T2317Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w1440-top-20260512T2317Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w1440-bottom-20260512T2317Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-lioraframe-w1440-focused-20260512T2317Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-sanddune-w1440-top-20260512T2317Z.png"
+    ],
+    "console_logs": [],
+    "network_failures": [],
+    "sso_status": "VALID",
+    "lioraframe": {
+      "canvas_present": true,
+      "canvas_opacity": "1",
+      "console_present": true,
+      "bezel_opacity": "1",
+      "sticky_present": true,
+      "sticky_opacity": "1"
+    },
+    "sanddune": {
+      "canvas_present": true,
+      "has_size": true,
+      "mounted": true,
+      "opacity": "1",
+      "reduced_motion": false,
+      "force_param": "1",
+      "all_canvas_count": 3,
+      "bg_viz_present": false,
+      "url": "https://awsug.clouddelnorte.org/?__cdn_force_wallpaper=1"
+    }
+  },
+  "deploy_landed": true
+}

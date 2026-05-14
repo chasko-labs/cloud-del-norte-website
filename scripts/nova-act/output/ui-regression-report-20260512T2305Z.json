@@ -1,0 +1,34 @@
+{
+  "timestamp": "20260512T2305Z",
+  "results": {
+    "symptom_1_lioraframe": "FAIL",
+    "symptom_2_layout": "PASS",
+    "symptom_3_sanddune": "FAIL"
+  },
+  "evidence": {
+    "screenshots": [
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w375-top-20260512T2305Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w375-bottom-20260512T2305Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w768-top-20260512T2305Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w768-bottom-20260512T2305Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w1440-top-20260512T2305Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-layout-w1440-bottom-20260512T2305Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-lioraframe-w1440-focused-20260512T2305Z.png",
+      "https://clouddelnorte.org/screenshots/nova-act/verify-sanddune-w1440-top-20260512T2305Z.png"
+    ],
+    "console_logs": [],
+    "network_failures": [],
+    "sso_status": "VALID",
+    "lioraframe": {
+      "canvas_present": true,
+      "console_present": false,
+      "host_present": false,
+      "sticky_present": true
+    },
+    "sanddune": {
+      "canvas_present": true,
+      "mesh_count": 0
+    }
+  },
+  "deploy_landed": true
+}

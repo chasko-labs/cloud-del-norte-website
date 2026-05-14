@@ -1,0 +1,818 @@
+{
+  "timestamp": "20260512T1612Z",
+  "verdict": "fetch_succeeded_but_script_blocked",
+  "root_cause_analysis": {
+    "summary": "loadJitsiScript() hangs on re-mount due to stale <script> element from pre-mount execution",
+    "sequence": [
+      "1. Cloudscape Modal renders JitsiEmbed children even when visible=false",
+      "2. JitsiEmbed useEffect fires on hidden mount: fetchJitsiToken() -> 200 OK",
+      "3. loadJitsiScript() creates <script data-cdn-jitsi=1 src=external_api.js>",
+      "4. CSP script-src self blocks the script load -> onerror fires -> promise rejects",
+      "5. Catch block sets status=error (but modal is hidden, user cannot see it)",
+      "6. useEffect cleanup runs (cancelled=true)",
+      "7. User clicks join call -> setInCall(true) -> Modal visible -> JitsiEmbed RE-MOUNTS",
+      "8. Fresh useEffect: fetchJitsiToken() returns from cache (no network request)",
+      "9. loadJitsiScript() finds EXISTING <script data-cdn-jitsi=1> in DOM",
+      "10. Attaches new load/error listeners to the already-failed script element",
+      "11. Events already fired and will never fire again -> PROMISE HANGS FOREVER",
+      "12. status stays at loading -> UI shows requesting access token... indefinitely"
+    ],
+    "primary_bug": "loadJitsiScript() attaches listeners to an existing script element that already failed, creating a permanently-pending promise",
+    "secondary_bug": "Cloudscape Modal renders children when visible=false, causing premature JitsiEmbed mount and token fetch",
+    "csp_issue": "script-src is self only - does not include https://meet.clouddelnorte.org - this blocks external_api.js (known, noted in task)"
+  },
+  "pre_click_state": {
+    "script_element_exists": true,
+    "jitsi_api_defined": false,
+    "error_text_in_dom": false,
+    "token_post_before_click": 1,
+    "external_api_failed": 1
+  },
+  "final_state": {
+    "script_elements": 1,
+    "jitsi_api_defined": false,
+    "dialogs": [
+      "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "Your session has expiredPlease log in again to continue.Log in"
+    ]
+  },
+  "network_requests": [
+    {
+      "url": "https://awsug.clouddelnorte.org/meetings/index.html",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 331
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/auth-WwoKzmMb.css",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 51
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/_layout-zZUCDZx7.css",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 146
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/meetings-DyMyWaQW.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 179
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/rolldown-runtime-C8aF4MgB.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 179
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/preload-helper-Dd-HcVz_.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 181
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/audio-Cgnro8Ft.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 182
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/auth-CFZDE0q7.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 188
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/_layout-DrJBSuYC.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 230
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 171
+    },
+    {
+      "url": "https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Caveat:wght@600&display=swap",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 172
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/shaderStore-c3xPjYKk.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 91
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/performanceConfigurator-BOwqYx_7.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 92
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/dataBuffer-BNtYin4k.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 91
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/typeStore-CxhUh9BS.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 92
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/math.scalar.functions-bzbFSFu6.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 92
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/drawWrapper-B7PhQYte.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 96
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/postprocess.vertex-mLGHN7sd.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 95
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/logger-Bza-ppyW.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 101
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/decorators-DlDsPNnb.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 100
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/baseTexture.polynomial-pGErnL9d.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 99
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/postprocess.vertex-DOrlKPLV.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 103
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/textureLoaderManager-CHN5BSPE.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 106
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/effectRenderer-Ou6I0LB_.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 105
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/tools-CQ7x2xjk.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 113
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/texture-CxanUp1I.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 141
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/lightConstants-O_LSCxOE.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 141
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/textureTools-BScdwlRn.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 140
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/math.vector-D910cdFc.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 143
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/thinEngine-BQWQj67t.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 142
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/tools.functions-DWovlpHR.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 148
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/scene-BWLuXxuS.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 150
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/cdn-star-logo-DNuJwlJG.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 155
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/meshBuilder-DwEBGuEx.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 174
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/background-viz-DLoXI0XU.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 134
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/data/podcast-episodes.json",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 233
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/jetbrainsmono/v24/tDbv2o-flEEny0FZhsfKu5WU4zr3E_BX0PnT8RD8yKwBNntkaToggR7BYRbKPxDcwg.woff2",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 374
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/caveat/v23/WnznHAc5bAfYB2QRah7pcpNvOx-pjSx6eIWpYQ.woff2",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 375
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/kernelBlur.fragment-BzeUTzLQ.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 147
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/kernelBlurVaryingDeclaration-C3YCFm_C.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 148
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/kernelBlur.vertex-DbwIzAJ-.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 148
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/glowBlurPostProcess.fragment-wonDFXxU.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 127
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/glowMapMerge.vertex-6G59b3_a.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 128
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/glowMapMerge.fragment-CDAiv6ve.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 129
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/rgbdDecode.fragment-DPIpLq5F.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 123
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/helperFunctions-B-Ggt8yk.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 123
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/glowMapGeneration.fragment-CbHtCV2a.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 61
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/clipPlaneFragment-_RLf7GTV.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 62
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/clipPlaneVertex-DlWx3H-D.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 64
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/glowMapGeneration.vertex-B55u967a.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 65
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/morphTargetsVertex-zmjj_Ib4.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 65
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/pbr.vertex-DlgcyK8W.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 33
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/pbrBRDFFunctions-jTgpvYMo.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 33
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/fogFragment-s5eeAtNf.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 32
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/vertexColorMixing-hZHAH0ZU.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 34
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/assets/pbr.fragment-CmMYTrl-.js",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 42
+    },
+    {
+      "url": "https://awsug.clouddelnorte.org/brand/logo.svg",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 179
+    },
+    {
+      "url": "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com/token/jitsi",
+      "method": "POST",
+      "status": 200,
+      "duration_ms": 444,
+      "response_body_preview": "{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjbG91ZGRlbG5vcnRlLWF1dGgiLCJhdWQiOiJqaXRzaSIsInN1YiI6ImM4YjE2MzUwLTEwOTEtNzAzZi01ZWQ5LTFlZDkxYTZiZjlkMiIsInJvb20iOiIqIiwiY29udGV4dCI6eyJ1c2VyI"
+    },
+    {
+      "url": "https://fonts.gstatic.com/s/cinzel/v26/8vIJ7ww63mVu7gt79mT7.woff2",
+      "method": "GET",
+      "status": 200,
+      "duration_ms": 1003
+    }
+  ],
+  "console_messages": [
+    {
+      "ts": 0.8939642906188965,
+      "type": "error",
+      "text": "Refused to connect to 'https://api.open-meteo.com/v1/forecast?latitude=26.1118&longitude=-97.1681&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChicago' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 0.894261360168457,
+      "type": "error",
+      "text": "Fetch API cannot load https://api.open-meteo.com/v1/forecast?latitude=26.1118&longitude=-97.1681&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChicago. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 0.8945443630218506,
+      "type": "error",
+      "text": "Refused to connect to 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=26.1118&longitude=-97.1681&current=us_aqi,uv_index' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 0.8948111534118652,
+      "type": "error",
+      "text": "Fetch API cannot load https://air-quality-api.open-meteo.com/v1/air-quality?latitude=26.1118&longitude=-97.1681&current=us_aqi,uv_index. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 0.8951108455657959,
+      "type": "error",
+      "text": "Refused to connect to 'https://ipinfo.io/json' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 0.8953096866607666,
+      "type": "error",
+      "text": "Fetch API cannot load https://ipinfo.io/json. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 0.9483981132507324,
+      "type": "error",
+      "text": "Refused to connect to 'https://kruxstream.nmsu.edu/status-json.xsl' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 0.9485564231872559,
+      "type": "error",
+      "text": "Fetch API cannot load https://kruxstream.nmsu.edu/status-json.xsl. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 0.97774338722229,
+      "type": "error",
+      "text": "Refused to load media from 'https://kruxstream.nmsu.edu/KRUX' because it violates the following Content Security Policy directive: \"default-src 'self'\". Note that 'media-src' was not explicitly set, so 'default-src' is used as a fallback.\n"
+    },
+    {
+      "ts": 1.0486962795257568,
+      "type": "warning",
+      "text": "[fiona-frame] mount failed: EvalError: Refused to evaluate a string as JavaScript because 'unsafe-eval' is not an allowed source of script in the following Content Security Policy directive: \"script-src 'self'\".\n\n    at Function (<anonymous>)\n    at n (https://awsug.clouddelnorte.org/assets/_layout-DrJBSuYC.js:148:63312)\n    at r (https://awsug.clouddelnorte.org/assets/_layout-DrJBSuYC.js:148:63704)"
+    },
+    {
+      "ts": 1.1147966384887695,
+      "type": "log",
+      "text": "BJS - [16:12:10]: Babylon.js v9.4.1 - WebGL2"
+    },
+    {
+      "ts": 1.180997371673584,
+      "type": "warning",
+      "text": "[GroupMarkerNotSet(crbug.com/242999)!:A0602B00B42B0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content."
+    },
+    {
+      "ts": 1.3112480640411377,
+      "type": "warning",
+      "text": "[GroupMarkerNotSet(crbug.com/242999)!:A0902B00B42B0000]Automatic fallback to software WebGL has been deprecated. Please use the --enable-unsafe-swiftshader (about:flags#enable-unsafe-swiftshader) flag to opt in to lower security guarantees for trusted content."
+    },
+    {
+      "ts": 1.454439401626587,
+      "type": "error",
+      "text": "Refused to load the script 'https://meet.clouddelnorte.org/external_api.js' because it violates the following Content Security Policy directive: \"script-src 'self'\". Note that 'script-src-elem' was not explicitly set, so 'script-src' is used as a fallback.\n"
+    },
+    {
+      "ts": 5.801321506500244,
+      "type": "error",
+      "text": "Refused to connect to 'https://api.open-meteo.com/v1/forecast?latitude=35.687&longitude=-105.9378&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 5.801511287689209,
+      "type": "error",
+      "text": "Fetch API cannot load https://api.open-meteo.com/v1/forecast?latitude=35.687&longitude=-105.9378&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 5.801699876785278,
+      "type": "error",
+      "text": "Refused to connect to 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.687&longitude=-105.9378&current=us_aqi,uv_index' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 5.801908254623413,
+      "type": "error",
+      "text": "Fetch API cannot load https://air-quality-api.open-meteo.com/v1/air-quality?latitude=35.687&longitude=-105.9378&current=us_aqi,uv_index. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 8.972610473632812,
+      "type": "error",
+      "text": "Refused to connect to 'https://api.open-meteo.com/v1/forecast?latitude=31.7619&longitude=-106.485&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 8.972795486450195,
+      "type": "error",
+      "text": "Fetch API cannot load https://api.open-meteo.com/v1/forecast?latitude=31.7619&longitude=-106.485&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 8.972960472106934,
+      "type": "error",
+      "text": "Refused to connect to 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=31.7619&longitude=-106.485&current=us_aqi,uv_index' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 8.97310209274292,
+      "type": "error",
+      "text": "Fetch API cannot load https://air-quality-api.open-meteo.com/v1/air-quality?latitude=31.7619&longitude=-106.485&current=us_aqi,uv_index. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 13.181272268295288,
+      "type": "error",
+      "text": "Refused to connect to 'https://api.open-meteo.com/v1/forecast?latitude=27.7515&longitude=-107.6321&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChihuahua' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 13.181500434875488,
+      "type": "error",
+      "text": "Fetch API cannot load https://api.open-meteo.com/v1/forecast?latitude=27.7515&longitude=-107.6321&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChihuahua. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 13.18169379234314,
+      "type": "error",
+      "text": "Refused to connect to 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=27.7515&longitude=-107.6321&current=us_aqi,uv_index' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 13.181878328323364,
+      "type": "error",
+      "text": "Fetch API cannot load https://air-quality-api.open-meteo.com/v1/air-quality?latitude=27.7515&longitude=-107.6321&current=us_aqi,uv_index. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 17.395503520965576,
+      "type": "error",
+      "text": "Refused to connect to 'https://api.open-meteo.com/v1/forecast?latitude=33.1532&longitude=-105.7825&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 17.39571523666382,
+      "type": "error",
+      "text": "Fetch API cannot load https://api.open-meteo.com/v1/forecast?latitude=33.1532&longitude=-105.7825&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDenver. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 17.395950317382812,
+      "type": "error",
+      "text": "Refused to connect to 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=33.1532&longitude=-105.7825&current=us_aqi,uv_index' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 17.39618992805481,
+      "type": "error",
+      "text": "Fetch API cannot load https://air-quality-api.open-meteo.com/v1/air-quality?latitude=33.1532&longitude=-105.7825&current=us_aqi,uv_index. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 21.560473203659058,
+      "type": "error",
+      "text": "Refused to connect to 'https://api.open-meteo.com/v1/forecast?latitude=30.37&longitude=-107.95&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChihuahua' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 21.560628414154053,
+      "type": "error",
+      "text": "Fetch API cannot load https://api.open-meteo.com/v1/forecast?latitude=30.37&longitude=-107.95&current=temperature_2m,wind_speed_10m,wind_direction_10m,precipitation,weather_code&daily=temperature_2m_max,temperature_2m_min,precipitation_probability_max&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FChihuahua. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 21.560744762420654,
+      "type": "error",
+      "text": "Refused to connect to 'https://air-quality-api.open-meteo.com/v1/air-quality?latitude=30.37&longitude=-107.95&current=us_aqi,uv_index' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 21.56085443496704,
+      "type": "error",
+      "text": "Fetch API cannot load https://air-quality-api.open-meteo.com/v1/air-quality?latitude=30.37&longitude=-107.95&current=us_aqi,uv_index. Refused to connect because it violates the document's Content Security Policy."
+    },
+    {
+      "ts": 31.031984329223633,
+      "type": "error",
+      "text": "Refused to connect to 'https://kruxstream.nmsu.edu/status-json.xsl' because it violates the following Content Security Policy directive: \"connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com\".\n"
+    },
+    {
+      "ts": 31.03215456008911,
+      "type": "error",
+      "text": "Fetch API cannot load https://kruxstream.nmsu.edu/status-json.xsl. Refused to connect because it violates the document's Content Security Policy."
+    }
+  ],
+  "page_errors": [],
+  "failed_requests": [
+    {
+      "url": "https://meet.clouddelnorte.org/external_api.js",
+      "method": "GET",
+      "failure": "csp"
+    }
+  ],
+  "poll_timeline": [
+    {
+      "elapsed_s": 1,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 2,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 3,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 4,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 5,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 6,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 7,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 8,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 9,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 10,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 11,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 12,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 13,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 14,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 15,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 16,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 18,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 19,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 20,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 21,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 22,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 23,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 24,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 25,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 26,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 27,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 28,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 29,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 30,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    },
+    {
+      "elapsed_s": 31,
+      "modal_text": "Cloud Del Norte \u2014 live call\n\nrequesting access token\u2026",
+      "iframe_exists": false,
+      "iframe_src": ""
+    }
+  ],
+  "storage_keys": {
+    "session": [
+      [
+        "cdn.refreshToken",
+        1784
+      ],
+      [
+        "cdn.expiresAt",
+        13
+      ],
+      [
+        "cdn.accessToken",
+        1110
+      ],
+      [
+        "cdn.idToken",
+        1149
+      ]
+    ],
+    "local": [
+      [
+        "cdn-weather-cache-v2-el_paso",
+        47
+      ],
+      [
+        "cdn-weather-cache-v2-south_padre",
+        47
+      ],
+      [
+        "cdn-weather-cache-v2-santa_fe",
+        47
+      ],
+      [
+        "cdn-weather-cache-v2-mescalero",
+        47
+      ],
+      [
+        "cdn-weather-cache-v2-paquime",
+        47
+      ],
+      [
+        "cdn-weather-cache-v2-creel",
+        47
+      ]
+    ]
+  },
+  "screenshots": {
+    "before_click": "scripts/nova-act/output/fp021-before-click-20260512T1612Z.png",
+    "final": "scripts/nova-act/output/fp021-final-20260512T1612Z.png"
+  }
+}

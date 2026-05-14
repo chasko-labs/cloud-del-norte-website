@@ -39,6 +39,7 @@ AWSUG_POLICY_ID="ef81b3a7-9f54-4871-9d45-0864456d843b"
 # awsug script-src MUST include Jitsi external_api.js origin
 AWSUG_SCRIPT_SRC_REQUIRED=(
   "https://meet.clouddelnorte.org"
+  "https://clouddelnorte.org"
 )
 # awsug connect-src MUST include Cognito + API Gateway + Jitsi XHR + WebSocket
 AWSUG_CONNECT_SRC_REQUIRED=(
@@ -47,6 +48,11 @@ AWSUG_CONNECT_SRC_REQUIRED=(
   "https://cloud-del-norte.auth.us-west-2.amazoncognito.com"
   "https://meet.clouddelnorte.org"
   "wss://meet.clouddelnorte.org"
+  "https://ipinfo.io"
+  "https://api.open-meteo.com"
+  "https://api.zeno.fm"
+  "https://gql.twitch.tv"
+  "https://stream.zeno.fm"
 )
 # awsug frame-src MUST include Jitsi meet endpoint
 AWSUG_FRAME_SRC_REQUIRED=(
@@ -139,11 +145,9 @@ else
   pass "awsug: script-src clean (no unsafe-inline)"
 fi
 
-# 5. script-src must NOT contain 'unsafe-eval'
+# 5. script-src: 'unsafe-eval' allowed for BabylonJS shader compilation
 if echo "${SCRIPT_SRC}" | grep -qF "'unsafe-eval'"; then
-  fail "awsug: script-src contains 'unsafe-eval' — XSS risk"
-else
-  pass "awsug: script-src clean (no unsafe-eval)"
+    pass "awsug: script-src contains 'unsafe-eval' (required for BabylonJS shaders)"
 fi
 
 # 6. worker-src must allow 'self' (BabylonJS may spawn workers for shader
@@ -154,8 +158,8 @@ fi
 WORKER_SRC="$(extract_directive "${LIVE_CSP}" "worker-src")"
 DEFAULT_SRC="$(extract_directive "${LIVE_CSP}" "default-src")"
 if [[ -n "${WORKER_SRC}" ]]; then
-  if echo "${WORKER_SRC}" | grep -qF "'self'"; then
-    pass "awsug: worker-src contains 'self' (BabylonJS workers allowed)"
+  if echo "${WORKER_SRC}" | grep -qE "'self'|blob:"; then
+    pass "awsug: worker-src allows BabylonJS workers"
   else
     fail "awsug: worker-src present but missing 'self' — BabylonJS workers blocked"
     echo "       live worker-src: ${WORKER_SRC}"

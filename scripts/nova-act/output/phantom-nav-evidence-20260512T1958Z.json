@@ -1,0 +1,116 @@
+{
+  "results": {
+    "access_denied_card": "FAIL",
+    "create_meeting_hidden": "PASS"
+  },
+  "evidence": {
+    "nav_items": [
+      {
+        "text": "speakeasy",
+        "href": "https://awsug.clouddelnorte.org/index.html"
+      },
+      {
+        "text": "meetings",
+        "href": "https://awsug.clouddelnorte.org/meetings/index.html"
+      },
+      {
+        "text": "plans",
+        "href": "https://clouddelnorte.org/plans/index.html"
+      },
+      {
+        "text": "roadmap",
+        "href": "https://clouddelnorte.org/roadmap/index.html"
+      },
+      {
+        "text": "design system",
+        "href": "https://clouddelnorte.org/theme/index.html"
+      },
+      {
+        "text": "tech debt countdowns",
+        "href": "https://clouddelnorte.org/maintenance-calendar/index.html"
+      },
+      {
+        "text": "api guide",
+        "href": "https://clouddelnorte.org/learning/api/index.html"
+      },
+      {
+        "text": "join a call",
+        "href": "https://awsug.clouddelnorte.org/meetings/index.html"
+      },
+      {
+        "text": "RSVP on meetup.com",
+        "href": "https://www.meetup.com/awsugclouddelnorte/events/312792622/"
+      },
+      {
+        "text": "tune in →",
+        "href": "https://awsug.clouddelnorte.org/feed/index.html"
+      },
+      {
+        "text": "Reach out on Meetup",
+        "href": "https://www.meetup.com/awsugclouddelnorte/"
+      },
+      {
+        "text": "andmoredev.medium.com",
+        "href": "https://andmoredev.medium.com/"
+      },
+      {
+        "text": "andmore.dev",
+        "href": "https://andmore.dev/"
+      },
+      {
+        "text": "X @andmoredev",
+        "href": "https://x.com/andmoredev"
+      },
+      {
+        "text": "GitHub",
+        "href": "https://github.com/andmoredev"
+      },
+      {
+        "text": "🦋@bryanchasko.bsky.social",
+        "href": "https://bsky.app/profile/bryanchasko.bsky.social"
+      },
+      {
+        "text": "AWS Hero",
+        "href": "https://aws.amazon.com/developer/community/heroes/bryan-chasko/"
+      },
+      {
+        "text": "bryanchasko.com",
+        "href": "https://bryanchasko.com/"
+      },
+      {
+        "text": "GitHub",
+        "href": "https://github.com/BryanChasko"
+      },
+      {
+        "text": "LinkedIn",
+        "href": "https://www.linkedin.com/in/jrwright121"
+      },
+      {
+        "text": "Arrowhead Research Park",
+        "href": "https://arrowheadcenter.nmsu.edu/"
+      },
+      {
+        "text": "Arrowhead Soundstage Project",
+        "href": "https://www.lascrucesbulletin.com/stories/arrowhead-studios-15-million-project-breaks-ground,136925"
+      },
+      {
+        "text": "Find your local AWS User Group on Meetup.",
+        "href": "https://www.meetup.com/pro/global-aws-user-group-community/"
+      },
+      {
+        "text": "Global AWS User Group Community",
+        "href": "https://www.meetup.com/pro/global-aws-user-group-community/"
+      }
+    ],
+    "create_meeting_found": false,
+    "screenshot_nav": "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/phantom-nav-home-20260512T1958Z.png",
+    "screenshot_admin": "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/phantom-nav-admin-20260512T1958Z.png",
+    "admin_body_text": "",
+    "has_denial_text": false,
+    "has_alert_component": false,
+    "is_blank": true,
+    "admin_dom_snippet": "\n    <div id=\"root\"></div>\n  \n\n"
+  },
+  "timestamp": "20260512T1958Z",
+  "user": "cdn-member-only-test@clouddelnorte.org"
+}
