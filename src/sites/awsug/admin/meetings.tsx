@@ -13,44 +13,22 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Table from "@cloudscape-design/components/table";
 import Textarea from "@cloudscape-design/components/textarea";
 import TimeInput from "@cloudscape-design/components/time-input";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import {
+	type ScheduledMeetingApi,
+	createMeeting,
+	deleteMeeting,
+	listMeetings,
+} from "../_shared/api";
 
-export interface ScheduledMeeting {
-	meetingId: string;
-	title: string;
-	date: string; // YYYY-MM-DD
-	time: string; // HH:MM
-	description: string;
-	roomHash: string;
-}
-
-// TODO: replace with GET /admin/scheduled-meetings
-const MOCK_MEETINGS: ScheduledMeeting[] = [
-	{
-		meetingId: "mock-1",
-		title: "AWS UG May Meetup",
-		date: "2026-05-20",
-		time: "18:00",
-		description: "Monthly meetup — cloud networking topics",
-		roomHash: "abc123def456",
-	},
-	{
-		meetingId: "mock-2",
-		title: "Re:Invent Watch Party",
-		date: "2026-06-01",
-		time: "09:00",
-		description: "Live stream watch party",
-		roomHash: "xyz789uvw012",
-	},
-];
-
-const SHARE_BASE = "https://cloudnorte.dev/meetings/join/";
+const SHARE_BASE = "https://clouddelnorte.org/m/";
 
 interface CreateForm {
 	title: string;
 	date: string;
 	time: string;
 	description: string;
+	duration_minutes: string;
 }
 
 const EMPTY_FORM: CreateForm = {
@@ -58,14 +36,33 @@ const EMPTY_FORM: CreateForm = {
 	date: "",
 	time: "",
 	description: "",
+	duration_minutes: "60",
 };
 
 export function MeetingsTable() {
-	const [meetings, setMeetings] = useState<ScheduledMeeting[]>(MOCK_MEETINGS);
+	const [meetings, setMeetings] = useState<ScheduledMeetingApi[]>([]);
+	const [loading, setLoading] = useState(true);
 	const [showCreate, setShowCreate] = useState(false);
 	const [form, setForm] = useState<CreateForm>(EMPTY_FORM);
 	const [error, setError] = useState("");
 	const [saving, setSaving] = useState(false);
+	const [deletingId, setDeletingId] = useState<string | null>(null);
+
+	const load = useCallback(async () => {
+		setLoading(true);
+		setError("");
+		try {
+			setMeetings(await listMeetings());
+		} catch {
+			setError("Failed to load meetings.");
+		} finally {
+			setLoading(false);
+		}
+	}, []);
+
+	useEffect(() => {
+		void load();
+	}, [load]);
 
 	async function handleCreate() {
 		if (!form.title || !form.date || !form.time) {
@@ -75,19 +72,14 @@ export function MeetingsTable() {
 		setSaving(true);
 		setError("");
 		try {
-			// TODO: POST /admin/scheduled-meetings with form data
-			// const res = await apiRequest("/admin/scheduled-meetings", "POST", form);
-			// if (!res.ok) throw new Error(`create failed: ${res.status}`);
-			// const created: ScheduledMeeting = await res.json();
-			// setMeetings((prev) => [...prev, created]);
-
-			// Mock: generate a fake entry until Lambda exists
-			const mockCreated: ScheduledMeeting = {
-				meetingId: `mock-${Date.now()}`,
-				roomHash: Math.random().toString(36).slice(2, 14),
-				...form,
-			};
-			setMeetings((prev) => [...prev, mockCreated]);
+			const scheduled_start = `${form.date}T${form.time}:00`;
+			const created = await createMeeting({
+				title: form.title,
+				scheduled_start,
+				description: form.description,
+				duration_minutes: Number(form.duration_minutes) || 60,
+			});
+			setMeetings((prev) => [...prev, created]);
 			setShowCreate(false);
 			setForm(EMPTY_FORM);
 		} catch {
@@ -97,42 +89,71 @@ export function MeetingsTable() {
 		}
 	}
 
+	async function handleDelete(m: ScheduledMeetingApi) {
+		setDeletingId(m.meeting_id);
+		setError("");
+		try {
+			await deleteMeeting(m.meeting_id, m.scheduled_start);
+			setMeetings((prev) => prev.filter((x) => x.meeting_id !== m.meeting_id));
+		} catch {
+			setError("Failed to delete meeting.");
+		} finally {
+			setDeletingId(null);
+		}
+	}
+
 	const columns = [
 		{
 			id: "title",
 			header: "Title",
-			cell: (m: ScheduledMeeting) => m.title,
+			cell: (m: ScheduledMeetingApi) => m.title,
 			minWidth: 180,
 		},
 		{
-			id: "date",
-			header: "Date",
-			cell: (m: ScheduledMeeting) => m.date,
-			minWidth: 110,
+			id: "scheduled_start",
+			header: "Scheduled Start",
+			cell: (m: ScheduledMeetingApi) =>
+				new Date(m.scheduled_start).toLocaleString(),
+			minWidth: 180,
 		},
 		{
-			id: "time",
-			header: "Time",
-			cell: (m: ScheduledMeeting) => m.time,
-			minWidth: 80,
+			id: "duration",
+			header: "Duration (min)",
+			cell: (m: ScheduledMeetingApi) => m.duration_minutes,
+			minWidth: 100,
 		},
 		{
 			id: "description",
 			header: "Description",
-			cell: (m: ScheduledMeeting) => m.description,
+			cell: (m: ScheduledMeetingApi) => m.description,
 			minWidth: 200,
 		},
 		{
 			id: "shareUrl",
 			header: "Share URL",
-			cell: (m: ScheduledMeeting) => (
+			cell: (m: ScheduledMeetingApi) => (
 				<a
-					href={`${SHARE_BASE}${m.roomHash}`}
+					href={`${SHARE_BASE}${m.room_hash}`}
 					target="_blank"
 					rel="noreferrer"
-				>{`${SHARE_BASE}${m.roomHash}`}</a>
+				>{`${SHARE_BASE}${m.room_hash}`}</a>
 			),
 			minWidth: 260,
+		},
+		{
+			id: "actions",
+			header: "Actions",
+			minWidth: 100,
+			cell: (m: ScheduledMeetingApi) => (
+				<Button
+					loading={deletingId === m.meeting_id}
+					onClick={() => {
+						void handleDelete(m);
+					}}
+				>
+					Delete
+				</Button>
+			),
 		},
 	];
 
@@ -199,6 +220,16 @@ export function MeetingsTable() {
 							placeholder="hh:mm"
 						/>
 					</FormField>
+					<FormField label="Duration (minutes)">
+						<Input
+							value={form.duration_minutes}
+							onChange={({ detail }) =>
+								setForm((f) => ({ ...f, duration_minutes: detail.value }))
+							}
+							type="number"
+							placeholder="60"
+						/>
+					</FormField>
 					<FormField label="Description">
 						<Textarea
 							value={form.description}
@@ -211,23 +242,40 @@ export function MeetingsTable() {
 				</SpaceBetween>
 			</Modal>
 
-			<Table
-				items={meetings}
-				columnDefinitions={columns}
-				empty={<Box textAlign="center">No meetings scheduled.</Box>}
-				header={
-					<Header
-						counter={`(${meetings.length})`}
-						actions={
-							<Button variant="primary" onClick={() => setShowCreate(true)}>
-								Create meeting
-							</Button>
-						}
-					>
-						Scheduled Meetings
-					</Header>
-				}
-			/>
+			<SpaceBetween size="m">
+				{error && !showCreate && (
+					<Alert type="error" dismissible onDismiss={() => setError("")}>
+						{error}
+					</Alert>
+				)}
+				<Table
+					items={meetings}
+					columnDefinitions={columns}
+					loading={loading}
+					loadingText="Loading meetings"
+					empty={<Box textAlign="center">No meetings scheduled.</Box>}
+					header={
+						<Header
+							counter={`(${meetings.length})`}
+							actions={
+								<SpaceBetween direction="horizontal" size="xs">
+									<Button
+										iconName="refresh"
+										onClick={() => {
+											void load();
+										}}
+									/>
+									<Button variant="primary" onClick={() => setShowCreate(true)}>
+										Create meeting
+									</Button>
+								</SpaceBetween>
+							}
+						>
+							Scheduled Meetings
+						</Header>
+					}
+				/>
+			</SpaceBetween>
 		</>
 	);
 }

@@ -113,3 +113,40 @@ export async function fetchJitsiToken(): Promise<JitsiTokenResponse> {
 	if (!res.ok) throw new Error(`token failed: ${res.status}`);
 	return res.json() as Promise<JitsiTokenResponse>;
 }
+
+export interface ScheduledMeetingApi {
+	meeting_id: string;
+	title: string;
+	scheduled_start: string; // ISO 8601
+	description: string;
+	duration_minutes: number;
+	room_hash: string;
+}
+
+export async function listMeetings(): Promise<ScheduledMeetingApi[]> {
+	const res = await apiRequest("/admin/scheduled-meetings", "GET");
+	if (!res.ok) throw new Error(`list meetings failed: ${res.status}`);
+	return res.json() as Promise<ScheduledMeetingApi[]>;
+}
+
+export async function createMeeting(body: {
+	title: string;
+	scheduled_start: string;
+	description: string;
+	duration_minutes: number;
+}): Promise<ScheduledMeetingApi> {
+	const res = await apiRequest("/admin/scheduled-meetings", "POST", body);
+	if (!res.ok) throw new Error(`create meeting failed: ${res.status}`);
+	return res.json() as Promise<ScheduledMeetingApi>;
+}
+
+export async function deleteMeeting(
+	meeting_id: string,
+	scheduled_start: string,
+): Promise<void> {
+	const res = await apiRequest("/admin/scheduled-meetings", "DELETE", {
+		meeting_id,
+		scheduled_start,
+	});
+	if (!res.ok) throw new Error(`delete meeting failed: ${res.status}`);
+}
