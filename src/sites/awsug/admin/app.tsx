@@ -14,6 +14,7 @@ import Tabs from "@cloudscape-design/components/tabs";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import AwsugLayout from "../_layout";
+import { MeetingsTable } from "./meetings";
 import {
 	type AdminUser,
 	approveUser,
@@ -308,6 +309,11 @@ function AdminPanel() {
 								key={`banned-${refreshKey}`}
 							/>
 						),
+					},
+					{
+						id: "meetings",
+						label: "Meetings",
+						content: <MeetingsTable />,
 					},
 				]}
 			/>
