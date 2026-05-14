@@ -37,6 +37,7 @@ export default defineConfig({
 					__dirname,
 					"./src/pages/learning/api/index.html",
 				),
+				"learning/index": resolve(__dirname, "./src/pages/learning/index.html"),
 				"maintenance-calendar": resolve(
 					__dirname,
 					"./src/pages/maintenance-calendar/index.html",
@@ -50,7 +51,10 @@ export default defineConfig({
 				"dune-test": resolve(__dirname, "./src/pages/dune-test/index.html"),
 				plans: resolve(__dirname, "./src/pages/plans/index.html"),
 				costs: resolve(__dirname, "./src/pages/costs/index.html"),
-				"meeting-public": resolve(__dirname, "./src/pages/meeting-public/index.html"),
+				"meeting-public": resolve(
+					__dirname,
+					"./src/pages/meeting-public/index.html",
+				),
 			},
 			output: {
 				// split BabylonJS + Cloudscape into long-lived named chunks so
