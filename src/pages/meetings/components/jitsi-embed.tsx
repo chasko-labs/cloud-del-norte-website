@@ -162,6 +162,10 @@ export default function JitsiEmbed({ roomName, onClose }: JitsiEmbedProps) {
 						startWithVideoMuted: true,
 						dynamicBrandingUrl: "",
 						brandingRoomAlias: "",
+						localRecording: {
+							enabled: true,
+							format: "webm",
+						},
 					},
 					interfaceConfigOverwrite: {
 						SHOW_JITSI_WATERMARK: false,
