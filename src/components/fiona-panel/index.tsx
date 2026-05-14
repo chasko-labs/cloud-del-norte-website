@@ -27,7 +27,7 @@ function buildDeviceInfo(): string {
 }
 
 interface FionaEmbedModule {
-	mountLioraPanel: (assetBase: string) => Promise<void>;
+	mountFionaPanel: (assetBase: string) => Promise<void>;
 }
 
 function scheduleIdle(fn: () => void): void {
@@ -85,7 +85,7 @@ export function FionaPanel() {
 						/* @vite-ignore */ src
 					)) as FionaEmbedModule;
 					if (cancelled) return;
-					await mod.mountLioraPanel(base);
+					await mod.mountFionaPanel(base);
 				} catch {
 					// mount failure — shimmer stays as permanent panel fill
 				}

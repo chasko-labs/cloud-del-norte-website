@@ -109,7 +109,7 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib/ s3://$S3_BUCKET_MAIN/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"  # legacy S3 path names (host is fiona)
+      - aws s3 sync lib/ s3://$S3_BUCKET_MAIN/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"  # legacy S3 path names (host is fiona)
       - aws s3 sync lib/assets/ s3://$S3_BUCKET_MAIN/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
       - aws cloudfront create-invalidation --distribution-id $CF_DIST_MAIN --paths "/*"
 
@@ -169,10 +169,10 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib-awsug/ s3://$S3_BUCKET_AWSUG/ --delete --exact-timestamps --exclude "assets/*" --exclude "liora/*" --exclude "liora-embed/*" --cache-control "no-cache"
+      - aws s3 sync lib-awsug/ s3://$S3_BUCKET_AWSUG/ --delete --exact-timestamps --exclude "assets/*" --exclude "fiona/*" --exclude "fiona-embed/*" --cache-control "no-cache"
       - aws s3 sync lib-awsug/assets/ s3://$S3_BUCKET_AWSUG/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
-      - aws s3 sync s3://$S3_BUCKET_MAIN/liora-embed/ s3://$S3_BUCKET_AWSUG/liora-embed/
-      - aws s3 sync s3://$S3_BUCKET_MAIN/liora/ s3://$S3_BUCKET_AWSUG/liora/
+      - aws s3 sync s3://$S3_BUCKET_MAIN/fiona-embed/ s3://$S3_BUCKET_AWSUG/fiona-embed/
+      - aws s3 sync s3://$S3_BUCKET_MAIN/fiona/ s3://$S3_BUCKET_AWSUG/fiona/
       - aws cloudfront create-invalidation --distribution-id $CF_DIST_AWSUG --paths "/*"
 
   # ─── dev preview deploys (non-main branches) ────────────────────────────────
@@ -204,10 +204,10 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib/ s3://$S3_BUCKET_DEV/ --delete --exact-timestamps --exclude "liora/*" --exclude "liora-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"  # legacy S3 path names (host is fiona)
+      - aws s3 sync lib/ s3://$S3_BUCKET_DEV/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"  # legacy S3 path names (host is fiona)
       - aws s3 sync lib/assets/ s3://$S3_BUCKET_DEV/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
-      - aws s3 sync s3://$S3_BUCKET_MAIN/liora-embed/ s3://$S3_BUCKET_DEV/liora-embed/ --exact-timestamps  # legacy S3 path names (host is fiona)
-      - aws s3 sync s3://$S3_BUCKET_MAIN/liora/ s3://$S3_BUCKET_DEV/liora/ --exact-timestamps  # legacy S3 path names (host is fiona)
+      - aws s3 sync s3://$S3_BUCKET_MAIN/fiona-embed/ s3://$S3_BUCKET_DEV/fiona-embed/ --exact-timestamps  # legacy S3 path names (host is fiona)
+      - aws s3 sync s3://$S3_BUCKET_MAIN/fiona/ s3://$S3_BUCKET_DEV/fiona/ --exact-timestamps  # legacy S3 path names (host is fiona)
       - aws cloudfront create-invalidation --distribution-id $CF_DIST_DEV --paths "/*"
 
   - name: deploy-dev-auth
