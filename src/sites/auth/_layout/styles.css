@@ -28,23 +28,10 @@ body.cdn-auth-subdomain [class*="awsui_breadcrumbs"] {
 	display: none;
 }
 
-/* ── Suppress AppLayout header strip on auth pages ──────────────────────────
-   AppLayout renders an awsui_header_ band between the top-nav and content.
-   On auth pages it has no content but still paints a grey/cream bar. */
-body.cdn-auth-subdomain [class*="awsui_header_"]:not([id="top-nav"]):not(#\9) {
-	display: none;
-}
-body.cdn-auth-subdomain .cdn-auth-card [class*="awsui_header_"]:not(#\9) {
-	display: block;
-}
-
-/* ── Suppress AppLayout decorative background bar ─────────────────────────
-   Cloudscape renders an empty div.awsui_background_.awsui_has-default-background_
-   as a white strip behind the breadcrumbs/notifications area. On auth pages
-   the wallpaper should show through. :not(#\9) matches specificity trick
-   Cloudscape uses internally so we win without !important. */
-body.cdn-auth-subdomain:not(#\9)
-[class*="awsui_background_"][class*="awsui_has-default-background_"] {
+/* Hide the Cloudscape decorative background strip between nav and content */
+body.cdn-auth-subdomain [class*="awsui_scrolling-background"]:not(#\9),
+body.cdn-auth-subdomain [class*="awsui_has-default-background"]:not(#\9) {
+	background: transparent;
 	background-color: transparent;
 }
 
