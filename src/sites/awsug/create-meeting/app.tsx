@@ -5,6 +5,7 @@ import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
+import DatePicker from "@cloudscape-design/components/date-picker";
 import Form from "@cloudscape-design/components/form";
 import FormField from "@cloudscape-design/components/form-field";
 import Header from "@cloudscape-design/components/header";
@@ -12,6 +13,7 @@ import Input from "@cloudscape-design/components/input";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import Textarea from "@cloudscape-design/components/textarea";
+import TimeInput from "@cloudscape-design/components/time-input";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
@@ -25,6 +27,8 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 	const [meetupLink, setMeetupLink] = useState("");
 	const [speakers, setSpeakers] = useState("");
 	const [notes, setNotes] = useState("");
+	const [meetingDate, setMeetingDate] = useState("");
+	const [meetingTime, setMeetingTime] = useState("20:00");
 	const [meetupLinkError, setMeetupLinkError] = useState("");
 	const [formError, setFormError] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -55,6 +59,9 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 					meetupLink: meetupLink.trim(),
 					speakers: speakers.trim(),
 					notes: notes.trim(),
+					meetingDate: meetingDate
+						? `${meetingDate}T${meetingTime}:00Z`
+						: undefined,
 				}),
 			});
 			if (!res.ok) throw new Error(`api error: ${res.status}`);
@@ -113,6 +120,21 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 					errorText={formError || undefined}
 				>
 					<SpaceBetween size="m">
+						<FormField label="date">
+							<DatePicker
+								value={meetingDate}
+								onChange={({ detail }) => setMeetingDate(detail.value)}
+								placeholder="YYYY/MM/DD"
+							/>
+						</FormField>
+						<FormField label="time (UTC)">
+							<TimeInput
+								value={meetingTime}
+								onChange={({ detail }) => setMeetingTime(detail.value)}
+								format="hh:mm"
+								placeholder="20:00"
+							/>
+						</FormField>
 						<FormField
 							label="Meetup link"
 							description="optional — add after scheduling the call"
