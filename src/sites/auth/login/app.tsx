@@ -30,25 +30,6 @@ import AuthLayout from "../_layout";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
 
-function getSocialProviders(): Array<{ name: string; label: string }> {
-	const ua = navigator.userAgent;
-	const isApple =
-		/Mac|iPhone|iPad|iPod/.test(ua) ||
-		(navigator as any).userAgentData?.platform === "macOS";
-	const isAndroid = /Android/.test(ua);
-	const isChrome = /Chrome/.test(ua) && !/Edg/.test(ua);
-
-	const providers: Array<{ name: string; label: string }> = [];
-	if (isApple) providers.push({ name: "apple", label: "continue with Apple" });
-	if (isChrome || isAndroid)
-		providers.push({ name: "google", label: "continue with Google" });
-	if (providers.length === 0) {
-		providers.push({ name: "google", label: "continue with Google" });
-		providers.push({ name: "apple", label: "continue with Apple" });
-	}
-	return providers;
-}
-
 type Step = "credentials" | "mfa-setup" | "mfa-verify";
 
 function redirectWithTokens() {
@@ -474,31 +455,6 @@ function LoginForm() {
 						{t("auth.login.forgotPassword")}
 					</Link>
 					<Link href="/signup/index.html">{t("auth.login.noAccount")}</Link>
-				</SpaceBetween>
-			</Box>
-			<Box
-				textAlign="center"
-				color="text-status-inactive"
-				padding={{ top: "s" }}
-			>
-				— or —
-			</Box>
-			<Box textAlign="center" padding={{ top: "m" }}>
-				<SpaceBetween size="xs">
-					{getSocialProviders().map((p) => (
-						<Button
-							key={p.name}
-							variant="normal"
-							fullWidth
-							onClick={() => {
-								// TODO: wire to Cognito hosted UI OAuth endpoint once IdP is configured
-								// window.location.assign(`https://cloud-del-norte.auth.us-west-2.amazoncognito.com/oauth2/authorize?identity_provider=${p.name}&response_type=code&client_id=57eikmt418ea6vti2f6h0pl74r&redirect_uri=${encodeURIComponent('https://auth.clouddelnorte.org/login/index.html')}&scope=openid+email+profile`);
-								setFormError(`${p.label} coming soon`);
-							}}
-						>
-							{p.label}
-						</Button>
-					))}
 				</SpaceBetween>
 			</Box>
 			{window.PublicKeyCredential && (
