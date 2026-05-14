@@ -306,6 +306,7 @@ function SignupWizard() {
 				<SpaceBetween size="m">
 					<FormField
 						label={t("auth.signup.emailLabel")}
+						description="tip: use a plus address for privacy — e.g. you+cloud-del-norte@email.com"
 						errorText={step1Errors.email ?? undefined}
 					>
 						<Input
