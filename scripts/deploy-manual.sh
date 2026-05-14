@@ -121,6 +121,7 @@ aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/" \
   --exclude "liora-embed/*" \
   --exclude "fiona/*" \
   --exclude "fiona-embed/*" \
+  --exclude "screenshots/*" \
   --cache-control "no-cache"
 
 echo ""
