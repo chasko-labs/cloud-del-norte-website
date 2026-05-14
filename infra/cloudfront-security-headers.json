@@ -17,7 +17,7 @@
 		},
 		"ContentSecurityPolicy": {
 			"Override": true,
-			"ContentSecurityPolicy": "default-src 'self'; script-src 'self' https://meet.clouddelnorte.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com https://meet.clouddelnorte.org wss://meet.clouddelnorte.org; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://www.gravatar.com; object-src 'none'; frame-ancestors 'none'; frame-src https://meet.clouddelnorte.org"
+			"ContentSecurityPolicy": "default-src 'self'; script-src 'self' 'unsafe-eval' blob: https://meet.clouddelnorte.org https://clouddelnorte.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; connect-src 'self' https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com https://cognito-idp.us-west-2.amazonaws.com https://cloud-del-norte.auth.us-west-2.amazoncognito.com https://meet.clouddelnorte.org wss://meet.clouddelnorte.org https://clouddelnorte.org https://kruxstream.nmsu.edu https://d1le29qyzha1u4.cloudfront.net https://d3ctxlq1ktw2nl.cloudfront.net https://mcdn.podbean.com https://letscast.fm https://op3.dev https://dts.podtrac.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://www.gravatar.com; media-src 'self' blob: https://kruxstream.nmsu.edu https://d1le29qyzha1u4.cloudfront.net https://d3ctxlq1ktw2nl.cloudfront.net https://mcdn.podbean.com https://letscast.fm https://op3.dev https://dts.podtrac.com; worker-src blob:; object-src 'none'; frame-ancestors 'none'; frame-src https://meet.clouddelnorte.org https://www.youtube.com"
 		}
 	},
 	"CustomHeadersConfig": {
