@@ -20,9 +20,10 @@ export interface meeting {
 }
 
 export function generateRoomPassword(len = 6): string {
-	const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+	const chars = "ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
 	return Array.from(crypto.getRandomValues(new Uint8Array(len)))
-		.map(b => chars[b % chars.length]).join('');
+		.map((b) => chars[b % chars.length])
+		.join("");
 }
 
 /*     sold: 5513,

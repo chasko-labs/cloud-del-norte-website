@@ -78,7 +78,7 @@ function MemberHome({ auth }: { auth: AuthState }) {
 			.catch(() => setMeetup(null));
 	}, []);
 
-	const name = auth.name?.split(' ')[0] || firstName(auth.email);
+	const name = auth.name?.split(" ")[0] || firstName(auth.email);
 	const isMod = auth.groups.includes("moderators");
 
 	return (
@@ -148,7 +148,9 @@ function MemberHome({ auth }: { auth: AuthState }) {
 							<Box color="text-body-secondary">
 								{visibleStreams.length} stations available
 							</Box>
-							<Link href="https://clouddelnorte.org/feed/index.html" external>tune in →</Link>
+							<Link href="https://clouddelnorte.org/feed/index.html" external>
+								tune in →
+							</Link>
 						</SpaceBetween>
 					)}
 				</Container>

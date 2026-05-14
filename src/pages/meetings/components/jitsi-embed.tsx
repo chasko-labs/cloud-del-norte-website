@@ -89,7 +89,11 @@ const COPY = {
 const COLD_START_MS = 5_000;
 const UNREACHABLE_MS = 90_000;
 
-export default function JitsiEmbed({ roomName, roomPassword, onClose }: JitsiEmbedProps) {
+export default function JitsiEmbed({
+	roomName,
+	roomPassword,
+	onClose,
+}: JitsiEmbedProps) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
 	const apiRef = useRef<any>(null);
 	const [status, setStatus] = useState<Status>("loading");
@@ -116,7 +120,7 @@ export default function JitsiEmbed({ roomName, roomPassword, onClose }: JitsiEmb
 			});
 	}, []);
 
-			// biome-ignore lint/correctness/useExhaustiveDependencies: retryKey is an intentional re-run trigger
+	// biome-ignore lint/correctness/useExhaustiveDependencies: retryKey is an intentional re-run trigger
 	useEffect(() => {
 		let cancelled = false;
 		let coldTimer: ReturnType<typeof setTimeout> | null = null;
@@ -203,7 +207,7 @@ export default function JitsiEmbed({ roomName, roomPassword, onClose }: JitsiEmb
 					if (!cancelled) {
 						clearTimers();
 						setStatus("live");
-						if (roomPassword) api.executeCommand('password', roomPassword);
+						if (roomPassword) api.executeCommand("password", roomPassword);
 					}
 				});
 				api.addListener("readyToClose", () => {

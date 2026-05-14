@@ -14,7 +14,6 @@ import Tabs from "@cloudscape-design/components/tabs";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import AwsugLayout from "../_layout";
-import { MeetingsTable } from "./meetings";
 import {
 	type AdminUser,
 	approveUser,
@@ -23,6 +22,7 @@ import {
 	unbanUser,
 } from "../_shared/api";
 import { type AuthState, isModerator, requireAuth } from "../_shared/auth";
+import { MeetingsTable } from "./meetings";
 
 type TabFilter = "pending" | "members" | "banned";
 

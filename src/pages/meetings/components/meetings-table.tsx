@@ -28,7 +28,10 @@ function generateInstantRoomName(): string {
 
 /** Join window: opens 30 min before scheduledTime, closes 60 min after.
  *  If no scheduledTime provided, falls back to all-day on scheduledDate. */
-function isJoinWindowOpen(scheduledDate?: string, scheduledTime?: string): boolean {
+function isJoinWindowOpen(
+	scheduledDate?: string,
+	scheduledTime?: string,
+): boolean {
 	if (!scheduledDate) return false;
 	const now = new Date();
 	const [y, m, d] = scheduledDate.split("-").map(Number);
@@ -36,9 +39,7 @@ function isJoinWindowOpen(scheduledDate?: string, scheduledTime?: string): boole
 	if (!scheduledTime) {
 		// No time specified — allow all day
 		return (
-			now.getFullYear() === y &&
-			now.getMonth() + 1 === m &&
-			now.getDate() === d
+			now.getFullYear() === y && now.getMonth() + 1 === m && now.getDate() === d
 		);
 	}
 
@@ -102,10 +103,14 @@ const columnDefinitions = (
 		id: "join",
 		header: "Join",
 		cell: (m) => {
-			if (!m.roomName || !isJoinWindowOpen(m.scheduledDate, m.scheduledTime)) return "";
+			if (!m.roomName || !isJoinWindowOpen(m.scheduledDate, m.scheduledTime))
+				return "";
 			if (!isAuthenticated) {
 				return (
-					<Button variant="link" href="https://auth.clouddelnorte.org/login/index.html">
+					<Button
+						variant="link"
+						href="https://auth.clouddelnorte.org/login/index.html"
+					>
 						sign in to join
 					</Button>
 				);
@@ -188,7 +193,13 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 		},
 		pagination: { pageSize: preferences?.pageSize },
 		sorting: {
-			defaultState: { sortingColumn: columnDefinitions(t, setActiveRoom, auth.isAuthenticated)[0] },
+			defaultState: {
+				sortingColumn: columnDefinitions(
+					t,
+					setActiveRoom,
+					auth.isAuthenticated,
+				)[0],
+			},
 		},
 		selection: {},
 	});
@@ -212,7 +223,11 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 					{...collectionProps}
 					enableKeyboardNavigation={false}
 					items={items}
-					columnDefinitions={columnDefinitions(t, setActiveRoom, auth.isAuthenticated)}
+					columnDefinitions={columnDefinitions(
+						t,
+						setActiveRoom,
+						auth.isAuthenticated,
+					)}
 					stickyHeader={true}
 					resizableColumns={true}
 					variant="full-page"
@@ -314,8 +329,15 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 				closeAriaLabel="close meeting"
 			>
 				{activeRoom?.roomPassword && (
-					<Box variant="small" color="text-body-secondary" margin={{ bottom: "s" }}>
-						room password: <Box variant="code" display="inline">{activeRoom.roomPassword}</Box>
+					<Box
+						variant="small"
+						color="text-body-secondary"
+						margin={{ bottom: "s" }}
+					>
+						room password:{" "}
+						<Box variant="code" display="inline">
+							{activeRoom.roomPassword}
+						</Box>
 					</Box>
 				)}
 				{activeRoom?.roomName && (

@@ -1,23 +1,23 @@
 {
-  "rustacean_station": {
-    "title": "Hopp with Costa Alexoglou and Iason Paraskevopoulos",
-    "subtitle": "Allen Wyma talks with Costa Alexoglou and Iason Paraskevopoulos, creators of Hopp, a tool that enables remote pair progr",
-    "display": "Hopp with Costa Alexoglou and Iason Paraskevopoulos — Allen Wyma talks with Costa Alexoglou and Iason Paraskevopoulos, creators of Hopp, a tool "
-  },
-  "syntax_fm": {
-    "title": "1004: TanHacked",
-    "subtitle": "Scott and Wes break down the “Mini Shai-Hulud” supply chain attack that compromised TanStack and other popular npm packa",
-    "display": "1004: TanHacked — Scott and Wes break down the “Mini Shai-Hulud” supply chain attack that compromised TanSta"
-  },
-  "talk_python": {
-    "title": "#548: Event Sourcing Design Pattern",
-    "subtitle": "What if your database worked more like Git? Every change captured as an immutable event you can replay, instead of a sin",
-    "display": "#548: Event Sourcing Design Pattern — What if your database worked more like Git? Every change captured as an immutable event yo"
-  },
-  "aws_podcast": {
-    "title": "#754: Accelerating healthcare decisions with agents",
-    "subtitle": "In this episode of the AWS Podcast, you'll hear how Cohere Health®, uses Amazon Bedrock AgentCore to",
-    "display": "#754: Accelerating healthcare decisions with agents — In this episode of the AWS Podcast, you'll hear how Cohere Health®, uses Amazon Bedrock Ag"
-  },
-  "aws_developers_podcast": null
+	"rustacean_station": {
+		"title": "Hopp with Costa Alexoglou and Iason Paraskevopoulos",
+		"subtitle": "Allen Wyma talks with Costa Alexoglou and Iason Paraskevopoulos, creators of Hopp, a tool that enables remote pair progr",
+		"display": "Hopp with Costa Alexoglou and Iason Paraskevopoulos — Allen Wyma talks with Costa Alexoglou and Iason Paraskevopoulos, creators of Hopp, a tool "
+	},
+	"syntax_fm": {
+		"title": "1004: TanHacked",
+		"subtitle": "Scott and Wes break down the “Mini Shai-Hulud” supply chain attack that compromised TanStack and other popular npm packa",
+		"display": "1004: TanHacked — Scott and Wes break down the “Mini Shai-Hulud” supply chain attack that compromised TanSta"
+	},
+	"talk_python": {
+		"title": "#548: Event Sourcing Design Pattern",
+		"subtitle": "What if your database worked more like Git? Every change captured as an immutable event you can replay, instead of a sin",
+		"display": "#548: Event Sourcing Design Pattern — What if your database worked more like Git? Every change captured as an immutable event yo"
+	},
+	"aws_podcast": {
+		"title": "#754: Accelerating healthcare decisions with agents",
+		"subtitle": "In this episode of the AWS Podcast, you'll hear how Cohere Health®, uses Amazon Bedrock AgentCore to",
+		"display": "#754: Accelerating healthcare decisions with agents — In this episode of the AWS Podcast, you'll hear how Cohere Health®, uses Amazon Bedrock Ag"
+	},
+	"aws_developers_podcast": null
 }

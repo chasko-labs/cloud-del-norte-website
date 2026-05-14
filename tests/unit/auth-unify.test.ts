@@ -198,7 +198,7 @@ describe("RC-1 — CSP policy does not contain unsafe-eval or blob: in script-sr
 		// Extract script-src directive
 		const scriptSrcMatch = csp.match(/script-src\s+([^;]+)/);
 		expect(scriptSrcMatch).not.toBeNull();
-		const scriptSrc = scriptSrcMatch![1];
+		const scriptSrc = scriptSrcMatch?.[1];
 
 		expect(scriptSrc).not.toContain("'unsafe-eval'");
 		expect(scriptSrc).not.toContain("blob:");

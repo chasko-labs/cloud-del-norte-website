@@ -1950,18 +1950,22 @@ nav[class*="awsui_navigation_"]:not(
 :root:not(.awsui-dark-mode) [class*="side-navigation"] a[class*="awsui_link_"] {
 	color: #5a3a14;
 }
-:root:not(.awsui-dark-mode) [class*="side-navigation"] a[class*="awsui_link_"]:hover {
+:root:not(.awsui-dark-mode)
+	[class*="side-navigation"]
+	a[class*="awsui_link_"]:hover {
 	color: var(--cdn-aws-orange, #ff9900);
 }
 
 /* 2. Secondary/normal button text — readable brown, not purple */
-:root:not(.awsui-dark-mode) [class*="awsui_button"][class*="variant-normal"]:not(#\9):not(#\10) {
+:root:not(.awsui-dark-mode)
+	[class*="awsui_button"][class*="variant-normal"]:not(#\9):not(#\10) {
 	color: #5a3a14;
 	border-color: rgba(90, 58, 20, 0.4);
 }
 
 /* 3. Primary button — ensure white text on violet/purple bg */
-:root:not(.awsui-dark-mode) [class*="awsui_button"][class*="variant-primary"]:not(#\9):not(#\10) {
+:root:not(.awsui-dark-mode)
+	[class*="awsui_button"][class*="variant-primary"]:not(#\9):not(#\10) {
 	color: #fff;
 }
 
@@ -1975,5 +1979,3 @@ nav[class*="awsui_navigation_"]:not(
 eleton {
 	display: block;
 }
-
-

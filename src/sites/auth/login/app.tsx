@@ -148,8 +148,12 @@ function LoginForm() {
 			await completePasskeyAuth(session, assertion);
 			redirectWithTokens();
 		} catch (err) {
-			const msg = err instanceof AuthError ? err.message : 
-				err instanceof Error ? `passkey error: ${err.message}` : "passkey login failed";
+			const msg =
+				err instanceof AuthError
+					? err.message
+					: err instanceof Error
+						? `passkey error: ${err.message}`
+						: "passkey login failed";
 			setFormError(msg);
 			setLoading(false);
 		}
