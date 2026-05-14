@@ -1621,7 +1621,8 @@ body {
 nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 [class*="awsui_navigation__drawer"],
 [class*="awsui_navigation-container"] [class*="awsui_drawer-content"],
-[class*="awsui_navigation-container"] [class*="awsui_drawer-content-container"] {
+[class*="awsui_navigation-container"]
+	[class*="awsui_drawer-content-container"] {
 	scrollbar-width: none;
 	-ms-overflow-style: none;
 }
@@ -1815,6 +1816,20 @@ nav[class*="awsui_navigation_"]:not(
 		font-size: 8px;
 		margin-top: 1px;
 	}
+}
+
+/* ── Sign-in utility — prevent text truncation on narrow viewports ───────
+   Cloudscape clips the text span at narrow widths even with
+   disableUtilityCollapse: true. Sign-in is always the last utility when
+   unauthenticated, so :last-child is a reliable scope. */
+#top-nav
+	[class*="awsui_utility-button_"]:last-child
+	[class*="awsui_utility-button-text_"],
+#top-nav [class*="awsui_utility-button_"]:last-child span {
+	white-space: nowrap;
+	overflow: visible;
+	text-overflow: clip;
+	min-width: max-content;
 }
 
 /* ── Audio reactivity — Phase A ──────────────────────────────────────────
