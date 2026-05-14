@@ -47,6 +47,7 @@ export function MeetingsTable() {
 	const [error, setError] = useState("");
 	const [saving, setSaving] = useState(false);
 	const [deletingId, setDeletingId] = useState<string | null>(null);
+	const [invitees, setInvitees] = useState("");
 
 	const load = useCallback(async () => {
 		setLoading(true);
@@ -78,10 +79,17 @@ export function MeetingsTable() {
 				scheduled_start,
 				description: form.description,
 				duration_minutes: Number(form.duration_minutes) || 60,
+				invitees: invitees.trim()
+					? invitees
+							.split(",")
+							.map((e) => e.trim())
+							.filter(Boolean)
+					: undefined,
 			});
 			setMeetings((prev) => [...prev, created]);
 			setShowCreate(false);
 			setForm(EMPTY_FORM);
+			setInvitees("");
 		} catch {
 			setError("Failed to create meeting.");
 		} finally {
@@ -237,6 +245,16 @@ export function MeetingsTable() {
 								setForm((f) => ({ ...f, description: detail.value }))
 							}
 							placeholder="Optional description"
+						/>
+					</FormField>
+					<FormField
+						label="invite (emails, comma-separated)"
+						description="optional — sends email invites with meeting link"
+					>
+						<Input
+							value={invitees}
+							onChange={({ detail }) => setInvitees(detail.value)}
+							placeholder="alice@example.com, bob@example.com"
 						/>
 					</FormField>
 				</SpaceBetween>
