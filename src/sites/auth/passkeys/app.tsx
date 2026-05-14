@@ -50,10 +50,17 @@ function PasskeyManager() {
 		setSuccess("");
 		try {
 			const options = await startWebAuthnRegistration();
-			let creationOptions = options.CredentialCreationOptions as any;
+			let creationOptions = (options.CredentialCreationOptions ??
+				(options as any).credentialCreationOptions) as any;
+			if (!creationOptions)
+				throw new AuthError(
+					"WebAuthn registration not available — check pool configuration",
+				);
 			if (typeof creationOptions === "string")
 				creationOptions = JSON.parse(creationOptions);
 			const publicKey = creationOptions.publicKey;
+			if (!publicKey || !publicKey.challenge)
+				throw new AuthError("Invalid WebAuthn response — missing challenge");
 			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
 			publicKey.user.id = base64urlToBuffer(publicKey.user.id);
 			if (publicKey.excludeCredentials) {
