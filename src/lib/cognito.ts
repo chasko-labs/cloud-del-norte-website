@@ -359,13 +359,34 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 			PREFERRED_CHALLENGE: "WEB_AUTHN",
 		},
 	});
+	console.log("[passkey] InitiateAuth response:", {
+		ChallengeName: result.ChallengeName,
+		ChallengeParameters: result.ChallengeParameters,
+		hasCredentialRequestOptions: !!(
+			result.ChallengeParameters as Record<string, string> | undefined
+		)?.CredentialRequestOptions,
+	});
+	const challengeName = result.ChallengeName as string;
+	if (challengeName !== "WEB_AUTHN") {
+		throw new AuthError(
+			`passkey not available — Cognito returned ${challengeName ?? "no challenge"} instead of WEB_AUTHN. ` +
+				`This account may not have a passkey registered, or the user pool is not configured for passkeys.`,
+			challengeName,
+		);
+	}
+	const credentialRequestOptionsRaw = (
+		result.ChallengeParameters as Record<string, string> | undefined
+	)?.CredentialRequestOptions;
+	if (!credentialRequestOptionsRaw) {
+		throw new AuthError(
+			"passkey challenge missing CredentialRequestOptions — check Cognito user pool WebAuthn configuration",
+			"MissingCredentialRequestOptions",
+		);
+	}
 	return {
-		challengeName: result.ChallengeName as string,
+		challengeName,
 		session: result.Session as string,
-		credentials: JSON.parse(
-			(result.ChallengeParameters as Record<string, string> | undefined)
-				?.CredentialRequestOptions ?? "{}",
-		),
+		credentials: JSON.parse(credentialRequestOptionsRaw),
 	};
 }
 
@@ -395,9 +416,27 @@ export async function completePasskeyAuth(
 			}),
 		},
 	});
+	console.log("[passkey] RespondToAuthChallenge response:", {
+		ChallengeName: result.ChallengeName,
+		hasAuthResult: !!result.AuthenticationResult,
+	});
 	if (result.AuthenticationResult) {
 		storeTokens(result);
+		return;
 	}
+	if (result.ChallengeName) {
+		// Cognito requires a follow-up challenge (e.g. SOFTWARE_TOKEN_MFA) after passkey assertion.
+		// Passkey-only sign-in is not possible for this account — MFA is also required.
+		throw new AuthError(
+			`passkey verified, but MFA is also required (${result.ChallengeName}). ` +
+				`Please sign in with your password and MFA code instead.`,
+			result.ChallengeName as string,
+		);
+	}
+	throw new AuthError(
+		"passkey authentication completed but no tokens were returned — check Cognito configuration",
+		"NoAuthResult",
+	);
 }
 
 // ---- Base64url helpers for WebAuthn ----

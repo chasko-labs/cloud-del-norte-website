@@ -93,6 +93,8 @@ function LoginForm() {
 			let passkeyEmail =
 				email.trim() || localStorage.getItem("cdn.passkey_email") || "";
 
+			console.log("[passkey] handlePasskeyLogin start, email:", passkeyEmail ? "(set)" : "(empty)");
+
 			if (!passkeyEmail) {
 				// No email known — try discoverable credential flow
 				// Ask browser to show available passkeys without server round-trip
@@ -113,6 +115,7 @@ function LoginForm() {
 					// userHandle is the Cognito user sub — we need to look up the email
 					// For now, decode it as UTF-8 in case it's the email directly
 					const decoded = new TextDecoder().decode(response.userHandle);
+					console.log("[passkey] discoverable userHandle decoded:", decoded.includes("@") ? "email" : "UUID/other", decoded.length, "chars");
 					// If it looks like an email, use it; otherwise it's a sub UUID
 					if (decoded.includes("@")) {
 						passkeyEmail = decoded;
@@ -133,7 +136,9 @@ function LoginForm() {
 			}
 
 			// Step 2: Now we have the email — do the Cognito flow
+			console.log("[passkey] calling initiatePasskeyAuth for:", passkeyEmail);
 			const { session, credentials } = await initiatePasskeyAuth(passkeyEmail);
+			console.log("[passkey] initiatePasskeyAuth succeeded, credentials keys:", Object.keys(credentials));
 			const publicKey = (credentials as any).publicKey ?? credentials;
 			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
 			if (publicKey.allowCredentials) {
@@ -141,13 +146,16 @@ function LoginForm() {
 					(c: any) => ({ ...c, id: base64urlToBuffer(c.id) }),
 				);
 			}
+			console.log("[passkey] calling navigator.credentials.get");
 			const assertion = (await navigator.credentials.get({
 				publicKey,
 			})) as PublicKeyCredential;
 			if (!assertion) throw new AuthError("passkey cancelled");
+			console.log("[passkey] got assertion, calling completePasskeyAuth");
 			await completePasskeyAuth(session, assertion);
 			redirectWithTokens();
 		} catch (err) {
+			console.error("[passkey] error:", err);
 			const msg =
 				err instanceof AuthError
 					? err.message

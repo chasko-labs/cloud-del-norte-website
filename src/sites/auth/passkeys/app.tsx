@@ -105,7 +105,7 @@ function PasskeyManager() {
 			await completeWebAuthnRegistration(credentialData);
 			setSuccess("passkey registered");
 			try {
-				const idToken = sessionStorage.getItem("cdn.id_token");
+				const idToken = sessionStorage.getItem("cdn.idToken");
 				if (idToken) {
 					const payload = JSON.parse(atob(idToken.split(".")[1]));
 					if (payload.email)
@@ -179,7 +179,7 @@ function PasskeyManager() {
 			setSuccess("device added");
 			setStep(2);
 			try {
-				const idToken = sessionStorage.getItem("cdn.id_token");
+				const idToken = sessionStorage.getItem("cdn.idToken");
 				if (idToken) {
 					const payload = JSON.parse(atob(idToken.split(".")[1]));
 					if (payload.email)
