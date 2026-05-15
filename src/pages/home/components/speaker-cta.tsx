@@ -11,22 +11,24 @@ export default function SpeakerProposalCta() {
 
   return (
     <>
-      <Container
-        header={
-          <Header
-            variant="h2"
-            actions={
-              <Button variant="primary" onClick={() => setOpen(true)}>
-                {t("homePage.speakerCta.cta")}
-              </Button>
-            }
-          >
-            {t("homePage.speakerCta.header")}
-          </Header>
-        }
-      >
-        <p>{t("homePage.speakerCta.body")}</p>
-      </Container>
+      <div className="cdn-card">
+        <Container
+          header={
+            <Header
+              variant="h2"
+              actions={
+                <Button variant="primary" onClick={() => setOpen(true)}>
+                  {t("homePage.speakerCta.cta")}
+                </Button>
+              }
+            >
+              {t("homePage.speakerCta.header")}
+            </Header>
+          }
+        >
+          <p>{t("homePage.speakerCta.body")}</p>
+        </Container>
+      </div>
       <SpeakerProposalForm
         open={open}
         onClose={() => setOpen(false)}

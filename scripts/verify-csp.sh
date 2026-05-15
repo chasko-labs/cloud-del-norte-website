@@ -40,6 +40,7 @@ AWSUG_POLICY_ID="ef81b3a7-9f54-4871-9d45-0864456d843b"
 AWSUG_SCRIPT_SRC_REQUIRED=(
   "https://meet.clouddelnorte.org"
   "https://clouddelnorte.org"
+  "https://cdn.babylonjs.com"
   "https://*.token.awswaf.com"
 )
 # awsug connect-src MUST include Cognito + API Gateway + Jitsi XHR + WebSocket
@@ -55,6 +56,7 @@ AWSUG_CONNECT_SRC_REQUIRED=(
   "https://api.zeno.fm"
   "https://gql.twitch.tv"
   "https://stream.zeno.fm"
+  "https://cdn.babylonjs.com"
   "https://*.token.awswaf.com"
 )
 # awsug frame-src MUST include Jitsi meet endpoint
@@ -63,6 +65,11 @@ AWSUG_FRAME_SRC_REQUIRED=(
 )
 # awsug style-src — no external requirements after hCaptcha removal
 AWSUG_STYLE_SRC_REQUIRED=()
+# awsug worker-src MUST include BabylonJS worker bootstrap
+AWSUG_WORKER_SRC_REQUIRED=(
+  "blob:"
+  "https://cdn.babylonjs.com"
+)
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 ERRORS=0
@@ -130,6 +137,9 @@ else
   done
   for domain in "${AWSUG_STYLE_SRC_REQUIRED[@]}"; do
     check_domain_in_directive "${LIVE_CSP}" "style-src" "${domain}"
+  done
+  for domain in "${AWSUG_WORKER_SRC_REQUIRED[@]}"; do
+    check_domain_in_directive "${LIVE_CSP}" "worker-src" "${domain}"
   done
 fi
 echo ""
