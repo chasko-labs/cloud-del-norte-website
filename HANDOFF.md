@@ -73,70 +73,47 @@ CSP drift between repo (`infra/cloudfront-security-headers.json`) and live Cloud
 
 ---
 
-## in-flight 2026-05-15 — speaker proposal CTA (#132, PR #190)
+## shipped 2026-05-15 — speaker proposal CTA (#132 closed, both PRs merged)
 
-PR #190 has 13 commits on feat/speaker-proposals. Awaiting Bryan SES recipient verification + PR review.
+| repo | PR | merge SHA |
+|------|----|-----------|
+| cloud-del-norte-website | #190 | c0e83acc |
+| cloud-del-norte-meet | #24 | d7c1f3de |
 
-key commits:
-- backend lambda + iac (001937a0)
-- frontend form + admin panel (f992e5e0)
-- function url + csp updates (9f54c4ec)
-- iac corrections from live deploy (1ce72ef0)
-- pivot to aws waf captcha + api gateway (967f5a7e)
-- frontend pivot to aws waf captcha sdk (194ef2da)
-- deploy script corrections from waf migration (76ab17d8)
-- finalize env with api gateway + waf urls (def527fe)
-- schema enums + apigw v1 → v2 migration attempt (faa26aa1)
-- use REST API V1 for WAFv2 compatibility (0b589222) — WAFv2 regional only supports REST V1, not HTTP V2
-- nova act e2e verification script (afa549c8)
-- i18n format keys nested for traversal (e5729741) — Nova Act caught raw keys
-- nova act rerun confirms i18n fix (after e5729741)
+Nova Act full end-to-end PASS — submission id 7a48fc77-d693-4b86-9659-501d2daf1001, all six steps clean (CTA → modal → fill → submit → thank-you). CSP invalidations I5YTI5X8Q4FHK6R8K7DVLSRP9M + I82LDZUH25X71ERP1AURTE0DXH applied to main + awsug distributions. Issue #132 closed.
 
-### deployed AWS infra (account 170473530355 us-west-2)
+### what's live
 
-- DynamoDB cdn-speaker-proposals + cdn-speaker-proposals-rate (TTL on expiresAt)
-- IAM role cdn-speaker-proposals-lambda-role
-- Lambda cdn-speaker-proposals (Node 22, 256MB, 10s)
-- API Gateway REST V1: cdn-speaker-proposals-api at https://7526ltaid2.execute-api.us-west-2.amazonaws.com/prod
-- WAF WebACL cdn-speaker-proposals-webacl associated to /prod stage. Rules: AmazonIpReputationList managed + RateLimit 100/5min + CAPTCHA on POST /proposals
-- WAF Application Integration URL: https://6af16c42-23d5-41bc-9a6b-68323971bdb2.us-west-2.sdk.awswaf.com/6af16c42-23d5-41bc-9a6b-68323971bdb2/
-- SSM /cloud-del-norte/speaker-proposals/ip-hash-salt populated
-- SES verification email sent to bryanj+clouddelnortespeakerrequest@abstractspacecraft.com — Bryan must click link
+- DynamoDB cdn-speaker-proposals + cdn-speaker-proposals-rate (account 170473530355 us-west-2)
+- Lambda cdn-speaker-proposals (Node 22, idempotent IaC deploy via scripts/deploy-speaker-proposals.sh)
+- API Gateway REST V1 cdn-speaker-proposals-api at https://7526ltaid2.execute-api.us-west-2.amazonaws.com/prod
+- WAF WebACL cdn-speaker-proposals-webacl: AmazonIpReputationList managed + RateLimit 100/5min + **Challenge** action on POST /proposals (silent JS challenge, passes Nova Act + real browsers, blocks no-JS bots)
+- Admin routes GET + PATCH /admin/proposals on existing portal API gateway rwmypxz9z6, JWT-authed moderators-only (cloud-del-norte-meet repo)
+- Frontend: home top-row CTA card, awsug right-panel speaker_role card, both open same Cloudscape Modal with full form
+- Admin panel: second section with proposals table, filter, mark-contacted, convert-to-meeting
+- SES notification to bryanj+clouddelnortespeakerrequest@abstractspacecraft.com (recipient verified, sandbox delivers)
 
-### architectural decisions captured this session
+### lessons learned
 
-- WAFv2 regional scope supports REST API V1 (and ALB, App Runner, AppSync, Cognito), NOT HTTP API V2. Stayed on REST V1.
-- AWS-shop preference: AWS WAF CAPTCHA chosen over hCaptcha. Native, credit-eligible (~$6/mo).
-- Defense in depth: WAF rate limit 100/5min + AWS IP reputation managed rule + app-layer 3/hour DynamoDB conditional + honeypot + manual review.
-- SES from heraldstack@clouddelnorte.org (domain identity in 170473530355 us-west-2). Sandbox mode — recipient verification required per address.
-
-### verification results
-
-- Direct Lambda invoke with valid payload: 201, DynamoDB row written (id 1e341a5e-77aa-468c-9e46-f564a8a9539f). Pipeline works end-to-end with one exception: SES blocked because recipient unverified in sandbox.
-- Nova Act on dev.clouddelnorte.org: form-UI PASS (CTA visible, modal opens, all 8 fields, submit button), end-to-end INCONCLUSIVE (WAF blocks automated browsers as designed).
-- WAF correctly blocks automated submission flow.
-
-### bryan manual steps before merging PR #190
-
-1. click the SES verification email at bryanj+clouddelnortespeakerrequest@abstractspacecraft.com (sent during this session). once clicked, sandbox lets the pipeline deliver.
-2. submit one real speaker proposal from a real browser at https://dev.clouddelnorte.org/ to confirm end-to-end including SES delivery
-3. review + merge PR #190
-
-### post-merge
-
-- Woodpecker auto-deploys frontend on push to main
-- run scripts/sync-cloudfront-headers.sh to apply CSP additions for waf SDK origin
-
-### blocked-on (separate work)
-
-- chasko-labs/cloud-del-norte-meet#23 — admin GET/PATCH proposal routes. Until that lands, admin panel proposals table will show 'failed to load.' Public CTA + form + email all work without it.
-- SES production-access request (eliminates sandbox recipient-verification requirement). One-time AWS support ticket; takes 24h.
+- WAFv2 regional scope supports REST API V1 (and ALB, App Runner, AppSync, Cognito), NOT HTTP API V2. REST V1 is correct.
+- WAF Challenge action is correct for low-volume forms where automation tests are part of CI. WAF CAPTCHA action would block Nova Act by design — fine for hostile-environment forms but wrong tradeoff here.
+- IaC discipline: every AWS resource committed as JSON or shell script BEFORE deploy. Idempotent re-runs.
+- Test gate: Nova Act PASS on dev.clouddelnorte.org before merging to main. Caught two real bugs (i18n format key structure, format enum drift) that direct-test would have missed.
+- Cross-repo work: filed cloud-del-norte-meet#23 and drove implementation to closure in same session as website#132. Sequential merge (meet first, website second) avoids broken-state windows.
 
 ---
 
 ## priority queue (next session)
 
-### p0 — #162 phantom-nav fix
+### p0 — #185 passkey sign-in still broken on Pixel 9
+
+5 prior fix attempts (2b9092a3, 11dc296a, 5ebe62c2, 6d3b8024, 5aef3564) plus a 4-bug fix in 6ab5ee24. Bryan still hits 'passkey login failed' on Pixel 9 after manually entering email. Needs interactive browser-console debugging on a real device — best done in a session where Bryan can drive the test cycle.
+
+### p1 — #189 verification methods (SMS / TOTP / push as alternatives to email)
+
+Cognito pool us-west-2_cyPQF4F3r supports MFA SOFTWARE_TOKEN already; need to expose as VERIFICATION method (not just MFA) and add SMS option (requires SNS spend limit setup or sandbox exit).
+
+### p1 — #186 meetings improvements (slices 1+2 shipped, slice 3+ remaining)
 
 Defense in depth: hide admin nav link for non-moderators + render denial card on direct /admin nav + moderator-only create-meeting gate. Product decision confirmed. Implementation in this sprint.
 
