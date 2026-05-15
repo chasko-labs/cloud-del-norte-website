@@ -76,8 +76,8 @@ function decodeJwtSub(authHeader) {
 	}
 }
 
-const VALID_FORMATS = new Set(["talk", "workshop", "lightning", "panel", "demo"]);
-const VALID_DAYS = new Set(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]);
+const VALID_FORMATS = new Set(["in_person_west_tx_nm", "virtual", "either"]);
+const VALID_DAYS = new Set(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]);
 const VALID_TOD = new Set(["morning", "afternoon", "evening"]);
 const ISO_DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
