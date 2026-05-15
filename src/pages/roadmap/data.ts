@@ -36,9 +36,9 @@ export const boardColumns: BoardColumn[] = [
 		cards: [
 			{ id: "SCRUM-17", title: "Refine culture documentation" },
 			{ id: "SCRUM-22", title: "Announce Next Volunteer Activation" },
-			{ id: "SCRUM-14", title: "Book Demario for March conversation" },
-			{ id: "SCRUM-7", title: "Book April Guests" },
-			{ id: "SCRUM-8", title: "Book May Guests" },
+			{ id: "SCRUM-14", title: "Book Demario for June conversation" },
+			{ id: "SCRUM-7", title: "Book July Guests" },
+			{ id: "SCRUM-8", title: "Book August Guests" },
 			{ id: "SCRUM-20", title: "Announce Global Community Meetup" },
 		],
 	},
@@ -48,9 +48,9 @@ export const boardColumns: BoardColumn[] = [
 		cards: [
 			{
 				id: "SCRUM-2",
-				title: "UG Leaders: Choose Workshop title & date in March",
+				title: "UG Leaders: Choose Workshop title & date in June",
 			},
-			{ id: "SCRUM-6", title: "Book April Guests" },
+			{ id: "SCRUM-6", title: "Book July Guests" },
 		],
 	},
 	{
