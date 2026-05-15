@@ -131,79 +131,95 @@ LAMBDA_ARN=$(aws lambda get-function --function-name "$LAMBDA_NAME" \
 ACCOUNT_ID="$LAMBDA_ACCOUNT"
 REGION="$LAMBDA_REGION"
 
-echo '=== 5z. Cleanup legacy REST API V1 (idempotent) ==='
-V1_API_ID=$(aws apigateway get-rest-apis --profile "$PROFILE" --region "$REGION" --query 'items[?name==`cdn-speaker-proposals-api`].id' --output text)
-if [ -n "$V1_API_ID" ] && [ "$V1_API_ID" != "None" ]; then
-  echo "Deleting legacy V1 REST API: $V1_API_ID"
-  aws apigateway delete-rest-api --rest-api-id "$V1_API_ID" --profile "$PROFILE" --region "$REGION"
-fi
+echo '=== 5z. Cleanup: delete any REST API V1 and HTTP API V2 with this name (idempotent) ==='
+# WAFv2 only supports /restapis/ (REST V1) — not /apis/ (HTTP V2). Use REST V1.
+# Delete any stale REST V1 APIs with this name
+for OLD_V1 in $(aws apigateway get-rest-apis --profile "$PROFILE" --region "$REGION" \
+    --query 'items[?name==`cdn-speaker-proposals-api`].id' --output text); do
+  [ -n "$OLD_V1" ] && [ "$OLD_V1" != "None" ] && {
+    echo "Deleting REST API V1: $OLD_V1"
+    aws apigateway delete-rest-api --rest-api-id "$OLD_V1" --profile "$PROFILE" --region "$REGION"
+  }
+done
+# Delete any stale HTTP API V2 with this name
+for OLD_V2 in $(aws apigatewayv2 get-apis --profile "$PROFILE" --region "$REGION" \
+    --query 'Items[?Name==`cdn-speaker-proposals-api`].ApiId' --output text); do
+  [ -n "$OLD_V2" ] && [ "$OLD_V2" != "None" ] && {
+    echo "Deleting HTTP API V2: $OLD_V2"
+    aws apigatewayv2 delete-api --api-id "$OLD_V2" --profile "$PROFILE" --region "$REGION"
+  }
+done
 
-echo '=== 5. Create/update HTTP API V2 (idempotent) ==='
-API_ID=$(aws apigatewayv2 get-apis --profile "$PROFILE" --region "$REGION" --query 'Items[?Name==`cdn-speaker-proposals-api`].ApiId' --output text)
-if [ -z "$API_ID" ] || [ "$API_ID" = "None" ]; then
-  echo 'Creating HTTP API V2...'
-  API_ID=$(aws apigatewayv2 create-api \
-    --name cdn-speaker-proposals-api \
-    --protocol-type HTTP \
-    --description 'Public API for speaker proposal submissions, protected by AWS WAF CAPTCHA' \
-    --cors-configuration AllowOrigins=https://clouddelnorte.org,https://awsug.clouddelnorte.org,AllowMethods=POST,OPTIONS,AllowHeaders=Content-Type,Authorization,x-aws-waf-token,AllowCredentials=false,MaxAge=300 \
-    --profile "$PROFILE" --region "$REGION" \
-    --query ApiId --output text)
-else
-  echo "HTTP API V2 exists: $API_ID, updating CORS..."
-  aws apigatewayv2 update-api --api-id "$API_ID" \
-    --cors-configuration AllowOrigins=https://clouddelnorte.org,https://awsug.clouddelnorte.org,AllowMethods=POST,OPTIONS,AllowHeaders=Content-Type,Authorization,x-aws-waf-token,AllowCredentials=false,MaxAge=300 \
-    --profile "$PROFILE" --region "$REGION" >/dev/null
-fi
+echo '=== 5. Create REST API V1 (WAF-compatible, idempotent) ==='
+# REST V1 required: WAFv2 associate-web-acl only accepts arn:aws:apigateway:region::/restapis/<id>/stages/<stage>
+API_ID=$(aws apigateway create-rest-api \
+  --name cdn-speaker-proposals-api \
+  --description 'Public API for speaker proposal submissions, protected by AWS WAF CAPTCHA' \
+  --profile "$PROFILE" --region "$REGION" \
+  --query id --output text)
 echo "API_ID=$API_ID"
 
-echo '=== 5b. Lambda integration (idempotent) ==='
-INTEGRATION_ID=$(aws apigatewayv2 get-integrations --api-id "$API_ID" --profile "$PROFILE" --region "$REGION" --query 'Items[0].IntegrationId' --output text)
-if [ -z "$INTEGRATION_ID" ] || [ "$INTEGRATION_ID" = "None" ]; then
-  INTEGRATION_ID=$(aws apigatewayv2 create-integration \
-    --api-id "$API_ID" \
-    --integration-type AWS_PROXY \
-    --integration-uri "arn:aws:lambda:$REGION:$ACCOUNT_ID:function:$LAMBDA_NAME" \
-    --integration-method POST \
-    --payload-format-version 2.0 \
-    --profile "$PROFILE" --region "$REGION" \
-    --query IntegrationId --output text)
-fi
-echo "INTEGRATION_ID=$INTEGRATION_ID"
+ROOT_ID=$(aws apigateway get-resources --rest-api-id "$API_ID" \
+  --profile "$PROFILE" --region "$REGION" \
+  --query 'items[?path==`/`].id' --output text)
 
-echo '=== 5c. Route POST /proposals (idempotent, no authorizer) ==='
-ROUTE_KEY='POST /proposals'
-EXISTING_ROUTE=$(aws apigatewayv2 get-routes --api-id "$API_ID" --profile "$PROFILE" --region "$REGION" --query "Items[?RouteKey=='$ROUTE_KEY'].RouteId" --output text)
-if [ -z "$EXISTING_ROUTE" ] || [ "$EXISTING_ROUTE" = "None" ]; then
-  aws apigatewayv2 create-route \
-    --api-id "$API_ID" \
-    --route-key "$ROUTE_KEY" \
-    --target "integrations/$INTEGRATION_ID" \
-    --authorization-type NONE \
-    --profile "$PROFILE" --region "$REGION" >/dev/null
-fi
+echo '=== 5b. /proposals resource ==='
+RESOURCE_ID=$(aws apigateway create-resource \
+  --rest-api-id "$API_ID" \
+  --parent-id "$ROOT_ID" \
+  --path-part proposals \
+  --profile "$PROFILE" --region "$REGION" \
+  --query id --output text)
+echo "RESOURCE_ID=$RESOURCE_ID"
 
-echo '=== 5d. Stage $default with auto-deploy (idempotent) ==='
-STAGE_EXISTS=$(aws apigatewayv2 get-stages --api-id "$API_ID" --profile "$PROFILE" --region "$REGION" --query 'Items[?StageName==`$default`].StageName' --output text)
-if [ -z "$STAGE_EXISTS" ] || [ "$STAGE_EXISTS" = "None" ]; then
-  aws apigatewayv2 create-stage \
-    --api-id "$API_ID" \
-    --stage-name '$default' \
-    --auto-deploy \
-    --profile "$PROFILE" --region "$REGION" >/dev/null
-fi
+echo '=== 5c. POST method + Lambda proxy integration ==='
+aws apigateway put-method \
+  --rest-api-id "$API_ID" --resource-id "$RESOURCE_ID" \
+  --http-method POST --authorization-type NONE \
+  --profile "$PROFILE" --region "$REGION" >/dev/null
+aws apigateway put-integration \
+  --rest-api-id "$API_ID" --resource-id "$RESOURCE_ID" \
+  --http-method POST --type AWS_PROXY --integration-http-method POST \
+  --uri "arn:aws:apigateway:${REGION}:lambda:path/2015-03-31/functions/${LAMBDA_ARN}/invocations" \
+  --profile "$PROFILE" --region "$REGION" >/dev/null
 
-echo '=== 5e. Lambda permission for API Gateway invoke (idempotent) ==='
-STATEMENT_ID='apigateway-invoke-speaker-proposals-v2'
+echo '=== 5d. OPTIONS method + MOCK integration (CORS) ==='
+aws apigateway put-method \
+  --rest-api-id "$API_ID" --resource-id "$RESOURCE_ID" \
+  --http-method OPTIONS --authorization-type NONE \
+  --profile "$PROFILE" --region "$REGION" >/dev/null
+aws apigateway put-integration \
+  --rest-api-id "$API_ID" --resource-id "$RESOURCE_ID" \
+  --http-method OPTIONS --type MOCK \
+  --request-templates '{"application/json":"{\"statusCode\":200}"}' \
+  --profile "$PROFILE" --region "$REGION" >/dev/null
+aws apigateway put-method-response \
+  --rest-api-id "$API_ID" --resource-id "$RESOURCE_ID" \
+  --http-method OPTIONS --status-code 200 \
+  --response-parameters '{"method.response.header.Access-Control-Allow-Headers":false,"method.response.header.Access-Control-Allow-Methods":false,"method.response.header.Access-Control-Allow-Origin":false}' \
+  --profile "$PROFILE" --region "$REGION" >/dev/null
+aws apigateway put-integration-response \
+  --rest-api-id "$API_ID" --resource-id "$RESOURCE_ID" \
+  --http-method OPTIONS --status-code 200 \
+  --response-parameters '{"method.response.header.Access-Control-Allow-Headers":"'"'"'Content-Type,Authorization,x-aws-waf-token'"'"'","method.response.header.Access-Control-Allow-Methods":"'"'"'POST,OPTIONS'"'"'","method.response.header.Access-Control-Allow-Origin":"'"'"'https://clouddelnorte.org'"'"'"}' \
+  --profile "$PROFILE" --region "$REGION" >/dev/null
+
+echo '=== 5e. Deploy to prod stage ==='
+aws apigateway create-deployment \
+  --rest-api-id "$API_ID" --stage-name prod \
+  --profile "$PROFILE" --region "$REGION" >/dev/null
+
+echo '=== 5f. Lambda permission for API Gateway REST invoke (idempotent) ==='
+STATEMENT_ID='apigateway-invoke-speaker-proposals'
 aws lambda add-permission \
   --function-name "$LAMBDA_NAME" \
   --statement-id "$STATEMENT_ID" \
   --action lambda:InvokeFunction \
   --principal apigateway.amazonaws.com \
-  --source-arn "arn:aws:execute-api:$REGION:$ACCOUNT_ID:$API_ID/*/*" \
+  --source-arn "arn:aws:execute-api:$REGION:$ACCOUNT_ID:$API_ID/*/POST/proposals" \
   --profile "$PROFILE" --region "$REGION" 2>/dev/null || echo 'permission already exists, ok'
 
-API_ENDPOINT="https://$API_ID.execute-api.$REGION.amazonaws.com"
+API_ENDPOINT="https://$API_ID.execute-api.$REGION.amazonaws.com/prod"
 echo "API_ENDPOINT=$API_ENDPOINT"
 echo "PROPOSALS_URL=$API_ENDPOINT/proposals"
 
@@ -227,8 +243,9 @@ else
     --query "WebACLs[?Name=='${WEBACL_NAME}'].ARN" --output text)
 fi
 
-echo "=== 7. Associate WebACL with API Gateway stage (idempotent) ==="
-RESOURCE_ARN="arn:aws:apigateway:${REGION}::/apis/${API_ID}/stages/\$default"
+echo "=== 7. Associate WebACL with REST API V1 prod stage (idempotent) ==="
+# WAFv2 associate-web-acl only supports /restapis/ (REST V1), not /apis/ (HTTP V2)
+RESOURCE_ARN="arn:aws:apigateway:${REGION}::/restapis/${API_ID}/stages/prod"
 CURRENT_WEBACL=$(aws wafv2 get-web-acl-for-resource \
   --resource-arn "$RESOURCE_ARN" \
   --region "$REGION" --profile "$PROFILE" \
@@ -240,7 +257,7 @@ else
     --web-acl-arn "$WEBACL_ARN" \
     --resource-arn "$RESOURCE_ARN" \
     --region "$REGION" --profile "$PROFILE"
-  echo "WebACL associated with API Gateway stage."
+  echo "WebACL associated with REST API V1 prod stage."
 fi
 
 echo "=== 8. WAF Application Integration URL ==="
