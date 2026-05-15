@@ -21,6 +21,7 @@ const ses = new SESv2Client({ region: "us-west-2" });
 // ── helpers ──────────────────────────────────────────────────────────────────
 const ALLOWED_ORIGINS = new Set([
 	"https://clouddelnorte.org",
+	"https://dev.clouddelnorte.org",
 	"https://awsug.clouddelnorte.org",
 ]);
 
