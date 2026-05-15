@@ -1,0 +1,32 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "DynamoDBSpeakerProposals",
+      "Effect": "Allow",
+      "Action": ["dynamodb:PutItem", "dynamodb:GetItem", "dynamodb:UpdateItem", "dynamodb:Scan", "dynamodb:Query"],
+      "Resource": [
+        "arn:aws:dynamodb:us-west-2:170473530355:table/cdn-speaker-proposals",
+        "arn:aws:dynamodb:us-west-2:170473530355:table/cdn-speaker-proposals-rate"
+      ]
+    },
+    {
+      "Sid": "SESSendOnly",
+      "Effect": "Allow",
+      "Action": ["ses:SendEmail", "sesv2:SendEmail"],
+      "Resource": "*"
+    },
+    {
+      "Sid": "SSMRead",
+      "Effect": "Allow",
+      "Action": ["ssm:GetParameter"],
+      "Resource": "arn:aws:ssm:us-west-2:170473530355:parameter/cloud-del-norte/speaker-proposals/*"
+    },
+    {
+      "Sid": "CloudWatchLogs",
+      "Effect": "Allow",
+      "Action": ["logs:CreateLogGroup", "logs:CreateLogStream", "logs:PutLogEvents"],
+      "Resource": "arn:aws:logs:us-west-2:170473530355:*"
+    }
+  ]
+}
