@@ -83,3 +83,20 @@ export async function banUser(sub: string): Promise<ApproveUserResponse> {
 		(r) => r.json() as Promise<ApproveUserResponse>,
 	);
 }
+
+export interface CreateMeetingRequest {
+	meetupLink?: string;
+	speakers?: string;
+	notes?: string;
+	scheduledDate?: string;
+	scheduledTime?: string;
+	speakerBioUrl?: string;
+	meetupRsvpUrl?: string;
+}
+
+export async function createMeeting(body: CreateMeetingRequest): Promise<void> {
+	return withRetry(
+		() => adminRequest("/admin/meetings", "POST", body),
+		() => Promise.resolve(),
+	);
+}

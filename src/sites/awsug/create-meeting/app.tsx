@@ -17,6 +17,7 @@ import TimeInput from "@cloudscape-design/components/time-input";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
+import { formatInTz, TZ_ZONES } from "../../../pages/meetings/util/timezone";
 import AwsugLayout from "../_layout";
 import { type AuthState, isModerator, requireAuth } from "../_shared/auth";
 
@@ -29,6 +30,8 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 	const [notes, setNotes] = useState("");
 	const [meetingDate, setMeetingDate] = useState("");
 	const [meetingTime, setMeetingTime] = useState("20:00");
+	const [speakerBioUrl, setSpeakerBioUrl] = useState("");
+	const [meetupRsvpUrl, setMeetupRsvpUrl] = useState("");
 	const [meetupLinkError, setMeetupLinkError] = useState("");
 	const [formError, setFormError] = useState("");
 	const [loading, setLoading] = useState(false);
@@ -59,9 +62,10 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 					meetupLink: meetupLink.trim(),
 					speakers: speakers.trim(),
 					notes: notes.trim(),
-					meetingDate: meetingDate
-						? `${meetingDate}T${meetingTime}:00Z`
-						: undefined,
+					scheduledDate: meetingDate || undefined,
+					scheduledTime: meetingTime || undefined,
+					speakerBioUrl: speakerBioUrl.trim() || undefined,
+					meetupRsvpUrl: meetupRsvpUrl.trim() || undefined,
 				}),
 			});
 			if (!res.ok) throw new Error(`api error: ${res.status}`);
@@ -127,7 +131,7 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 								placeholder="YYYY/MM/DD"
 							/>
 						</FormField>
-						<FormField label="time (UTC)">
+						<FormField label="time (America/Denver — El Paso)">
 							<TimeInput
 								value={meetingTime}
 								onChange={({ detail }) => setMeetingTime(detail.value)}
@@ -135,6 +139,20 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 								placeholder="20:00"
 							/>
 						</FormField>
+						{meetingDate.length === 10 && /^\d{2}:\d{2}$/.test(meetingTime) && (
+							<SpaceBetween size="xxs">
+								{TZ_ZONES.map(({ label, tz }) => (
+									<Box key={tz}>
+										<Box variant="awsui-key-label" display="inline">
+											{label}:{" "}
+										</Box>
+										<Box variant="span">
+											{formatInTz(meetingDate, meetingTime, tz)}
+										</Box>
+									</Box>
+								))}
+							</SpaceBetween>
+						)}
 						<FormField
 							label="Meetup link"
 							description="optional — add after scheduling the call"
@@ -147,11 +165,27 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 								placeholder="https://www.meetup.com/cloud-del-norte/events/..."
 							/>
 						</FormField>
+						<FormField label="Meetup RSVP URL" description="optional — takes precedence over event link for RSVP button">
+							<Input
+								type="url"
+								value={meetupRsvpUrl}
+								onChange={({ detail }) => setMeetupRsvpUrl(detail.value)}
+								placeholder="https://www.meetup.com/cloud-del-norte/events/..."
+							/>
+						</FormField>
 						<FormField label="Speaker names" description="optional">
 							<Input
 								value={speakers}
 								onChange={({ detail }) => setSpeakers(detail.value)}
 								placeholder="First Last, First Last"
+							/>
+						</FormField>
+						<FormField label="Speaker bio URL" description="optional">
+							<Input
+								type="url"
+								value={speakerBioUrl}
+								onChange={({ detail }) => setSpeakerBioUrl(detail.value)}
+								placeholder="https://"
 							/>
 						</FormField>
 						<FormField label="Additional notes" description="optional">

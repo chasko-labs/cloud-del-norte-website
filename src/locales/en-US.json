@@ -240,6 +240,8 @@
 			"header": "MeetingDetails",
 			"pricesLabel": "Prices",
 			"pricesDescription": "Define the prices for wholesale and retail.",
+			"scheduledDateLabel": "Scheduled date",
+			"scheduledTimeLabel": "Scheduled time",
 			"meetupLinkLabel": "Meetup Link",
 			"speakerNamesLabel": "Speaker Names",
 			"speakerBioUrlLabel": "Speaker Bio URL",

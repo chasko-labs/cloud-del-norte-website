@@ -18,54 +18,8 @@ import { useAuth } from "../../../hooks/useAuth";
 import { useTranslation } from "../../../hooks/useTranslation";
 import type { meeting } from "../data";
 import { generateRoomPassword } from "../data";
+import { formatInTz, TZ_ZONES } from "../util/timezone";
 import JitsiEmbed from "./jitsi-embed";
-
-const TZ_ZONES: { label: string; tz: string }[] = [
-	{ label: "El Paso", tz: "America/Denver" },
-	{ label: "Boston", tz: "America/New_York" },
-	{ label: "Seattle", tz: "America/Los_Angeles" },
-	{ label: "Greenwich", tz: "UTC" },
-	{ label: "Shahrisabz", tz: "Asia/Samarkand" },
-];
-
-function formatInTz(isoDate: string, isoTime: string, tz: string): string {
-	// Parse as America/Denver (the canonical input timezone)
-	const [y, m, d] = isoDate.split("-").map(Number);
-	const [h, min] = isoTime.split(":").map(Number);
-	// Build an absolute instant by interpreting the date+time in Denver
-	const denverFmt = new Intl.DateTimeFormat("en-US", {
-		timeZone: "America/Denver",
-		year: "numeric",
-		month: "2-digit",
-		day: "2-digit",
-		hour: "2-digit",
-		minute: "2-digit",
-		hour12: false,
-	});
-	// Use a UTC epoch that, when displayed in Denver, shows the given date+time.
-	// We approximate by finding the UTC offset for Denver at that moment.
-	const approxUtc = Date.UTC(y, m - 1, d, h, min);
-	const denverParts = denverFmt.formatToParts(approxUtc);
-	const get = (type: string) =>
-		Number(denverParts.find((p) => p.type === type)?.value ?? 0);
-	const denverDisplayH = get("hour");
-	const denverDisplayMin = get("minute");
-	// Offset = displayed hour - UTC hour (in minutes)
-	const utcH = new Date(approxUtc).getUTCHours();
-	const utcMin = new Date(approxUtc).getUTCMinutes();
-	const offsetMin = (denverDisplayH - utcH) * 60 + (denverDisplayMin - utcMin);
-	const absoluteMs = approxUtc - offsetMin * 60_000;
-
-	return new Intl.DateTimeFormat("en-US", {
-		timeZone: tz,
-		weekday: "short",
-		month: "short",
-		day: "numeric",
-		hour: "numeric",
-		minute: "2-digit",
-		hour12: true,
-	}).format(absoluteMs);
-}
 
 function TimezonePopover({
 	scheduledDate,

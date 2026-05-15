@@ -1,17 +1,20 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import Alert from "@cloudscape-design/components/alert";
 import Button from "@cloudscape-design/components/button";
 import ContentLayout from "@cloudscape-design/components/content-layout";
 import Form from "@cloudscape-design/components/form";
 import Header from "@cloudscape-design/components/header";
 import HelpPanel from "@cloudscape-design/components/help-panel";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
 import { RequireAuth } from "../../components/require-auth";
 import { useTranslation } from "../../hooks/useTranslation";
+import { createMeeting } from "../../lib/admin";
+import type { CreateMeetingRequest } from "../../lib/admin";
 import ShellLayout from "../../layouts/shell";
 import {
 	applyLocale,
@@ -25,7 +28,7 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../utils/theme";
-import MeetingDetails from "./components/marketing";
+import MeetingDetails, { type MeetingDetailsValues } from "./components/marketing";
 import Shape from "./components/shape";
 import {
 	BasicValidationContext,
@@ -58,6 +61,28 @@ function FormContent() {
 		focusFirstErrorField,
 	} = useBasicValidation();
 
+	const detailsRef = useRef<MeetingDetailsValues>({
+		meetupLink: "",
+		speakers: "",
+		speakerBioUrl: "",
+		meetupRsvpUrl: "",
+		notes: "",
+		scheduledDate: "",
+		scheduledTime: "20:00",
+	});
+
+	const [submitting, setSubmitting] = useState(false);
+	const [submitError, setSubmitError] = useState("");
+	const [done, setDone] = useState(false);
+
+	if (done) {
+		return (
+			<ContentLayout header={<Header variant="h1">{t("createMeeting.header")}</Header>}>
+				<Alert type="success">Meeting created successfully.</Alert>
+			</ContentLayout>
+		);
+	}
+
 	return (
 		<ContentLayout
 			header={
@@ -75,18 +100,44 @@ function FormContent() {
 				>
 					<form
 						onSubmit={(event) => {
+							event.preventDefault();
 							setIsFormSubmitted(true);
 							focusFirstErrorField();
-							event.preventDefault();
+
+							const vals = detailsRef.current;
+							// Basic required-field guard (mirrors marketing.tsx validation)
+							if (!vals.meetupLink || !vals.speakers) return;
+
+							const body: CreateMeetingRequest = {
+								meetupLink: vals.meetupLink || undefined,
+								speakers: vals.speakers || undefined,
+								speakerBioUrl: vals.speakerBioUrl || undefined,
+								meetupRsvpUrl: vals.meetupRsvpUrl || undefined,
+								notes: vals.notes || undefined,
+								scheduledDate: vals.scheduledDate || undefined,
+								scheduledTime: vals.scheduledTime || undefined,
+							};
+
+							setSubmitting(true);
+							setSubmitError("");
+							createMeeting(body)
+								.then(() => setDone(true))
+								.catch(() =>
+									setSubmitError(
+										"Failed to create meeting. The meetings API may not be available yet — contact an organizer.",
+									),
+								)
+								.finally(() => setSubmitting(false));
 						}}
 					>
 						<Form
+							errorText={submitError || undefined}
 							actions={
 								<SpaceBetween direction="horizontal" size="xs">
 									<Button href="/meetings/index.html" variant="link">
 										{t("common.cancel")}
 									</Button>
-									<Button formAction="submit" variant="primary">
+									<Button formAction="submit" variant="primary" loading={submitting}>
 										{t("createMeeting.submit")}
 									</Button>
 								</SpaceBetween>
@@ -94,8 +145,11 @@ function FormContent() {
 						>
 							<SpaceBetween size="l">
 								<Shape />
-								<details />
-								<MeetingDetails />
+								<MeetingDetails
+									onChange={(vals) => {
+										detailsRef.current = vals;
+									}}
+								/>
 							</SpaceBetween>
 						</Form>
 					</form>
@@ -106,12 +160,6 @@ function FormContent() {
 }
 
 export default function App() {
-	const {
-		isFormSubmitted,
-		setIsFormSubmitted,
-		addErrorField,
-		focusFirstErrorField,
-	} = useBasicValidation();
 	const [theme, setTheme] = useState<Theme>(() => initializeTheme());
 	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 

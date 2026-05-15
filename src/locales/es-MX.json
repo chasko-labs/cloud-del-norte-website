@@ -240,6 +240,8 @@
 			"header": "Detalles de la Junta",
 			"pricesLabel": "Precios",
 			"pricesDescription": "Define los precios para mayoreo y menudeo.",
+			"scheduledDateLabel": "Fecha programada",
+			"scheduledTimeLabel": "Hora programada",
 			"meetupLinkLabel": "Link del Meetup",
 			"speakerNamesLabel": "Nombres de los Speakers",
 			"speakerBioUrlLabel": "URL de Bio del Speaker",
