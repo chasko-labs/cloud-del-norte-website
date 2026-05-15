@@ -52,6 +52,12 @@ for TABLE_JSON in "$DYNAMODB_DIR/speaker-proposals-table.json" "$DYNAMODB_DIR/sp
   fi
 done
 
+echo "=== 1b. Enable TTL on rate table (idempotent) ==="
+aws dynamodb update-time-to-live \
+  --table-name "$RATE_TABLE" \
+  --time-to-live-specification "Enabled=true,AttributeName=expiresAt" \
+  --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null || true
+
 echo "=== 2. Create/update IAM role ==="
 TRUST_POLICY="file://$IAM_DIR/speaker-proposals-trust-policy.json"
 EXEC_POLICY="file://$IAM_DIR/speaker-proposals-execution-policy.json"
@@ -96,6 +102,7 @@ if aws lambda get-function --function-name "$LAMBDA_NAME" \
     --function-name "$LAMBDA_NAME" \
     --region "$LAMBDA_REGION" --profile "$PROFILE"
   aws lambda update-function-configuration --function-name "$LAMBDA_NAME" \
+    --role "$ROLE_ARN" \
     --environment "$ENV_VARS" \
     --timeout "$LAMBDA_TIMEOUT" --memory-size "$LAMBDA_MEMORY" \
     --region "$LAMBDA_REGION" --profile "$PROFILE"
@@ -115,20 +122,23 @@ else
 fi
 
 echo "=== 5. Create/update Function URL (idempotent) ==="
-CORS_CONFIG='AllowOrigins=https://clouddelnorte.org,https://awsug.clouddelnorte.org,AllowMethods=POST,OPTIONS,AllowHeaders=Content-Type,Authorization,AllowCredentials=false'
+CORS_FILE=$(mktemp /tmp/cors-config-XXXXXX.json)
+cat > "$CORS_FILE" <<'EOF'
+{"AllowOrigins":["https://clouddelnorte.org","https://awsug.clouddelnorte.org"],"AllowMethods":["*"],"AllowHeaders":["Content-Type","Authorization"],"AllowCredentials":false}
+EOF
 
 if aws lambda get-function-url-config --function-name "$LAMBDA_NAME" \
     --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
   echo "Function URL already exists, updating CORS..."
   aws lambda update-function-url-config --function-name "$LAMBDA_NAME" \
     --auth-type NONE \
-    --cors "$CORS_CONFIG" \
+    --cors "file://$CORS_FILE" \
     --region "$LAMBDA_REGION" --profile "$PROFILE"
 else
   echo "Creating Function URL..."
   aws lambda create-function-url-config --function-name "$LAMBDA_NAME" \
     --auth-type NONE \
-    --cors "$CORS_CONFIG" \
+    --cors "file://$CORS_FILE" \
     --region "$LAMBDA_REGION" --profile "$PROFILE"
   # Allow public invocation via Function URL
   aws lambda add-permission --function-name "$LAMBDA_NAME" \
