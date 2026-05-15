@@ -22,6 +22,10 @@ export default defineConfig({
 					__dirname,
 					"./src/sites/awsug/auth/redeem/index.html",
 				),
+				"auth/callback": resolve(
+					__dirname,
+					"./src/sites/awsug/auth/callback/index.html",
+				),
 				meetings: resolve(__dirname, "./src/sites/awsug/meetings/index.html"),
 				"create-meeting": resolve(
 					__dirname,

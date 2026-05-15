@@ -75,6 +75,33 @@ export async function beginLogin(returnTo?: string): Promise<void> {
 	window.location.assign(`${HOSTED_UI}/oauth2/authorize?${params.toString()}`);
 }
 
+// Silent reauth: identical to beginLogin but adds prompt=none.
+// Cognito returns immediately — either with a code (session exists) or
+// with error=login_required (no session). The callback handles both cases.
+// Guard: if a silent attempt is already in flight (cdn.loginState present),
+// skip to avoid a double-redirect race.
+export async function beginSilentLogin(returnTo?: string): Promise<void> {
+	if (sessionStorage.getItem(KEY_LOGIN_STATE)) return;
+	const verifier = randomVerifier();
+	const challenge = await pkceChallenge(verifier);
+	const state: LoginState = {
+		pkceVerifier: verifier,
+		returnTo: returnTo ?? window.location.pathname + window.location.search,
+	};
+	sessionStorage.setItem(KEY_LOGIN_STATE, JSON.stringify(state));
+
+	const params = new URLSearchParams({
+		response_type: "code",
+		client_id: CLIENT_ID,
+		redirect_uri: redirectUri(),
+		scope: SCOPES,
+		code_challenge: challenge,
+		code_challenge_method: "S256",
+		prompt: "none",
+	});
+	window.location.assign(`${HOSTED_UI}/oauth2/authorize?${params.toString()}`);
+}
+
 export async function handleCallback(): Promise<{ returnTo: string }> {
 	const url = new URL(window.location.href);
 	const code = url.searchParams.get("code");

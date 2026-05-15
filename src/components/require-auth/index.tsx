@@ -5,7 +5,7 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import { type ReactNode, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { AUTH_LOGIN_URL } from "../../lib/auth";
+import { beginSilentLogin } from "../../lib/auth";
 
 export interface RequireAuthProps {
 	children: ReactNode;
@@ -22,7 +22,14 @@ export function RequireAuth({
 
 	useEffect(() => {
 		if (!auth.isAuthenticated) {
-			window.location.assign(AUTH_LOGIN_URL);
+			// Attempt silent reauth via prompt=none. If Cognito has a session the
+			// callback will exchange the code and return here. If not, the callback
+			// detects login_required and redirects to the login form.
+			beginSilentLogin().catch(() => {
+				// beginSilentLogin only throws if sessionStorage is unavailable;
+				// in that case fall through and show the spinner indefinitely
+				// (the user will see the sign-in redirect on next interaction).
+			});
 		}
 	}, [auth.isAuthenticated]);
 

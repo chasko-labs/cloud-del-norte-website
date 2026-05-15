@@ -5,10 +5,12 @@ const KEY_ID_TOKEN = "cdn.idToken";
 const KEY_ACCESS_TOKEN = "cdn.accessToken";
 const KEY_REFRESH_TOKEN = "cdn.refreshToken";
 const KEY_EXPIRES_AT = "cdn.expiresAt";
+const KEY_LOGIN_STATE = "cdn.loginState";
 
 const AUTH_ORIGIN = "https://auth.clouddelnorte.org";
 const HOSTED_UI = "https://cloud-del-norte.auth.us-west-2.amazoncognito.com";
 const CLIENT_ID = "57eikmt418ea6vti2f6h0pl74r";
+const SCOPES = "openid email profile";
 
 export interface AuthState {
 	email: string;
@@ -115,6 +117,112 @@ export function getAuthState(): AuthState | null {
 		return null;
 	}
 }
+
+// ---- PKCE silent reauth ----
+
+function base64UrlEncode(bytes: Uint8Array): string {
+	let binary = "";
+	for (let i = 0; i < bytes.length; i++)
+		binary += String.fromCharCode(bytes[i]);
+	return btoa(binary)
+		.replace(/\+/g, "-")
+		.replace(/\//g, "_")
+		.replace(/=+$/, "");
+}
+
+function randomVerifier(): string {
+	const bytes = new Uint8Array(48);
+	crypto.getRandomValues(bytes);
+	return base64UrlEncode(bytes);
+}
+
+async function pkceChallenge(verifier: string): Promise<string> {
+	const data = new TextEncoder().encode(verifier);
+	const digest = await crypto.subtle.digest("SHA-256", data);
+	return base64UrlEncode(new Uint8Array(digest));
+}
+
+function callbackUri(): string {
+	return `${window.location.origin}/auth/callback/`;
+}
+
+interface LoginState {
+	pkceVerifier: string;
+	returnTo: string;
+}
+
+// Silent reauth: sends prompt=none to Cognito. If a session exists, Cognito
+// redirects to /auth/callback/ with a code. If not, it returns login_required
+// and the callback redirects to the login form. Guard against double-redirect
+// by checking for an in-flight loginState.
+export async function beginSilentLogin(returnTo?: string): Promise<void> {
+	if (sessionStorage.getItem(KEY_LOGIN_STATE)) return;
+	const verifier = randomVerifier();
+	const challenge = await pkceChallenge(verifier);
+	const state: LoginState = {
+		pkceVerifier: verifier,
+		returnTo: returnTo ?? window.location.pathname + window.location.search,
+	};
+	sessionStorage.setItem(KEY_LOGIN_STATE, JSON.stringify(state));
+
+	const params = new URLSearchParams({
+		response_type: "code",
+		client_id: CLIENT_ID,
+		redirect_uri: callbackUri(),
+		scope: SCOPES,
+		code_challenge: challenge,
+		code_challenge_method: "S256",
+		prompt: "none",
+	});
+	window.location.assign(`${HOSTED_UI}/oauth2/authorize?${params.toString()}`);
+}
+
+export async function handleCallback(): Promise<{ returnTo: string }> {
+	const url = new URL(window.location.href);
+	const code = url.searchParams.get("code");
+	const error = url.searchParams.get("error");
+	if (error) throw new Error(`oidc error: ${error}`);
+	if (!code) throw new Error("oidc callback missing code");
+
+	const raw = sessionStorage.getItem(KEY_LOGIN_STATE);
+	if (!raw) throw new Error("oidc callback missing login state");
+	const state = JSON.parse(raw) as LoginState;
+	sessionStorage.removeItem(KEY_LOGIN_STATE);
+
+	const body = new URLSearchParams({
+		grant_type: "authorization_code",
+		client_id: CLIENT_ID,
+		code,
+		redirect_uri: callbackUri(),
+		code_verifier: state.pkceVerifier,
+	});
+	const res = await fetch(`${HOSTED_UI}/oauth2/token`, {
+		method: "POST",
+		headers: { "Content-Type": "application/x-www-form-urlencoded" },
+		body: body.toString(),
+	});
+	if (!res.ok) throw new Error(`oidc token exchange failed: ${res.status}`);
+	const tokens = (await res.json()) as {
+		id_token: string;
+		access_token: string;
+		refresh_token?: string;
+		expires_in: number;
+	};
+	const existingRefresh = sessionStorage.getItem(KEY_REFRESH_TOKEN);
+	sessionStorage.setItem(KEY_ID_TOKEN, tokens.id_token);
+	sessionStorage.setItem(KEY_ACCESS_TOKEN, tokens.access_token);
+	if (tokens.refresh_token)
+		sessionStorage.setItem(KEY_REFRESH_TOKEN, tokens.refresh_token);
+	else if (existingRefresh)
+		sessionStorage.setItem(KEY_REFRESH_TOKEN, existingRefresh);
+	sessionStorage.setItem(
+		KEY_EXPIRES_AT,
+		String(Date.now() + tokens.expires_in * 1000),
+	);
+	return { returnTo: state.returnTo || "/" };
+}
+
+// ---- end PKCE silent reauth ----
 
 export function requireAuth(): AuthState {
 	const state = getAuthState();

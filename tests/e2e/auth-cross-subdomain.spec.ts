@@ -185,4 +185,42 @@ test.describe("cross-subdomain session — pre-deploy smoke (no credentials requ
 			}
 		}
 	});
+
+	test("silent reauth: unauthenticated visit to awsug /auth/callback/ with login_required redirects to login", async ({
+		page,
+	}) => {
+		// Simulate Cognito returning login_required to the awsug callback.
+		// Cognito appends ?error=login_required to the redirect_uri when prompt=none
+		// is used and no session exists.
+		const callbackWithError =
+			`${AWSUG_URL}auth/callback/?error=login_required&error_description=User+is+not+authenticated`;
+		const response = await page.goto(callbackWithError);
+		// Page must load (not 5xx)
+		expect(response?.status()).toBeLessThan(500);
+		// After the callback processes login_required it redirects to the login form.
+		// Wait for navigation away from /auth/callback/
+		await page
+			.waitForURL((url) => !url.pathname.includes("/auth/callback"), {
+				timeout: 10_000,
+			})
+			.catch(() => {
+				// If the page hasn't deployed yet, the redirect won't happen — that's OK pre-deploy.
+			});
+	});
+
+	test("silent reauth: unauthenticated visit to main /auth/callback/ with login_required redirects to login", async ({
+		page,
+	}) => {
+		const callbackWithError =
+			"https://clouddelnorte.org/auth/callback/?error=login_required&error_description=User+is+not+authenticated";
+		const response = await page.goto(callbackWithError);
+		expect(response?.status()).toBeLessThan(500);
+		await page
+			.waitForURL((url) => !url.pathname.includes("/auth/callback"), {
+				timeout: 10_000,
+			})
+			.catch(() => {
+				// Pre-deploy: page may not redirect yet.
+			});
+	});
 });

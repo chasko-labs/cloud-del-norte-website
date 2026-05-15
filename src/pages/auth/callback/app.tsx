@@ -22,7 +22,14 @@ export default function App() {
 				window.location.replace(returnTo || "/");
 			} catch (err) {
 				if (cancelled) return;
-				setErrorMsg(err instanceof Error ? err.message : "sign-in failed");
+				const msg = err instanceof Error ? err.message : "sign-in failed";
+				// login_required is the expected response when prompt=none is used and
+				// the user has no active Cognito session. Fall back to the login form.
+				if (msg.includes("login_required")) {
+					window.location.assign(AUTH_LOGIN_URL);
+					return;
+				}
+				setErrorMsg(msg);
 				setStatus("error");
 			}
 		})();

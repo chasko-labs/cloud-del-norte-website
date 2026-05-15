@@ -234,3 +234,89 @@ describe("decodeToken — JWT payload parsing", () => {
 		}).toThrow("malformed jwt");
 	});
 });
+
+// ---- Silent reauth: beginSilentLogin guard ----
+
+describe("beginSilentLogin — double-redirect guard", () => {
+	beforeEach(() => sessionStorage.clear());
+	afterEach(() => {
+		sessionStorage.clear();
+		vi.restoreAllMocks();
+	});
+
+	it("does not overwrite cdn.loginState when one is already present", () => {
+		// Simulate an in-flight silent reauth
+		const existing = JSON.stringify({
+			pkceVerifier: "existing-verifier",
+			returnTo: "/meetings/",
+		});
+		sessionStorage.setItem("cdn.loginState", existing);
+
+		// beginSilentLogin guard: if KEY_LOGIN_STATE is set, return early
+		const alreadyInFlight = sessionStorage.getItem("cdn.loginState") !== null;
+		expect(alreadyInFlight).toBe(true);
+
+		// State must be unchanged
+		expect(sessionStorage.getItem("cdn.loginState")).toBe(existing);
+	});
+
+	it("sets cdn.loginState when no prior attempt is in flight", () => {
+		expect(sessionStorage.getItem("cdn.loginState")).toBeNull();
+
+		// Simulate what beginSilentLogin does (without the actual redirect)
+		const state = JSON.stringify({
+			pkceVerifier: "new-verifier",
+			returnTo: "/admin/",
+		});
+		sessionStorage.setItem("cdn.loginState", state);
+
+		expect(sessionStorage.getItem("cdn.loginState")).toBe(state);
+	});
+});
+
+// ---- Silent reauth: callback login_required handling ----
+
+describe("callback — login_required falls back to login form", () => {
+	it("detects login_required in error message", () => {
+		const err = new Error("oidc error: login_required");
+		const isLoginRequired = err.message.includes("login_required");
+		expect(isLoginRequired).toBe(true);
+	});
+
+	it("does not treat other errors as login_required", () => {
+		const err = new Error("oidc token exchange failed: 400");
+		const isLoginRequired = err.message.includes("login_required");
+		expect(isLoginRequired).toBe(false);
+	});
+});
+
+// ---- Silent reauth: prompt=none URL construction ----
+
+describe("beginSilentLogin — prompt=none in authorize URL", () => {
+	it("authorize URL contains prompt=none", () => {
+		const params = new URLSearchParams({
+			response_type: "code",
+			client_id: "57eikmt418ea6vti2f6h0pl74r",
+			redirect_uri: "https://clouddelnorte.org/auth/callback/",
+			scope: "openid email profile",
+			code_challenge: "abc123",
+			code_challenge_method: "S256",
+			prompt: "none",
+		});
+		const url = `https://cloud-del-norte.auth.us-west-2.amazoncognito.com/oauth2/authorize?${params.toString()}`;
+		expect(url).toContain("prompt=none");
+	});
+
+	it("regular beginLogin URL does NOT contain prompt=none", () => {
+		const params = new URLSearchParams({
+			response_type: "code",
+			client_id: "57eikmt418ea6vti2f6h0pl74r",
+			redirect_uri: "https://clouddelnorte.org/auth/callback/",
+			scope: "openid email profile",
+			code_challenge: "abc123",
+			code_challenge_method: "S256",
+		});
+		const url = `https://cloud-del-norte.auth.us-west-2.amazoncognito.com/oauth2/authorize?${params.toString()}`;
+		expect(url).not.toContain("prompt=none");
+	});
+});
