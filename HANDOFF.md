@@ -73,6 +73,46 @@ CSP drift between repo (`infra/cloudfront-security-headers.json`) and live Cloud
 
 ---
 
+## in-flight 2026-05-15 — speaker proposal CTA (#132, PR #190)
+
+Three commits on feat/speaker-proposals. Awaiting Bryan manual steps + review.
+
+| commit | description |
+|--------|-------------|
+| 001937a0 | feat(speaker-proposals): backend lambda + iac (#132) |
+| f992e5e0 | feat(speaker-proposals): frontend form + admin panel (#132) |
+| 9f54c4ec | feat(speaker-proposals): function url + csp updates (#132) |
+
+deployed AWS infra (account 170473530355 us-west-2):
+- DynamoDB: cdn-speaker-proposals + cdn-speaker-proposals-rate (TTL on expiresAt)
+- IAM: cdn-speaker-proposals-lambda-role
+- Lambda: cdn-speaker-proposals
+- Function URL: https://mxaqohnri6hrozflfbwb7b72by0mrhcy.lambda-url.us-west-2.on.aws/
+
+decisions locked (issue #132 comment 4460964896):
+- hCaptcha v1
+- private until published (proposals not public until linked meeting published)
+- SES notification to bryanj+clouddelnortespeakerrequest@abstractspacecraft.com on every new submission
+- per-IP rate limit 3/hour
+
+bryan manual steps before merging PR #190:
+1. sign up at hcaptcha.com (free), create site for clouddelnorte.org
+2. populate SSM secrets (account 170473530355 us-west-2):
+   `aws ssm put-parameter --name /cloud-del-norte/speaker-proposals/hcaptcha-secret --value <SECRET> --type SecureString --profile jitsi-video-hosting --region us-west-2`
+   `aws ssm put-parameter --name /cloud-del-norte/speaker-proposals/ip-hash-salt --value $(openssl rand -hex 32) --type SecureString --profile jitsi-video-hosting --region us-west-2`
+3. update .env.production VITE_HCAPTCHA_SITE_KEY = the public site key from hCaptcha. push to feat/speaker-proposals.
+4. review + merge PR #190.
+
+post-merge:
+- Woodpecker auto-deploys frontend
+- run `./scripts/sync-cloudfront-headers.sh` to apply CSP additions for hcaptcha.com + Function URL
+- smoke-test anonymous submission from https://clouddelnorte.org/
+
+blocked-on:
+- chasko-labs/cloud-del-norte-meet#23 — admin GET /admin/proposals + PATCH /admin/proposals/{id} routes (filed). Until that lands, the admin panel proposals table will show 'failed to load.' The CTA + form + Lambda + email all work without it.
+
+---
+
 ## priority queue (next session)
 
 ### p0 — #162 phantom-nav fix
