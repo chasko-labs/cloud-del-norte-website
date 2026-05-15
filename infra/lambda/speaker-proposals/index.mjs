@@ -5,9 +5,9 @@ import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from "@aws-sdk/lib-
 import { SSMClient } from "@aws-sdk/client-ssm";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 
-// ── Bot rejection is handled at the edge by AWS WAF CAPTCHA before this Lambda
+// ── Bot rejection is handled at the edge by AWS WAF Challenge before this Lambda
 // is ever invoked. The WAF WebACL (cdn-speaker-proposals-webacl) enforces:
-//   - CAPTCHA challenge on POST /proposals
+//   - Challenge on POST /proposals
 //   - Rate limit 100 req/5 min per IP (WAF) + 3 req/hr soft policy (app layer)
 //   - Amazon IP Reputation managed rule
 // No CAPTCHA verification is performed inside this function.
