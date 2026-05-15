@@ -345,10 +345,13 @@
 			"earliestDate": "recomendamos al menos 90 días de anticipación para la promoción"
 		},
 		"errors": {
-			"captcha": "verificación de captcha fallida, intenta de nuevo",
+			"security": "por favor completa la verificación de seguridad",
 			"rate": "demasiados envíos — intenta de nuevo en una hora",
 			"validation": "revisa los campos marcados",
 			"network": "algo salió mal, intenta de nuevo"
+		},
+		"security": {
+			"checkingLabel": "verificando..."
 		},
 		"submitButton": "enviar propuesta",
 		"cancelButton": "cancelar",

@@ -13,11 +13,7 @@ import Textarea from "@cloudscape-design/components/textarea";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { getIdToken } from "../../lib/auth";
-import {
-  getHCaptchaResponse,
-  renderHCaptcha,
-  resetHCaptcha,
-} from "./hcaptcha-loader";
+import { ensureSdk, getToken, renderCaptcha } from "./waf-captcha-loader";
 import "./styles.css";
 
 interface Props {
@@ -72,6 +68,7 @@ const TIME_OPTIONS: MultiselectOption[] = [
 export default function SpeakerProposalForm({ open, onClose, source }: Props) {
   const { t } = useTranslation();
   const claims = useRef(decodeTokenClaims());
+  const captchaContainerRef = useRef<HTMLDivElement>(null);
 
   const [name, setName] = useState(claims.current.name ?? "");
   const [email, setEmail] = useState(claims.current.email ?? "");
@@ -91,6 +88,7 @@ export default function SpeakerProposalForm({ open, onClose, source }: Props) {
   const [globalError, setGlobalError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
+  const [showCaptcha, setShowCaptcha] = useState(false);
 
   // refs for focus-first-error
   const nameRef = useRef<HTMLInputElement>(null);
@@ -100,7 +98,7 @@ export default function SpeakerProposalForm({ open, onClose, source }: Props) {
 
   useEffect(() => {
     if (open) {
-      void renderHCaptcha("speaker-cta-hcaptcha");
+      void ensureSdk();
     }
   }, [open]);
 
@@ -120,7 +118,7 @@ export default function SpeakerProposalForm({ open, onClose, source }: Props) {
     setErrors({});
     setGlobalError("");
     setDone(false);
-    resetHCaptcha();
+    setShowCaptcha(false);
   }
 
   function handleClose() {
@@ -138,7 +136,6 @@ export default function SpeakerProposalForm({ open, onClose, source }: Props) {
     if (abstract.length > 1000) next.abstract = t("speakerForm.errors.validation");
     setErrors(next);
     if (Object.keys(next).length > 0) {
-      // focus first invalid field
       if (next.name) nameRef.current?.focus();
       else if (next.email) emailRef.current?.focus();
       else if (next.topic) topicRef.current?.focus();
@@ -148,14 +145,7 @@ export default function SpeakerProposalForm({ open, onClose, source }: Props) {
     return true;
   }
 
-  async function handleSubmit() {
-    if (!validate()) return;
-    if (honeypot) return; // honeypot triggered — silently drop
-
-    setSubmitting(true);
-    setGlobalError("");
-
-    const hcaptchaToken = getHCaptchaResponse();
+  async function submitWithToken(wafToken: string): Promise<void> {
     const body = {
       name,
       email,
@@ -169,61 +159,91 @@ export default function SpeakerProposalForm({ open, onClose, source }: Props) {
       notes: notes || undefined,
       submittedFromUrl: window.location.href,
       website: honeypot,
-      hcaptchaToken,
     };
 
-    try {
-      const endpoint = import.meta.env.VITE_SPEAKER_PROPOSAL_ENDPOINT as string;
-      const idToken = getIdToken();
-      const headers: Record<string, string> = {
+    const endpoint = import.meta.env.VITE_SPEAKER_PROPOSAL_ENDPOINT as string;
+    const idToken = getIdToken();
+    const res = await fetch(`${endpoint}/proposals`, {
+      method: "POST",
+      headers: {
         "Content-Type": "application/json",
-      };
-      if (idToken) headers["Authorization"] = `Bearer ${idToken}`;
+        "x-aws-waf-token": wafToken,
+        ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
+      },
+      body: JSON.stringify(body),
+    });
 
-      const res = await fetch(`${endpoint}/proposals`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify(body),
-      });
+    if (res.status === 201) {
+      setDone(true);
+      return;
+    }
 
-      if (res.status === 201) {
-        setDone(true);
+    if (res.status === 405) {
+      // WAF CAPTCHA challenge — render explicit puzzle
+      setShowCaptcha(true);
+      setGlobalError(t("speakerForm.errors.security"));
+      setSubmitting(false);
+      // renderCaptcha is called via useEffect once showCaptcha + ref are ready
+      return;
+    }
+
+    if (res.status === 429) {
+      setGlobalError(t("speakerForm.errors.rate"));
+      return;
+    }
+
+    if (res.status === 400) {
+      let json: { error?: string; fields?: Record<string, string> } = {};
+      try {
+        json = (await res.json()) as typeof json;
+      } catch {
+        /* ignore */
+      }
+      if (json.fields) {
+        setErrors(json.fields);
         return;
       }
+      setGlobalError(t("speakerForm.errors.validation"));
+      return;
+    }
 
-      if (res.status === 429) {
-        setGlobalError(t("speakerForm.errors.rate"));
-        resetHCaptcha();
-        return;
-      }
+    setGlobalError(t("speakerForm.errors.network"));
+  }
 
-      if (res.status === 400) {
-        let json: { error?: string; fields?: Record<string, string> } = {};
-        try {
-          json = (await res.json()) as typeof json;
-        } catch {
-          /* ignore */
-        }
-        if (json.error === "captcha_failed") {
-          setGlobalError(t("speakerForm.errors.captcha"));
-          resetHCaptcha();
-          return;
-        }
-        if (json.fields) {
-          setErrors(json.fields);
-          return;
-        }
-        setGlobalError(t("speakerForm.errors.validation"));
-        return;
-      }
+  async function handleSubmit() {
+    if (!validate()) return;
+    if (honeypot) return; // honeypot triggered — silently drop
 
-      setGlobalError(t("speakerForm.errors.network"));
+    setSubmitting(true);
+    setGlobalError("");
+
+    try {
+      const wafToken = await getToken();
+      await submitWithToken(wafToken);
     } catch {
       setGlobalError(t("speakerForm.errors.network"));
     } finally {
       setSubmitting(false);
     }
   }
+
+  // When WAF returns 405, mount the explicit CAPTCHA puzzle into the container
+  useEffect(() => {
+    if (!showCaptcha || !captchaContainerRef.current) return;
+    renderCaptcha(captchaContainerRef.current, {
+      onSuccess: (solvedToken: string) => {
+        setShowCaptcha(false);
+        setGlobalError("");
+        setSubmitting(true);
+        void submitWithToken(solvedToken).finally(() => setSubmitting(false));
+      },
+      onError: () => {
+        setGlobalError(t("speakerForm.errors.network"));
+        setShowCaptcha(false);
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showCaptcha]);
 
   if (done) {
     return (
@@ -425,9 +445,9 @@ export default function SpeakerProposalForm({ open, onClose, source }: Props) {
             />
           </FormField>
 
-          <div className="spf-hcaptcha-wrap">
-            <div id="speaker-cta-hcaptcha" />
-          </div>
+          {showCaptcha && (
+            <div ref={captchaContainerRef} className="spf-captcha-container" />
+          )}
         </SpaceBetween>
       </Form>
     </Modal>

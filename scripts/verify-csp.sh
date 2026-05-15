@@ -40,12 +40,12 @@ AWSUG_POLICY_ID="ef81b3a7-9f54-4871-9d45-0864456d843b"
 AWSUG_SCRIPT_SRC_REQUIRED=(
   "https://meet.clouddelnorte.org"
   "https://clouddelnorte.org"
-  "https://hcaptcha.com"
-  "https://*.hcaptcha.com"
+  "https://*.token.awswaf.com"
 )
 # awsug connect-src MUST include Cognito + API Gateway + Jitsi XHR + WebSocket
 AWSUG_CONNECT_SRC_REQUIRED=(
   "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com"
+  "https://*.execute-api.us-west-2.amazonaws.com"
   "https://cognito-idp.us-west-2.amazonaws.com"
   "https://cloud-del-norte.auth.us-west-2.amazoncognito.com"
   "https://meet.clouddelnorte.org"
@@ -55,21 +55,14 @@ AWSUG_CONNECT_SRC_REQUIRED=(
   "https://api.zeno.fm"
   "https://gql.twitch.tv"
   "https://stream.zeno.fm"
-  "https://hcaptcha.com"
-  "https://*.hcaptcha.com"
-  "https://mxaqohnri6hrozflfbwb7b72by0mrhcy.lambda-url.us-west-2.on.aws"
+  "https://*.token.awswaf.com"
 )
 # awsug frame-src MUST include Jitsi meet endpoint
 AWSUG_FRAME_SRC_REQUIRED=(
   "https://meet.clouddelnorte.org"
-  "https://hcaptcha.com"
-  "https://*.hcaptcha.com"
 )
-# awsug style-src MUST include hCaptcha
-AWSUG_STYLE_SRC_REQUIRED=(
-  "https://hcaptcha.com"
-  "https://*.hcaptcha.com"
-)
+# awsug style-src — no external requirements after hCaptcha removal
+AWSUG_STYLE_SRC_REQUIRED=()
 
 # ── Helpers ──────────────────────────────────────────────────────────────────
 ERRORS=0

@@ -345,10 +345,13 @@
 			"earliestDate": "we recommend at least 90 days out for promotion"
 		},
 		"errors": {
-			"captcha": "captcha verification failed, please try again",
+			"security": "please complete the security check",
 			"rate": "too many submissions — please try again in an hour",
 			"validation": "please check the highlighted fields",
 			"network": "something went wrong, please try again"
+		},
+		"security": {
+			"checkingLabel": "verifying..."
 		},
 		"submitButton": "submit proposal",
 		"cancelButton": "cancel",
