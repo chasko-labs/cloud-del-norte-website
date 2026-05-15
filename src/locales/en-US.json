@@ -195,8 +195,10 @@
 			"presenters": "Presenters",
 			"happened": "Happened?",
 			"onDemand": "On-Demand",
-			"eventPage": "Event Page"
+			"eventPage": "Event Page",
+			"rsvp": "RSVP"
 		},
+		"rsvpButton": "RSVP",
 		"empty": {
 			"noMatches": "No matches",
 			"noMatchesSubtitle": "We can't find a match.",
@@ -240,6 +242,7 @@
 			"pricesDescription": "Define the prices for wholesale and retail.",
 			"meetupLinkLabel": "Meetup Link",
 			"speakerNamesLabel": "Speaker Names",
+			"speakerBioUrlLabel": "Speaker Bio URL",
 			"additionalNotesLabel": "Additional notes",
 			"optional": " - optional",
 			"linkRequired": "Link is required.",

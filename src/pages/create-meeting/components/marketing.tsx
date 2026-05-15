@@ -16,6 +16,7 @@ export default function MeetingDetails() {
 	const { t } = useTranslation();
 	const [wholeSalePrice, setWholeSalePrice] = useState("");
 	const [presenterName, setRetailPrice] = useState("");
+	const [speakerBioUrl, setSpeakerBioUrl] = useState("");
 	const [additionalNotes, setAdditionalNotes] = useState("");
 	const isEmptyString = (value: string) => !value?.length;
 
@@ -88,6 +89,22 @@ export default function MeetingDetails() {
 										/>
 									</FormField>
 								</ColumnLayout>
+								<FormField
+									label={
+										<>
+											{t("createMeeting.meetingDetails.speakerBioUrlLabel")}
+											<i>{t("createMeeting.meetingDetails.optional")}</i>
+										</>
+									}
+									stretch={true}
+								>
+									<Input
+										value={speakerBioUrl}
+										onChange={({ detail }) => setSpeakerBioUrl(detail.value)}
+										type="url"
+										placeholder="https://"
+									/>
+								</FormField>
 								<FormField
 									label={
 										<>

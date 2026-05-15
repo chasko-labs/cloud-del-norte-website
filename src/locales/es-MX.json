@@ -195,8 +195,10 @@
 			"presenters": "Presentadores",
 			"happened": "¿Pasó?",
 			"onDemand": "On-Demand",
-			"eventPage": "Página del Evento"
+			"eventPage": "Página del Evento",
+			"rsvp": "RSVP"
 		},
+		"rsvpButton": "RSVP",
 		"empty": {
 			"noMatches": "Sin resultados",
 			"noMatchesSubtitle": "No encontramos nada, compa.",
@@ -240,6 +242,7 @@
 			"pricesDescription": "Define los precios para mayoreo y menudeo.",
 			"meetupLinkLabel": "Link del Meetup",
 			"speakerNamesLabel": "Nombres de los Speakers",
+			"speakerBioUrlLabel": "URL de Bio del Speaker",
 			"additionalNotesLabel": "Notas adicionales",
 			"optional": " - opcional",
 			"linkRequired": "El link es necesario, morro.",

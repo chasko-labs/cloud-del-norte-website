@@ -17,6 +17,10 @@ export interface meeting {
 	// Join window: 30 min before → 60 min after scheduledTime.
 	scheduledTime?: string;
 	roomPassword?: string;
+	// URL to the speaker's bio page (LinkedIn, personal site, etc.)
+	speakerBioUrl?: string;
+	// Explicit Meetup RSVP URL. Falls back to eventlink when absent.
+	meetupRsvpUrl?: string;
 }
 
 export function generateRoomPassword(len = 6): string {

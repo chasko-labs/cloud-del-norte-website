@@ -5,9 +5,12 @@ import CollectionPreferences, {
 	type CollectionPreferencesProps,
 } from "@cloudscape-design/components/collection-preferences";
 import Header from "@cloudscape-design/components/header";
+import Link from "@cloudscape-design/components/link";
 import Modal from "@cloudscape-design/components/modal";
 import Pagination from "@cloudscape-design/components/pagination";
+import Popover from "@cloudscape-design/components/popover";
 import SpaceBetween from "@cloudscape-design/components/space-between";
+import StatusIndicator from "@cloudscape-design/components/status-indicator";
 import Table, { type TableProps } from "@cloudscape-design/components/table";
 import TextFilter from "@cloudscape-design/components/text-filter";
 import { type ReactNode, useState } from "react";
@@ -16,6 +19,88 @@ import { useTranslation } from "../../../hooks/useTranslation";
 import type { meeting } from "../data";
 import { generateRoomPassword } from "../data";
 import JitsiEmbed from "./jitsi-embed";
+
+const TZ_ZONES: { label: string; tz: string }[] = [
+	{ label: "El Paso", tz: "America/Denver" },
+	{ label: "Boston", tz: "America/New_York" },
+	{ label: "Seattle", tz: "America/Los_Angeles" },
+	{ label: "Greenwich", tz: "UTC" },
+	{ label: "Shahrisabz", tz: "Asia/Samarkand" },
+];
+
+function formatInTz(isoDate: string, isoTime: string, tz: string): string {
+	// Parse as America/Denver (the canonical input timezone)
+	const [y, m, d] = isoDate.split("-").map(Number);
+	const [h, min] = isoTime.split(":").map(Number);
+	// Build an absolute instant by interpreting the date+time in Denver
+	const denverFmt = new Intl.DateTimeFormat("en-US", {
+		timeZone: "America/Denver",
+		year: "numeric",
+		month: "2-digit",
+		day: "2-digit",
+		hour: "2-digit",
+		minute: "2-digit",
+		hour12: false,
+	});
+	// Use a UTC epoch that, when displayed in Denver, shows the given date+time.
+	// We approximate by finding the UTC offset for Denver at that moment.
+	const approxUtc = Date.UTC(y, m - 1, d, h, min);
+	const denverParts = denverFmt.formatToParts(approxUtc);
+	const get = (type: string) =>
+		Number(denverParts.find((p) => p.type === type)?.value ?? 0);
+	const denverDisplayH = get("hour");
+	const denverDisplayMin = get("minute");
+	// Offset = displayed hour - UTC hour (in minutes)
+	const utcH = new Date(approxUtc).getUTCHours();
+	const utcMin = new Date(approxUtc).getUTCMinutes();
+	const offsetMin = (denverDisplayH - utcH) * 60 + (denverDisplayMin - utcMin);
+	const absoluteMs = approxUtc - offsetMin * 60_000;
+
+	return new Intl.DateTimeFormat("en-US", {
+		timeZone: tz,
+		weekday: "short",
+		month: "short",
+		day: "numeric",
+		hour: "numeric",
+		minute: "2-digit",
+		hour12: true,
+	}).format(absoluteMs);
+}
+
+function TimezonePopover({
+	scheduledDate,
+	scheduledTime,
+	children,
+}: {
+	scheduledDate: string;
+	scheduledTime: string;
+	children: ReactNode;
+}) {
+	return (
+		<Popover
+			dismissButton={false}
+			position="right"
+			size="medium"
+			triggerType="text"
+			content={
+				<SpaceBetween size="xxs">
+					{TZ_ZONES.map(({ label, tz }) => (
+						<Box key={tz}>
+							<Box variant="awsui-key-label" display="inline">
+								{label}:{" "}
+							</Box>
+							<Box variant="span">
+								{formatInTz(scheduledDate, scheduledTime, tz)}
+							</Box>
+						</Box>
+					))}
+				</SpaceBetween>
+			}
+		>
+			{children}
+		</Popover>
+	);
+}
 
 function generateInstantRoomName(): string {
 	const bytes = new Uint8Array(3);
@@ -69,13 +154,33 @@ const columnDefinitions = (
 ): TableProps<meeting>["columnDefinitions"] => [
 	{
 		header: t("meetings.tableHeaders.meetupTitle"),
-		cell: ({ name }) => name,
+		cell: (m) =>
+			m.scheduledDate && m.scheduledTime ? (
+				<TimezonePopover
+					scheduledDate={m.scheduledDate}
+					scheduledTime={m.scheduledTime}
+				>
+					{m.name}
+				</TimezonePopover>
+			) : (
+				m.name
+			),
 		sortingField: "name",
 		minWidth: 175,
 	},
 	{
 		header: t("meetings.tableHeaders.presenters"),
-		cell: ({ presenters }) => presenters,
+		cell: ({ presenters, speakerBioUrl }) =>
+			speakerBioUrl ? (
+				<SpaceBetween size="xxs" direction="horizontal">
+					<span>{presenters}</span>
+					<Link href={speakerBioUrl} external>
+						bio
+					</Link>
+				</SpaceBetween>
+			) : (
+				presenters
+			),
 		sortingField: "presenters",
 		minWidth: 160,
 	},
@@ -96,6 +201,20 @@ const columnDefinitions = (
 		cell: ({ eventlink }) => eventlink,
 		sortingField: "eventlink",
 		minWidth: 160,
+	},
+	{
+		id: "rsvp",
+		header: t("meetings.tableHeaders.rsvp"),
+		cell: ({ meetupRsvpUrl, eventlink }) => {
+			const url = meetupRsvpUrl || eventlink;
+			if (!url) return null;
+			return (
+				<Button variant="link" href={url} target="_blank">
+					{t("meetings.rsvpButton")}
+				</Button>
+			);
+		},
+		minWidth: 80,
 	},
 	{
 		// Join column — only shown for meetings scheduled today (scheduledDate
