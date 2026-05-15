@@ -366,7 +366,7 @@ export default function SpeakerProposalForm({ open, onClose, source }: Props) {
             </div>
           </FormField>
 
-          <FormField label={t("speakerForm.fields.format")}>
+          <FormField label={t("speakerForm.fields.format.label")}>
             <RadioGroup
               value={format}
               onChange={({ detail }) => setFormat(detail.value)}

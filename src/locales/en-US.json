@@ -329,10 +329,12 @@
 			"email": "your email",
 			"topic": "talk title",
 			"abstract": "abstract",
-			"format": "preferred format",
-			"format.in_person_west_tx_nm": "in-person (west tx / nm)",
-			"format.virtual": "virtual",
-			"format.either": "either works",
+			"format": {
+				"label": "preferred format",
+				"in_person_west_tx_nm": "in-person (west tx / nm)",
+				"virtual": "virtual",
+				"either": "either works"
+			},
 			"bioUrl": "speaker bio url",
 			"preferredDays": "preferred days",
 			"preferredTimeOfDay": "preferred time of day",

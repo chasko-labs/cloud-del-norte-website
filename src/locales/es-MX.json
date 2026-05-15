@@ -329,10 +329,12 @@
 			"email": "tu correo",
 			"topic": "título de la charla",
 			"abstract": "resumen",
-			"format": "formato preferido",
-			"format.in_person_west_tx_nm": "presencial (west tx / nm)",
-			"format.virtual": "virtual",
-			"format.either": "cualquiera funciona",
+			"format": {
+				"label": "formato preferido",
+				"in_person_west_tx_nm": "presencial (west tx / nm)",
+				"virtual": "virtual",
+				"either": "cualquiera funciona"
+			},
 			"bioUrl": "url de bio del ponente",
 			"preferredDays": "días preferidos",
 			"preferredTimeOfDay": "horario preferido",
