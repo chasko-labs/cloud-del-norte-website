@@ -263,6 +263,13 @@
 			"noLabel": "sin etiqueta"
 		}
 	},
+	"homePage": {
+		"speakerCta": {
+			"header": "habla en cloud del norte",
+			"body": "¿tienes algo que compartir? queremos escucharte. charlas, demos, lightning rounds — todos los formatos son bienvenidos. servimos el corredor juárez / el paso / las cruces y más allá.",
+			"cta": "proponer una charla"
+		}
+	},
 	"helpPanel": {
 		"rsvpHeader": "RSVP para Eventos en Vivo",
 		"cloudDelNorteMeetups": "Meetups de Nube of the North",
@@ -310,7 +317,44 @@
 		"lsmLeadDesc": "Lengua de Señas Mexicana — conectar la comunidad sorda de Juárez con los eventos del grupo",
 		"spanishSpeakersDesc": "ayúdanos a llegar a los builders hispanohablantes del Borderplex",
 		"womenWelcomeDesc": "buscamos activamente a mujeres builders para roles de organización",
-		"reachOutOnMeetup": "Contáctanos en Meetup"
+		"reachOutOnMeetup": "Contáctanos en Meetup",
+		"speakerRoleName": "ponente",
+		"speakerRoleDesc": "propón una charla, demo o lightning round — presencial, virtual o híbrido. cubrimos el corredor juárez / el paso / las cruces y más allá.",
+		"speakerRoleCta": "proponer una charla"
+	},
+	"speakerForm": {
+		"modalTitle": "proponer una charla",
+		"fields": {
+			"name": "tu nombre",
+			"email": "tu correo",
+			"topic": "título de la charla",
+			"abstract": "resumen",
+			"format": "formato preferido",
+			"format.in_person_west_tx_nm": "presencial (west tx / nm)",
+			"format.virtual": "virtual",
+			"format.either": "cualquiera funciona",
+			"bioUrl": "url de bio del ponente",
+			"preferredDays": "días preferidos",
+			"preferredTimeOfDay": "horario preferido",
+			"earliestDate": "fecha más próxima disponible",
+			"notes": "algo más que debamos saber"
+		},
+		"helpers": {
+			"topic": "menos de 120 caracteres — un título provisional está bien",
+			"bioUrl": "opcional — link a tu linkedin, sitio web o perfil de ponente",
+			"earliestDate": "recomendamos al menos 90 días de anticipación para la promoción"
+		},
+		"errors": {
+			"captcha": "verificación de captcha fallida, intenta de nuevo",
+			"rate": "demasiados envíos — intenta de nuevo en una hora",
+			"validation": "revisa los campos marcados",
+			"network": "algo salió mal, intenta de nuevo"
+		},
+		"submitButton": "enviar propuesta",
+		"cancelButton": "cancelar",
+		"thankYouTitle": "propuesta recibida",
+		"thankYouBody": "gracias. te contactaremos en 7 días.",
+		"thankYouClose": "cerrar"
 	},
 	"learning": {
 		"api": {
@@ -455,7 +499,34 @@
 		"columnCreated": "creado",
 		"columnActions": "acciones",
 		"approveButton": "aprobar",
-		"errorHeader": "error al cargar usuarios"
+		"errorHeader": "error al cargar usuarios",
+		"proposals": {
+			"tableHeader": "propuestas de ponentes",
+			"loadingText": "cargando propuestas",
+			"columnSubmitted": "enviado",
+			"columnName": "nombre",
+			"columnTopic": "tema",
+			"columnFormat": "formato",
+			"columnEarliestDate": "fecha más próxima",
+			"columnStatus": "estado",
+			"columnActions": "acciones",
+			"actionMarkContacted": "marcar contactado",
+			"actionConvertToMeeting": "convertir en junta",
+			"filterLabel": "filtrar por estado",
+			"filterAll": "todos",
+			"status": {
+				"pending": "pendiente",
+				"contacted": "contactado",
+				"scheduled": "programado",
+				"completed": "completado",
+				"declined": "rechazado",
+				"in_person_west_tx_nm": "presencial (west tx / nm)",
+				"virtual": "virtual",
+				"either": "cualquiera"
+			},
+			"emptyTitle": "sin propuestas",
+			"emptySubtitle": "ninguna propuesta coincide con este filtro"
+		}
 	},
 	"roadmap": {
 		"title": "Roadmap",

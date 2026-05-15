@@ -1508,6 +1508,7 @@ html {
 
 body {
 	min-height: 100vh;
+	overflow-x: clip;
 }
 
 /* ── CdnWallpaper Suite — atmospheric surface rules ──────────────────────────
@@ -1975,4 +1976,15 @@ nav[class*="awsui_navigation_"]:not(
 }
 .awsui-dark-mode .cdn-stars-skeleton {
 	display: block;
+}
+
+/* ── P3 touch-target compliance (WCAG 2.5.8 — 44×44 minimum) ────────────── */
+button[class*="awsui_navigation-toggle"] {
+	min-width: 44px;
+	min-height: 44px;
+}
+
+#top-nav [class*="utility-wrapper"] a[class*="awsui_link"] {
+	min-width: 44px;
+	min-height: 44px;
 }

@@ -263,6 +263,13 @@
 			"noLabel": "no label"
 		}
 	},
+	"homePage": {
+		"speakerCta": {
+			"header": "speak at cloud del norte",
+			"body": "got something to share? we want to hear it. talks, demos, lightning rounds — all formats welcome. we serve the juárez / el paso / las cruces corridor and beyond.",
+			"cta": "propose a talk"
+		}
+	},
 	"helpPanel": {
 		"rsvpHeader": "RSVP for Live Events",
 		"cloudDelNorteMeetups": "Cloud Del Norte Meetups",
@@ -310,7 +317,44 @@
 		"lsmLeadDesc": "Mexican Sign Language — connecting the Juárez deaf community with group events",
 		"spanishSpeakersDesc": "help reach Spanish-speaking builders across the Borderplex",
 		"womenWelcomeDesc": "we actively recruit women builders for organizing roles",
-		"reachOutOnMeetup": "Reach out on Meetup"
+		"reachOutOnMeetup": "Reach out on Meetup",
+		"speakerRoleName": "speaker",
+		"speakerRoleDesc": "propose a talk, demo, or lightning round — in-person, virtual, or hybrid. we cover the juárez / el paso / las cruces corridor and beyond.",
+		"speakerRoleCta": "propose a talk"
+	},
+	"speakerForm": {
+		"modalTitle": "propose a talk",
+		"fields": {
+			"name": "your name",
+			"email": "your email",
+			"topic": "talk title",
+			"abstract": "abstract",
+			"format": "preferred format",
+			"format.in_person_west_tx_nm": "in-person (west tx / nm)",
+			"format.virtual": "virtual",
+			"format.either": "either works",
+			"bioUrl": "speaker bio url",
+			"preferredDays": "preferred days",
+			"preferredTimeOfDay": "preferred time of day",
+			"earliestDate": "earliest available date",
+			"notes": "anything else we should know"
+		},
+		"helpers": {
+			"topic": "keep it under 120 characters — a working title is fine",
+			"bioUrl": "optional — link to your linkedin, website, or speaker profile",
+			"earliestDate": "we recommend at least 90 days out for promotion"
+		},
+		"errors": {
+			"captcha": "captcha verification failed, please try again",
+			"rate": "too many submissions — please try again in an hour",
+			"validation": "please check the highlighted fields",
+			"network": "something went wrong, please try again"
+		},
+		"submitButton": "submit proposal",
+		"cancelButton": "cancel",
+		"thankYouTitle": "proposal received",
+		"thankYouBody": "thanks. we will reach out within 7 days.",
+		"thankYouClose": "close"
 	},
 	"learning": {
 		"api": {
@@ -455,7 +499,34 @@
 		"columnCreated": "created",
 		"columnActions": "actions",
 		"approveButton": "approve",
-		"errorHeader": "failed to load users"
+		"errorHeader": "failed to load users",
+		"proposals": {
+			"tableHeader": "speaker proposals",
+			"loadingText": "loading proposals",
+			"columnSubmitted": "submitted",
+			"columnName": "name",
+			"columnTopic": "topic",
+			"columnFormat": "format",
+			"columnEarliestDate": "earliest date",
+			"columnStatus": "status",
+			"columnActions": "actions",
+			"actionMarkContacted": "mark contacted",
+			"actionConvertToMeeting": "convert to meeting",
+			"filterLabel": "filter by status",
+			"filterAll": "all",
+			"status": {
+				"pending": "pending",
+				"contacted": "contacted",
+				"scheduled": "scheduled",
+				"completed": "completed",
+				"declined": "declined",
+				"in_person_west_tx_nm": "in-person (west tx / nm)",
+				"virtual": "virtual",
+				"either": "either"
+			},
+			"emptyTitle": "no proposals",
+			"emptySubtitle": "no speaker proposals match this filter"
+		}
 	},
 	"roadmap": {
 		"title": "Roadmap",

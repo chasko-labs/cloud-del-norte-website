@@ -100,3 +100,55 @@ export async function createMeeting(body: CreateMeetingRequest): Promise<void> {
 		() => Promise.resolve(),
 	);
 }
+
+export interface Proposal {
+	id: string;
+	name: string;
+	email: string;
+	cognitoSub: string | null;
+	topic: string;
+	abstract: string;
+	format: "in_person_west_tx_nm" | "virtual" | "either";
+	bioUrl: string | null;
+	preferredDays: string[];
+	preferredTimeOfDay: string[];
+	earliestDate: string;
+	notes: string | null;
+	submittedFromUrl: string | null;
+	status: "pending" | "contacted" | "scheduled" | "completed" | "declined";
+	createdAt: string;
+	linkedMeetingId?: string;
+}
+
+export interface ListProposalsResponse {
+	proposals: Proposal[];
+}
+
+export async function listProposals(
+	filter: Proposal["status"] = "pending",
+): Promise<Proposal[]> {
+	const result = await withRetry(
+		() => adminRequest(`/admin/proposals?filter=${filter}`, "GET"),
+		(r) => r.json() as Promise<ListProposalsResponse>,
+	);
+	return result.proposals;
+}
+
+export async function patchProposal(
+	id: string,
+	body: {
+		status?: Proposal["status"];
+		notes?: string;
+		linkedMeetingId?: string;
+	},
+): Promise<Proposal> {
+	return withRetry(
+		() =>
+			adminRequest(
+				`/admin/proposals/${encodeURIComponent(id)}`,
+				"PATCH",
+				body,
+			),
+		(r) => r.json() as Promise<Proposal>,
+	);
+}

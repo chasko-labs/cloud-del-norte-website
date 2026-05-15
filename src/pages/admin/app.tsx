@@ -24,6 +24,7 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../utils/theme";
+import SpeakerProposalsAdminTable from "./components/speaker-proposals-table";
 
 function BreadcrumbsContent() {
 	const { t } = useTranslation();
@@ -171,7 +172,10 @@ export default function App() {
 			navigation={<Navigation />}
 		>
 			<RequireAuth requireGroup="moderators">
-				<AdminTable />
+				<SpaceBetween size="xl">
+					<AdminTable />
+					<SpeakerProposalsAdminTable />
+				</SpaceBetween>
 			</RequireAuth>
 		</ShellLayout>
 	);
