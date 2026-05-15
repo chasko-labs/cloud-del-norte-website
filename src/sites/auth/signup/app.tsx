@@ -7,21 +7,28 @@ import Button from "@cloudscape-design/components/button";
 import FormField from "@cloudscape-design/components/form-field";
 import Input from "@cloudscape-design/components/input";
 import Link from "@cloudscape-design/components/link";
+import RadioGroup from "@cloudscape-design/components/radio-group";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Textarea from "@cloudscape-design/components/textarea";
+import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	AuthError,
 	assertNonEmpty,
+	associateSoftwareToken,
 	confirmSignUp,
 	FIELD_LIMITS,
 	resendConfirmationCode,
+	respondToMfaChallenge,
 	signInWithPassword,
 	signUp,
+	verifySoftwareToken,
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
 import CodeInput from "../_layout/CodeInput";
+
+type VerifyMethod = "email" | "totp" | "sms";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
 /* match verify/app.tsx — 120s gives time to switch to email/authenticator
@@ -107,9 +114,16 @@ function SignupWizard() {
 	const [background, setBackground] = useState(saved?.background ?? "");
 
 	// step 4
+	const [verifyMethod, setVerifyMethod] = useState<VerifyMethod>("email");
 	const [code, setCode] = useState("");
 	const [cooldown, setCooldown] = useState(0);
 	const cooldownRef = useRef<ReturnType<typeof setInterval> | null>(null);
+	// TOTP-at-signup state
+	const [totpSecret, setTotpSecret] = useState("");
+	const [totpSession, setTotpSession] = useState("");
+	const [totpCode, setTotpCode] = useState("");
+	const [totpLoading, setTotpLoading] = useState(false);
+	const [totpError, setTotpError] = useState("");
 
 	// error state
 	const [step1Errors, setStep1Errors] = useState<Record<string, string>>({});
@@ -151,15 +165,16 @@ function SignupWizard() {
 
 	function startCooldown() {
 		setCooldown(RESEND_COOLDOWN_SECS);
-		cooldownRef.current = setInterval(() => {
+		const id = setInterval(() => {
 			setCooldown((prev) => {
 				if (prev <= 1) {
-					clearInterval(cooldownRef.current!);
+					clearInterval(id);
 					return 0;
 				}
 				return prev - 1;
 			});
 		}, 1000);
+		cooldownRef.current = id;
 	}
 
 	function validateStep1(): boolean {
@@ -214,7 +229,8 @@ function SignupWizard() {
 						background,
 					});
 					setSignUpCalled(true);
-					startCooldown();
+					if (verifyMethod === "email") startCooldown();
+					if (verifyMethod === "totp") void handleTotpSetup();
 				} catch (err) {
 					if (err instanceof AuthError) {
 						if (err.code === "UsernameExistsException") {
@@ -241,6 +257,8 @@ function SignupWizard() {
 	}
 
 	async function handleSubmit() {
+		// TOTP path has its own submit button — this handler is email-only
+		if (verifyMethod !== "email") return;
 		const errs: Record<string, string> = {};
 		try {
 			assertNonEmpty(code, t("auth.signup.verifyCodeLabel"));
@@ -296,6 +314,82 @@ function SignupWizard() {
 			startCooldown();
 		} catch {
 			/* best effort */
+		}
+	}
+
+	// TOTP-at-signup: called when user selects TOTP method and advances to step 4.
+	// AssociateSoftwareToken requires an active session from a sign-in challenge.
+	// At signup time there is no session yet — auto-confirm via Lambda is required.
+	// TODO(#189): add a pre-signup or post-confirmation Lambda trigger that calls
+	// AdminConfirmSignUp so the TOTP path can complete without the email code.
+	// Until that Lambda exists, we show the QR setup UI but cannot finalize
+	// confirmation — the user will need to fall back to email.
+	async function handleTotpSetup() {
+		setTotpLoading(true);
+		setTotpError("");
+		try {
+			// Sign in to get an MFA_SETUP challenge session
+			const result = await signInWithPassword(email, password);
+			if (
+				result.type === "challenge" &&
+				result.challenge.challengeName === "MFA_SETUP"
+			) {
+				const { secretCode, session } = await associateSoftwareToken(
+					result.challenge.session,
+				);
+				setTotpSecret(secretCode);
+				setTotpSession(session);
+			} else {
+				// User already confirmed or no MFA_SETUP challenge — fall back to email
+				setTotpError(
+					"TOTP setup requires a pending MFA_SETUP challenge. " +
+						"This account may already be confirmed. Try signing in directly.",
+				);
+			}
+		} catch (err) {
+			if (
+				err instanceof AuthError &&
+				err.code === "UserNotConfirmedException"
+			) {
+				// Expected: user isn't confirmed yet, can't sign in to get a session.
+				// Lambda trigger needed to auto-confirm before TOTP setup.
+				setTotpError(
+					"TOTP setup at signup requires a backend Lambda trigger (AdminConfirmSignUp) " +
+						"that isn't configured yet. Please use 'Email me a code' for now. " +
+						"See issue #189 for the Lambda work item.",
+				);
+			} else {
+				setTotpError(
+					err instanceof AuthError ? err.message : "TOTP setup failed",
+				);
+			}
+		} finally {
+			setTotpLoading(false);
+		}
+	}
+
+	async function handleTotpVerify() {
+		if (!totpSession || !totpCode) return;
+		setTotpLoading(true);
+		setTotpError("");
+		try {
+			const session = await verifySoftwareToken(totpSession, totpCode);
+			// After VerifySoftwareToken, respond to MFA_SETUP challenge to get tokens
+			await respondToMfaChallenge(session, totpCode, "MFA_SETUP");
+			// At this point user is signed in — redirect
+			const idToken = sessionStorage.getItem("cdn.idToken") ?? "";
+			const accessToken = sessionStorage.getItem("cdn.accessToken") ?? "";
+			const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
+			const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}`;
+			clearWizardState();
+			window.location.assign(
+				`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
+			);
+		} catch (err) {
+			setTotpError(
+				err instanceof AuthError ? err.message : "TOTP verification failed",
+			);
+			setTotpLoading(false);
 		}
 	}
 
@@ -426,26 +520,127 @@ function SignupWizard() {
 			content: (
 				<SpaceBetween size="m">
 					{formError && <Alert type="error">{formError}</Alert>}
-					<Box>We sent a 6-digit code to {email}</Box>
-					<FormField
-						label={t("auth.signup.verifyCodeLabel")}
-						errorText={step4Errors.code ?? undefined}
-					>
-						<CodeInput value={code} onChange={setCode} autoFocus />
+					<FormField label="How would you like to verify your account?">
+						<RadioGroup
+							value={verifyMethod}
+							onChange={({ detail }) =>
+								setVerifyMethod(detail.value as VerifyMethod)
+							}
+							items={[
+								{
+									value: "email",
+									label: "Email me a code",
+									description: `We'll send a 6-digit code to ${email}`,
+								},
+								{
+									value: "totp",
+									label: "Set up authenticator app instead",
+									description:
+										"Skip the email step entirely. Works with Google Authenticator, Microsoft Authenticator, Authy — the same way banking apps work.",
+								},
+								{
+									value: "sms",
+									label: "Send code to my phone",
+									description: "SMS verification — coming soon",
+									disabled: true,
+								},
+							]}
+						/>
 					</FormField>
-					<Link
-						onFollow={() => {
-							void handleResend();
-						}}
-						variant={cooldown > 0 ? "secondary" : "primary"}
-					>
-						{cooldown > 0
-							? t("auth.signup.resendCooldown").replace(
-									"{{seconds}}",
-									String(cooldown),
-								)
-							: t("auth.signup.resendCode")}
-					</Link>
+
+					{verifyMethod === "email" && (
+						<SpaceBetween size="m">
+							<Box>We sent a 6-digit code to {email}</Box>
+							<FormField
+								label={t("auth.signup.verifyCodeLabel")}
+								errorText={step4Errors.code ?? undefined}
+							>
+								<CodeInput value={code} onChange={setCode} autoFocus />
+							</FormField>
+							<Link
+								onFollow={() => {
+									void handleResend();
+								}}
+								variant={cooldown > 0 ? "secondary" : "primary"}
+							>
+								{cooldown > 0
+									? t("auth.signup.resendCooldown").replace(
+											"{{seconds}}",
+											String(cooldown),
+										)
+									: t("auth.signup.resendCode")}
+							</Link>
+						</SpaceBetween>
+					)}
+
+					{verifyMethod === "totp" && (
+						<SpaceBetween size="m">
+							{totpError && (
+								<Alert type="error" header="TOTP setup unavailable">
+									{totpError}
+								</Alert>
+							)}
+							{!totpError && !totpSecret && (
+								<Alert type="info">
+									Setting up your authenticator app… if this takes a moment,
+									complete account creation first then set up TOTP at sign-in.
+								</Alert>
+							)}
+							{totpSecret && (
+								<SpaceBetween size="m">
+									<Alert type="info" header="Scan this QR code">
+										Open Google Authenticator, Microsoft Authenticator, or Authy
+										and scan the code below. Then enter the 6-digit code it
+										shows.
+									</Alert>
+									<Box textAlign="center">
+										<QRCodeSVG
+											value={`otpauth://totp/CloudDelNorte:${encodeURIComponent(email)}?secret=${totpSecret}&issuer=CloudDelNorte`}
+											size={180}
+											level="M"
+										/>
+									</Box>
+									<Box variant="small" color="text-body-secondary">
+										Or enter this secret manually:
+									</Box>
+									<Box>
+										<span
+											style={{ fontFamily: "monospace", userSelect: "all" }}
+										>
+											{totpSecret}
+										</span>
+									</Box>
+									<FormField
+										label="6-digit code from your authenticator"
+										errorText={totpError || undefined}
+									>
+										<Input
+											type="text"
+											value={totpCode}
+											onChange={({ detail }) => setTotpCode(detail.value)}
+											inputMode="numeric"
+											autoFocus
+										/>
+									</FormField>
+									<Button
+										variant="primary"
+										onClick={() => void handleTotpVerify()}
+										loading={totpLoading}
+										disabled={totpCode.replace(/\D/g, "").length < 6}
+									>
+										Verify & complete signup
+									</Button>
+								</SpaceBetween>
+							)}
+						</SpaceBetween>
+					)}
+
+					{verifyMethod === "sms" && (
+						<Alert type="info">
+							SMS verification is coming soon. Please choose Email or
+							Authenticator app for now.
+						</Alert>
+					)}
 				</SpaceBetween>
 			),
 		},

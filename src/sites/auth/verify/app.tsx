@@ -7,6 +7,7 @@ import Button from "@cloudscape-design/components/button";
 import Form from "@cloudscape-design/components/form";
 import FormField from "@cloudscape-design/components/form-field";
 import Link from "@cloudscape-design/components/link";
+import RadioGroup from "@cloudscape-design/components/radio-group";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import type React from "react";
 import { useEffect, useRef, useState } from "react";
@@ -24,6 +25,8 @@ import CodeInput from "../_layout/CodeInput";
    without missing the resend window — was 30s, too short for app-switch UX */
 const RESEND_COOLDOWN_SECS = 120;
 
+type VerifyMethod = "email" | "totp" | "sms";
+
 function VerifyForm() {
 	const { t } = useTranslation();
 	document.title = `${t("auth.verify.title")} — ${t("auth.siteTitle")}`;
@@ -31,6 +34,7 @@ function VerifyForm() {
 	const [email] = useState(
 		() => new URLSearchParams(window.location.search).get("email") ?? "",
 	);
+	const [verifyMethod, setVerifyMethod] = useState<VerifyMethod>("email");
 	const [code, setCode] = useState("");
 	const [codeError, setCodeError] = useState("");
 	const [formError, setFormError] = useState("");
@@ -51,15 +55,16 @@ function VerifyForm() {
 
 	function startCooldown() {
 		setCooldown(RESEND_COOLDOWN_SECS);
-		cooldownRef.current = setInterval(() => {
+		const id = setInterval(() => {
 			setCooldown((prev) => {
 				if (prev <= 1) {
-					clearInterval(cooldownRef.current!);
+					clearInterval(id);
 					return 0;
 				}
 				return prev - 1;
 			});
 		}, 1000);
+		cooldownRef.current = id;
 	}
 
 	async function handleSubmit(e: React.FormEvent) {
@@ -123,59 +128,97 @@ function VerifyForm() {
 
 	return (
 		<div className="cdn-auth-form-inner">
-			<form
-				onSubmit={(e) => {
-					void handleSubmit(e);
-				}}
-				noValidate
-			>
-				<Form
-					actions={
-						<span className={`cdn-auth-submit-state ${submitState}`}>
-							<Button
-								formAction="submit"
-								variant="primary"
-								loading={loading}
-								disabled={code.replace(/\D/g, "").length < 6}
-							>
-								{submitState === "verifying"
-									? "Verifying with Cognito"
-									: t("auth.verify.confirmButton")}
-							</Button>
-							{submitState === "success" && (
-								<span className="cdn-auth-success-check" aria-hidden="true">
-									✓
+			<SpaceBetween size="m">
+				<FormField label="How would you like to verify your account?">
+					<RadioGroup
+						value={verifyMethod}
+						onChange={({ detail }) =>
+							setVerifyMethod(detail.value as VerifyMethod)
+						}
+						items={[
+							{
+								value: "email",
+								label: "Email me a code",
+								description: email
+									? `We'll send a 6-digit code to ${email}`
+									: "Enter the code sent to your email",
+							},
+							{
+								value: "totp",
+								label: "Set up authenticator app instead",
+								description:
+									"TOTP setup at signup means you skip the email step entirely. " +
+									"Authenticator apps (Google Authenticator, Microsoft Authenticator, Authy) " +
+									"work the same way as banking apps. " +
+									"Available when signing up — sign in to set up TOTP on an existing account.",
+								disabled: true,
+							},
+							{
+								value: "sms",
+								label: "Send code to my phone",
+								description: "SMS verification — coming soon",
+								disabled: true,
+							},
+						]}
+					/>
+				</FormField>
+
+				{verifyMethod === "email" && (
+					<form
+						onSubmit={(e) => {
+							void handleSubmit(e);
+						}}
+						noValidate
+					>
+						<Form
+							actions={
+								<span className={`cdn-auth-submit-state ${submitState}`}>
+									<Button
+										formAction="submit"
+										variant="primary"
+										loading={loading}
+										disabled={code.replace(/\D/g, "").length < 6}
+									>
+										{submitState === "verifying"
+											? "Verifying with Cognito"
+											: t("auth.verify.confirmButton")}
+									</Button>
+									{submitState === "success" && (
+										<span className="cdn-auth-success-check" aria-hidden="true">
+											✓
+										</span>
+									)}
 								</span>
-							)}
-						</span>
-					}
-					errorText={formError || undefined}
-				>
-					<SpaceBetween size="m">
-						{email && (
-							<Box>
-								{t("auth.verify.description").replace("{{email}}", email)}
-							</Box>
-						)}
-						<FormField
-							label={t("auth.verify.codeLabel")}
-							errorText={codeError || undefined}
+							}
+							errorText={formError || undefined}
 						>
-							<CodeInput value={code} onChange={setCode} autoFocus />
-						</FormField>
-						<Link
-							onFollow={() => {
-								void handleResend();
-							}}
-							variant={cooldown > 0 ? "secondary" : "primary"}
-						>
-							{cooldown > 0
-								? `Resend available in ${cooldown}s`
-								: t("auth.verify.resendCode")}
-						</Link>
-					</SpaceBetween>
-				</Form>
-			</form>
+							<SpaceBetween size="m">
+								{email && (
+									<Box>
+										{t("auth.verify.description").replace("{{email}}", email)}
+									</Box>
+								)}
+								<FormField
+									label={t("auth.verify.codeLabel")}
+									errorText={codeError || undefined}
+								>
+									<CodeInput value={code} onChange={setCode} autoFocus />
+								</FormField>
+								<Link
+									onFollow={() => {
+										void handleResend();
+									}}
+									variant={cooldown > 0 ? "secondary" : "primary"}
+								>
+									{cooldown > 0
+										? `Resend available in ${cooldown}s`
+										: t("auth.verify.resendCode")}
+								</Link>
+							</SpaceBetween>
+						</Form>
+					</form>
+				)}
+			</SpaceBetween>
 			<Box margin={{ top: "m" }} textAlign="center">
 				<Link href="/login/index.html">Back to sign in</Link>
 			</Box>
