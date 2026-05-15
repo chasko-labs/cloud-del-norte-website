@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Deploy cdn-speaker-proposals Lambda + DynamoDB tables + IAM role + Function URL
+# Deploy cdn-speaker-proposals Lambda + DynamoDB tables + IAM role + API Gateway + WAF
 # Run from AIBOX where SSO profiles are authenticated.
 # Requires: aws cli v2, jq
 # Profile: jitsi-video-hosting (account 170473530355, us-west-2)
-# NOTE: Do NOT use aerospaceug-admin — Cognito + admin Lambdas live in 170473530355.
 
 LAMBDA_ACCOUNT=170473530355
 LAMBDA_REGION=us-west-2
@@ -19,12 +18,16 @@ PROFILE=jitsi-video-hosting
 
 PROPOSALS_TABLE=cdn-speaker-proposals
 RATE_TABLE=cdn-speaker-proposals-rate
+API_NAME=cdn-speaker-proposals-api
+WEBACL_NAME=cdn-speaker-proposals-webacl
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 LAMBDA_DIR="$REPO_ROOT/infra/lambda/speaker-proposals"
 DYNAMODB_DIR="$REPO_ROOT/infra/dynamodb"
 IAM_DIR="$REPO_ROOT/infra/iam"
+APIGW_DIR="$REPO_ROOT/infra/api-gateway"
+WAF_DIR="$REPO_ROOT/infra/waf"
 
 trap 'echo "ERROR: deploy failed at line $LINENO" >&2' ERR
 
@@ -90,7 +93,7 @@ cd "$REPO_ROOT"
 echo "=== 4. Create/update Lambda function ==="
 ROLE_ARN="arn:aws:iam::${LAMBDA_ACCOUNT}:role/${ROLE_NAME}"
 
-ENV_VARS="Variables={HCAPTCHA_SECRET_SSM_PATH=/cloud-del-norte/speaker-proposals/hcaptcha-secret,IP_HASH_SALT_SSM_PATH=/cloud-del-norte/speaker-proposals/ip-hash-salt,RATE_TABLE_NAME=${RATE_TABLE},TABLE_NAME=${PROPOSALS_TABLE},NOTIFICATION_EMAIL=bryanj+clouddelnortespeakerrequest@abstractspacecraft.com,FROM_ADDRESS=heraldstack@clouddelnorte.org,ADMIN_PANEL_URL=https://awsug.clouddelnorte.org/admin/}"
+ENV_VARS="Variables={IP_HASH_SALT_SSM_PATH=/cloud-del-norte/speaker-proposals/ip-hash-salt,RATE_TABLE_NAME=${RATE_TABLE},TABLE_NAME=${PROPOSALS_TABLE},NOTIFICATION_EMAIL=bryanj+clouddelnortespeakerrequest@abstractspacecraft.com,FROM_ADDRESS=heraldstack@clouddelnorte.org,ADMIN_PANEL_URL=https://awsug.clouddelnorte.org/admin/}"
 
 if aws lambda get-function --function-name "$LAMBDA_NAME" \
     --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
@@ -121,47 +124,165 @@ else
     --region "$LAMBDA_REGION" --profile "$PROFILE"
 fi
 
-echo "=== 5. Create/update Function URL (idempotent) ==="
-CORS_FILE=$(mktemp /tmp/cors-config-XXXXXX.json)
-cat > "$CORS_FILE" <<'EOF'
-{"AllowOrigins":["https://clouddelnorte.org","https://awsug.clouddelnorte.org"],"AllowMethods":["*"],"AllowHeaders":["Content-Type","Authorization"],"AllowCredentials":false}
-EOF
+LAMBDA_ARN=$(aws lambda get-function --function-name "$LAMBDA_NAME" \
+  --region "$LAMBDA_REGION" --profile "$PROFILE" \
+  --query 'Configuration.FunctionArn' --output text)
 
-if aws lambda get-function-url-config --function-name "$LAMBDA_NAME" \
-    --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
-  echo "Function URL already exists, updating CORS..."
-  aws lambda update-function-url-config --function-name "$LAMBDA_NAME" \
-    --auth-type NONE \
-    --cors "file://$CORS_FILE" \
-    --region "$LAMBDA_REGION" --profile "$PROFILE"
+echo "=== 5. Create/update HTTP API Gateway (idempotent) ==="
+API_ID=$(aws apigatewayv2 get-apis \
+  --region "$LAMBDA_REGION" --profile "$PROFILE" \
+  --query "Items[?Name=='${API_NAME}'].ApiId" --output text)
+
+if [ -z "$API_ID" ]; then
+  echo "Creating API Gateway: $API_NAME..."
+  API_ID=$(aws apigatewayv2 create-api \
+    --cli-input-json "file://$APIGW_DIR/cdn-speaker-proposals-api.json" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE" \
+    --query 'ApiId' --output text)
+  echo "Created API: $API_ID"
 else
-  echo "Creating Function URL..."
-  aws lambda create-function-url-config --function-name "$LAMBDA_NAME" \
-    --auth-type NONE \
-    --cors "file://$CORS_FILE" \
-    --region "$LAMBDA_REGION" --profile "$PROFILE"
-  # Allow public invocation via Function URL
-  aws lambda add-permission --function-name "$LAMBDA_NAME" \
-    --statement-id FunctionURLAllowPublicAccess \
-    --action lambda:InvokeFunctionUrl \
-    --principal "*" \
-    --function-url-auth-type NONE \
-    --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null || true
+  echo "API Gateway $API_NAME already exists: $API_ID"
 fi
 
-FUNCTION_URL=$(aws lambda get-function-url-config --function-name "$LAMBDA_NAME" \
+API_ENDPOINT=$(aws apigatewayv2 get-api --api-id "$API_ID" \
   --region "$LAMBDA_REGION" --profile "$PROFILE" \
-  --query 'FunctionUrl' --output text)
+  --query 'ApiEndpoint' --output text)
+
+# Integration: find existing or create
+INTEGRATION_ID=$(aws apigatewayv2 get-integrations --api-id "$API_ID" \
+  --region "$LAMBDA_REGION" --profile "$PROFILE" \
+  --query "Items[?IntegrationUri=='${LAMBDA_ARN}'].IntegrationId" --output text)
+
+if [ -z "$INTEGRATION_ID" ]; then
+  echo "Creating Lambda integration..."
+  INTEGRATION_ID=$(aws apigatewayv2 create-integration \
+    --api-id "$API_ID" \
+    --integration-type AWS_PROXY \
+    --integration-uri "$LAMBDA_ARN" \
+    --payload-format-version "2.0" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE" \
+    --query 'IntegrationId' --output text)
+  echo "Created integration: $INTEGRATION_ID"
+else
+  echo "Integration already exists: $INTEGRATION_ID"
+fi
+
+# Route: POST /proposals
+ROUTE_ID=$(aws apigatewayv2 get-routes --api-id "$API_ID" \
+  --region "$LAMBDA_REGION" --profile "$PROFILE" \
+  --query "Items[?RouteKey=='POST /proposals'].RouteId" --output text)
+
+if [ -z "$ROUTE_ID" ]; then
+  echo "Creating route POST /proposals..."
+  aws apigatewayv2 create-route \
+    --api-id "$API_ID" \
+    --route-key "POST /proposals" \
+    --target "integrations/${INTEGRATION_ID}" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE" > /dev/null
+  echo "Route created."
+else
+  echo "Route POST /proposals already exists: $ROUTE_ID"
+fi
+
+# $default stage with auto-deploy
+STAGE_EXISTS=$(aws apigatewayv2 get-stages --api-id "$API_ID" \
+  --region "$LAMBDA_REGION" --profile "$PROFILE" \
+  --query "Items[?StageName=='\$default'].StageName" --output text)
+
+if [ -z "$STAGE_EXISTS" ]; then
+  echo "Creating \$default stage..."
+  aws apigatewayv2 create-stage \
+    --api-id "$API_ID" \
+    --stage-name '$default' \
+    --auto-deploy \
+    --region "$LAMBDA_REGION" --profile "$PROFILE" > /dev/null
+  echo "Stage created."
+else
+  echo "\$default stage already exists."
+fi
+
+# Lambda invoke permission for API Gateway (idempotent)
+STMT_ID="AllowAPIGatewayInvoke"
+if ! aws lambda get-policy --function-name "$LAMBDA_NAME" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null \
+    | jq -e ".Policy | fromjson | .Statement[] | select(.Sid==\"${STMT_ID}\")" > /dev/null 2>&1; then
+  echo "Adding lambda:InvokeFunction permission for API Gateway..."
+  aws lambda add-permission \
+    --function-name "$LAMBDA_NAME" \
+    --statement-id "$STMT_ID" \
+    --action lambda:InvokeFunction \
+    --principal apigateway.amazonaws.com \
+    --source-arn "arn:aws:execute-api:${LAMBDA_REGION}:${LAMBDA_ACCOUNT}:${API_ID}/*/*/proposals" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE" > /dev/null
+  echo "Permission added."
+else
+  echo "Lambda invoke permission already exists."
+fi
+
+echo "=== 6. Create/update WAF WebACL (idempotent) ==="
+WEBACL_ID=$(aws wafv2 list-web-acls --scope REGIONAL \
+  --region "$LAMBDA_REGION" --profile "$PROFILE" \
+  --query "WebACLs[?Name=='${WEBACL_NAME}'].Id" --output text)
+
+if [ -z "$WEBACL_ID" ]; then
+  echo "Creating WAF WebACL: $WEBACL_NAME..."
+  WEBACL_RESULT=$(aws wafv2 create-web-acl \
+    --cli-input-json "file://$WAF_DIR/speaker-proposals-webacl.json" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE")
+  WEBACL_ID=$(echo "$WEBACL_RESULT" | jq -r '.Summary.Id')
+  WEBACL_ARN=$(echo "$WEBACL_RESULT" | jq -r '.Summary.ARN')
+  echo "Created WebACL: $WEBACL_ID"
+else
+  echo "WebACL $WEBACL_NAME already exists: $WEBACL_ID"
+  WEBACL_ARN=$(aws wafv2 list-web-acls --scope REGIONAL \
+    --region "$LAMBDA_REGION" --profile "$PROFILE" \
+    --query "WebACLs[?Name=='${WEBACL_NAME}'].ARN" --output text)
+fi
+
+echo "=== 7. Associate WebACL with API Gateway stage (idempotent) ==="
+RESOURCE_ARN="arn:aws:apigateway:${LAMBDA_REGION}::/apis/${API_ID}/stages/\$default"
+aws wafv2 associate-web-acl \
+  --web-acl-arn "$WEBACL_ARN" \
+  --resource-arn "$RESOURCE_ARN" \
+  --region "$LAMBDA_REGION" --profile "$PROFILE"
+echo "WebACL associated with API Gateway stage."
+
+echo "=== 8. Get WAF Application Integration URL ==="
+APP_INTEGRATION_URL=$(aws wafv2 get-web-acl \
+  --name "$WEBACL_NAME" \
+  --scope REGIONAL \
+  --id "$WEBACL_ID" \
+  --region "$LAMBDA_REGION" --profile "$PROFILE" \
+  --query 'WebACL.TokenDomains' --output text 2>/dev/null || true)
+
+# ApplicationIntegrationURL is on the top-level get-web-acl response
+APP_INTEGRATION_URL=$(aws wafv2 get-web-acl \
+  --name "$WEBACL_NAME" \
+  --scope REGIONAL \
+  --id "$WEBACL_ID" \
+  --region "$LAMBDA_REGION" --profile "$PROFILE" \
+  --query 'ApplicationIntegrationURL' --output text 2>/dev/null || echo "(not yet available — check AWS console)")
+
+echo "=== 9. Cleanup: remove Lambda Function URL (idempotent) ==="
+if aws lambda delete-function-url-config --function-name "$LAMBDA_NAME" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
+  echo "Lambda Function URL deleted."
+else
+  echo "Lambda Function URL not found (already removed or never created)."
+fi
 
 echo ""
-echo "=== Done ==="
-echo "Function URL: $FUNCTION_URL"
+echo "=== 10. Summary ==="
+echo "API Gateway endpoint:    $API_ENDPOINT"
+echo "POST /proposals URL:     ${API_ENDPOINT}/proposals"
+echo "WebACL ARN:              $WEBACL_ARN"
+echo "WAF App Integration URL: $APP_INTEGRATION_URL"
 echo ""
-echo "=== SSM parameters to populate before first use ==="
-echo "  aws ssm put-parameter --name /cloud-del-norte/speaker-proposals/hcaptcha-secret \\"
-echo "    --value '<YOUR_HCAPTCHA_SECRET_KEY>' --type SecureString \\"
-echo "    --region $LAMBDA_REGION --profile $PROFILE"
-echo ""
+echo "=== SSM parameter to populate before first use ==="
 echo "  aws ssm put-parameter --name /cloud-del-norte/speaker-proposals/ip-hash-salt \\"
 echo "    --value \"\$(openssl rand -hex 32)\" --type SecureString \\"
 echo "    --region $LAMBDA_REGION --profile $PROFILE"
+echo ""
+echo "=== Frontend integration ==="
+echo "Load WAF JS SDK from: \${APP_INTEGRATION_URL}jsapi.js"
+echo "Use AwsWafIntegration.getToken() before submitting the proposal form."

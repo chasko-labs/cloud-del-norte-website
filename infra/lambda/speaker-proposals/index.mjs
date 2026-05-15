@@ -2,25 +2,21 @@ import { createHash } from "node:crypto";
 import { randomUUID } from "node:crypto";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import { SSMClient } from "@aws-sdk/client-ssm";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
+
+// ── Bot rejection is handled at the edge by AWS WAF CAPTCHA before this Lambda
+// is ever invoked. The WAF WebACL (cdn-speaker-proposals-webacl) enforces:
+//   - CAPTCHA challenge on POST /proposals
+//   - Rate limit 100 req/5 min per IP (WAF) + 3 req/hr soft policy (app layer)
+//   - Amazon IP Reputation managed rule
+// No CAPTCHA verification is performed inside this function.
 
 // ── module-scope singletons ──────────────────────────────────────────────────
 const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient({ region: "us-west-2" }));
-const ssm = new SSMClient({ region: "us-west-2" });
+// SSMClient retained for ip-hash-salt reads if needed in future; currently IP_HASH_SALT env var is used directly.
+const _ssm = new SSMClient({ region: "us-west-2" }); // eslint-disable-line no-unused-vars
 const ses = new SESv2Client({ region: "us-west-2" });
-
-let _hcaptchaSecret = null;
-
-async function getHcaptchaSecret() {
-	if (_hcaptchaSecret) return _hcaptchaSecret;
-	const res = await ssm.send(new GetParameterCommand({
-		Name: process.env.HCAPTCHA_SECRET_SSM_PATH,
-		WithDecryption: true,
-	}));
-	_hcaptchaSecret = res.Parameter.Value;
-	return _hcaptchaSecret;
-}
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const ALLOWED_ORIGINS = new Set([
@@ -35,7 +31,7 @@ function corsHeaders(requestOrigin) {
 	return {
 		"Content-Type": "application/json",
 		"Access-Control-Allow-Origin": origin,
-		"Access-Control-Allow-Headers": "Content-Type,Authorization",
+		"Access-Control-Allow-Headers": "Content-Type,Authorization,x-aws-waf-token",
 		"Access-Control-Allow-Methods": "POST,OPTIONS",
 	};
 }
@@ -103,6 +99,8 @@ function validateBody(body) {
 }
 
 // ── handler ──────────────────────────────────────────────────────────────────
+// Event shape: AWS Lambda payload format v2 (compatible with both API Gateway
+// HTTP API proxy integration and Lambda Function URL — both use the same v2 shape).
 export async function handler(event) {
 	const requestId = event.requestContext?.requestId || "local";
 	const method = event.requestContext?.http?.method || event.httpMethod || "UNKNOWN";
@@ -130,26 +128,8 @@ export async function handler(event) {
 			return respond(200, { ok: true }, headers);
 		}
 
-		// ── hCaptcha ─────────────────────────────────────────────────────────
-		const captchaToken = body["h-captcha-response"] || body.captchaToken;
-		if (!captchaToken) {
-			return respond(400, { error: "captcha_failed" }, headers);
-		}
-
-		const secret = await getHcaptchaSecret();
-		const ip = getRequestIp(event);
-		const verifyRes = await fetch("https://api.hcaptcha.com/siteverify", {
-			method: "POST",
-			headers: { "Content-Type": "application/x-www-form-urlencoded" },
-			body: `response=${encodeURIComponent(captchaToken)}&secret=${encodeURIComponent(secret)}&remoteip=${encodeURIComponent(ip)}`,
-		});
-		const verification = await verifyRes.json();
-		if (verification.success !== true) {
-			log("warn", "captcha failed", { requestId, errors: verification["error-codes"] });
-			return respond(400, { error: "captcha_failed" }, headers);
-		}
-
 		// ── rate limit ───────────────────────────────────────────────────────
+		const ip = getRequestIp(event);
 		const ipHash = hashIp(ip);
 		const rateKey = `${ipHash}#${hourBucket()}`;
 		const nowSec = Math.floor(Date.now() / 1000);
@@ -195,7 +175,7 @@ export async function handler(event) {
 			notes: body.notes || null,
 			submittedFromUrl: body.submittedFromUrl || null,
 			ipHash,
-			hcaptchaPassed: true,
+			wafCaptchaPassed: true,
 			status: "pending",
 			createdAt: new Date().toISOString(),
 		};
