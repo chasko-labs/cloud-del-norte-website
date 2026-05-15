@@ -1,12 +1,7 @@
 {
-  "Name": "cdn-speaker-proposals-api",
-  "ProtocolType": "HTTP",
-  "Description": "Public API for speaker proposal submissions, protected by AWS WAF CAPTCHA",
-  "CorsConfiguration": {
-    "AllowOrigins": ["https://clouddelnorte.org", "https://awsug.clouddelnorte.org"],
-    "AllowMethods": ["POST", "OPTIONS"],
-    "AllowHeaders": ["Content-Type", "Authorization", "x-aws-waf-token"],
-    "AllowCredentials": false,
-    "MaxAge": 300
+  "name": "cdn-speaker-proposals-api",
+  "description": "REST API for speaker proposals - WAF protected",
+  "endpointConfiguration": {
+    "types": ["REGIONAL"]
   }
 }

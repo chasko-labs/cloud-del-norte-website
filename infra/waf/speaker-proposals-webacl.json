@@ -2,7 +2,7 @@
   "Name": "cdn-speaker-proposals-webacl",
   "Scope": "REGIONAL",
   "DefaultAction": {"Allow": {}},
-  "Description": "WAF protection for speaker proposal API — CAPTCHA on POST, rate limit on all",
+  "Description": "WAF protection for speaker proposal API - CAPTCHA on POST, rate limit on all",
   "VisibilityConfig": {
     "SampledRequestsEnabled": true,
     "CloudWatchMetricsEnabled": true,
@@ -36,7 +36,7 @@
           "Statements": [
             {
               "ByteMatchStatement": {
-                "SearchString": "/proposals",
+                "SearchString": "L3Byb3Bvc2Fscw==",
                 "FieldToMatch": {"UriPath": {}},
                 "TextTransformations": [{"Priority": 0, "Type": "NONE"}],
                 "PositionalConstraint": "EXACTLY"
@@ -44,7 +44,7 @@
             },
             {
               "ByteMatchStatement": {
-                "SearchString": "POST",
+                "SearchString": "UE9TVA==",
                 "FieldToMatch": {"Method": {}},
                 "TextTransformations": [{"Priority": 0, "Type": "NONE"}],
                 "PositionalConstraint": "EXACTLY"
