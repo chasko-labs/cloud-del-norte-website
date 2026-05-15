@@ -1,0 +1,80 @@
+{
+  "Name": "cdn-speaker-proposals-webacl",
+  "Scope": "REGIONAL",
+  "DefaultAction": {"Allow": {}},
+  "Description": "WAF protection for speaker proposal API - Challenge on POST, rate limit on all",
+  "VisibilityConfig": {
+    "SampledRequestsEnabled": true,
+    "CloudWatchMetricsEnabled": true,
+    "MetricName": "cdn-speaker-proposals-webacl"
+  },
+  "CaptchaConfig": {
+    "ImmunityTimeProperty": {"ImmunityTime": 1800}
+  },
+  "Rules": [
+    {
+      "Name": "RateLimitPerIP",
+      "Priority": 0,
+      "Statement": {
+        "RateBasedStatement": {
+          "Limit": 100,
+          "AggregateKeyType": "IP"
+        }
+      },
+      "Action": {"Block": {}},
+      "VisibilityConfig": {
+        "SampledRequestsEnabled": true,
+        "CloudWatchMetricsEnabled": true,
+        "MetricName": "RateLimitPerIP"
+      }
+    },
+    {
+      "Name": "ChallengeOnProposalsPost",
+      "Priority": 1,
+      "Statement": {
+        "AndStatement": {
+          "Statements": [
+            {
+              "ByteMatchStatement": {
+                "SearchString": "L3Byb3Bvc2Fscw==",
+                "FieldToMatch": {"UriPath": {}},
+                "TextTransformations": [{"Priority": 0, "Type": "NONE"}],
+                "PositionalConstraint": "EXACTLY"
+              }
+            },
+            {
+              "ByteMatchStatement": {
+                "SearchString": "UE9TVA==",
+                "FieldToMatch": {"Method": {}},
+                "TextTransformations": [{"Priority": 0, "Type": "NONE"}],
+                "PositionalConstraint": "EXACTLY"
+              }
+            }
+          ]
+        }
+      },
+      "Action": {"Challenge": {}},
+      "VisibilityConfig": {
+        "SampledRequestsEnabled": true,
+        "CloudWatchMetricsEnabled": true,
+        "MetricName": "ChallengeOnProposalsPost"
+      }
+    },
+    {
+      "Name": "AWSManagedRulesAmazonIpReputationList",
+      "Priority": 2,
+      "OverrideAction": {"None": {}},
+      "Statement": {
+        "ManagedRuleGroupStatement": {
+          "VendorName": "AWS",
+          "Name": "AWSManagedRulesAmazonIpReputationList"
+        }
+      },
+      "VisibilityConfig": {
+        "SampledRequestsEnabled": true,
+        "CloudWatchMetricsEnabled": true,
+        "MetricName": "AWSManagedRulesAmazonIpReputationList"
+      }
+    }
+  ]
+}

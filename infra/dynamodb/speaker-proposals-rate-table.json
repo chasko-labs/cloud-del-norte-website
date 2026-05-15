@@ -1,0 +1,6 @@
+{
+  "TableName": "cdn-speaker-proposals-rate",
+  "AttributeDefinitions": [{"AttributeName": "ipHashHour", "AttributeType": "S"}],
+  "KeySchema": [{"AttributeName": "ipHashHour", "KeyType": "HASH"}],
+  "BillingMode": "PAY_PER_REQUEST"
+}

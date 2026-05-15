@@ -1,10 +1,13 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import Button from "@cloudscape-design/components/button";
 import HelpPanel from "@cloudscape-design/components/help-panel";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
+import { useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
+import SpeakerProposalForm from "../../../components/speaker-proposal-form";
 import "./help-panel.css";
 import SidePanelCard, { type SidePanelCardItem } from "./side-panel-card";
 
@@ -61,6 +64,7 @@ const WAYNE_CARDS: SidePanelCardItem[] = [
 
 export const HelpPanelHome = () => {
 	const { t } = useTranslation();
+	const [speakerFormOpen, setSpeakerFormOpen] = useState(false);
 
 	return (
 		<HelpPanel header={<h2>{t("helpPanel.userGroupTitle")}</h2>}>
@@ -100,6 +104,18 @@ export const HelpPanelHome = () => {
 								{t("helpPanel.womenWelcomeDesc")}
 							</p>
 						</div>
+						<div className="hp-role-card">
+							<p className="hp-role-card-name">{t("helpPanel.speakerRoleName")}</p>
+							<p className="hp-role-card-desc">{t("helpPanel.speakerRoleDesc")}</p>
+							<div style={{ marginTop: "8px" }}>
+								<Button
+									variant="primary"
+									onClick={() => setSpeakerFormOpen(true)}
+								>
+									{t("helpPanel.speakerRoleCta")}
+								</Button>
+							</div>
+						</div>
 					</SpaceBetween>
 					<p className="hp-body" style={{ marginTop: "12px" }}>
 						<Link href="https://www.meetup.com/awsugclouddelnorte/" external>
@@ -107,6 +123,12 @@ export const HelpPanelHome = () => {
 						</Link>
 					</p>
 				</div>
+
+				<SpeakerProposalForm
+					open={speakerFormOpen}
+					onClose={() => setSpeakerFormOpen(false)}
+					source="awsug-panel"
+				/>
 
 				<hr className="hp-divider" />
 

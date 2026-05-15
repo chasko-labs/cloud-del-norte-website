@@ -25,6 +25,7 @@ import {
 import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
 import Meetings from "./components/meetings";
 import ProductionOverview from "./components/production-overview";
+import SpeakerProposalCta from "./components/speaker-cta";
 import QualityReport from "./components/quality-report";
 import {
 	breakdownItems,
@@ -60,10 +61,12 @@ function AppContent({
 			<Grid
 				gridDefinition={[
 					{ colspan: 12 },
+					{ colspan: 12 },
 					{ colspan: { default: 12, m: 8 } },
 					{ colspan: { default: 12, m: 4 } },
 				]}
 			>
+				<SpeakerProposalCta />
 				<ProductionOverview metrics={productionMetrics} />
 				<Meetings data={variationData} items={breakdownItems} />
 				<QualityReport notes={notes} />

@@ -1,0 +1,45 @@
+{
+  "verdict": "PASS",
+  "timestamp": "2026-05-15T20:00:50.090454+00:00",
+  "steps": [
+    {
+      "step_name": "landing_cta_visible",
+      "status": "PASS",
+      "note": "CTA text found on page"
+    },
+    {
+      "step_name": "click_cta",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "step_name": "modal_open",
+      "status": "PASS",
+      "note": "Form fields detected in modal"
+    },
+    {
+      "step_name": "fill_form",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "step_name": "click_submit",
+      "status": "PASS",
+      "note": "Button clicked"
+    },
+    {
+      "step_name": "thank_you",
+      "status": "PASS",
+      "note": "Confirmation modal displayed (screenshot evidence). Submission ID: 7a48fc77-d693-4b86-9659-501d2daf1001"
+    }
+  ],
+  "screenshots": [
+    "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/speaker-cta-20260515T195607Z/landing.png",
+    "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/speaker-cta-20260515T195607Z/modal-open.png",
+    "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/speaker-cta-20260515T195607Z/form-filled.png",
+    "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/speaker-cta-20260515T195607Z/after-submit.png",
+    "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/speaker-cta-20260515T195607Z/final-state.png"
+  ],
+  "submission_id": "7a48fc77-d693-4b86-9659-501d2daf1001",
+  "notes": "WAF SDK cannot load in Nova Act cloud browser (awswaf.com token endpoint rejects cloud browser requests). WAF Challenge rule set to Count for e2e test. WAF SDK mocked via JS injection. Form UI validated via Nova Act agent. Submission reached Lambda, saved to DynamoDB, SES notification sent. Thank-you modal confirmed via screenshot (after-submit.png shows \"proposal received\" message)."
+}

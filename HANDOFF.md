@@ -73,6 +73,67 @@ CSP drift between repo (`infra/cloudfront-security-headers.json`) and live Cloud
 
 ---
 
+## in-flight 2026-05-15 — speaker proposal CTA (#132, PR #190)
+
+PR #190 has 13 commits on feat/speaker-proposals. Awaiting Bryan SES recipient verification + PR review.
+
+key commits:
+- backend lambda + iac (001937a0)
+- frontend form + admin panel (f992e5e0)
+- function url + csp updates (9f54c4ec)
+- iac corrections from live deploy (1ce72ef0)
+- pivot to aws waf captcha + api gateway (967f5a7e)
+- frontend pivot to aws waf captcha sdk (194ef2da)
+- deploy script corrections from waf migration (76ab17d8)
+- finalize env with api gateway + waf urls (def527fe)
+- schema enums + apigw v1 → v2 migration attempt (faa26aa1)
+- use REST API V1 for WAFv2 compatibility (0b589222) — WAFv2 regional only supports REST V1, not HTTP V2
+- nova act e2e verification script (afa549c8)
+- i18n format keys nested for traversal (e5729741) — Nova Act caught raw keys
+- nova act rerun confirms i18n fix (after e5729741)
+
+### deployed AWS infra (account 170473530355 us-west-2)
+
+- DynamoDB cdn-speaker-proposals + cdn-speaker-proposals-rate (TTL on expiresAt)
+- IAM role cdn-speaker-proposals-lambda-role
+- Lambda cdn-speaker-proposals (Node 22, 256MB, 10s)
+- API Gateway REST V1: cdn-speaker-proposals-api at https://7526ltaid2.execute-api.us-west-2.amazonaws.com/prod
+- WAF WebACL cdn-speaker-proposals-webacl associated to /prod stage. Rules: AmazonIpReputationList managed + RateLimit 100/5min + CAPTCHA on POST /proposals
+- WAF Application Integration URL: https://6af16c42-23d5-41bc-9a6b-68323971bdb2.us-west-2.sdk.awswaf.com/6af16c42-23d5-41bc-9a6b-68323971bdb2/
+- SSM /cloud-del-norte/speaker-proposals/ip-hash-salt populated
+- SES verification email sent to bryanj+clouddelnortespeakerrequest@abstractspacecraft.com — Bryan must click link
+
+### architectural decisions captured this session
+
+- WAFv2 regional scope supports REST API V1 (and ALB, App Runner, AppSync, Cognito), NOT HTTP API V2. Stayed on REST V1.
+- AWS-shop preference: AWS WAF CAPTCHA chosen over hCaptcha. Native, credit-eligible (~$6/mo).
+- Defense in depth: WAF rate limit 100/5min + AWS IP reputation managed rule + app-layer 3/hour DynamoDB conditional + honeypot + manual review.
+- SES from heraldstack@clouddelnorte.org (domain identity in 170473530355 us-west-2). Sandbox mode — recipient verification required per address.
+
+### verification results
+
+- Direct Lambda invoke with valid payload: 201, DynamoDB row written (id 1e341a5e-77aa-468c-9e46-f564a8a9539f). Pipeline works end-to-end with one exception: SES blocked because recipient unverified in sandbox.
+- Nova Act on dev.clouddelnorte.org: form-UI PASS (CTA visible, modal opens, all 8 fields, submit button), end-to-end INCONCLUSIVE (WAF blocks automated browsers as designed).
+- WAF correctly blocks automated submission flow.
+
+### bryan manual steps before merging PR #190
+
+1. click the SES verification email at bryanj+clouddelnortespeakerrequest@abstractspacecraft.com (sent during this session). once clicked, sandbox lets the pipeline deliver.
+2. submit one real speaker proposal from a real browser at https://dev.clouddelnorte.org/ to confirm end-to-end including SES delivery
+3. review + merge PR #190
+
+### post-merge
+
+- Woodpecker auto-deploys frontend on push to main
+- run scripts/sync-cloudfront-headers.sh to apply CSP additions for waf SDK origin
+
+### blocked-on (separate work)
+
+- chasko-labs/cloud-del-norte-meet#23 — admin GET/PATCH proposal routes. Until that lands, admin panel proposals table will show 'failed to load.' Public CTA + form + email all work without it.
+- SES production-access request (eliminates sandbox recipient-verification requirement). One-time AWS support ticket; takes 24h.
+
+---
+
 ## priority queue (next session)
 
 ### p0 — #162 phantom-nav fix

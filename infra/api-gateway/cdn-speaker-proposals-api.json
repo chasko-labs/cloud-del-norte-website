@@ -1,0 +1,7 @@
+{
+  "name": "cdn-speaker-proposals-api",
+  "description": "REST API for speaker proposals - WAF protected",
+  "endpointConfiguration": {
+    "types": ["REGIONAL"]
+  }
+}

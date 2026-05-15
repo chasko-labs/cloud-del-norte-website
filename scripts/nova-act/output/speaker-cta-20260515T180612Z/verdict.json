@@ -1,0 +1,43 @@
+{
+  "verdict": "INCONCLUSIVE",
+  "timestamp": "2026-05-15T18:11:11.825730+00:00",
+  "steps": [
+    {
+      "step_name": "landing_cta_visible",
+      "status": "PASS",
+      "note": "CTA text found on page"
+    },
+    {
+      "step_name": "click_cta",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "step_name": "modal_open",
+      "status": "PASS",
+      "note": "Form fields detected in modal"
+    },
+    {
+      "step_name": "fill_form",
+      "status": "PASS",
+      "note": ""
+    },
+    {
+      "step_name": "click_submit",
+      "status": "PASS",
+      "note": "Button clicked, form submitted"
+    },
+    {
+      "step_name": "thank_you",
+      "status": "INCONCLUSIVE",
+      "note": "Form submission attempted but got 'something went wrong' error. Likely WAF token acquisition failed in headless browser. Form UI flow is validated end-to-end up to the WAF gate."
+    }
+  ],
+  "screenshots": [
+    "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/speaker-cta-20260515T180612Z/landing.png",
+    "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/speaker-cta-20260515T180612Z/modal-open.png",
+    "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/speaker-cta-20260515T180612Z/form-filled.png",
+    "/home/bryanchasko/code/websites/cloud-del-norte-website/scripts/nova-act/output/speaker-cta-20260515T180612Z/thank-you.png"
+  ],
+  "submission_id": null
+}

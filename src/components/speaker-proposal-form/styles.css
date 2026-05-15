@@ -1,0 +1,29 @@
+/* speaker-proposal-form — modal-specific overrides only */
+
+.spf-honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.spf-char-counter {
+  font-size: var(--font-size-body-s, 12px);
+  color: var(--color-text-body-secondary, #5f6b7a);
+  text-align: right;
+  margin-top: 4px;
+}
+
+.spf-char-counter--over {
+  color: var(--color-text-status-error, #d91515);
+}
+
+.spf-hcaptcha-wrap {
+  margin-top: 8px;
+}
+
+.spf-result {
+  text-align: center;
+  padding: 24px 0;
+}
