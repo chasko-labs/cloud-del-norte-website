@@ -6,6 +6,7 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import { useEffect, useId, useRef, useState } from "react";
+import { SkeletonLine, SkeletonTitle } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 export interface FeedPost {
@@ -49,7 +50,7 @@ function useFeed(key: "andmore" | "awsml"): {
 	return { posts: data?.[key]?.slice(0, 5) ?? [], ready: data !== null };
 }
 
-function PostCarousel({ posts }: { posts: FeedPost[] }) {
+function PostCarousel({ posts, ready }: { posts: FeedPost[]; ready: boolean }) {
 	const { t } = useTranslation();
 	const [index, setIndex] = useState(0);
 	const [paused, setPaused] = useState(false);
@@ -61,6 +62,19 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
 		const id = setInterval(() => setIndex((i) => (i + 1) % posts.length), 6000);
 		return () => clearInterval(id);
 	}, [paused, posts.length]);
+
+	if (!ready) {
+		return (
+			<>
+				{[0, 1, 2, 3, 4].map((i) => (
+					<div key={i} style={{ marginBottom: "0.75rem" }}>
+						<SkeletonTitle />
+						<SkeletonLine />
+					</div>
+				))}
+			</>
+		);
+	}
 
 	if (posts.length === 0) {
 		return <p className="feed-posts__empty">{t("feedPage.feedPostsEmpty")}</p>;
@@ -166,7 +180,7 @@ function PostCarousel({ posts }: { posts: FeedPost[] }) {
 
 export function FeedAndmore() {
 	const { t } = useTranslation();
-	const { posts } = useFeed("andmore");
+	const { posts, ready } = useFeed("andmore");
 	return (
 		<Container
 			header={
@@ -185,14 +199,14 @@ export function FeedAndmore() {
 				</Header>
 			}
 		>
-			<PostCarousel posts={posts} />
+			<PostCarousel posts={posts} ready={ready} />
 		</Container>
 	);
 }
 
 export function FeedAwsml() {
 	const { t } = useTranslation();
-	const { posts } = useFeed("awsml");
+	const { posts, ready } = useFeed("awsml");
 	return (
 		<Container
 			header={
@@ -212,7 +226,7 @@ export function FeedAwsml() {
 				</Header>
 			}
 		>
-			<PostCarousel posts={posts} />
+			<PostCarousel posts={posts} ready={ready} />
 		</Container>
 	);
 }

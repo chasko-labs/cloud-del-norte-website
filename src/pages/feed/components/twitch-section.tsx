@@ -3,6 +3,7 @@
 
 import Container from "@cloudscape-design/components/container";
 import { useEffect, useRef, useState } from "react";
+import { SkeletonFrame } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { probeTwitchLive } from "../../../lib/twitch-channel-cache";
 
@@ -174,8 +175,12 @@ function TwitchChannelCard({
 	if (probeLive === false) return null;
 
 	if (!hostname) {
-		// SSR / pre-hydration — no embed, no fallback CTA (Bryan rejects it)
-		return null;
+		// SSR / pre-hydration — show skeleton until hostname resolves
+		return (
+			<Container>
+				<SkeletonFrame />
+			</Container>
+		);
 	}
 
 	return (

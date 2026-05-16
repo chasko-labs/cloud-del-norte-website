@@ -5,6 +5,7 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import { LazyEmbed } from "../../../components/lazy-embed";
+import { SkeletonFrame } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 export default function AndresYoutubeLive({
@@ -46,11 +47,7 @@ export default function AndresYoutubeLive({
 					</div>
 				</div>
 			) : (
-				<p>
-					<Link href="https://www.youtube.com/@andmoredev/live" external>
-						{t("feedPage.andresYoutubeWatchLive")}
-					</Link>
-				</p>
+				<SkeletonFrame />
 			)}
 		</Container>
 	);

@@ -30,6 +30,7 @@ import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { SkeletonLine, SkeletonTitle } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 const MEETUP_GROUP = "awsugclouddelnorte";
@@ -206,9 +207,12 @@ export default function NextMeetup() {
 
 	if (state === "loading") {
 		content = (
-			<Box color="text-status-inactive" fontSize="body-s">
-				{t("feedPage.nextMeetupLoading")}
-			</Box>
+			<>
+				<SkeletonTitle />
+				<SkeletonLine />
+				<SkeletonLine />
+				<SkeletonLine />
+			</>
 		);
 	} else if (state === "fallback" || !event) {
 		// es-MX gets a rich past-event spotlight card instead of the bare CTA.
