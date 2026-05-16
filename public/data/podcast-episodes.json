@@ -19,5 +19,15 @@
     "subtitle": "In this episode of the AWS Podcast, you'll hear how Cohere Health®, uses Amazon Bedrock AgentCore to",
     "display": "#754: Accelerating healthcare decisions with agents — In this episode of the AWS Podcast, you'll hear how Cohere Health®, uses Amazon Bedrock Ag"
   },
-  "aws_developers_podcast": null
+  "aws_developers_podcast": null,
+  "talking_serverless": {
+    "title": "[Video Episode] Simplifying Complexity with Serverless ft. Sushanth Mangalore",
+    "subtitle": "In this episode, we sit down with Sushanth Mangalore , Architect & Technology Leader at AWS, to explore complexity and i",
+    "display": "[Video Episode] Simplifying Complexity with Serverless ft. Sushanth Mangalore — In this episode, we sit down with Sushanth Mangalore , Architect & Technology Leader at AW"
+  },
+  "onda_aws": {
+    "title": "EP334: DevOps Agent",
+    "subtitle": "AWS DevOps Agent, uno de los anuncios más interesantes de re:Invent 2025 en la categoría de Management & Governance, y q",
+    "display": "EP334: DevOps Agent — AWS DevOps Agent, uno de los anuncios más interesantes de re:Invent 2025 en la categoría d"
+  }
 }

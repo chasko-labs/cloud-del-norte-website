@@ -789,6 +789,58 @@ export const STREAMS: StreamDef[] = [
 			);
 		},
 	},
+	{
+		key: "talking_serverless",
+		type: "podcast",
+		// latest enclosure from anchor.fm/s/e2c52c8/podcast/rss (decoded cloudfront URL)
+		url: "https://d3ctxlq1ktw2nl.cloudfront.net/staging/2025-10-11/412279204-44100-2-c5fbb32d7a846.mp3",
+		rssFeedUrl: "https://anchor.fm/s/e2c52c8/podcast/rss",
+		label: "talking serverless",
+		location: { city: "distributed", region: "serverless", country: "global" },
+		// lambda purple theme — distinct from aws_podcast/aws_bites/logicast orange palette
+		colors: {
+			primary: "#5C2D91",
+			secondary: "#FF9900",
+			accent: "#faf7f0",
+			primaryLight: "#7c4ab8",
+			primaryDark: "#9060f0",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
+			);
+		},
+	},
+	{
+		// AWS LATAM podcast (Podcast AWS LATAM / Onda AWS) — hosted on Art19.
+		// RSS: https://rss.art19.com/podcast-aws-latam
+		// Audio served from rss.art19.com — added to CSP connect-src + media-src.
+		key: "onda_aws",
+		type: "podcast",
+		url: "https://rss.art19.com/episodes/dcdecbda-f200-4c08-842e-40d9cf459dc5.mp3",
+		rssFeedUrl: "https://rss.art19.com/podcast-aws-latam",
+		label: "onda aws latam",
+		location: { city: "distributed", region: "AWS LATAM", country: "México" },
+		// AWS orange + LATAM sapling green
+		colors: {
+			primary: "#FF9900",
+			secondary: "#00A86B",
+			accent: "#faf7f0",
+			primaryLight: "#FF9900",
+			primaryDark: "#ffb84d",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
+			);
+		},
+	},
 ];
 
 /**
