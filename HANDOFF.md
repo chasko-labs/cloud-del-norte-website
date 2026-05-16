@@ -2,8 +2,74 @@
 
 **date:** 2026-05-16  
 **branch:** main  
-**last commit:** 5e5e787e feat(speaker-proposals): file github issue alongside ses email + ddb writeup  
-**deploy:** verified 2026-05-16 15:13 UTC — Lambda end-to-end PASS (DynamoDB + SES + GitHub issue #192 all fired via Promise.allSettled). Frontend deployed at 15:03:00 GMT.
+**last commit:** 6cf1b8ff feat(feedback): report-a-bug + make-a-wish shortcuts in right panel  
+**deploy:** verified 2026-05-16 15:34 UTC — all 4 Wave 3 commits live, feedback Lambda end-to-end PASS (issue #194 created + closed as smoke-test cleanup).
+
+---
+
+## completed 2026-05-16 session — Wave 3 (skeletons + podcast feeds + player next-button + bug/wish shortcuts)
+
+Four commits on main, all four parallel tracks landed cleanly:
+
+| commit | description |
+|--------|-------------|
+| 4aab3a75 | fix(player): next-station button stays visible regardless of metadata length |
+| 5ff3b662 | feat(streams): add talking serverless + onda aws latam to player rotation |
+| 15691dfd | feat(feed): cdn-skeleton primitive + applied to every async card on feed page |
+| 6cf1b8ff | feat(feedback): report-a-bug + make-a-wish shortcuts in right panel |
+
+### what shipped
+
+**Stage A — Skeletons on async feed cards**
+- New `cdn-skeleton` primitive at `src/styles/cdn-skeleton.css` + reusable React component at `src/components/skeleton/index.tsx`
+- Light + dark mode tuned shimmer, prefers-reduced-motion respected, `aria-live polite` for SR users
+- Applied to: next-meetup, twitch sections (hostname pre-hydration), andres youtube live (videoId null), awsml + andmore feed lists (useFeed ready flag)
+
+**Stage B — Two new podcasts in player rotation**
+- Talking Serverless: `https://anchor.fm/s/e2c52c8/podcast/rss` — purple theme primary `#5C2D91` riffing on Lambda λ
+- Onda AWS LATAM: `https://rss.art19.com/podcast-aws-latam` — AWS orange + sapling green for LATAM warmth
+- CSP media-src updated to include `rss.art19.com` (Talking Serverless audio is already on `d3ctxlq1ktw2nl.cloudfront.net` which was whitelisted)
+- Both follow the existing podcast template (`type: "podcast"`, `parseMeta` extracts first `<item>` title via Document.querySelector)
+- `scripts/fetch-feeds.mjs` PODCAST_FEEDS array updated for build-time pre-fetch
+
+**Stage C — Next-station button visibility fix**
+- Player row layout: `flex-shrink: 0` on the next-button slot, `min-width: 0` + `overflow: hidden` + `text-overflow: ellipsis` on the metadata sibling
+- Long now-playing strings (KEXP track + artist + DJ comment, KUTX program names, KSFR talk-show fallbacks, Concepto Radial fallback link) no longer push the chevron off-screen
+- Focus + aria-label preserved
+
+**Stage D — Report a bug + make a wish shortcuts**
+- New Lambda `cdn-feedback` at `https://j66tb5lrvmr7bzxptje6ojr3aq0rbsht.lambda-url.us-west-2.on.aws/`
+- No DynamoDB, no SES — pure GitHub issue creation against `chasko-labs/cloud-del-norte-website`
+- Single payload schema: `{type: 'bug' | 'wish', summary, details, contactEmail?}`
+- Labels attached: `bug` or `wish` + `community-feedback` (verified attached on issue #194)
+- Reuses existing SSM token at `/cloud-del-norte/speaker-proposals/github-token` (no new secret required)
+- Per-IP rate limit at app layer (5/hr) via in-memory Map
+- CSP wildcard `*.lambda-url.us-west-2.on.aws` on connect-src for both main + awsug
+- Two new CTA cards in `HelpPanelHome` between the CFP card and the `interested?` expandable, both rendering with the cdn purple/violet button via the established `.hp-role-card--cta` scope
+- Bilingual copy in both locales
+
+### end-to-end verification
+
+```
+cdn-feedback Lambda direct invoke: statusCode 200
+issue url: https://github.com/chasko-labs/cloud-del-norte-website/issues/194
+labels attached: community-feedback + wish
+issue closed as smoke-test cleanup
+visual: right panel shows CFP + bug + wish stacked correctly above 'interested?'
+visual: player widget shows next-button beside long metadata (CONCEPTO RADIAL / Ciudad de México) without squeeze
+```
+
+### lessons learned
+
+- Four parallel ghost-solan-rust-coder dispatches with disjoint file scopes ran cleanly — no file conflicts, all committed independently. Total session time ≈ longest single track.
+- Bryan correction "I already fucking asked for those things" — when Bryan raises items in a single multi-part prompt, ALL items are in scope. Parse multi-part prompts greedily and dispatch breadth-first; ask clarification only on architecturally divergent paths (Option A/B/C), not on scope.
+- Bryan correction "we dont use aws creds we sso and your already ssoed" — always check SSO state agent-side before requesting Bryan action. heraldstack gh CLI identity is the right agent identity for service automation.
+- gh CLI labels survive issue creation even when `gh issue list --label X` returns empty briefly post-create — the label IS attached, just indexer lag. Verify with `gh issue view N --json labels` rather than `gh issue list --label X`.
+
+### items still on Bryan's earlier ask, not yet done
+
+- **Hamburger left = info right button consistency on real device** (claimed fixed in 381626bd; untouched this session; Bryan flagged from his earlier prompt)
+- **Deeper skeleton coverage** — this session covered next-meetup, twitch, andres-youtube, awsml + andmore. Builder deck, vbrownbag, zacs carousels still need state-machine work to expose the loading branch.
 
 ---
 
