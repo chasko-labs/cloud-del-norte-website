@@ -91,17 +91,37 @@ const columnDefinitions = (
 	},
 	{
 		header: t("meetings.tableHeaders.presenters"),
-		cell: ({ presenters, speakerBioUrl }) =>
-			speakerBioUrl ? (
-				<SpaceBetween size="xxs" direction="horizontal">
+		cell: ({ presenters, speakerBioUrl, speakerBio }) => (
+			<SpaceBetween size="xxs">
+				{speakerBioUrl ? (
+					<SpaceBetween size="xxs" direction="horizontal">
+						<span>{presenters}</span>
+						<Link href={speakerBioUrl} external>
+							bio
+						</Link>
+					</SpaceBetween>
+				) : (
 					<span>{presenters}</span>
-					<Link href={speakerBioUrl} external>
-						bio
-					</Link>
-				</SpaceBetween>
-			) : (
-				presenters
-			),
+				)}
+				{speakerBio && (
+					<span
+						style={{
+							display: "-webkit-box",
+							fontStyle: "italic",
+							fontSize: "var(--font-size-body-s, 12px)",
+							color: "var(--color-text-body-secondary)",
+							WebkitLineClamp: 3,
+							WebkitBoxOrient: "vertical",
+							overflow: "hidden",
+							textOverflow: "ellipsis",
+						}}
+						title={speakerBio}
+					>
+						{speakerBio}
+					</span>
+				)}
+			</SpaceBetween>
+		),
 		sortingField: "presenters",
 		minWidth: 160,
 	},

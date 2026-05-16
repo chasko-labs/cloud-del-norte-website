@@ -19,6 +19,8 @@ export interface meeting {
 	roomPassword?: string;
 	// URL to the speaker's bio page (LinkedIn, personal site, etc.)
 	speakerBioUrl?: string;
+	// Short speaker bio text. Optional — populated once the API returns it.
+	speakerBio?: string;
 	// Explicit Meetup RSVP URL. Falls back to eventlink when absent.
 	meetupRsvpUrl?: string;
 }
