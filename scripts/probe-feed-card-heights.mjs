@@ -6,6 +6,10 @@
 // Launches headless Chromium at desktop (1024×768) and mobile (375×812),
 // measures all .feed-carousel__frame and .feed-twitch__frame elements,
 // and reports which exceed the benchmark by >20%.
+//
+// Expected max-heights after fix:
+//   desktop: 315px (560px * 9/16)
+//   mobile:  210px
 
 import { createRequire } from "node:module";
 

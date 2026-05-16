@@ -18,6 +18,7 @@
 	width: 100%;
 	aspect-ratio: 16 / 9;
 	max-width: 560px;
+	max-height: 315px;
 }
 
 .feed-carousel__frame iframe {
@@ -235,6 +236,7 @@
 	width: 100%;
 	aspect-ratio: 16 / 9;
 	max-width: 560px;
+	max-height: 315px;
 }
 
 .feed-twitch__frame iframe {
@@ -249,6 +251,13 @@
 .feed-twitch__fallback {
 	font-size: var(--cdn-text-sm);
 	color: var(--cdn-color-text-muted);
+}
+
+@media (max-width: 600px) {
+	.feed-carousel__frame,
+	.feed-twitch__frame {
+		max-height: 210px;
+	}
 }
 
 /* ---------- Feed posts section ---------- */
@@ -872,13 +881,11 @@
 	box-shadow:
 		0 0 0 1px rgba(233, 25, 22, 0.3),
 		0 0 28px rgba(233, 25, 22, 0.12);
-	/* live video embeds get the hero tier — 16:9 iframes at full grid width
-	   need ~420px to render the player UI + chat + safe-area without the
-	   slot growing under the video. overrides any cell-tier min-height
-	   inherited from .feed-grid__cell or .feed-grid__cell--full because
-	   .feed-live-hero__card always co-occurs with both classes (see
-	   app.tsx live hero render). */
-	min-height: var(--cdn-slot-hero-min-h, 420px);
+	/* live video embeds get the hero tier — constrained to prevent oversized
+	   cards relative to the standard YouTube carousel benchmark (~315px frame).
+	   Container chrome (header + padding) adds ~80px, so total card max is ~420px.
+	   min-height removed — let content size naturally within the cap. */
+	max-height: 420px;
 	min-width: 0;
 	display: flex;
 	flex-direction: column;
