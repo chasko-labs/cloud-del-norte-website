@@ -2,10 +2,10 @@ import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import { useState } from "react";
-import { useTranslation } from "../../../hooks/useTranslation";
-import SpeakerProposalForm from "../../../components/speaker-proposal-form";
+import { useTranslation } from "../../hooks/useTranslation";
+import SpeakerProposalForm from "../speaker-proposal-form";
 
-export default function SpeakerProposalCta() {
+export default function SpeakerProposalCta({ source = "home" }: { source?: "home" | "awsug-panel" | "feed" }) {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
@@ -32,7 +32,7 @@ export default function SpeakerProposalCta() {
       <SpeakerProposalForm
         open={open}
         onClose={() => setOpen(false)}
-        source="home"
+        source={source}
       />
     </>
   );

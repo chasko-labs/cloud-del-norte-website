@@ -19,7 +19,7 @@ import "./styles.css";
 interface Props {
   open: boolean;
   onClose: () => void;
-  source: "home" | "awsug-panel";
+  source: "home" | "awsug-panel" | "feed";
 }
 
 type MultiselectOption = { label: string; value: string };

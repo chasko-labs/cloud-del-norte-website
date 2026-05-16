@@ -24,6 +24,7 @@ import {
 	type Theme,
 } from "../../utils/theme";
 import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
+import SpeakerProposalCta from "../../components/speaker-proposal-cta";
 import AndresYoutubeLive from "./components/andres-youtube-live";
 import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
@@ -223,6 +224,10 @@ function AppContent({
 		<ContentLayout
 			header={<Header variant="h1">{t("feedPage.header")}</Header>}
 		>
+			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
+				<SpeakerProposalCta source="feed" />
+			</div>
+			<hr className="feed-section-divider" />
 			{/* Stable hero slot — wrapper renders always so cards appearing /
 			    disappearing don't unmount a parent and reflow content below.
 			    Pair with sticky-poll on data sources gating `liveToShow` so

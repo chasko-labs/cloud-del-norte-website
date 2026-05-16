@@ -25,7 +25,7 @@ import {
 import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
 import Meetings from "./components/meetings";
 import ProductionOverview from "./components/production-overview";
-import SpeakerProposalCta from "./components/speaker-cta";
+import SpeakerProposalCta from "../../components/speaker-proposal-cta";
 import QualityReport from "./components/quality-report";
 import {
 	breakdownItems,
