@@ -1,5 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
+
+import Box from "@cloudscape-design/components/box";
+import Tabs from "@cloudscape-design/components/tabs";
 import { useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
@@ -26,6 +29,47 @@ function BreadcrumbsContent() {
 	return (
 		<Breadcrumbs
 			active={{ text: t("meetings.breadcrumb"), href: "/meetings/index.html" }}
+		/>
+	);
+}
+
+const today = new Date().toISOString().slice(0, 10);
+
+const upcomingMeetings = variationsData.filter(
+	(m) => !m.scheduledDate || m.scheduledDate >= today || m.happened === "false",
+);
+
+const pastMeetings = variationsData.filter(
+	(m) => m.happened === "true" || (m.scheduledDate && m.scheduledDate < today),
+);
+
+function MeetingsTabs() {
+	const { t } = useTranslation();
+	const [activeTab, setActiveTab] = useState("upcoming");
+
+	return (
+		<Tabs
+			activeTabId={activeTab}
+			onChange={({ detail }) => setActiveTab(detail.activeTabId)}
+			tabs={[
+				{
+					id: "upcoming",
+					label: t("meetings.tabs.upcoming"),
+					content: <VariationsTable meetings={upcomingMeetings} />,
+				},
+				{
+					id: "history",
+					label: t("meetings.tabs.history"),
+					content:
+						pastMeetings.length === 0 ? (
+							<Box textAlign="center" padding="l" color="text-status-inactive">
+								{t("meetings.noPastMeetings")}
+							</Box>
+						) : (
+							<VariationsTable meetings={pastMeetings} />
+						),
+				},
+			]}
 		/>
 	);
 }
@@ -60,7 +104,7 @@ export default function App() {
 		>
 			{/* Guests can browse meetings; the join action inside VariationsTable
 			    gates on auth — guests see the list, must sign in to RSVP. */}
-			<VariationsTable meetings={variationsData} />
+			<MeetingsTabs />
 		</ShellLayout>
 	);
 }
