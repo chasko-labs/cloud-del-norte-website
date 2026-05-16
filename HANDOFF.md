@@ -2,22 +2,76 @@
 
 **date:** 2026-05-16  
 **branch:** main  
-**last commit:** 4be9fd66 fix(player): tighten left-edge mask + allow play-button shadow bleed  
-**deploy:** verified 2026-05-16 21:13 UTC — main + awsug live (manual deploy fallback used; Woodpecker still in #157 death-loop).
+**last commit:** b67ce092 feat(meetings): timezone picker on meetings list (#186 slice 3 partial)  
+**deploy:** verified 2026-05-16 21:26 UTC — all 3 subdomains live via manual fallback (Woodpecker still in #157 death-loop).
 
 ---
 
-## completed 2026-05-16 evening — paused player CSS WIP resumed + shipped
+## completed 2026-05-16 evening — Wave 4 (autonomous PO decomposition, 4-track parallel)
 
-Single-commit fix on the persistent-player splash zone. Was sitting uncommitted on AIBOX before resumption.
+Bryan delegated full PO discretion ("its up to you and the scrum team"). Picked 4 disjoint tracks from the backlog excluding anything gated on Bryan's hands or design choices. Four parallel ghost-solan dispatches, all committed + pushed.
 
-| commit | description |
-|--------|-------------|
-| 4be9fd66 | fix(player): mask reveal 50% → 25% so skip/next button never hidden + overflow:visible so play-button shadow can bleed past splash |
+| commit | track | description |
+|--------|-------|-------------|
+| da87e44f | C | chore: gitignore nova-act bytecode + speaker-cta output artifacts (8 untracked paths cleaned) |
+| bf62da91 | A | feat(skeletons): builder deck + vbrownbag + zacs carousels show CdnSkeleton during load |
+| eed50e3e | B | feat(auth): UX polish pass — breadcrumbs + breathing room + glass opacity + CTA color + hide player |
+| b67ce092 | D | feat(meetings): timezone picker on meetings list (#186 slice 3 partial) |
 
-Dark-mode rule kept at 50% reveal — denser background, different optical balance. Built clean (biome ci 2 pre-existing warnings only, build 2.23s). Verified live in `lib/assets/theme-DapIvsfY.css` minified bundle: `overflow:visible` + `mask-image:linear-gradient(90deg,#0000 0%,#000 25%)`.
+### what shipped per track
 
-Woodpecker auto-deploy did not pick up the push — agent still in #157 death-loop on chasko-labs/chrome-extension-moodle-uploader (`database is locked` + GH statuses 422 retry storm). Manual deploy via `scripts/deploy-manual.sh main` + `awsug --skip-build` ran clean. CloudFront invalidations I6Q9NL1DZ5Q3XPINJTSG7QUTHT (main) + IBEF371A5U633ZRQ90W9D5OSJ2 (awsug). Auth subdomain not redeployed — auth surface doesn't include the persistent player.
+**Track A — Skeletons deeper (Bryan flagged still-pending in HANDOFF, completed)**
+- `youtube-channel-carousel.tsx`: useEffect mounted flag + SkeletonFrame on first paint (covers vbrownbag + zacs carousels which share this component)
+- `youtube-carousel.tsx`: same pattern (covers builder deck)
+- Builds clean across all 3 lib targets
+
+**Track B — a2 login UX polish (5 concrete 2026-05-03 research findings, NOT the design-alternative choice)**
+- Finding 1 (breadcrumbs): already suppressed via `body.cdn-auth-subdomain [class*="awsui_breadcrumbs"] { display: none; }` in pre-existing styles.css. Confirmed present, no change needed. Identity link already targets `https://clouddelnorte.org/feed/index.html`.
+- Finding 2 (form breathing room): `--cdn-auth-form` row-gap +8px, label margin +4px, all using Cloudscape `--space-*` tokens
+- Finding 3 (glass card opacity): `--cdn-glass-bg` alpha 0.82 → 0.97 light mode, 0.88 → 1.0 dark mode
+- Finding 4 (CTA color): amber gradient (`#6b3a10 → #8b5a2b`) → warm gold (`#a07828 → var(--cdn-gold, #c9a23f)`). Cloudscape primary token also retargeted.
+- Finding 5 (hide player on auth): `body.cdn-auth-subdomain .cdn-player-slot { display: none; }`. Component intact; gate is CSS-only.
+
+**Track C — repo hygiene**
+- Deleted 8 untracked detritus paths: 5 `scripts/nova-act/output/speaker-cta-20260515T*` dirs, 1 `__pycache__/site-critique.cpython-312.pyc`, 3 one-shot probe scripts (`probe-feed-after-scroll.mjs`, `probe-fiona-restored.mjs`, `probe-home-cta.mjs`)
+- Fixed mangled .gitignore patterns: now properly ignores `scripts/nova-act/output/` + `scripts/nova-act/__pycache__/`
+- Canonical `scripts/probe-cta-button-classes.mjs` retained (Cloudscape probe pattern)
+
+**Track D — Timezone picker on meetings list (#186 slice 3 partial)**
+- New `src/components/meetings/TimezoneSelect.tsx` (Cloudscape Select dropdown of IANA zones via Intl.supportedValuesOf with curated fallback)
+- `src/pages/meetings/util/timezone.ts` LS_TZ_KEY = "cdn-meetings-tz" + format helpers with timeZoneName: 'short'
+- `meetings-table.tsx` reads selected zone from localStorage, renders converted times + abbreviated zone name
+- en-US + es-MX i18n keys added
+- Scope correctly limited to main subdomain — verified awsug meetings page (`src/sites/awsug/meetings/app.tsx`) has no list-with-times, just a join-call button + meetup.com link, so picker is correctly NOT shipped there
+
+### deploy
+
+Woodpecker still in #157 death-loop. Manual fallback ran clean for all 3 subdomains:
+- main: invalidation IE2GLBP95N7NYUOHC53YWLGBSJ → last-modified 2026-05-16T21:25:03Z
+- auth: invalidation logged → last-modified 2026-05-16T21:25:38Z (gets the auth polish pass)
+- awsug: invalidation logged → last-modified 2026-05-16T21:26:15Z
+
+### verification of deployed bundles
+
+| track | signature found in | status |
+|-------|---------------------|--------|
+| A | `lib/assets/feed-CCbNVqfh.js` (SkeletonFrame import) | ✓ |
+| B | `lib-auth/assets/_layout-*.css` + `lib/assets/theme-*.css` (.cdn-auth-subdomain rules + --cdn-glass-bg + --cdn-gold) | ✓ |
+| C | `git status --short` clean (only transient build-time feeds.json restored post-deploy) | ✓ |
+| D | `lib/assets/timezone-BX--vUwY.js` (cdn-meetings-tz key) | ✓ |
+
+### lessons learned
+
+- "leave me out of it" is a real directive: pick from backlog, exclude human-gated items, execute disjoint parallel dispatch, don't return to ask.
+- For multi-feature issues (#186 had 5 pieces in title), pick the most isolated piece for autonomous dispatch — leave cross-repo or backend-coupled pieces for sessions where Bryan can resolve dependencies.
+- "Polish pass with N concrete findings" beats "design alternative" when no decision has been made — ships visible improvement without committing to a direction.
+- Always grep BOTH `lib/` AND `lib-awsug/` for new feature signatures post-deploy. Apparent surface-coverage gaps may be correct scoping (Track D's awsug "miss" was actually correct — that surface has no list-with-times).
+- ghost-solan-rust-coder: 4-of-4 reliable in this wave. All ran biome + build gates and pushed clean.
+
+### items still on Bryan's earlier ask, not yet done
+
+- Hamburger-left = info-right button consistency on real device — needs Pixel 9 + Bryan
+- Big a2 design alternative selection (postcard / command console / desert entry) — Bryan owns this choice; polish pass shipped meanwhile
 
 
 
