@@ -1,6 +1,6 @@
 import "./styles.css";
 
-/** Headphones-over-microphone icon for podcast mode */
+/** k4 — headphones-over-microphone composite icon for podcast mode indicator */
 export function PodcastIcon() {
 	return (
 		<svg
@@ -15,15 +15,20 @@ export function PodcastIcon() {
 			className="cdn-podcast-icon"
 			aria-hidden="true"
 		>
-			{/* headphone band */}
-			<path d="M4 15V12a8 8 0 0 1 16 0v3" />
+			{/* mic body — classic capsule, lower-center, partially behind headphone band */}
+			<rect x="9.5" y="10" width="5" height="7" rx="2.5" />
+			{/* mic stand stem */}
+			<line x1="12" y1="17" x2="12" y2="21" />
+			{/* mic stand base */}
+			<line x1="9" y1="21" x2="15" y2="21" />
+			{/* headphone band — U-arc over the top, crossing in front of mic */}
+			<path d="M4 14V11a8 8 0 0 1 16 0v3" />
 			{/* left ear cup */}
-			<rect x="2" y="14" width="4" height="6" rx="1" />
+			<rect x="2" y="13" width="4" height="5" rx="1.5" />
 			{/* right ear cup */}
-			<rect x="18" y="14" width="4" height="6" rx="1" />
-			{/* mic below center */}
-			<line x1="12" y1="18" x2="12" y2="22" />
-			<circle cx="12" cy="17" r="2" />
+			<rect x="18" y="13" width="4" height="5" rx="1.5" />
+			{/* accent: small dynamic line on mic capsule body */}
+			<line x1="11" y1="13" x2="13" y2="13" />
 		</svg>
 	);
 }
