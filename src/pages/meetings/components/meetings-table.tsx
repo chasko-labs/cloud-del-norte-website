@@ -1,3 +1,5 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
 import { useCollection } from "@cloudscape-design/collection-hooks";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
@@ -8,53 +10,17 @@ import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import Modal from "@cloudscape-design/components/modal";
 import Pagination from "@cloudscape-design/components/pagination";
-import Popover from "@cloudscape-design/components/popover";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import StatusIndicator from "@cloudscape-design/components/status-indicator";
 import Table, { type TableProps } from "@cloudscape-design/components/table";
 import TextFilter from "@cloudscape-design/components/text-filter";
 import { type ReactNode, useState } from "react";
+import TimezoneSelect from "../../../components/meetings/TimezoneSelect";
 import { useAuth } from "../../../hooks/useAuth";
 import { useTranslation } from "../../../hooks/useTranslation";
 import type { meeting } from "../data";
 import { generateRoomPassword } from "../data";
-import { formatInTz, TZ_ZONES } from "../util/timezone";
+import { formatInTz, getStoredTimezone } from "../util/timezone";
 import JitsiEmbed from "./jitsi-embed";
-
-function TimezonePopover({
-	scheduledDate,
-	scheduledTime,
-	children,
-}: {
-	scheduledDate: string;
-	scheduledTime: string;
-	children: ReactNode;
-}) {
-	return (
-		<Popover
-			dismissButton={false}
-			position="right"
-			size="medium"
-			triggerType="text"
-			content={
-				<SpaceBetween size="xxs">
-					{TZ_ZONES.map(({ label, tz }) => (
-						<Box key={tz}>
-							<Box variant="awsui-key-label" display="inline">
-								{label}:{" "}
-							</Box>
-							<Box variant="span">
-								{formatInTz(scheduledDate, scheduledTime, tz)}
-							</Box>
-						</Box>
-					))}
-				</SpaceBetween>
-			}
-		>
-			{children}
-		</Popover>
-	);
-}
 
 function generateInstantRoomName(): string {
 	const bytes = new Uint8Array(3);
@@ -105,17 +71,18 @@ const columnDefinitions = (
 	t: (key: string) => string,
 	onJoin: (m: meeting) => void,
 	isAuthenticated: boolean,
+	selectedTz: string,
 ): TableProps<meeting>["columnDefinitions"] => [
 	{
 		header: t("meetings.tableHeaders.meetupTitle"),
 		cell: (m) =>
 			m.scheduledDate && m.scheduledTime ? (
-				<TimezonePopover
-					scheduledDate={m.scheduledDate}
-					scheduledTime={m.scheduledTime}
-				>
-					{m.name}
-				</TimezonePopover>
+				<SpaceBetween size="xxs">
+					<span>{m.name}</span>
+					<Box variant="small" color="text-body-secondary">
+						{formatInTz(m.scheduledDate, m.scheduledTime, selectedTz)}
+					</Box>
+				</SpaceBetween>
 			) : (
 				m.name
 			),
@@ -231,6 +198,9 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 		CollectionPreferencesProps["preferences"]
 	>({ pageSize: 20 });
 	const [activeRoom, setActiveRoom] = useState<meeting | null>(null);
+	const [selectedTz, setSelectedTz] = useState<string>(() =>
+		getStoredTimezone(),
+	);
 
 	const hasCallToday = meetings.some(
 		(m) => m.roomName && isJoinWindowOpen(m.scheduledDate, m.scheduledTime),
@@ -271,6 +241,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 					t,
 					setActiveRoom,
 					auth.isAuthenticated,
+					selectedTz,
 				)[0],
 			},
 		},
@@ -300,6 +271,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 						t,
 						setActiveRoom,
 						auth.isAuthenticated,
+						selectedTz,
 					)}
 					stickyHeader={true}
 					resizableColumns={true}
@@ -324,6 +296,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 							)}
 							actions={
 								<SpaceBetween size="xs" direction="horizontal">
+									<TimezoneSelect value={selectedTz} onChange={setSelectedTz} />
 									{auth.isAuthenticated && auth.isModerator && (
 										<Button
 											variant="primary"

@@ -219,6 +219,9 @@
 		"aria": {
 			"selectionGroup": "Selección de elementos",
 			"tableLabel": "tabla de juntas"
+		},
+		"timezone": {
+			"label": "Zona horaria"
 		}
 	},
 	"createMeeting": {

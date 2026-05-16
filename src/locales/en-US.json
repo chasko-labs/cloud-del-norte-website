@@ -219,6 +219,9 @@
 		"aria": {
 			"selectionGroup": "Items selection",
 			"tableLabel": "meetings table"
+		},
+		"timezone": {
+			"label": "Time zone"
 		}
 	},
 	"createMeeting": {
