@@ -557,6 +557,21 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	background-color: transparent;
 }
 
+/* Mobile toolbar breadcrumb strip — Cloudscape's visual-refresh AppLayout
+   renders a sticky <section.awsui_mobile-toolbar_*> on mobile viewports with
+   background-color: #ffffff. The older [class*="awsui_breadcrumbs"] rule misses
+   this parent container. Also covers the universal-toolbar variant (v3 toolbar
+   refresh path) which paints the same opaque white.
+   Probe: scripts/probe-breadcrumb-banner.mjs — 2026-05-15 */
+:root:not(.awsui-dark-mode) [class*="awsui_mobile-toolbar"]:not(#\9),
+:root:not(.awsui-dark-mode) [class*="awsui_universal-toolbar"]:not(#\9),
+.awsui-dark-mode [class*="awsui_mobile-toolbar"]:not(#\9),
+.awsui-dark-mode [class*="awsui_universal-toolbar"]:not(#\9) {
+	background: transparent;
+	background-color: transparent;
+	box-shadow: none;
+}
+
 /* ContentLayout refresh-style header — Cloudscape's newer ContentLayout
    variant uses awsui_refresh_* class on the header band. Older selectors
    (awsui_has-header_, awsui_header-background_) miss it. Probe found this
