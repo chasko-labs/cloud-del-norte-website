@@ -2,8 +2,24 @@
 
 **date:** 2026-05-16  
 **branch:** main  
-**last commit:** 6cf1b8ff feat(feedback): report-a-bug + make-a-wish shortcuts in right panel  
-**deploy:** verified 2026-05-16 15:34 UTC — all 4 Wave 3 commits live, feedback Lambda end-to-end PASS (issue #194 created + closed as smoke-test cleanup).
+**last commit:** 4be9fd66 fix(player): tighten left-edge mask + allow play-button shadow bleed  
+**deploy:** verified 2026-05-16 21:13 UTC — main + awsug live (manual deploy fallback used; Woodpecker still in #157 death-loop).
+
+---
+
+## completed 2026-05-16 evening — paused player CSS WIP resumed + shipped
+
+Single-commit fix on the persistent-player splash zone. Was sitting uncommitted on AIBOX before resumption.
+
+| commit | description |
+|--------|-------------|
+| 4be9fd66 | fix(player): mask reveal 50% → 25% so skip/next button never hidden + overflow:visible so play-button shadow can bleed past splash |
+
+Dark-mode rule kept at 50% reveal — denser background, different optical balance. Built clean (biome ci 2 pre-existing warnings only, build 2.23s). Verified live in `lib/assets/theme-DapIvsfY.css` minified bundle: `overflow:visible` + `mask-image:linear-gradient(90deg,#0000 0%,#000 25%)`.
+
+Woodpecker auto-deploy did not pick up the push — agent still in #157 death-loop on chasko-labs/chrome-extension-moodle-uploader (`database is locked` + GH statuses 422 retry storm). Manual deploy via `scripts/deploy-manual.sh main` + `awsug --skip-build` ran clean. CloudFront invalidations I6Q9NL1DZ5Q3XPINJTSG7QUTHT (main) + IBEF371A5U633ZRQ90W9D5OSJ2 (awsug). Auth subdomain not redeployed — auth surface doesn't include the persistent player.
+
+
 
 ---
 
