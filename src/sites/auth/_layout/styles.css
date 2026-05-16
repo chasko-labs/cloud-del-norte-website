@@ -28,6 +28,15 @@ body.cdn-auth-subdomain [class*="awsui_breadcrumbs"] {
 	display: none;
 }
 
+/* ── Hide persistent radio player on auth pages (UX research finding a2-5) ──
+   The player is a 'third focal point during auth' — suppress the slot entirely
+   so login/signup/verify have a single focal axis. The component is not
+   deleted; the gate lives here in the auth stylesheet, not in the layout shell
+   source, so no runtime logic changes are needed. */
+body.cdn-auth-subdomain .cdn-player-slot {
+	display: none;
+}
+
 /* Hide the Cloudscape decorative background strip between nav and content */
 body.cdn-auth-subdomain
 [class*="awsui_scrolling-background"]:not(#\9):not(#\10):not(#\11),
@@ -100,7 +109,9 @@ body.cdn-auth-subdomain:not(#\9):not(.awsui-dark-mode) {
 	--color-border-input-focused-4z0pgn: var(--cdn-amber);
 	--color-border-item-focused-uk47pl: var(--cdn-amber);
 	--color-background-control-checked-ka7kc2: var(--cdn-violet);
-	--color-background-button-primary-default-vdt0fu: var(--cdn-amber);
+	/* UX research finding a2-4: CTA color changed from amber to warmer gold.
+	   --cdn-gold (#c9a23f) is the warmest existing brand gold token. */
+	--color-background-button-primary-default-vdt0fu: var(--cdn-gold);
 	--color-text-button-normal-default-nzalii: #5a3a14;
 	--color-border-button-normal-default-glqfp1: rgba(90, 58, 20, 0.4);
 	--color-text-status-info-ue8bd2: var(--cdn-purple);
@@ -196,7 +207,9 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 .cdn-auth-card {
 	max-width: 520px;
 	--cdn-glass-blur: 22px;
-	--cdn-glass-bg: rgba(237, 229, 212, 0.82);
+	/* UX research finding a2-3: card was too transparent over the 3D background
+	   ('cognitive overload'). Bumped light-mode alpha by +0.15 (0.82 → 0.97). */
+	--cdn-glass-bg: rgba(237, 229, 212, 0.97);
 	border: 1.5px solid rgba(139, 90, 43, 0.35);
 	box-shadow:
 		0 4px 24px rgba(34, 22, 8, 0.1),
@@ -205,7 +218,8 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 }
 
 .awsui-dark-mode .cdn-auth-card {
-	--cdn-glass-bg: rgba(28, 34, 48, 0.88);
+	/* UX research finding a2-3: bumped dark-mode alpha by +0.15 (0.88 → 1.0). */
+	--cdn-glass-bg: rgba(28, 34, 48, 1);
 	border-color: rgba(144, 96, 240, 0.38);
 	box-shadow:
 		0 4px 32px rgba(0, 0, 0, 0.4),

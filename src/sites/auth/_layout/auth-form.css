@@ -14,12 +14,24 @@
 	box-shadow: none;
 }
 
+/* ── form-field vertical breathing room (UX research finding a2-2) ────────
+   Cloudscape space tokens: --space-xs = 4px, --space-s = 8px.
+   Row gap between fields: +8px (--space-s added to existing gap).
+   Label-to-input spacing: +4px (--space-xs added to existing margin). */
+.cdn-auth-form:not(#\9) [class*="awsui_form-layout"] {
+	row-gap: var(--space-s, 8px);
+}
+
+.cdn-auth-form:not(#\9) [class*="awsui_form-field"] {
+	padding-bottom: var(--space-s, 8px);
+}
+
 /* ── labels ────────────────────────────────────────────────────────────── */
 .cdn-auth-form:not(#\9) [class*="awsui_label_"] {
 	font-size: 13px;
 	font-weight: 500;
 	color: var(--cdn-color-text-secondary, #5a3a1e);
-	margin-bottom: 6px;
+	margin-bottom: calc(6px + var(--space-xs, 4px));
 }
 
 .awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_label_"] {
@@ -126,7 +138,13 @@
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
-	background: linear-gradient(135deg, #6b3a10 0%, #8b5a2b 100%);
+	/* UX research finding a2-4: amber (#8b5a2b) reads as caution — replaced
+	   with warmer gold using the --cdn-gold brand token (#c9a23f). */
+	background: linear-gradient(
+		135deg,
+		#a07828 0%,
+		var(--cdn-gold, #c9a23f) 100%
+	);
 	border-color: transparent;
 	color: #fff;
 	transition:
@@ -138,8 +156,12 @@
 	[class*="awsui_button"][class*="variant-primary"]:hover,
 .cdn-auth-form:not(#\9):not(#\9):not(#\9)
 	button[class*="variant-primary"]:hover {
-	background: linear-gradient(135deg, #6e4722 0%, #8b5a2b 100%);
-	box-shadow: 0 4px 14px rgba(139, 90, 43, 0.35);
+	background: linear-gradient(
+		135deg,
+		#a07828 0%,
+		var(--cdn-gold, #c9a23f) 100%
+	);
+	box-shadow: 0 4px 14px rgba(201, 162, 63, 0.4);
 	transform: translateY(-1px);
 }
 
