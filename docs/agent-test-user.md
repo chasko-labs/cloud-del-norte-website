@@ -7,13 +7,13 @@ the heraldstack service account is used for automated testing and agent operatio
 - email: heraldstack@clouddelnorte.org
 - cognito sub: e8716360-c081-708a-1211-3234508e71d2
 - groups: members, moderators
-- password: stored in AWS Secrets Manager `cloud-del-norte/heraldstack-cognito-pw-nuPFyW` (account 170473530355, us-west-2)
+- password: stored in AWS Secrets Manager `cloud-del-norte/heraldstack-cognito-pw` (account 170473530355, us-west-2)
 
 ## usage
 
 ```bash
 # retrieve password
-aws secretsmanager get-secret-value --secret-id cloud-del-norte/heraldstack-cognito-pw-nuPFyW --profile jitsi-video-hosting --region us-west-2 --query SecretString --output text
+aws secretsmanager get-secret-value --secret-id cloud-del-norte/heraldstack-cognito-pw --profile jitsi-video-hosting --region us-west-2 --query SecretString --output text
 
 # authenticate
 aws cognito-idp initiate-auth \

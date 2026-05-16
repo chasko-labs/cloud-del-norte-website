@@ -6,7 +6,7 @@ Pool: `us-west-2_cyPQF4F3r` in account 170473530355 (jitsi-video-hosting).
 
 | Email | Sub | Groups | Password Location | Notes |
 |-------|-----|--------|-------------------|-------|
-| heraldstack@clouddelnorte.org | e8716360-c081-708a-1211-3234508e71d2 | members, moderators | Secrets Manager `cloud-del-norte/heraldstack-cognito-pw-nuPFyW` | Agent service account. MFA configured. |
+| heraldstack@clouddelnorte.org | e8716360-c081-708a-1211-3234508e71d2 | members, moderators | Secrets Manager `cloud-del-norte/heraldstack-cognito-pw` | Agent service account. MFA configured. |
 | bryanj+clouddelnorte@abstractspacecraft.com | 58315330-f091-7008-ae3b-4033fecd6811 | members, moderators | Bryan's password manager | Bryan's real account. MFA configured. |
 | heraldstack-test-member@clouddelnorte.org | 7801f370-8041-70b4-ac72-27ae41858727 | members | (password location unclear — audit needed) | Pre-existing fleet. |
 | heraldstack-test-pending@clouddelnorte.org | e8515370-4071-70c1-7497-ad0e4640b31e | pending | (audit needed) | Pre-existing. 'pending' group = distinct from zero-groups. |

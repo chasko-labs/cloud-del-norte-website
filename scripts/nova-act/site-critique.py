@@ -101,7 +101,7 @@ CREDS = {
     },
     "moderator": {
         "email":    "heraldstack@clouddelnorte.org",
-        "password": _sm.get_secret_value(SecretId="cloud-del-norte/heraldstack-cognito-pw-nuPFyW")["SecretString"],
+        "password": _sm.get_secret_value(SecretId="cloud-del-norte/heraldstack-cognito-pw")["SecretString"],
     },
 }
 
