@@ -1,9 +1,75 @@
 # cloud del norte — handoff plan
 
-**date:** 2026-05-12  
+**date:** 2026-05-16  
 **branch:** main  
-**last commit:** 0cf54d7a fix(infra): CSP script-src + connect-src allow meet.clouddelnorte.org (FP-021)  
-**deploy:** verified 2026-05-12 16:19 UTC — awsug.clouddelnorte.org (FP-021 CSP patch live, E2QLAWFVIT1AR8 invalidation I9YDRZ6T4LL26Y9C4VLQKGH1Y9)
+**last commit:** 5e5e787e feat(speaker-proposals): file github issue alongside ses email + ddb writeup  
+**deploy:** verified 2026-05-16 15:13 UTC — Lambda end-to-end PASS (DynamoDB + SES + GitHub issue #192 all fired via Promise.allSettled). Frontend deployed at 15:03:00 GMT.
+
+---
+
+## completed 2026-05-16 session — feed CTA rework + right panel restructure + github issue side-effect
+
+Four commits on main, two waves, end-to-end verified:
+
+| commit | description |
+|--------|-------------|
+| 801b9754 | fix(feed): move speaker CTA to bottom + rewrite copy + bilingual i18n + glass standardization pass |
+| 12280997 | fix(speaker-cta): propose-a-talk button now renders cdn purple not cloudscape blue (Cloudscape needed !important; probe pattern committed at scripts/probe-cta-button-classes.mjs) |
+| 2ebc00f1 | feat(help-panel): right panel restructure — cfp card on top, expandables for org+volunteers, remove footer dup |
+| 5e5e787e | feat(speaker-proposals): file github issue alongside ses email + ddb writeup |
+
+### what shipped
+
+**Wave 1 — Feed page CTA**
+- Speaker CTA moved from top to bottom of feed page (was visually competing with next-meetup card for first-screen attention)
+- Copy rewritten to Bryan's exact spec: "call for proposals now open - all levels welcome for talks (up to 2 hours), demos & lightning rounds (5 minutes). Presentations encouraged in English, Spanish & regional Sign Language"
+- es-MX translation added with regional border-Spanish voice consistent with existing locale strings
+- Glass standardization pass: cdn-card light + dark — border alpha 0.14→0.22, backdrop-filter blur+saturate explicitly set, semi-transparent surface, inset top-rim highlight for proper glass gleam
+- CTA primary button retargeted from Cloudscape cyan/blue to cdn purple/violet via scoped descendant selector inside `.cdn-card--cta`. Required `!important` to win Cloudscape cascade — discovered via Playwright probe (`scripts/probe-cta-button-classes.mjs`, now committed and reusable for future Cloudscape style overrides)
+
+**Wave 2 frontend — Right side panel restructure**
+- CFP card promoted from 6th/last to 1st position in volunteer roles list
+- Same Cloudscape-blue defect on side-panel button fixed via parallel `.hp-role-card--cta` scope mirroring the `.cdn-card--cta` pattern
+- CFP copy synced bilingual with Wave 1 feed CTA — single voice across both surfaces (`call for proposals open` / `convocatoria abierta`)
+- ASL/LSM/spanish-speakers/students/women-welcome collapsed into one ExpandableSection with header `interested?` / `¿te interesa?`
+- Each organizer (Andres, Bryan, Jacob) + Wayne Savage in Hall of Fame now in own ExpandableSection (name-as-header, default closed)
+- Removed duplicate `find your local meetup` block — footer already carries the meetup.com/pro/global-aws-user-group-community link
+- `helpPanel.globalCommunityHeader` + `helpPanel.findLocalGroup` keys left orphaned-safe in locales (footer uses different keys)
+
+**Wave 2 backend — GitHub issue side-effect**
+- Existing speaker-proposals Lambda (`infra/lambda/speaker-proposals/index.mjs`) gained a `createGitHubIssue(proposal)` helper that runs in parallel with SES via `Promise.allSettled([sesSend, createGitHubIssue(item)])` after a successful DynamoDB PutItem
+- Defense in depth on moderator notification: DynamoDB (source of truth) + SES email + GitHub issue all fire on every proposal. Either side-effect can fail without blocking the user's 201 response
+- GitHub issue body links to in-app admin panel: `https://awsug.clouddelnorte.org/admin/?tab=proposals&id=$id` so a moderator clicking from the github notification lands directly on the proposal in the existing admin workflow
+- Labels: `speaker-proposal`, `needs-review`. Repo: `chasko-labs/cloud-del-norte-website`
+- IAM policy already allowed wildcard `ssm:GetParameter` on `/cloud-del-norte/speaker-proposals/*` — no policy change needed
+- Deploy script warns (does not block) if SSM token missing; side-effect silently no-ops in that state, all other paths continue normally
+- 5-second AbortController timeout on github call. Token from SSM `/cloud-del-norte/speaker-proposals/github-token` (SecureString, populated from heraldstack agent gh CLI token — separation from Bryan's personal identity)
+
+### end-to-end verification (Lambda direct invoke smoke test)
+
+```
+submission id: ca0850e5-f139-43b0-b3e5-97b9ba433356
+DynamoDB:      ✓ row present, createdAt 2026-05-16T15:13:35.564Z
+SES:           ✓ silent success (Lambda only logs on rejection)
+GitHub issue:  ✓ #192 filed at https://github.com/chasko-labs/cloud-del-norte-website/issues/192
+               ✓ admin panel link populated correctly
+               ✓ labels speaker-proposal + needs-review attached
+               ✓ closed as smoke-test cleanup
+Lambda runtime: 1610ms (cold start 694ms init + 916ms exec, well under 10s timeout)
+```
+
+### lessons learned
+
+- Cloudscape CSS Modules use hashed class names. The two-attribute substring selector `[class*="awsui_button"][class*="variant-primary"]` worked for binding (both substrings on same class attribute), BUT lost the cascade to Cloudscape's own primary-color rule. `!important` was required on background-color, background-image, border-color, color, box-shadow for default + :hover + :focus-visible + :active states. Inner label span color also needed override via `[class*="awsui_content"]`.
+- Defense-in-depth notification pattern via Promise.allSettled is cheaper than a separate Lambda + EventBridge rule. Single Lambda runtime + 3 fan-out side-effects + non-blocking on individual failures.
+- Lambda direct-invoke is faster than Nova Act for backend-only smoke tests. Use `aws lambda invoke --payload fileb://event.json` with API Gateway-shaped event when the surface area is the Lambda's new logic, not the WAF/API/CSP path. Reserve Nova Act for full browser-flow regression.
+- Heraldstack agent identity (`/home/bryanchasko/.config/gh/hosts.yml`) has its own gh CLI token with `repo` scope — using it for service-side automation keeps github actions attributable to the agent, not Bryan personally. Token obtained via `gh auth token --user heraldstack`.
+- HANDOFF.md update + qdrant session-end-capture remain Harald-direct work (within scope), not delegated to kerouac. Faster signal-to-noise.
+
+### items still on Bryan's right-panel ask, not yet done
+
+- **Skeletons on all cards for loading states** — its own scope, not blocking
+- **`report a bug` / `make a wish` shortcuts** — Bryan's last reply confirmed CFP keeps the existing pipeline (modal + DynamoDB + SES + GitHub issue), but did not reconfirm whether bug/wish are still in scope. If still wanted, would be NEW modal forms creating GitHub issues directly (no DynamoDB/SES). Easy follow-on wave.
 
 ---
 
