@@ -15,5 +15,6 @@ coverage/
 .eslintcache
 
 # Nova Act test output (ephemeral)
-scripts/nova-act/output/scripts/nova-act/__pycache__/
+scripts/nova-act/output/
+scripts/nova-act/__pycache__/
 test-results/
