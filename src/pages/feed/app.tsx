@@ -7,6 +7,7 @@ import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
+import SpeakerProposalCta from "../../components/speaker-proposal-cta";
 import { useAndresLive } from "../../hooks/useAndresLive";
 import { useChannelLive } from "../../hooks/useChannelLive";
 import { useTranslation } from "../../hooks/useTranslation";
@@ -24,7 +25,6 @@ import {
 	type Theme,
 } from "../../utils/theme";
 import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
-import SpeakerProposalCta from "../../components/speaker-proposal-cta";
 import AndresYoutubeLive from "./components/andres-youtube-live";
 import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
@@ -224,10 +224,6 @@ function AppContent({
 		<ContentLayout
 			header={<Header variant="h1">{t("feedPage.header")}</Header>}
 		>
-			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
-				<SpeakerProposalCta source="feed" />
-			</div>
-			<hr className="feed-section-divider" />
 			{/* Stable hero slot — wrapper renders always so cards appearing /
 			    disappearing don't unmount a parent and reflow content below.
 			    Pair with sticky-poll on data sources gating `liveToShow` so
@@ -262,6 +258,10 @@ function AppContent({
 						{sections[key]}
 					</div>
 				))}
+			</div>
+			<hr className="feed-section-divider" />
+			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
+				<SpeakerProposalCta source="feed" />
 			</div>
 		</ContentLayout>
 	);

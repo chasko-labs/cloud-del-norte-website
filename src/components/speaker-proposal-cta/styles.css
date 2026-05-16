@@ -1,0 +1,43 @@
+/* Retarget Cloudscape primary button to cdn purple/violet palette inside the CTA card.
+   Scoped to .cdn-card--cta so no other Cloudscape Buttons are affected. */
+.cdn-card--cta [class*="awsui_button"][class*="variant-primary"] {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-purple, #5a1f8a),
+		var(--cdn-violet, #9060f0)
+	);
+	border-color: var(--cdn-purple, #5a1f8a);
+	color: #fff;
+	box-shadow: 0 2px 8px rgba(90, 31, 138, 0.35);
+}
+
+.cdn-card--cta [class*="awsui_button"][class*="variant-primary"]:hover {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-violet, #9060f0),
+		var(--cdn-purple, #5a1f8a)
+	);
+	border-color: var(--cdn-violet, #9060f0);
+	box-shadow: 0 4px 14px rgba(144, 96, 240, 0.45);
+}
+
+/* Dark mode — slightly brighter violet lead */
+.awsui-dark-mode .cdn-card--cta
+	[class*="awsui_button"][class*="variant-primary"] {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-violet, #9060f0),
+		var(--cdn-purple, #5a1f8a)
+	);
+	border-color: var(--cdn-violet, #9060f0);
+	color: #fff;
+	box-shadow: 0 2px 10px rgba(144, 96, 240, 0.45);
+}
+
+.awsui-dark-mode
+	.cdn-card--cta
+	[class*="awsui_button"][class*="variant-primary"]:hover {
+	background: linear-gradient(135deg, #a878ff, var(--cdn-violet, #9060f0));
+	border-color: #a878ff;
+	box-shadow: 0 4px 16px rgba(168, 120, 255, 0.5);
+}
