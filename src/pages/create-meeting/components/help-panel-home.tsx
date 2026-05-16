@@ -7,6 +7,7 @@ import HelpPanel from "@cloudscape-design/components/help-panel";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useState } from "react";
+import FeedbackCta from "../../../components/feedback-cta";
 import SpeakerProposalForm from "../../../components/speaker-proposal-form";
 import { useTranslation } from "../../../hooks/useTranslation";
 import "./help-panel.css";
@@ -88,6 +89,12 @@ export const HelpPanelHome = () => {
 								</Button>
 							</div>
 						</div>
+
+						{/* Report a bug */}
+						<FeedbackCta kind="bug" />
+
+						{/* Make a wish */}
+						<FeedbackCta kind="wish" />
 
 						{/* Remaining volunteer roles — collapsed by default */}
 						<ExpandableSection

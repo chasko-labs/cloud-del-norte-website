@@ -321,7 +321,40 @@
 		"speakerRoleName": "convocatoria abierta",
 		"speakerRoleDesc": "todos los niveles bienvenidos para pláticas (hasta 2 horas), demos y lightning rounds (5 minutos). presentaciones en inglés, español y lengua de señas regional son bienvenidas.",
 		"speakerRoleCta": "proponer una charla",
-		"volunteerRolesHeader": "¿te interesa?"
+		"volunteerRolesHeader": "¿te interesa?",
+		"reportBugName": "reportar un bug",
+		"reportBugDesc": "¿algo no funciona? cuéntanos. leemos cada reporte.",
+		"reportBugCta": "reportar un bug",
+		"makeWishName": "pedir un deseo",
+		"makeWishDesc": "¿idea de función? ¿solicitud de speaker? ¿algo que quieres ver en el sitio? dinos.",
+		"makeWishCta": "pedir un deseo"
+	},
+	"feedbackForm": {
+		"fields": {
+			"summary": "resumen",
+			"summaryPlaceholder": "¿qué pasó / qué quieres?",
+			"details": "detalles",
+			"detailsPlaceholder": "todo el contexto que puedas darnos",
+			"contactEmail": "correo de contacto (opcional)"
+		},
+		"helpers": {
+			"summary": "8–120 caracteres",
+			"contactEmail": "deja en blanco para mantenerte anónimo"
+		},
+		"errors": {
+			"summaryMin": "el resumen debe tener al menos 8 caracteres",
+			"summaryMax": "el resumen debe tener 120 caracteres o menos",
+			"detailsRequired": "los detalles son requeridos",
+			"detailsMax": "los detalles deben tener 2000 caracteres o menos",
+			"rate": "demasiados envíos — intenta de nuevo en una hora",
+			"network": "algo salió mal, intenta de nuevo"
+		},
+		"submitButton": "enviar",
+		"cancelButton": "cancelar",
+		"closeButton": "cerrar",
+		"thankYouTitle": "recibido",
+		"thankYouBody": "gracias. lo revisaremos.",
+		"viewIssue": "ver tu issue en GitHub →"
 	},
 	"speakerForm": {
 		"modalTitle": "proponer una charla",

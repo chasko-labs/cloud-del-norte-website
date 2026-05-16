@@ -321,7 +321,40 @@
 		"speakerRoleName": "call for proposals open",
 		"speakerRoleDesc": "all levels welcome for talks (up to 2 hours), demos & lightning rounds (5 minutes). presentations encouraged in english, spanish & regional sign language.",
 		"speakerRoleCta": "propose a talk",
-		"volunteerRolesHeader": "interested?"
+		"volunteerRolesHeader": "interested?",
+		"reportBugName": "report a bug",
+		"reportBugDesc": "something broken? let us know. we read every report.",
+		"reportBugCta": "report a bug",
+		"makeWishName": "make a wish",
+		"makeWishDesc": "feature idea? speaker request? something you want to see on the site? tell us.",
+		"makeWishCta": "make a wish"
+	},
+	"feedbackForm": {
+		"fields": {
+			"summary": "summary",
+			"summaryPlaceholder": "what happened / what do you want?",
+			"details": "details",
+			"detailsPlaceholder": "as much context as you can give us",
+			"contactEmail": "contact email (optional)"
+		},
+		"helpers": {
+			"summary": "8–120 characters",
+			"contactEmail": "leave blank to stay anonymous"
+		},
+		"errors": {
+			"summaryMin": "summary must be at least 8 characters",
+			"summaryMax": "summary must be 120 characters or less",
+			"detailsRequired": "details are required",
+			"detailsMax": "details must be 2000 characters or less",
+			"rate": "too many submissions — please try again in an hour",
+			"network": "something went wrong, please try again"
+		},
+		"submitButton": "submit",
+		"cancelButton": "cancel",
+		"closeButton": "close",
+		"thankYouTitle": "got it",
+		"thankYouBody": "thanks. we'll take a look.",
+		"viewIssue": "view your issue on GitHub →"
 	},
 	"speakerForm": {
 		"modalTitle": "propose a talk",

@@ -9,6 +9,8 @@ interface ImportMetaEnv {
 	 *  Required on subdomains where fiona-embed is not deployed.
 	 *  Example: https://clouddelnorte.org */
 	readonly VITE_FIONA_ORIGIN: string | undefined;
+	/** Lambda Function URL for bug/wish feedback submissions */
+	readonly VITE_FEEDBACK_API_URL: string | undefined;
 }
 
 interface ImportMeta {

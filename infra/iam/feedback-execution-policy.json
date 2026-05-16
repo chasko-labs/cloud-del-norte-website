@@ -1,0 +1,21 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "SSMRead",
+			"Effect": "Allow",
+			"Action": ["ssm:GetParameter"],
+			"Resource": "arn:aws:ssm:us-west-2:170473530355:parameter/cloud-del-norte/speaker-proposals/github-token"
+		},
+		{
+			"Sid": "CloudWatchLogs",
+			"Effect": "Allow",
+			"Action": [
+				"logs:CreateLogGroup",
+				"logs:CreateLogStream",
+				"logs:PutLogEvents"
+			],
+			"Resource": "arn:aws:logs:us-west-2:170473530355:*"
+		}
+	]
+}
