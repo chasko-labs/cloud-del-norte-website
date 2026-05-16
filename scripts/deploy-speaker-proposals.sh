@@ -93,7 +93,7 @@ cd "$REPO_ROOT"
 echo "=== 4. Create/update Lambda function ==="
 ROLE_ARN="arn:aws:iam::${LAMBDA_ACCOUNT}:role/${ROLE_NAME}"
 
-ENV_VARS="Variables={IP_HASH_SALT_SSM_PATH=/cloud-del-norte/speaker-proposals/ip-hash-salt,RATE_TABLE_NAME=${RATE_TABLE},TABLE_NAME=${PROPOSALS_TABLE},NOTIFICATION_EMAIL=bryanj+clouddelnortespeakerrequest@abstractspacecraft.com,FROM_ADDRESS=heraldstack@clouddelnorte.org,ADMIN_PANEL_URL=https://awsug.clouddelnorte.org/admin/}"
+ENV_VARS="Variables={IP_HASH_SALT_SSM_PATH=/cloud-del-norte/speaker-proposals/ip-hash-salt,RATE_TABLE_NAME=${RATE_TABLE},TABLE_NAME=${PROPOSALS_TABLE},NOTIFICATION_EMAIL=bryanj+clouddelnortespeakerrequest@abstractspacecraft.com,FROM_ADDRESS=heraldstack@clouddelnorte.org,ADMIN_PANEL_URL=https://awsug.clouddelnorte.org/admin/,GH_REPO=chasko-labs/cloud-del-norte-website}"
 
 if aws lambda get-function --function-name "$LAMBDA_NAME" \
     --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
@@ -275,7 +275,19 @@ else
 fi
 
 echo ""
-echo "=== 10. Summary ==="
+echo "=== 10. Check for GitHub issue SSM token (advisory) ==="
+if ! aws ssm get-parameter --name "/cloud-del-norte/speaker-proposals/github-token" \
+    --with-decryption --region "$LAMBDA_REGION" --profile "$PROFILE" \
+    --query 'Parameter.Name' --output text 2>/dev/null | grep -q github-token; then
+  echo -e "\033[33mWARN: SSM /cloud-del-norte/speaker-proposals/github-token not found.\033[0m"
+  echo -e "\033[33m  GH issue side-effect will silently noop until Bryan populates SSM token; run:\033[0m"
+  echo -e "\033[33m  aws ssm put-parameter --name /cloud-del-norte/speaker-proposals/github-token --value <PAT> --type SecureString --profile jitsi-video-hosting --region us-west-2\033[0m"
+else
+  echo "SSM github-token present — GH issue side-effect active."
+fi
+
+echo ""
+echo "=== 11. Summary ==="
 echo "API Gateway endpoint:    $API_ENDPOINT"
 echo "POST /proposals URL:     ${API_ENDPOINT}/proposals"
 echo "WebACL ARN:              $WEBACL_ARN"

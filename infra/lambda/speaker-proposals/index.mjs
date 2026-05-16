@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { randomUUID } from "node:crypto";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { SSMClient } from "@aws-sdk/client-ssm";
+import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
 import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 
 // ── Bot rejection is handled at the edge by AWS WAF Challenge before this Lambda
@@ -14,8 +14,7 @@ import { SESv2Client, SendEmailCommand } from "@aws-sdk/client-sesv2";
 
 // ── module-scope singletons ──────────────────────────────────────────────────
 const dynamo = DynamoDBDocumentClient.from(new DynamoDBClient({ region: "us-west-2" }));
-// SSMClient retained for ip-hash-salt reads if needed in future; currently IP_HASH_SALT env var is used directly.
-const _ssm = new SSMClient({ region: "us-west-2" }); // eslint-disable-line no-unused-vars
+const ssm = new SSMClient({ region: "us-west-2" });
 const ses = new SESv2Client({ region: "us-west-2" });
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -97,6 +96,85 @@ function validateBody(body) {
 	if (body.notes !== undefined && body.notes !== null && typeof body.notes !== "string") errors.push("notes must be string");
 	if (body.submittedFromUrl !== undefined && body.submittedFromUrl !== null && typeof body.submittedFromUrl !== "string") errors.push("submittedFromUrl must be string");
 	return errors;
+}
+
+// ── GitHub issue side-effect ─────────────────────────────────────────────────
+async function createGitHubIssue(proposal) {
+	const GH_REPO = process.env.GH_REPO || "chasko-labs/cloud-del-norte-website";
+	let token;
+	try {
+		const param = await ssm.send(new GetParameterCommand({
+			Name: "/cloud-del-norte/speaker-proposals/github-token",
+			WithDecryption: true,
+		}));
+		token = param.Parameter?.Value;
+	} catch (err) {
+		log("warn", "[github-issue] SSM token unavailable — skipping", { err: err.message });
+		return null;
+	}
+	if (!token) {
+		log("warn", "[github-issue] SSM token empty — skipping");
+		return null;
+	}
+
+	const days = Array.isArray(proposal.preferredDays) ? proposal.preferredDays.join(", ") : (proposal.preferredDays || "any");
+	const tod = Array.isArray(proposal.preferredTimeOfDay) ? proposal.preferredTimeOfDay.join(", ") : (proposal.preferredTimeOfDay || "any");
+	const body = [
+		"## Speaker proposal received",
+		"",
+		`**Submitter:** ${proposal.name} (${proposal.email})`,
+		`**Topic:** ${proposal.topic}`,
+		`**Format:** ${proposal.format}`,
+		`**Earliest available:** ${proposal.earliestDate}`,
+		`**Preferred days:** ${days}`,
+		`**Preferred time:** ${tod}`,
+		...(proposal.bioUrl ? [`**Bio:** ${proposal.bioUrl}`] : []),
+		"",
+		"### Abstract",
+		proposal.abstract,
+		"",
+		...(proposal.notes ? [`### Notes`, proposal.notes, ""] : []),
+		"---",
+		"",
+		`**Submission ID:** \`${proposal.id}\``,
+		`**Source:** ${proposal.source || "web"}`,
+		`**Cognito sub:** \`${proposal.cognitoSub || "anonymous"}\``,
+		"",
+		`[Review in admin panel](https://awsug.clouddelnorte.org/admin/?tab=proposals&id=${proposal.id})`,
+	].join("\n");
+
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), 5000);
+	try {
+		const res = await fetch(`https://api.github.com/repos/${GH_REPO}/issues`, {
+			method: "POST",
+			signal: controller.signal,
+			headers: {
+				"Authorization": `Bearer ${token}`,
+				"Accept": "application/vnd.github+json",
+				"X-GitHub-Api-Version": "2022-11-28",
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				title: `[CFP] ${proposal.topic} — ${proposal.name}`,
+				body,
+				labels: ["speaker-proposal", "needs-review"],
+			}),
+		});
+		if (!res.ok) {
+			const text = await res.text().catch(() => "");
+			log("error", "[github-issue] API error", { status: res.status, body: text });
+			return null;
+		}
+		const data = await res.json();
+		log("info", "[github-issue] filed", { issue: data.number, url: data.html_url });
+		return data;
+	} catch (err) {
+		log("error", "[github-issue] fetch failed", { err: err.message });
+		return null;
+	} finally {
+		clearTimeout(timeout);
+	}
 }
 
 // ── handler ──────────────────────────────────────────────────────────────────
@@ -188,7 +266,7 @@ export async function handler(event) {
 
 		log("info", "proposal saved", { requestId, id: item.id });
 
-		// ── SES notification (best-effort) ───────────────────────────────────
+		// ── SES + GitHub issue (parallel best-effort) ───────────────────────
 		const adminLink = `${process.env.ADMIN_PANEL_URL}?proposalId=${item.id}`;
 		const textBody = [
 			`New speaker proposal: ${item.topic}`,
@@ -225,22 +303,26 @@ export async function handler(event) {
 <p>Submitted from: ${item.submittedFromUrl || "(unknown)"}</p>
 <p><a href="${adminLink}">Review proposal</a></p>`;
 
-		try {
-			await ses.send(new SendEmailCommand({
-				FromEmailAddress: process.env.FROM_ADDRESS,
-				Destination: { ToAddresses: [process.env.NOTIFICATION_EMAIL] },
-				Content: {
-					Simple: {
-						Subject: { Data: `New speaker proposal: ${item.topic}` },
-						Body: {
-							Text: { Data: textBody },
-							Html: { Data: htmlBody },
-						},
+		const sesSend = ses.send(new SendEmailCommand({
+			FromEmailAddress: process.env.FROM_ADDRESS,
+			Destination: { ToAddresses: [process.env.NOTIFICATION_EMAIL] },
+			Content: {
+				Simple: {
+					Subject: { Data: `New speaker proposal: ${item.topic}` },
+					Body: {
+						Text: { Data: textBody },
+						Html: { Data: htmlBody },
 					},
 				},
-			}));
-		} catch (sesErr) {
-			log("error", "SES send failed (non-fatal)", { requestId, id: item.id, err: sesErr.message });
+			},
+		}));
+
+		const [sesResult, ghResult] = await Promise.allSettled([sesSend, createGitHubIssue(item)]);
+		if (sesResult.status === "rejected") {
+			log("error", "SES send failed (non-fatal)", { requestId, id: item.id, err: sesResult.reason?.message });
+		}
+		if (ghResult.status === "rejected") {
+			log("error", "[github-issue] allSettled rejection (non-fatal)", { requestId, id: item.id, err: ghResult.reason?.message });
 		}
 
 		return respond(201, { ok: true, id: item.id }, headers);
