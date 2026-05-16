@@ -682,6 +682,29 @@ function PersistentPlayerBar({
 					<span />
 				</span>
 			)}
+			{playing && (
+				<span className="cdn-pp__sigil" aria-hidden="true">
+					<svg
+						role="img"
+						aria-label="audio-reactive sigil"
+						width="20"
+						height="20"
+						viewBox="0 0 24 24"
+						fill="none"
+						stroke="currentColor"
+						strokeWidth="1.5"
+						strokeLinecap="round"
+						strokeLinejoin="round"
+					>
+						<title>audio-reactive sigil</title>
+						<path d="M12 22V8" />
+						<path d="M9 22h6" />
+						<path d="M12 8l-3 4h6l-3-4z" />
+						<path d="M8 4a6 6 0 0 1 8 0" />
+						<path d="M6 1.5a9 9 0 0 1 12 0" />
+					</svg>
+				</span>
+			)}
 			{playing && streamDef?.type === "radio" && <DancerIcon animate />}
 			{playing && streamDef?.type === "podcast" && <PodcastIcon />}
 			{/* type icon — 💃🏾 radio / 🗣️ podcast — sits left of play button */}

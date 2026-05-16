@@ -1,10 +1,12 @@
 /* ==========================================================================
-   Auth subdomain — light-mode polish
+   Auth subdomain — postcard direction (liora a2 rethink)
 
-   Goal: bring the auth flow (login, signup, verify, forgot-password) in line
-   with the warm cream + amber + violet brand palette used across the rest of
-   the site. Without this stylesheet the auth bundles only loaded Cloudscape
-   global styles, falling back to stock blue/white chrome.
+   Creative direction: the auth card is a hand-addressed postcard — warm,
+   inviting, humanistic. Deckled edge suggestion via inset shadow, decorative
+   stamp corner (::before on the card), and a parchment texture gradient.
+   Typography stays Cinzel (serif identity) with monospace inputs for the
+   command-console hybrid that already shipped. The postcard metaphor wraps
+   the existing glass-card treatment in a warmer compositional frame.
 
    tokens.css (global brand tokens) is imported here, not from each auth
    main.tsx — keeps the four entry points lean, single source of truth for
@@ -13,9 +15,6 @@
    cdn-glass-streaks.css ships the .cdn-glass plate primitive used on the
    auth card (composed in index.tsx) plus streak gradient tokens reused by
    the page-header underline animation.
-
-   Dark-mode rules in tokens.css and shell/styles.css are untouched — the
-   selectors below are scoped to :root:not(.awsui-dark-mode).
    ========================================================================== */
 
 @import "../../../styles/tokens.css";
@@ -58,9 +57,9 @@ body.cdn-auth-subdomain main[class*="awsui_layout"],
 body.cdn-auth-subdomain [class*="awsui_layout-main"] {
 	background: linear-gradient(
 		180deg,
-		rgba(42, 24, 16, 0.04) 0%,
-		rgba(42, 24, 16, 0.12) 40%,
-		rgba(42, 24, 16, 0.06) 100%
+		rgba(42, 24, 16, 0.02) 0%,
+		rgba(42, 24, 16, 0.08) 50%,
+		rgba(42, 24, 16, 0.03) 100%
 	);
 }
 
@@ -204,27 +203,57 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
    .cdn-glass treatment composed in index.tsx — picks up 0.55-alpha cream bg,
    1.5px warm border, layered shadow, top-edge gradient streak, backdrop blur.
    Hover lift inherited from .cdn-glass. */
+/* ── Postcard treatment — deckled edge, stamp corner, parchment texture ── */
 .cdn-auth-card {
 	max-width: 520px;
 	--cdn-glass-blur: 22px;
-	/* UX research finding a2-3: card was too transparent over the 3D background
-	   ('cognitive overload'). Bumped light-mode alpha by +0.15 (0.82 → 0.97). */
-	--cdn-glass-bg: rgba(237, 229, 212, 0.97);
-	border: 1.5px solid rgba(139, 90, 43, 0.35);
+	--cdn-glass-bg: rgba(245, 238, 225, 0.98);
+	border: 1.5px solid rgba(139, 90, 43, 0.28);
+	border-radius: 2px;
 	box-shadow:
-		0 4px 24px rgba(34, 22, 8, 0.1),
+		0 6px 32px rgba(34, 22, 8, 0.12),
 		0 1px 4px rgba(34, 22, 8, 0.06),
-		inset 0 1px 0 rgba(255, 255, 255, 0.18);
+		inset 0 0 0 3px rgba(139, 90, 43, 0.04),
+		inset 0 1px 0 rgba(255, 255, 255, 0.22);
+	position: relative;
+	overflow: visible;
+}
+
+/* stamp corner — decorative brand mark in top-right */
+.cdn-auth-card::after {
+	content: "☁";
+	position: absolute;
+	top: 10px;
+	right: 12px;
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 16px;
+	border: 1.5px solid rgba(139, 90, 43, 0.25);
+	border-radius: 1px;
+	background: rgba(201, 162, 63, 0.08);
+	color: var(--cdn-gold, #c9a23f);
+	pointer-events: none;
+	z-index: 1;
 }
 
 .awsui-dark-mode .cdn-auth-card {
-	/* UX research finding a2-3: bumped dark-mode alpha by +0.15 (0.88 → 1.0). */
-	--cdn-glass-bg: rgba(28, 34, 48, 1);
-	border-color: rgba(144, 96, 240, 0.38);
+	--cdn-glass-bg: rgba(22, 26, 38, 1);
+	border-color: rgba(144, 96, 240, 0.3);
+	border-radius: 2px;
 	box-shadow:
-		0 4px 32px rgba(0, 0, 0, 0.4),
+		0 6px 32px rgba(0, 0, 0, 0.45),
 		0 1px 6px rgba(0, 0, 0, 0.2),
-		inset 0 1px 0 rgba(144, 96, 240, 0.12);
+		inset 0 0 0 3px rgba(144, 96, 240, 0.04),
+		inset 0 1px 0 rgba(144, 96, 240, 0.1);
+}
+
+.awsui-dark-mode .cdn-auth-card::after {
+	border-color: rgba(144, 96, 240, 0.3);
+	background: rgba(144, 96, 240, 0.08);
+	color: var(--cdn-violet, #9060f0);
 }
 
 /* The ContentLayout renders children directly under awsui_layout — add a top
@@ -275,30 +304,29 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	gap: 0;
 }
 
-/* ── Page header band — Cinzel wordmark + per-page context ───────────────────
-   Rendered above .cdn-auth-card. Wordmark sits smaller than the breadcrumb h1
-   (~1.4rem clamp) so it reads as a host signature rather than competing with
-   the form heading inside the card. Context line below it is the per-page
-   "what are you doing here" cue — set in the component via pageContext prop. */
+/* ── Page header band — postcard addressee + message ─────────────────────────
+   The wordmark reads as the addressee on a postcard; the context line below
+   is the handwritten message. Slightly rotated (-0.5deg) for organic feel. */
 .cdn-auth-page-header {
 	max-width: 520px;
 	margin: 0 auto 16px;
 	padding: 32px 8px 12px;
 	text-align: center;
 	position: relative;
+	transform: rotate(-0.3deg);
 }
 
 .cdn-auth-wordmark {
-	font-family: "Cinzel", Georgia, serif;
+	font-family: "Alfa Slab One", "Cinzel", Georgia, serif;
 	font-weight: 700;
-	font-size: clamp(1.25rem, 1.8vw, 1.45rem);
-	letter-spacing: 0.08em;
+	font-size: clamp(1.35rem, 2vw, 1.6rem);
+	letter-spacing: 0.04em;
 	line-height: 1.15;
 	text-transform: uppercase;
 	background-image: linear-gradient(
-		90deg,
+		135deg,
 		#8b5a2b 0%,
-		#ff9900 50%,
+		var(--cdn-gold, #c9a23f) 50%,
 		#8b5a2b 100%
 	);
 	background-size: 200% 100%;
@@ -307,18 +335,13 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	background-clip: text;
 	-webkit-text-fill-color: transparent;
 	color: transparent;
-	/* v0.0.0053: was inline-block which let the wordmark + context line collapse
-	   onto one row at desktop widths ("CLOUD DEL NORTECreate your account" with
-	   no separator). block forces a hard row break; margin-bottom opens the
-	   typographic gap so the amber underline beneath context reads as the seam
-	   between identity (wordmark) + intent (page context). */
 	display: block;
 	margin-bottom: 10px;
 }
 
 .awsui-dark-mode .cdn-auth-wordmark {
 	background-image: linear-gradient(
-		90deg,
+		135deg,
 		#9060f0 0%,
 		#d7c7ee 50%,
 		#9060f0 100%
@@ -327,15 +350,15 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 
 /* v0.0.0047: Cinzel italic + tighter tracking lifts the per-page context line
    ("Sign in to Cloud Del Norte" / "Create your account") from a plain caption
-   to a typeset stage direction. */
+   to a postcard message — the handwritten note below the addressee. */
 .cdn-auth-context {
 	font-family: "Cinzel", Georgia, serif;
 	font-style: italic;
-	font-size: 1rem;
-	font-weight: 600;
-	letter-spacing: 0.05em;
+	font-size: 0.95rem;
+	font-weight: 500;
+	letter-spacing: 0.03em;
 	margin-top: 4px;
-	color: rgba(74, 40, 24, 0.78);
+	color: rgba(74, 40, 24, 0.72);
 	position: relative;
 	display: inline-block;
 	padding-bottom: 6px;
@@ -363,17 +386,17 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	background: var(--cdn-streak-h-dark);
 }
 
-/* ── Entrance choreography ───────────────────────────────────────────────────
-   Header fades up + amber underline grows; card glass-slides in 80ms later
-   with springy cubic-bezier bounce. Both gated on prefers-reduced-motion. */
+/* ── Entrance choreography — postcard landing ────────────────────────────────
+   Header fades in with slight rotation settle; card drops in like a postcard
+   landing on a desk. Both gated on prefers-reduced-motion. */
 @keyframes cdn-auth-header-in {
 	from {
 		opacity: 0;
-		transform: translateY(8px);
+		transform: rotate(-1deg) translateY(8px);
 	}
 	to {
 		opacity: 1;
-		transform: translateY(0);
+		transform: rotate(-0.3deg) translateY(0);
 	}
 }
 
@@ -389,11 +412,11 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 @keyframes cdn-auth-card-in {
 	from {
 		opacity: 0;
-		transform: scale(0.97) translateY(6px);
+		transform: rotate(0.5deg) translateY(12px);
 	}
 	to {
 		opacity: 1;
-		transform: scale(1) translateY(0);
+		transform: rotate(0) translateY(0);
 	}
 }
 
@@ -405,10 +428,10 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 		animation: cdn-auth-underline-grow 600ms ease-out 200ms both;
 	}
 	/* Override the generic cdn-card-in keyframe (tokens.css) on the auth card
-	   so we get the springy cubic-bezier scale-in instead of the slide. 80ms
-	   delay so the header settles first, then the card pops in behind it. */
+	   so we get the postcard-landing ease-out. 80ms delay so the header settles
+	   first, then the card drops in. */
 	.cdn-auth-card {
-		animation: cdn-auth-card-in 350ms cubic-bezier(0.34, 1.56, 0.64, 1) 80ms
+		animation: cdn-auth-card-in 450ms cubic-bezier(0.22, 0.61, 0.36, 1) 80ms
 			both;
 	}
 }

@@ -859,3 +859,77 @@ body.cdn-stream-playing .cdn-pp__waveform {
 .cdn-auth-subdomain .cdn-player-slot {
 	display: none;
 }
+
+/* ==========================================================================
+   Audio-reactive sigil (l rethink — liora design)
+
+   A brand mark (radio tower silhouette via CSS) that pulses with the beat.
+   Uses --cdn-mid (0-1 audio level written per-frame by background-viz) to
+   drive opacity, scale, and glow. Sits between the waveform bars and the
+   type icon, visible only when playing. Respects prefers-reduced-motion.
+   ========================================================================== */
+@keyframes cdn-sigil-pulse {
+	0%,
+	100% {
+		transform: scale(calc(1 + var(--cdn-mid, 0) * 0.08));
+		opacity: calc(0.5 + var(--cdn-mid, 0) * 0.5);
+	}
+	50% {
+		transform: scale(calc(1 + var(--cdn-mid, 0) * 0.14));
+		opacity: calc(0.6 + var(--cdn-mid, 0) * 0.4);
+	}
+}
+
+@keyframes cdn-sigil-glow {
+	0%,
+	100% {
+		filter: drop-shadow(
+			0 0 calc(1px + var(--cdn-mid, 0) * 3px)
+				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.4)
+		);
+	}
+	50% {
+		filter: drop-shadow(
+			0 0 calc(2px + var(--cdn-mid, 0) * 5px)
+				rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.6)
+		);
+	}
+}
+
+.cdn-pp__sigil {
+	display: none;
+	align-items: center;
+	justify-content: center;
+	width: 20px;
+	height: 20px;
+	flex-shrink: 0;
+	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
+	opacity: 0.6;
+	animation:
+		cdn-sigil-pulse 2.4s ease-in-out infinite,
+		cdn-sigil-glow 2.4s ease-in-out infinite;
+}
+
+body.cdn-stream-playing .cdn-pp__sigil {
+	display: inline-flex;
+}
+
+/* light mode: softer glow, multiply blend for ink-on-parchment feel */
+:root:not(.awsui-dark-mode) .cdn-pp__sigil {
+	opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-pp__sigil {
+		animation: none;
+		opacity: 0.6;
+	}
+}
+
+/* Mobile — slightly smaller sigil */
+@media (max-width: 600px) {
+	.cdn-pp__sigil {
+		width: 16px;
+		height: 16px;
+	}
+}
