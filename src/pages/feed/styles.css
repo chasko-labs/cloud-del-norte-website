@@ -11,6 +11,7 @@
 .feed-carousel__viewport {
 	width: 100%;
 	overflow: hidden;
+	min-width: 0;
 }
 
 .feed-carousel__frame {
@@ -19,6 +20,7 @@
 	aspect-ratio: 16 / 9;
 	max-width: 560px;
 	max-height: 315px;
+	min-height: 180px;
 }
 
 .feed-carousel__frame iframe {
@@ -237,6 +239,7 @@
 	aspect-ratio: 16 / 9;
 	max-width: 560px;
 	max-height: 315px;
+	min-height: 180px;
 }
 
 .feed-twitch__frame iframe {

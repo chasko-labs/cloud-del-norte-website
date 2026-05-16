@@ -1994,9 +1994,16 @@ nav[class*="awsui_navigation_"]:not(
 }
 
 /* ── P3 touch-target compliance (WCAG 2.5.8 — 44×44 minimum) ────────────── */
-button[class*="awsui_navigation-toggle"] {
+button[class*="awsui_navigation-toggle"],
+[class*="awsui_tools-toggle_"] button,
+button[class*="awsui_tools-toggle"] {
 	min-width: 44px;
 	min-height: 44px;
+	width: 36px !important;
+	height: 36px !important;
+	max-width: 36px !important;
+	max-height: 36px !important;
+	transition: none !important;
 }
 
 #top-nav [class*="utility-wrapper"] a[class*="awsui_link"] {
