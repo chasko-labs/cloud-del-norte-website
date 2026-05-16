@@ -133,6 +133,7 @@ def scenario_fp011():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 login(nova, "S1")
                 nova.act(f"Navigate to {MEETINGS_URL} and wait for the page to fully load.")
@@ -189,6 +190,7 @@ def scenario_fp015():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 login(nova, "S2")
                 try:
@@ -265,6 +267,7 @@ def scenario_returnto():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 login(nova, "S3")
                 nova.act(f"Navigate to {MEETINGS_URL} and wait for the page to fully load.")

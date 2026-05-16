@@ -31,6 +31,13 @@ import boto3
 from bedrock_agentcore.tools.browser_client import browser_session
 from nova_act import NovaAct, workflow
 from nova_act.types.act_errors import ActActuationError
+from nova_act.util.s3_writer import S3Writer
+
+s3_writer = S3Writer(
+    boto_session=boto3.Session(profile_name='aerospaceug-admin'),
+    s3_bucket_name='clouddelnorte.org',
+    s3_prefix='screenshots/nova-act/',
+)
 
 AUTH_URL = "https://auth.clouddelnorte.org/login/index.html"
 # Force-wallpaper param bypasses SwiftShader detection in Playwright.
@@ -132,9 +139,11 @@ def run() -> None:
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=DOMAINS[0], headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
+                stop_hooks=[s3_writer],
             ) as nova:
                 inject_error_capture(nova.page)
-                nova.page.goto(DOMAINS[0], wait_until="networkidle", timeout=30000)
+                nova.go_to_url(DOMAINS[0])
                 log(f"  Waiting {WARMUP_S}s for BabylonJS warmup…")
                 time.sleep(WARMUP_S)
 
@@ -161,6 +170,8 @@ def run() -> None:
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
+                stop_hooks=[s3_writer],
             ) as nova:
                 log(f"  Logging in as {MOD_EMAIL}")
                 nova.act(f"Enter '{MOD_EMAIL}' in the email field.")
@@ -178,7 +189,7 @@ def run() -> None:
                     log(f"  Checking {domain}…")
 
                     inject_error_capture(nova.page)
-                    nova.page.goto(url, wait_until="networkidle", timeout=30000)
+                    nova.go_to_url(url)
                     log(f"  Waiting {WARMUP_S}s for BabylonJS warmup…")
                     time.sleep(WARMUP_S)
 

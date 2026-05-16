@@ -62,6 +62,7 @@ def run():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 # --- Login ---
                 log(f"Logging in as {EMAIL}")
@@ -75,7 +76,7 @@ def run():
                 log(f"Post-login URL: {nova.page.url}")
 
                 # --- Navigate to AWSUG ---
-                nova.page.goto(AWSUG_URL, wait_until="networkidle", timeout=30000)
+                nova.go_to_url(AWSUG_URL)
                 time.sleep(3)
                 log(f"AWSUG URL: {nova.page.url}")
 
@@ -110,7 +111,7 @@ def run():
 
                 # --- Phantom navigation: direct /admin/index.html ---
                 log(f"Direct navigating to {ADMIN_URL}")
-                resp = nova.page.goto(ADMIN_URL, wait_until="networkidle", timeout=30000)
+                resp = nova.go_to_url(ADMIN_URL)
                 time.sleep(3)
                 final_url = nova.page.url
                 status = resp.status if resp else "no-response"

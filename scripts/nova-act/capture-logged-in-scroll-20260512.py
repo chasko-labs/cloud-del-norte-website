@@ -16,6 +16,13 @@ import boto3
 from bedrock_agentcore.tools.browser_client import browser_session
 from nova_act import NovaAct, workflow
 from nova_act.types.act_errors import ActActuationError
+from nova_act.util.s3_writer import S3Writer
+
+s3_writer = S3Writer(
+    boto_session=boto3.Session(profile_name='aerospaceug-admin'),
+    s3_bucket_name='clouddelnorte.org',
+    s3_prefix='screenshots/nova-act/',
+)
 
 AUTH_URL = "https://auth.clouddelnorte.org/login/index.html"
 TARGET_URL = "https://awsug.clouddelnorte.org/index.html"
@@ -150,6 +157,8 @@ def run():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
+                stop_hooks=[s3_writer],
             ) as nova:
                 # --- Login ---
                 log(f"Login as {EMAIL}")

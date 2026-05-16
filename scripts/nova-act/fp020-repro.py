@@ -124,6 +124,7 @@ def phase_a_signup():
         with NovaAct(
             cdp_endpoint_url=ws_url, cdp_headers=headers,
             starting_page=SIGNUP_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
         ) as nova:
             time.sleep(4)
 
@@ -177,6 +178,7 @@ def phase_d_login_and_nav():
         with NovaAct(
             cdp_endpoint_url=ws_url, cdp_headers=headers,
             starting_page=LOGIN_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
         ) as nova:
             time.sleep(4)
 
@@ -194,7 +196,7 @@ def phase_d_login_and_nav():
 
             # PHASE E: navigate to awsug
             log("E", "=== PHASE E: Navigate to awsug ===")
-            nova.page.goto(AWSUG_URL, wait_until="domcontentloaded")
+            nova.go_to_url(AWSUG_URL)
             time.sleep(5)
             log("E", f"URL: {nova.page.url}")
             screenshot(nova, f"fp020-awsug-nav-{TS}.png")

@@ -4,8 +4,8 @@
 Captures 24 screenshots (2 domains × 2 auth states × 3 widths × 2 scroll positions)
 plus console logs and network failure data for logged-in sessions.
 """
+import asyncio
 import json, os, signal, sys, time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -14,8 +14,16 @@ os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 
 import boto3
 from bedrock_agentcore.tools.browser_client import browser_session
-from nova_act import NovaAct, workflow
+from nova_act.asyncio import NovaAct
+from nova_act import workflow
 from nova_act.types.act_errors import ActActuationError
+from nova_act.util.s3_writer import S3Writer
+
+s3_writer = S3Writer(
+    boto_session=boto3.Session(profile_name='aerospaceug-admin'),
+    s3_bucket_name='clouddelnorte.org',
+    s3_prefix='screenshots/nova-act/',
+)
 
 AUTH_URL = "https://auth.clouddelnorte.org/login/index.html"
 DOMAINS = ["clouddelnorte.org", "awsug.clouddelnorte.org"]
@@ -55,7 +63,7 @@ def capture_screenshots(nova, domain: str, auth_state: str):
     base_url = f"https://{domain}"
     for width in WIDTHS:
         nova.page.set_viewport_size({"width": width, "height": 900})
-        nova.page.goto(base_url, wait_until="networkidle", timeout=30000)
+        nova.go_to_url(base_url)
         time.sleep(3)
 
         # Scroll top
@@ -160,7 +168,7 @@ def inject_observers(page):
     boto_session_kwargs={"profile_name": "bryanchasko-kiro", "region_name": "us-east-1"},
     workflow_definition_name="cdn-visual-regression",
 )
-def run():
+async def run():
     signal.signal(signal.SIGALRM, lambda s, f: (_ for _ in ()).throw(TimeoutError("timeout")))
     signal.alarm(TIMEOUT)
     try:
@@ -168,9 +176,11 @@ def run():
         log("=== LOGGED-OUT captures ===")
         with browser_session(region="us-east-1", name="cdn-vis-out") as browser:
             ws_url, headers = browser.generate_ws_headers()
-            with NovaAct(
+            async with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=f"https://{DOMAINS[0]}", headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
+                stop_hooks=[s3_writer],
             ) as nova:
                 for domain in DOMAINS:
                     log(f"Capturing logged-OUT: {domain}")
@@ -180,9 +190,11 @@ def run():
         log("=== LOGGED-IN captures ===")
         with browser_session(region="us-east-1", name="cdn-vis-in") as browser:
             ws_url, headers = browser.generate_ws_headers()
-            with NovaAct(
+            async with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
+                stop_hooks=[s3_writer],
             ) as nova:
                 # Login
                 log(f"Logging in as {MOD_EMAIL}")
@@ -198,10 +210,10 @@ def run():
                 for domain in DOMAINS:
                     log(f"Capturing logged-IN: {domain}")
                     # Inject observers before navigating to target
-                    nova.page.goto(f"https://{domain}", wait_until="domcontentloaded", timeout=30000)
+                    nova.go_to_url(f"https://{domain}")
                     inject_observers(nova.page)
                     # Re-navigate to get full capture with observers active
-                    nova.page.goto(f"https://{domain}", wait_until="networkidle", timeout=30000)
+                    nova.go_to_url(f"https://{domain}")
                     time.sleep(5)
                     capture_screenshots(nova, domain, "IN")
                     capture_diagnostics(nova, domain)
@@ -221,7 +233,7 @@ if __name__ == "__main__":
     log(f"Domains: {DOMAINS}")
     log(f"Widths: {WIDTHS}")
     log(f"User: {MOD_EMAIL}")
-    run()
+    asyncio.run(run())
 
     # --- Summary ---
     log(f"\n{'='*60}")
