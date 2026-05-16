@@ -135,7 +135,7 @@ def _run_cell(cell):
     session_name = ("cdnCritique-" + cid)[:63]
     starting = LOGIN_URL if cell["auth_state"] != "guest" else cell["url"]
 
-    with browser_session(region="us-east-1", name=session_name) as browser:
+    with browser_session(region="us-east-1", identifier=session_name) as browser:
         ws_url, headers = browser.generate_ws_headers()
         with NovaAct(
             cdp_endpoint_url=ws_url,
