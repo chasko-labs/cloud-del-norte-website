@@ -102,6 +102,7 @@ def scenario_moderator():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 login(nova, MOD_EMAIL, MOD_PASSWORD, "MOD")
                 nova.act(f"Navigate to {AWSUG_URL} and wait for the page to fully load.")
@@ -145,6 +146,7 @@ def scenario_member():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 login(nova, MEMBER_EMAIL, MEMBER_PASSWORD, "MEM")
                 nova.act(f"Navigate to {AWSUG_URL} and wait for the page to fully load.")
@@ -189,6 +191,7 @@ def scenario_pending():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 login(nova, PENDING_EMAIL, PENDING_PASSWORD, "PEND")
                 nova.act(f"Navigate to {AWSUG_URL} and wait for the page to fully load.")

@@ -142,6 +142,7 @@ def run_fp017():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 # Login
                 nova.act(f"Enter '{PENDING_EMAIL}' in the email field.")

@@ -21,6 +21,13 @@ import boto3
 from bedrock_agentcore.tools.browser_client import browser_session
 from nova_act import NovaAct, workflow
 from nova_act.types.act_errors import ActActuationError
+from nova_act.util.s3_writer import S3Writer
+
+s3_writer = S3Writer(
+    boto_session=boto3.Session(profile_name='aerospaceug-admin'),
+    s3_bucket_name='clouddelnorte.org',
+    s3_prefix='screenshots/nova-act/',
+)
 
 AUTH_URL = "https://auth.clouddelnorte.org/login/index.html"
 AWSUG_URL = "https://awsug.clouddelnorte.org"
@@ -95,6 +102,8 @@ def run():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
+                stop_hooks=[s3_writer],
             ) as nova:
                 # --- Login ---
                 log(f"Login as {EMAIL}")
@@ -108,9 +117,9 @@ def run():
                 log(f"Post-login: {nova.page.url}")
 
                 # --- Navigate to AWSUG ---
-                nova.page.goto(AWSUG_URL, wait_until="networkidle", timeout=30000)
+                nova.go_to_url(AWSUG_URL)
                 inject_observers(nova.page)
-                nova.page.goto(AWSUG_URL, wait_until="networkidle", timeout=30000)
+                nova.go_to_url(AWSUG_URL)
                 time.sleep(5)
 
                 # === SYMPTOM 2: Layout screenshots at 3 viewports × 2 scroll ===
@@ -118,7 +127,7 @@ def run():
                 layout_shots = []
                 for w, h in VIEWPORTS:
                     nova.page.set_viewport_size({"width": w, "height": h})
-                    nova.page.goto(AWSUG_URL, wait_until="networkidle", timeout=30000)
+                    nova.go_to_url(AWSUG_URL)
                     time.sleep(2)
                     nova.page.evaluate("window.scrollTo(0,0)")
                     time.sleep(0.5)
@@ -136,7 +145,7 @@ def run():
                 # === SYMPTOM 1: LioraFrame (fiona-frame) ===
                 log("=== Symptom 1: fiona-frame verification ===")
                 nova.page.set_viewport_size({"width": 1440, "height": 900})
-                nova.page.goto(AWSUG_URL, wait_until="networkidle", timeout=30000)
+                nova.go_to_url(AWSUG_URL)
                 time.sleep(5)
 
                 # Focused screenshot of fiona-frame
@@ -178,7 +187,7 @@ def run():
                 # === SYMPTOM 3: Dune scene ===
                 log("=== Symptom 3: dune scene ===")
                 inject_observers(nova.page)
-                nova.page.goto(DUNE_URL, wait_until="networkidle", timeout=30000)
+                nova.go_to_url(DUNE_URL)
                 time.sleep(10)  # BabylonJS warmup
 
                 dune_state = nova.page.evaluate("""() => {

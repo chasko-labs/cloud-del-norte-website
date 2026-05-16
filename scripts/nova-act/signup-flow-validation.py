@@ -118,6 +118,7 @@ def scenario_fp004():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=SIGNUP_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 time.sleep(4)
                 screenshot(nova, f"fp004-signup-page-{TS}.png")
@@ -169,6 +170,7 @@ def scenario_fp007():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=SIGNUP_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 time.sleep(3)
 
@@ -182,12 +184,12 @@ def scenario_fp007():
 
                 # Navigate away
                 log("FP007", "Navigating away...")
-                nova.page.goto(HOME_URL, wait_until="domcontentloaded")
+                nova.go_to_url(HOME_URL)
                 time.sleep(2)
 
                 # Navigate back
                 log("FP007", "Navigating back to signup...")
-                nova.page.goto(SIGNUP_URL, wait_until="domcontentloaded")
+                nova.go_to_url(SIGNUP_URL)
                 time.sleep(4)
 
                 screenshot(nova, f"fp007-returned-{TS}.png")
@@ -242,6 +244,7 @@ def scenario_fp001_fp002():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=SIGNUP_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 time.sleep(4)
                 log("MFA", f"Filling signup form with {mfa_email}")
@@ -288,6 +291,7 @@ def scenario_fp001_fp002():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=LOGIN_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 time.sleep(4)
                 log("MFA", "Filling login credentials in fresh session...")
@@ -320,7 +324,7 @@ def scenario_fp001_fp002():
                     log("MFA", "Falling back to deployed JS bundle validation...")
 
                     # Navigate to login page and extract the JS bundle content
-                    nova.page.goto(LOGIN_URL, wait_until="domcontentloaded")
+                    nova.go_to_url(LOGIN_URL)
                     time.sleep(3)
 
                     # Get all script sources AND modulepreload links

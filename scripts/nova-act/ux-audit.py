@@ -31,6 +31,9 @@ def run_audit():
             starting_page="https://auth.clouddelnorte.org/login/index.html",
             headless=True,
             tty=False,
+            record_video=True,
+            logs_directory='/tmp/nova-act-logs',
+            go_to_url_timeout=30,
         ) as nova:
             try:
                 nova.act(

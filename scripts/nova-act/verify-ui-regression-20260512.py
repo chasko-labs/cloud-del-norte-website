@@ -16,6 +16,13 @@ os.environ["AWS_DEFAULT_REGION"] = "us-east-1"
 import boto3
 from nova_act import NovaAct, workflow
 from nova_act.types.act_errors import ActActuationError
+from nova_act.util.s3_writer import S3Writer
+
+s3_writer = S3Writer(
+    boto_session=boto3.Session(profile_name='aerospaceug-admin'),
+    s3_bucket_name='clouddelnorte.org',
+    s3_prefix='screenshots/nova-act/',
+)
 
 try:
     from bedrock_agentcore.tools.browser_client import browser_session
@@ -108,6 +115,8 @@ def run_validation(email: str, password: str):
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
+                stop_hooks=[s3_writer],
             ) as nova:
                 # --- Login (verbatim from fp014-016) ---
                 log(f"Logging in as {email}")
@@ -121,7 +130,7 @@ def run_validation(email: str, password: str):
                 log(f"Post-login URL: {nova.page.url}")
 
                 # --- Navigate to AWSUG ---
-                nova.page.goto(AWSUG_URL, wait_until="networkidle", timeout=30000)
+                nova.go_to_url(AWSUG_URL)
                 time.sleep(3)
 
                 # --- Symptom 2: Layout at 3 viewports, top + bottom ---
@@ -192,7 +201,7 @@ def run_validation(email: str, password: str):
                 # Force wallpaper bypasses SwiftShader skip in headless browser
                 # Ensure reduced-motion is not set (would skip dune mount)
                 nova.page.emulate_media(reduced_motion="no-preference")
-                nova.page.goto(AWSUG_URL + "/?__cdn_force_wallpaper=1", wait_until="networkidle", timeout=30000)
+                nova.go_to_url(AWSUG_URL + "/?__cdn_force_wallpaper=1")
                 time.sleep(8)
 
                 dune_checks = nova.page.evaluate("""() => {

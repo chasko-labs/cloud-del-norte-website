@@ -62,6 +62,7 @@ def run():
             with NovaAct(
                 cdp_endpoint_url=ws_url, cdp_headers=headers,
                 starting_page=AUTH_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
             ) as nova:
                 # Capture network
                 api_responses = []
@@ -86,7 +87,7 @@ def run():
                 log(f"Post-login URL: {nova.page.url}")
 
                 # Navigate to admin
-                nova.page.goto(ADMIN_URL, wait_until="networkidle", timeout=30000)
+                nova.go_to_url(ADMIN_URL)
                 time.sleep(4)
                 log(f"Admin URL: {nova.page.url}")
 

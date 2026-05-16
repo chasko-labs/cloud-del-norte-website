@@ -229,6 +229,7 @@ def scenario_fp009():
         with NovaAct(
             cdp_endpoint_url=ws_url, cdp_headers=headers,
             starting_page=MEETINGS_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
         ) as nova:
             time.sleep(3)
             inject_auth(nova, tokens)
@@ -291,6 +292,7 @@ def scenario_fp013():
         with NovaAct(
             cdp_endpoint_url=ws_url, cdp_headers=headers,
             starting_page=MEETINGS_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
         ) as nova:
             time.sleep(3)
             inject_auth(nova, tokens)

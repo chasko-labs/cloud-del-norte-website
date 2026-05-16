@@ -72,6 +72,7 @@ def run():
         with NovaAct(
             cdp_endpoint_url=ws_url, cdp_headers=headers,
             starting_page=DEV_URL, headless=True, tty=False,
+                record_video=True, logs_directory='/tmp/nova-act-logs', go_to_url_timeout=30,
         ) as nova:
             # Step 1: Wait for React to render, then check CTA
             nova.page.wait_for_function(
