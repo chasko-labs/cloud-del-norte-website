@@ -6,6 +6,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { chromium } from "playwright";
 
+// Cap the Node process hosting Playwright. CI containers on shared workstations
+// have seen unbounded Chrome/Node growth cause system freezes (2026-05-16).
+process.env.NODE_OPTIONS = '--max-old-space-size=768';
+
 const baseUrl = process.argv[2];
 const outDir = process.argv[3];
 if (!baseUrl || !outDir) {
@@ -25,12 +29,21 @@ const PAGES = [
 	{ name: "feed", path: "/feed/index.html" },
 ];
 
+// Memory-safe flags for CI screenshots. GPU rasterization/ANGLE flags removed —
+// they raise rendering memory for quality we don't need here. Caps applied at
+// both the V8 (--max-old-space-size) and process (NODE_OPTIONS above) layers.
 const LAUNCH_ARGS = [
 	"--autoplay-policy=no-user-gesture-required",
-	"--ignore-gpu-blocklist",
-	"--enable-gpu-rasterization",
-	"--use-gl=angle",
-	"--use-angle=gl",
+	"--disable-dev-shm-usage",
+	"--disable-gpu",
+	"--no-sandbox",
+	"--js-flags=--max-old-space-size=512",
+	"--disable-background-networking",
+	"--disable-default-apps",
+	"--disable-extensions",
+	"--disable-sync",
+	"--metrics-recording-only",
+	"--no-first-run",
 ];
 
 const browser = await chromium.launch({ headless: true, args: LAUNCH_ARGS });
