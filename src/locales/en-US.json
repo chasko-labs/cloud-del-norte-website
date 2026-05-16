@@ -222,6 +222,24 @@
 		},
 		"timezone": {
 			"label": "Time zone"
+		},
+		"tabs": {
+			"upcoming": "Upcoming",
+			"history": "Past Meetings"
+		},
+		"noPastMeetings": "No past meetings on record.",
+		"rsvpOnMeetup": "RSVP on Meetup",
+		"editModal": {
+			"title": "Edit Meeting",
+			"meetupLink": "Meetup link",
+			"speakers": "Speakers",
+			"notes": "Notes",
+			"scheduledDate": "Scheduled date",
+			"scheduledTime": "Scheduled time",
+			"speakerBioUrl": "Speaker bio URL",
+			"meetupRsvpUrl": "Meetup RSVP URL",
+			"save": "Save",
+			"cancel": "Cancel"
 		}
 	},
 	"createMeeting": {

@@ -15,10 +15,13 @@ import Textarea from "@cloudscape-design/components/textarea";
 import TimeInput from "@cloudscape-design/components/time-input";
 import { useCallback, useEffect, useState } from "react";
 import {
+	type AdminMeeting,
 	createMeeting,
 	deleteMeeting,
+	listAdminMeetings,
 	listMeetings,
 	type ScheduledMeetingApi,
+	updateAdminMeeting,
 } from "../_shared/api";
 
 const SHARE_BASE = "https://clouddelnorte.org/m/";
@@ -39,6 +42,26 @@ const EMPTY_FORM: CreateForm = {
 	duration_minutes: "60",
 };
 
+interface EditForm {
+	meetupLink: string;
+	speakers: string;
+	notes: string;
+	scheduledDate: string;
+	scheduledTime: string;
+	speakerBioUrl: string;
+	meetupRsvpUrl: string;
+}
+
+const EMPTY_EDIT: EditForm = {
+	meetupLink: "",
+	speakers: "",
+	notes: "",
+	scheduledDate: "",
+	scheduledTime: "",
+	speakerBioUrl: "",
+	meetupRsvpUrl: "",
+};
+
 export function MeetingsTable() {
 	const [meetings, setMeetings] = useState<ScheduledMeetingApi[]>([]);
 	const [loading, setLoading] = useState(true);
@@ -48,6 +71,13 @@ export function MeetingsTable() {
 	const [saving, setSaving] = useState(false);
 	const [deletingId, setDeletingId] = useState<string | null>(null);
 	const [invitees, setInvitees] = useState("");
+
+	// Edit state
+	const [editTarget, setEditTarget] = useState<AdminMeeting | null>(null);
+	const [editForm, setEditForm] = useState<EditForm>(EMPTY_EDIT);
+	const [editSaving, setEditSaving] = useState(false);
+	const [adminMeetings, setAdminMeetings] = useState<AdminMeeting[]>([]);
+	const [adminLoading, setAdminLoading] = useState(false);
 
 	const load = useCallback(async () => {
 		setLoading(true);
@@ -61,9 +91,21 @@ export function MeetingsTable() {
 		}
 	}, []);
 
+	const loadAdminMeetings = useCallback(async () => {
+		setAdminLoading(true);
+		try {
+			setAdminMeetings(await listAdminMeetings("upcoming"));
+		} catch {
+			// non-fatal
+		} finally {
+			setAdminLoading(false);
+		}
+	}, []);
+
 	useEffect(() => {
 		void load();
-	}, [load]);
+		void loadAdminMeetings();
+	}, [load, loadAdminMeetings]);
 
 	async function handleCreate() {
 		if (!form.title || !form.date || !form.time) {
@@ -107,6 +149,36 @@ export function MeetingsTable() {
 			setError("Failed to delete meeting.");
 		} finally {
 			setDeletingId(null);
+		}
+	}
+
+	function openEdit(m: AdminMeeting) {
+		setEditTarget(m);
+		setEditForm({
+			meetupLink: m.meetup_link ?? "",
+			speakers: m.speakers ?? "",
+			notes: m.notes ?? "",
+			scheduledDate: m.scheduled_date ?? "",
+			scheduledTime: m.scheduled_time ?? "",
+			speakerBioUrl: m.speaker_bio_url ?? "",
+			meetupRsvpUrl: m.meetup_rsvp_url ?? "",
+		});
+		setError("");
+	}
+
+	async function handleEditSave() {
+		if (!editTarget) return;
+		setEditSaving(true);
+		setError("");
+		try {
+			await updateAdminMeeting(editTarget.meeting_id, editForm);
+			setEditTarget(null);
+			setEditForm(EMPTY_EDIT);
+			void loadAdminMeetings();
+		} catch {
+			setError("Failed to save meeting.");
+		} finally {
+			setEditSaving(false);
 		}
 	}
 
@@ -165,8 +237,151 @@ export function MeetingsTable() {
 		},
 	];
 
+	const adminColumns = [
+		{
+			id: "speakers",
+			header: "Speakers",
+			cell: (m: AdminMeeting) => m.speakers ?? "",
+			minWidth: 160,
+		},
+		{
+			id: "date",
+			header: "Date",
+			cell: (m: AdminMeeting) =>
+				m.scheduled_date
+					? `${m.scheduled_date}${m.scheduled_time ? ` ${m.scheduled_time}` : ""}`
+					: "",
+			minWidth: 140,
+		},
+		{
+			id: "meetupLink",
+			header: "Meetup",
+			cell: (m: AdminMeeting) =>
+				m.meetup_link ? (
+					<a href={m.meetup_link} target="_blank" rel="noreferrer">
+						link
+					</a>
+				) : null,
+			minWidth: 80,
+		},
+		{
+			id: "rsvpUrl",
+			header: "RSVP URL",
+			cell: (m: AdminMeeting) => m.meetup_rsvp_url ?? "",
+			minWidth: 140,
+		},
+		{
+			id: "edit",
+			header: "Edit",
+			minWidth: 80,
+			cell: (m: AdminMeeting) => (
+				<Button onClick={() => openEdit(m)}>Edit</Button>
+			),
+		},
+	];
+
 	return (
 		<>
+			{/* Edit modal */}
+			<Modal
+				visible={!!editTarget}
+				onDismiss={() => {
+					setEditTarget(null);
+					setEditForm(EMPTY_EDIT);
+					setError("");
+				}}
+				header="Edit Meeting"
+				footer={
+					<SpaceBetween direction="horizontal" size="xs">
+						<Button
+							onClick={() => {
+								setEditTarget(null);
+								setEditForm(EMPTY_EDIT);
+								setError("");
+							}}
+						>
+							Cancel
+						</Button>
+						<Button
+							variant="primary"
+							loading={editSaving}
+							onClick={() => {
+								void handleEditSave();
+							}}
+						>
+							Save
+						</Button>
+					</SpaceBetween>
+				}
+			>
+				<SpaceBetween size="m">
+					{error && <Alert type="error">{error}</Alert>}
+					<FormField label="Meetup link">
+						<Input
+							value={editForm.meetupLink}
+							onChange={({ detail }) =>
+								setEditForm((f) => ({ ...f, meetupLink: detail.value }))
+							}
+						/>
+					</FormField>
+					<FormField label="Speakers">
+						<Input
+							value={editForm.speakers}
+							onChange={({ detail }) =>
+								setEditForm((f) => ({ ...f, speakers: detail.value }))
+							}
+						/>
+					</FormField>
+					<FormField label="Scheduled date">
+						<DatePicker
+							value={editForm.scheduledDate}
+							onChange={({ detail }) =>
+								setEditForm((f) => ({ ...f, scheduledDate: detail.value }))
+							}
+							placeholder="YYYY/MM/DD"
+						/>
+					</FormField>
+					<FormField label="Scheduled time">
+						<TimeInput
+							value={editForm.scheduledTime}
+							onChange={({ detail }) =>
+								setEditForm((f) => ({ ...f, scheduledTime: detail.value }))
+							}
+							format="hh:mm"
+							placeholder="hh:mm"
+						/>
+					</FormField>
+					<FormField label="Speaker bio URL">
+						<Input
+							value={editForm.speakerBioUrl}
+							onChange={({ detail }) =>
+								setEditForm((f) => ({ ...f, speakerBioUrl: detail.value }))
+							}
+							placeholder="https://linkedin.com/in/..."
+						/>
+					</FormField>
+					<FormField label="Meetup RSVP URL">
+						<Input
+							value={editForm.meetupRsvpUrl}
+							onChange={({ detail }) =>
+								setEditForm((f) => ({ ...f, meetupRsvpUrl: detail.value }))
+							}
+							placeholder="https://meetup.com/..."
+						/>
+					</FormField>
+					<FormField label="Notes">
+						<Textarea
+							value={editForm.notes}
+							onChange={({ detail }) =>
+								setEditForm((f) => ({ ...f, notes: detail.value }))
+							}
+							placeholder="Optional notes"
+						/>
+					</FormField>
+				</SpaceBetween>
+			</Modal>
+
+			{/* Create modal */}
 			<Modal
 				visible={showCreate}
 				onDismiss={() => {
@@ -290,6 +505,30 @@ export function MeetingsTable() {
 							}
 						>
 							Scheduled Meetings
+						</Header>
+					}
+				/>
+
+				{/* Portal admin meetings (editable via /admin/meetings) */}
+				<Table
+					items={adminMeetings}
+					columnDefinitions={adminColumns}
+					loading={adminLoading}
+					loadingText="Loading portal meetings"
+					empty={<Box textAlign="center">No portal meetings.</Box>}
+					header={
+						<Header
+							counter={`(${adminMeetings.length})`}
+							actions={
+								<Button
+									iconName="refresh"
+									onClick={() => {
+										void loadAdminMeetings();
+									}}
+								/>
+							}
+						>
+							Portal Meetings (editable)
 						</Header>
 					}
 				/>

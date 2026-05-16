@@ -151,3 +151,49 @@ export async function deleteMeeting(
 	});
 	if (!res.ok) throw new Error(`delete meeting failed: ${res.status}`);
 }
+
+// ---- Admin meetings (cdn-portal API /admin/meetings) ----
+
+export interface AdminMeeting {
+	meeting_id: string;
+	meetup_link?: string;
+	speakers?: string;
+	notes?: string;
+	scheduled_date?: string;
+	scheduled_time?: string;
+	speaker_bio_url?: string;
+	meetup_rsvp_url?: string;
+	created_at?: string;
+	updated_at?: string;
+}
+
+export async function listAdminMeetings(
+	view: "upcoming" | "past" = "upcoming",
+): Promise<AdminMeeting[]> {
+	const res = await apiRequest(`/admin/meetings?view=${view}`, "GET");
+	if (!res.ok) throw new Error(`list admin meetings failed: ${res.status}`);
+	const data = (await res.json()) as { meetings: AdminMeeting[] };
+	return data.meetings;
+}
+
+export async function updateAdminMeeting(
+	id: string,
+	body: Partial<{
+		meetupLink: string;
+		speakers: string;
+		notes: string;
+		scheduledDate: string;
+		scheduledTime: string;
+		speakerBioUrl: string;
+		meetupRsvpUrl: string;
+	}>,
+): Promise<AdminMeeting> {
+	const res = await apiRequest(
+		`/admin/meetings/${encodeURIComponent(id)}`,
+		"PUT",
+		body,
+	);
+	if (!res.ok) throw new Error(`update meeting failed: ${res.status}`);
+	const data = (await res.json()) as { meeting: AdminMeeting };
+	return data.meeting;
+}

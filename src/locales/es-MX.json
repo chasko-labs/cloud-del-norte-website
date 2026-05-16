@@ -222,6 +222,24 @@
 		},
 		"timezone": {
 			"label": "Zona horaria"
+		},
+		"tabs": {
+			"upcoming": "Próximas",
+			"history": "Juntas Anteriores"
+		},
+		"noPastMeetings": "No hay juntas anteriores registradas.",
+		"rsvpOnMeetup": "RSVP en Meetup",
+		"editModal": {
+			"title": "Editar Junta",
+			"meetupLink": "Enlace de Meetup",
+			"speakers": "Oradores",
+			"notes": "Notas",
+			"scheduledDate": "Fecha programada",
+			"scheduledTime": "Hora programada",
+			"speakerBioUrl": "URL de bio del orador",
+			"meetupRsvpUrl": "URL de RSVP en Meetup",
+			"save": "Guardar",
+			"cancel": "Cancelar"
 		}
 	},
 	"createMeeting": {
