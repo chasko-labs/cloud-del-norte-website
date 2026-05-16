@@ -147,11 +147,18 @@ const columnDefinitions = (
 		id: "rsvp",
 		header: t("meetings.tableHeaders.rsvp"),
 		cell: ({ meetupRsvpUrl, eventlink }) => {
+			const isMeetupUrl = !!meetupRsvpUrl;
 			const url = meetupRsvpUrl || eventlink;
 			if (!url) return null;
 			return (
-				<Button variant="link" href={url} target="_blank">
-					{t("meetings.rsvpButton")}
+				<Button
+					variant="link"
+					href={url}
+					target="_blank"
+					iconAlign="right"
+					iconName="external"
+				>
+					{isMeetupUrl ? t("meetings.rsvpOnMeetup") : t("meetings.rsvpButton")}
 				</Button>
 			);
 		},
