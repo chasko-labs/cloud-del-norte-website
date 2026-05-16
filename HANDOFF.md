@@ -2,8 +2,71 @@
 
 **date:** 2026-05-16  
 **branch:** main  
-**last commit:** b67ce092 feat(meetings): timezone picker on meetings list (#186 slice 3 partial)  
-**deploy:** verified 2026-05-16 21:26 UTC — all 3 subdomains live via manual fallback (Woodpecker still in #157 death-loop).
+**last commit:** 790092d7 feat(icons): k4 headphones-over-mic composite icon as podcast mode indicator  
+**deploy:** verified 2026-05-16 23:07 UTC — all 3 subdomains live via manual fallback (Woodpecker still in #157 death-loop).
+
+---
+
+## completed 2026-05-16 late evening — Wave 5 (3 parallel + 1 sequential, autonomous PO continuation)
+
+Bryan: "keep grinding of course." Continued autonomous decomposition. Tracks C + D serialized via depends_on to avoid en-US.json/es-MX.json merge race. Tracks A + B + C ran in parallel; D ran after C.
+
+| commit | track | description |
+|--------|-------|-------------|
+| 6348ef3d | C | feat(meetings): speaker bio on meeting cards (#186 slice 3 partial) |
+| 7cc9afdc | A.1 | feat(player): custom SVG icons in podcast mode — new podcast-player-icons.tsx |
+| 218ec419 | A.2 | feat(player): custom SVG icons in podcast mode — wiring conditional render in index.tsx |
+| 790092d7 | B | feat(icons): k4 headphones-over-mic composite icon as podcast mode indicator |
+| — | D | no commit needed — #162 already shipped, audit produced verification, issue closed |
+
+### what shipped per track
+
+**Track A — e2 podcast player icon redesign** (HANDOFF creative item, now closed)
+- New `src/components/persistent-player/podcast-player-icons.tsx` exports 5 components:
+  - PodcastPlayIcon: stylised triangle with inner echo at 35% opacity
+  - PodcastPauseIcon: two vertical bars
+  - SeekBackIcon: CCW curved arc + inline `<text>15</text>`
+  - SeekForwardIcon: CW mirror
+  - NextEpisodeIcon: vertical bar + chevron right
+- All icons: viewBox 24x24, fill="none", stroke="currentColor", strokeWidth=1.5, round caps/joins, aria-hidden inline
+- Wired in `index.tsx` with `isPodcast` gate: podcast mode shows custom icons, radio mode keeps existing ⏭/▶/■ chrome
+- Verified live: SeekBackIcon path `M9 12a5 5 0` in lib/assets/theme-DPPji9wW.js
+
+**Track B — k4 headphones-over-mic composite icon** (HANDOFF creative item, now closed)
+- Replaced stub SVG in `src/components/podcast-icon/index.tsx` with composite design: U-arc headphone band crossing in front of rounded-rect mic capsule, ear cups flanking, accent line for dynamic feel
+- Player already imports `<PodcastIcon />` when `streamDef.type === "podcast" && playing` — no wiring change needed
+- All currentColor strokes auto-adapt to light/dark mode
+
+**Track C — speaker bio on meeting cards (#186 slice 3 partial)**
+- Optional `speakerBio?: string` field added to meeting type, rendered conditionally on cards
+- en-US + es-MX locale keys added matching existing nesting
+- If/when cloud-del-norte-meet API populates the field, the UI auto-renders it
+
+**Track D — #162 phantom-nav audit**
+- Audited `src/sites/awsug/admin/app.tsx`: AccessDenied component renders Cloudscape Alert type=warning with `awsug.admin.moderatorAccessRequired` i18n key + back-link Button to /meetings/index.html. AdminWithLayout branches: spinner → AccessDenied → AdminPanel by auth state.
+- en-US + es-MX strings already present
+- All 3 pieces of #162 verified shipped (FP-014 ab10ba7b nav-hide + dc2b9eb9 create-meeting gate + AccessDenied)
+- Issue #162 closed with verification comment
+
+### deploy
+
+Manual fallback (Woodpecker still dead per #157):
+- main: last-modified 2026-05-16T23:05:19Z
+- auth: last-modified 2026-05-16T23:06:13Z (rebuild only — no auth-specific Wave 5 changes)
+- awsug: last-modified 2026-05-16T23:07:10Z (admin + meetings chunks refreshed)
+
+### lessons learned
+
+- Pipeline output can truncate. Always verify commits via `git log origin/main` over trusting subagent text reports.
+- depends_on serialization on locale-touching tracks works cleanly. Two ghosts editing the same JSON file in parallel would race; sequential is the safe pattern.
+- "STOP and report on stale-issue detection" is correct ghost behavior. Track D produced the #162 closure rationale instead of fabricating work — saved a separate triage session.
+- Verifying minified bundle signatures: prefer unique SVG path data (e.g., `M9 12a5 5 0`) over JSX text-node children — minifier reorders attribute spreads.
+
+### items closed this wave
+
+- e2 podcast player icon redesign (creative)
+- k4 headphones-over-mic composite icon (creative)
+- chasko-labs/cloud-del-norte-website#162 phantom-nav
 
 ---
 
@@ -321,10 +384,7 @@ Defense in depth: hide admin nav link for non-moderators + render denial card on
 
 ### p1 — open creative/ux items
 
-- a2: login page full ux rethink
-- c2: add AWS LATAM podcast RSS feed
-- e2: podcast player icon redesign
-- k4: headphones-over-microphone composite icon
+- a2: login page full ux rethink (polish pass shipped Wave 4; big design-alternative choice still pending)
 - l: animated records rethink — "waveform disc" concept
 
 ### p2 — Device Farm CI integration
@@ -513,8 +573,7 @@ Quick reference:
 
 | issue | status | notes |
 |-------|--------|-------|
-| #157 | quiescent | Woodpecker death-loop — SQLite locked state on chasko-labs/chrome-extension-moodle-uploader. Documented, not blocking website deploys (manual deploy script works). |
-| #162 | in-progress | phantom-nav — /admin/index.html blank for non-moderators + create-meeting access level. Fix: hide admin nav link for non-mods + denial card on direct /admin + moderator-only create-meeting. |
+| #157 | quiescent | Woodpecker death-loop — SQLite locked state on chasko-labs/chrome-extension-moodle-uploader. Documented, not blocking website deploys (manual deploy script works). Worth a separate triage session. |
 
 ---
 
