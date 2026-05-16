@@ -1,8 +1,9 @@
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LazyEmbed } from "../../../components/lazy-embed";
+import { SkeletonFrame } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 interface Props {
@@ -21,9 +22,14 @@ export default function YouTubeChannelCarousel({
 	liveVideoId = null,
 }: Props) {
 	const { t } = useTranslation();
+	const [mounted, setMounted] = useState(false);
 	const [current, setCurrent] = useState(() =>
 		Math.floor(Math.random() * videoIds.length),
 	);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
 
 	const prev = () =>
 		setCurrent((c) => (c - 1 + videoIds.length) % videoIds.length);
@@ -49,40 +55,44 @@ export default function YouTubeChannelCarousel({
 				</Header>
 			}
 		>
-			<div className="feed-carousel">
-				<div className="feed-carousel__viewport">
-					<div className="feed-carousel__frame">
-						<LazyEmbed
-							src={`https://www.youtube.com/embed/${embedId}`}
-							title={`${name} ${current + 1} / ${videoIds.length}`}
-							allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
-						/>
+			{!mounted ? (
+				<SkeletonFrame />
+			) : (
+				<div className="feed-carousel">
+					<div className="feed-carousel__viewport">
+						<div className="feed-carousel__frame">
+							<LazyEmbed
+								src={`https://www.youtube.com/embed/${embedId}`}
+								title={`${name} ${current + 1} / ${videoIds.length}`}
+								allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
+							/>
+						</div>
 					</div>
+					{!live && videoIds.length > 1 && (
+						<div className="feed-carousel__controls">
+							<button
+								type="button"
+								className="feed-carousel__btn"
+								onClick={prev}
+								aria-label={t("feedPage.youtubePrevVideo")}
+							>
+								&#8592;
+							</button>
+							<span className="feed-carousel__counter">
+								{current + 1} / {videoIds.length}
+							</span>
+							<button
+								type="button"
+								className="feed-carousel__btn"
+								onClick={next}
+								aria-label={t("feedPage.youtubeNextVideo")}
+							>
+								&#8594;
+							</button>
+						</div>
+					)}
 				</div>
-				{!live && videoIds.length > 1 && (
-					<div className="feed-carousel__controls">
-						<button
-							type="button"
-							className="feed-carousel__btn"
-							onClick={prev}
-							aria-label={t("feedPage.youtubePrevVideo")}
-						>
-							&#8592;
-						</button>
-						<span className="feed-carousel__counter">
-							{current + 1} / {videoIds.length}
-						</span>
-						<button
-							type="button"
-							className="feed-carousel__btn"
-							onClick={next}
-							aria-label={t("feedPage.youtubeNextVideo")}
-						>
-							&#8594;
-						</button>
-					</div>
-				)}
-			</div>
+			)}
 		</Container>
 	);
 }
