@@ -15,6 +15,13 @@ import { formatLocation, hexToRgbTuple } from "../../lib/streams";
 import { STREAMS } from "../../lib/streams-order";
 import { DancerIcon } from "../dancer-icon";
 import { PodcastIcon } from "../podcast-icon";
+import {
+	NextEpisodeIcon,
+	PodcastPauseIcon,
+	PodcastPlayIcon,
+	SeekBackIcon,
+	SeekForwardIcon,
+} from "./podcast-player-icons";
 import "./styles.css";
 
 const POLL_MS = 30_000;
@@ -579,7 +586,7 @@ function PersistentPlayerBar({
 					aria-label="next station"
 					title="next station"
 				>
-					<span aria-hidden="true">⏭</span>
+					{isPodcast ? <NextEpisodeIcon /> : <span aria-hidden="true">⏭</span>}
 				</button>
 				<span className="cdn-pp__next-hint" aria-hidden="true">
 					{(() => {
@@ -701,7 +708,7 @@ function PersistentPlayerBar({
 						aria-label="rewind 15 seconds"
 						title="rewind 15s"
 					>
-						<span aria-hidden="true">«15</span>
+						<SeekBackIcon />
 					</button>
 					<button
 						type="button"
@@ -710,7 +717,7 @@ function PersistentPlayerBar({
 						aria-label="fast-forward 15 seconds"
 						title="fast-forward 15s"
 					>
-						<span aria-hidden="true">15»</span>
+						<SeekForwardIcon />
 					</button>
 				</>
 			)}
@@ -721,7 +728,7 @@ function PersistentPlayerBar({
 					onClick={resume}
 					aria-label="resume playback"
 				>
-					&#9654;
+					{isPodcast ? <PodcastPlayIcon /> : <>&#9654;</>}
 				</button>
 			) : playing ? (
 				<button
@@ -730,7 +737,7 @@ function PersistentPlayerBar({
 					onClick={pause}
 					aria-label="pause playback"
 				>
-					{isPodcast ? <>&#9646;&#9646;</> : <>&#9632;</>}
+					{isPodcast ? <PodcastPauseIcon /> : <>&#9632;</>}
 				</button>
 			) : (
 				<button
@@ -739,7 +746,7 @@ function PersistentPlayerBar({
 					onClick={play}
 					aria-label="play"
 				>
-					&#9654;
+					{isPodcast ? <PodcastPlayIcon /> : <>&#9654;</>}
 				</button>
 			)}
 		</section>
