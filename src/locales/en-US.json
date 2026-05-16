@@ -318,9 +318,10 @@
 		"spanishSpeakersDesc": "help reach Spanish-speaking builders across the Borderplex",
 		"womenWelcomeDesc": "we actively recruit women builders for organizing roles",
 		"reachOutOnMeetup": "Reach out on Meetup",
-		"speakerRoleName": "speaker",
-		"speakerRoleDesc": "propose a talk, demo, or lightning round — in-person, virtual, or hybrid. we cover the juárez / el paso / las cruces corridor and beyond.",
-		"speakerRoleCta": "propose a talk"
+		"speakerRoleName": "call for proposals open",
+		"speakerRoleDesc": "all levels welcome for talks (up to 2 hours), demos & lightning rounds (5 minutes). presentations encouraged in english, spanish & regional sign language.",
+		"speakerRoleCta": "propose a talk",
+		"volunteerRolesHeader": "interested?"
 	},
 	"speakerForm": {
 		"modalTitle": "propose a talk",

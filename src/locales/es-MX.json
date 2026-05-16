@@ -318,9 +318,10 @@
 		"spanishSpeakersDesc": "ayúdanos a llegar a los builders hispanohablantes del Borderplex",
 		"womenWelcomeDesc": "buscamos activamente a mujeres builders para roles de organización",
 		"reachOutOnMeetup": "Contáctanos en Meetup",
-		"speakerRoleName": "ponente",
-		"speakerRoleDesc": "propón una charla, demo o lightning round — presencial, virtual o híbrido. cubrimos el corredor juárez / el paso / las cruces y más allá.",
-		"speakerRoleCta": "proponer una charla"
+		"speakerRoleName": "convocatoria abierta",
+		"speakerRoleDesc": "todos los niveles bienvenidos para pláticas (hasta 2 horas), demos y lightning rounds (5 minutos). presentaciones en inglés, español y lengua de señas regional son bienvenidas.",
+		"speakerRoleCta": "proponer una charla",
+		"volunteerRolesHeader": "¿te interesa?"
 	},
 	"speakerForm": {
 		"modalTitle": "proponer una charla",
