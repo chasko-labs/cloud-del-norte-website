@@ -113,4 +113,9 @@ steps:
     when:
       - event: [push, pull_request, manual]
     commands:
-      - gitleaks detect --verbose --source . --exit-code 1
+      - |
+        if [ "$CI_PIPELINE_EVENT" = "cron" ]; then
+          gitleaks detect --verbose --source . --exit-code 1
+        else
+          gitleaks detect --verbose --source . --exit-code 1 --log-opts="$CI_COMMIT_BEFORE_SHA..$CI_COMMIT_SHA"
+        fi
