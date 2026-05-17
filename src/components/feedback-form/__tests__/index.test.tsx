@@ -2,7 +2,10 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-type AnyProps = Record<string, unknown>;
+type AnyProps = Record<string, unknown> & {
+	children?: React.ReactNode;
+	footer?: React.ReactNode;
+};
 
 // ── FileUpload mock — exposes a trigger function via data-testid ─────────────
 // The mock stores the onChange prop in a ref accessible to tests so they
