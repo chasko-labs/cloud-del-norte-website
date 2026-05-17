@@ -2,8 +2,105 @@
 
 **date:** 2026-05-17  
 **branch:** main  
-**last commit:** de3df273 chore(biome): auto-format + 2 useExhaustiveDependencies fixes (34 → 0 errors)  
-**deploy:** verified 2026-05-17 17:17 UTC — all 3 subdomains live; auth bundle 877KB → 114KB (-87%); biome 34 → 0 errors. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+**last commit:** cc0888ca feat(feed): lazy-load cards + infinite scroll sentinel (2 mobile / 4 desktop initial)  
+**deploy:** verified 2026-05-17 ~19:25 UTC — all 3 subdomains live with Wave 16 chrome redesign + always-sticky player + lazy feed cards. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-17 — Wave 16 (5-stage DAG: screenshot-first chrome redesign + player always-sticky + lazy cards/infinite scroll)
+
+Bryan's multi-part directive: mobile chrome buttons too big (Wave 14's 44×44 over-corrected visually), misaligned with breadcrumb, blocking player, look "1990s" against state-of-the-art site. Plus: changed his mind on conditional sticky — wants player always on screen. Plus: limit cards above footer to 2 mobile / 4 desktop with infinite scroll for lazy loading. Bryan specifically asked for screenshot-first workflow: "dispatch a screenshot then feed the screenshot to liora for feedback (make sure you have a screenshot on load & scroll down)".
+
+5-stage DAG: liora-headless captures screenshots → solan implements feed lazy-load (parallel) → liora-css-repair reviews screenshots + redesigns buttons + reverts player conditional → orin closeout → liora-headless final verification.
+
+| commit | track | description |
+|--------|-------|-------------|
+| 6ac2dad0 | A | fix(chrome): wave 16 mobile button redesign + player always-sticky |
+| cc0888ca | C | feat(feed): lazy-load cards + infinite scroll sentinel (2 mobile / 4 desktop initial) |
+
+### Track A — mobile chrome redesign (commit 6ac2dad0)
+
+Stage 1A: ghost-liora-headless-verifier captured 2 screenshots at 375×667 viewport (load + scrolled to 400px) per Bryan's spec. Saved /tmp/wave16-track-a-load.png and /tmp/wave16-track-a-scroll.png. Reported DOM geometry: hamburger + info bounding rects, breadcrumb alignment, player overlap.
+
+Stage 2A: ghost-liora-css-repair reviewed screenshots, applied targeted CSS fixes:
+- Visible circle reduced from 44×44 to **32×32** (padding-on-transparent technique: 6px transparent padding around 32×32 visible = 46×46 total click target, still WCAG-compliant ≥44px)
+- Box-sizing content-box ensures padding adds to the click zone without affecting visible size
+- Modern circular look: 50% border-radius preserved, glass-style background harmonizing with cdn-glass aesthetic, subtle backdrop-filter blur
+- Icon SVG centering: display: flex; align-items: center; justify-content: center; on button container; SVG sized to ~16-20px (down from dominant 24px in 44×44 circle)
+- Verified vertical alignment with breadcrumb: 1px delta (within 3px tolerance)
+
+Track B (rolled into Stage 2A — both CSS work in adjacent files): reverted Wave 13/14 conditional sticky on player. Removed `body.cdn-stream-playing` gate from `.cdn-player-slot { position: sticky }` rule. Player now sticky unconditionally. The body class still drives the audio-reactive sigil from Wave 7 — only its position:sticky scoping was removed.
+
+Verifier confirmed:
+- 32×32 visible at 375px and 1024px
+- 46×46 click target including padding (≥ 44×44 WCAG)
+- SVG icon centerX/centerY = button centerX/centerY (0px delta)
+- Border-radius 50% (perfectly circular)
+- Vertical alignment with breadcrumb: 1px delta
+- No overlap with player at any scrollY (16px separation on mobile)
+- Player position: sticky regardless of body class — verified with cdn-stream-playing absent
+
+### Track C — feed cards lazy-load + infinite scroll (commit cc0888ca)
+
+Stage 1B (parallel with 1A): ghost-solan-rust-coder investigated src/pages/feed/app.tsx and card components. Implemented:
+
+New files:
+- `src/hooks/useInfiniteCards.ts` — useState(visibleCount) initialized via matchMedia('(max-width: 689px)') as 2 (mobile) or 4 (desktop). matchMedia listener resizes initial count if viewport crosses breakpoint. incrementVisible() = setVisibleCount(c => Math.min(c + (isMobile ? 2 : 4), cards.length)). Returns { visibleCount, incrementVisible, hasMore }.
+- `src/components/feed-sentinel/index.tsx` — IntersectionObserver({ threshold: 0.1, rootMargin: '300px' }) on its own ref. When intersecting, calls onVisible() prop. Renders an aria-hidden 1px div. Returns null when hasMore is false.
+- `src/hooks/__tests__/useInfiniteCards.test.ts` — Vitest tests covering: initial mobile=2, initial desktop=4, increment by N respects cards.length cap, hasMore reflects state, doesn't exceed length.
+
+Modified:
+- `src/pages/feed/app.tsx` — wired the hook + render `cards.slice(0, visibleCount)` followed by `<FeedSentinel onVisible={incrementVisible} hasMore={hasMore} />`.
+
+Verifier confirmed:
+- 375px: 2 cards in DOM initially ✓
+- 1024px: 4 cards in DOM initially ✓
+- Sentinel triggers on scroll to near-bottom: cards grow 2 → 4 (one batch appended) ✓
+- IntersectionObserver pattern functional (rootMargin 300px is reasonable preload buffer)
+
+### deploy
+
+All 3 subdomains via `bash scripts/deploy-manual.sh`:
+- main: deployed (cards changes are main-subdomain feed page; CSS changes shared shell)
+- auth: deployed (CSS changes shared shell)
+- awsug: deployed (CSS changes shared shell)
+
+### dispatch performance
+
+- ghost-liora-headless-verifier (Stage 1A screenshot): clean. Returned 2 screenshots + DOM geometry data + concrete observations matching Bryan's complaints.
+- ghost-solan-rust-coder (Stage 1B feed cards): clean. New hook + sentinel component + tests all in one focused dispatch. Reused existing LazyEmbed pattern from Wave 4.
+- ghost-liora-css-repair (Stage 2A): clean. Used Stage 1A screenshots as input, applied 4 specific fixes (size, padding, centering, modern look + Track B player always-sticky reversal) in single dispatch. Captured before/after Playwright verification.
+- ghost-orin-ci-cd (Stage 3): 2 atomic commits, single push, all 3 subdomains deployed. Clean.
+- ghost-liora-headless-verifier (Stage 4 final): comprehensive — 6 main checkpoints + 3 bonus regression checks. All PASS. Qualitative: "tight and modern".
+
+### lessons learned
+
+- **Screenshot-first workflow is gold for visual redesign tasks.** Bryan asked for it explicitly; the result was a clean targeted fix instead of guessing. Stage 1A's DOM geometry data (button centerY vs breadcrumb centerY, icon vs background centering) gave Liora-css-repair specific failure modes to address. Pattern reusable for any future visual-tuning ask.
+- **Padding-on-transparent click target technique** is the right solution when WCAG touch target conflicts with visual desire for smaller buttons. 32×32 visible + 6px transparent padding = 46×46 click target, satisfies both. content-box ensures padding adds to the click zone.
+- **Reversing prior-wave decisions is not failure** — Bryan changed his mind on conditional player sticky from Wave 13/14 to Wave 16. The CSS rule was simple to update. The body class itself is preserved for its other usage (audio-reactive sigil from Wave 7). Architectural separation of concerns (one body class, two CSS rules consuming it differently) made the partial reversal painless.
+- **IntersectionObserver sentinel pattern** for infinite scroll is the right primitive: append-only virtualization, no unmount on scroll-up. rootMargin: '300px' is a reasonable preload buffer that triggers append before user reaches the bottom — feels seamless on touch scroll. Existing LazyEmbed (Wave 4) had already established the IntersectionObserver pattern in this codebase.
+- **2 mobile / 4 desktop initial** with matchMedia('(max-width: 689px)') is a clean responsive default. Bryan's "2 cards mobile / 4 desktop when they grid" maps directly to matchMedia logic — no need for ResizeObserver complexity.
+- Wave 14 → Wave 16 chrome cleanup chain: Wave 14 over-corrected for WCAG (44×44 visible was too dominant), Wave 16 corrected for visual (32×32 with transparent padding satisfies both). Iterating on user-facing aesthetics requires verifier loops; pure CSS review can't catch "looks 1990s" vibes.
+
+### items closed this wave
+
+- Bryan's "buttons too large" → 32×32 visible + 46×46 click target
+- Bryan's "buttons not aligned with breadcrumb" → 1px vertical delta verified
+- Bryan's "buttons blocking play / next button" → 16px separation, no overlap at any scrollY
+- Bryan's "hamburger + info icons look 1990s" → modern flat circular flex-centered with glass background
+- Bryan's "icons not positioned well within their backgrounds" → SVG centered 0px delta vs button center
+- Bryan's "keep player on screen whether playing or not" → unconditional position: sticky
+- Bryan's "limit cards to 2 mobile / 4 desktop + infinite scroll lazy loading" → useInfiniteCards hook + FeedSentinel component + IntersectionObserver
+
+### follow-ups (next session candidates)
+
+- **C2 sentinel rootMargin tuning** — verifier noted the 300px rootMargin may need adjustment for very short pages. UX edge case, low priority unless Bryan flags.
+- **Desktop nav-toggle hidden at 1024px** — Cloudscape default (side-nav open). The 32×32 styling is applied but invisible. Expected behavior, just noted.
+- **Player sticky top value** — currently `top: 56px` in CSS but computed as 112px. May vary by toolbar height. Worth a future audit across content lengths.
+- Wave 15 follow-ups still queued: 19 pre-existing test failures investigation, biome.json ignore list for public/data/**, broader test coverage backfill.
+- Bryan-input requests still queued: Twitch CSP frame-src decision, records-in-breadcrumb clarification, A3 desktop alignment 4.92px (low priority).
+- Out of CDN PO scope: #157 Woodpecker recovery, #201 v3.14.x upgrade.
+- Bryan-gated: #185 passkey on Pixel 9, #189 verification methods.
 
 ---
 
