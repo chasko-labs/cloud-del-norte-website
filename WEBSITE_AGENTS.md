@@ -1,3 +1,24 @@
+> **legacy file — do not use as entry point**
+>
+> this file is legacy. read AGENTS.md instead.
+>
+> kept for historical context — predates the AGENTS.md-at-root convention
+> adopted in Wave 10 (commit f772a1df). the 'shannon collective' framing
+> documented here is no longer the operating model. the current structure
+> is haunting-kiro-cli + agentskills.io convention + distilled steering docs.
+>
+> canonical entry points:
+> - `AGENTS.md` — universal agent entry point (root)
+> - `.kiro/AGENTS.md` — haunting-flavored overlay
+> - `.kiro/steering/` — behavioral steering rules (deployment, aws-resources, etc.)
+> - `HANDOFF.md` — live backlog and session continuity
+>
+> this file is retained because it documents the heraldstack shannon agent
+> collective context that birthed the project. content may not yet be fully
+> distilled into the new structure. do not delete without validating coverage.
+
+---
+
 # cloud del norte — agents & automation
 
 how the site gets built with AI. this is the operating manual for working on cloud del norte with claude code and the shannon agent collective.
