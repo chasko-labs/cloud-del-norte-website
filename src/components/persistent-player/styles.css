@@ -74,8 +74,8 @@
 	overflow: visible;
 }
 
-/* 5. Player sticky ONLY when a station is playing */
-body.cdn-stream-playing .cdn-player-slot {
+/* 5. Player always sticky — unconditional (Wave 16 reversal) */
+.cdn-player-slot {
 	position: sticky;
 	top: 56px;
 }
@@ -770,9 +770,9 @@ body.cdn-podcast-playing .cdn-pp__btn--resume {
 }
 
 /* Mobile (<=688px) — sticky breadcrumb toolbar (~56px) below #top-nav (56px).
-   Player slot sticks at 112px to clear both bars. Only when playing. */
+   Player slot sticks at 112px to clear both bars. */
 @media (max-width: 688px) {
-	body.cdn-stream-playing .cdn-player-slot {
+	.cdn-player-slot {
 		top: 112px;
 	}
 }

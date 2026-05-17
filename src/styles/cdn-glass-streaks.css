@@ -1163,20 +1163,16 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
    200ms cubic-bezier; reduced motion disables pulse + scale.
    ========================================================================== */
 
-/* Light mode — dark mahogany gradient + amber border + cream icon */
+/* Light mode — translucent glass + amber border */
 :root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-	background: linear-gradient(
-		135deg,
-		var(--cdn-gradient-nav-start) 0%,
-		var(--cdn-gradient-nav-mid) 55%,
-		var(--cdn-gradient-nav-end) 100%
-	);
-	border: 1.5px solid rgba(139, 90, 43, 0.55);
-	color: var(--cdn-cream, #ede5d4);
+	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.7));
+	backdrop-filter: blur(8px) saturate(1.1);
+	-webkit-backdrop-filter: blur(8px) saturate(1.1);
+	border: 1.5px solid rgba(139, 90, 43, 0.3);
+	color: rgba(90, 58, 20, 0.85);
 	box-shadow:
-		0 2px 12px rgba(44, 18, 6, 0.32),
-		0 0 0 1px rgba(255, 153, 0, 0.08),
-		inset 0 1px 0 rgba(255, 153, 0, 0.18);
+		0 1px 6px rgba(44, 18, 6, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.4);
 	transition:
 		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1187,38 +1183,27 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 
 :root:not(.awsui-dark-mode)
 	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
-	background: linear-gradient(
-		135deg,
-		var(--cdn-gradient-nav-mid) 0%,
-		var(--cdn-gradient-nav-end) 55%,
-		var(--cdn-gradient-nav-start) 100%
-	);
-	border-color: var(--cdn-amber, #8b5a2b);
-	transform: scale(1.08);
+	border-color: rgba(139, 90, 43, 0.5);
+	transform: scale(1.06);
 	box-shadow:
-		0 6px 22px rgba(44, 18, 6, 0.42),
-		0 0 14px rgba(255, 153, 0, 0.45),
-		0 0 0 2px rgba(255, 153, 0, 0.22),
-		inset 0 1px 0 rgba(255, 153, 0, 0.32);
-	filter: drop-shadow(0 0 6px rgba(255, 153, 0, 0.35));
+		0 2px 12px rgba(44, 18, 6, 0.18),
+		0 0 8px rgba(255, 153, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	filter: none;
 }
 
 :root:not(.awsui-dark-mode)
 	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10):active {
-	transform: scale(1);
+	transform: scale(0.96);
 	box-shadow:
-		inset 0 2px 6px rgba(0, 0, 0, 0.45),
-		0 1px 4px rgba(44, 18, 6, 0.28);
+		inset 0 1px 3px rgba(0, 0, 0, 0.15),
+		0 1px 2px rgba(44, 18, 6, 0.1);
 	filter: none;
 }
 
-/* Light mode — cream icon glyph against the dark gradient.
-   Cloudscape's info icon is `<circle r="7"> <path d="...">` — both meant to
-   render as STROKE outlines, not solid fills. Setting fill: cream solid-
-   filled the ring and buried the "i" inside it. Now: only set color so
-   currentColor flows + paint the shapes via stroke. */
+/* Light mode — dark icon on glass background */
 :root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-	color: var(--cdn-color-bg, #ede5d4);
+	color: rgba(90, 58, 20, 0.85);
 }
 
 :root:not(.awsui-dark-mode)
@@ -1235,20 +1220,16 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 	stroke-linecap: round;
 }
 
-/* Dark mode — deep navy gradient + violet border + lavender icon */
+/* Dark mode — translucent glass + violet border */
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-	background: linear-gradient(
-		135deg,
-		var(--cdn-gradient-nav-start) 0%,
-		var(--cdn-gradient-nav-mid) 50%,
-		var(--cdn-gradient-nav-end) 100%
-	);
-	border: 1.5px solid rgba(144, 96, 240, 0.5);
-	color: var(--cdn-lavender, #d7c7ee);
+	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.55));
+	backdrop-filter: blur(8px) saturate(1.1);
+	-webkit-backdrop-filter: blur(8px) saturate(1.1);
+	border: 1.5px solid rgba(144, 96, 240, 0.3);
+	color: rgba(215, 199, 238, 0.9);
 	box-shadow:
-		0 4px 18px -2px rgba(0, 0, 0, 0.55),
-		0 0 0 1px rgba(144, 96, 240, 0.12),
-		inset 0 1px 0 rgba(144, 96, 240, 0.28);
+		0 1px 6px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(144, 96, 240, 0.15);
 	transition:
 		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1258,27 +1239,20 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 }
 
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
-	background: linear-gradient(
-		135deg,
-		var(--cdn-gradient-nav-mid) 0%,
-		var(--cdn-gradient-nav-end) 50%,
-		var(--cdn-gradient-nav-start) 100%
-	);
-	border-color: var(--cdn-violet, #9060f0);
-	transform: scale(1.08);
+	border-color: rgba(144, 96, 240, 0.55);
+	transform: scale(1.06);
 	box-shadow:
-		0 8px 28px -4px rgba(0, 0, 0, 0.6),
-		0 0 18px rgba(144, 96, 240, 0.55),
-		0 0 0 2px rgba(144, 96, 240, 0.28),
-		inset 0 1px 0 rgba(215, 199, 238, 0.4);
-	filter: drop-shadow(0 0 8px rgba(144, 96, 240, 0.5));
+		0 2px 12px rgba(0, 0, 0, 0.3),
+		0 0 8px rgba(144, 96, 240, 0.25),
+		inset 0 1px 0 rgba(144, 96, 240, 0.25);
+	filter: none;
 }
 
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):active {
-	transform: scale(1);
+	transform: scale(0.96);
 	box-shadow:
-		inset 0 2px 6px rgba(0, 0, 0, 0.6),
-		0 1px 4px rgba(0, 0, 0, 0.4);
+		inset 0 1px 3px rgba(0, 0, 0, 0.3),
+		0 1px 2px rgba(0, 0, 0, 0.2);
 	filter: none;
 }
 
@@ -1297,16 +1271,14 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 	0%,
 	100% {
 		box-shadow:
-			0 2px 12px rgba(44, 18, 6, 0.32),
-			0 0 0 1px rgba(255, 153, 0, 0.08),
-			inset 0 1px 0 rgba(255, 153, 0, 0.18);
+			0 1px 6px rgba(44, 18, 6, 0.12),
+			inset 0 1px 0 rgba(255, 255, 255, 0.4);
 	}
 	50% {
 		box-shadow:
-			0 3px 16px rgba(44, 18, 6, 0.38),
-			0 0 12px rgba(255, 153, 0, 0.22),
-			0 0 0 2px rgba(255, 153, 0, 0.16),
-			inset 0 1px 0 rgba(255, 153, 0, 0.28);
+			0 2px 10px rgba(44, 18, 6, 0.16),
+			0 0 6px rgba(255, 153, 0, 0.1),
+			inset 0 1px 0 rgba(255, 255, 255, 0.5);
 	}
 }
 
@@ -1314,16 +1286,14 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 	0%,
 	100% {
 		box-shadow:
-			0 4px 18px -2px rgba(0, 0, 0, 0.55),
-			0 0 0 1px rgba(144, 96, 240, 0.12),
-			inset 0 1px 0 rgba(144, 96, 240, 0.28);
+			0 1px 6px rgba(0, 0, 0, 0.25),
+			inset 0 1px 0 rgba(144, 96, 240, 0.15);
 	}
 	50% {
 		box-shadow:
-			0 5px 22px -2px rgba(0, 0, 0, 0.6),
-			0 0 16px rgba(144, 96, 240, 0.35),
-			0 0 0 2px rgba(144, 96, 240, 0.22),
-			inset 0 1px 0 rgba(144, 96, 240, 0.4);
+			0 2px 10px rgba(0, 0, 0, 0.3),
+			0 0 6px rgba(144, 96, 240, 0.18),
+			inset 0 1px 0 rgba(144, 96, 240, 0.25);
 	}
 }
 
@@ -1351,17 +1321,14 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
    ========================================================================== */
 :root:not(.awsui-dark-mode)
 	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-	background: linear-gradient(
-		135deg,
-		var(--cdn-gradient-nav-start) 0%,
-		var(--cdn-gradient-nav-mid) 55%,
-		var(--cdn-gradient-nav-end) 100%
-	);
-	border: 1px solid rgba(139, 90, 43, 0.4);
-	color: rgba(245, 233, 208, 0.92);
+	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.7));
+	backdrop-filter: blur(8px) saturate(1.1);
+	-webkit-backdrop-filter: blur(8px) saturate(1.1);
+	border: 1.5px solid rgba(139, 90, 43, 0.3);
+	color: rgba(90, 58, 20, 0.85);
 	box-shadow:
-		0 1px 4px rgba(44, 18, 6, 0.32),
-		inset 0 1px 0 rgba(255, 153, 0, 0.18);
+		0 1px 6px rgba(44, 18, 6, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.4);
 	transition:
 		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.2s ease,
@@ -1369,17 +1336,14 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 }
 
 .awsui-dark-mode [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-	background: linear-gradient(
-		135deg,
-		var(--cdn-gradient-nav-start) 0%,
-		var(--cdn-gradient-nav-mid) 50%,
-		var(--cdn-gradient-nav-end) 100%
-	);
-	border: 1px solid rgba(144, 96, 240, 0.4);
-	color: rgba(215, 199, 238, 0.92);
+	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.55));
+	backdrop-filter: blur(8px) saturate(1.1);
+	-webkit-backdrop-filter: blur(8px) saturate(1.1);
+	border: 1.5px solid rgba(144, 96, 240, 0.3);
+	color: rgba(215, 199, 238, 0.9);
 	box-shadow:
-		0 1px 4px rgba(0, 0, 0, 0.5),
-		inset 0 1px 0 rgba(144, 96, 240, 0.3);
+		0 1px 6px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(144, 96, 240, 0.15);
 	transition:
 		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.2s ease,
@@ -1392,19 +1356,19 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 
 :root:not(.awsui-dark-mode)
 	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
-	border-color: rgba(255, 153, 0, 0.55);
+	border-color: rgba(139, 90, 43, 0.5);
 	box-shadow:
-		0 2px 8px rgba(44, 18, 6, 0.42),
-		0 0 12px rgba(255, 153, 0, 0.28),
-		inset 0 1px 0 rgba(255, 153, 0, 0.32);
+		0 2px 12px rgba(44, 18, 6, 0.18),
+		0 0 8px rgba(255, 153, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .awsui-dark-mode [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
-	border-color: rgba(144, 96, 240, 0.65);
+	border-color: rgba(144, 96, 240, 0.55);
 	box-shadow:
-		0 2px 10px rgba(0, 0, 0, 0.55),
-		0 0 14px rgba(144, 96, 240, 0.35),
-		inset 0 1px 0 rgba(144, 96, 240, 0.45);
+		0 2px 12px rgba(0, 0, 0, 0.3),
+		0 0 8px rgba(144, 96, 240, 0.25),
+		inset 0 1px 0 rgba(144, 96, 240, 0.25);
 }
 
 @media (prefers-reduced-motion: reduce) {

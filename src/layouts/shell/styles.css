@@ -1993,19 +1993,26 @@ nav[class*="awsui_navigation_"]:not(
 	display: block;
 }
 
-/* ── P3 touch-target compliance (WCAG 2.5.8 — 44×44 minimum) ────────────── */
+/* ── P3 touch-target compliance (WCAG 2.5.8 — 44×44 minimum) ──────────────
+   Visible circle: 32×32. Transparent padding extends tap zone to 44×44.
+   display:flex centers the SVG icon within the visible circle. */
 button[class*="awsui_navigation-toggle"],
 [class*="awsui_tools-toggle_"] button,
 button[class*="awsui_tools-toggle"] {
-	min-width: 44px;
-	min-height: 44px;
-	width: 44px !important;
-	height: 44px !important;
-	max-width: 44px !important;
-	max-height: 44px !important;
+	width: 32px !important;
+	height: 32px !important;
+	min-width: 32px !important;
+	min-height: 32px !important;
+	max-width: 32px !important;
+	max-height: 32px !important;
+	padding: 6px !important;
+	box-sizing: content-box !important;
 	aspect-ratio: 1 !important;
 	border-radius: 50% !important;
 	transition: none !important;
+	display: flex !important;
+	align-items: center !important;
+	justify-content: center !important;
 }
 
 #top-nav [class*="utility-wrapper"] a[class*="awsui_link"] {
@@ -2017,7 +2024,8 @@ button[class*="awsui_tools-toggle"] {
    vertical alignment + sticky buttons on scroll ─────────────────────────── */
 
 /* 1. Keep button backings circular at ALL viewports (under 690px they were
-   becoming vertical rectangles due to flex-shrink losing aspect ratio) */
+   becoming vertical rectangles due to flex-shrink losing aspect ratio).
+   Visible circle 32×32 + 6px padding = 44×44 touch target. */
 @media (max-width: 690px) {
 	[class*="awsui_mobile-toolbar"] button[class*="awsui_navigation-toggle"],
 	[class*="awsui_mobile-toolbar"] [class*="awsui_tools-toggle_"] button,
@@ -2026,9 +2034,11 @@ button[class*="awsui_tools-toggle"] {
 	[class*="awsui_universal-toolbar"] [class*="awsui_tools-toggle_"] button,
 	[class*="awsui_universal-toolbar"] button[class*="awsui_tools-toggle"] {
 		flex-shrink: 0 !important;
-		width: 44px !important;
-		height: 44px !important;
-		min-width: 44px !important;
+		width: 32px !important;
+		height: 32px !important;
+		min-width: 32px !important;
+		padding: 6px !important;
+		box-sizing: content-box !important;
 		aspect-ratio: 1 !important;
 		border-radius: 50% !important;
 	}
@@ -2054,25 +2064,17 @@ button[class*="awsui_tools-toggle"] {
 	align-items: center;
 }
 
-/* 4. On scroll: ONLY info/hamburger buttons stay on screen (sticky).
-   The mobile-toolbar buttons get position:fixed so they persist;
-   the breadcrumb content scrolls away naturally. */
+/* 4. On scroll: buttons stay visible (sticky within toolbar).
+   Removed position:fixed + top:60px which pushed buttons below the toolbar
+   into the player zone. Buttons now stay within the toolbar's flex row,
+   vertically centered with the breadcrumb via align-items:center on parent. */
 @media (max-width: 768px) {
 	[class*="awsui_mobile-toolbar"] [class*="awsui_navigation-toggle_"],
 	[class*="awsui_mobile-toolbar"] [class*="awsui_tools-toggle_"],
 	[class*="awsui_universal-toolbar"] [class*="awsui_navigation-toggle_"],
 	[class*="awsui_universal-toolbar"] [class*="awsui_tools-toggle_"] {
-		position: fixed;
-		top: 60px;
+		position: static;
 		z-index: 1100;
-	}
-	[class*="awsui_mobile-toolbar"] [class*="awsui_navigation-toggle_"],
-	[class*="awsui_universal-toolbar"] [class*="awsui_navigation-toggle_"] {
-		left: 8px;
-	}
-	[class*="awsui_mobile-toolbar"] [class*="awsui_tools-toggle_"],
-	[class*="awsui_universal-toolbar"] [class*="awsui_tools-toggle_"] {
-		right: 8px;
 	}
 }
 
