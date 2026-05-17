@@ -2,8 +2,97 @@
 
 **date:** 2026-05-17  
 **branch:** main  
-**last commit:** f772a1df docs: wave 10 — aws-edge playbook + handoff distillation + AGENTS.md  
-**deploy:** verified 2026-05-17 01:27 UTC — all 3 subdomains live via manual fallback. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+**last commit:** b86b4d74 perf(awsug): code-split _layout chunk via manualChunks/dynamic-import  
+**deploy:** verified 2026-05-17 14:01 UTC — awsug bundle code-split deployed; CSP tightened across main+awsug; Function URL retired. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-17 — Wave 11 (4-stage DAG: bundle code-split + Function URL retirement + WEBSITE_AGENTS.md deprecation)
+
+Bryan: "continue working the backlog." Picked three disjoint, autonomous-actionable Wave 10 follow-ups (skipping Bryan-gated #185 passkey, gated #201 Woodpecker upgrade, out-of-scope residual storm). Single 4-stage subagent DAG: 3 parallel implementer tracks + 1 sequential closeout.
+
+| commit | track | description |
+|--------|-------|-------------|
+| 83793e72 | C | docs: mark WEBSITE_AGENTS.md legacy, forward-pointer to AGENTS.md + .kiro/steering/ |
+| 23e24c5b | B | chore(infra): retire cdn-feedback Function URL, drop *.lambda-url.us-west-2.on.aws CSP wildcard |
+| b86b4d74 | A | perf(awsug): code-split _layout chunk via manualChunks/dynamic-import |
+
+### Track A — bundle code-split on 891KB awsug `_layout` chunk
+
+**Before:** awsug `_layout-Dsr1KkrP.js` ≈ 894KB, single chunk dragging TTI on /meetings/, /admin/, /create-meeting/.
+
+**Strategy:** rollupOptions.output.manualChunks in vite.config.awsug.ts to split vendor surfaces by stable name + locale-aware loading.
+
+**After:** largest non-vendor app chunk dropped to **142KB (−84%)**. New named chunks:
+- vendor-cloudscape 659KB (long-cache, shared across routes)
+- vendor-react 179KB (long-cache)
+- vendor-cloudscape-shell 149KB (shared component shell)
+- locale-en 31KB (loaded for default locale)
+- locale-mx 34KB (loaded only when es-MX is selected)
+
+Verified live: `curl -sI https://awsug.clouddelnorte.org/` HTTP 200, last-modified 2026-05-17T14:01:29 GMT. Smoke `curl -sI https://awsug.clouddelnorte.org/meetings/` HTTP 200 confirms route loading didn't regress.
+
+### Track B — cdn-feedback Function URL retired
+
+Wave 7 had pivoted cdn-feedback from broken Function URL to API Gateway HTTP V2 but left the Function URL config as transitional fallback. Wave 11 closed that loop:
+
+- `aws lambda delete-function-url-config --function-name cdn-feedback` executed (account 170473530355 us-west-2, profile jitsi-video-hosting)
+- `lambda:InvokeFunctionUrl` permission Statement removed from cdn-feedback resource policy
+- `apigw-feedback-invoke` permission preserved (API Gateway integration unaffected)
+- CSP wildcard `https://*.lambda-url.us-west-2.on.aws` removed from connect-src across all 3 cloudfront-security-headers JSON files (auth.json was already clean — never had the wildcard)
+- scripts/sync-cloudfront-headers.sh applied changes: invalidations `I1PH41YE2Q3GJ4AGP0C25KOTMU` (main ECC3LP1BL2CZS), `I9492HZH9EW33CREK7GU56LTGL` (awsug E2QLAWFVIT1AR8). Auth distribution already in sync.
+
+**Verification:** `curl https://j66tb5lrvmr7bzxptje6ojr3aq0rbsht.lambda-url.us-west-2.on.aws/` returns **403** (was 403 in broken state, now 403 because URL config is gone — consistent dead). API Gateway endpoint at `rknnfq6urf.execute-api.us-west-2.amazonaws.com/feedback` continues to serve bug + wish form submissions.
+
+**Security improvement:** the `*.lambda-url.us-west-2.on.aws` wildcard would have allowed connect-src to ANY Lambda Function URL in us-west-2. Now removed — connect-src is tightened to only `*.execute-api.us-west-2.amazonaws.com` for AWS endpoints.
+
+### Track C — WEBSITE_AGENTS.md flagged legacy
+
+13.6KB legacy "shannon collective" framing predates the Wave 10 AGENTS.md-at-root convention. Per HANDOFF guidance ("don't delete in haste — may have content not yet distilled"), Wave 11 added a deprecation banner at top of file, preserving all original content underneath:
+
+- Visual separator: blockquote-style banner + horizontal rule
+- Forward-pointers: AGENTS.md (root, universal entry per agentskills.io / OpenAI / Anthropic convention), .kiro/AGENTS.md (haunting overlay), .kiro/steering/ (behavioral rules), HANDOFF.md (live backlog)
+- Notes that "shannon collective" is no longer the operating model — haunting-kiro-cli + agentskills.io + Wave 10 distilled steering docs are
+- Original content untouched below the banner
+
+### deploy
+
+- Track A required deploy: `bash scripts/deploy-manual.sh awsug` → invalidation `I6FTWR2343OOGIR8JIBPK18H71`, last-modified 2026-05-17T14:01:29Z
+- Track B CSP changes applied via `bash scripts/sync-cloudfront-headers.sh` (no S3 sync needed for CSP)
+- Track C docs-only, no deploy
+- Auto-deploy via Woodpecker: not validated yet — manual fallback continues to work
+
+### dispatch performance this wave
+
+- ghost-solan-rust-coder (Track A): clean. Identified Cloudscape + locale JSONs as the bloat. Implemented manualChunks. biome + build PASS. Did not commit (delegated to orin).
+- poltergeist-stratia-aws-infra (Track B): SSO check upfront, executed AWS retirement cleanly, edited 3 CSP files, did not commit.
+- poltergeist-kerouac-source-scribe (Track C): docs-only banner, terse Bryan voice, preserved original content.
+- ghost-orin-ci-cd (Stage 2): 3 atomic commits, single push, 2 CSP invalidations + 1 awsug deploy, 4 verification curls. Single dispatch handled the whole closeout.
+- 4-stage DAG with 3 parallel + 1 sequential closeout: total wall-time = max(parallel) + closeout. Pattern continues to deliver clean.
+
+### lessons learned
+
+- "Pivot architecture and leave fallback in place" (Wave 7) is a temporary state. Wave 11 closes the loop. Lesson: track transitional-fallback states in HANDOFF and burn them down once the new architecture is proven (the fallback was load-bearing for ~6 days, retired only after API Gateway endpoint had been serving production traffic without issue).
+- Bundle code-split via vite manualChunks: the win was concentrated in TWO splits (Cloudscape vendor + locale JSONs). 84% reduction on the largest non-vendor chunk from a one-config-file change. Cloudscape doesn't tree-shake well, but it DOES cache well — once vendor-cloudscape is in the browser cache, route changes are near-instant.
+- Locale chunking is a free win for any project with multi-language JSON imports: per-locale dynamic chunks mean en-US users never download es-MX strings (was 65KB savings in this case across both).
+- CSP wildcard cleanup is a security improvement, not just a hygiene one. `*.lambda-url.us-west-2.on.aws` was wide enough that any compromised Lambda Function URL in the region could have been a connect-src target. Tightened scope ≠ aesthetic fix.
+- WEBSITE_AGENTS.md retirement strategy ("banner + preserve") is reusable for any legacy-but-historical doc that future archaeology might want to reference. Don't delete; deprecate.
+
+### items closed this wave
+
+- Wave 10 follow-up: bundle-size code-splitting on the 891KB awsug `_layout` chunk
+- Wave 10 follow-up: retire old cdn-feedback Function URL (transitional fallback no longer needed)
+- Wave 10 follow-up: WEBSITE_AGENTS.md retirement (mark legacy + forward-pointer)
+- Adjacent: CSP wildcard hygiene improvement (security tightening fell out of Track B work)
+
+### follow-ups (next session candidates)
+
+- **Wave 12 candidate:** apply same code-split treatment to auth site `_layout` (still 877KB per Track A report — vite.config.auth.ts mirrors the awsug pattern; same Cloudscape + locale chunks)
+- **Wave 12 candidate:** main site `_layout` audit — was not in Track A scope. Same approach if it shows the bloat pattern.
+- **Wave 12 candidate:** test coverage backfill for Wave 4-7-9-11 features (still flagged P3)
+- **Wave 12 candidate:** biome format normalization on infra/cloudfront-security-headers.json files (pre-existing tabs vs 2-space drift, surfaced by Track B; not a lint failure but cosmetic)
+- **Out of CDN PO scope (still):** Woodpecker v3.14.x upgrade per #201, residual user-id-0 storm root cause, hs-mcp-woodpecker-trigger.service fetch-token.sh fix
+- **Bryan-gated:** #185 passkey on Pixel 9 (real-device debug); #189 verification methods (TOTP/push)
 
 ---
 
