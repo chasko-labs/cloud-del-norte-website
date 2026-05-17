@@ -165,7 +165,10 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 								placeholder="https://www.meetup.com/cloud-del-norte/events/..."
 							/>
 						</FormField>
-						<FormField label="Meetup RSVP URL" description="optional — takes precedence over event link for RSVP button">
+						<FormField
+							label="Meetup RSVP URL"
+							description="optional — takes precedence over event link for RSVP button"
+						>
 							<Input
 								type="url"
 								value={meetupRsvpUrl}

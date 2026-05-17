@@ -93,7 +93,10 @@ function LoginForm() {
 			let passkeyEmail =
 				email.trim() || localStorage.getItem("cdn.passkey_email") || "";
 
-			console.log("[passkey] handlePasskeyLogin start, email:", passkeyEmail ? "(set)" : "(empty)");
+			console.log(
+				"[passkey] handlePasskeyLogin start, email:",
+				passkeyEmail ? "(set)" : "(empty)",
+			);
 
 			if (!passkeyEmail) {
 				// No email known — try discoverable credential flow
@@ -115,7 +118,12 @@ function LoginForm() {
 					// userHandle is the Cognito user sub — we need to look up the email
 					// For now, decode it as UTF-8 in case it's the email directly
 					const decoded = new TextDecoder().decode(response.userHandle);
-					console.log("[passkey] discoverable userHandle decoded:", decoded.includes("@") ? "email" : "UUID/other", decoded.length, "chars");
+					console.log(
+						"[passkey] discoverable userHandle decoded:",
+						decoded.includes("@") ? "email" : "UUID/other",
+						decoded.length,
+						"chars",
+					);
 					// If it looks like an email, use it; otherwise it's a sub UUID
 					if (decoded.includes("@")) {
 						passkeyEmail = decoded;
@@ -138,7 +146,10 @@ function LoginForm() {
 			// Step 2: Now we have the email — do the Cognito flow
 			console.log("[passkey] calling initiatePasskeyAuth for:", passkeyEmail);
 			const { session, credentials } = await initiatePasskeyAuth(passkeyEmail);
-			console.log("[passkey] initiatePasskeyAuth succeeded, credentials keys:", Object.keys(credentials));
+			console.log(
+				"[passkey] initiatePasskeyAuth succeeded, credentials keys:",
+				Object.keys(credentials),
+			);
 			const publicKey = (credentials as any).publicKey ?? credentials;
 			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
 			if (publicKey.allowCredentials) {

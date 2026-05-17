@@ -8,6 +8,7 @@ import Link from "@cloudscape-design/components/link";
 import { useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
+import SpeakerProposalCta from "../../components/speaker-proposal-cta";
 import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
 import {
@@ -25,7 +26,6 @@ import {
 import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
 import Meetings from "./components/meetings";
 import ProductionOverview from "./components/production-overview";
-import SpeakerProposalCta from "../../components/speaker-proposal-cta";
 import QualityReport from "./components/quality-report";
 import {
 	breakdownItems,

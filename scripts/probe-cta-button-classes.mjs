@@ -1,7 +1,9 @@
 import { chromium } from "playwright";
 
 const browser = await chromium.launch();
-const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 } });
+const ctx = await browser.newContext({
+	viewport: { width: 1280, height: 900 },
+});
 const page = await ctx.newPage();
 
 await page.goto(`https://clouddelnorte.org/?_cb=${Date.now()}`, {

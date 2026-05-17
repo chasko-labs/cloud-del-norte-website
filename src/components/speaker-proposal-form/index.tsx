@@ -17,439 +17,438 @@ import { ensureSdk, getToken, renderCaptcha } from "./waf-captcha-loader";
 import "./styles.css";
 
 interface Props {
-  open: boolean;
-  onClose: () => void;
-  source: "home" | "awsug-panel" | "feed";
+	open: boolean;
+	onClose: () => void;
+	source: "home" | "awsug-panel" | "feed";
 }
 
 type MultiselectOption = { label: string; value: string };
 
 function defaultEarliestDate(): string {
-  const d = new Date();
-  d.setDate(d.getDate() + 90);
-  return d.toISOString().slice(0, 10);
+	const d = new Date();
+	d.setDate(d.getDate() + 90);
+	return d.toISOString().slice(0, 10);
 }
 
 function decodeTokenClaims(): { name?: string; email?: string } {
-  try {
-    const token = getIdToken();
-    if (!token) return {};
-    const parts = token.split(".");
-    if (parts.length < 2) return {};
-    let payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
-    const pad = payload.length % 4;
-    if (pad) payload += "=".repeat(4 - pad);
-    const claims = JSON.parse(atob(payload)) as Record<string, unknown>;
-    return {
-      name: typeof claims.name === "string" ? claims.name : undefined,
-      email: typeof claims.email === "string" ? claims.email : undefined,
-    };
-  } catch {
-    return {};
-  }
+	try {
+		const token = getIdToken();
+		if (!token) return {};
+		const parts = token.split(".");
+		if (parts.length < 2) return {};
+		let payload = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+		const pad = payload.length % 4;
+		if (pad) payload += "=".repeat(4 - pad);
+		const claims = JSON.parse(atob(payload)) as Record<string, unknown>;
+		return {
+			name: typeof claims.name === "string" ? claims.name : undefined,
+			email: typeof claims.email === "string" ? claims.email : undefined,
+		};
+	} catch {
+		return {};
+	}
 }
 
 const DAY_OPTIONS: MultiselectOption[] = [
-  { value: "mon", label: "monday" },
-  { value: "tue", label: "tuesday" },
-  { value: "wed", label: "wednesday" },
-  { value: "thu", label: "thursday" },
-  { value: "fri", label: "friday" },
-  { value: "sat", label: "saturday" },
-  { value: "sun", label: "sunday" },
+	{ value: "mon", label: "monday" },
+	{ value: "tue", label: "tuesday" },
+	{ value: "wed", label: "wednesday" },
+	{ value: "thu", label: "thursday" },
+	{ value: "fri", label: "friday" },
+	{ value: "sat", label: "saturday" },
+	{ value: "sun", label: "sunday" },
 ];
 
 const TIME_OPTIONS: MultiselectOption[] = [
-  { value: "morning", label: "morning" },
-  { value: "afternoon", label: "afternoon" },
-  { value: "evening", label: "evening" },
+	{ value: "morning", label: "morning" },
+	{ value: "afternoon", label: "afternoon" },
+	{ value: "evening", label: "evening" },
 ];
 
 export default function SpeakerProposalForm({ open, onClose, source }: Props) {
-  const { t } = useTranslation();
-  const claims = useRef(decodeTokenClaims());
-  const captchaContainerRef = useRef<HTMLDivElement>(null);
+	const { t } = useTranslation();
+	const claims = useRef(decodeTokenClaims());
+	const captchaContainerRef = useRef<HTMLDivElement>(null);
 
-  const [name, setName] = useState(claims.current.name ?? "");
-  const [email, setEmail] = useState(claims.current.email ?? "");
-  const [topic, setTopic] = useState("");
-  const [abstract, setAbstract] = useState("");
-  const [format, setFormat] = useState("either");
-  const [bioUrl, setBioUrl] = useState("");
-  const [preferredDays, setPreferredDays] = useState<MultiselectOption[]>([]);
-  const [preferredTimeOfDay, setPreferredTimeOfDay] = useState<
-    MultiselectOption[]
-  >([]);
-  const [earliestDate, setEarliestDate] = useState(defaultEarliestDate());
-  const [notes, setNotes] = useState("");
-  const [honeypot, setHoneypot] = useState("");
+	const [name, setName] = useState(claims.current.name ?? "");
+	const [email, setEmail] = useState(claims.current.email ?? "");
+	const [topic, setTopic] = useState("");
+	const [abstract, setAbstract] = useState("");
+	const [format, setFormat] = useState("either");
+	const [bioUrl, setBioUrl] = useState("");
+	const [preferredDays, setPreferredDays] = useState<MultiselectOption[]>([]);
+	const [preferredTimeOfDay, setPreferredTimeOfDay] = useState<
+		MultiselectOption[]
+	>([]);
+	const [earliestDate, setEarliestDate] = useState(defaultEarliestDate());
+	const [notes, setNotes] = useState("");
+	const [honeypot, setHoneypot] = useState("");
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [globalError, setGlobalError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [done, setDone] = useState(false);
-  const [showCaptcha, setShowCaptcha] = useState(false);
+	const [errors, setErrors] = useState<Record<string, string>>({});
+	const [globalError, setGlobalError] = useState("");
+	const [submitting, setSubmitting] = useState(false);
+	const [done, setDone] = useState(false);
+	const [showCaptcha, setShowCaptcha] = useState(false);
 
-  // refs for focus-first-error
-  const nameRef = useRef<HTMLInputElement>(null);
-  const emailRef = useRef<HTMLInputElement>(null);
-  const topicRef = useRef<HTMLInputElement>(null);
-  const abstractRef = useRef<HTMLTextAreaElement>(null);
+	// refs for focus-first-error
+	const nameRef = useRef<HTMLInputElement>(null);
+	const emailRef = useRef<HTMLInputElement>(null);
+	const topicRef = useRef<HTMLInputElement>(null);
+	const abstractRef = useRef<HTMLTextAreaElement>(null);
 
-  useEffect(() => {
-    if (open) {
-      void ensureSdk();
-    }
-  }, [open]);
+	useEffect(() => {
+		if (open) {
+			void ensureSdk();
+		}
+	}, [open]);
 
-  function resetForm() {
-    const c = decodeTokenClaims();
-    setName(c.name ?? "");
-    setEmail(c.email ?? "");
-    setTopic("");
-    setAbstract("");
-    setFormat("either");
-    setBioUrl("");
-    setPreferredDays([]);
-    setPreferredTimeOfDay([]);
-    setEarliestDate(defaultEarliestDate());
-    setNotes("");
-    setHoneypot("");
-    setErrors({});
-    setGlobalError("");
-    setDone(false);
-    setShowCaptcha(false);
-  }
+	function resetForm() {
+		const c = decodeTokenClaims();
+		setName(c.name ?? "");
+		setEmail(c.email ?? "");
+		setTopic("");
+		setAbstract("");
+		setFormat("either");
+		setBioUrl("");
+		setPreferredDays([]);
+		setPreferredTimeOfDay([]);
+		setEarliestDate(defaultEarliestDate());
+		setNotes("");
+		setHoneypot("");
+		setErrors({});
+		setGlobalError("");
+		setDone(false);
+		setShowCaptcha(false);
+	}
 
-  function handleClose() {
-    resetForm();
-    onClose();
-  }
+	function handleClose() {
+		resetForm();
+		onClose();
+	}
 
-  function validate(): boolean {
-    const next: Record<string, string> = {};
-    if (!name.trim()) next.name = t("speakerForm.errors.validation");
-    if (!email.trim()) next.email = t("speakerForm.errors.validation");
-    if (!topic.trim()) next.topic = t("speakerForm.errors.validation");
-    if (topic.length > 120) next.topic = t("speakerForm.errors.validation");
-    if (!abstract.trim()) next.abstract = t("speakerForm.errors.validation");
-    if (abstract.length > 1000) next.abstract = t("speakerForm.errors.validation");
-    setErrors(next);
-    if (Object.keys(next).length > 0) {
-      if (next.name) nameRef.current?.focus();
-      else if (next.email) emailRef.current?.focus();
-      else if (next.topic) topicRef.current?.focus();
-      else if (next.abstract) abstractRef.current?.focus();
-      return false;
-    }
-    return true;
-  }
+	function validate(): boolean {
+		const next: Record<string, string> = {};
+		if (!name.trim()) next.name = t("speakerForm.errors.validation");
+		if (!email.trim()) next.email = t("speakerForm.errors.validation");
+		if (!topic.trim()) next.topic = t("speakerForm.errors.validation");
+		if (topic.length > 120) next.topic = t("speakerForm.errors.validation");
+		if (!abstract.trim()) next.abstract = t("speakerForm.errors.validation");
+		if (abstract.length > 1000)
+			next.abstract = t("speakerForm.errors.validation");
+		setErrors(next);
+		if (Object.keys(next).length > 0) {
+			if (next.name) nameRef.current?.focus();
+			else if (next.email) emailRef.current?.focus();
+			else if (next.topic) topicRef.current?.focus();
+			else if (next.abstract) abstractRef.current?.focus();
+			return false;
+		}
+		return true;
+	}
 
-  async function submitWithToken(wafToken: string): Promise<void> {
-    const body = {
-      name,
-      email,
-      topic,
-      abstract,
-      format,
-      bioUrl: bioUrl || undefined,
-      preferredDays: preferredDays.map((o) => o.value),
-      preferredTimeOfDay: preferredTimeOfDay.map((o) => o.value),
-      earliestDate,
-      notes: notes || undefined,
-      submittedFromUrl: window.location.href,
-      website: honeypot,
-    };
+	async function submitWithToken(wafToken: string): Promise<void> {
+		const body = {
+			name,
+			email,
+			topic,
+			abstract,
+			format,
+			bioUrl: bioUrl || undefined,
+			preferredDays: preferredDays.map((o) => o.value),
+			preferredTimeOfDay: preferredTimeOfDay.map((o) => o.value),
+			earliestDate,
+			notes: notes || undefined,
+			submittedFromUrl: window.location.href,
+			website: honeypot,
+		};
 
-    const endpoint = import.meta.env.VITE_SPEAKER_PROPOSAL_ENDPOINT as string;
-    const idToken = getIdToken();
-    const res = await fetch(`${endpoint}/proposals`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-aws-waf-token": wafToken,
-        ...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
-      },
-      body: JSON.stringify(body),
-    });
+		const endpoint = import.meta.env.VITE_SPEAKER_PROPOSAL_ENDPOINT as string;
+		const idToken = getIdToken();
+		const res = await fetch(`${endpoint}/proposals`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+				"x-aws-waf-token": wafToken,
+				...(idToken ? { Authorization: `Bearer ${idToken}` } : {}),
+			},
+			body: JSON.stringify(body),
+		});
 
-    if (res.status === 201) {
-      setDone(true);
-      return;
-    }
+		if (res.status === 201) {
+			setDone(true);
+			return;
+		}
 
-    if (res.status === 405) {
-      // WAF CAPTCHA challenge — render explicit puzzle
-      setShowCaptcha(true);
-      setGlobalError(t("speakerForm.errors.security"));
-      setSubmitting(false);
-      // renderCaptcha is called via useEffect once showCaptcha + ref are ready
-      return;
-    }
+		if (res.status === 405) {
+			// WAF CAPTCHA challenge — render explicit puzzle
+			setShowCaptcha(true);
+			setGlobalError(t("speakerForm.errors.security"));
+			setSubmitting(false);
+			// renderCaptcha is called via useEffect once showCaptcha + ref are ready
+			return;
+		}
 
-    if (res.status === 429) {
-      setGlobalError(t("speakerForm.errors.rate"));
-      return;
-    }
+		if (res.status === 429) {
+			setGlobalError(t("speakerForm.errors.rate"));
+			return;
+		}
 
-    if (res.status === 400) {
-      let json: { error?: string; fields?: Record<string, string> } = {};
-      try {
-        json = (await res.json()) as typeof json;
-      } catch {
-        /* ignore */
-      }
-      if (json.fields) {
-        setErrors(json.fields);
-        return;
-      }
-      setGlobalError(t("speakerForm.errors.validation"));
-      return;
-    }
+		if (res.status === 400) {
+			let json: { error?: string; fields?: Record<string, string> } = {};
+			try {
+				json = (await res.json()) as typeof json;
+			} catch {
+				/* ignore */
+			}
+			if (json.fields) {
+				setErrors(json.fields);
+				return;
+			}
+			setGlobalError(t("speakerForm.errors.validation"));
+			return;
+		}
 
-    setGlobalError(t("speakerForm.errors.network"));
-  }
+		setGlobalError(t("speakerForm.errors.network"));
+	}
 
-  async function handleSubmit() {
-    if (!validate()) return;
-    if (honeypot) return; // honeypot triggered — silently drop
+	async function handleSubmit() {
+		if (!validate()) return;
+		if (honeypot) return; // honeypot triggered — silently drop
 
-    setSubmitting(true);
-    setGlobalError("");
+		setSubmitting(true);
+		setGlobalError("");
 
-    try {
-      const wafToken = await getToken();
-      await submitWithToken(wafToken);
-    } catch {
-      setGlobalError(t("speakerForm.errors.network"));
-    } finally {
-      setSubmitting(false);
-    }
-  }
+		try {
+			const wafToken = await getToken();
+			await submitWithToken(wafToken);
+		} catch {
+			setGlobalError(t("speakerForm.errors.network"));
+		} finally {
+			setSubmitting(false);
+		}
+	}
 
-  // When WAF returns 405, mount the explicit CAPTCHA puzzle into the container
-  useEffect(() => {
-    if (!showCaptcha || !captchaContainerRef.current) return;
-    renderCaptcha(captchaContainerRef.current, {
-      onSuccess: (solvedToken: string) => {
-        setShowCaptcha(false);
-        setGlobalError("");
-        setSubmitting(true);
-        void submitWithToken(solvedToken).finally(() => setSubmitting(false));
-      },
-      onError: () => {
-        setGlobalError(t("speakerForm.errors.network"));
-        setShowCaptcha(false);
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showCaptcha]);
+	// When WAF returns 405, mount the explicit CAPTCHA puzzle into the container
+	// biome-ignore lint/correctness/useExhaustiveDependencies: submitWithToken and t are stable refs; adding them causes re-render loops
+	useEffect(() => {
+		if (!showCaptcha || !captchaContainerRef.current) return;
+		renderCaptcha(captchaContainerRef.current, {
+			onSuccess: (solvedToken: string) => {
+				setShowCaptcha(false);
+				setGlobalError("");
+				setSubmitting(true);
+				void submitWithToken(solvedToken).finally(() => setSubmitting(false));
+			},
+			onError: () => {
+				setGlobalError(t("speakerForm.errors.network"));
+				setShowCaptcha(false);
+			},
+		});
+	}, [showCaptcha]);
 
-  if (done) {
-    return (
-      <Modal
-        visible={open}
-        onDismiss={handleClose}
-        header={t("speakerForm.thankYouTitle")}
-        footer={
-          <Box float="right">
-            <Button variant="primary" onClick={handleClose}>
-              {t("speakerForm.thankYouClose")}
-            </Button>
-          </Box>
-        }
-      >
-        <div className="spf-result" aria-live="polite">
-          <p>{t("speakerForm.thankYouBody")}</p>
-        </div>
-      </Modal>
-    );
-  }
+	if (done) {
+		return (
+			<Modal
+				visible={open}
+				onDismiss={handleClose}
+				header={t("speakerForm.thankYouTitle")}
+				footer={
+					<Box float="right">
+						<Button variant="primary" onClick={handleClose}>
+							{t("speakerForm.thankYouClose")}
+						</Button>
+					</Box>
+				}
+			>
+				<div className="spf-result" aria-live="polite">
+					<p>{t("speakerForm.thankYouBody")}</p>
+				</div>
+			</Modal>
+		);
+	}
 
-  return (
-    <Modal
-      visible={open}
-      onDismiss={handleClose}
-      size="large"
-      header={t("speakerForm.modalTitle")}
-      footer={
-        <Box float="right">
-          <SpaceBetween direction="horizontal" size="xs">
-            <Button variant="link" onClick={handleClose} disabled={submitting}>
-              {t("speakerForm.cancelButton")}
-            </Button>
-            <Button
-              variant="primary"
-              loading={submitting}
-              onClick={() => {
-                void handleSubmit();
-              }}
-            >
-              {t("speakerForm.submitButton")}
-            </Button>
-          </SpaceBetween>
-        </Box>
-      }
-    >
-      {/* honeypot — visually hidden */}
-      <div className="spf-honeypot" aria-hidden="true">
-        <input
-          type="text"
-          name="website"
-          tabIndex={-1}
-          autoComplete="off"
-          value={honeypot}
-          onChange={(e) => setHoneypot(e.target.value)}
-        />
-      </div>
+	return (
+		<Modal
+			visible={open}
+			onDismiss={handleClose}
+			size="large"
+			header={t("speakerForm.modalTitle")}
+			footer={
+				<Box float="right">
+					<SpaceBetween direction="horizontal" size="xs">
+						<Button variant="link" onClick={handleClose} disabled={submitting}>
+							{t("speakerForm.cancelButton")}
+						</Button>
+						<Button
+							variant="primary"
+							loading={submitting}
+							onClick={() => {
+								void handleSubmit();
+							}}
+						>
+							{t("speakerForm.submitButton")}
+						</Button>
+					</SpaceBetween>
+				</Box>
+			}
+		>
+			{/* honeypot — visually hidden */}
+			<div className="spf-honeypot" aria-hidden="true">
+				<input
+					type="text"
+					name="website"
+					tabIndex={-1}
+					autoComplete="off"
+					value={honeypot}
+					onChange={(e) => setHoneypot(e.target.value)}
+				/>
+			</div>
 
-      <Form errorText={globalError || undefined}>
-        <SpaceBetween size="m">
-          <FormField
-            label={t("speakerForm.fields.name")}
-            errorText={errors.name}
-          >
-            <Input
-              ref={nameRef}
-              value={name}
-              onChange={({ detail }) => setName(detail.value)}
-              placeholder={t("speakerForm.fields.name")}
-            />
-          </FormField>
+			<Form errorText={globalError || undefined}>
+				<SpaceBetween size="m">
+					<FormField
+						label={t("speakerForm.fields.name")}
+						errorText={errors.name}
+					>
+						<Input
+							ref={nameRef}
+							value={name}
+							onChange={({ detail }) => setName(detail.value)}
+							placeholder={t("speakerForm.fields.name")}
+						/>
+					</FormField>
 
-          <FormField
-            label={t("speakerForm.fields.email")}
-            errorText={errors.email}
-          >
-            <Input
-              ref={emailRef}
-              value={email}
-              type="email"
-              onChange={({ detail }) => setEmail(detail.value)}
-              placeholder="you@example.com"
-            />
-          </FormField>
+					<FormField
+						label={t("speakerForm.fields.email")}
+						errorText={errors.email}
+					>
+						<Input
+							ref={emailRef}
+							value={email}
+							type="email"
+							onChange={({ detail }) => setEmail(detail.value)}
+							placeholder="you@example.com"
+						/>
+					</FormField>
 
-          <FormField
-            label={t("speakerForm.fields.topic")}
-            errorText={errors.topic}
-            description={t("speakerForm.helpers.topic")}
-          >
-            <Input
-              ref={topicRef}
-              value={topic}
-              onChange={({ detail }) => setTopic(detail.value)}
-              placeholder={t("speakerForm.fields.topic")}
-            />
-            <div
-              className={`spf-char-counter${topic.length > 120 ? " spf-char-counter--over" : ""}`}
-            >
-              {topic.length}/120
-            </div>
-          </FormField>
+					<FormField
+						label={t("speakerForm.fields.topic")}
+						errorText={errors.topic}
+						description={t("speakerForm.helpers.topic")}
+					>
+						<Input
+							ref={topicRef}
+							value={topic}
+							onChange={({ detail }) => setTopic(detail.value)}
+							placeholder={t("speakerForm.fields.topic")}
+						/>
+						<div
+							className={`spf-char-counter${topic.length > 120 ? " spf-char-counter--over" : ""}`}
+						>
+							{topic.length}/120
+						</div>
+					</FormField>
 
-          <FormField
-            label={t("speakerForm.fields.abstract")}
-            errorText={errors.abstract}
-          >
-            <Textarea
-              ref={abstractRef}
-              value={abstract}
-              onChange={({ detail }) => setAbstract(detail.value)}
-              rows={5}
-              placeholder={t("speakerForm.fields.abstract")}
-            />
-            <div
-              className={`spf-char-counter${abstract.length > 1000 ? " spf-char-counter--over" : ""}`}
-            >
-              {abstract.length}/1000
-            </div>
-          </FormField>
+					<FormField
+						label={t("speakerForm.fields.abstract")}
+						errorText={errors.abstract}
+					>
+						<Textarea
+							ref={abstractRef}
+							value={abstract}
+							onChange={({ detail }) => setAbstract(detail.value)}
+							rows={5}
+							placeholder={t("speakerForm.fields.abstract")}
+						/>
+						<div
+							className={`spf-char-counter${abstract.length > 1000 ? " spf-char-counter--over" : ""}`}
+						>
+							{abstract.length}/1000
+						</div>
+					</FormField>
 
-          <FormField label={t("speakerForm.fields.format.label")}>
-            <RadioGroup
-              value={format}
-              onChange={({ detail }) => setFormat(detail.value)}
-              items={[
-                {
-                  value: "in_person_west_tx_nm",
-                  label: t("speakerForm.fields.format.in_person_west_tx_nm"),
-                },
-                {
-                  value: "virtual",
-                  label: t("speakerForm.fields.format.virtual"),
-                },
-                {
-                  value: "either",
-                  label: t("speakerForm.fields.format.either"),
-                },
-              ]}
-            />
-          </FormField>
+					<FormField label={t("speakerForm.fields.format.label")}>
+						<RadioGroup
+							value={format}
+							onChange={({ detail }) => setFormat(detail.value)}
+							items={[
+								{
+									value: "in_person_west_tx_nm",
+									label: t("speakerForm.fields.format.in_person_west_tx_nm"),
+								},
+								{
+									value: "virtual",
+									label: t("speakerForm.fields.format.virtual"),
+								},
+								{
+									value: "either",
+									label: t("speakerForm.fields.format.either"),
+								},
+							]}
+						/>
+					</FormField>
 
-          <FormField
-            label={t("speakerForm.fields.bioUrl")}
-            description={t("speakerForm.helpers.bioUrl")}
-          >
-            <Input
-              value={bioUrl}
-              type="url"
-              onChange={({ detail }) => setBioUrl(detail.value)}
-              placeholder="https://"
-            />
-          </FormField>
+					<FormField
+						label={t("speakerForm.fields.bioUrl")}
+						description={t("speakerForm.helpers.bioUrl")}
+					>
+						<Input
+							value={bioUrl}
+							type="url"
+							onChange={({ detail }) => setBioUrl(detail.value)}
+							placeholder="https://"
+						/>
+					</FormField>
 
-          <FormField label={t("speakerForm.fields.preferredDays")}>
-            <Multiselect
-              selectedOptions={preferredDays}
-              onChange={({ detail }) =>
-                setPreferredDays(
-                  detail.selectedOptions as MultiselectOption[],
-                )
-              }
-              options={DAY_OPTIONS}
-              placeholder={t("speakerForm.fields.preferredDays")}
-            />
-          </FormField>
+					<FormField label={t("speakerForm.fields.preferredDays")}>
+						<Multiselect
+							selectedOptions={preferredDays}
+							onChange={({ detail }) =>
+								setPreferredDays(detail.selectedOptions as MultiselectOption[])
+							}
+							options={DAY_OPTIONS}
+							placeholder={t("speakerForm.fields.preferredDays")}
+						/>
+					</FormField>
 
-          <FormField label={t("speakerForm.fields.preferredTimeOfDay")}>
-            <Multiselect
-              selectedOptions={preferredTimeOfDay}
-              onChange={({ detail }) =>
-                setPreferredTimeOfDay(
-                  detail.selectedOptions as MultiselectOption[],
-                )
-              }
-              options={TIME_OPTIONS}
-              placeholder={t("speakerForm.fields.preferredTimeOfDay")}
-            />
-          </FormField>
+					<FormField label={t("speakerForm.fields.preferredTimeOfDay")}>
+						<Multiselect
+							selectedOptions={preferredTimeOfDay}
+							onChange={({ detail }) =>
+								setPreferredTimeOfDay(
+									detail.selectedOptions as MultiselectOption[],
+								)
+							}
+							options={TIME_OPTIONS}
+							placeholder={t("speakerForm.fields.preferredTimeOfDay")}
+						/>
+					</FormField>
 
-          <FormField
-            label={t("speakerForm.fields.earliestDate")}
-            description={t("speakerForm.helpers.earliestDate")}
-          >
-            <DatePicker
-              value={earliestDate}
-              onChange={({ detail }) => setEarliestDate(detail.value)}
-              placeholder="YYYY/MM/DD"
-            />
-          </FormField>
+					<FormField
+						label={t("speakerForm.fields.earliestDate")}
+						description={t("speakerForm.helpers.earliestDate")}
+					>
+						<DatePicker
+							value={earliestDate}
+							onChange={({ detail }) => setEarliestDate(detail.value)}
+							placeholder="YYYY/MM/DD"
+						/>
+					</FormField>
 
-          <FormField label={t("speakerForm.fields.notes")}>
-            <Textarea
-              value={notes}
-              onChange={({ detail }) => setNotes(detail.value)}
-              rows={3}
-              placeholder={t("speakerForm.fields.notes")}
-            />
-          </FormField>
+					<FormField label={t("speakerForm.fields.notes")}>
+						<Textarea
+							value={notes}
+							onChange={({ detail }) => setNotes(detail.value)}
+							rows={3}
+							placeholder={t("speakerForm.fields.notes")}
+						/>
+					</FormField>
 
-          {showCaptcha && (
-            <div ref={captchaContainerRef} className="spf-captcha-container" />
-          )}
-        </SpaceBetween>
-      </Form>
-    </Modal>
-  );
+					{showCaptcha && (
+						<div ref={captchaContainerRef} className="spf-captcha-container" />
+					)}
+				</SpaceBetween>
+			</Form>
+		</Modal>
+	);
 }

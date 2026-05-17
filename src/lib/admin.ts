@@ -144,11 +144,7 @@ export async function patchProposal(
 ): Promise<Proposal> {
 	return withRetry(
 		() =>
-			adminRequest(
-				`/admin/proposals/${encodeURIComponent(id)}`,
-				"PATCH",
-				body,
-			),
+			adminRequest(`/admin/proposals/${encodeURIComponent(id)}`, "PATCH", body),
 		(r) => r.json() as Promise<Proposal>,
 	);
 }

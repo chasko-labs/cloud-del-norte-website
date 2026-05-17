@@ -192,8 +192,7 @@ test.describe("cross-subdomain session — pre-deploy smoke (no credentials requ
 		// Simulate Cognito returning login_required to the awsug callback.
 		// Cognito appends ?error=login_required to the redirect_uri when prompt=none
 		// is used and no session exists.
-		const callbackWithError =
-			`${AWSUG_URL}auth/callback/?error=login_required&error_description=User+is+not+authenticated`;
+		const callbackWithError = `${AWSUG_URL}auth/callback/?error=login_required&error_description=User+is+not+authenticated`;
 		const response = await page.goto(callbackWithError);
 		// Page must load (not 5xx)
 		expect(response?.status()).toBeLessThan(500);

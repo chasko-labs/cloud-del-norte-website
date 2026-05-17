@@ -1,6 +1,7 @@
 // Probe: identify the white-background element behind the breadcrumb on /feed/ mobile light mode.
-import { createRequire } from "node:module";
+
 import { writeFileSync } from "node:fs";
+import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const { chromium } = require("playwright");
@@ -23,7 +24,7 @@ const result = await page.evaluate(() => {
 	// Find the breadcrumb link containing 'feed'
 	const links = [...document.querySelectorAll("a")];
 	const feedLink = links.find(
-		(a) => a.textContent.trim().toLowerCase() === "feed"
+		(a) => a.textContent.trim().toLowerCase() === "feed",
 	);
 	if (!feedLink) return { error: "no feed link found" };
 
@@ -62,6 +63,9 @@ const result = await page.evaluate(() => {
 
 await browser.close();
 
-writeFileSync("/tmp/breadcrumb-banner-probe.json", JSON.stringify(result, null, 2));
+writeFileSync(
+	"/tmp/breadcrumb-banner-probe.json",
+	JSON.stringify(result, null, 2),
+);
 console.log(JSON.stringify(result, null, 2));
 process.exit(0);

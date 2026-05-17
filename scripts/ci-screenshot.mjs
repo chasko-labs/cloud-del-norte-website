@@ -8,7 +8,7 @@ import { chromium } from "playwright";
 
 // Cap the Node process hosting Playwright. CI containers on shared workstations
 // have seen unbounded Chrome/Node growth cause system freezes (2026-05-16).
-process.env.NODE_OPTIONS = '--max-old-space-size=768';
+process.env.NODE_OPTIONS = "--max-old-space-size=768";
 
 const baseUrl = process.argv[2];
 const outDir = process.argv[3];

@@ -13,9 +13,9 @@ import Breadcrumbs from "../../components/breadcrumbs";
 import Navigation from "../../components/navigation";
 import { RequireAuth } from "../../components/require-auth";
 import { useTranslation } from "../../hooks/useTranslation";
-import { createMeeting } from "../../lib/admin";
-import type { CreateMeetingRequest } from "../../lib/admin";
 import ShellLayout from "../../layouts/shell";
+import type { CreateMeetingRequest } from "../../lib/admin";
+import { createMeeting } from "../../lib/admin";
 import {
 	applyLocale,
 	initializeLocale,
@@ -28,7 +28,9 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../utils/theme";
-import MeetingDetails, { type MeetingDetailsValues } from "./components/marketing";
+import MeetingDetails, {
+	type MeetingDetailsValues,
+} from "./components/marketing";
 import Shape from "./components/shape";
 import {
 	BasicValidationContext,
@@ -77,7 +79,9 @@ function FormContent() {
 
 	if (done) {
 		return (
-			<ContentLayout header={<Header variant="h1">{t("createMeeting.header")}</Header>}>
+			<ContentLayout
+				header={<Header variant="h1">{t("createMeeting.header")}</Header>}
+			>
 				<Alert type="success">Meeting created successfully.</Alert>
 			</ContentLayout>
 		);
@@ -137,7 +141,11 @@ function FormContent() {
 									<Button href="/meetings/index.html" variant="link">
 										{t("common.cancel")}
 									</Button>
-									<Button formAction="submit" variant="primary" loading={submitting}>
+									<Button
+										formAction="submit"
+										variant="primary"
+										loading={submitting}
+									>
 										{t("createMeeting.submit")}
 									</Button>
 								</SpaceBetween>

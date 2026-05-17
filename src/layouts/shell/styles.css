@@ -2081,8 +2081,12 @@ body.cdn-scrolled [class*="awsui_breadcrumbs"] {
 	opacity: 0;
 	transform: translateY(-8px);
 	pointer-events: none;
-	transition: opacity 0.2s ease, transform 0.2s ease;
+	transition:
+		opacity 0.2s ease,
+		transform 0.2s ease;
 }
 [class*="awsui_breadcrumbs"] {
-	transition: opacity 0.2s ease, transform 0.2s ease;
+	transition:
+		opacity 0.2s ease,
+		transform 0.2s ease;
 }
