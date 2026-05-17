@@ -2,8 +2,63 @@
 
 **date:** 2026-05-17  
 **branch:** main  
-**last commit:** c542635c fix(visual): wave 9 polish — modal buttons violet, auth card deckled shadow + opacity  
-**deploy:** verified 2026-05-17 01:27 UTC — all 3 subdomains live via manual fallback. Woodpecker partial-recovery (residual user-id-0 storm at ~36s cadence, root cause was hs-mcp-woodpecker-trigger.service crash-loop, now disabled — see #157).
+**last commit:** f772a1df docs: wave 10 — aws-edge playbook + handoff distillation + AGENTS.md  
+**deploy:** verified 2026-05-17 01:27 UTC — all 3 subdomains live via manual fallback. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-17 — Wave 10 (research-output landing — 5-stage DAG)
+
+Bryan delivered a three-thing summary from a parallel research session, asking to act on all three: AWS edge recovery playbook, Woodpecker upgrade audit, HANDOFF distillation. Single 5-stage subagent DAG ran 3 parallel research outputs + 2 sequential closeout stages.
+
+| commit | description |
+|--------|-------------|
+| f772a1df | docs: wave 10 — aws-edge playbook + handoff distillation + AGENTS.md |
+
+### what shipped (single atomic commit, 7 files, 587 insertions)
+
+**`.kiro/steering/aws-edge-recovery-playbook.md`** (144 lines, kerouac authored). Anchored by Wave 7's dual-permission Function URL discovery. Sections: dual-permission rule, diagnostic-first protocol for aws edge, escalation thresholds, API Gateway HTTP V2 pivot pattern, evidence chain template, what NOT to do, referenced commits. Single-sentence rule: "A 403 from a Lambda Function URL gateway with a correct resource policy is a state-corruption signal, not a permission problem; pivot to API Gateway after one failed retry."
+
+**5 topical steering docs distilled from HANDOFF.md** (kerouac authored, all in `.kiro/steering/`):
+- `deployment.md` (73 lines) — manual deploy syntax, Woodpecker auto-deploy expected behavior, manual fallback decision tree, distribution IDs (main ECC3LP1BL2CZS, auth ECQ44FO9MBTCY, awsug E2QLAWFVIT1AR8, dev EEHVTUEQ97V0X), CloudFront invalidation pattern
+- `aws-resources.md` (78 lines) — every named AWS resource, account, region, role. Lambdas, API Gateways, DynamoDB, IAM, Cognito us-west-2_cyPQF4F3r, SSM paths, account ledger (170473530355 jitsi-video-hosting / 211125425201 aerospaceug-admin / 946179428633 kiro)
+- `dispatch-orchestration.md` (64 lines) — multi-stage DAG patterns, depends_on for locale-touching tracks, ghost types proven on this codebase, pre-dispatch context injection rule, single-atomic-commit-per-phase
+- `cloudscape-overrides.md` (91 lines) — Cloudscape v3 hashed CSS Modules, !important pattern, .cdn-card--cta + .hp-role-card--cta + [class*=awsui_dialog] scopes (Wave 9 lesson), brand tokens, light/dark parity rule, scripts/probe-cta-button-classes.mjs
+- `friction-points-resolved.md` (61 lines) — one-line-per-FP table, FP-001 through FP-021, severity + status + lesson + commit. Grep-target for prior-art before re-discovery.
+
+**`AGENTS.md` at project root** (76 lines, kerouac authored). Universal entry point per agentskills.io / OpenAI / Anthropic emerging convention — read by ANY AI agent (Cursor, Aider, Claude Code, Cody, etc.). Sections: what this repo is, quick start, where to look first, conventions, what to NOT do, aws context, the rule in one sentence. Pointers up to `.kiro/AGENTS.md` for haunting-flavored context, sideways to `.kiro/steering/` for behavioral rules, down to HANDOFF.md backlog.
+
+### Wave 10 Track B — Woodpecker audit + upgrade plan (parallel kade-vox dispatch, no commits)
+
+kade-vox audited the autocancel-shim narrative and produced a v3.13.0 → v3.14.x upgrade plan (read-only, no execution). Output landed at `/tmp/wave10-woodpecker-audit-and-upgrade-plan.md`. orin filed it as a tracked issue:
+
+- chasko-labs/cloud-del-norte-website#201 "Woodpecker v3.13.0 → v3.14.x upgrade plan + autocancel-shim audit" (labels: infrastructure, ops)
+- Cross-referenced on #157 via comment 4468832909
+
+### legacy WEBSITE_AGENTS.md disposition
+
+`WEBSITE_AGENTS.md` (13.6KB at root) predates the AGENTS.md-at-root convention. NOT modified this wave. Recommendation captured: future session can mark it legacy with a forward-pointer to AGENTS.md + `.kiro/steering/`, then retire after the new structure is validated. Do NOT delete in haste — may have content not yet distilled.
+
+### lessons learned
+
+- Distilling 57KB of HANDOFF history into 587 lines of steering docs is a high-leverage move. Future ghosts get pre-loaded context on dispatch instead of re-discovering AWS account numbers, Cloudscape override patterns, dispatch DAG conventions, etc.
+- The `aws-edge-recovery-playbook.md` codifies the Wave 7 pivot lesson as a rule. Next time a Function URL goes 403 with correct AuthType, the diagnostic SDK invoke happens first, the pivot decision in 1 step instead of 40 minutes of permission/policy/URL recreation.
+- Naming: AGENTS.md at root is the modern universal convention. `.kiro/AGENTS.md` is the haunting-overlay entry point. Both can coexist.
+- 5-stage DAG with 3 parallel research stages + 2 sequential closeout is an efficient pattern when work fans out cleanly to disjoint outputs. Total wall-time = max(parallel) + sum(sequential).
+- kerouac-source-scribe is reliable for terse-Bryan-voice doc authorship at scale (7 files, 587 lines, single dispatch).
+- Filing /tmp/ docs as GitHub issues is a viable handoff pattern when the throwaway content is high-value but not warranting a repo commit.
+
+### items closed this wave
+
+- Bryan's three-thing summary: all three priorities landed in single dispatch (1 commit + 1 GitHub issue + 1 cross-reference comment)
+- Wave 7's dual-permission discovery now codified as canonical pattern
+- HANDOFF distillation: 5 topical steering docs ship with the codebase
+
+### follow-ups
+
+- Wave 11 candidate: execute Woodpecker v3.14.x upgrade per #201 plan (Bryan or core-anchor authorization)
+- Wave 11 candidate: WEBSITE_AGENTS.md retirement (mark legacy + forward-pointer)
+- Wave 11 candidate: residual user-id-0 storm root cause (out of CDN PO scope)
 
 ---
 
@@ -739,7 +794,8 @@ Quick reference:
 
 | issue | status | notes |
 |-------|--------|-------|
-| #157 | partial-recovery | Wave 8 fix: server restart cleared SQLite WAL lock, moodle-uploader webhook disabled three ways. Wave 9 second-pass: identified hs-mcp-woodpecker-trigger.service (systemd, user hs-shannon) as user-id-0 storm source — 2,859 crash-loop restarts due to fetch-token.sh AWS SSM failure. Service stopped + disabled. Server received Wave 9 webhook delivery (HTTP 200, 6s) but no pipeline event surfaced in logs, and user-id-0 errors resumed ~12 min post-stop at ~36s cadence. Auto-deploy NOT yet validated end-to-end. Manual deploy via scripts/deploy-manual.sh remains the operating norm and works fine. |
+| #157 | partial-recovery | Wave 8 fix: server restart cleared SQLite WAL lock, moodle-uploader webhook disabled three ways. Wave 9 second-pass: identified hs-mcp-woodpecker-trigger.service (systemd, user hs-shannon) as user-id-0 storm source — 2,859 crash-loop restarts due to fetch-token.sh AWS SSM failure. Service stopped + disabled. Server received Wave 9 webhook delivery (HTTP 200, 6s) but no pipeline event surfaced in logs, and user-id-0 errors resumed ~12 min post-stop at ~36s cadence. Auto-deploy NOT yet validated end-to-end. Manual deploy via scripts/deploy-manual.sh remains the operating norm and works fine. Wave 10 follow-up: see #201 for v3.13.0 → v3.14.x upgrade plan + autocancel-shim audit. |
+| #201 | open | Wave 10 filed: Woodpecker v3.13.0 → v3.14.x upgrade plan + autocancel-shim audit. Authored by ghost-kade-vox-host-admin. Includes current version pin location, target version with breaking-change notes, migration steps, rollback path, verification, risk + time estimate. Awaits Bryan or core-anchor authorization before execution. Labels: infrastructure, ops. |
 | autocancel-shim | follow-up | Stopped during #157 first-pass (was perpetuating webhook loop due to valkey unavailability — diagnosis later corrected; valkey is healthy). Needs config update before re-enabling. |
 | hs-mcp-woodpecker-trigger | follow-up | Service stopped + disabled. fetch-token.sh AWS SSM call failing, causing crash-loop. Add StartLimitBurst to systemd unit before re-enabling. Out of CDN PO scope. |
 | residual-user-id-0-storm | follow-up | Even after stopping hs-mcp-woodpecker-trigger.service, user-id-0 POST storm resumed at ~36s cadence ~12 min later. Source not yet identified. Possible: a different cron/timer, residual queue records from the prior crash-loop, or another internal client. |
