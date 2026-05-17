@@ -1,11 +1,14 @@
 import { vi } from "vitest";
 
-// Cloudscape components use ResizeObserver internally — not in jsdom
-globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
-	observe: vi.fn(),
-	unobserve: vi.fn(),
-	disconnect: vi.fn(),
-}));
+// Cloudscape components use ResizeObserver internally — not in jsdom.
+// Must be a real class (not an arrow fn) so `new ResizeObserver()` works.
+class ResizeObserverMock {
+	observe() {}
+	unobserve() {}
+	disconnect() {}
+}
+globalThis.ResizeObserver =
+	ResizeObserverMock as unknown as typeof ResizeObserver;
 
 // Cloudscape also reads window.matchMedia
 Object.defineProperty(window, "matchMedia", {

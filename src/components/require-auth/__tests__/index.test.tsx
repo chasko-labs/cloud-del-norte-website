@@ -5,6 +5,7 @@ import type { AuthState } from "../../../contexts/auth-context";
 
 vi.mock("../../../lib/auth", () => ({
 	beginLogin: vi.fn(),
+	beginSilentLogin: vi.fn(() => Promise.resolve()),
 	signOut: vi.fn(),
 	// Passed through but not used in these tests:
 	getIdToken: vi.fn(() => null),
@@ -90,10 +91,9 @@ describe("RequireAuth", () => {
 				</RequireAuth>,
 			),
 		);
+		const { beginSilentLogin } = await import("../../../lib/auth");
 		await waitFor(() => {
-			expect(window.location.assign).toHaveBeenCalledWith(
-				"https://auth.clouddelnorte.org/login/index.html",
-			);
+			expect(beginSilentLogin).toHaveBeenCalled();
 		});
 		expect(screen.queryByText("protected")).not.toBeInTheDocument();
 		expect(container.textContent).toMatch(/redirecting to sign-in/i);
@@ -108,8 +108,9 @@ describe("RequireAuth", () => {
 				</RequireAuth>,
 			),
 		);
+		const { beginSilentLogin } = await import("../../../lib/auth");
 		await waitFor(() => {
-			expect(window.location.assign).toHaveBeenCalled();
+			expect(beginSilentLogin).toHaveBeenCalled();
 		});
 		expect(screen.getByText("custom-fb")).toBeInTheDocument();
 	});

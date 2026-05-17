@@ -145,7 +145,7 @@ describe("auth module", () => {
 	});
 
 	describe("signOut", () => {
-		it("clears tokens and redirects to Cognito logout", async () => {
+		it("clears tokens and redirects to AUTH_LOGIN_URL", async () => {
 			sessionStorage.setItem("cdn.idToken", "x");
 			sessionStorage.setItem("cdn.accessToken", "x");
 			sessionStorage.setItem("cdn.refreshToken", "x");
@@ -155,7 +155,7 @@ describe("auth module", () => {
 				value: { origin: "https://example.test", assign },
 				writable: true,
 			});
-			const { signOut } = await import("../auth");
+			const { signOut, AUTH_LOGIN_URL } = await import("../auth");
 			signOut();
 
 			expect(sessionStorage.getItem("cdn.idToken")).toBeNull();
@@ -163,11 +163,7 @@ describe("auth module", () => {
 			expect(sessionStorage.getItem("cdn.refreshToken")).toBeNull();
 			expect(sessionStorage.getItem("cdn.expiresAt")).toBeNull();
 			expect(assign).toHaveBeenCalledTimes(1);
-			const target = assign.mock.calls[0][0] as string;
-			expect(target.startsWith(`${HOSTED_UI}/logout?`)).toBe(true);
-			const params = new URLSearchParams(target.split("?")[1]);
-			expect(params.get("client_id")).toBe(CLIENT_ID);
-			expect(params.get("logout_uri")).toBe("https://example.test/");
+			expect(assign).toHaveBeenCalledWith(AUTH_LOGIN_URL);
 		});
 	});
 });

@@ -57,7 +57,7 @@ function installFakeExternalApi(): {
 
 describe("JitsiEmbed", () => {
 	beforeEach(async () => {
-		vi.useFakeTimers();
+		vi.useFakeTimers({ shouldAdvanceTime: true });
 		// Remove any prior-loaded script tag between tests.
 		document
 			.querySelectorAll("script[data-cdn-jitsi]")

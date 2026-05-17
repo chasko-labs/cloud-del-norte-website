@@ -16,6 +16,7 @@ globalThis.ResizeObserver =
 
 vi.mock("../../../lib/auth", () => ({
 	beginLogin: vi.fn(),
+	beginSilentLogin: vi.fn(() => Promise.resolve()),
 	signOut: vi.fn(),
 	getIdToken: vi.fn(() => null),
 	decodeToken: vi.fn(),
@@ -186,7 +187,8 @@ describe("/admin auth gating + table", () => {
 				<App />
 			</AuthContext.Provider>,
 		);
-		await waitFor(() => expect(window.location.assign).toHaveBeenCalled());
+		const { beginSilentLogin } = await import("../../../lib/auth");
+		await waitFor(() => expect(beginSilentLogin).toHaveBeenCalled());
 		expect(screen.queryByRole("table")).not.toBeInTheDocument();
 	});
 

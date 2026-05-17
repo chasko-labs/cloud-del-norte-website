@@ -124,6 +124,14 @@ describe("translation coverage", () => {
 			"feedPage.pastMeetupSpeaker4Name", // proper name
 			"auth.login.mfaSetup.googleIos", // "Google Authenticator (iOS)" - proper product name
 			"auth.login.mfaSetup.googleAndroid", // "Google Authenticator (Android)" - proper product name
+			// Loanwords, acronyms, and proper nouns legitimately identical in both locales
+			"admin.proposals.status.virtual", // "virtual" - same in Spanish
+			"feedPage.theZacsShowHeader", // "the Zac's show" - proper name
+			"feedPage.vbrownbagHeader", // "vBrownBag" - proper noun / brand name
+			"feedbackForm.fileUpload.errorIconAriaLabel", // "Error" - universal tech term
+			"meetings.rsvpButton", // "RSVP" - universal abbreviation
+			"meetings.tableHeaders.rsvp", // "RSVP" - universal abbreviation
+			"speakerForm.fields.format.virtual", // "virtual" - same in Spanish
 		]);
 
 		// Helper to get value by dot-notation key

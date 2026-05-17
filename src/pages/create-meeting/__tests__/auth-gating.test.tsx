@@ -16,6 +16,7 @@ globalThis.ResizeObserver =
 
 vi.mock("../../../lib/auth", () => ({
 	beginLogin: vi.fn(),
+	beginSilentLogin: vi.fn(() => Promise.resolve()),
 	signOut: vi.fn(),
 	getIdToken: vi.fn(() => null),
 	decodeToken: vi.fn(),
@@ -127,7 +128,8 @@ describe("/create-meeting auth gating", () => {
 				<App />
 			</AuthContext.Provider>,
 		);
-		await waitFor(() => expect(window.location.assign).toHaveBeenCalled());
+		const { beginSilentLogin } = await import("../../../lib/auth");
+		await waitFor(() => expect(beginSilentLogin).toHaveBeenCalled());
 		expect(screen.queryByTestId("create-form-inner")).not.toBeInTheDocument();
 		expect(container.textContent).toMatch(/redirecting to sign-in/i);
 	});
