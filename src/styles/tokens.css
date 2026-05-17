@@ -726,3 +726,86 @@ body.cdn-stream-playing
 		box-shadow: var(--cdn-card-rim-light);
 	}
 }
+
+/* ==========================================================================
+   Wave 9 — Modal primary/link button retarget (P1-001, P1-002)
+
+   Cloudscape Modal renders in a portal at document root. The existing
+   .cdn-card--cta / .hp-role-card--cta scopes only cover the side-panel
+   trigger buttons, not the modal footer buttons. Target [class*="awsui_dialog"]
+   which wraps the modal content + footer.
+   ========================================================================== */
+
+/* Primary button — purple/violet gradient (matches .cdn-card--cta pattern) */
+[class*="awsui_dialog"] [class*="awsui_button"][class*="variant-primary"] {
+	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-image: linear-gradient(135deg, var(--cdn-purple, #5a1f8a), var(--cdn-violet, #9060f0)) !important;
+	border-color: var(--cdn-purple, #5a1f8a) !important;
+	color: #fff !important;
+	box-shadow: 0 2px 8px rgba(90, 31, 138, 0.35) !important;
+}
+
+[class*="awsui_dialog"] [class*="awsui_button"][class*="variant-primary"]:hover {
+	background-color: var(--cdn-violet, #9060f0) !important;
+	background-image: linear-gradient(135deg, var(--cdn-violet, #9060f0), var(--cdn-purple, #5a1f8a)) !important;
+	border-color: var(--cdn-violet, #9060f0) !important;
+	color: #fff !important;
+	box-shadow: 0 4px 14px rgba(144, 96, 240, 0.45) !important;
+}
+
+[class*="awsui_dialog"] [class*="awsui_button"][class*="variant-primary"]:focus-visible {
+	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-image: linear-gradient(135deg, var(--cdn-purple, #5a1f8a), var(--cdn-violet, #9060f0)) !important;
+	border-color: var(--cdn-purple, #5a1f8a) !important;
+	color: #fff !important;
+}
+
+[class*="awsui_dialog"] [class*="awsui_button"][class*="variant-primary"]:active {
+	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-image: linear-gradient(135deg, var(--cdn-purple, #5a1f8a), var(--cdn-violet, #9060f0)) !important;
+	border-color: var(--cdn-purple, #5a1f8a) !important;
+	color: #fff !important;
+}
+
+/* Inner label span */
+[class*="awsui_dialog"] [class*="awsui_button"][class*="variant-primary"] [class*="awsui_content"] {
+	color: #fff !important;
+}
+
+/* Link/cancel button — brand violet instead of Cloudscape blue */
+[class*="awsui_dialog"] [class*="awsui_button"][class*="variant-link"] {
+	color: var(--cdn-purple, #5a1f8a) !important;
+}
+
+[class*="awsui_dialog"] [class*="awsui_button"][class*="variant-link"]:hover {
+	color: var(--cdn-violet, #9060f0) !important;
+}
+
+[class*="awsui_dialog"] [class*="awsui_button"][class*="variant-link"] [class*="awsui_content"] {
+	color: inherit !important;
+}
+
+/* Dark mode — violet leads */
+.awsui-dark-mode [class*="awsui_dialog"] [class*="awsui_button"][class*="variant-primary"] {
+	background-color: var(--cdn-violet, #9060f0) !important;
+	background-image: linear-gradient(135deg, var(--cdn-violet, #9060f0), var(--cdn-purple, #5a1f8a)) !important;
+	border-color: var(--cdn-violet, #9060f0) !important;
+	color: #fff !important;
+	box-shadow: 0 2px 10px rgba(144, 96, 240, 0.45) !important;
+}
+
+.awsui-dark-mode [class*="awsui_dialog"] [class*="awsui_button"][class*="variant-primary"]:hover {
+	background-color: #a878ff !important;
+	background-image: linear-gradient(135deg, #a878ff, var(--cdn-violet, #9060f0)) !important;
+	border-color: #a878ff !important;
+	color: #fff !important;
+	box-shadow: 0 4px 16px rgba(168, 120, 255, 0.5) !important;
+}
+
+.awsui-dark-mode [class*="awsui_dialog"] [class*="awsui_button"][class*="variant-link"] {
+	color: var(--cdn-lavender, #d7c7ee) !important;
+}
+
+.awsui-dark-mode [class*="awsui_dialog"] [class*="awsui_button"][class*="variant-link"]:hover {
+	color: var(--cdn-violet, #9060f0) !important;
+}

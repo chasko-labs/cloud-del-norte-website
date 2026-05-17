@@ -214,7 +214,10 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 		0 6px 32px rgba(34, 22, 8, 0.12),
 		0 1px 4px rgba(34, 22, 8, 0.06),
 		inset 0 0 0 3px rgba(139, 90, 43, 0.04),
-		inset 0 1px 0 rgba(255, 255, 255, 0.22);
+		inset 0 1px 0 rgba(255, 255, 255, 0.22),
+		inset 0 0 12px rgba(139, 90, 43, 0.12),
+		inset 0 0 2px rgba(139, 90, 43, 0.08);
+	opacity: 0.97;
 	position: relative;
 	overflow: visible;
 }
@@ -247,7 +250,10 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 		0 6px 32px rgba(0, 0, 0, 0.45),
 		0 1px 6px rgba(0, 0, 0, 0.2),
 		inset 0 0 0 3px rgba(144, 96, 240, 0.04),
-		inset 0 1px 0 rgba(144, 96, 240, 0.1);
+		inset 0 1px 0 rgba(144, 96, 240, 0.1),
+		inset 0 0 12px rgba(144, 96, 240, 0.1),
+		inset 0 0 2px rgba(144, 96, 240, 0.06);
+	opacity: 0.97;
 }
 
 .awsui-dark-mode .cdn-auth-card::after {
