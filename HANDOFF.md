@@ -2,8 +2,83 @@
 
 **date:** 2026-05-17  
 **branch:** main  
-**last commit:** 7d4719ec feat(feedback): pivot to API Gateway HTTP V2, retire broken Function URL  
-**deploy:** verified 2026-05-17 00:04 UTC — all 3 subdomains live via manual fallback (Woodpecker still in #157 death-loop, root cause now diagnosed below).
+**last commit:** c542635c fix(visual): wave 9 polish — modal buttons violet, auth card deckled shadow + opacity  
+**deploy:** verified 2026-05-17 01:27 UTC — all 3 subdomains live via manual fallback. Woodpecker partial-recovery (residual user-id-0 storm at ~36s cadence, root cause was hs-mcp-woodpecker-trigger.service crash-loop, now disabled — see #157).
+
+---
+
+## completed 2026-05-17 — Wave 9 (dual-track: live-site visual polish + CI/CD second-pass)
+
+Bryan: "stop & plan & dispatch so that you can keep working with liora & team on gettin the live site up to snuff as well as getting the cicd up to snuff you need to orchestrate both. you have a large backlog - i want to see the colors & buttons & forms to submit bugs fixed."
+
+Two tracks ran in parallel via single 5-stage subagent DAG.
+
+### Track A — live-site visual polish (4-stage pipeline: audit → fix → commit+deploy → re-verify)
+
+| commit | description |
+|--------|-------------|
+| c542635c | fix(visual): wave 9 polish — modal buttons violet, auth card deckled shadow + opacity |
+
+**Stage A1 — visual audit (liora-headless-verifier).** Playwright Chromium audit of clouddelnorte.org + awsug.clouddelnorte.org + auth.clouddelnorte.org. Bug + wish modals opened, fields exercised (no submit), screenshots captured. Postcard a2 + sigil l verified intact from Wave 7. 4 P1 findings:
+- P1-001: Modal primary button still showed Cloudscape blue, not brand violet (the !important override had a hashed-class scope drift inside Cloudscape Modal vs Modal-less containers)
+- P1-002: Modal cancel/link button color was Cloudscape blue, not cdn-purple
+- P1-003: Auth card was missing the deckled-edge inset shadow (postcard direction had drifted)
+- P1-004: Auth card opacity treatment needed light/dark parity
+
+**Stage A2 — fixes (liora-css-repair).** Applied targeted CSS fixes inside Cloudscape Modal scope:
+- Added `[class*=awsui_dialog] [class*=awsui_button][class*=variant-primary]` selector chain with cdn-purple background-color + violet gradient background-image + white text, all !important
+- Added matching link-button override with `color: var(--cdn-purple)`
+- Restored the auth card deckled shadow: `inset 0 0 12px rgba(139,90,43,0.12)`
+- Opacity rule `.97` mirrored across light + `:root.awsui-dark-mode`
+
+**Stage A3 — commit + deploy (orin-ci-cd).** Single atomic commit c542635c. Manual deploy of all 3 subdomains.
+
+**Stage A4 — re-verify (liora-headless-verifier).** All 4 P1 findings confirmed FIXED. Bundle hash drift confirmed:
+- main jsx-runtime: CeqMCHS- (new), theme: CyLQ4_r5 (new)
+- awsug _layout: DsVgnaU8, auth: BQCSca8g
+- auth _layout: Cl5kCTVk
+
+CSS token verification via curl direct against deployed bundles:
+- `clouddelnorte.org/assets/jsx-runtime-CeqMCHS-.css` contains `awsui_dialog.*variant-primary{background-color:var(--cdn-purple,#5a1f8a)!important;background-image:linear-gradient(135deg, var(--cdn-purple,#5a1f8a), var(--cdn-violet,#9060f0))!important`
+- `awsug.clouddelnorte.org/assets/auth-BQCSca8g.css` contains the same
+- `auth.clouddelnorte.org/assets/_layout-Cl5kCTVk.css` contains `opacity:.97` (×2 light+dark) + `inset 0 0 12px` (×1)
+
+Computed-style verification on rendered page:
+- Bug modal primary button: `background-color: rgb(90,31,138)` + linear-gradient to violet ✓
+- Wish modal primary button: same ✓
+- Modal cancel: `color: rgb(90,31,138)` ✓
+
+**Regression check:** Postcard auth direction intact (wordmark gradient, Cinzel italic, -0.3deg rotation, stamp corner ☁). Sigil l intact (cdn-logo-hero element rendering).
+
+### Track B — CI/CD second-pass (kade-vox-host-admin)
+
+**Found and stopped the user-id-0 POST storm:** `hs-mcp-woodpecker-trigger.service` (systemd, user hs-shannon) was in a 2,859-restart crash loop. fetch-token.sh was failing on AWS SSM, service kept retrying, each retry hit Woodpecker API at localhost:8210 without valid auth → "cannot get user with id 0" + sustained SQLite write contention.
+
+Action: stopped + disabled via `sudo -n -u hs-haunting sudo -n systemctl stop/disable hs-mcp-woodpecker-trigger.service`. Queue drained naturally in ~90s.
+
+**Post-stop status (immediate window after kade-vox's report):**
+- 'cannot get user with id 0': 0
+- 'database is locked': 0
+- 'queue: evict_at_once': 0
+
+**Webhook redelivery test:** Second attempt after queue drained → HTTP 200 ✓
+
+**Duplicate webhook 624417931 (private 192.168.4.53):** returns 404 already gone, no action needed.
+
+**Validation push (commit c542635c at 01:25:58Z):** GitHub delivered to ci.bryanchasko.com → status 200 in 6s ✓. Server received the webhook.
+
+**Residual concern:** ~12 minutes after kade-vox's "all clear" report, user-id-0 errors began reappearing at much lower frequency (~36s cadence vs original few-seconds). Server received the c542635c webhook with 200 but no pipeline event surfaced in server logs. There's a deeper data-integrity issue: a separate internal client OR a residual record from the prior crash-loop is generating sporadic POST attempts. Auto-deploy is NOT yet validated end-to-end via a successful pipeline run.
+
+**Workaround in effect:** Manual fallback via scripts/deploy-manual.sh continues to work. All 3 subdomains deployed via manual route during this wave.
+
+### follow-ups (next session candidates)
+
+- hs-mcp-woodpecker-trigger.service: fix fetch-token.sh AWS SSM failure mode + add StartLimitBurst before re-enabling. Out of CDN PO scope — kade-vox-host-admin or core-anchor.
+- Investigate residual user-id-0 storm source (cron, timer, or another container) and stop it.
+- Once both above are clean, validate auto-deploy via a fresh push and close #157.
+- Bundle-size code-splitting on the 891KB awsug `_layout-Dsr1KkrP.js` chunk (not yet shipped).
+- Test coverage backfill for Wave 4-7-9 features.
+- Retire the old cdn-feedback Function URL config (transitional fallback no longer needed).
 
 ---
 
@@ -664,8 +739,10 @@ Quick reference:
 
 | issue | status | notes |
 |-------|--------|-------|
-| #157 | fix-applied-pending-validation | 2026-05-17 00:30 UTC: kade-vox executed Bryan-authorized fix. heraldstack-woodpecker-server restarted (cleared SQLite WAL lock, 34→0 'database is locked' errors). chasko-labs/chrome-extension-moodle-uploader webhook disabled three ways: GitHub webhooks 606259222 + 624417905 set active=false, Woodpecker repo id 8 deactivated via API, autocancel shim stopped. Server CPU idle. Will fully close on first successful auto-deploy of cloud-del-norte-website on next push to main. |
-| autocancel-shim | follow-up | Stopped during #157 fix (was perpetuating webhook loop due to valkey unavailability). Needs valkey restored OR config update to skip deactivated repos before being restarted. |
+| #157 | partial-recovery | Wave 8 fix: server restart cleared SQLite WAL lock, moodle-uploader webhook disabled three ways. Wave 9 second-pass: identified hs-mcp-woodpecker-trigger.service (systemd, user hs-shannon) as user-id-0 storm source — 2,859 crash-loop restarts due to fetch-token.sh AWS SSM failure. Service stopped + disabled. Server received Wave 9 webhook delivery (HTTP 200, 6s) but no pipeline event surfaced in logs, and user-id-0 errors resumed ~12 min post-stop at ~36s cadence. Auto-deploy NOT yet validated end-to-end. Manual deploy via scripts/deploy-manual.sh remains the operating norm and works fine. |
+| autocancel-shim | follow-up | Stopped during #157 first-pass (was perpetuating webhook loop due to valkey unavailability — diagnosis later corrected; valkey is healthy). Needs config update before re-enabling. |
+| hs-mcp-woodpecker-trigger | follow-up | Service stopped + disabled. fetch-token.sh AWS SSM call failing, causing crash-loop. Add StartLimitBurst to systemd unit before re-enabling. Out of CDN PO scope. |
+| residual-user-id-0-storm | follow-up | Even after stopping hs-mcp-woodpecker-trigger.service, user-id-0 POST storm resumed at ~36s cadence ~12 min later. Source not yet identified. Possible: a different cron/timer, residual queue records from the prior crash-loop, or another internal client. |
 
 ---
 
