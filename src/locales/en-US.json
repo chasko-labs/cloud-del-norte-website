@@ -356,11 +356,13 @@
 			"summaryPlaceholder": "what happened / what do you want?",
 			"details": "details",
 			"detailsPlaceholder": "as much context as you can give us",
-			"contactEmail": "contact email (optional)"
+			"contactEmail": "contact email (optional)",
+			"attachments": "Screenshots (optional)"
 		},
 		"helpers": {
 			"summary": "8–120 characters",
-			"contactEmail": "leave blank to stay anonymous"
+			"contactEmail": "leave blank to stay anonymous",
+			"attachments": "Paste a screenshot or click to select. Up to 3 images, 2MB each."
 		},
 		"errors": {
 			"summaryMin": "summary must be at least 8 characters",
@@ -368,7 +370,18 @@
 			"detailsRequired": "details are required",
 			"detailsMax": "details must be 2000 characters or less",
 			"rate": "too many submissions — please try again in an hour",
-			"network": "something went wrong, please try again"
+			"network": "something went wrong, please try again",
+			"attachmentsMax": "Up to 3 images per submission",
+			"attachmentSize": "Each image must be 2MB or smaller",
+			"attachmentType": "Only PNG, JPEG, GIF, or WEBP images allowed"
+		},
+		"fileUpload": {
+			"uploadButton": "Choose files",
+			"dropzoneText": "(or paste from clipboard)",
+			"removeFileAriaLabel": "Remove file {{name}}",
+			"limitShowFewer": "Show fewer",
+			"limitShowMore": "Show more",
+			"errorIconAriaLabel": "Error"
 		},
 		"submitButton": "submit",
 		"cancelButton": "cancel",

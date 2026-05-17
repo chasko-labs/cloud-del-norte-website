@@ -1,6 +1,7 @@
 import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
+import FileUpload from "@cloudscape-design/components/file-upload";
 import Form from "@cloudscape-design/components/form";
 import FormField from "@cloudscape-design/components/form-field";
 import Input from "@cloudscape-design/components/input";
@@ -8,7 +9,7 @@ import Link from "@cloudscape-design/components/link";
 import Modal from "@cloudscape-design/components/modal";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Textarea from "@cloudscape-design/components/textarea";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 
 interface Props {
@@ -20,6 +21,33 @@ interface Props {
 const ENDPOINT =
 	(import.meta.env.VITE_FEEDBACK_API_URL as string | undefined) ?? "";
 
+const MAX_FILES = 3;
+const MAX_FILE_BYTES = 2_000_000;
+const ALLOWED_TYPES = new Set([
+	"image/png",
+	"image/jpeg",
+	"image/gif",
+	"image/webp",
+]);
+
+function readAsBase64(file: File): Promise<{
+	filename: string;
+	contentType: string;
+	base64Data: string;
+}> {
+	return new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onload = () => {
+			const result = reader.result as string;
+			// strip "data:<mime>;base64," prefix
+			const base64Data = result.split(",")[1] ?? "";
+			resolve({ filename: file.name, contentType: file.type, base64Data });
+		};
+		reader.onerror = () => reject(reader.error);
+		reader.readAsDataURL(file);
+	});
+}
+
 export default function FeedbackForm({ open, onClose, kind }: Props) {
 	const { t } = useTranslation();
 
@@ -29,9 +57,56 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 	const [honeypot, setHoneypot] = useState("");
 	const [summaryError, setSummaryError] = useState("");
 	const [detailsError, setDetailsError] = useState("");
+	const [attachmentError, setAttachmentError] = useState("");
 	const [globalError, setGlobalError] = useState("");
 	const [submitting, setSubmitting] = useState(false);
 	const [issueUrl, setIssueUrl] = useState<string | null>(null);
+	const [attachments, setAttachments] = useState<File[]>([]);
+
+	// Track object URLs for revocation
+	const objectUrlsRef = useRef<string[]>([]);
+
+	// Revoke all outstanding object URLs
+	function revokeObjectUrls() {
+		for (const url of objectUrlsRef.current) {
+			URL.revokeObjectURL(url);
+		}
+		objectUrlsRef.current = [];
+	}
+
+	// Clipboard paste listener while modal is open
+	useEffect(() => {
+		if (!open) return;
+
+		function handlePaste(e: ClipboardEvent) {
+			const items = Array.from(e.clipboardData?.items ?? []);
+			const imageItems = items.filter((item) => item.type.startsWith("image/"));
+			if (!imageItems.length) return;
+			setAttachments((prev) => {
+				const slots = MAX_FILES - prev.length;
+				if (slots <= 0) return prev;
+				const newFiles = imageItems
+					.slice(0, slots)
+					.map((item) => item.getAsFile())
+					.filter((f): f is File => f !== null);
+				return [...prev, ...newFiles];
+			});
+		}
+
+		window.addEventListener("paste", handlePaste);
+		return () => window.removeEventListener("paste", handlePaste);
+	}, [open]);
+
+	// Revoke object URLs on unmount
+	useEffect(() => {
+		const ref = objectUrlsRef;
+		return () => {
+			for (const url of ref.current) {
+				URL.revokeObjectURL(url);
+			}
+			ref.current = [];
+		};
+	}, []);
 
 	function reset() {
 		setSummary("");
@@ -40,8 +115,11 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 		setHoneypot("");
 		setSummaryError("");
 		setDetailsError("");
+		setAttachmentError("");
 		setGlobalError("");
 		setIssueUrl(null);
+		revokeObjectUrls();
+		setAttachments([]);
 	}
 
 	function handleClose() {
@@ -69,6 +147,18 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 		} else {
 			setDetailsError("");
 		}
+		if (attachments.length > MAX_FILES) {
+			setAttachmentError(t("feedbackForm.errors.attachmentsMax"));
+			ok = false;
+		} else if (attachments.some((f) => !ALLOWED_TYPES.has(f.type))) {
+			setAttachmentError(t("feedbackForm.errors.attachmentType"));
+			ok = false;
+		} else if (attachments.some((f) => f.size > MAX_FILE_BYTES)) {
+			setAttachmentError(t("feedbackForm.errors.attachmentSize"));
+			ok = false;
+		} else {
+			setAttachmentError("");
+		}
 		return ok;
 	}
 
@@ -80,6 +170,11 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 		setGlobalError("");
 
 		try {
+			const attachmentPayload =
+				attachments.length > 0
+					? await Promise.all(attachments.map(readAsBase64))
+					: undefined;
+
 			const res = await fetch(ENDPOINT, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
@@ -89,6 +184,7 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 					details: details.trim(),
 					contactEmail: contactEmail.trim() || undefined,
 					website: honeypot,
+					...(attachmentPayload ? { attachments: attachmentPayload } : {}),
 				}),
 			});
 
@@ -203,6 +299,40 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 							rows={5}
 							placeholder={t("feedbackForm.fields.detailsPlaceholder")}
 							ariaLabel={t("feedbackForm.fields.details")}
+						/>
+					</FormField>
+
+					<FormField
+						label={t("feedbackForm.fields.attachments")}
+						description={t("feedbackForm.helpers.attachments")}
+						errorText={attachmentError}
+					>
+						<FileUpload
+							value={attachments}
+							onChange={({ detail }) => {
+								revokeObjectUrls();
+								setAttachments(detail.value);
+								setAttachmentError("");
+							}}
+							accept="image/png,image/jpeg,image/gif,image/webp"
+							multiple
+							showFileThumbnail
+							tokenLimit={MAX_FILES}
+							i18nStrings={{
+								uploadButtonText: () =>
+									t("feedbackForm.fileUpload.uploadButton"),
+								dropzoneText: () => t("feedbackForm.fileUpload.dropzoneText"),
+								removeFileAriaLabel: (fileIndex) =>
+									t("feedbackForm.fileUpload.removeFileAriaLabel").replace(
+										"{{name}}",
+										attachments[fileIndex]?.name ?? String(fileIndex),
+									),
+								limitShowFewer: t("feedbackForm.fileUpload.limitShowFewer"),
+								limitShowMore: t("feedbackForm.fileUpload.limitShowMore"),
+								errorIconAriaLabel: t(
+									"feedbackForm.fileUpload.errorIconAriaLabel",
+								),
+							}}
 						/>
 					</FormField>
 

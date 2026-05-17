@@ -16,6 +16,12 @@
 				"logs:PutLogEvents"
 			],
 			"Resource": "arn:aws:logs:us-west-2:170473530355:*"
+		},
+		{
+			"Sid": "S3Attachments",
+			"Effect": "Allow",
+			"Action": ["s3:PutObject"],
+			"Resource": "arn:aws:s3:::cdn-feedback-attachments/attachments/*"
 		}
 	]
 }

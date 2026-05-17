@@ -1,6 +1,11 @@
-import { SSMClient, GetParameterCommand } from "@aws-sdk/client-ssm";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetParameterCommand, SSMClient } from "@aws-sdk/client-ssm";
 
 const ssm = new SSMClient({ region: "us-west-2" });
+const s3 = new S3Client({ region: "us-west-2" });
+
+const ATTACHMENTS_BUCKET =
+	process.env.ATTACHMENTS_BUCKET ?? "cdn-feedback-attachments";
 
 const ALLOWED_ORIGINS = new Set([
 	"https://clouddelnorte.org",
@@ -25,7 +30,6 @@ function respond(status, body, headers) {
 }
 
 // In-memory rate limit: 5 per IP per hour per Lambda instance.
-// Heavy abuse triggers CloudFront/WAF at the edge before reaching here.
 const rateMap = new Map();
 
 function hourBucket() {
@@ -37,7 +41,6 @@ function checkRate(ip) {
 	const count = rateMap.get(key) ?? 0;
 	if (count >= 5) return false;
 	rateMap.set(key, count + 1);
-	// Prune old buckets occasionally
 	if (rateMap.size > 500) {
 		const cur = hourBucket();
 		for (const k of rateMap.keys()) {
@@ -48,6 +51,50 @@ function checkRate(ip) {
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const ALLOWED_MIME = new Set([
+	"image/png",
+	"image/jpeg",
+	"image/gif",
+	"image/webp",
+]);
+
+const MIME_TO_EXT = {
+	"image/png": "png",
+	"image/jpeg": "jpg",
+	"image/gif": "gif",
+	"image/webp": "webp",
+};
+
+function checkMagicBytes(buf, contentType) {
+	if (contentType === "image/png") {
+		return (
+			buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47
+		);
+	}
+	if (contentType === "image/jpeg") {
+		return buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+	}
+	if (contentType === "image/gif") {
+		return (
+			buf[0] === 0x47 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x38
+		);
+	}
+	if (contentType === "image/webp") {
+		// RIFF????WEBP
+		return (
+			buf[0] === 0x52 &&
+			buf[1] === 0x49 &&
+			buf[2] === 0x46 &&
+			buf[3] === 0x46 &&
+			buf[8] === 0x57 &&
+			buf[9] === 0x45 &&
+			buf[10] === 0x42 &&
+			buf[11] === 0x50
+		);
+	}
+	return false;
+}
 
 function validate(body) {
 	const errs = [];
@@ -65,7 +112,79 @@ function validate(body) {
 	if (body.details?.length > 2000) errs.push("details max 2000 chars");
 	if (body.contactEmail && !EMAIL_RE.test(body.contactEmail))
 		errs.push("contactEmail invalid");
+	if (body.attachments !== undefined) {
+		if (!Array.isArray(body.attachments))
+			errs.push("attachments must be array");
+		else if (body.attachments.length > 3) errs.push("attachments max 3");
+		else {
+			for (const att of body.attachments) {
+				if (
+					!att.filename ||
+					typeof att.filename !== "string" ||
+					!att.contentType ||
+					!att.base64Data
+				) {
+					errs.push("each attachment needs filename, contentType, base64Data");
+					break;
+				}
+				if (!ALLOWED_MIME.has(att.contentType)) {
+					errs.push(`unsupported contentType: ${att.contentType}`);
+					break;
+				}
+				const rawSize = Math.floor((att.base64Data.length * 3) / 4);
+				if (rawSize > 2_000_000) {
+					errs.push(`attachment ${att.filename} exceeds 2MB`);
+					break;
+				}
+			}
+		}
+	}
 	return errs;
+}
+
+async function uploadAttachments(attachments) {
+	if (!attachments?.length) return [];
+	const urls = [];
+	for (const att of attachments) {
+		try {
+			const buf = Buffer.from(att.base64Data, "base64");
+			if (!checkMagicBytes(buf, att.contentType)) {
+				console.log(
+					JSON.stringify({
+						level: "warn",
+						msg: "magic byte mismatch, skipping",
+						filename: att.filename,
+						contentType: att.contentType,
+					}),
+				);
+				continue;
+			}
+			const ext = MIME_TO_EXT[att.contentType];
+			const uuid = crypto.randomUUID();
+			const key = `attachments/${uuid}.${ext}`;
+			await s3.send(
+				new PutObjectCommand({
+					Bucket: ATTACHMENTS_BUCKET,
+					Key: key,
+					Body: buf,
+					ContentType: att.contentType,
+				}),
+			);
+			urls.push(
+				`https://${ATTACHMENTS_BUCKET}.s3.us-west-2.amazonaws.com/${key}`,
+			);
+		} catch (err) {
+			console.log(
+				JSON.stringify({
+					level: "error",
+					msg: "attachment upload failed",
+					filename: att.filename,
+					err: err.message,
+				}),
+			);
+		}
+	}
+	return urls;
 }
 
 async function getGitHubToken() {
@@ -89,7 +208,13 @@ async function getGitHubToken() {
 	}
 }
 
-async function createIssue(type, summary, details, contactEmail) {
+async function createIssue(
+	type,
+	summary,
+	details,
+	contactEmail,
+	attachmentUrls,
+) {
 	const token = await getGitHubToken();
 	if (!token) return null;
 
@@ -99,6 +224,14 @@ async function createIssue(type, summary, details, contactEmail) {
 
 	const lines = [`**Summary:** ${summary}`, "", "**Details:**", details];
 	if (contactEmail) lines.push("", `**Contact:** ${contactEmail}`);
+
+	if (attachmentUrls?.length) {
+		lines.push("");
+		attachmentUrls.forEach((url, i) => {
+			lines.push(`![screenshot ${i + 1}](${url})`);
+		});
+	}
+
 	lines.push(
 		"",
 		"---",
@@ -189,11 +322,14 @@ export async function handler(event) {
 		return respond(400, { error: "validation", details: errors }, headers);
 	}
 
+	const attachmentUrls = await uploadAttachments(body.attachments);
+
 	const issueUrl = await createIssue(
 		body.type,
 		body.summary.trim(),
 		body.details.trim(),
 		body.contactEmail?.trim() || undefined,
+		attachmentUrls,
 	);
 
 	if (!issueUrl) {

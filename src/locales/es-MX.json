@@ -356,11 +356,13 @@
 			"summaryPlaceholder": "¿qué pasó / qué quieres?",
 			"details": "detalles",
 			"detailsPlaceholder": "todo el contexto que puedas darnos",
-			"contactEmail": "correo de contacto (opcional)"
+			"contactEmail": "correo de contacto (opcional)",
+			"attachments": "Capturas de pantalla (opcional)"
 		},
 		"helpers": {
 			"summary": "8–120 caracteres",
-			"contactEmail": "deja en blanco para mantenerte anónimo"
+			"contactEmail": "deja en blanco para mantenerte anónimo",
+			"attachments": "Pega una captura o haz clic para seleccionar. Hasta 3 imágenes, 2MB cada una."
 		},
 		"errors": {
 			"summaryMin": "el resumen debe tener al menos 8 caracteres",
@@ -368,7 +370,18 @@
 			"detailsRequired": "los detalles son requeridos",
 			"detailsMax": "los detalles deben tener 2000 caracteres o menos",
 			"rate": "demasiados envíos — intenta de nuevo en una hora",
-			"network": "algo salió mal, intenta de nuevo"
+			"network": "algo salió mal, intenta de nuevo",
+			"attachmentsMax": "Hasta 3 imágenes por envío",
+			"attachmentSize": "Cada imagen debe ser de 2MB o menos",
+			"attachmentType": "Solo se permiten imágenes PNG, JPEG, GIF o WEBP"
+		},
+		"fileUpload": {
+			"uploadButton": "Elegir archivos",
+			"dropzoneText": "(o pega desde el portapapeles)",
+			"removeFileAriaLabel": "Quitar archivo {{name}}",
+			"limitShowFewer": "Mostrar menos",
+			"limitShowMore": "Mostrar más",
+			"errorIconAriaLabel": "Error"
 		},
 		"submitButton": "enviar",
 		"cancelButton": "cancelar",

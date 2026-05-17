@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Deploy cdn-feedback Lambda with Function URL (open CORS to clouddelnorte.org).
-# Idempotent: create-or-update Lambda + Function URL.
+# Deploy cdn-feedback Lambda (code + IAM + env vars).
+# Production traffic via API Gateway HTTP V2 (configured separately).
 # Profile: jitsi-video-hosting (account 170473530355, us-west-2)
 
 LAMBDA_ACCOUNT=170473530355
@@ -59,7 +59,7 @@ cd "$REPO_ROOT"
 
 echo "=== 3. Create/update Lambda function ==="
 ROLE_ARN="arn:aws:iam::${LAMBDA_ACCOUNT}:role/${ROLE_NAME}"
-ENV_VARS="Variables={GH_REPO=chasko-labs/cloud-del-norte-website}"
+ENV_VARS="Variables={GH_REPO=chasko-labs/cloud-del-norte-website,ATTACHMENTS_BUCKET=cdn-feedback-attachments}"
 
 if aws lambda get-function --function-name "$LAMBDA_NAME" \
     --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
@@ -90,48 +90,7 @@ else
     --region "$LAMBDA_REGION" --profile "$PROFILE"
 fi
 
-echo "=== 4. Create/update Function URL (idempotent) ==="
-CORS_CONFIG='{
-  "AllowOrigins": ["https://clouddelnorte.org","https://awsug.clouddelnorte.org","https://dev.clouddelnorte.org"],
-  "AllowMethods": ["POST"],
-  "AllowHeaders": ["Content-Type"],
-  "MaxAge": 86400
-}'
-
-if aws lambda get-function-url-config --function-name "$LAMBDA_NAME" \
-    --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
-  echo "Function URL exists — updating CORS..."
-  aws lambda update-function-url-config --function-name "$LAMBDA_NAME" \
-    --auth-type NONE \
-    --cors "$CORS_CONFIG" \
-    --region "$LAMBDA_REGION" --profile "$PROFILE" >/dev/null
-else
-  echo "Creating Function URL..."
-  aws lambda create-function-url-config --function-name "$LAMBDA_NAME" \
-    --auth-type NONE \
-    --cors "$CORS_CONFIG" \
-    --region "$LAMBDA_REGION" --profile "$PROFILE" >/dev/null
-fi
-
-echo "=== 5. Add public invoke permission (idempotent) ==="
-aws lambda add-permission \
-  --function-name "$LAMBDA_NAME" \
-  --statement-id function-url-public \
-  --action lambda:InvokeFunctionUrl \
-  --principal '*' \
-  --function-url-auth-type NONE \
-  --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null || echo "permission already exists"
-
-echo "=== 6. Done ==="
-FUNCTION_URL=$(aws lambda get-function-url-config --function-name "$LAMBDA_NAME" \
-  --region "$LAMBDA_REGION" --profile "$PROFILE" \
-  --query 'FunctionUrl' --output text)
-
+echo "=== 4. Done ==="
 echo ""
-echo "Function URL: $FUNCTION_URL"
-echo ""
-echo "Next step: add the hostname to connect-src in infra/cloudfront-security-headers.{json,main.json,awsug.json}"
-echo "then run: AWS_PROFILE=aerospaceug-admin ./scripts/sync-cloudfront-headers.sh all"
-echo ""
-echo "Set in .env.production:"
-echo "  VITE_FEEDBACK_API_URL=${FUNCTION_URL}"
+echo "Lambda code + IAM + env vars deployed."
+echo "Production endpoint: https://rknnfq6urf.execute-api.us-west-2.amazonaws.com/feedback (API Gateway HTTP V2, unchanged since Wave 7)"

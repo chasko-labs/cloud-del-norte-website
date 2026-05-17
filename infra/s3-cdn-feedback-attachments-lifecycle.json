@@ -1,0 +1,14 @@
+{
+	"Rules": [
+		{
+			"ID": "expire-attachments-365d",
+			"Status": "Enabled",
+			"Filter": {
+				"Prefix": "attachments/"
+			},
+			"Expiration": {
+				"Days": 365
+			}
+		}
+	]
+}
