@@ -30,6 +30,7 @@ import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
 import AndresYoutubeLive from "./components/andres-youtube-live";
 import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
+import FeaturedVideoCard from "./components/featured-video-card";
 import { FeedAndmore, FeedAwsml } from "./components/feed-section";
 import NextMeetup from "./components/next-meetup";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
@@ -49,7 +50,8 @@ type SectionKey =
 	| "awsml"
 	| "arrowhead"
 	| "vbrownbag"
-	| "theZacsShow";
+	| "theZacsShow"
+	| "featuredVideo";
 
 // priority order for live hero — first live item wins the top slot
 const LIVE_PRIORITY = [
@@ -71,6 +73,7 @@ const SECTION_KEYS: SectionKey[] = [
 	"arrowhead",
 	"vbrownbag",
 	"theZacsShow",
+	"featuredVideo",
 ];
 
 const VBROWNBAG_IDS = [
@@ -190,6 +193,15 @@ function AppContent({
 					videoIds={ZACSSHOW_IDS}
 					live={zacsLive}
 					liveVideoId={zacsVideoId}
+				/>
+			),
+			featuredVideo: (
+				<FeaturedVideoCard
+					videoId="0PedFnnH_Ic"
+					title="How a Former Journalist Became an AWS Community Builder | Women in Tech Story"
+					author="Shubham gour"
+					authorUrl="https://www.youtube.com/@Shubhamgourtech"
+					thumbnailUrl="https://i.ytimg.com/vi/0PedFnnH_Ic/hqdefault.jpg"
 				/>
 			),
 		}),
