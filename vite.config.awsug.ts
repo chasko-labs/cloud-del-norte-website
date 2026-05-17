@@ -33,6 +33,26 @@ export default defineConfig({
 				),
 				admin: resolve(__dirname, "./src/sites/awsug/admin/index.html"),
 			},
+			output: {
+				manualChunks(id) {
+					if (id.includes("node_modules/react-dom")) return "vendor-react";
+					if (id.includes("node_modules/react/")) return "vendor-react";
+					if (
+						id.includes(
+							"node_modules/@cloudscape-design/components/app-layout",
+						) ||
+						id.includes(
+							"node_modules/@cloudscape-design/components/top-navigation",
+						)
+					) {
+						return "vendor-cloudscape-shell";
+					}
+					if (id.includes("node_modules/@cloudscape-design"))
+						return "vendor-cloudscape";
+					if (id.includes("/src/locales/es-MX.json")) return "locale-mx";
+					if (id.includes("/src/locales/en-US.json")) return "locale-en";
+				},
+			},
 		},
 	},
 });
