@@ -74,7 +74,11 @@
 	overflow: visible;
 }
 
-/* 5. Player always sticky — unconditional (Wave 16 reversal) */
+/* 5. Player always sticky — unconditional (Wave 16 reversal).
+   top: 56px = desktop: only #top-nav (56px). No breadcrumb bar at wide widths.
+   top: 112px override at <=688px (see media query below) = nav 56px + sticky
+   breadcrumb toolbar 56px. Wave 16 verifier noted runtime 112px — that is the
+   mobile override; desktop 56px is correct. */
 .cdn-player-slot {
 	position: sticky;
 	top: 56px;

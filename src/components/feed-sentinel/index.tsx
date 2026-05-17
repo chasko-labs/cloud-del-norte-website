@@ -16,7 +16,9 @@ export function FeedSentinel({ onVisible, hasMore }: FeedSentinelProps) {
 			([entry]) => {
 				if (entry.isIntersecting) onVisible();
 			},
-			{ rootMargin: "300px", threshold: 0.1 },
+			// rootMargin 400px: preload earlier so first-append fires on short pages
+			// without requiring multiple scrolls (Wave 16 verifier — was 300px).
+			{ rootMargin: "400px", threshold: 0.1 },
 		);
 		io.observe(el);
 		return () => io.disconnect();
