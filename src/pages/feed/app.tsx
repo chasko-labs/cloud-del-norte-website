@@ -6,10 +6,12 @@ import Header from "@cloudscape-design/components/header";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
+import { FeedSentinel } from "../../components/feed-sentinel";
 import Navigation from "../../components/navigation";
 import SpeakerProposalCta from "../../components/speaker-proposal-cta";
 import { useAndresLive } from "../../hooks/useAndresLive";
 import { useChannelLive } from "../../hooks/useChannelLive";
+import { useInfiniteCards } from "../../hooks/useInfiniteCards";
 import { useTranslation } from "../../hooks/useTranslation";
 import Shell from "../../layouts/shell";
 import {
@@ -220,6 +222,12 @@ function AppContent({
 		(k) => !allLiveKeys.has(k) && !offlineKeys.has(k),
 	);
 
+	const {
+		visibleCards: visibleGridCards,
+		incrementVisible,
+		hasMore,
+	} = useInfiniteCards(gridOrder);
+
 	return (
 		<ContentLayout
 			header={<Header variant="h1">{t("feedPage.header")}</Header>}
@@ -253,12 +261,13 @@ function AppContent({
 			</div>
 			<hr className="feed-section-divider" />
 			<div className="feed-grid">
-				{gridOrder.map((key) => (
+				{visibleGridCards.map((key) => (
 					<div key={key} className="feed-grid__cell cdn-card">
 						{sections[key]}
 					</div>
 				))}
 			</div>
+			<FeedSentinel onVisible={incrementVisible} hasMore={hasMore} />
 			<hr className="feed-section-divider" />
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<SpeakerProposalCta source="feed" />
