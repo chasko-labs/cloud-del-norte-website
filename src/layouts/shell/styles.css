@@ -2092,3 +2092,43 @@ body.cdn-scrolled [class*="awsui_breadcrumbs"] {
 		opacity 0.2s ease,
 		transform 0.2s ease;
 }
+
+/* ── Wave 17 — Vinyl record icon in breadcrumb bar ─────────────────────────
+   Decorative spinning record when audio plays. Fits within the 48px bar. */
+[class*="awsui_breadcrumbs"]::before {
+	content: "";
+	display: inline-block;
+	width: 36px;
+	height: 36px;
+	flex-shrink: 0;
+	margin-right: 8px;
+	vertical-align: middle;
+	background:
+		url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Ccircle cx='18' cy='18' r='17' fill='%23232323' stroke='%23444' stroke-width='1'/%3E%3Ccircle cx='18' cy='18' r='14' fill='none' stroke='%23555' stroke-width='0.3' opacity='0.3'/%3E%3Ccircle cx='18' cy='18' r='11' fill='none' stroke='%23555' stroke-width='0.3' opacity='0.3'/%3E%3Ccircle cx='18' cy='18' r='8' fill='none' stroke='%23555' stroke-width='0.3' opacity='0.3'/%3E%3Ccircle cx='18' cy='18' r='6' fill='%236b21a8'/%3E%3Ccircle cx='18' cy='18' r='2' fill='%23232323'/%3E%3C/svg%3E")
+		center / contain no-repeat;
+}
+
+body.cdn-stream-playing [class*="awsui_breadcrumbs"]::before {
+	animation: cdn-vinyl-spin 3s linear infinite;
+}
+
+@keyframes cdn-vinyl-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body.cdn-stream-playing [class*="awsui_breadcrumbs"]::before {
+		animation: none;
+	}
+}
+
+/* ── Wave 17 A3 — desktop tools-toggle vertical alignment nudge ────────────
+   At ≥1024px the tools-toggle sits ~5px higher than breadcrumb centerY due
+   to Cloudscape grid cell placement. Margin-top nudge aligns them. */
+@media (min-width: 1024px) {
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+		margin-top: 5px;
+	}
+}
