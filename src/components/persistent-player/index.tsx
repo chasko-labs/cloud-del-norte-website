@@ -13,6 +13,7 @@ import {
 } from "../../lib/player-persist";
 import { formatLocation, hexToRgbTuple } from "../../lib/streams";
 import { STREAMS } from "../../lib/streams-order";
+import { checkReachability } from "../../lib/streams-reachability";
 import { DancerIcon } from "../dancer-icon";
 import { PodcastIcon } from "../podcast-icon";
 import {
@@ -135,6 +136,12 @@ function PersistentPlayerBar({
 		if (streamDef?.type !== "podcast" || !streamDef.rssFeedUrl) return;
 		setRssAudioUrl(null); // reset on station change
 		const capturedKey = state.stationKey;
+		// corsBlocked feeds cannot be fetched in the browser — rely on build-time cache
+		if (streamDef.corsBlocked) {
+			const cached = episodeCacheRef.current?.[capturedKey];
+			if (cached) setNowPlaying(cached);
+			return;
+		}
 		fetch(streamDef.rssFeedUrl)
 			.then((r) => (r.ok ? r.text() : null))
 			.then((xml) => {
@@ -816,11 +823,9 @@ function PersistentPlayerInner() {
 		});
 	}, []);
 
-	// skip station — direction +1 advances, -1 rewinds. Mirrors the
-	// previous KruxPlayer modulo arithmetic so OS media-session skip
-	// behaves the same. autoplay state is preserved as-is — if something
-	// was playing the next station keeps playing; if idle it stays idle.
-	// Both radio and podcast follow the same rule.
+	// skip station — direction +1 advances, -1 rewinds. Checks reachability
+	// before switching; skips up to 3 unreachable stations. If all 3 fail,
+	// lands on the last attempted so the audio element can surface its own error.
 	const handleSkipStation = useCallback((direction: 1 | -1) => {
 		const scrollY = window.scrollY;
 		clearPodcastPosition();
@@ -828,18 +833,42 @@ function PersistentPlayerInner() {
 			if (!current) return current;
 			const idx = STREAMS.findIndex((s) => s.key === current.stationKey);
 			if (idx < 0) return current;
-			const nextIdx = (idx + direction + STREAMS.length) % STREAMS.length;
-			const next = STREAMS[nextIdx];
-			const nextState: PersistedPlayerState = {
-				stationKey: next.key,
-				stationUrl: next.url,
-				stationLabel: next.label,
-				metaUrl: next.metaUrl,
-			};
-			savePlayerState(nextState);
-			return nextState;
+
+			// Kick off async reachability probing without blocking the state update.
+			// We optimistically advance one step, then re-advance if it's unreachable.
+			(async () => {
+				const MAX_SKIPS = 3;
+				let curIdx = idx;
+				let lastState: PersistedPlayerState | null = null;
+				for (let attempt = 0; attempt < MAX_SKIPS; attempt++) {
+					curIdx = (curIdx + direction + STREAMS.length) % STREAMS.length;
+					const next = STREAMS[curIdx];
+					const reach = await checkReachability(next);
+					const nextState: PersistedPlayerState = {
+						stationKey: next.key,
+						stationUrl: next.url,
+						stationLabel: next.label,
+						metaUrl: next.metaUrl,
+					};
+					lastState = nextState;
+					if (reach !== "fail") {
+						savePlayerState(nextState);
+						setState(nextState);
+						requestAnimationFrame(() => window.scrollTo(0, scrollY));
+						return;
+					}
+				}
+				// All 3 attempts failed — display the last candidate anyway
+				if (lastState) {
+					savePlayerState(lastState);
+					setState(lastState);
+					requestAnimationFrame(() => window.scrollTo(0, scrollY));
+				}
+			})();
+
+			// Return current unchanged — async handler above will update state
+			return current;
 		});
-		requestAnimationFrame(() => window.scrollTo(0, scrollY));
 	}, []);
 
 	const handlePlayStateChange = useCallback((isPlaying: boolean) => {

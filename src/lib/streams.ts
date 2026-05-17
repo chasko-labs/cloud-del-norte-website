@@ -136,6 +136,12 @@ export interface StreamDef {
 	/** when true, stream is excluded from the shuffle order. use for temporarily
 	 *  broken streams (DNS failures, unreachable endpoints). remove to restore. */
 	readonly hidden?: true;
+	/** when true, station is in Bryan's known-working list. shuffleOnce guarantees
+	 *  position 0 comes from this subset. reachability probe is skipped (trusted). */
+	readonly curated?: boolean;
+	/** when true, the feed URL is CORS-blocked in the browser. parseMeta / RSS
+	 *  fetches are skipped at runtime; build-time pre-fetched data is used instead. */
+	readonly corsBlocked?: boolean;
 	/** parses metaUrl response into "song — artist" string. omit alongside metaUrl */
 	parseMeta?(data: unknown): string | null;
 	/**
@@ -201,6 +207,7 @@ export const STREAMS: StreamDef[] = [
 	},
 	{
 		key: "kexp",
+		curated: true, // Bryan's known-good list: legendary Seattle public radio, stream stable
 		url: "https://kexp.streamguys1.com/kexp160.aac",
 		label: "kexp 90.3",
 		metaUrl: "https://api.kexp.org/v2/plays/?limit=1&format=json",
@@ -266,6 +273,7 @@ export const STREAMS: StreamDef[] = [
 	},
 	{
 		key: "ksfr",
+		curated: true, // Bryan's known-good list: NPR affiliate Santa Fe, CORS-open StreamTheWorld endpoint
 		// StreamTheWorld AAC+ endpoint surfaced from ksfr.org homepage HTML scan
 		// (curl + grep). 302 redirects to 18243.live.streamtheworld.com:443/KSFRFM_ICE.aac.
 		// Validated: HTTP/1.1 302 → HTTP/1.0 200, Content-Type: audio/aacp,
@@ -667,7 +675,10 @@ export const STREAMS: StreamDef[] = [
 		// Access-Control-Allow-Origin headers → browser fetch() is CORS-blocked.
 		// Episode title will not surface in the player UI; the hardcoded Episode 754
 		// mp3 will play until go-aws.com DNS resolves and rssAudioUrl updates.
+		// curated: Bryan's canonical AWS podcast (not the aws_developers_podcast which
+		// is hidden/broken). This is the production weekly AWS news show.
 		key: "aws_podcast",
+		curated: true, // Bryan's known-good list: canonical weekly AWS podcast, CloudFront audio CDN
 		type: "podcast",
 		url: "https://d1le29qyzha1u4.cloudfront.net/AWS_Podcast_Episode_754.mp3",
 		rssFeedUrl: "https://d3gih7jbfe3jlq.cloudfront.net/aws-podcast.rss",
@@ -722,6 +733,7 @@ export const STREAMS: StreamDef[] = [
 	},
 	{
 		key: "aws_bites",
+		curated: true, // Bryan's known-good list: AWS Bites with Eoin and Luciano, anchor.fm CDN reliable
 		type: "podcast",
 		url: "https://d3ctxlq1ktw2nl.cloudfront.net/staging/2026-2-5/419350002-44100-2-d983932023608.mp3",
 		rssFeedUrl: "https://anchor.fm/s/6a3312a0/podcast/rss",
@@ -768,6 +780,10 @@ export const STREAMS: StreamDef[] = [
 	},
 	{
 		key: "rust_in_production",
+		// letscast.fm feed emits no Access-Control-Allow-Origin header — CORS-blocked
+		// in the browser. Build-time fetch-feeds.mjs populates podcast-episodes.json
+		// server-side (no CORS restriction). Runtime parseMeta is skipped.
+		corsBlocked: true,
 		type: "podcast",
 		url: "https://letscast.fm/media/public/938e6879-4aff-480d-8772-d0e0967725c5.mp3",
 		rssFeedUrl: "https://letscast.fm/podcasts/rust-in-production-82281512/feed",
@@ -791,6 +807,7 @@ export const STREAMS: StreamDef[] = [
 	},
 	{
 		key: "talking_serverless",
+		curated: true, // Bryan's known-good list: anchor.fm CDN reliable, serverless focus
 		type: "podcast",
 		// latest enclosure from anchor.fm/s/e2c52c8/podcast/rss (decoded cloudfront URL)
 		url: "https://d3ctxlq1ktw2nl.cloudfront.net/staging/2025-10-11/412279204-44100-2-c5fbb32d7a846.mp3",

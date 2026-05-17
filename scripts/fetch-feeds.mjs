@@ -46,6 +46,10 @@ const PODCAST_FEEDS = [
 		url: "https://aws-podcast.s3.amazonaws.com/awsdevelopers/AWS_Developers_Podcast.xml",
 	},
 	{ key: "talking_serverless", url: "https://anchor.fm/s/e2c52c8/podcast/rss" },
+	{
+		key: "rust_in_production",
+		url: "https://letscast.fm/podcasts/rust-in-production-82281512/feed",
+	},
 	{ key: "onda_aws", url: "https://rss.art19.com/podcast-aws-latam" },
 ];
 

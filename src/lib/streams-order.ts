@@ -27,6 +27,16 @@ function shuffleOnce(arr: readonly StreamDef[]): StreamDef[] {
 		const j = Math.floor(Math.random() * (i + 1));
 		[copy[i], copy[j]] = [copy[j], copy[i]];
 	}
+	// Guarantee position 0 is from the curated subset (Bryan's known-good list).
+	// Pick a random curated entry and swap it to the front.
+	const curatedIdxs = copy.reduce<number[]>((acc, s, i) => {
+		if (s.curated) acc.push(i);
+		return acc;
+	}, []);
+	if (curatedIdxs.length > 0) {
+		const pick = curatedIdxs[Math.floor(Math.random() * curatedIdxs.length)];
+		[copy[0], copy[pick]] = [copy[pick], copy[0]];
+	}
 	return copy;
 }
 
