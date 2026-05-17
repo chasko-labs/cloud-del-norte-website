@@ -664,7 +664,8 @@ Quick reference:
 
 | issue | status | notes |
 |-------|--------|-------|
-| #157 | root-cause-identified | Woodpecker SERVER (not agent) has SQLite WAL lock contention from chasko-labs/chrome-extension-moodle-uploader webhook storm. Agent "unhealthy" is cosmetic (distroless container, no /bin/sh for healthcheck). Real fix per kade-vox Wave 7 triage: docker restart heraldstack-woodpecker-server + disable moodle-uploader webhook. Authorization needed (server-scope). Manual deploy via scripts/deploy-manual.sh remains operationally sustainable. |
+| #157 | fix-applied-pending-validation | 2026-05-17 00:30 UTC: kade-vox executed Bryan-authorized fix. heraldstack-woodpecker-server restarted (cleared SQLite WAL lock, 34→0 'database is locked' errors). chasko-labs/chrome-extension-moodle-uploader webhook disabled three ways: GitHub webhooks 606259222 + 624417905 set active=false, Woodpecker repo id 8 deactivated via API, autocancel shim stopped. Server CPU idle. Will fully close on first successful auto-deploy of cloud-del-norte-website on next push to main. |
+| autocancel-shim | follow-up | Stopped during #157 fix (was perpetuating webhook loop due to valkey unavailability). Needs valkey restored OR config update to skip deactivated repos before being restarted. |
 
 ---
 
