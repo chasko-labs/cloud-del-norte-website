@@ -2,8 +2,124 @@
 
 **date:** 2026-05-17  
 **branch:** main  
-**last commit:** b86b4d74 perf(awsug): code-split _layout chunk via manualChunks/dynamic-import  
-**deploy:** verified 2026-05-17 14:01 UTC — awsug bundle code-split deployed; CSP tightened across main+awsug; Function URL retired. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+**last commit:** d037915d feat(feedback): clipboard paste + image upload on bug/wish forms  
+**deploy:** verified 2026-05-17 14:25 UTC — image upload feature live on main+awsug, e2e from Origin → issue #207 filed with image markdown link (cleaned up). Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-17 — Wave 12 (3-stage DAG: clipboard paste + image upload on bug/wish forms)
+
+Bryan: "the report a bug needs a way to copy / paste an image from clipboard / upload an image."
+
+Decomposed into a 3-stage subagent DAG. Architecture locked upfront in dispatch prompts to skip the planner stage: Cloudscape FileUpload + window-level paste listener on frontend, base64 inline in existing JSON payload (cap 3 × 2MB raw under Lambda 6MB sync limit), new public-read S3 bucket `cdn-feedback-attachments` with UUID filenames + 365-day lifecycle, GitHub issue body templating with `![screenshot N](https://cdn-feedback-attachments.s3.us-west-2.amazonaws.com/attachments/<uuid>.<ext>)` lines.
+
+| commit | description |
+|--------|-------------|
+| d037915d | feat(feedback): clipboard paste + image upload on bug/wish forms |
+
+### what shipped (single atomic commit, 9 files, ~411 insertions)
+
+**Backend (`infra/lambda/feedback/index.mjs`, +144 LOC):**
+- Imports `@aws-sdk/client-s3` (Node 22 Lambda runtime baseline package, no node_modules bundling needed)
+- Validates `attachments[]` array: max 3, each ≤2MB raw, MIME ∈ {png, jpeg, gif, webp}, magic-byte signature check (89 50 4E 47 for PNG, FF D8 FF for JPEG, 47 49 46 38 for GIF, RIFF...WEBP for WebP)
+- For each valid attachment: generates UUIDv4, decodes base64, `PutObjectCommand` to `cdn-feedback-attachments` with key `attachments/<uuid>.<ext>` and ContentType
+- Per-attachment errors logged + skipped without failing the whole submission (partial-success acceptable)
+- `createIssue()` extended to take `attachmentUrls[]` and embed markdown image lines between Details and footer
+- Bucket name from env var `ATTACHMENTS_BUCKET` (default `cdn-feedback-attachments`)
+- Existing 5/IP/hr rate limit + honeypot + email validation unchanged
+
+**S3 + IAM IaC (5 files):**
+- `scripts/deploy-feedback-attachments.sh` (NEW, 69 LOC): idempotent. SSO check, create-bucket-if-missing, public-access-block (block-acls + allow-policy), put-bucket-policy, put-bucket-lifecycle-configuration. Mirrors `scripts/deploy-feedback.sh` style.
+- `infra/s3-cdn-feedback-attachments-policy.json` (NEW): single Statement, `Principal: *`, `s3:GetObject` on `arn:aws:s3:::cdn-feedback-attachments/attachments/*`. Public read scoped to attachments/ prefix only.
+- `infra/s3-cdn-feedback-attachments-lifecycle.json` (NEW): one Rule, Filter Prefix `attachments/`, Expiration 365 days. Bug screenshots auto-purge after a year.
+- `infra/iam/feedback-execution-policy.json`: appended `S3Attachments` Statement granting `s3:PutObject` on `arn:aws:s3:::cdn-feedback-attachments/attachments/*` to the existing cdn-feedback Lambda role.
+- `scripts/deploy-feedback.sh`: added `ATTACHMENTS_BUCKET=cdn-feedback-attachments` to environment-variables block on update-function-configuration.
+
+**Frontend (`src/components/feedback-form/index.tsx`, +132 LOC):**
+- Imports Cloudscape `FileUpload` component
+- New state: `attachments: File[]`, `attachmentError: string`
+- `useEffect` registers window-level `paste` event listener while modal is open. Iterates `event.clipboardData.items`, extracts `image/*` files via `getAsFile()`, pushes onto attachments[] (respects max 3). Cleans up on close.
+- New FormField between Details and ContactEmail with `<FileUpload accept="image/png,image/jpeg,image/gif,image/webp" multiple tokenLimit={3} showFileThumbnail>` — Cloudscape handles the upload UI + thumbnail rendering.
+- Validation: attachments.length ≤ 3 + each file.size ≤ 2_000_000 bytes; surfaces errors via FormField errorText.
+- `handleSubmit` awaits `Promise.all(attachments.map(readAsBase64))` before fetch. Sends `attachments: [{filename, contentType, base64Data}]` in payload.
+- `reset()` clears attachments[] (and any object URLs Cloudscape FileUpload manages internally).
+- Modal hint copy: "paste a screenshot or click to select. up to 3 images, 2MB each."
+
+**i18n (en-US + es-MX, +19 lines each):**
+- `feedbackForm.fields.attachments`: "Screenshots (optional)" / "Capturas de pantalla (opcional)"
+- `feedbackForm.helpers.attachments`: paste-or-click hint, English + regional Spanish voice
+- `feedbackForm.errors.attachmentsMax / attachmentSize / attachmentType`: all three error states bilingual
+- Cloudscape FileUpload built-in i18nStrings (uploadButton, dropzoneText, removeFileAriaLabel, limitShowFewer/More, errorIconAriaLabel) all bilingual
+
+### deploy
+
+- Backend infra deployed via `bash scripts/deploy-feedback-attachments.sh` (S3 bucket + policy + lifecycle in account 170473530355 us-west-2) and `bash scripts/deploy-feedback.sh` (Lambda code + IAM update + ATTACHMENTS_BUCKET env var). Both under PO scope (AWS CLI + IaC scripts).
+- Frontend deployed via `bash scripts/deploy-manual.sh main` + `bash scripts/deploy-manual.sh awsug`:
+  - main: invalidation I39TM2IO9J3RZ5RU3OGGFYVDK5, last-modified 2026-05-17T14:24:08Z
+  - awsug: invalidation I8N3PNAR0YO20YZL482WNNU4N5, last-modified 2026-05-17T14:25:09Z
+
+### end-to-end verification
+
+Direct Lambda invoke smoke (Stage 2):
+```
+aws lambda invoke --function-name cdn-feedback --payload <event with 1x1 PNG attachment>
+→ statusCode 200, issueUrl chasko-labs/cloud-del-norte-website/issues/206
+S3 ls: 5f85fa95-39cc-424a-a348-b9235872bd2b.png (70 bytes, image/png)
+curl -sI <S3 url>: HTTP 200, content-type image/png
+gh issue view 206: labels [bug, community-feedback], body has ![screenshot 1](https://cdn-feedback-attachments.s3...) markdown link
+```
+
+E2E from clouddelnorte.org Origin (Stage 3):
+```
+curl -sS -X POST https://rknnfq6urf.execute-api.us-west-2.amazonaws.com/feedback \
+  -H 'Origin: https://clouddelnorte.org' --data @<event with 1x1 PNG>
+→ HTTP 200, issueUrl chasko-labs/cloud-del-norte-website/issues/207
+S3 object 88bae485-97b8-4642-90c9-f3b8249132fc.png verified HTTP 200 image/png
+GitHub issue body has correct image markdown link
+```
+
+Both smoke + e2e test issues closed and S3 objects deleted post-verification.
+
+### Wave 12 surprise: outdated deploy script recreated an orphan Function URL
+
+`scripts/deploy-feedback.sh` predates Wave 7's API Gateway pivot. Steps 4 + 5 (Create Function URL + add public-invoke permission) are dead code that conflict with the Wave 11 Function URL retirement. Stage 2's Lambda update unintentionally recreated the orphan URL `7ceyguq2oqyepd7hephd4srvyq0dkmbr.lambda-url.us-west-2.on.aws`.
+
+Mitigation in same wave:
+1. Manually deleted the new orphan Function URL config + removed `function-url-public` permission Statement
+2. Removed 28 lines of dead Function URL steps from `scripts/deploy-feedback.sh`. New step 4 prints "Production endpoint: API Gateway HTTP V2 (unchanged since Wave 7)" — keeps next deploy clean.
+3. apigw-feedback-invoke permission preserved (production path intact)
+
+Lesson: when an architecture pivot happens (Wave 7), all related deploy scripts need the dead-path removal in the SAME wave or it will resurface as a recurring orphan-creator. Tech debt deferred = tech debt that resurfaces under load.
+
+### dispatch performance this wave
+
+- ghost-solan-rust-coder (Stage 1): 9-file delta (~411 insertions), single dispatch covered Lambda + IaC + frontend + i18n. biome PASS, build PASS, staged correctly. Clean.
+- poltergeist-stratia-aws-infra (Stage 2): MISREPORTED initially — claimed `jitsi-video-hosting` AWS profile was absent, blocking deploy. Profile WAS present + SSO active (verified directly). Operator (Harald) executed Stage 2 manually via shell after the misreport.
+- ghost-orin-ci-cd (Stage 3, re-dispatched as 3b): clean closeout — script-fix + commit + push + main+awsug deploy + e2e from Origin + cleanup. Single dispatch handled the whole tail.
+
+### lessons learned
+
+- Architecture-locked-in-dispatch-prompt is a strong pattern. Stage 1 didn't have to plan; it had a 50-line architecture brief and just executed. 411 insertions in one focused dispatch.
+- Stage 2's misreport on AWS profile state is a known risk: subagent's environment introspection may not match host reality. Operator-verified SSO state directly via `aws sts get-caller-identity` before re-dispatching. Pattern: when a dispatch reports an environment-state blocker, verify it directly before accepting.
+- Cloudscape FileUpload + window-level paste listener is the right primitive for clipboard-paste + click-to-select. Browser clipboard API (`event.clipboardData.items` + `getAsFile()`) gives File objects directly — no special blob handling needed.
+- Public S3 with UUID filenames + 365-day lifecycle is the simplest viable image-host for community-bug-report use case. Privacy-by-obscurity is acceptable when filenames are random UUIDv4 (effectively unguessable). Lifecycle prevents bucket bloat.
+- Magic-byte validation is non-negotiable for user-uploaded files. Trusting MIME header alone is a known attack vector (renamed extensions). Lambda checks first 8-12 bytes against PNG/JPEG/GIF/WebP signatures.
+- Same-day Wave 9 → 10 → 11 → 12 (4 waves) feasible when dispatches are clean and each wave has disjoint scope. Backlog burndown rate matters when the team is in flow.
+- Cumulative same-day total: 5 commits on origin/main today (c542635c Wave 9, db9f3045 + f772a1df + bd426dd3 Wave 10, 83793e72 + 23e24c5b + b86b4d74 + b2be040b Wave 11, d037915d Wave 12 = 9 actual commits across all 4 waves).
+
+### items closed this wave
+
+- Bryan's directive: "report a bug needs a way to copy / paste an image from clipboard / upload an image" — DONE end-to-end (frontend + backend + IaC + i18n + deploy + e2e verified)
+- Latent tech-debt: outdated `scripts/deploy-feedback.sh` Function URL recreation block — fixed in same commit
+
+### follow-ups (next session candidates)
+
+- **Wave 13 candidate:** biome ci has 33 pre-existing errors across the project (formatting drifts + 2 useExhaustiveDependencies in speaker-proposal-form). Not from Wave 12. Worth a clean-up pass.
+- **Wave 13 candidate:** auth site `_layout` 877KB code-split (mirror Wave 11 Track A onto vite.config.auth.ts) — surfaced Wave 11
+- **Wave 13 candidate:** main site `_layout` audit — surfaced Wave 11
+- **Wave 13 candidate:** test coverage backfill for Wave 4-7-9-11-12 features (P3, ongoing)
+- **Out of CDN PO scope (still):** Woodpecker v3.14.x upgrade per #201, residual user-id-0 storm, hs-mcp-woodpecker-trigger.service fetch-token.sh fix
+- **Bryan-gated:** #185 passkey on Pixel 9 (real-device debug); #189 verification methods (TOTP/push)
 
 ---
 
