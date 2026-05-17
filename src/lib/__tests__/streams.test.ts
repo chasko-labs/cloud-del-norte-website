@@ -44,8 +44,8 @@ describe("STREAMS — location coverage", () => {
 
 	it("Mexican stations use proper Spanish naming (México with accent)", () => {
 		const mxStations = STREAMS.filter((s) => s.location.country === "México");
-		// ibero_909, concepto_radial, radio_udg_lagos
-		expect(mxStations.length).toBe(3);
+		// ibero_909, concepto_radial, radio_udg_lagos, onda_aws (AWS LATAM — distributed México)
+		expect(mxStations.length).toBe(4);
 		for (const s of mxStations) {
 			expect(s.location.country).toBe("México");
 		}

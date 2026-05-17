@@ -75,4 +75,21 @@ describe("checkReachability", () => {
 		await checkReachability(stream);
 		expect(fetch).toHaveBeenCalledTimes(1);
 	});
+
+	it("re-fetches after TTL expires (>5 min)", async () => {
+		vi.useFakeTimers({ shouldAdvanceTime: true });
+		vi.mocked(fetch).mockResolvedValue({ type: "opaque" } as Response);
+		const stream = { ...BASE, key: "reach-ttl-expire" };
+
+		await checkReachability(stream);
+		expect(fetch).toHaveBeenCalledTimes(1);
+
+		// Advance past the 5-minute TTL
+		vi.advanceTimersByTime(5 * 60 * 1000 + 1);
+
+		await checkReachability(stream);
+		expect(fetch).toHaveBeenCalledTimes(2);
+
+		vi.useRealTimers();
+	});
 });
