@@ -1,9 +1,100 @@
 # cloud del norte — handoff plan
 
-**date:** 2026-05-16  
+**date:** 2026-05-17  
 **branch:** main  
-**last commit:** 790092d7 feat(icons): k4 headphones-over-mic composite icon as podcast mode indicator  
-**deploy:** verified 2026-05-16 23:07 UTC — all 3 subdomains live via manual fallback (Woodpecker still in #157 death-loop).
+**last commit:** 7d4719ec feat(feedback): pivot to API Gateway HTTP V2, retire broken Function URL  
+**deploy:** verified 2026-05-17 00:04 UTC — all 3 subdomains live via manual fallback (Woodpecker still in #157 death-loop, root cause now diagnosed below).
+
+---
+
+## completed 2026-05-17 — Wave 7 (3-stage DAG: liora creative + feedback API Gateway pivot + woodpecker triage)
+
+Bryan resumed session with directive: "back to work on clouddelnorte.org bryan really wants to be able to submit tickets from the right sidepannel already." Right-panel report-a-bug + make-a-wish forms had silently been failing — diagnosis traced to the cdn-feedback Lambda Function URL being stuck in unrecoverable AccessDeniedException state.
+
+| commit | track | description |
+|--------|-------|-------------|
+| 93abf758 | A | feat(creative): liora a2 postcard direction + l audio-reactive sigil (Wave 6 Track A) |
+| ee051c3a | B | feat(feedback): API Gateway HTTP V2 deploy script (pivot from broken Function URL) |
+| 7d4719ec | B | feat(feedback): pivot to API Gateway HTTP V2, retire broken Function URL |
+
+### Track A — Liora a2 postcard + l audio-reactive sigil (creative, both items closed)
+
+Bryan delegated big a2 design-alternative selection AND l animated-records rethink to Liora. Her picks landed atomic in 93abf758:
+
+- **a2 postcard direction** (`src/sites/auth/_layout/styles.css` ~129 lines net): warm, hand-addressed-postcard frame around the existing glass card — deckled-edge inset shadow, decorative `::after` stamp corner with cloud glyph, parchment texture gradient, slightly bumped card opacity (0.97 → 0.98) and softened border. Cinzel typography preserved as serif identity. Postcard wraps the prior glass treatment, doesn't replace it.
+- **l audio-reactive sigil** (`src/components/persistent-player/index.tsx` + `styles.css`): a brand-mark radio tower SVG that pulses with the beat using `--cdn-mid` (0–1 audio level written per-frame by background-viz). Two CSS keyframes (`cdn-sigil-pulse` for transform/opacity, `cdn-sigil-glow` for drop-shadow tied to `--station-primary-mode-rgb`). Visible only when `playing && body.cdn-stream-playing`. Respects `prefers-reduced-motion`. Light mode gets softer 0.5 opacity for ink-on-parchment feel.
+- Solan needed one a11y fix on the new `<svg>` (biome's `noSvgWithoutTitle` rule even with `aria-hidden="true"` parent): added `role="img"`, `aria-label`, `<title>` first child. Same fix pattern usable for any future inline SVG.
+
+### Track B — cdn-feedback Lambda: Function URL → API Gateway HTTP V2
+
+**Why pivot.** Diagnosis chain:
+- Direct SDK invoke (`aws lambda invoke`) of cdn-feedback worked perfectly — created GitHub issue #196 (closed as cleanup). Lambda is healthy.
+- Function URL `https://j66tb5lrvmr7bzxptje6ojr3aq0rbsht.lambda-url.us-west-2.on.aws/` returned HTTP 403 `AccessDeniedException` at the gateway BEFORE Lambda was invoked (no CloudWatch entry).
+- AuthType was NONE. Resource policy had correct `Principal: *` + `lambda:InvokeFunctionUrl` action + condition `lambda:FunctionUrlAuthType = NONE`.
+- Tried in order: remove+readd permission with fresh statement-id (still 403), delete+recreate Function URL with new URL `pncx4l4wl6b23m3j6onyhbruwu0lzuaa` (still 403), 60-second IAM propagation wait (still 403). No SCPs, no RCPs, no declarative policies, no VPC binding, no public-access blocks I could find.
+- CORS preflight returned 200 cleanly. POST returned 403. CloudWatch trace showed last successful invocation 2026-05-16T15:40:51Z (Wave 3 smoke). After that, every request rejected pre-Lambda.
+- Concluded: Function URL is in genuine unrecoverable state. Pivot architecture instead of fighting AWS edge.
+
+**What shipped.** API Gateway HTTP V2 cdn-feedback-api at `https://rknnfq6urf.execute-api.us-west-2.amazonaws.com/feedback` (account 170473530355 us-west-2):
+- HTTP V2 (no WAF — feedback is low-volume, app-layer rate limit already in Lambda code)
+- POST /feedback route → AWS_PROXY integration to cdn-feedback Lambda (PayloadFormatVersion 2.0)
+- $default stage with AutoDeploy=true
+- CORS allowed origins: clouddelnorte.org + awsug.clouddelnorte.org + dev.clouddelnorte.org. Methods POST OPTIONS. Headers content-type. Max-age 86400.
+- Lambda permission `apigw-feedback-invoke` for principal apigateway.amazonaws.com on action lambda:InvokeFunction
+- IaC artifact `scripts/deploy-feedback-apigw.sh` mirrors `scripts/deploy-speaker-proposals.sh` pattern (idempotent, set -euo pipefail, SSO check upfront)
+- `.env.production` updated: `VITE_FEEDBACK_API_URL=https://rknnfq6urf.execute-api.us-west-2.amazonaws.com/feedback`
+- Old Function URL config NOT deleted — left as transitional fallback. Cleanup can happen any future session.
+- CSP unchanged — both main and awsug already allow `https://*.execute-api.us-west-2.amazonaws.com` on connect-src (left over from speaker-proposals migration).
+
+### deploy
+
+Manual fallback (Woodpecker still dead per #157 — root cause now identified, see triage section):
+- main: last-modified 2026-05-17T00:03:23Z
+- awsug: last-modified 2026-05-17T00:03:58Z
+- auth: last-modified 2026-05-17T00:04:37Z
+
+### end-to-end verification
+
+```
+direct lambda SDK invoke during 403 triage → 200, issue #196 (closed)
+new endpoint hash rknnfq6urf in deployed bundle help-panel-home-DiwQOYt9.js: ✓
+clouddelnorte.org Origin POST type=bug → 200, issue #197 (closed)
+clouddelnorte.org Origin POST type=wish → 200, issue #198 (closed)
+clouddelnorte.org Origin POST with browser User-Agent → 200, issue #199 (closed)
+awsug.clouddelnorte.org Origin POST type=wish → 200, issue #200 (closed)
+OPTIONS preflight → 204, access-control-allow-origin matches Origin, max-age 86400
+```
+
+### Track C — Woodpecker #157 root cause identified (kade-vox host triage)
+
+This was the parallel tooling track — Bryan's standing rule: "always dispatch someone to work on tooling while you do other stuff."
+
+**Real root cause:** SQLite WAL lock contention on **heraldstack-woodpecker-server** (NOT the agent). 21 'database is locked' errors in last 500 server log lines. Webhook storm from chasko-labs/chrome-extension-moodle-uploader floods the server: 1731 entries in last 2000 server log lines, ~every 30 seconds. Triggering commit `c400a774` fails GitHub status API with 422, GitHub re-delivers webhook, server can't persist pipeline result (locked DB), pipeline marked failed → loop.
+
+**Agent 'unhealthy' is cosmetic, not the blocker.** woodpeckerci/woodpecker-agent:v3.13.0 is distroless — no /bin/sh, so `CMD-SHELL '/bin/woodpecker-agent ping'` healthcheck fails on shell spawn (failing streak count 897). Agent IS processing pipelines normally. The actual failure is at the server's persistence layer.
+
+**Recommended fix sequence (5 minutes, requires authorization):**
+1. `docker restart heraldstack-woodpecker-server` — clears SQLite lock state
+2. Disable chasko-labs/chrome-extension-moodle-uploader webhook in Woodpecker UI to stop the feedback loop
+3. Medium-term: fix agent healthcheck (docker-compose.yml CMD-SHELL → CMD format with binary directly)
+4. Long-term: SQLite → PostgreSQL migration if pipeline volume keeps growing
+
+**Why not done this session.** Out of poltergeist-kade-vox-host-admin's authorized scope (agent-container actions only; server restart is server-scope). Documented on issue #157 with full evidence chain. Manual deploy via `scripts/deploy-manual.sh` remains the operating norm and works fine.
+
+### lessons learned
+
+- AWS Lambda Function URLs can enter a genuinely unrecoverable state where the gateway returns 403 AccessDeniedException despite correct AuthType + resource policy. delete-and-recreate did not help; only architectural pivot to API Gateway worked. This is a valid pattern: if Function URL state is broken, mirror speaker-proposals' API Gateway approach. CSP already allows execute-api wildcard, .env swap is the only frontend touch.
+- Diagnosis-first beats panic-iteration. Direct SDK invoke confirmed Lambda was healthy in seconds; that one signal told us pivot was the right move (vs. spending more cycles fighting the gateway).
+- "Submit form silently fails" is the worst UX failure mode. End-to-end verification (curl + bundle inspection + multiple Origins) catches what unit tests miss.
+- Single atomic commit per logical phase. Track A landed clean as one commit (vs. Wave 5 Track A's 2-commit split). Better git history.
+- Kade-vox surfaced the cosmetic-vs-real distinction on Woodpecker (agent healthcheck red herring, server SQLite is the real issue) — saved hours of misdirected debugging. Tooling-track-in-parallel pays off.
+
+### items closed this wave
+
+- Right-sidepanel ticket submission (Bryan's session-restart directive — bug + wish forms verified 200 OK from both main and awsug Origins)
+- a2 postcard design-alternative direction landed (a2 closed in HANDOFF, polish pass + alternative both shipped)
+- l audio-reactive sigil landed (l closed in HANDOFF, "waveform disc" rethink shipped via radio-tower sigil)
+- #157 root cause identified and documented (issue stays open pending server-restart authorization, but no longer "unknown")
 
 ---
 
@@ -384,8 +475,7 @@ Defense in depth: hide admin nav link for non-moderators + render denial card on
 
 ### p1 — open creative/ux items
 
-- a2: login page full ux rethink (polish pass shipped Wave 4; big design-alternative choice still pending)
-- l: animated records rethink — "waveform disc" concept
+(none — a2 design-alternative landed Wave 7 postcard direction; l audio-reactive sigil landed Wave 7. Backlog now creative-clean.)
 
 ### p2 — Device Farm CI integration
 
@@ -513,11 +603,12 @@ token refresh fix, nav cleanup, CSS fixes (player overflow, footer, speakeasy ne
 
 ### open creative/ux items
 
-- a2: login page full ux rethink — quick-fix shipped (glass card opacity/blur), full rethink still open. three design alternatives researched: postcard, command console, desert entry.
-- c2: add AWS LATAM podcast RSS feed to streams
-- e2: podcast player icon redesign — custom SVG play/pause, seek ±15s, next episode
-- k4: headphones-over-microphone composite icon for podcast mode
-- l: animated records rethink — "waveform disc" concept for podcasts (waveform bars partially address this)
+(All resolved as of Wave 7. Historical record:)
+- ~~a2: login page full ux rethink~~ — polish pass Wave 4 + postcard alternative Wave 7 (commit 93abf758)
+- ~~c2: add AWS LATAM podcast RSS feed to streams~~ — Wave 3 (commit 5ff3b662)
+- ~~e2: podcast player icon redesign~~ — Wave 5 (commits 7cc9afdc + 218ec419)
+- ~~k4: headphones-over-microphone composite icon for podcast mode~~ — Wave 5 (commit 790092d7)
+- ~~l: animated records rethink~~ — Wave 7 audio-reactive radio-tower sigil (commit 93abf758)
 
 ### deploy cost-aggregator lambda + cross-account iam
 
@@ -573,7 +664,7 @@ Quick reference:
 
 | issue | status | notes |
 |-------|--------|-------|
-| #157 | quiescent | Woodpecker death-loop — SQLite locked state on chasko-labs/chrome-extension-moodle-uploader. Documented, not blocking website deploys (manual deploy script works). Worth a separate triage session. |
+| #157 | root-cause-identified | Woodpecker SERVER (not agent) has SQLite WAL lock contention from chasko-labs/chrome-extension-moodle-uploader webhook storm. Agent "unhealthy" is cosmetic (distroless container, no /bin/sh for healthcheck). Real fix per kade-vox Wave 7 triage: docker restart heraldstack-woodpecker-server + disable moodle-uploader webhook. Authorization needed (server-scope). Manual deploy via scripts/deploy-manual.sh remains operationally sustainable. |
 
 ---
 
