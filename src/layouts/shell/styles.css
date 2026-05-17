@@ -2003,10 +2003,69 @@ button[class*="awsui_tools-toggle"] {
 	height: 36px !important;
 	max-width: 36px !important;
 	max-height: 36px !important;
+	aspect-ratio: 1 !important;
+	border-radius: 50% !important;
 	transition: none !important;
 }
 
 #top-nav [class*="utility-wrapper"] a[class*="awsui_link"] {
 	min-width: 44px;
 	min-height: 44px;
+}
+
+/* ── Wave 13 — mobile chrome bar: circular backings + breadcrumb height +
+   vertical alignment + sticky buttons on scroll ─────────────────────────── */
+
+/* 1. Keep button backings circular at ALL viewports (under 690px they were
+   becoming vertical rectangles due to flex-shrink losing aspect ratio) */
+@media (max-width: 690px) {
+	[class*="awsui_mobile-toolbar"] button[class*="awsui_navigation-toggle"],
+	[class*="awsui_mobile-toolbar"] [class*="awsui_tools-toggle_"] button,
+	[class*="awsui_mobile-toolbar"] button[class*="awsui_tools-toggle"],
+	[class*="awsui_universal-toolbar"] button[class*="awsui_navigation-toggle"],
+	[class*="awsui_universal-toolbar"] [class*="awsui_tools-toggle_"] button,
+	[class*="awsui_universal-toolbar"] button[class*="awsui_tools-toggle"] {
+		flex-shrink: 0 !important;
+		width: 36px !important;
+		height: 36px !important;
+		min-width: 36px !important;
+		aspect-ratio: 1 !important;
+		border-radius: 50% !important;
+	}
+}
+
+/* 2. Breadcrumb bar tall enough for vinyl record icons (~40px) */
+[class*="awsui_mobile-toolbar"]:not(#\9):not(#\10),
+[class*="awsui_universal-toolbar"]:not(#\9):not(#\10) {
+	min-height: 48px;
+	align-items: center;
+}
+
+/* 3. Breadcrumb + menu open icons vertically centered in shared chrome bar */
+[class*="awsui_mobile-toolbar"] [class*="awsui_breadcrumbs"],
+[class*="awsui_universal-toolbar"] [class*="awsui_breadcrumbs"] {
+	display: flex;
+	align-items: center;
+}
+
+/* 4. On scroll: ONLY info/hamburger buttons stay on screen (sticky).
+   The mobile-toolbar buttons get position:fixed so they persist;
+   the breadcrumb content scrolls away naturally. */
+@media (max-width: 768px) {
+	[class*="awsui_mobile-toolbar"] [class*="awsui_navigation-toggle_"],
+	[class*="awsui_mobile-toolbar"] [class*="awsui_tools-toggle_"],
+	[class*="awsui_universal-toolbar"] [class*="awsui_navigation-toggle_"],
+	[class*="awsui_universal-toolbar"] [class*="awsui_tools-toggle_"] {
+		position: fixed;
+		top: 60px;
+		z-index: 1100;
+	}
+	[class*="awsui_mobile-toolbar"] [class*="awsui_navigation-toggle_"],
+	[class*="awsui_universal-toolbar"] [class*="awsui_navigation-toggle_"] {
+		left: 8px;
+	}
+	[class*="awsui_mobile-toolbar"] [class*="awsui_tools-toggle_"],
+	[class*="awsui_universal-toolbar"] [class*="awsui_tools-toggle_"] {
+		right: 8px;
+	}
 }

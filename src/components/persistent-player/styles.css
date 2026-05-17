@@ -54,8 +54,7 @@
 	width: 100%;
 	margin: 0 0 12px 0;
 	min-height: 48px;
-	position: sticky;
-	top: 56px;
+	position: relative;
 	z-index: 100;
 	/* light mode: gradient cream — transparent left → frosted right */
 	background: linear-gradient(
@@ -67,12 +66,18 @@
 	);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
-	/* mask reveals from 25% so skip/next button is never hidden */
-	-webkit-mask-image: linear-gradient(to right, transparent 0%, black 25%);
-	mask-image: linear-gradient(to right, transparent 0%, black 25%);
+	/* mask: reveal from 12% so skip/next button is clearly visible */
+	-webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%);
+	mask-image: linear-gradient(to right, transparent 0%, black 12%);
 	border-bottom: none;
 	/* allow play button animations/shadows to bleed outside */
 	overflow: visible;
+}
+
+/* 5. Player sticky ONLY when a station is playing */
+body.cdn-stream-playing .cdn-player-slot {
+	position: sticky;
+	top: 56px;
 }
 
 /* station color splash — audio-reactive radial from right edge */
@@ -115,8 +120,8 @@ body.cdn-stream-playing .cdn-player-slot::before {
 	);
 	backdrop-filter: blur(12px);
 	-webkit-backdrop-filter: blur(12px);
-	-webkit-mask-image: linear-gradient(to right, transparent 0%, black 50%);
-	mask-image: linear-gradient(to right, transparent 0%, black 50%);
+	-webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%);
+	mask-image: linear-gradient(to right, transparent 0%, black 12%);
 	border-bottom: none;
 }
 
@@ -444,14 +449,14 @@ a.cdn-pp__label--donate:focus-visible {
 	border-radius: 6px;
 	border: none;
 	background: transparent;
-	color: rgba(139, 90, 43, 0.55);
+	color: rgba(139, 90, 43, 0.82);
 	font-size: 0.85rem;
 }
 
 .awsui-dark-mode .cdn-pp__btn--skip {
 	border: 1px solid rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.22);
 	background: rgba(var(--station-primary-mode-rgb, 144, 96, 240), 0.06);
-	color: rgba(240, 240, 240, 0.65);
+	color: rgba(240, 240, 240, 0.88);
 }
 
 .cdn-pp__btn--skip:hover {
@@ -478,13 +483,24 @@ a.cdn-pp__label--donate:focus-visible {
 	flex-shrink: 0;
 	min-width: 2.5rem;
 	gap: 2px;
+	/* opaque backing so skip button + next-station name are clearly visible
+	   above the player slot gradient (Wave 13 fix) */
+	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.85));
+	border-radius: 8px;
+	padding: 4px 6px;
+	position: relative;
+	z-index: 2;
+}
+
+.awsui-dark-mode .cdn-pp__skip-wrap {
+	background: rgba(10, 12, 20, 0.85);
 }
 
 .cdn-pp__next-hint {
 	font-size: 9px;
 	letter-spacing: 0.08em;
 	white-space: nowrap;
-	opacity: 0.5;
+	opacity: 0.85;
 	color: var(--station-primary-mode, var(--cdn-violet, #9060f0));
 }
 
@@ -754,9 +770,9 @@ body.cdn-podcast-playing .cdn-pp__btn--resume {
 }
 
 /* Mobile (<=688px) — sticky breadcrumb toolbar (~56px) below #top-nav (56px).
-   Player slot sticks at 112px to clear both bars. */
+   Player slot sticks at 112px to clear both bars. Only when playing. */
 @media (max-width: 688px) {
-	.cdn-player-slot {
+	body.cdn-stream-playing .cdn-player-slot {
 		top: 112px;
 	}
 }
