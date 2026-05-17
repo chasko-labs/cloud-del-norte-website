@@ -1999,10 +1999,10 @@ button[class*="awsui_navigation-toggle"],
 button[class*="awsui_tools-toggle"] {
 	min-width: 44px;
 	min-height: 44px;
-	width: 36px !important;
-	height: 36px !important;
-	max-width: 36px !important;
-	max-height: 36px !important;
+	width: 44px !important;
+	height: 44px !important;
+	max-width: 44px !important;
+	max-height: 44px !important;
 	aspect-ratio: 1 !important;
 	border-radius: 50% !important;
 	transition: none !important;
@@ -2026,9 +2026,9 @@ button[class*="awsui_tools-toggle"] {
 	[class*="awsui_universal-toolbar"] [class*="awsui_tools-toggle_"] button,
 	[class*="awsui_universal-toolbar"] button[class*="awsui_tools-toggle"] {
 		flex-shrink: 0 !important;
-		width: 36px !important;
-		height: 36px !important;
-		min-width: 36px !important;
+		width: 44px !important;
+		height: 44px !important;
+		min-width: 44px !important;
 		aspect-ratio: 1 !important;
 		border-radius: 50% !important;
 	}
@@ -2039,6 +2039,12 @@ button[class*="awsui_tools-toggle"] {
 [class*="awsui_universal-toolbar"]:not(#\9):not(#\10) {
 	min-height: 48px;
 	align-items: center;
+}
+
+/* A3 fix — desktop toolbar inner flex row vertical alignment */
+[class*="awsui_universal-toolbar"] > *,
+[class*="awsui_mobile-toolbar"] > * {
+	align-items: center !important;
 }
 
 /* 3. Breadcrumb + menu open icons vertically centered in shared chrome bar */
@@ -2068,4 +2074,15 @@ button[class*="awsui_tools-toggle"] {
 	[class*="awsui_universal-toolbar"] [class*="awsui_tools-toggle_"] {
 		right: 8px;
 	}
+}
+
+/* A4 fix — breadcrumb fades away on scroll so only buttons remain visible */
+body.cdn-scrolled [class*="awsui_breadcrumbs"] {
+	opacity: 0;
+	transform: translateY(-8px);
+	pointer-events: none;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+}
+[class*="awsui_breadcrumbs"] {
+	transition: opacity 0.2s ease, transform 0.2s ease;
 }
