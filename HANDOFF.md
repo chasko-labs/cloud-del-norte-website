@@ -2,8 +2,141 @@
 
 **date:** 2026-05-17  
 **branch:** main  
-**last commit:** d037915d feat(feedback): clipboard paste + image upload on bug/wish forms  
-**deploy:** verified 2026-05-17 14:25 UTC — image upload feature live on main+awsug, e2e from Origin → issue #207 filed with image markdown link (cleaned up). Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+**last commit:** 9aa129e9 fix(chrome): wave 14 cleanup — 44x44 circles + scroll-driven breadcrumb hide + desktop alignment  
+**deploy:** verified 2026-05-17 ~15:10 UTC — all 3 subdomains live with Wave 13+14 mobile chrome + curated stations + image upload. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-17 — Wave 13 + 14 (mobile chrome + scroll/sticky + curated stations + console warnings)
+
+Bryan dropped a multi-part directive: under-690px button circles preserved, breadcrumb height for records, on-load alignment, scroll-driven breadcrumb-hides-while-buttons-stay, player conditional sticky, console warnings cleanup (oembed 404s, iframe allow attribute, letscast.fm CORS), curated stations whitelist with reachability check, next-button visibility on player. Decomposed into Wave 13 (5-stage DAG with 3 parallel implementer tracks + orin closeout + liora-headless verifier) + Wave 14 (concrete cleanup of 3 failures the verifier surfaced).
+
+| commit | wave | description |
+|--------|------|-------------|
+| 434e7be0 | 13 Track C | feat(player): curated stations on initial load + reachability skip on next + corsBlocked Rust in Production |
+| 9b66e7b1 | 13 Track A | fix(chrome): preserve circle backings <690px + sticky buttons on scroll + conditional sticky player + next-button visibility |
+| 9aa129e9 | 14 | fix(chrome): wave 14 cleanup — 44x44 circles + scroll-driven breadcrumb hide + desktop alignment |
+
+### Wave 13 — 3 parallel implementer tracks
+
+**Track A (ghost-liora-css-repair) — mobile chrome + scroll/sticky + next-button visibility (commit 9b66e7b1).** Initial pass: added `@media (max-width: 690px)` rule keeping circle backings (border-radius 50%) but with width: 36px / height: 36px !important. Added scroll behavior, position: sticky on toolbar, conditional `position: sticky` on player gated by `body.cdn-stream-playing`. Added opaque backing on next-button slot via `.cdn-pp__skip-wrap` z-index: 2 + position: relative. Mask reveal moved from 25% to 12% so skip area is fully opaque.
+
+**Track B (ghost-solan-rust-coder) — console warnings cleanup (no commit).** Investigation found NO `allowfullscreen` attributes anywhere in src/. The "Allow attribute will take precedence" warning Bryan saw originates from Twitch's vendor `https://embed.twitch.tv/embed/v1.js` script, NOT from our code. Cannot be fixed from src/. Track B was correctly a no-op. The oembed 404 noise was already de facto silent (cache logic in `youtube-oembed-cache.ts` from earlier waves handles 404 as "not live").
+
+**Track C (ghost-solan-rust-coder) — curated stations + reachability + CORS-blocked feed handling (commit 434e7be0).** Architecture:
+- Added `curated?: boolean` and `corsBlocked?: boolean` flags to StreamDef in `src/lib/streams.ts`
+- Marked these as curated:true: kexp, ksfr, talking-serverless, aws-podcast, aws-bites
+- Marked `rust-in-production` (letscast.fm feed) as corsBlocked:true
+- Modified `src/lib/streams-order.ts` shuffleOnce so position 0 in rotation is from the curated subset (random within curated, then full shuffle for remaining)
+- New `src/lib/streams-reachability.ts` with `checkReachability(stream)` returning 'ok' | 'fail' | 'skip-curated'. In-memory 5-minute TTL cache. Uses `fetch(url, { mode: 'no-cors', method: 'HEAD', signal: AbortSignal.timeout(2000) })`. Curated streams skip the probe; corsBlocked streams return 'fail' immediately
+- Wired into `persistent-player/index.tsx` goNext() with 3-skip cap to avoid infinite loops
+- Skipped `parseMeta` runtime call for corsBlocked streams (relies on build-time `scripts/fetch-feeds.mjs` data)
+- Added `src/lib/__tests__/streams-reachability.test.ts` covering all 3 branches
+
+### Wave 13 verifier results — 3 failures surfaced
+
+ghost-liora-headless-verifier audited live deployment at 375/690/1024px viewports:
+
+PASS:
+- A2: 48px bar height, no record/vinyl elements found in DOM at any viewport — "records to fit" reference may be a future feature; bar is correctly sized
+- A5: player conditional sticky works (relative → sticky on body.cdn-stream-playing)
+- A6: next-button + station name visible at both 375px and 1024px (opaque backing wins over gradient)
+- B: 0 oembed 404s in 8s window, 0 letscast.fm CORS errors (corsBlocked skip works). 1 residual "Allow attribute" warning from Twitch v1.js vendor (third-party, unfixable)
+- C: initial station = `talking-serverless` (curated set member), 4 next-clicks all show valid-metadata stations
+
+FAIL:
+- A1: buttons 36×44 ellipse at 375px (NOT circle) — `min-height: 44px` (WCAG touch target) wins over `height: 36px` in @media block
+- A3: 4.9px alignment delta at 1024px (vs 3px tolerance) — desktop universal-toolbar gap
+- A4: whole mobile-toolbar sticks together — breadcrumb does NOT scroll away independently as Bryan asked
+
+### Wave 14 — concrete cleanup (commit 9aa129e9)
+
+ghost-liora-css-repair single dispatch fixed all 3 failures:
+
+**A1 fix:** bumped circle to `width: 44px !important; height: 44px !important;` inside `@media (max-width: 690px)`. Satisfies BOTH WCAG 44×44 touch target AND circular shape (border-radius 50% remained). Verified: nav-toggle + tools-toggle both 44×44 at 375px.
+
+**A3 attempt → accepted as-is:** added `align-items: center !important` on universal-toolbar selector. Re-verifier delta is 4.92px → still outside 3px tolerance. Root cause confirmed: Cloudscape AppLayout places breadcrumb and tools-toggle in DIFFERENT grid cells at desktop, no shared flex container. Single align-items rule cannot bridge separate grid areas. Verifier noted: "cosmetically minor, same visual row". Bryan's primary mobile concerns are PASS; accepting the desktop 4.92px as a documented Cloudscape grid constraint.
+
+**A4 fix:** added scroll listener in `src/layouts/shell/index.tsx` using requestAnimationFrame:
+```typescript
+useEffect(() => {
+  let ticking = false;
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    requestAnimationFrame(() => {
+      document.body.classList.toggle('cdn-scrolled', window.scrollY > 80);
+      ticking = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  return () => { window.removeEventListener('scroll', onScroll); document.body.classList.remove('cdn-scrolled'); };
+}, []);
+```
+
+Plus CSS in shell/styles.css:
+```css
+body.cdn-scrolled [class*="awsui_breadcrumbs"] {
+  opacity: 0;
+  transform: translateY(-8px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+```
+
+Re-verifier: PASS — at scrollY=200, breadcrumb opacity=0, transform=translateY(-8px), pointer-events: none. Buttons (nav-toggle + tools-toggle) remain visible inside the sticky toolbar. Body class `cdn-scrolled` confirmed present.
+
+Note: implementation diverged slightly from spec — body class is `cdn-scrolled` (not `cdn-scrolled-past-bar`), threshold is 80px (not 64px). Both work correctly; minor naming/threshold difference.
+
+### deploy
+
+Manual fallback continues to be operating norm (Woodpecker auto-deploy still partial recovery):
+- Wave 13 deploy: main last-modified ~14:45:41Z, awsug + auth via deploy-manual.sh
+- Wave 14 deploy: all 3 subdomains via deploy-manual.sh ~15:05Z
+
+### dispatch performance
+
+Wave 13:
+- ghost-liora-css-repair (Track A): clean initial pass, surfaced own gaps in re-verify (the kind of feedback loop that's healthy)
+- ghost-solan-rust-coder (Track B): correctly identified no-op (no allowfullscreen in src/, "warning" was Twitch v1.js vendor — third-party)
+- ghost-solan-rust-coder (Track C): clean. New file streams-reachability.ts + tests + persistent-player wiring. All tests PASS.
+- ghost-orin-ci-cd: 2 atomic commits (Track B excluded since no changes), single push, all 3 subdomains deployed
+- ghost-liora-headless-verifier: thorough — 8 checkpoints, screenshots, computed-style + scroll simulation + console message capture. Flagged 3 concrete failures + 1 marginal + 1 INCONCLUSIVE-but-acceptable (records reference)
+
+Wave 14:
+- ghost-liora-css-repair: targeted 3-fix single dispatch. A1 + A4 perfect; A3 attempted but root cause is structural (Cloudscape grid). Honest report.
+- ghost-orin-ci-cd: single atomic commit, single push, all 3 subdomains deployed
+- ghost-liora-headless-verifier: re-verified just the 3 fixes + regression checks on A5/A6/C. PASS A1+A4, FAIL A3 (4.92px) but with explicit "cosmetically minor" note.
+
+### lessons learned
+
+- Verifier feedback loop is GOLD. Wave 13 Track A fix + Wave 14 cleanup is one continuous improvement cycle. The headless verifier surfaced 3 concrete failures that NO amount of static-CSS review would have caught (the min-height conflict, the toolbar's all-or-nothing sticky behavior, the desktop grid gap).
+- WCAG 44×44 touch target trumps aesthetic-only sizing. Bryan asked for "circles" not "small circles" — bumping to 44×44 satisfies both. Always prefer satisfying the stricter constraint over fighting it with !important.
+- Cloudscape AppLayout grid is a hard constraint. Not every cosmetic fix is achievable with CSS alone — some Cloudscape layouts require either accepting their structure OR a much larger restructure (custom AppLayout replacement). 4.92px desktop delta in 2 separate grid cells is the right tradeoff vs the cost.
+- Track B (no-op verdict) is a valid outcome. ghost-solan-rust-coder correctly determined NO change needed — the warning Bryan saw was from Twitch's vendor v1.js, not our code. Documenting this in HANDOFF prevents future re-investigation.
+- Architecture-locked-in-prompt continues to deliver: Track C had a clean spec (curated flag + reachability check + corsBlocked + 5-min TTL + 3-skip cap), Solan implemented it 1:1 in single dispatch with tests.
+- Scroll-driven body class for chrome behavior is a clean primitive: requestAnimationFrame + passive listener + cleanup-on-unmount. Reusable for any "header collapse on scroll" or "show-FAB after scroll" pattern.
+
+### items closed across Waves 13+14
+
+- Bryan's mobile chrome under-690px (circles preserved)
+- Bryan's "buttons sticky on scroll, breadcrumb scrolls away"
+- Bryan's "player only sticky if playing"
+- Bryan's "next button + station name visibility"
+- Bryan's "curated working stations + reachability check"
+- Bryan's "letscast.fm CORS error"
+- Bryan's "oembed 404 noise" (already de facto silent)
+
+### follow-ups (next session candidates)
+
+- **A3 desktop alignment (cosmetic):** 4.92px delta at 1024px between breadcrumb slot and tools-toggle. Cloudscape AppLayout grid constraint. Options: (a) accept-as-is (current state), (b) custom AppLayout that uses a single flex row for both, (c) carve out tools-toggle into its own positioned element overlaying the grid. Low priority unless Bryan flags it.
+- **Twitch CSP frame-src:** verifier reported `Refused to frame 'https://embed.twitch.tv/'`. Either add embed.twitch.tv to CSP frame-src so the embed loads, OR remove the Twitch embed entirely. Pre-existing issue, not Wave 13/14 scope.
+- **biome ci 33 pre-existing errors:** carry-forward Wave 13 candidate. Now Wave 15 candidate.
+- **Auth site _layout 877KB code-split:** carry-forward from Wave 11. Mirror Wave 11 Track A onto vite.config.auth.ts.
+- **Records / vinyl in breadcrumb:** Bryan referenced them but verifier found no record/vinyl elements in DOM. Confirm with Bryan whether this is a future feature to add or an existing component that's hidden.
+- **Test coverage backfill:** Wave 4-7-9-11-12-13-14 features (P3, ongoing).
+- **Out-of-scope:** Woodpecker v3.14.x upgrade (#201), residual user-id-0 storm.
+- **Bryan-gated:** #185 passkey on Pixel 9 (real-device); #189 verification methods.
 
 ---
 
