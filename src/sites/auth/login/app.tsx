@@ -38,6 +38,14 @@ function redirectWithTokens() {
 	const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
 	const returnTo =
 		new URLSearchParams(window.location.search).get("return_to") ?? "";
+
+	// After new account email verify, send to verification-setup before the feed
+	if (sessionStorage.getItem("cdn.needsVerificationSetup") === "1") {
+		sessionStorage.removeItem("cdn.needsVerificationSetup");
+		window.location.assign("/verification-setup/index.html");
+		return;
+	}
+
 	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
 	window.location.assign(`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`);
 }

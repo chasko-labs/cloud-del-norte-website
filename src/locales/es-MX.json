@@ -851,6 +851,27 @@
 			"resetButton": "Restablecer",
 			"backToSignIn": "Volver al inicio de sesión",
 			"genericError": "Algo salió mal. Intenta de nuevo."
+		},
+		"verificationSetup": {
+			"title": "Configura verificación adicional",
+			"pageContext": "Configura verificación adicional",
+			"description": "Agrega un segundo factor para mantener tu cuenta segura. Puedes omitirlo ahora y configurarlo después.",
+			"chooseLabel": "Elige un método de verificación",
+			"totpLabel": "App autenticadora (TOTP)",
+			"totpDescription": "Usa Google Authenticator, Microsoft Authenticator o Authy para generar códigos de 6 dígitos.",
+			"passkeyLabel": "Clave de acceso (biométrica / dispositivo)",
+			"passkeyDescription": "Inicia sesión con Face ID, huella dactilar o Windows Hello — sin contraseña.",
+			"skipLabel": "Omitir por ahora",
+			"skipDescription": "Puedes configurar esto después desde los ajustes de tu cuenta.",
+			"continueButton": "Continuar",
+			"skipButton": "Omitir por ahora",
+			"backButton": "Atrás",
+			"loading": "Cargando…",
+			"totpScanPrompt": "Escanea este código QR con tu app autenticadora:",
+			"totpManualLabel": "O ingresa este secreto manualmente:",
+			"totpCodeLabel": "Código de 6 dígitos de tu autenticadora",
+			"totpVerifyButton": "Verificar y continuar",
+			"genericError": "Algo salió mal. Intenta de nuevo."
 		}
 	},
 	"awsug": {

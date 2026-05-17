@@ -25,6 +25,10 @@ export default defineConfig({
 					__dirname,
 					"./src/sites/auth/forgot-password/index.html",
 				),
+				"verification-setup": resolve(
+					__dirname,
+					"./src/sites/auth/verification-setup/index.html",
+				),
 			},
 			output: {
 				manualChunks(id) {

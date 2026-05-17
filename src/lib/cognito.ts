@@ -169,6 +169,44 @@ export async function associateSoftwareToken(
 	};
 }
 
+/** Associate TOTP using a live AccessToken (post-login voluntary setup). */
+export async function associateSoftwareTokenWithAccessToken(): Promise<{
+	secretCode: string;
+}> {
+	const accessToken = getAccessToken();
+	if (!accessToken) throw new AuthError("not authenticated");
+	const result = await cognitoPost("AssociateSoftwareToken", {
+		AccessToken: accessToken,
+	});
+	return { secretCode: result.SecretCode as string };
+}
+
+/** Verify TOTP code using AccessToken (post-login voluntary setup). */
+export async function verifySoftwareTokenWithAccessToken(
+	code: string,
+): Promise<void> {
+	const accessToken = getAccessToken();
+	if (!accessToken) throw new AuthError("not authenticated");
+	await cognitoPost("VerifySoftwareToken", {
+		AccessToken: accessToken,
+		UserCode: sanitize(code, "code"),
+		FriendlyDeviceName: "authenticator",
+	});
+}
+
+/** Set a single Cognito user attribute using the live access token. */
+export async function setUserAttribute(
+	name: string,
+	value: string,
+): Promise<void> {
+	const accessToken = getAccessToken();
+	if (!accessToken) throw new AuthError("not authenticated");
+	await cognitoPost("UpdateUserAttributes", {
+		AccessToken: accessToken,
+		UserAttributes: [{ Name: name, Value: value }],
+	});
+}
+
 export async function verifySoftwareToken(
 	session: string,
 	code: string,

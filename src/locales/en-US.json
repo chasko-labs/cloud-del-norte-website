@@ -851,6 +851,27 @@
 			"resetButton": "Reset password",
 			"backToSignIn": "Back to sign in",
 			"genericError": "Something went wrong. Try again."
+		},
+		"verificationSetup": {
+			"title": "Set up extra verification",
+			"pageContext": "Set up extra verification",
+			"description": "Add a second factor to keep your account secure. You can skip for now and set it up later.",
+			"chooseLabel": "Choose a verification method",
+			"totpLabel": "Authenticator app (TOTP)",
+			"totpDescription": "Use Google Authenticator, Microsoft Authenticator, or Authy to generate 6-digit codes.",
+			"passkeyLabel": "Passkey (biometric / device)",
+			"passkeyDescription": "Sign in with Face ID, fingerprint, or Windows Hello — no password needed.",
+			"skipLabel": "Skip for now",
+			"skipDescription": "You can set this up later from your account settings.",
+			"continueButton": "Continue",
+			"skipButton": "Skip for now",
+			"backButton": "Back",
+			"loading": "Loading…",
+			"totpScanPrompt": "Scan this QR code with your authenticator app:",
+			"totpManualLabel": "Or enter this secret manually:",
+			"totpCodeLabel": "6-digit code from your authenticator",
+			"totpVerifyButton": "Verify & continue",
+			"genericError": "Something went wrong. Try again."
 		}
 	},
 	"awsug": {

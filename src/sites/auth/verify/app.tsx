@@ -83,6 +83,8 @@ function VerifyForm() {
 			await confirmSignUp(email, code.trim());
 			setSubmitState("success");
 			window.setTimeout(() => setDone(true), 500);
+			// Flag for login to redirect to verification-setup after sign-in
+			sessionStorage.setItem("cdn.needsVerificationSetup", "1");
 		} catch (err) {
 			if (err instanceof AuthError) {
 				if (err.code === "CodeMismatchException") {
