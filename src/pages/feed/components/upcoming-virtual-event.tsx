@@ -69,6 +69,26 @@ export default function UpcomingVirtualEvent() {
 					<Box color="text-body-secondary" fontSize="body-s">
 						{t("feedPage.upcomingVirtualEventDescription")}
 					</Box>
+					<div className="feed-upcoming-virtual-event__featured-talk">
+						<span
+							className="feed-upcoming-virtual-event__ug-mark"
+							role="img"
+							aria-label={t("feedPage.upcomingVirtualEventUgMarkLabel")}
+						>
+							<span aria-hidden="true">UG</span>
+						</span>
+						<div className="feed-upcoming-virtual-event__featured-talk-body">
+							<span className="feed-upcoming-virtual-event__featured-talk-badge">
+								{t("feedPage.upcomingVirtualEventFeaturedTalkBadge")}
+							</span>
+							<p className="feed-upcoming-virtual-event__featured-talk-speaker">
+								{t("feedPage.upcomingVirtualEventFeaturedTalkSpeaker")}
+							</p>
+							<p className="feed-upcoming-virtual-event__featured-talk-title">
+								{t("feedPage.upcomingVirtualEventFeaturedTalkTitle")}
+							</p>
+						</div>
+					</div>
 					<Button
 						variant="primary"
 						href={RSVP_URL}

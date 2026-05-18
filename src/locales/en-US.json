@@ -137,7 +137,11 @@
 		"upcomingVirtualEventLocation": "Online event — join from anywhere",
 		"upcomingVirtualEventDescription": "A global virtual gathering hosted by the AWS community. Open to all. Join the live stream and connect with builders worldwide.",
 		"upcomingVirtualEventRsvp": "RSVP on Meetup",
-		"upcomingVirtualEventImageAlt": "AWS Global Community Gatherings virtual event banner"
+		"upcomingVirtualEventImageAlt": "AWS Global Community Gatherings virtual event banner",
+		"upcomingVirtualEventFeaturedTalkBadge": "FEATURED TALK",
+		"upcomingVirtualEventFeaturedTalkSpeaker": "AWSUG Cloud Del Norte organizer Bryan Chasko",
+		"upcomingVirtualEventFeaturedTalkTitle": "A Migration Story: After 240 Consecutive Months, I Avoided a Charge From Microsoft",
+		"upcomingVirtualEventUgMarkLabel": "AWS User Group mark"
 	},
 	"dashboardPage": {
 		"productionOverview": {

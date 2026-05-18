@@ -137,7 +137,11 @@
 		"upcomingVirtualEventLocation": "Evento en línea — únete desde cualquier lugar",
 		"upcomingVirtualEventDescription": "Una reunión virtual global organizada por la comunidad AWS. Abierta a todos. Únete a la transmisión en vivo y conecta con builders de todo el mundo.",
 		"upcomingVirtualEventRsvp": "Registrarse en Meetup",
-		"upcomingVirtualEventImageAlt": "Banner del evento virtual Reunión Global de la Comunidad AWS"
+		"upcomingVirtualEventImageAlt": "Banner del evento virtual Reunión Global de la Comunidad AWS",
+		"upcomingVirtualEventFeaturedTalkBadge": "PRESENTACIÓN DESTACADA",
+		"upcomingVirtualEventFeaturedTalkSpeaker": "El organizador de AWSUG Cloud Del Norte, Bryan Chasko",
+		"upcomingVirtualEventFeaturedTalkTitle": "Una historia de migración: después de 240 meses consecutivos, evité un cargo de Microsoft",
+		"upcomingVirtualEventUgMarkLabel": "Marca AWS User Group"
 	},
 	"dashboardPage": {
 		"productionOverview": {

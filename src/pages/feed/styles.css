@@ -1068,3 +1068,131 @@
 	border-color: rgba(144, 96, 240, 0.5);
 	color: var(--cdn-lavender, #d7c7ee);
 }
+
+/* --------------------------------------------------------------------------
+   Upcoming Virtual Event — Featured Talk callout
+   Layout: animated UG mark on left, talk metadata on right. Brand violet
+   gradient mark with subtle pulse. prefers-reduced-motion disables the pulse.
+   -------------------------------------------------------------------------- */
+.feed-upcoming-virtual-event__featured-talk {
+	display: flex;
+	gap: 16px;
+	align-items: flex-start;
+	padding: 14px 16px;
+	border-radius: 12px;
+	background: linear-gradient(
+		135deg,
+		rgba(90, 31, 138, 0.08) 0%,
+		rgba(144, 96, 240, 0.06) 100%
+	);
+	border: 1px solid rgba(90, 31, 138, 0.22);
+	margin-top: 4px;
+}
+
+.awsui-dark-mode .feed-upcoming-virtual-event__featured-talk {
+	background: linear-gradient(
+		135deg,
+		rgba(144, 96, 240, 0.14) 0%,
+		rgba(215, 199, 238, 0.06) 100%
+	);
+	border-color: rgba(144, 96, 240, 0.4);
+}
+
+.feed-upcoming-virtual-event__ug-mark {
+	flex-shrink: 0;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	background: linear-gradient(
+		135deg,
+		var(--cdn-purple, #5a1f8a) 0%,
+		var(--cdn-violet, #9060f0) 100%
+	);
+	color: #faf7f0;
+	font-family: "Cinzel", "Times New Roman", serif;
+	font-style: italic;
+	font-weight: 700;
+	font-size: 22px;
+	letter-spacing: 0.04em;
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.55),
+		0 4px 14px rgba(90, 31, 138, 0.35);
+	animation: cdn-ug-mark-pulse 2.6s ease-in-out infinite;
+	user-select: none;
+}
+
+.awsui-dark-mode .feed-upcoming-virtual-event__ug-mark {
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.7),
+		0 4px 16px rgba(144, 96, 240, 0.5);
+}
+
+@keyframes cdn-ug-mark-pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		box-shadow:
+			0 0 0 2px rgba(255, 153, 0, 0.55),
+			0 4px 14px rgba(90, 31, 138, 0.35),
+			0 0 0 0 rgba(144, 96, 240, 0.45);
+	}
+	50% {
+		transform: scale(1.05);
+		box-shadow:
+			0 0 0 2px rgba(255, 153, 0, 0.85),
+			0 4px 18px rgba(90, 31, 138, 0.5),
+			0 0 0 8px rgba(144, 96, 240, 0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.feed-upcoming-virtual-event__ug-mark {
+		animation: none;
+	}
+}
+
+.feed-upcoming-virtual-event__featured-talk-body {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.feed-upcoming-virtual-event__featured-talk-badge {
+	display: inline-block;
+	padding: 2px 8px;
+	border-radius: 999px;
+	background-color: var(--cdn-aws-orange, #ff9900);
+	color: #1a1a1a;
+	font-size: var(--cdn-text-xs, 0.6875rem);
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	margin-bottom: 6px;
+}
+
+.feed-upcoming-virtual-event__featured-talk-speaker {
+	margin: 0 0 4px;
+	font-size: var(--cdn-text-sm, 0.75rem);
+	font-weight: 600;
+	color: var(--cdn-color-text, #1a1a1a);
+	line-height: 1.35;
+}
+
+.awsui-dark-mode .feed-upcoming-virtual-event__featured-talk-speaker {
+	color: #faf7f0;
+}
+
+.feed-upcoming-virtual-event__featured-talk-title {
+	margin: 0;
+	font-size: var(--cdn-text-base, 0.875rem);
+	font-weight: 700;
+	font-style: italic;
+	color: var(--cdn-purple, #5a1f8a);
+	line-height: 1.4;
+}
+
+.awsui-dark-mode .feed-upcoming-virtual-event__featured-talk-title {
+	color: var(--cdn-lavender, #d7c7ee);
+}
