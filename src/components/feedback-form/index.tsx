@@ -10,6 +10,8 @@ import Modal from "@cloudscape-design/components/modal";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Textarea from "@cloudscape-design/components/textarea";
 import { useEffect, useRef, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { useFeedbackDraft } from "../../hooks/useFeedbackDraft";
 import { useTranslation } from "../../hooks/useTranslation";
 
 interface Props {
@@ -39,7 +41,6 @@ function readAsBase64(file: File): Promise<{
 		const reader = new FileReader();
 		reader.onload = () => {
 			const result = reader.result as string;
-			// strip "data:<mime>;base64," prefix
 			const base64Data = result.split(",")[1] ?? "";
 			resolve({ filename: file.name, contentType: file.type, base64Data });
 		};
@@ -50,23 +51,26 @@ function readAsBase64(file: File): Promise<{
 
 export default function FeedbackForm({ open, onClose, kind }: Props) {
 	const { t } = useTranslation();
+	const { isAuthenticated, email: userEmail, sub: reporterSub } = useAuth();
+	const isSignedIn = isAuthenticated && reporterSub != null;
 
-	const [summary, setSummary] = useState("");
-	const [details, setDetails] = useState("");
-	const [contactEmail, setContactEmail] = useState("");
+	const { draft, setDraftField, clearDraft, hasPersistedDraft } =
+		useFeedbackDraft(kind);
+
 	const [honeypot, setHoneypot] = useState("");
 	const [summaryError, setSummaryError] = useState("");
 	const [detailsError, setDetailsError] = useState("");
 	const [attachmentError, setAttachmentError] = useState("");
 	const [globalError, setGlobalError] = useState("");
+	const [showRetry, setShowRetry] = useState(false);
 	const [submitting, setSubmitting] = useState(false);
 	const [issueUrl, setIssueUrl] = useState<string | null>(null);
 	const [attachments, setAttachments] = useState<File[]>([]);
+	const [draftDismissed, setDraftDismissed] = useState(false);
 
 	// Track object URLs for revocation
 	const objectUrlsRef = useRef<string[]>([]);
 
-	// Revoke all outstanding object URLs
 	function revokeObjectUrls() {
 		for (const url of objectUrlsRef.current) {
 			URL.revokeObjectURL(url);
@@ -109,15 +113,14 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 	}, []);
 
 	function reset() {
-		setSummary("");
-		setDetails("");
-		setContactEmail("");
 		setHoneypot("");
 		setSummaryError("");
 		setDetailsError("");
 		setAttachmentError("");
 		setGlobalError("");
+		setShowRetry(false);
 		setIssueUrl(null);
+		setDraftDismissed(false);
 		revokeObjectUrls();
 		setAttachments([]);
 	}
@@ -129,19 +132,19 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 
 	function validate(): boolean {
 		let ok = true;
-		if (summary.trim().length < 8) {
+		if (draft.summary.trim().length < 8) {
 			setSummaryError(t("feedbackForm.errors.summaryMin"));
 			ok = false;
-		} else if (summary.trim().length > 120) {
+		} else if (draft.summary.trim().length > 120) {
 			setSummaryError(t("feedbackForm.errors.summaryMax"));
 			ok = false;
 		} else {
 			setSummaryError("");
 		}
-		if (!details.trim()) {
+		if (!draft.details.trim()) {
 			setDetailsError(t("feedbackForm.errors.detailsRequired"));
 			ok = false;
-		} else if (details.length > 2000) {
+		} else if (draft.details.length > 2000) {
 			setDetailsError(t("feedbackForm.errors.detailsMax"));
 			ok = false;
 		} else {
@@ -168,6 +171,7 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 
 		setSubmitting(true);
 		setGlobalError("");
+		setShowRetry(false);
 
 		try {
 			const attachmentPayload =
@@ -175,35 +179,56 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 					? await Promise.all(attachments.map(readAsBase64))
 					: undefined;
 
+			const payload: Record<string, unknown> = {
+				type: kind,
+				summary: draft.summary.trim(),
+				details: draft.details.trim(),
+				contactEmail: draft.contactEmail.trim() || undefined,
+				website: honeypot,
+				...(attachmentPayload ? { attachments: attachmentPayload } : {}),
+			};
+			if (isSignedIn && reporterSub) {
+				payload.reporterSub = reporterSub;
+			}
+
 			const res = await fetch(ENDPOINT, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					type: kind,
-					summary: summary.trim(),
-					details: details.trim(),
-					contactEmail: contactEmail.trim() || undefined,
-					website: honeypot,
-					...(attachmentPayload ? { attachments: attachmentPayload } : {}),
-				}),
+				body: JSON.stringify(payload),
+				signal: AbortSignal.timeout(15000),
 			});
 
 			if (res.status === 429) {
 				setGlobalError(t("feedbackForm.errors.rate"));
 				return;
 			}
+			if (res.status >= 500) {
+				setGlobalError(t("feedbackForm.errors.server"));
+				setShowRetry(true);
+				return;
+			}
 			if (!res.ok) {
 				setGlobalError(t("feedbackForm.errors.network"));
+				setShowRetry(true);
 				return;
 			}
 			const data = (await res.json()) as { ok: boolean; issueUrl: string };
 			if (data.ok) {
+				clearDraft();
 				setIssueUrl(data.issueUrl);
 			} else {
 				setGlobalError(t("feedbackForm.errors.network"));
+				setShowRetry(true);
 			}
-		} catch {
-			setGlobalError(t("feedbackForm.errors.network"));
+		} catch (err) {
+			if (err instanceof DOMException && err.name === "AbortError") {
+				setGlobalError(t("feedbackForm.errors.timeout"));
+			} else if (err instanceof TypeError) {
+				setGlobalError(t("feedbackForm.errors.offline"));
+			} else {
+				setGlobalError(t("feedbackForm.errors.network"));
+			}
+			setShowRetry(true);
 		} finally {
 			setSubmitting(false);
 		}
@@ -237,6 +262,8 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 			</Modal>
 		);
 	}
+
+	const showDraftBanner = hasPersistedDraft && !draftDismissed && !issueUrl;
 
 	return (
 		<Modal
@@ -274,82 +301,134 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 				/>
 			</div>
 
-			<Form errorText={globalError || undefined}>
-				<SpaceBetween size="m">
-					<FormField
-						label={t("feedbackForm.fields.summary")}
-						errorText={summaryError}
-						description={t("feedbackForm.helpers.summary")}
+			<SpaceBetween size="m">
+				{showDraftBanner && (
+					<Alert
+						type="info"
+						action={
+							<Button
+								onClick={() => {
+									clearDraft();
+									setDraftDismissed(true);
+								}}
+							>
+								{t("feedbackForm.discardDraft")}
+							</Button>
+						}
 					>
-						<Input
-							value={summary}
-							onChange={({ detail }) => setSummary(detail.value)}
-							placeholder={t("feedbackForm.fields.summaryPlaceholder")}
-							ariaLabel={t("feedbackForm.fields.summary")}
-						/>
-					</FormField>
+						{t("feedbackForm.draftRestored")}
+					</Alert>
+				)}
 
-					<FormField
-						label={t("feedbackForm.fields.details")}
-						errorText={detailsError}
-					>
-						<Textarea
-							value={details}
-							onChange={({ detail }) => setDetails(detail.value)}
-							rows={5}
-							placeholder={t("feedbackForm.fields.detailsPlaceholder")}
-							ariaLabel={t("feedbackForm.fields.details")}
-						/>
-					</FormField>
+				<Form errorText={globalError || undefined}>
+					<SpaceBetween size="m">
+						<FormField
+							label={t("feedbackForm.fields.summary")}
+							errorText={summaryError}
+							description={t("feedbackForm.helpers.summary")}
+						>
+							<Input
+								value={draft.summary}
+								onChange={({ detail }) =>
+									setDraftField("summary", detail.value)
+								}
+								placeholder={t("feedbackForm.fields.summaryPlaceholder")}
+								ariaLabel={t("feedbackForm.fields.summary")}
+							/>
+						</FormField>
 
-					<FormField
-						label={t("feedbackForm.fields.attachments")}
-						description={t("feedbackForm.helpers.attachments")}
-						errorText={attachmentError}
-					>
-						<FileUpload
-							value={attachments}
-							onChange={({ detail }) => {
-								revokeObjectUrls();
-								setAttachments(detail.value);
-								setAttachmentError("");
-							}}
-							accept="image/png,image/jpeg,image/gif,image/webp"
-							multiple
-							showFileThumbnail
-							tokenLimit={MAX_FILES}
-							i18nStrings={{
-								uploadButtonText: () =>
-									t("feedbackForm.fileUpload.uploadButton"),
-								dropzoneText: () => t("feedbackForm.fileUpload.dropzoneText"),
-								removeFileAriaLabel: (fileIndex) =>
-									t("feedbackForm.fileUpload.removeFileAriaLabel").replace(
-										"{{name}}",
-										attachments[fileIndex]?.name ?? String(fileIndex),
+						<FormField
+							label={t("feedbackForm.fields.details")}
+							errorText={detailsError}
+						>
+							<Textarea
+								value={draft.details}
+								onChange={({ detail }) =>
+									setDraftField("details", detail.value)
+								}
+								rows={5}
+								placeholder={t("feedbackForm.fields.detailsPlaceholder")}
+								ariaLabel={t("feedbackForm.fields.details")}
+							/>
+						</FormField>
+
+						<FormField
+							label={t("feedbackForm.fields.attachments")}
+							description={t("feedbackForm.helpers.attachments")}
+							errorText={attachmentError}
+						>
+							<FileUpload
+								value={attachments}
+								onChange={({ detail }) => {
+									revokeObjectUrls();
+									setAttachments(detail.value);
+									setAttachmentError("");
+								}}
+								accept="image/png,image/jpeg,image/gif,image/webp"
+								multiple
+								showFileThumbnail
+								tokenLimit={MAX_FILES}
+								i18nStrings={{
+									uploadButtonText: () =>
+										t("feedbackForm.fileUpload.uploadButton"),
+									dropzoneText: () => t("feedbackForm.fileUpload.dropzoneText"),
+									removeFileAriaLabel: (fileIndex) =>
+										t("feedbackForm.fileUpload.removeFileAriaLabel").replace(
+											"{{name}}",
+											attachments[fileIndex]?.name ?? String(fileIndex),
+										),
+									limitShowFewer: t("feedbackForm.fileUpload.limitShowFewer"),
+									limitShowMore: t("feedbackForm.fileUpload.limitShowMore"),
+									errorIconAriaLabel: t(
+										"feedbackForm.fileUpload.errorIconAriaLabel",
 									),
-								limitShowFewer: t("feedbackForm.fileUpload.limitShowFewer"),
-								limitShowMore: t("feedbackForm.fileUpload.limitShowMore"),
-								errorIconAriaLabel: t(
-									"feedbackForm.fileUpload.errorIconAriaLabel",
-								),
-							}}
-						/>
-					</FormField>
+								}}
+							/>
+						</FormField>
 
-					<FormField
-						label={t("feedbackForm.fields.contactEmail")}
-						description={t("feedbackForm.helpers.contactEmail")}
-					>
-						<Input
-							value={contactEmail}
-							type="email"
-							onChange={({ detail }) => setContactEmail(detail.value)}
-							placeholder="you@example.com"
-							ariaLabel={t("feedbackForm.fields.contactEmail")}
-						/>
-					</FormField>
-				</SpaceBetween>
-			</Form>
+						{isSignedIn ? (
+							<Box variant="small">
+								{t("feedbackForm.signedInAs").replace(
+									"{email}",
+									userEmail ?? "",
+								)}
+							</Box>
+						) : (
+							<>
+								<FormField
+									label={t("feedbackForm.fields.contactEmail")}
+									description={t("feedbackForm.helpers.contactEmail")}
+								>
+									<Input
+										value={draft.contactEmail}
+										type="email"
+										onChange={({ detail }) =>
+											setDraftField("contactEmail", detail.value)
+										}
+										placeholder="you@example.com"
+										ariaLabel={t("feedbackForm.fields.contactEmail")}
+									/>
+								</FormField>
+								<Box variant="small">
+									<Link href="/login/?returnTo=/feed/">
+										{t("feedbackForm.signInToFollow")}
+									</Link>
+								</Box>
+							</>
+						)}
+
+						{showRetry && globalError && (
+							<Button
+								onClick={() => {
+									void handleSubmit();
+								}}
+							>
+								{t("feedbackForm.retry")}
+							</Button>
+						)}
+					</SpaceBetween>
+				</Form>
+			</SpaceBetween>
 		</Modal>
 	);
 }

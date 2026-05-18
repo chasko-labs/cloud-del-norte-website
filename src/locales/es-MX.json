@@ -373,8 +373,16 @@
 			"network": "algo salió mal, intenta de nuevo",
 			"attachmentsMax": "Hasta 3 imágenes por envío",
 			"attachmentSize": "Cada imagen debe ser de 2MB o menos",
-			"attachmentType": "Solo se permiten imágenes PNG, JPEG, GIF o WEBP"
+			"attachmentType": "Solo se permiten imágenes PNG, JPEG, GIF o WEBP",
+			"timeout": "Se agotó el tiempo de conexión. Revisa tu señal e intenta de nuevo.",
+			"offline": "Parece que estás sin conexión. Tu borrador está guardado, intenta de nuevo cuando tengas señal.",
+			"server": "Nuestro servidor tuvo un hipo. Intenta de nuevo en un momento."
 		},
+		"signedInAs": "Enviando como {email}",
+		"signInToFollow": "Inicia sesión para seguir este reporte",
+		"draftRestored": "Tu borrador fue restaurado.",
+		"discardDraft": "Descartar",
+		"retry": "Intentar de nuevo",
 		"fileUpload": {
 			"uploadButton": "Elegir archivos",
 			"dropzoneText": "(o pega desde el portapapeles)",

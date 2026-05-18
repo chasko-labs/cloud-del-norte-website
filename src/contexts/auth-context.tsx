@@ -16,6 +16,7 @@ import {
 export interface AuthState {
 	isAuthenticated: boolean;
 	idToken: string | null;
+	sub: string | null;
 	email: string | null;
 	name: string | null;
 	groups: string[];
@@ -47,6 +48,7 @@ function readState(): AuthState {
 		const claims = decodeToken(idToken);
 		const groupsClaim = claims["cognito:groups"];
 		const groups = Array.isArray(groupsClaim) ? (groupsClaim as string[]) : [];
+		const sub = typeof claims.sub === "string" ? claims.sub : null;
 		const email = typeof claims.email === "string" ? claims.email : null;
 		const name =
 			typeof claims.name === "string"
@@ -57,6 +59,7 @@ function readState(): AuthState {
 		return {
 			isAuthenticated: true,
 			idToken,
+			sub,
 			email,
 			name,
 			groups,
@@ -72,6 +75,7 @@ function emptyState(): AuthState {
 	return {
 		isAuthenticated: false,
 		idToken: null,
+		sub: null,
 		email: null,
 		name: null,
 		groups: [],

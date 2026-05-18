@@ -51,6 +51,7 @@ function state(overrides: Partial<AuthState> = {}): AuthState {
 	return {
 		isAuthenticated: false,
 		idToken: null,
+		sub: null,
 		email: null,
 		name: null,
 		groups: [],

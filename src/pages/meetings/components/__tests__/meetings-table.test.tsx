@@ -93,6 +93,7 @@ function authState(overrides: Partial<AuthState> = {}): AuthState {
 	return {
 		isAuthenticated: true,
 		idToken: "tok",
+		sub: null,
 		email: "a@b.co",
 		name: "alice",
 		groups: [],

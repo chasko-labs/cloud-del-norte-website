@@ -33,6 +33,7 @@ function authedState(overrides: Partial<AuthState> = {}): AuthState {
 	return {
 		isAuthenticated: true,
 		idToken: "id",
+		sub: "test-sub-123",
 		email: "a@b.co",
 		name: "A",
 		groups: ["members"],
@@ -46,6 +47,7 @@ function unauthedState(): AuthState {
 	return {
 		isAuthenticated: false,
 		idToken: null,
+		sub: null,
 		email: null,
 		name: null,
 		groups: [],

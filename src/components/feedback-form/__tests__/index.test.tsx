@@ -1,6 +1,6 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 type AnyProps = Record<string, unknown> & {
 	children?: React.ReactNode;
@@ -82,8 +82,13 @@ vi.mock("@cloudscape-design/components/textarea", () => ({
 		}),
 }));
 vi.mock("@cloudscape-design/components/alert", () => ({
-	default: ({ children }: AnyProps) =>
-		React.createElement("div", { role: "alert" }, children),
+	default: ({ children, action }: AnyProps) =>
+		React.createElement(
+			"div",
+			{ role: "alert" },
+			children,
+			(action ?? null) as React.ReactNode,
+		),
 }));
 vi.mock("@cloudscape-design/components/link", () => ({
 	default: ({ children, href }: AnyProps) =>
@@ -100,6 +105,36 @@ vi.mock("@cloudscape-design/components/space-between", () => ({
 
 vi.mock("../../../hooks/useTranslation", () => ({
 	useTranslation: () => ({ t: (key: string) => key }),
+}));
+
+// ── useAuth mock — default: signed out ───────────────────────────────────────
+const mockAuthState = {
+	isAuthenticated: false,
+	sub: null as string | null,
+	email: null as string | null,
+};
+vi.mock("../../../hooks/useAuth", () => ({
+	useAuth: () => mockAuthState,
+}));
+
+// ── useFeedbackDraft mock — expose controllable draft state ───────────────────
+const mockDraft = {
+	type: "bug" as "bug" | "wish",
+	summary: "",
+	details: "",
+	contactEmail: "",
+};
+const mockSetDraftField = vi.fn((key: string, value: string) => {
+	(mockDraft as Record<string, unknown>)[key] = value;
+});
+const mockClearDraft = vi.fn();
+vi.mock("../../../hooks/useFeedbackDraft", () => ({
+	useFeedbackDraft: () => ({
+		draft: mockDraft,
+		setDraftField: mockSetDraftField,
+		clearDraft: mockClearDraft,
+		hasPersistedDraft: false,
+	}),
 }));
 
 // ── helpers ──────────────────────────────────────────────────────────────────
@@ -129,6 +164,15 @@ describe("FeedbackForm — Wave 12 image upload", () => {
 	beforeEach(() => {
 		fileUploadOnChange = null;
 		vi.stubGlobal("fetch", vi.fn());
+		// Reset shared mock draft state
+		mockDraft.summary = "";
+		mockDraft.details = "";
+		mockDraft.contactEmail = "";
+		mockAuthState.isAuthenticated = false;
+		mockAuthState.sub = null;
+		mockAuthState.email = null;
+		mockClearDraft.mockClear();
+		mockSetDraftField.mockClear();
 	});
 
 	it("paste handler adds clipboard image to attachments", () => {
@@ -301,5 +345,227 @@ describe("FeedbackForm — Wave 12 image upload", () => {
 		expect(body.attachments?.[0].contentType).toBe("image/png");
 		// base64Data is a non-empty string (FileReader.readAsDataURL result stripped of prefix)
 		expect(typeof body.attachments?.[0].base64Data).toBe("string");
+	});
+});
+
+// ── Wave 20: draft persistence ────────────────────────────────────────────────
+describe("FeedbackForm — Wave 20 draft persistence", () => {
+	beforeEach(() => {
+		fileUploadOnChange = null;
+		localStorage.clear();
+		mockDraft.summary = "";
+		mockDraft.details = "";
+		mockDraft.contactEmail = "";
+		mockAuthState.isAuthenticated = false;
+		mockAuthState.sub = null;
+		mockAuthState.email = null;
+		mockClearDraft.mockClear();
+		mockSetDraftField.mockClear();
+		vi.stubGlobal("fetch", vi.fn());
+	});
+
+	afterEach(() => {
+		localStorage.clear();
+	});
+
+	it("typing into summary calls setDraftField", () => {
+		render(<FeedbackForm open={true} onClose={vi.fn()} kind="bug" />);
+		const summaryInput = screen.getByRole("textbox", {
+			name: "feedbackForm.fields.summary",
+		});
+		act(() => {
+			fireEvent.change(summaryInput, {
+				target: { value: "draft summary text" },
+			});
+		});
+		expect(mockSetDraftField).toHaveBeenCalledWith(
+			"summary",
+			"draft summary text",
+		);
+	});
+
+	it("re-mounting form restores values from localStorage via useFeedbackDraft", () => {
+		// The hook itself handles storage read on mount — tested in useFeedbackDraft.test.ts
+		// Here we just verify the form renders with whatever draft the hook returns
+		mockDraft.summary = "restored summary";
+		render(<FeedbackForm open={true} onClose={vi.fn()} kind="bug" />);
+		const summaryInput = screen.getByRole("textbox", {
+			name: "feedbackForm.fields.summary",
+		}) as HTMLInputElement;
+		expect(summaryInput.value).toBe("restored summary");
+	});
+
+	it("successful submit calls clearDraft", async () => {
+		mockDraft.summary = "A valid summary here!";
+		mockDraft.details = "Valid details content.";
+
+		vi.mocked(fetch).mockResolvedValueOnce({
+			ok: true,
+			status: 200,
+			json: async () => ({
+				ok: true,
+				issueUrl: "https://github.com/x/y/issues/1",
+			}),
+		} as Response);
+
+		render(<FeedbackForm open={true} onClose={vi.fn()} kind="bug" />);
+		const submitBtn = screen.getByText("feedbackForm.submitButton");
+
+		await act(async () => {
+			submitBtn.click();
+		});
+
+		await waitFor(() => {
+			expect(mockClearDraft).toHaveBeenCalledTimes(1);
+		});
+	});
+});
+
+// ── Wave 20: auth integration ─────────────────────────────────────────────────
+describe("FeedbackForm — Wave 20 auth integration", () => {
+	beforeEach(() => {
+		fileUploadOnChange = null;
+		mockDraft.summary = "";
+		mockDraft.details = "";
+		mockDraft.contactEmail = "";
+		mockAuthState.isAuthenticated = false;
+		mockAuthState.sub = null;
+		mockAuthState.email = null;
+		mockClearDraft.mockClear();
+		mockSetDraftField.mockClear();
+		vi.stubGlobal("fetch", vi.fn());
+	});
+
+	it("signed-out mode shows contact email field", () => {
+		render(<FeedbackForm open={true} onClose={vi.fn()} kind="bug" />);
+		const emailInput = screen.getByRole("textbox", {
+			name: "feedbackForm.fields.contactEmail",
+		});
+		expect(emailInput).toBeTruthy();
+	});
+
+	it("signed-in mode hides contact-email field", () => {
+		mockAuthState.isAuthenticated = true;
+		mockAuthState.sub = "us-west-2_abc123";
+		mockAuthState.email = "user@example.com";
+
+		render(<FeedbackForm open={true} onClose={vi.fn()} kind="bug" />);
+
+		expect(
+			screen.queryByRole("textbox", {
+				name: "feedbackForm.fields.contactEmail",
+			}),
+		).toBeNull();
+		expect(screen.getByText(/feedbackForm\.signedInAs/)).toBeTruthy();
+	});
+
+	it("signed-in submit includes reporterSub in payload", async () => {
+		mockAuthState.isAuthenticated = true;
+		mockAuthState.sub = "us-west-2_abc123";
+		mockAuthState.email = "user@example.com";
+		mockDraft.summary = "A valid summary here!";
+		mockDraft.details = "Valid details content.";
+
+		const mockFetch = vi.mocked(fetch).mockResolvedValueOnce({
+			ok: true,
+			status: 200,
+			json: async () => ({
+				ok: true,
+				issueUrl: "https://github.com/x/y/issues/1",
+			}),
+		} as Response);
+
+		render(<FeedbackForm open={true} onClose={vi.fn()} kind="bug" />);
+		const submitBtn = screen.getByText("feedbackForm.submitButton");
+
+		await act(async () => {
+			submitBtn.click();
+		});
+
+		await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(1));
+
+		const [, callOpts] = mockFetch.mock.calls[0];
+		const body = JSON.parse((callOpts as RequestInit).body as string) as {
+			reporterSub?: string;
+		};
+		expect(body.reporterSub).toBe("us-west-2_abc123");
+	});
+});
+
+// ── Wave 20: detailed error handling ─────────────────────────────────────────
+describe("FeedbackForm — Wave 20 detailed errors", () => {
+	beforeEach(() => {
+		fileUploadOnChange = null;
+		mockDraft.summary = "A valid summary here!";
+		mockDraft.details = "Valid details content.";
+		mockDraft.contactEmail = "";
+		mockAuthState.isAuthenticated = false;
+		mockAuthState.sub = null;
+		mockAuthState.email = null;
+		mockClearDraft.mockClear();
+		mockSetDraftField.mockClear();
+		vi.stubGlobal("fetch", vi.fn());
+	});
+
+	it("HTTP 429 shows rate-limit message", async () => {
+		vi.mocked(fetch).mockResolvedValueOnce({
+			ok: false,
+			status: 429,
+			json: async () => ({}),
+		} as Response);
+
+		render(<FeedbackForm open={true} onClose={vi.fn()} kind="bug" />);
+		const submitBtn = screen.getByText("feedbackForm.submitButton");
+
+		await act(async () => {
+			submitBtn.click();
+		});
+
+		await waitFor(() => {
+			const form = screen.getByTestId("form");
+			expect(form.getAttribute("data-error")).toBe("feedbackForm.errors.rate");
+		});
+	});
+
+	it("HTTP 500 shows server-error message and retry button", async () => {
+		vi.mocked(fetch).mockResolvedValueOnce({
+			ok: false,
+			status: 500,
+			json: async () => ({}),
+		} as Response);
+
+		render(<FeedbackForm open={true} onClose={vi.fn()} kind="bug" />);
+		const submitBtn = screen.getByText("feedbackForm.submitButton");
+
+		await act(async () => {
+			submitBtn.click();
+		});
+
+		await waitFor(() => {
+			const form = screen.getByTestId("form");
+			expect(form.getAttribute("data-error")).toBe(
+				"feedbackForm.errors.server",
+			);
+		});
+		expect(screen.getByText("feedbackForm.retry")).toBeTruthy();
+	});
+
+	it("TypeError (network down) shows offline message", async () => {
+		vi.mocked(fetch).mockRejectedValueOnce(new TypeError("Failed to fetch"));
+
+		render(<FeedbackForm open={true} onClose={vi.fn()} kind="bug" />);
+		const submitBtn = screen.getByText("feedbackForm.submitButton");
+
+		await act(async () => {
+			submitBtn.click();
+		});
+
+		await waitFor(() => {
+			const form = screen.getByTestId("form");
+			expect(form.getAttribute("data-error")).toBe(
+				"feedbackForm.errors.offline",
+			);
+		});
+		expect(screen.getByText("feedbackForm.retry")).toBeTruthy();
 	});
 });
