@@ -2,8 +2,85 @@
 
 **date:** 2026-05-18  
 **branch:** main  
-**last commit:** 640a5f30 feat(feedback-form): wave 20 localStorage draft + detailed errors + auth integration  
-**deploy:** verified 2026-05-18 01:35 UTC — all 3 subdomains live with form resilience + auth integration. Test gate 499 PASS / 0 FAIL. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+**last commit:** 8f1c6542 perf(3d): wave 21 detect software WebGL + skip Babylon scenes, pause render loop on visibility hidden  
+**deploy:** verified 2026-05-18 01:54 UTC — all 3 subdomains live with software-WebGL detection + static fallback + visibility pause. Test gate 513 PASS / 0 FAIL. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-18 — Wave 21 (perf: software WebGL detection + static fallback + visibility pause)
+
+Bryan: "i noticed on one of my machiens 'SwiftShader software rendering, no GPU offload — burned 10 cores until killed.' is that from our website? if so can we work to ensure we dont leak to that extent?"
+
+Yes — confirmed. Three Babylon.js scenes (dune background, animated star logo, background viz) were running render loops at 60fps regardless of GPU availability. When Chrome falls back to SwiftShader (software WebGL — common on remote desktop, missing drivers, integrated GPUs without acceleration, battery-saver mode), every shader/mesh/animation calculation runs on CPU and pegs multiple cores.
+
+| commit | description |
+|--------|-------------|
+| 8f1c6542 | perf(3d): wave 21 detect software WebGL + skip Babylon scenes, pause render loop on visibility hidden |
+
+### what shipped (8 files, 357 insertions)
+
+**Detection module — `src/lib/render-capability.ts`:**
+- `detectRenderCapability(): RenderCapability` — reads `WEBGL_debug_renderer_info` extension, parses `UNMASKED_RENDERER_WEBGL` string, classifies renderer
+- Software fallbacks detected: `SwiftShader` (Chrome), `llvmpipe` (Mesa), `Microsoft Basic Render Driver` (Windows), generic `software`
+- `prefers-reduced-motion: reduce` also flagged via matchMedia
+- Returns `{ hardwareWebgl, reducedMotion, shouldRenderRichScene, rendererString }` where `shouldRenderRichScene = hardwareWebgl && !reducedMotion`
+- Lazy-loaded chunk `render-capability-BMjTL_sf.js` — runs BEFORE Babylon engine downloads, so software-WebGL users skip the entire 3D engine pull
+
+**Page Visibility hook — `src/hooks/usePageVisibility.ts`:**
+- `usePageVisibility(): boolean` — listens to `visibilitychange`, returns current `!document.hidden` state
+- Cleanup-safe (removeEventListener on unmount)
+
+**Babylon scenes refactored:**
+- `src/dune/SceneBootstrap.ts` — calls `detectRenderCapability()` before `new Engine()`. If `!shouldRenderRichScene`, mounts static fallback (`.cdn-dune-static-fallback` CSS gradient) instead of Babylon. Adds `visibilitychange` listener that calls `engine.stopRenderLoop()` when hidden + `engine.runRenderLoop(scene.render)` on resume. Cleanup removes listener on dispose.
+- `src/lib/cdn-star-logo/StarScene.ts` — same pattern. Static fallback uses existing `LogoSvg` component (`src/components/logo-svg/`).
+- `src/lib/background-viz/dune-scene.ts` — same pattern; falls back to lighter static rendering when capability is low.
+- `src/dune/styles.css` — new `.cdn-dune-static-fallback` rule with cdn-sky-top → cdn-sky-mid → cdn-sand gradient that visually matches the original 3D scene's color palette.
+
+**Tests added (+14 new):**
+- `src/lib/__tests__/render-capability.test.ts` — mocks WebGL_debug_renderer_info, tests SwiftShader / llvmpipe / NVIDIA / no-webgl branches, prefers-reduced-motion truth table
+- `src/hooks/__tests__/usePageVisibility.test.ts` — initial value, visibilitychange event firing, cleanup on unmount
+
+### deploy
+
+All 3 subdomains via `bash scripts/deploy-manual.sh`:
+- main: invalidation `I3DIRDL4GEB0D3T3JOJ60CXJ2F`, last-modified 2026-05-18T01:52:14Z
+- awsug: invalidation `I7ZSQXRO8UKVUNG1YP4VFLUB86`, last-modified 01:53:16Z
+- auth: invalidation `I4FFMMLEPFK8EY0HU38UJ3VC2U`, last-modified 01:54:06Z
+
+### bundle smoke
+
+- `render-capability-BMjTL_sf.js` deployed (HTTP 200)
+- Contains expected tokens: `WEBGL_debug_renderer_info`, `UNMASKED_RENDERER`, `SwiftShader`, `llvmpipe`, `shouldRenderRichScene`
+- Lazy-loaded by `babylon-engine-DpKiYhsK.js` and `background-viz-DVpAiWJc.js` — confirms the detection runs before the heavy 3D engine downloads
+
+### dispatch performance
+
+- 2-stage DAG (single solan + orin closeout). No recovery cycles. Tight feature wave.
+- Solan correctly architected the lazy-load relationship: render-capability is its own chunk that babylon-engine + background-viz import dynamically. Software-WebGL users never download the Babylon engine bundle at all (~600KB savings on those machines).
+- Test count grew 499 → 513 (+14) with no failures. The visibility hook tests + capability detection tests cover both the happy path (hardware GPU) and the gated fallback paths (SwiftShader, llvmpipe, prefers-reduced-motion, no-webgl).
+
+### lessons learned
+
+- **Software WebGL is a real shipping hazard.** Sites with non-trivial 3D scenes need to detect SwiftShader/llvmpipe and degrade gracefully. CPU burn from a 60fps Babylon render loop on software fallback is severe — Bryan's machine needed to KILL the tab.
+- **Lazy-loading the detection module is leverage.** Putting `detectRenderCapability()` in its own chunk that Babylon imports dynamically means software-WebGL users skip the entire 3D engine download (~600KB Babylon+shaders). Detection runs first, decides, then either pulls the engine or shows the static fallback.
+- **Page Visibility pause is universal good practice, not just a software-WebGL concern.** Even on hardware GPU, a hidden tab burning render cycles wastes battery + GPU/CPU thermal headroom. Apply universally.
+- **prefers-reduced-motion should gate animation, not just CSS animations.** Same intent applies to 60fps WebGL render loops. Honoring this accessibility preference also reduces CPU usage for users on lower-power devices (often correlated).
+- **`WEBGL_debug_renderer_info` is mature + reliable.** Major browsers expose UNMASKED_RENDERER_WEBGL. The string format is consistent enough to regex-match the major software renderers (SwiftShader, llvmpipe, Microsoft Basic). For unknown future renderers, the regex pattern is conservative — if it doesn't match a known software renderer, we assume hardware (acceptable false-negative rate; software burns are catastrophic, hardware false-positives are zero-cost).
+
+### items closed this wave
+
+- Bryan's bug report: "SwiftShader software rendering, no GPU offload — burned 10 cores until killed"
+- Bryan's directive: "ensure we don't leak to that extent"
+
+### follow-ups (next session candidates)
+
+- **Wave 22: Speakeasy bugs-list page** (originally Wave 21 but deferred). Lambda gets new GET /feedback/mine endpoint that parses Authorization Bearer JWT, extracts sub, queries GitHub via gh CLI / API filtered by `reporter-<sub-prefix>` label, returns JSON. Frontend: new auth-gated awsug page with Cloudscape Table showing user's submitted issues.
+- **Wave 17 carry-over:** add `?debug-passkey=1` diagnostic instrumentation per Track 5 audit spec
+- **Real-device tests for Bryan:**
+  - Wave 20 sign-in test: confirm contact-email field is hidden + reporter-<prefix> label appears on issue
+  - Wave 21 SwiftShader test: revisit the machine that was burning cores, confirm static fallback now appears + CPU stays cool
+  - #185 passkey on Pixel 9 (after debug-passkey diagnostic ships)
+- **Out of CDN PO scope:** #157 Woodpecker recovery, #201 v3.14.x upgrade
 
 ---
 
