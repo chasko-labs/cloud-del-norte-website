@@ -8,6 +8,7 @@ import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import MeetupRsvpButton from "../../../components/brand-button/meetup-rsvp";
 import { useTranslation } from "../../../hooks/useTranslation";
+import EventBulbsOverlay from "./event-bulbs-overlay";
 
 const RSVP_URL =
 	"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/";
@@ -55,14 +56,17 @@ export default function UpcomingVirtualEvent() {
 						height={630}
 						loading="lazy"
 					/>
-					<img
-						src={EVENT_IMAGE_DARK}
-						alt={t("feedPage.upcomingVirtualEventImageAlt")}
-						className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--dark"
-						width={1200}
-						height={630}
-						loading="lazy"
-					/>
+					<div className="feed-upcoming-virtual-event__bulbs-wrapper">
+						<img
+							src={EVENT_IMAGE_DARK}
+							alt={t("feedPage.upcomingVirtualEventImageAlt")}
+							className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--dark"
+							width={1200}
+							height={630}
+							loading="lazy"
+						/>
+						<EventBulbsOverlay />
+					</div>
 					<Box fontWeight="bold" fontSize="heading-m">
 						<Link href={RSVP_URL} external>
 							{t("feedPage.upcomingVirtualEventTitle")}

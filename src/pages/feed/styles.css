@@ -1377,6 +1377,34 @@
 	display: block;
 }
 
+/* ---------- Bulbs overlay wrapper (dark-mode only) ---------- */
+/* Wraps the dark <img> + decorative <EventBulbsOverlay/> SVG so the SVG can be
+   absolutely positioned over the image only — never over the title link, RSVP
+   button, or other interactive UI below. The wrapper inherits the same width
+   constraints as the image so the SVG's viewBox aligns with the artwork. */
+.feed-upcoming-virtual-event__bulbs-wrapper {
+	position: relative;
+	display: block;
+	width: 100%;
+	max-width: 600px;
+	margin: 12px 0;
+}
+
+/* The wrapped image keeps its own margin/aspect rules — but inside the
+   wrapper, drop the wrapper's outer margin from the image so spacing isn't
+   doubled. */
+.feed-upcoming-virtual-event__bulbs-wrapper
+.feed-upcoming-virtual-event__image--dark {
+	margin: 0;
+}
+
+/* Light mode: hide the entire wrapper (the dark image inside is already
+   hidden by the existing image-swap rule, but hiding the wrapper also
+   removes the SVG overlay so it never paints over the light image). */
+:not(.awsui-dark-mode) .feed-upcoming-virtual-event__bulbs-wrapper {
+	display: none;
+}
+
 /* ---------- Next meetup card — stable height across loading/fallback/loaded ---------- */
 /* Reserve enough height for the loaded state (title + date + location + description)
    so the transition from loading does not shift the page layout. */
