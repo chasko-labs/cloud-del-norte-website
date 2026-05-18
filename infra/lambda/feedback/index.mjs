@@ -112,6 +112,8 @@ function validate(body) {
 	if (body.details?.length > 2000) errs.push("details max 2000 chars");
 	if (body.contactEmail && !EMAIL_RE.test(body.contactEmail))
 		errs.push("contactEmail invalid");
+	if (body.reporterSub && typeof body.reporterSub !== "string")
+		errs.push("reporterSub must be string");
 	if (body.attachments !== undefined) {
 		if (!Array.isArray(body.attachments))
 			errs.push("attachments must be array");
@@ -208,12 +210,46 @@ async function getGitHubToken() {
 	}
 }
 
+async function ensureReporterLabel(token, repo, sub) {
+	if (!sub) return null;
+	const prefix = sub
+		.replace(/[^a-zA-Z0-9]/g, "")
+		.slice(0, 8)
+		.toLowerCase();
+	if (!prefix) return null;
+	const labelName = `reporter-${prefix}`;
+	try {
+		await fetch(`https://api.github.com/repos/${repo}/labels`, {
+			method: "POST",
+			headers: {
+				Authorization: `Bearer ${token}`,
+				Accept: "application/vnd.github+json",
+			},
+			body: JSON.stringify({
+				name: labelName,
+				color: "7c4ab8",
+				description: `Bug/wish reporter sub prefix ${prefix}`,
+			}),
+		});
+	} catch (err) {
+		console.log(
+			JSON.stringify({
+				level: "warn",
+				msg: "label create failed",
+				err: err.message,
+			}),
+		);
+	}
+	return labelName;
+}
+
 async function createIssue(
 	type,
 	summary,
 	details,
 	contactEmail,
 	attachmentUrls,
+	reporterSub,
 ) {
 	const token = await getGitHubToken();
 	if (!token) return null;
@@ -222,7 +258,10 @@ async function createIssue(
 	const prefix = type === "bug" ? "[BUG]" : "[WISH]";
 	const label = type === "bug" ? "bug" : "wish";
 
+	const reporterLabel = await ensureReporterLabel(token, repo, reporterSub);
+
 	const lines = [`**Summary:** ${summary}`, "", "**Details:**", details];
+	if (reporterSub) lines.push("", `**Reporter:** ${reporterSub}`);
 	if (contactEmail) lines.push("", `**Contact:** ${contactEmail}`);
 
 	if (attachmentUrls?.length) {
@@ -253,7 +292,9 @@ async function createIssue(
 			body: JSON.stringify({
 				title: `${prefix} ${summary}`,
 				body: lines.join("\n"),
-				labels: [label, "community-feedback"],
+				labels: reporterLabel
+					? [label, "community-feedback", reporterLabel]
+					: [label, "community-feedback"],
 			}),
 		});
 		if (!res.ok) {
@@ -330,6 +371,7 @@ export async function handler(event) {
 		body.details.trim(),
 		body.contactEmail?.trim() || undefined,
 		attachmentUrls,
+		body.reporterSub || undefined,
 	);
 
 	if (!issueUrl) {
