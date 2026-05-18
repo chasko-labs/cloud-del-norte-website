@@ -5,6 +5,7 @@ import Box from "@cloudscape-design/components/box";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
+import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useEffect, useId, useRef, useState } from "react";
 import { SkeletonLine, SkeletonTitle } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
@@ -19,6 +20,7 @@ export interface FeedPost {
 interface FeedsData {
 	andmore: FeedPost[];
 	awsml: FeedPost[];
+	readysetcloud: FeedPost[];
 }
 
 // shared module-level cache so both feed components fetch /data/feeds.json once
@@ -38,7 +40,10 @@ function loadFeeds(): Promise<FeedsData | null> {
 	return feedsPromise;
 }
 
-function useFeed(key: "andmore" | "awsml"): {
+function useFeed(
+	key: "andmore" | "awsml" | "readysetcloud",
+	limit = 5,
+): {
 	posts: FeedPost[];
 	ready: boolean;
 } {
@@ -47,7 +52,7 @@ function useFeed(key: "andmore" | "awsml"): {
 		if (data) return;
 		loadFeeds().then((d) => setData(d));
 	}, [data]);
-	return { posts: data?.[key]?.slice(0, 5) ?? [], ready: data !== null };
+	return { posts: data?.[key]?.slice(0, limit) ?? [], ready: data !== null };
 }
 
 function PostCarousel({ posts, ready }: { posts: FeedPost[]; ready: boolean }) {
@@ -227,6 +232,94 @@ export function FeedAwsml() {
 			}
 		>
 			<PostCarousel posts={posts} ready={ready} />
+		</Container>
+	);
+}
+
+export function FeedReadysetcloud() {
+	const { t } = useTranslation();
+	const { posts, ready } = useFeed("readysetcloud", 10);
+	const latestBlog = posts.find((p) => p.link.includes("/blog/"));
+	const latestNewsletter = posts.find((p) => p.link.includes("/newsletter/"));
+
+	const excerptClamp: React.CSSProperties = {
+		display: "-webkit-box",
+		WebkitLineClamp: 3,
+		WebkitBoxOrient: "vertical",
+		overflow: "hidden",
+	};
+
+	return (
+		<Container
+			header={<Header variant="h2">{t("feedPage.readysetcloudHeader")}</Header>}
+		>
+			{!ready ? (
+				<>
+					<SkeletonTitle />
+					<SkeletonLine />
+					<SkeletonTitle />
+					<SkeletonLine />
+				</>
+			) : (
+				<SpaceBetween size="m">
+					<SpaceBetween size="xs">
+						<Box variant="h3" fontWeight="bold" fontSize="heading-s">
+							{t("feedPage.readysetcloudLatestBlog")}
+						</Box>
+						{latestBlog ? (
+							<>
+								<Link href={latestBlog.link} external>
+									{latestBlog.title}
+								</Link>
+								<Box color="text-status-inactive" fontSize="body-s">
+									{latestBlog.pubDate}
+								</Box>
+								{latestBlog.excerpt && (
+									<Box
+										variant="p"
+										color="text-body-secondary"
+										fontSize="body-s"
+									>
+										<span style={excerptClamp}>{latestBlog.excerpt}</span>
+									</Box>
+								)}
+							</>
+						) : (
+							<Box color="text-status-inactive" fontSize="body-s">
+								{t("feedPage.readysetcloudNoBlog")}
+							</Box>
+						)}
+					</SpaceBetween>
+					<SpaceBetween size="xs">
+						<Box variant="h3" fontWeight="bold" fontSize="heading-s">
+							{t("feedPage.readysetcloudLatestNewsletter")}
+						</Box>
+						{latestNewsletter ? (
+							<>
+								<Link href={latestNewsletter.link} external>
+									{latestNewsletter.title}
+								</Link>
+								<Box color="text-status-inactive" fontSize="body-s">
+									{latestNewsletter.pubDate}
+								</Box>
+								{latestNewsletter.excerpt && (
+									<Box
+										variant="p"
+										color="text-body-secondary"
+										fontSize="body-s"
+									>
+										<span style={excerptClamp}>{latestNewsletter.excerpt}</span>
+									</Box>
+								)}
+							</>
+						) : (
+							<Box color="text-status-inactive" fontSize="body-s">
+								{t("feedPage.readysetcloudNoNewsletter")}
+							</Box>
+						)}
+					</SpaceBetween>
+				</SpaceBetween>
+			)}
 		</Container>
 	);
 }

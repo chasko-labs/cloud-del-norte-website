@@ -30,10 +30,16 @@ import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
 import AndresYoutubeLive from "./components/andres-youtube-live";
 import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
+import FeaturedEvent from "./components/featured-event";
 import FeaturedVideoCard from "./components/featured-video-card";
-import { FeedAndmore, FeedAwsml } from "./components/feed-section";
+import {
+	FeedAndmore,
+	FeedAwsml,
+	FeedReadysetcloud,
+} from "./components/feed-section";
 import NextMeetup from "./components/next-meetup";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
+import UpcomingVirtualEvent from "./components/upcoming-virtual-event";
 import YoutubeCarousel from "./components/youtube-carousel";
 import YouTubeChannelCarousel from "./components/youtube-channel-carousel";
 import "./styles.css";
@@ -48,6 +54,7 @@ type SectionKey =
 	| "twitchAwsOnAir"
 	| "andmore"
 	| "awsml"
+	| "readysetcloud"
 	| "arrowhead"
 	| "vbrownbag"
 	| "theZacsShow"
@@ -70,6 +77,7 @@ const SECTION_KEYS: SectionKey[] = [
 	"twitchAwsOnAir",
 	"andmore",
 	"awsml",
+	"readysetcloud",
 	"arrowhead",
 	"vbrownbag",
 	"theZacsShow",
@@ -176,6 +184,7 @@ function AppContent({
 			),
 			andmore: <FeedAndmore />,
 			awsml: <FeedAwsml />,
+			readysetcloud: <FeedReadysetcloud />,
 			arrowhead: <ArrowheadNews />,
 			vbrownbag: (
 				<YouTubeChannelCarousel
@@ -265,7 +274,13 @@ function AppContent({
 				{liveToShow.length > 0 && <hr className="feed-section-divider" />}
 			</div>
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
+				<FeaturedEvent />
+			</div>
+			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<NextMeetup />
+			</div>
+			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
+				<UpcomingVirtualEvent />
 			</div>
 			<hr className="feed-section-divider" />
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">

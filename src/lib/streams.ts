@@ -647,7 +647,8 @@ export const STREAMS: StreamDef[] = [
 			const s = Array.isArray(src) ? src[0] : src;
 			if (!s) return null;
 			const out: RichMeta = { title: s.title ?? null };
-			if (typeof s.listeners === "number") return { ...out, listeners: s.listeners };
+			if (typeof s.listeners === "number")
+				return { ...out, listeners: s.listeners };
 			return out;
 		},
 	},

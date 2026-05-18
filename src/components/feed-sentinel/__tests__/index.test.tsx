@@ -23,9 +23,9 @@ beforeEach(() => {
 		constructor(cb: IOCallback, opts?: IntersectionObserverInit) {
 			lastCallback = cb;
 			lastOptions = opts ?? null;
-			const self = this;
+
 			lastInstance = {
-				disconnect: self.disconnect,
+				disconnect: this.disconnect,
 				trigger: cb,
 			};
 		}
