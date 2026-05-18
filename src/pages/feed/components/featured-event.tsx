@@ -2,12 +2,13 @@
 // SPDX-License-Identifier: MIT-0
 
 import Box from "@cloudscape-design/components/box";
-import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useEffect, useState } from "react";
+import MeetupRsvpButton from "../../../components/brand-button/meetup-rsvp";
+import SpeakeasyRsvpButton from "../../../components/brand-button/speakeasy-rsvp";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { getEvent, spotsRemaining } from "../../../lib/rsvp";
 
@@ -102,20 +103,16 @@ export default function FeaturedEvent() {
 							{spotsCopy}
 						</Box>
 					)}
-					<SpaceBetween size="xs" direction="vertical">
-						<Button variant="primary" href={RSVP_PAGE_URL}>
-							{t("feedPage.featuredEventRsvpPrimary")}
-						</Button>
-						<Button
-							variant="normal"
+					<div className="cdn-brand-btn-stack">
+						<SpeakeasyRsvpButton
+							href={RSVP_PAGE_URL}
+							label={t("feedPage.featuredEventRsvpPrimary")}
+						/>
+						<MeetupRsvpButton
 							href={meetupUrl}
-							target="_blank"
-							iconAlign="right"
-							iconName="external"
-						>
-							{t("feedPage.featuredEventRsvpMeetup")}
-						</Button>
-					</SpaceBetween>
+							label={t("feedPage.featuredEventRsvpMeetup")}
+						/>
+					</div>
 				</SpaceBetween>
 			</Container>
 		</div>

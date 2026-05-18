@@ -2,11 +2,11 @@
 // SPDX-License-Identifier: MIT-0
 
 import Box from "@cloudscape-design/components/box";
-import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
+import MeetupRsvpButton from "../../../components/brand-button/meetup-rsvp";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 const RSVP_URL =
@@ -97,15 +97,12 @@ export default function UpcomingVirtualEvent() {
 							</p>
 						</div>
 					</div>
-					<Button
-						variant="primary"
-						href={RSVP_URL}
-						target="_blank"
-						iconAlign="right"
-						iconName="external"
-					>
-						{t("feedPage.upcomingVirtualEventRsvp")}
-					</Button>
+					<div className="cdn-brand-btn-stack">
+						<MeetupRsvpButton
+							href={RSVP_URL}
+							label={t("feedPage.upcomingVirtualEventRsvp")}
+						/>
+					</div>
 				</SpaceBetween>
 			</Container>
 		</div>
