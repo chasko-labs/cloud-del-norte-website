@@ -2,8 +2,105 @@
 
 **date:** 2026-05-18  
 **branch:** main  
-**last commit:** 195c761a fix(chrome): wave 19 remove vinyl record ::before — was causing breadcrumb bump-down on mobile  
-**deploy:** verified 2026-05-18 00:13 UTC — all 3 subdomains live with vinyl regression removed. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+**last commit:** 640a5f30 feat(feedback-form): wave 20 localStorage draft + detailed errors + auth integration  
+**deploy:** verified 2026-05-18 01:35 UTC — all 3 subdomains live with form resilience + auth integration. Test gate 499 PASS / 0 FAIL. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-18 — Wave 20 (form resilience + auth integration on bug/wish forms)
+
+Bryan: "are all our forms working ok? last I tried submit a bug I got something went wrong please try again. I suspect it was related to my cell phone connection & trying to submit a png — we need to add statefulness so that its stored in browser memory until we're able to connect & give more details about what went wrong — we need an ability to tie this in to sign in status and if signed in rather than contact email we know them & if signed out we encourage them to sign in to follow it — members should be able to track the bugs they submit from the speakeasy (loggedin)"
+
+Decomposed: Wave 20 = form resilience + auth integration + Lambda label support. Wave 21 = Speakeasy bugs-list page (deferred so Bryan can browser-test Wave 20 first).
+
+| commit | description |
+|--------|-------------|
+| 2f34a090 | feat(feedback-lambda): wave 20 reporterSub support + reporter-<prefix> label |
+| 640a5f30 | feat(feedback-form): wave 20 localStorage draft + detailed errors + auth integration |
+
+### what shipped
+
+**Lambda backend (`infra/lambda/feedback/index.mjs`):**
+- Accepts optional `reporterSub` field in POST body
+- New helper `ensureReporterLabel(token, repo, sub)` — idempotent label creation via POST /repos/{owner}/{repo}/labels (422 on exists treated as success). Color: `7c4ab8` (cdn-purple) for visual consistency.
+- Per-user label `reporter-<8char-prefix>` (e.g., `reporter-a8718320`) attached to issue alongside existing `bug` + `community-feedback` labels
+- Issue body now contains `**Reporter:** <full-sub>` line between Details and footer when reporterSub provided
+- Anonymous flow unchanged (no reporterSub → no reporter label, no Reporter line)
+- Smoke-tested via Stage 2: anonymous and signed-in invocations both 200, labels + body verified, smoke issues closed
+
+**Frontend resilience (`src/components/feedback-form/index.tsx` + new hook):**
+- New hook `src/hooks/useFeedbackDraft.ts` manages localStorage persistence:
+  - Key: `cdn-feedback-draft-${kind}` (separate per-type so bug + wish drafts don't collide)
+  - Debounced save 500ms via setTimeout cleanup
+  - Restore on mount
+  - Clear on successful submit
+  - Persists summary + details + contactEmail (NOT attachments — too large for localStorage)
+- Detailed error mapping in handleSubmit:
+  - HTTP 429 → `feedbackForm.errors.rate` (rate limit)
+  - HTTP 500+ → `feedbackForm.errors.server` (server hiccup) + Retry button
+  - TypeError (network failure) → `feedbackForm.errors.offline` (offline)
+  - DOMException AbortError (timeout) → `feedbackForm.errors.timeout` (signal timeout)
+  - Other → `feedbackForm.errors.network` + Retry button
+- AbortSignal.timeout(15000) prevents indefinite hangs on bad cell signal
+- "Try again" button reuses persisted draft (no data loss on retry)
+- "Your draft was restored" Cloudscape Alert with Discard button when hasPersistedDraft && !justSubmitted
+
+**Auth integration:**
+- Reads existing Cognito session helper (added `sub: string | null` to AuthState interface in `src/lib/auth.ts`)
+- When signed in: hides contact-email FormField, shows "Submitting as <email>" Box, passes `user.sub` as `reporterSub` in POST payload
+- When signed out: shows contact-email FormField + "Sign in to follow this bug" Link below
+
+**i18n (en-US + es-MX):**
+- 8 new feedbackForm.* keys: errors.timeout, errors.offline, errors.server, signedInAs, signInToFollow, draftRestored, discardDraft, retry
+
+**Tests added:**
+- `src/components/feedback-form/__tests__/index.test.tsx` extended: localStorage persist/restore, signed-in mode hides contact-email, signed-in payload includes reporterSub, HTTP 429/500/TypeError error mapping, retry button visibility
+- New `src/hooks/__tests__/useFeedbackDraft.test.ts`: setDraftField updates state, debounced localStorage write, clearDraft removes key + resets state, hasPersistedDraft true on mount with stored data
+- 5 unrelated test files updated to add `sub: null` (or `sub: 'test-...'`) to AuthState mocks (consequence of the new field)
+
+### deploy
+
+- Lambda deployed via Stage 2 (stratia-aws-infra ran scripts/deploy-feedback.sh): smoke tests both anonymous + signed-in PASS, smoke issues closed
+- Frontend deployed to all 3 subdomains via deploy-manual.sh:
+  - main: invalidation `I676GJHIY5DI5QKH1NJADGC9ER`, last-modified 2026-05-18T01:33:43Z
+  - awsug: invalidation `I6FS75IZBFA8YT5V4KDVK5RWA1`, last-modified 01:34:45Z
+  - auth: invalidation `I9JBGXW5X3LK9IL2PS2XAR7BDD`, last-modified 01:35:54Z
+- E2E anon smoke from Origin: issue #211 filed + closed, HTTP 200 confirmed
+- Bundle smoke: `cdn-feedback-draft` string found in deployed `assets/help-panel-home-BhkG5xYv.js`
+
+### dispatch performance
+
+- Wave 20 4-stage DAG with 2 parallel Stage 1 tracks + Stage 2 Lambda deploy + Stage 3 closeout
+- Stage 3 caught 7 TS errors (5 test mocks missing `sub` field + 1 useReducer overload). Resolved via tiny solan fixup → orin retry.
+- Test gate jumped to 499 PASS / 0 FAIL (previous 1 pre-existing flake auto-resolved as side effect of AuthState typing fixes — bonus regression cleanup)
+- Same recovery pattern as Wave 17: type-mismatch surfaces during build gate → focused solan fixup → resume closeout
+
+### lessons learned
+
+- **Adding a field to a shared interface (`AuthState`) requires updating all mocks.** Stage 1B added `sub: string | null` but didn't search for existing AuthState mocks across test files. Result: 7 TS errors caught at build gate. Fix is mechanical (add `sub: null` to each mock), but the dispatch should have included a "find all mocks of changed interface" step.
+- **Build gate auto-fixed an unrelated flake.** The pre-existing auth/callback timeout flake from Wave 15 was likely caused by stale AuthState mock not matching current interface. Test gate now stable at 499 PASS / 0 FAIL. Pattern: type-correctness improvements have downstream cleanup benefits.
+- **AbortSignal.timeout() is the cleanest way to bound fetch duration.** 15s is generous enough for a cell-signal-degraded request to complete + lets us surface a useful timeout error if it doesn't. Browser-native, no setTimeout/AbortController plumbing.
+- **localStorage with debounced save (500ms)** prevents thrash on rapid typing while keeping the draft fresh enough to survive crashes/refreshes/offline. Per-type key (`cdn-feedback-draft-bug` vs `cdn-feedback-draft-wish`) means user can have separate drafts for different report types.
+- **Error message mapping by HTTP status / DOMException type** gives users actionable guidance instead of generic "something went wrong". Bryan's reported case (cell signal + PNG submit) probably hit either AbortError (timeout) or TypeError (network) — both now show specific copy.
+- **Per-user GitHub labels** (`reporter-<8char-prefix>`) is a clean way to filter/track user-submitted issues. `gh issue list --label reporter-a8718320` works as a query primitive. 8-char prefix balances uniqueness (4.3 billion combinations) with label namespace cleanliness.
+
+### items closed this wave
+
+- Bryan's bug report: "something went wrong please try again" generic error
+- Bryan's directive: "add statefulness so that its stored in browser memory until we're able to connect"
+- Bryan's directive: "give more details about what went wrong"
+- Bryan's directive: "tie this in to sign in status and if signed in rather than contact email we know them"
+- Bryan's directive: "if signed out we encourage them to sign in to follow it"
+- (Wave 21 will close: "members should be able to track the bugs they submit from the speakeasy")
+- Pre-existing test flake auto-resolved (auth/callback timeout)
+
+### follow-ups (next session candidates)
+
+- **Wave 21 first action: Speakeasy bugs-list page.** Lambda gets new GET /feedback/mine endpoint that parses Authorization Bearer JWT, extracts sub, queries GitHub issues via `gh issue list --label reporter-<sub-prefix>`, returns JSON. Frontend: new auth-gated page on awsug subdomain (the Speakeasy) with Cloudscape Table showing user's submitted issues with title, state, labels, created, link. Members can "track" their bugs.
+- **Bryan real-device test:** sign in on Pixel 9, submit a test bug, verify (a) contact-email field is hidden, (b) "submitting as <email>" line appears, (c) issue is filed with `reporter-<prefix>` label visible on github.com.
+- Wave 17 first-action: add `?debug-passkey=1` diagnostic instrumentation per Track 5 audit spec (still queued)
+- Real-device tests: #185 passkey on Pixel 9, #189 verification methods enrollment
+- Out of CDN PO scope: #157 Woodpecker recovery, #201 v3.14.x upgrade
 
 ---
 
