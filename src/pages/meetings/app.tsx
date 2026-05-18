@@ -2,7 +2,6 @@
 // SPDX-License-Identifier: MIT-0
 
 import Box from "@cloudscape-design/components/box";
-import SpaceBetween from "@cloudscape-design/components/space-between";
 import Tabs from "@cloudscape-design/components/tabs";
 import { useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
@@ -23,9 +22,7 @@ import {
 } from "../../utils/theme";
 import { HelpPanelHome } from "../create-meeting/components/help-panel-home";
 import VariationsTable from "./components/meetings-table";
-import MyTickets from "./components/my-tickets";
 import { variationsData } from "./data";
-import "../rsvp/styles.css";
 
 function BreadcrumbsContent() {
 	const { t } = useTranslation();
@@ -107,10 +104,7 @@ export default function App() {
 		>
 			{/* Guests can browse meetings; the join action inside VariationsTable
 			    gates on auth — guests see the list, must sign in to RSVP. */}
-			<SpaceBetween size="l">
-				<MyTickets />
-				<MeetingsTabs />
-			</SpaceBetween>
+			<MeetingsTabs />
 		</ShellLayout>
 	);
 }

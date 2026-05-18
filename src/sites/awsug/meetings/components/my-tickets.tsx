@@ -8,26 +8,22 @@ import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
-import { useAuth } from "../../../hooks/useAuth";
-import { useTranslation } from "../../../hooks/useTranslation";
+import { useTranslation } from "../../../../hooks/useTranslation";
 import {
 	buildTicketPayload,
 	getEvent,
 	listUserRsvps,
 	type RsvpRecord,
-} from "../../../lib/rsvp";
+} from "../../../../lib/rsvp";
+import type { AuthState } from "../../_shared/auth";
 
-export default function MyTickets() {
+export default function MyTickets({ auth }: { auth: AuthState }) {
 	const { t } = useTranslation();
-	const auth = useAuth();
 	const [tickets, setTickets] = useState<RsvpRecord[]>([]);
 
 	useEffect(() => {
-		if (!auth.isAuthenticated || !auth.sub) return;
 		setTickets(listUserRsvps(auth.sub));
-	}, [auth.isAuthenticated, auth.sub]);
-
-	if (!auth.isAuthenticated) return null;
+	}, [auth.sub]);
 
 	return (
 		<Container

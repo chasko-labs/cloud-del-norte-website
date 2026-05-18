@@ -11,13 +11,7 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
-import Breadcrumbs from "../../components/breadcrumbs";
-import Navigation from "../../components/navigation";
-import { RequireAuth } from "../../components/require-auth";
-import { LocaleProvider } from "../../contexts/locale-context";
-import { useAuth } from "../../hooks/useAuth";
-import { useTranslation } from "../../hooks/useTranslation";
-import ShellLayout from "../../layouts/shell";
+import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	addRsvp,
 	buildTicketPayload,
@@ -25,28 +19,17 @@ import {
 	getRsvp,
 	type RsvpRecord,
 	spotsRemaining,
-} from "../../lib/rsvp";
-import {
-	applyLocale,
-	initializeLocale,
-	type Locale,
-	setStoredLocale,
-} from "../../utils/locale";
-import {
-	applyTheme,
-	initializeTheme,
-	setStoredTheme,
-	type Theme,
-} from "../../utils/theme";
+} from "../../../lib/rsvp";
+import AwsugLayout from "../_layout";
+import { type AuthState, requireAuth } from "../_shared/auth";
 
 function getEventIdFromQuery(): string {
 	const params = new URLSearchParams(window.location.search);
 	return params.get("event") ?? "happy-hour-2026-06-03";
 }
 
-function RsvpFlow() {
+function RsvpFlow({ auth }: { auth: AuthState }) {
 	const { t, locale } = useTranslation();
-	const auth = useAuth();
 	const [eventId] = useState<string>(() => getEventIdFromQuery());
 	const event = getEvent(eventId);
 	const [ticket, setTicket] = useState<RsvpRecord | null>(null);
@@ -55,10 +38,10 @@ function RsvpFlow() {
 		event ? spotsRemaining(eventId) : 0,
 	);
 
-	// Auto-confirm RSVP on first authenticated visit (single-click flow once
-	// the user has signed in via the upstream beginSilentLogin redirect).
+	// Auto-confirm RSVP on first visit (single-click flow once authenticated).
+	// Idempotent — repeat visits to /rsvp/?event=... show the existing ticket.
 	useEffect(() => {
-		if (!event || !auth.isAuthenticated || !auth.sub) return;
+		if (!event) return;
 		const existing = getRsvp(eventId, auth.sub);
 		if (existing) {
 			setTicket(existing);
@@ -70,21 +53,13 @@ function RsvpFlow() {
 		const record = addRsvp({
 			eventId,
 			userSub: auth.sub,
-			name: auth.name,
+			name: auth.name ?? null,
 			email: auth.email,
 		});
 		setTicket(record);
 		setRemaining(spotsRemaining(eventId));
 		setSubmitting(false);
-	}, [
-		event,
-		auth.isAuthenticated,
-		auth.sub,
-		auth.name,
-		auth.email,
-		eventId,
-		remaining,
-	]);
+	}, [event, auth.sub, auth.name, auth.email, eventId, remaining]);
 
 	if (!event) {
 		return (
@@ -135,7 +110,6 @@ function RsvpFlow() {
 	}
 
 	if (!ticket) {
-		// Edge: authenticated but addRsvp didn't run yet (StrictMode dev double-mount, etc.).
 		return (
 			<Container>
 				<Box padding="xxl" textAlign="center">
@@ -197,42 +171,32 @@ function RsvpFlow() {
 	);
 }
 
+function RsvpWithAuth() {
+	const [auth, setAuth] = useState<AuthState | null>(null);
+
+	useEffect(() => {
+		// requireAuth() either returns the AuthState or redirects to
+		// auth.clouddelnorte.org/login/?return_to=<this path>. The login form
+		// has a "Don't have an account? Sign up" link; when reached via signup
+		// + redeem the user lands here authenticated.
+		setAuth(requireAuth());
+	}, []);
+
+	if (!auth) {
+		return (
+			<Box padding="xxl" textAlign="center">
+				<Spinner size="large" />
+			</Box>
+		);
+	}
+
+	return <RsvpFlow auth={auth} />;
+}
+
 export default function App() {
-	const [theme, setTheme] = useState<Theme>(() => initializeTheme());
-	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
-
-	const handleThemeChange = (newTheme: Theme) => {
-		setTheme(newTheme);
-		applyTheme(newTheme);
-		setStoredTheme(newTheme);
-	};
-	const handleLocaleChange = (newLocale: Locale) => {
-		setLocale(newLocale);
-		applyLocale(newLocale);
-		setStoredLocale(newLocale);
-	};
-
 	return (
-		<LocaleProvider locale={locale}>
-			<ShellLayout
-				theme={theme}
-				onThemeChange={handleThemeChange}
-				locale={locale}
-				onLocaleChange={handleLocaleChange}
-				breadcrumbs={
-					<Breadcrumbs active={{ text: "RSVP", href: "/rsvp/index.html" }} />
-				}
-				navigation={<Navigation />}
-			>
-				<RequireAuth>
-					<SpaceBetween size="l">
-						<Header variant="h1" description="">
-							Cloud Del Norte UG
-						</Header>
-						<RsvpFlow />
-					</SpaceBetween>
-				</RequireAuth>
-			</ShellLayout>
-		</LocaleProvider>
+		<AwsugLayout>
+			<RsvpWithAuth />
+		</AwsugLayout>
 	);
 }

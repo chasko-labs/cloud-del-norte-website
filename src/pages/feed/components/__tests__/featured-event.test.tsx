@@ -20,15 +20,15 @@ describe("FeaturedEvent", () => {
 		expect(screen.getByText("FEATURED")).toBeInTheDocument();
 	});
 
-	it("renders the event title with link to internal RSVP page", () => {
+	it("renders the event title with link to auth.clouddelnorte.org signup with rsvp return_to", () => {
 		renderWithLocale("us");
 		const link = screen.getByText(
 			"AWS Cloud del Norte UG — Community Happy Hour & Networking Night",
 		);
-		expect(link.closest("a")).toHaveAttribute(
-			"href",
-			"/rsvp/index.html?event=happy-hour-2026-06-03",
-		);
+		const expected =
+			"https://auth.clouddelnorte.org/signup/index.html?return_to=" +
+			encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03");
+		expect(link.closest("a")).toHaveAttribute("href", expected);
 	});
 
 	it("renders the date in en-US format", () => {
@@ -63,15 +63,15 @@ describe("FeaturedEvent", () => {
 		).toBeInTheDocument();
 	});
 
-	it("renders the primary speakeasy RSVP button linking to /rsvp", () => {
+	it("renders the primary speakeasy RSVP button linking to auth.clouddelnorte.org signup", () => {
 		renderWithLocale("us");
 		const primary = screen.getByRole("link", {
 			name: /RSVP & sign up for CloudDelNorte\.org speakeasy access/i,
 		});
-		expect(primary).toHaveAttribute(
-			"href",
-			"/rsvp/index.html?event=happy-hour-2026-06-03",
-		);
+		const expected =
+			"https://auth.clouddelnorte.org/signup/index.html?return_to=" +
+			encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03");
+		expect(primary).toHaveAttribute("href", expected);
 	});
 
 	it("renders the spots remaining counter (48 of 50 default baseline)", () => {
