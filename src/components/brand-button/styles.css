@@ -1,0 +1,142 @@
+/* --------------------------------------------------------------------------
+   Branded RSVP buttons — shared base + Meetup / Speakeasy variants.
+   Replaces hideous default Cloudscape blue on the outbound Meetup CTA.
+
+   Base contract:
+   - <a> rendered as an inline-flex pill with mark + label + trailing icon
+   - 44px minimum touch target height
+   - focus-visible ring for keyboard nav
+   - prefers-reduced-motion respected on hover transform
+   -------------------------------------------------------------------------- */
+
+.cdn-brand-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	padding: 10px 18px;
+	min-height: 44px;
+	width: 100%;
+	max-width: 480px;
+	border-radius: 999px;
+	font-family: inherit;
+	font-size: var(--cdn-text-sm, 0.875rem);
+	font-weight: 700;
+	letter-spacing: 0.01em;
+	text-decoration: none;
+	cursor: pointer;
+	border: 0;
+	transition:
+		transform 160ms ease,
+		box-shadow 160ms ease,
+		background 160ms ease;
+	user-select: none;
+}
+
+.cdn-brand-btn:focus-visible {
+	outline: 3px solid var(--cdn-aws-orange, #ff9900);
+	outline-offset: 3px;
+}
+
+.cdn-brand-btn__mark {
+	flex-shrink: 0;
+	display: block;
+}
+
+.cdn-brand-btn__label {
+	flex: 1 1 auto;
+	text-align: center;
+	line-height: 1.2;
+}
+
+.cdn-brand-btn__external,
+.cdn-brand-btn__chevron {
+	flex-shrink: 0;
+	opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-brand-btn {
+		transition: none;
+	}
+	.cdn-brand-btn:hover,
+	.cdn-brand-btn:active {
+		transform: none;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   Variant — Meetup
+   Brand red (#ED1C40), white mark + label, hover darken slightly.
+   -------------------------------------------------------------------------- */
+
+.cdn-brand-btn--meetup {
+	background-color: #ed1c40;
+	color: #ffffff;
+	box-shadow: 0 2px 6px rgba(237, 28, 64, 0.25);
+}
+
+.cdn-brand-btn--meetup:hover,
+.cdn-brand-btn--meetup:focus-visible {
+	background-color: #d11636;
+	box-shadow: 0 6px 16px rgba(237, 28, 64, 0.35);
+	transform: translateY(-1px);
+}
+
+.cdn-brand-btn--meetup:active {
+	background-color: #b91230;
+	transform: translateY(0);
+	box-shadow: 0 1px 3px rgba(237, 28, 64, 0.35);
+}
+
+.awsui-dark-mode .cdn-brand-btn--meetup {
+	box-shadow: 0 2px 8px rgba(237, 28, 64, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   Variant — Speakeasy (on-site Cloud Del Norte RSVP)
+   Brand purple→violet gradient, white star mark, AWS-orange focus ring.
+   -------------------------------------------------------------------------- */
+
+.cdn-brand-btn--speakeasy {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-purple, #5a1f8a) 0%,
+		var(--cdn-violet, #9060f0) 100%
+	);
+	color: #faf7f0;
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.4),
+		0 4px 14px rgba(90, 31, 138, 0.3);
+}
+
+.cdn-brand-btn--speakeasy:hover,
+.cdn-brand-btn--speakeasy:focus-visible {
+	background: linear-gradient(135deg, #491678 0%, #7e4ee4 100%);
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.7),
+		0 8px 20px rgba(90, 31, 138, 0.45);
+	transform: translateY(-1px);
+}
+
+.cdn-brand-btn--speakeasy:active {
+	transform: translateY(0);
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.55),
+		0 2px 6px rgba(90, 31, 138, 0.35);
+}
+
+.awsui-dark-mode .cdn-brand-btn--speakeasy {
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.55),
+		0 4px 18px rgba(144, 96, 240, 0.45);
+}
+
+/* Stack adjustment — when two brand buttons sit in a vertical SpaceBetween
+   they should breathe slightly more than the default 4px gap. */
+.cdn-brand-btn-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	align-items: stretch;
+}
