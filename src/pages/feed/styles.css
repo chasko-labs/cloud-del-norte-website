@@ -939,10 +939,12 @@
 	display: inline-block;
 	padding: 4px 12px;
 	border-radius: 999px;
-	text-transform: uppercase;
+	background-color: var(--cdn-purple, #5a1f8a);
+	color: #faf7f0;
+	font-size: var(--cdn-text-sm, 0.75rem);
+	font-weight: 700;
 	letter-spacing: 0.05em;
-	background: rgba(144, 96, 240, 0.08);
-	border: 1px solid rgba(144, 96, 240, 0.3);
+	text-transform: uppercase;
 }
 
 .feed-featured-event__image {
@@ -966,10 +968,12 @@
 	display: inline-block;
 	padding: 4px 12px;
 	border-radius: 999px;
-	text-transform: uppercase;
+	background-color: var(--cdn-aws-orange, #ff9900);
+	color: #1a1a1a;
+	font-size: var(--cdn-text-sm, 0.75rem);
+	font-weight: 700;
 	letter-spacing: 0.05em;
-	background: rgba(255, 153, 0, 0.08);
-	border: 1px solid rgba(255, 153, 0, 0.3);
+	text-transform: uppercase;
 }
 
 .feed-upcoming-virtual-event__image {
