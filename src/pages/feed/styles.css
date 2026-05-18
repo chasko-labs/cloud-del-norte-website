@@ -455,6 +455,12 @@
 	min-height: 0;
 }
 
+/* wave 25b — extra breathing room between stacked event cards (featured,
+   next-meetup, upcoming-virtual). 14px additional vertical gap. */
+.feed-grid__cell--full + .feed-grid__cell--full {
+	margin-top: 14px;
+}
+
 /* ---------- Builder center deck — 4-card window with rotation
    v0.0.0105 — bryan: "stick to showing 4 at a time with ability to rotate
    through the article cards to see the rest". Window of exactly 4 cards;
@@ -999,9 +1005,15 @@
 	max-width: 600px;
 	height: auto;
 	aspect-ratio: 1200 / 630;
-	object-fit: cover;
+	object-fit: contain;
+	object-position: center;
+	background-color: rgba(0, 0, 0, 0.04);
 	border-radius: var(--cdn-radius-md, 8px);
 	margin: 12px 0;
+}
+
+.awsui-dark-mode .feed-upcoming-virtual-event__image {
+	background-color: rgba(255, 255, 255, 0.04);
 }
 
 /* Theme-driven image swap — show only the variant that matches the active
