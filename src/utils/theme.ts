@@ -37,6 +37,21 @@ export const setStoredTheme = (theme: Theme): void => {
 // system-preference change.
 const scheduleApplyMode = (mode: Mode): void => {
 	if (lastAppliedMode === mode) return;
+	// FIRST-PAINT SYNC PATH (wave-25c): when this is the very first apply
+	// (lastAppliedMode === null), skeletons are about to mount on the same
+	// frame. Deferring applyMode via requestIdleCallback (up to 200ms below)
+	// leaves Cloudscape's design-token table out of sync with the
+	// awsui-dark-mode class that the inline <head> guard already set on
+	// <html> — so skeletons render against half-themed tokens for that
+	// window. That's the "stick" Bryan reported. Run synchronously on the
+	// first apply so the first commit has both class and tokens aligned.
+	// Subsequent toggles still use the idle/rAF schedule below to keep
+	// click-feel instant.
+	if (lastAppliedMode === null) {
+		lastAppliedMode = mode;
+		applyMode(mode);
+		return;
+	}
 	if (pendingApplyHandle !== null) {
 		// A previous schedule is in-flight. Cancel it and re-queue with the
 		// freshest mode — applyMode is expensive enough that running it
