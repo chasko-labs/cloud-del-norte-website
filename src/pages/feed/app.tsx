@@ -32,7 +32,7 @@ import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
 import FeaturedEvent from "./components/featured-event";
 import FeaturedVideoCard from "./components/featured-video-card";
-import { FeedAndmore, FeedAwsml } from "./components/feed-section";
+import { FeedAndmore, FeedAwsml, FeedReadysetcloud } from "./components/feed-section";
 import NextMeetup from "./components/next-meetup";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
 import UpcomingVirtualEvent from "./components/upcoming-virtual-event";
@@ -50,6 +50,7 @@ type SectionKey =
 	| "twitchAwsOnAir"
 	| "andmore"
 	| "awsml"
+	| "readysetcloud"
 	| "arrowhead"
 	| "vbrownbag"
 	| "theZacsShow"
@@ -72,6 +73,7 @@ const SECTION_KEYS: SectionKey[] = [
 	"twitchAwsOnAir",
 	"andmore",
 	"awsml",
+	"readysetcloud",
 	"arrowhead",
 	"vbrownbag",
 	"theZacsShow",
@@ -178,6 +180,7 @@ function AppContent({
 			),
 			andmore: <FeedAndmore />,
 			awsml: <FeedAwsml />,
+			readysetcloud: <FeedReadysetcloud />,
 			arrowhead: <ArrowheadNews />,
 			vbrownbag: (
 				<YouTubeChannelCarousel

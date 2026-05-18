@@ -25,6 +25,7 @@ const FEEDS = [
 		url: "https://aws.amazon.com/blogs/machine-learning/feed/",
 		limit: 5,
 	},
+	{ key: "readysetcloud", url: "https://www.readysetcloud.io/index.xml", limit: 5 },
 ];
 
 // Podcast entries whose browser fetch is CORS-blocked but accessible server-side.

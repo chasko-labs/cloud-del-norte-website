@@ -19,6 +19,7 @@ export interface FeedPost {
 interface FeedsData {
 	andmore: FeedPost[];
 	awsml: FeedPost[];
+	readysetcloud: FeedPost[];
 }
 
 // shared module-level cache so both feed components fetch /data/feeds.json once
@@ -38,7 +39,7 @@ function loadFeeds(): Promise<FeedsData | null> {
 	return feedsPromise;
 }
 
-function useFeed(key: "andmore" | "awsml"): {
+function useFeed(key: "andmore" | "awsml" | "readysetcloud"): {
 	posts: FeedPost[];
 	ready: boolean;
 } {
@@ -225,6 +226,18 @@ export function FeedAwsml() {
 					{t("feedPage.awsMlBlog")}
 				</Header>
 			}
+		>
+			<PostCarousel posts={posts} ready={ready} />
+		</Container>
+	);
+}
+
+export function FeedReadysetcloud() {
+	const { t } = useTranslation();
+	const { posts, ready } = useFeed("readysetcloud");
+	return (
+		<Container
+			header={<Header variant="h2">{t("feedPage.readysetcloudHeader")}</Header>}
 		>
 			<PostCarousel posts={posts} ready={ready} />
 		</Container>
