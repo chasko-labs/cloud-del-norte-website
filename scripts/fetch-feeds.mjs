@@ -62,7 +62,9 @@ const PODCAST_FEEDS = [
 	},
 	{
 		key: "el_sonido_kexp",
-		url: "https://www.omnycontent.com/d/playlist/bad5d079.../podcast.rss",
+		// wave 26b: replaced wave-24a placeholder with canonical Omny Studio
+		// playlist URL discovered via Apple iTunes lookup (id=1677011949).
+		url: "https://www.omnycontent.com/d/playlist/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/9ed4d2cd-fdc6-4cff-88a0-afbf01777950/podcast.rss",
 	},
 	{
 		key: "fight_for_our_existence",
