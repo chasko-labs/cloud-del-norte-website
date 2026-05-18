@@ -5,6 +5,10 @@ import Spinner from "@cloudscape-design/components/spinner";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
+import {
+	fetchKexpNowPlaying,
+	type KexpNowPlaying,
+} from "../../lib/kexp-now-playing";
 import { setMediaSession } from "../../lib/media-session";
 import {
 	clearPodcastPosition,
@@ -67,6 +71,18 @@ function PersistentPlayerBar({
 	const [nowPlaying, setNowPlaying] = useState<string | null>(null);
 	const [rssAudioUrl, setRssAudioUrl] = useState<string | null>(null);
 	const [streamHealth, setStreamHealth] = useState<StreamHealth>("ok");
+	// KEXP-only album art surface — populated by a parallel poll against
+	// api.kexp.org/v2/plays whenever the active station is `kexp` AND the
+	// audio is actually playing. Cleared on station-change / stop. The shared
+	// fetchMeta path already populates `nowPlaying` with "song — artist", so
+	// this state only holds the artwork URL + a refs-tracked "current track"
+	// signature used to skip stale-data re-renders.
+	const [kexpArt, setKexpArt] = useState<KexpNowPlaying | null>(null);
+	// stable signature of the last KEXP track we accepted — lets the polling
+	// effect short-circuit re-renders when KEXP returns the same row twice
+	// (DJ on a long airbreak after one song, slow rotations). Stored as ref so
+	// it survives across polls without joining the effect dep list.
+	const kexpTrackSigRef = useRef<string | null>(null);
 	// build-time podcast episode cache — populated once from /data/podcast-episodes.json.
 	// used as fallback when live RSS fetch is CORS-blocked in the browser.
 	const episodeCacheRef = useRef<Record<string, string | null> | null>(null);
@@ -419,6 +435,53 @@ function PersistentPlayerBar({
 		};
 	}, [fetchMeta, streamDef]);
 
+	// KEXP-only album art poll — runs in parallel with the shared metadata
+	// poller above (which populates `nowPlaying` from the same /v2/plays
+	// endpoint). We keep the two pollers separate because:
+	//   - the shared poller sits in streams.ts territory (parseMeta returns a
+	//     plain string, not artwork) and that file is owned by another wave
+	//   - this poller only runs while KEXP is the active station AND audio is
+	//     actually playing, so it disappears the moment the user stops or
+	//     skips to a different station
+	// Stale-data guard: if the API returns the same song/artist signature on
+	// the next poll, we skip the setState call so React does not re-render
+	// the <img> (which would otherwise re-trigger the lazy-load decode).
+	useEffect(() => {
+		if (state.stationKey !== "kexp" || !playing) {
+			// any non-KEXP station OR paused state immediately drops the album
+			// art surface — listener should never see a stale Nu Shooz cover
+			// while listening to KRUX
+			setKexpArt(null);
+			kexpTrackSigRef.current = null;
+			return;
+		}
+		let cancelled = false;
+		const poll = async () => {
+			const result = await fetchKexpNowPlaying();
+			if (cancelled) return;
+			if (!result) {
+				// API failure / airbreak — silently drop the album art block;
+				// the existing player UI continues to display the station label
+				// + (when present) the song-string from the shared poller
+				if (kexpTrackSigRef.current !== null) {
+					kexpTrackSigRef.current = null;
+					setKexpArt(null);
+				}
+				return;
+			}
+			const sig = `${result.song}::${result.artist}::${result.albumArtUrl ?? ""}`;
+			if (sig === kexpTrackSigRef.current) return; // unchanged — skip re-render
+			kexpTrackSigRef.current = sig;
+			setKexpArt(result);
+		};
+		poll();
+		const id = window.setInterval(poll, POLL_MS);
+		return () => {
+			cancelled = true;
+			window.clearInterval(id);
+		};
+	}, [state.stationKey, playing]);
+
 	const resume = useCallback(() => {
 		audioRef.current?.play().catch(() => {});
 		setBlocked(false);
@@ -623,6 +686,28 @@ function PersistentPlayerBar({
 					})()}
 				</span>
 			</div>
+			{/* KEXP-only album art — small thumbnail to the LEFT of the meta
+			    column. Renders only when station=kexp + we have an image URL.
+			    The aria-live wrapper announces track changes for screen
+			    readers; alt text on the inner <img> carries the
+			    "song — artist" line for sighted users. */}
+			{state.stationKey === "kexp" && kexpArt?.albumArtUrl ? (
+				<span className="cdn-pp__kexp-art-wrap" aria-live="polite">
+					<img
+						className="cdn-pp__kexp-art"
+						src={kexpArt.albumArtUrl}
+						alt={
+							kexpArt.song && kexpArt.artist
+								? `${kexpArt.song} by ${kexpArt.artist}`
+								: t("persistentPlayer.kexpNowPlayingFallback")
+						}
+						loading="lazy"
+						decoding="async"
+						width={40}
+						height={40}
+					/>
+				</span>
+			) : null}
 			<span className="cdn-pp__meta">
 				{streamDef?.donateUrl ? (
 					<a

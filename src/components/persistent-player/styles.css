@@ -752,6 +752,66 @@ body.cdn-podcast-playing .cdn-pp__btn--resume {
 	opacity: 0.9;
 }
 
+/* KEXP now-playing album art (Wave 26c).
+   Renders ONLY when state.stationKey === "kexp" AND the API returned a
+   non-empty image_uri. The wrapper is the aria-live announcer; the inner
+   <img> is lazy-decoded so the cover-art-archive 500px PNG never blocks
+   first paint of the player itself.
+   Sits between the skip-wrap and the right-aligned meta column — visually
+   the cover-art is the "left anchor" of the now-playing pair. */
+.cdn-pp__kexp-art-wrap {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 40px;
+	height: 40px;
+	border-radius: var(--cdn-radius-sm, 4px);
+	overflow: hidden;
+	/* faint station-tinted ring so the thumbnail reads as part of the player
+	   palette in both modes. KEXP buttercup in light, amber-darkened in
+	   dark — the ring uses --station-primary-mode which is already mode-
+	   aware via the .cdn-pp custom-property cascade above. */
+	box-shadow: 0 0 0 1px
+		color-mix(
+			in srgb,
+			var(--station-primary-mode, var(--cdn-violet, #9060f0)) 40%,
+			transparent
+		);
+}
+
+.cdn-pp__kexp-art {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	border-radius: inherit;
+	/* slight desaturation in light mode so the thumbnail does not fight the
+	   cream parchment palette; full saturation in dark mode where the navy
+	   bg can carry vivid cover art */
+	filter: saturate(0.95);
+}
+
+.awsui-dark-mode .cdn-pp__kexp-art {
+	filter: saturate(1);
+}
+
+@media (max-width: 600px) {
+	/* shrink slightly on phones — meta column needs every pixel */
+	.cdn-pp__kexp-art-wrap {
+		width: 32px;
+		height: 32px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-pp__kexp-art {
+		/* nothing animated here today, but lock the hook so any future
+		   transition added to this element honors the user setting */
+		transition: none;
+	}
+}
+
 @media (prefers-reduced-motion: reduce) {
 	.cdn-pp__btn--stop {
 		animation: none;

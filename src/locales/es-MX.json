@@ -968,7 +968,8 @@
 		"streamErrorAdvancing": "estación no disponible, avanzando...",
 		"connecting": "conectando",
 		"retrying": "reintentando",
-		"connectingAria": "conectando al stream"
+		"connectingAria": "conectando al stream",
+		"kexpNowPlayingFallback": "sonando en KEXP"
 	},
 	"rsvp": {
 		"breadcrumb": "RSVP",

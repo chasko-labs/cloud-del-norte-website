@@ -968,7 +968,8 @@
 		"streamErrorAdvancing": "station unavailable, advancing...",
 		"connecting": "connecting",
 		"retrying": "retrying",
-		"connectingAria": "connecting to stream"
+		"connectingAria": "connecting to stream",
+		"kexpNowPlayingFallback": "now playing on KEXP"
 	},
 	"rsvp": {
 		"breadcrumb": "RSVP",
