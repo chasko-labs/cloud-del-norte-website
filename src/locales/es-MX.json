@@ -142,9 +142,9 @@
 		"upcomingVirtualEventFeaturedTalkSpeaker": "El organizador de AWSUG Cloud Del Norte, Bryan Chasko",
 		"upcomingVirtualEventFeaturedTalkTitle": "Una historia de migración: después de 240 meses consecutivos, evité un cargo de Microsoft",
 		"upcomingVirtualEventUgMarkLabel": "Marca AWS User Group",
-		"featuredEventInPersonLabel": "Junio de 2026 en persona: centro de El Paso, Texas",
-		"featuredEventSpotsRemaining": "{count} de {capacity} cupos disponibles",
-		"featuredEventRsvpPrimary": "RSVP y regístrate para el acceso speakeasy de CloudDelNorte.org",
+		"featuredEventInPersonLabel": "Junio 2026 presencial: centro de El Paso, Texas",
+		"featuredEventSpotsRemaining": "Quedan {count} de {capacity} cupos",
+		"featuredEventRsvpPrimary": "RSVP y regístrate al speakeasy de CloudDelNorte.org",
 		"featuredEventRsvpMeetup": "RSVP en Meetup"
 	},
 	"dashboardPage": {
@@ -269,7 +269,7 @@
 			"cancel": "Cancelar"
 		},
 		"myTicketsHeader": "Tus boletos",
-		"myTicketsEmpty": "Aún no has confirmado asistencia a eventos presenciales de Cloud Del Norte.",
+		"myTicketsEmpty": "Todavía no has hecho RSVP a ningún evento presencial de Cloud Del Norte.",
 		"myTicketsShowAtDoor": "Muestra este código en la puerta"
 	},
 	"createMeeting": {
@@ -971,14 +971,14 @@
 		"breadcrumb": "RSVP",
 		"pageTitle": "RSVP — Cloud Del Norte",
 		"header": "RSVP para evento presencial",
-		"subheader": "Limitado a las primeras 50 personas. Guarda tu código QR — muéstralo en la puerta para entrar.",
+		"subheader": "Solo las primeras 50 personas. Guarda tu código QR — muéstralo en la puerta.",
 		"checkingAuth": "Verificando tu sesión...",
-		"eventNotFound": "Evento no encontrado",
-		"eventNotFoundDesc": "Esta página de RSVP ya no está activa. Consulta los próximos eventos en la página de reuniones.",
+		"eventNotFound": "No encontramos el evento",
+		"eventNotFoundDesc": "Esta página de RSVP ya no está activa. Checa los próximos eventos en la página de reuniones.",
 		"soldOutHeader": "Este evento está lleno",
-		"soldOutBody": "Los 50 cupos presenciales están tomados. Revisa el feed para el próximo evento presencial, o únete a la reunión global virtual enlazada abajo.",
+		"soldOutBody": "Ya se llenaron los 50 cupos presenciales. Checa el feed para el próximo evento presencial, o únete a la reunión global virtual de abajo.",
 		"ticketHeader": "Estás en la lista",
-		"ticketSubheader": "Muestra este código QR en la puerta para entrar. Puedes volver a verlo en cualquier momento desde la página de reuniones.",
+		"ticketSubheader": "Muestra este código QR en la puerta. Puedes volverlo a ver cuando quieras desde la página de reuniones.",
 		"ticketEvent": "Evento",
 		"ticketDate": "Fecha",
 		"ticketLocation": "Ubicación",
@@ -987,6 +987,6 @@
 		"viewMyTickets": "Ver mis boletos",
 		"rsvpButton": "Confirmar mi RSVP",
 		"rsvpingNow": "Reservando tu lugar...",
-		"fallbackMeetupCta": "Mejor RSVP en Meetup"
+		"fallbackMeetupCta": "Mejor házlo por Meetup"
 	}
 }
