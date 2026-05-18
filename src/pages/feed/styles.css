@@ -946,24 +946,151 @@
 	}
 }
 
-/* ---------- Featured event card ---------- */
+/* ---------- Featured event card — wave 25a "rizz" upgrade ----------
+   Brings the featured event card up to the fiona end-credits visual standard:
+   stage-light gradient backplate (warm tungsten on light, cool stage-spot
+   violet on dark), multi-layer ambient bloom, animated shimmer sweep on the
+   FEATURED badge, image with twin-bloom rim (purple + AWS gold to echo the
+   Copilot artwork) + micro-tilt easter-egg on hover, marquee-feel typography
+   on title/date, pulsing chip on the spots-remaining counter.
+
+   Local CSS variables scoped to .feed-featured-event keep the wave-23.5 token
+   baseline untouched (per hard scope: do NOT mutate src/styles/tokens.css).
+   All motion respects prefers-reduced-motion. Light + dark mode parity. */
 
 .feed-featured-event {
+	/* light-mode rizz tokens — warm tungsten stage light + brand violet bloom */
+	--cdn-rizz-spot-warm: rgba(201, 162, 63, 0.22);
+	--cdn-rizz-spot-violet: rgba(144, 96, 240, 0.16);
+	--cdn-rizz-bloom-purple: rgba(90, 31, 138, 0.22);
+	--cdn-rizz-bloom-gold: rgba(201, 162, 63, 0.28);
+	--cdn-rizz-shimmer: rgba(255, 250, 235, 0.6);
+	--cdn-rizz-badge-glow: rgba(144, 96, 240, 0.45);
+	--cdn-rizz-image-rim-1: rgba(90, 31, 138, 0.32);
+	--cdn-rizz-image-rim-2: rgba(201, 162, 63, 0.28);
+	--cdn-rizz-spots-glow: rgba(144, 96, 240, 0.4);
+
+	position: relative;
+	isolation: isolate;
 	border-left: 4px solid var(--cdn-violet, #9060f0);
+	border-radius: var(--cdn-radius-md, 8px);
+	overflow: hidden;
 }
 
+.awsui-dark-mode .feed-featured-event {
+	/* dark-mode rizz tokens — cool stage-spotlight indigo/violet, lavender bloom */
+	--cdn-rizz-spot-warm: rgba(255, 153, 0, 0.1);
+	--cdn-rizz-spot-violet: rgba(144, 96, 240, 0.28);
+	--cdn-rizz-bloom-purple: rgba(144, 96, 240, 0.4);
+	--cdn-rizz-bloom-gold: rgba(255, 184, 71, 0.18);
+	--cdn-rizz-shimmer: rgba(215, 199, 238, 0.55);
+	--cdn-rizz-badge-glow: rgba(199, 184, 232, 0.52);
+	--cdn-rizz-image-rim-1: rgba(144, 96, 240, 0.42);
+	--cdn-rizz-image-rim-2: rgba(255, 153, 0, 0.22);
+	--cdn-rizz-spots-glow: rgba(199, 184, 232, 0.45);
+}
+
+/* Stage-light gradient backplate — two cross-faded radial spotlights:
+   warm key from upper-left, cool/violet fill from lower-right. Sits behind
+   all content via z-index:0; children stack on z-index:1 below. */
+.feed-featured-event::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background:
+		radial-gradient(
+			ellipse 70% 50% at 14% 8%,
+			var(--cdn-rizz-spot-warm) 0%,
+			transparent 62%
+		),
+		radial-gradient(
+			ellipse 65% 55% at 88% 92%,
+			var(--cdn-rizz-spot-violet) 0%,
+			transparent 65%
+		);
+	opacity: 0.95;
+}
+
+/* All direct content children sit above the spotlight backplate. */
+.feed-featured-event > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* ---------- FEATURED badge — pill with stronger gradient + shimmer sweep ---------- */
 .feed-featured-event__badge {
+	position: relative;
 	display: inline-block;
-	padding: 4px 12px;
+	padding: 4px 14px;
 	border-radius: 999px;
+	background-image: linear-gradient(
+		135deg,
+		var(--cdn-purple, #5a1f8a) 0%,
+		var(--cdn-violet, #9060f0) 100%
+	);
 	background-color: var(--cdn-purple, #5a1f8a);
 	color: #faf7f0;
 	font-size: var(--cdn-text-sm, 0.75rem);
 	font-weight: 700;
-	letter-spacing: 0.05em;
+	letter-spacing: 0.08em;
 	text-transform: uppercase;
+	overflow: hidden;
+	box-shadow:
+		0 1px 2px rgba(48, 0, 106, 0.3),
+		0 4px 12px -2px var(--cdn-rizz-badge-glow),
+		inset 0 1px 0 rgba(255, 250, 235, 0.32),
+		inset 0 -1px 0 rgba(48, 0, 106, 0.4);
 }
 
+.awsui-dark-mode .feed-featured-event__badge {
+	box-shadow:
+		0 1px 2px rgba(0, 0, 0, 0.5),
+		0 4px 14px -2px var(--cdn-rizz-badge-glow),
+		inset 0 1px 0 rgba(215, 199, 238, 0.28),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+/* Animated shimmer sweep — diagonal highlight crosses the badge every 4.6s.
+   Suppressed in prefers-reduced-motion below. */
+.feed-featured-event__badge::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		transparent 0%,
+		transparent 38%,
+		var(--cdn-rizz-shimmer) 50%,
+		transparent 62%,
+		transparent 100%
+	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
+	mix-blend-mode: screen;
+	border-radius: inherit;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-featured-badge-shimmer {
+		0% {
+			background-position: 120% 0;
+		}
+		60%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-featured-event__badge::after {
+		animation: feed-featured-badge-shimmer 4.6s cubic-bezier(0.4, 0, 0.2, 1)
+			infinite;
+	}
+}
+
+/* ---------- Event image — twin-bloom rim + micro-tilt easter egg ---------- */
 .feed-featured-event__image {
 	display: block;
 	width: 100%;
@@ -973,6 +1100,224 @@
 	object-fit: cover;
 	border-radius: var(--cdn-radius-md, 8px);
 	margin: 12px 0;
+	/* twin-bloom: inner cream rim + outer purple+gold halos that echo the
+	   Copilot artwork (violet star, AWS Community gold accents). */
+	box-shadow:
+		inset 0 0 0 1px rgba(255, 250, 235, 0.18),
+		0 1px 3px rgba(48, 0, 106, 0.18),
+		0 8px 22px -6px var(--cdn-rizz-image-rim-1),
+		0 16px 36px -10px var(--cdn-rizz-image-rim-2),
+		0 0 0 1px var(--cdn-rizz-image-rim-1);
+	transition:
+		transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.awsui-dark-mode .feed-featured-event__image {
+	box-shadow:
+		inset 0 0 0 1px rgba(215, 199, 238, 0.16),
+		0 2px 6px rgba(0, 0, 0, 0.5),
+		0 10px 26px -6px var(--cdn-rizz-image-rim-1),
+		0 18px 42px -10px var(--cdn-rizz-image-rim-2),
+		0 0 0 1px var(--cdn-rizz-image-rim-1);
+}
+
+/* hover micro-tilt easter egg (1.4deg) + intensified bloom. flat fallback
+   in @media (prefers-reduced-motion: reduce) below. */
+@media (prefers-reduced-motion: no-preference) {
+	.feed-featured-event__image:hover {
+		transform: rotate(-1.4deg) translateY(-2px);
+		filter: brightness(1.04) saturate(1.06);
+		box-shadow:
+			inset 0 0 0 1px rgba(255, 250, 235, 0.28),
+			0 2px 4px rgba(48, 0, 106, 0.22),
+			0 12px 30px -6px var(--cdn-rizz-image-rim-1),
+			0 22px 48px -10px var(--cdn-rizz-image-rim-2),
+			0 0 0 1.5px var(--cdn-rizz-image-rim-1);
+	}
+}
+
+/* ---------- Marquee-feel typography on title + date ---------- */
+.feed-featured-event__title {
+	letter-spacing: -0.005em;
+	line-height: 1.22;
+}
+
+.feed-featured-event__title a {
+	background-image: linear-gradient(
+		90deg,
+		var(--cdn-purple, #5a1f8a) 0%,
+		var(--cdn-violet, #9060f0) 100%
+	);
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+	text-decoration: none;
+	transition: filter 0.2s ease;
+}
+
+.awsui-dark-mode .feed-featured-event__title a {
+	background-image: linear-gradient(
+		90deg,
+		var(--cdn-violet, #9060f0) 0%,
+		var(--cdn-lavender, #d7c7ee) 100%
+	);
+}
+
+.feed-featured-event__title a:hover,
+.feed-featured-event__title a:focus-visible {
+	filter: brightness(1.1) saturate(1.08);
+}
+
+/* preserve focus ring on the underlying anchor */
+.feed-featured-event__title a:focus-visible {
+	outline: 2px solid var(--cdn-violet, #9060f0);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+.feed-featured-event__date {
+	letter-spacing: 0.04em;
+	font-variant-numeric: tabular-nums;
+}
+
+.feed-featured-event__description {
+	line-height: 1.5;
+	max-width: 56ch;
+}
+
+/* ---------- Location pill — strengthened amber tungsten chip ---------- */
+.feed-featured-event__location {
+	display: inline-block;
+	padding: 3px 12px;
+	border-radius: 999px;
+	background: linear-gradient(
+		135deg,
+		rgba(201, 162, 63, 0.18) 0%,
+		rgba(139, 90, 43, 0.14) 100%
+	);
+	border: 1px solid rgba(139, 90, 43, 0.36);
+	color: var(--cdn-amber, #8b5a2b);
+	font-size: var(--cdn-text-xs, 0.6875rem);
+	font-weight: 700;
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 250, 235, 0.45),
+		0 2px 6px -1px rgba(139, 90, 43, 0.18);
+}
+
+.awsui-dark-mode .feed-featured-event__location {
+	background: linear-gradient(
+		135deg,
+		rgba(255, 153, 0, 0.18) 0%,
+		rgba(255, 184, 71, 0.1) 100%
+	);
+	border-color: rgba(255, 153, 0, 0.48);
+	color: var(--cdn-aws-orange, #ff9900);
+	box-shadow:
+		inset 0 1px 0 rgba(255, 184, 71, 0.18),
+		0 2px 8px -2px rgba(255, 153, 0, 0.32);
+}
+
+/* ---------- Spots-remaining — chip with stage-light pulse ---------- */
+.feed-featured-event__spots {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 999px;
+	background: linear-gradient(
+		135deg,
+		rgba(144, 96, 240, 0.14) 0%,
+		rgba(90, 31, 138, 0.1) 100%
+	);
+	border: 1px solid rgba(144, 96, 240, 0.42);
+	color: var(--cdn-purple, #5a1f8a);
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	font-variant-numeric: tabular-nums;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 250, 235, 0.4),
+		0 0 0 0 var(--cdn-rizz-spots-glow),
+		0 2px 8px -2px rgba(90, 31, 138, 0.22);
+}
+
+.awsui-dark-mode .feed-featured-event__spots {
+	background: linear-gradient(
+		135deg,
+		rgba(199, 184, 232, 0.14) 0%,
+		rgba(144, 96, 240, 0.1) 100%
+	);
+	border-color: rgba(199, 184, 232, 0.4);
+	color: var(--cdn-lavender, #d7c7ee);
+	box-shadow:
+		inset 0 1px 0 rgba(215, 199, 238, 0.18),
+		0 0 0 0 var(--cdn-rizz-spots-glow),
+		0 2px 10px -2px rgba(144, 96, 240, 0.34);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-featured-spots-pulse {
+		0%,
+		100% {
+			box-shadow:
+				inset 0 1px 0 rgba(255, 250, 235, 0.4),
+				0 0 0 0 var(--cdn-rizz-spots-glow),
+				0 2px 8px -2px rgba(90, 31, 138, 0.22);
+		}
+		50% {
+			box-shadow:
+				inset 0 1px 0 rgba(255, 250, 235, 0.5),
+				0 0 0 6px transparent,
+				0 4px 14px -2px var(--cdn-rizz-spots-glow);
+		}
+	}
+
+	@keyframes feed-featured-spots-pulse-dark {
+		0%,
+		100% {
+			box-shadow:
+				inset 0 1px 0 rgba(215, 199, 238, 0.18),
+				0 0 0 0 var(--cdn-rizz-spots-glow),
+				0 2px 10px -2px rgba(144, 96, 240, 0.34);
+		}
+		50% {
+			box-shadow:
+				inset 0 1px 0 rgba(215, 199, 238, 0.28),
+				0 0 0 6px transparent,
+				0 4px 18px -2px var(--cdn-rizz-spots-glow);
+		}
+	}
+
+	.feed-featured-event__spots {
+		animation: feed-featured-spots-pulse 3.4s ease-in-out infinite;
+	}
+
+	.awsui-dark-mode .feed-featured-event__spots {
+		animation: feed-featured-spots-pulse-dark 3.4s ease-in-out infinite;
+	}
+}
+
+/* ---------- Reduced-motion fallback — strip all animation, keep static
+   visuals so the rizz still reads (gradients + glow + shadows remain). */
+@media (prefers-reduced-motion: reduce) {
+	.feed-featured-event__badge::after {
+		animation: none;
+		background-position: 50% 0;
+		opacity: 0.5;
+	}
+
+	.feed-featured-event__image,
+	.feed-featured-event__image:hover {
+		transform: none;
+		transition: none;
+	}
+
+	.feed-featured-event__spots,
+	.awsui-dark-mode .feed-featured-event__spots {
+		animation: none;
+	}
 }
 
 /* ---------- Upcoming virtual event card ---------- */
@@ -1230,30 +1575,7 @@
 	color: var(--cdn-lavender, #d7c7ee);
 }
 
-/* Featured event — location pill + seat counter (RSVP flow phase 1) */
-.feed-featured-event__location {
-	display: inline-block;
-	padding: 2px 10px;
-	border-radius: 999px;
-	background-color: rgba(139, 90, 43, 0.12);
-	border: 1px solid rgba(139, 90, 43, 0.32);
-	color: var(--cdn-amber, #8b5a2b);
-	font-size: var(--cdn-text-xs, 0.6875rem);
-	font-weight: 700;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-}
-
-.awsui-dark-mode .feed-featured-event__location {
-	background-color: rgba(255, 153, 0, 0.14);
-	border-color: rgba(255, 153, 0, 0.4);
-	color: var(--cdn-aws-orange, #ff9900);
-}
-
-.feed-featured-event__spots {
-	color: var(--cdn-purple, #5a1f8a);
-}
-
-.awsui-dark-mode .feed-featured-event__spots {
-	color: var(--cdn-lavender, #d7c7ee);
-}
+/* Featured event location pill + spots counter — see "wave 25a rizz upgrade"
+   block above for the consolidated rules (location pill stage-light tint,
+   spots-remaining pulsing chip). Older standalone definitions removed in
+   wave 25a — all .feed-featured-event__* styling is colocated above. */

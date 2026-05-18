@@ -76,10 +76,18 @@ export default function FeaturedEvent() {
 						height={630}
 						loading="lazy"
 					/>
-					<Box fontWeight="bold" fontSize="heading-m">
+					<Box
+						fontWeight="bold"
+						fontSize="heading-m"
+						className="feed-featured-event__title"
+					>
 						<Link href={RSVP_PAGE_URL}>{t("feedPage.featuredEventTitle")}</Link>
 					</Box>
-					<Box color="text-body-secondary" fontSize="body-s">
+					<Box
+						color="text-body-secondary"
+						fontSize="body-s"
+						className="feed-featured-event__date"
+					>
 						{formattedDate}
 					</Box>
 					<Box
@@ -92,7 +100,11 @@ export default function FeaturedEvent() {
 					<Box color="text-body-secondary" fontSize="body-s">
 						{t("feedPage.featuredEventLocation")}
 					</Box>
-					<Box color="text-body-secondary" fontSize="body-s">
+					<Box
+						color="text-body-secondary"
+						fontSize="body-s"
+						className="feed-featured-event__description"
+					>
 						{t("feedPage.featuredEventDescription")}
 					</Box>
 					{spotsCopy && (
