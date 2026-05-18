@@ -387,6 +387,23 @@
 	-webkit-backdrop-filter: blur(10px) saturate(1.15);
 }
 
+/* wave 23.5 — fill container: Cloudscape Container root + content must stretch
+   to fill the cdn-card flex parent so no dead whitespace remains on desktop. */
+.feed-grid__cell.cdn-card {
+	display: flex;
+	flex-direction: column;
+}
+
+.feed-grid__cell.cdn-card > [class*="awsui_root"] {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.feed-grid__cell.cdn-card > [class*="awsui_root"] > [class*="awsui_content_"] {
+	flex: 1 1 auto;
+}
+
 /* glassmorphism — suppress Container chrome so the cdn-card glass surface shows.
    descendant (not direct-child) combinator handles any React wrapper divs between
    cdn-card and the Cloudscape root element. */

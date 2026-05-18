@@ -136,11 +136,12 @@
 	--cdn-shadow-container-light:
 		0 1px 4px rgba(139, 90, 43, 0.1), 0 4px 12px rgba(139, 90, 43, 0.06);
 	--cdn-shadow-card-light:
-		0 2px 8px rgba(139, 90, 43, 0.12), 0 1px 3px rgba(0, 0, 0, 0.06),
-		0 0 1px rgba(139, 90, 43, 0.08);
+		0 1px 3px rgba(139, 90, 43, 0.1), 0 4px 10px -2px rgba(139, 90, 43, 0.12),
+		0 8px 20px -4px rgba(139, 90, 43, 0.08);
 	--cdn-shadow-card-hover-light:
-		0 8px 24px rgba(139, 90, 43, 0.18), 0 4px 10px rgba(0, 0, 0, 0.08),
-		0 0 2px rgba(139, 90, 43, 0.12);
+		0 4px 8px rgba(139, 90, 43, 0.14), 0 12px 28px -4px rgba(139, 90, 43, 0.18),
+		0 20px 40px -8px rgba(139, 90, 43, 0.1),
+		0 0 0 1px rgba(139, 90, 43, 0.06);
 	--cdn-shadow-input-light: inset 0 1px 3px rgba(139, 90, 43, 0.08);
 	--cdn-shadow-nav-light: 2px 0 8px rgba(139, 90, 43, 0.08);
 
@@ -282,8 +283,10 @@ html:not(.awsui-dark-mode) body {
 		0 8px 24px -6px rgba(0, 0, 0, 0.35), 0 4px 12px -3px rgba(0, 0, 0, 0.25),
 		inset 0 1px 0 rgba(255, 255, 255, 0.04);
 	--cdn-shadow-glow:
+		0 4px 8px rgba(0, 0, 0, 0.35),
 		0 16px 32px -8px rgba(0, 0, 0, 0.4),
-		0 0 30px -8px rgba(144, 96, 240, calc(0.2 + var(--cdn-mid) * 0.15));
+		0 0 20px -4px rgba(144, 96, 240, calc(0.22 + var(--cdn-mid) * 0.15)),
+		0 0 40px -8px rgba(144, 96, 240, calc(0.12 + var(--cdn-mid) * 0.1));
 
 	/* Table header — elevated surface in dark mode to distinguish from data rows */
 	--color-background-table-header-hdjxos: #0a0a1f;
@@ -363,10 +366,11 @@ html:not(.awsui-dark-mode) body {
 		rgba(30, 26, 48, 0.88) 30%,
 		rgba(17, 24, 39, 0.97) 100%
 	);
-	border-color: rgba(144, 96, 240, 0.15);
+	border-color: rgba(144, 96, 240, 0.18);
 	box-shadow:
-		0 8px 24px -6px rgba(0, 0, 0, 0.3),
-		0 0 20px -8px rgba(144, 96, 240, 0.1);
+		0 2px 4px rgba(0, 0, 0, 0.3),
+		0 8px 24px -6px rgba(0, 0, 0, 0.35),
+		0 0 24px -8px rgba(144, 96, 240, 0.15);
 }
 
 /* ==========================================================================
@@ -639,38 +643,55 @@ html:not(.awsui-dark-mode) body {
    thread + preserves clamp/excerpt geometry from the v0.0.0114 sprint.
    ========================================================================== */
 
-/* shared gradient + shadow tokens — single source of truth, both modes */
+/* shared gradient + shadow tokens — single source of truth, both modes
+   wave 23.5: strengthened gradients + layered shadow stack inspired by
+   fiona end-credits popout (multi-layer glow + radial accent bloom) */
 :root {
-	/* light mode: warm cream → amber-tinted cream → warm cream
-	   subtle 4-6% alpha shift, reads as cream-with-light not as gradient */
-	--cdn-card-gradient-light: linear-gradient(
-		135deg,
-		rgba(255, 250, 235, 0.55) 0%,
-		rgba(232, 215, 180, 0.18) 45%,
-		rgba(250, 244, 230, 0.5) 100%
-	);
-	/* warm amber rim glow + soft drop — sits above the existing cloudscape shadow */
+	/* light mode: warm cream → amber radial accent → cream edge
+	   stronger than prior 4-6% alpha — reads as warm directional light */
+	--cdn-card-gradient-light:
+		radial-gradient(
+			ellipse at 30% 0%,
+			rgba(201, 162, 63, 0.1) 0%,
+			transparent 60%
+		),
+		linear-gradient(
+			135deg,
+			rgba(255, 250, 235, 0.7) 0%,
+			rgba(232, 215, 180, 0.28) 45%,
+			rgba(250, 244, 230, 0.6) 100%
+		);
+	/* layered shadow: close contact + medium spread + ambient depth (fiona-credits inspired) */
 	--cdn-card-rim-light:
-		inset 0 1px 0 rgba(255, 250, 235, 0.7),
-		inset 0 -1px 0 rgba(139, 90, 43, 0.06),
-		0 1px 3px rgba(139, 90, 43, 0.08),
-		0 6px 16px -4px rgba(139, 90, 43, 0.12);
+		inset 0 1px 0 rgba(255, 250, 235, 0.85),
+		inset 0 -1px 0 rgba(139, 90, 43, 0.08),
+		0 1px 2px rgba(139, 90, 43, 0.12),
+		0 4px 8px -2px rgba(139, 90, 43, 0.1),
+		0 8px 20px -4px rgba(139, 90, 43, 0.14);
 }
 
 .awsui-dark-mode {
-	/* dark mode: violet bloom from top-left fading to deeper navy bottom-right
-	   reads as ambient violet rim light, not as a gradient */
-	--cdn-card-gradient-light: linear-gradient(
-		135deg,
-		rgba(144, 96, 240, 0.08) 0%,
-		rgba(48, 0, 106, 0.04) 45%,
-		rgba(10, 10, 46, 0.18) 100%
-	);
+	/* dark mode: violet radial bloom from top-left + linear depth gradient
+	   reads as ambient violet rim light with directional accent */
+	--cdn-card-gradient-light:
+		radial-gradient(
+			ellipse at 25% 0%,
+			rgba(144, 96, 240, 0.14) 0%,
+			transparent 55%
+		),
+		linear-gradient(
+			135deg,
+			rgba(144, 96, 240, 0.1) 0%,
+			rgba(48, 0, 106, 0.06) 45%,
+			rgba(10, 10, 46, 0.22) 100%
+		);
+	/* layered: inner highlight + close shadow + violet ambient glow + deep drop */
 	--cdn-card-rim-light:
-		inset 0 1px 0 rgba(199, 184, 232, 0.08),
-		inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-		0 2px 6px rgba(0, 0, 0, 0.32),
-		0 8px 22px -6px rgba(144, 96, 240, 0.18);
+		inset 0 1px 0 rgba(199, 184, 232, 0.12),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+		0 2px 4px rgba(0, 0, 0, 0.35),
+		0 6px 16px -4px rgba(144, 96, 240, 0.22),
+		0 12px 28px -8px rgba(0, 0, 0, 0.3);
 }
 
 /* Cloudscape Container body — variant-default + variant-stacked.
