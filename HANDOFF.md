@@ -2,8 +2,49 @@
 
 **date:** 2026-05-18  
 **branch:** main  
-**last commit:** 69d28889 fix(csp): wave 23 — trim dead origins (zeno + dev-podcast + aws-podcast-s3) so radio unam fits under 1784 limit  
-**deploy:** verified 2026-05-18 16:03 UTC — Radio UNAM 96.1 now live in production CSP. tv.radiohosting.online:9484 confirmed in connect-src + media-src. Three Mexican stations restored.
+**last commit:** bb01d881 docs(handoff): wave 23 — radio unam 96.1 live + CSP trim  
+**deploy:** all 4 subdomains current as of 2026-05-18 16:25 UTC.
+
+---
+
+## housekeeping 2026-05-18 16:25 UTC — dev parity + arch docs + multi-track in flight
+
+Bryan: "dev.clouddelnorte.org is way behind clouddelnorte.org … be sure you've updated our stream architectures & technical documentation … on desktop some cards appear oddly because the info card doesn't adapt to its container leaving awkward weird white space / gaps & generally our card lighting / gradients / shaddows are really weak … extending babylon should be put on the backlog for after dev is up to date, the css stuff you can do in parallel … re 'your signoff' the 'your' there should be stratia not bryan."
+
+### dev parity (closed)
+
+dev.clouddelnorte.org was 3 days stale (last-modified 2026-05-15T19:13Z). Brought to current via `bash scripts/deploy-manual.sh dev`:
+- new last-modified 2026-05-18T16:25:24Z
+- invalidation `IF2BKZUZTHPZVFLA9F4XHPZ76T`
+- HTTP 200 verified
+
+Note: dev distribution `EEHVTUEQ97V0X` has **no response-headers-policy attached** — runs without CSP enforcement. Intentional for staging but means dev can't catch CSP regressions before production. Wave-25 candidate to attach a CSP that mirrors main.
+
+### architecture documentation (shipped)
+
+`docs/streams-podcasts-architecture.md` (new, 293 lines): canonical reference covering subdomain map, StreamDef + RichMeta interfaces, shuffleOnce + curated discovery, parseMeta variants (icecast / NPR Composer / Zeno SSE / RSS), CSP architecture + 1784-char limit + sync mechanism, build-time fetch-feeds.mjs pipeline, stream health monitoring, resilience patterns shipped Waves 20-23, and what's queued for Wave 24.
+
+### multi-track in flight
+
+| track | branch | dispatch |
+|---|---|---|
+| Wave 24 design signoff | feature/wave-24-radio-podcast-buildout | ghost-stratia-code-mapper reviewing `docs/wave-24-design.md` |
+| CSS card polish (gaps + lighting/gradients/shadows) | new chore branch | ghost-liora-css-repair |
+| Wave 24 implementation | feature/wave-24-radio-podcast-buildout | gated on Stratia signoff + Bryan answers to 7 open questions |
+
+### Babylon JS extension backlog (deferred to post-Wave-24)
+
+Bryan flagged 3 BabylonJS playground references for future 3D-ism on the radio + record-button UI:
+
+1. **Metal / lighting on the radio console** — https://playground.babylonjs.com/#HA3E1B#113. Apply to the persistent-player chrome.
+2. **3D-ism for product showcases** — https://www.babylonjs.com/Demos/ProductPage/. Could elevate the feed page card grid.
+3. **Shading layer for music-aware record-button menu** — https://playground.babylonjs.com/#1EISUM#3. The left + right menu buttons already simulate records; this shading would make them tactile.
+
+Backlog ticket lives here in HANDOFF until decomposed into a wave. Sequence: ship Wave 24 first, then revisit.
+
+### corrections logged
+
+- "Liora signoff" was wrong in Wave 24 closeout messaging — should be **Stratia signoff** for architecture review. Adjusted dispatch pattern going forward: Liora is UX/CSS specialist (writes design docs + applies CSS fixes), **Stratia is the architecture reviewer / signoff authority** for design plans.
 
 ---
 
