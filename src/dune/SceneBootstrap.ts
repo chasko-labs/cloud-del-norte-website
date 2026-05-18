@@ -33,6 +33,7 @@ import { Scene } from "@babylonjs/core/scene";
 // time so the gate is in place BEFORE any `new Engine(...)` call below.
 Logger.LogLevels = Logger.WarningLogLevel | Logger.ErrorLogLevel;
 
+import { detectRenderCapability } from "../lib/render-capability.js";
 import {
 	AnimationController,
 	CAMERA_RADIUS_BASE,
@@ -118,6 +119,36 @@ function detectReducedMotion(): boolean {
 export function mountDuneSceneOnCanvas(
 	canvas: HTMLCanvasElement,
 ): DuneSceneCanvasHandle {
+	const capability = detectRenderCapability();
+	console.log("[dune] render capability:", capability);
+	if (!capability.shouldRenderRichScene) {
+		// Software renderer or reduced-motion: mount static fallback, skip Babylon.
+		const parent = canvas.parentElement;
+		if (parent) {
+			parent.classList.add("cdn-dune-static-fallback");
+		}
+		canvas.style.display = "none";
+		// Return a no-op handle — callers (mountDuneScene, dune-test page) must tolerate this.
+		return {
+			engine: null as unknown as Engine,
+			scene: null as unknown as Scene,
+			resize() {},
+			dispose() {},
+			getPerfMedian() {
+				return 0;
+			},
+			getLastFrameMs() {
+				return 0;
+			},
+			isPerfDegraded() {
+				return false;
+			},
+			refreshStationTint() {},
+			pause() {},
+			resume() {},
+		};
+	}
+
 	const engine = new Engine(canvas, true, {
 		preserveDrawingBuffer: true,
 		stencil: true,
@@ -237,6 +268,21 @@ export function mountDuneSceneOnCanvas(
 	};
 	engine.runRenderLoop(renderTick);
 
+	// Page Visibility API — pause render loop when tab is hidden to prevent
+	// CPU/GPU burn on background tabs (especially critical on SwiftShader paths
+	// that reach here via forced hardware detection override).
+	function handleVisibility() {
+		if (document.hidden) {
+			engine.stopRenderLoop();
+			paused = true;
+		} else {
+			paused = false;
+			lastFrameMs = performance.now();
+			engine.runRenderLoop(renderTick);
+		}
+	}
+	document.addEventListener("visibilitychange", handleVisibility);
+
 	return {
 		engine,
 		scene,
@@ -244,6 +290,7 @@ export function mountDuneSceneOnCanvas(
 			engine.resize();
 		},
 		dispose() {
+			document.removeEventListener("visibilitychange", handleVisibility);
 			engine.stopRenderLoop();
 			haze.dispose();
 			ground.dispose();
@@ -319,7 +366,7 @@ export function ensureDuneFallback(container: HTMLElement): () => void {
 export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 	ensureDuneFallback(container);
 
-	if (shouldForceStatic()) {
+	if (shouldForceStatic() || !detectRenderCapability().shouldRenderRichScene) {
 		// Static-fallback path — no babylon engine, no canvas. The fallback
 		// gradient div above carries the visual. getPerfMedian returns 0 so
 		// the wallpaper integration's perf gate sees "no sample yet" and

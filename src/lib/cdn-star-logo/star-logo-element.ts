@@ -11,6 +11,7 @@
 //
 // The component sizes itself to its host element via CSS (default 100% / 100%).
 
+import { detectRenderCapability } from "../render-capability.js";
 import { StarScene } from "./StarScene.js";
 
 const TEMPLATE_STYLE = `
@@ -43,6 +44,13 @@ export class CdnStarLogoElement extends HTMLElement {
 		root.innerHTML = `<style>${TEMPLATE_STYLE}</style><canvas></canvas>`;
 		this.canvas = root.querySelector("canvas");
 		if (!this.canvas) return;
+
+		const capability = detectRenderCapability();
+		if (!capability.shouldRenderRichScene) {
+			// Software WebGL or reduced-motion: skip 3D scene. The <LogoSvg> sibling
+			// in the shell DOM is always rendered and serves as the static fallback.
+			return;
+		}
 
 		this.scene = new StarScene(this.canvas, {
 			transparentBackground: this.hasAttribute("transparent"),

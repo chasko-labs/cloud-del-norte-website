@@ -2101,3 +2101,19 @@ body.cdn-scrolled [class*="awsui_breadcrumbs"] {
 		margin-top: 5px;
 	}
 }
+
+/* ── SwiftShader / software-WebGL static fallback ────────────────────────────
+   Applied to the dune canvas parent when detectRenderCapability() determines
+   no hardware GPU is available. Replicates the dune scene palette as a fixed
+   gradient so Bryan's site remains visually distinctive on software-render
+   machines (remote desktop, missing drivers, battery-saver, etc.).
+   CSS custom properties fall back to the hardcoded brand values when tokens
+   haven't loaded. */
+.cdn-dune-static-fallback {
+	background: linear-gradient(
+		180deg,
+		var(--cdn-sky-top, #2d5d8a) 0%,
+		var(--cdn-sky-mid, #d4a574) 60%,
+		var(--cdn-sand, #ede5d4) 100%
+	);
+}

@@ -84,6 +84,7 @@ export class StarScene {
 	readonly bulbs: Mesh[];
 	private readonly opts: Required<StarSceneOptions>;
 	private glow!: GlowLayer;
+	private readonly handleVisibility: () => void;
 
 	constructor(canvas: HTMLCanvasElement, options: StarSceneOptions = {}) {
 		this.opts = {
@@ -111,9 +112,20 @@ export class StarScene {
 		this.attachAnimations();
 
 		this.engine.runRenderLoop(() => this.scene.render());
+
+		// Page Visibility — pause render loop when tab is hidden.
+		this.handleVisibility = () => {
+			if (document.hidden) {
+				this.engine.stopRenderLoop();
+			} else {
+				this.engine.runRenderLoop(() => this.scene.render());
+			}
+		};
+		document.addEventListener("visibilitychange", this.handleVisibility);
 	}
 
 	dispose(): void {
+		document.removeEventListener("visibilitychange", this.handleVisibility);
 		this.engine.stopRenderLoop();
 		this.scene.dispose();
 		this.engine.dispose();
