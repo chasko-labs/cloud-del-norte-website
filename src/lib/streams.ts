@@ -918,6 +918,83 @@ export const STREAMS: StreamDef[] = [
 			);
 		},
 	},
+	{
+		key: "writing_on_the_wall",
+		curated: true,
+		type: "podcast",
+		url: "https://podcasts.captivate.fm/media/placeholder.mp3",
+		rssFeedUrl: "https://feeds.captivate.fm/writing-on-the-wall/",
+		label: "writing on the wall",
+		location: { city: "Mescalero", region: "New Mexico", country: "USA" },
+		colors: {
+			primary: "#2E8B57",
+			secondary: "#D2691E",
+			accent: "#faf7f0",
+			primaryLight: "#1d6b3f",
+			primaryDark: "#4ade80",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
+			);
+		},
+	},
+	{
+		key: "el_sonido_kexp",
+		corsBlocked: true,
+		type: "podcast",
+		url: "https://traffic.omny.fm/d/clips/placeholder.mp3",
+		rssFeedUrl:
+			"https://www.omnycontent.com/d/playlist/bad5d079.../podcast.rss",
+		label: "el sonido (kexp)",
+		location: { city: "Seattle", region: "Washington", country: "USA" },
+		colors: {
+			primary: "#9B59B6",
+			secondary: "#E74C3C",
+			accent: "#1a1a1a",
+			primaryLight: "#7b2d8b",
+			primaryDark: "#c084fc",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
+			);
+		},
+	},
+	{
+		key: "fight_for_our_existence",
+		curated: true,
+		type: "podcast",
+		url: "https://content.rss.com/fight4ourexistence/placeholder.mp3",
+		rssFeedUrl: "https://media.rss.com/fight4ourexistence/feed.xml",
+		label: "the fight for our existence",
+		location: {
+			city: "distributed",
+			region: "indigenous rights",
+			country: "USA",
+		},
+		colors: {
+			primary: "#CD853F",
+			secondary: "#1C3A13",
+			accent: "#faf7f0",
+			primaryLight: "#8b5a2b",
+			primaryDark: "#dda15e",
+		},
+		parseMeta(data) {
+			const doc = data as Document;
+			return (
+				doc
+					.querySelector?.("channel > item:first-child > title")
+					?.textContent?.trim() ?? null
+			);
+		},
+	},
 ];
 
 /**

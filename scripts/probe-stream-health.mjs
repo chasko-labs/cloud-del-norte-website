@@ -40,10 +40,17 @@ const results = await Promise.all(
 		const t = setTimeout(() => ctrl.abort(), 8000);
 		try {
 			const res = await fetch(e.url, {
-				method: "HEAD",
+				method: "GET",
+				headers: { Range: "bytes=0-1024" },
 				signal: ctrl.signal,
 				redirect: "follow",
 			});
+			const reader = res.body?.getReader();
+			if (reader) {
+				await reader.read();
+				reader.cancel();
+			}
+			ctrl.abort();
 			return {
 				...e,
 				status: res.status,
