@@ -15,15 +15,15 @@ function renderWithLocale(locale: "us" | "mx") {
 }
 
 describe("FeaturedEvent", () => {
-	it("renders the FEATURED badge", () => {
+	it("renders the FEATURED badge (rizz copy: DON'T MISS)", () => {
 		renderWithLocale("us");
-		expect(screen.getByText("FEATURED")).toBeInTheDocument();
+		expect(screen.getByText("DON'T MISS")).toBeInTheDocument();
 	});
 
 	it("renders the event title with link to auth.clouddelnorte.org signup with rsvp return_to", () => {
 		renderWithLocale("us");
 		const link = screen.getByText(
-			"AWS Cloud del Norte UG — Community Happy Hour & Networking Night",
+			"Speakeasy Happy Hour — June Networking Night",
 		);
 		const expected =
 			"https://auth.clouddelnorte.org/signup/index.html?return_to=" +
