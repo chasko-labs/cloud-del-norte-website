@@ -681,9 +681,17 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	{
+		// wave 26b: regression repair. Url + RSS were correct since wave 24a
+		// (b223a054 swapped feed.syntax.fm/rss → traffic.megaphone.fm), but
+		// playback failed because traffic.megaphone.fm 302-redirects to
+		// dcs-cached.megaphone.fm / dcs-spotify.megaphone.fm — neither host
+		// was covered by media-src CSP. Wave 26b adds https://*.megaphone.fm
+		// to media-src + connect-src, restoring playback. Url bumped to the
+		// current latest enclosure (FSI1805655428.mp3) for cold-start; runtime
+		// rssAudioUrl override picks up newer episodes automatically.
 		key: "syntax_fm",
 		type: "podcast",
-		url: "https://traffic.megaphone.fm/FSI9958347805.mp3",
+		url: "https://traffic.megaphone.fm/FSI1805655428.mp3",
 		rssFeedUrl: "https://feeds.megaphone.fm/FSI1483080183",
 		label: "syntax.fm",
 		location: { city: "distributed", region: "web dev", country: "global" },
@@ -894,6 +902,11 @@ export const STREAMS: StreamDef[] = [
 		// curated: surfaces AWS LATAM podcast at position 0 sometimes. Audio (media-src)
 		// + RSS title refresh (connect-src) both allowed for rss.art19.com after Wave 22
 		// CSP refresh. parseMeta refreshes the latest episode title at runtime.
+		// wave 26b: re-verified 2026-05-18 — RSS reachable (200, ACAO: * with Origin
+		// header), latest enclosure dcdecbda-... matches the hardcoded url, audio
+		// plays directly from rss.art19.com (no redirect chain). If a future report
+		// of "doesn't play" recurs, suspect transient art19 outage rather than a
+		// stale url; the runtime rssAudioUrl override auto-refreshes per station change.
 		key: "onda_aws",
 		curated: true,
 		type: "podcast",
@@ -919,10 +932,16 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	{
+		// wave 26b: replaced placeholder mp3 with first enclosure URL pulled
+		// from feeds.captivate.fm/writing-on-the-wall on 2026-05-18. captivate
+		// returns Access-Control-Allow-Origin: * on both the RSS feed and the
+		// podcasts.captivate.fm/media CDN so runtime parseMeta + audio playback
+		// both work without a proxy. url updates dynamically via rssAudioUrl on
+		// station change; this hardcoded value is the cold-start fallback.
 		key: "writing_on_the_wall",
 		curated: true,
 		type: "podcast",
-		url: "https://podcasts.captivate.fm/media/placeholder.mp3",
+		url: "https://podcasts.captivate.fm/media/e6669b29-0d10-4ff3-9d67-b802b29f4850/WOTW-Jan-28-2025.mp3",
 		rssFeedUrl: "https://feeds.captivate.fm/writing-on-the-wall/",
 		label: "writing on the wall",
 		location: { city: "Mescalero", region: "New Mexico", country: "USA" },
@@ -943,12 +962,22 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	{
+		// wave 26b: replaced wave-24a placeholder URL+RSS with canonical Omny
+		// Studio feed discovered via Apple iTunes lookup (id=1677011949 →
+		// feedUrl). The KEXP podcasts page only links to Apple/Spotify/PCA so
+		// the RSS URL had to be resolved out-of-band. RSS feed has Access-
+		// Control-Allow-Origin: * so corsBlocked is no longer needed; runtime
+		// parseMeta works directly. url is the latest "El Sonido: Cancioneros"
+		// enclosure (Cypress Hill, 2026-05-18); refreshes via rssAudioUrl on
+		// station change. The audio mp3 redirects through
+		// kexp-podcast.streamguys1.com — added to media-src CSP so the
+		// redirect target plays.
 		key: "el_sonido_kexp",
-		corsBlocked: true,
+		curated: true,
 		type: "podcast",
-		url: "https://traffic.omny.fm/d/clips/placeholder.mp3",
+		url: "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/509ca84e-787b-4abc-9e28-b44a00009667/audio.mp3",
 		rssFeedUrl:
-			"https://www.omnycontent.com/d/playlist/bad5d079.../podcast.rss",
+			"https://www.omnycontent.com/d/playlist/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/9ed4d2cd-fdc6-4cff-88a0-afbf01777950/podcast.rss",
 		label: "el sonido (kexp)",
 		location: { city: "Seattle", region: "Washington", country: "USA" },
 		colors: {
@@ -968,10 +997,18 @@ export const STREAMS: StreamDef[] = [
 		},
 	},
 	{
+		// wave 26b: replaced wave-24a placeholder URL with first enclosure
+		// pulled from media.rss.com/fight4ourexistence/feed.xml on 2026-05-18
+		// ("Her Spirit Lives: Bernadette Smith on Justice for Nicole Smith").
+		// The mp3 chain redirects content.rss.com → rsscom.pdn.tritondigital.com
+		// (signed CDN URL); both hosts are already in CSP media-src from
+		// wave 24a. RSS feed returns Access-Control-Allow-Origin: * when
+		// requested with an Origin header (Vary: Origin), so runtime parseMeta
+		// + dynamic url rotation via rssAudioUrl both work.
 		key: "fight_for_our_existence",
 		curated: true,
 		type: "podcast",
-		url: "https://content.rss.com/fight4ourexistence/placeholder.mp3",
+		url: "https://content.rss.com/episodes/126551/2820809/fight4ourexistence/2026_05_15_06_55_58_5a8d17f3-a3d8-4e29-9a63-6b240f7b833b.mp3",
 		rssFeedUrl: "https://media.rss.com/fight4ourexistence/feed.xml",
 		label: "the fight for our existence",
 		location: {
