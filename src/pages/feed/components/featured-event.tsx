@@ -39,7 +39,6 @@ export default function FeaturedEvent() {
 			>
 				<SpaceBetween size="s">
 					<Box
-						color="text-status-info"
 						fontWeight="bold"
 						fontSize="body-s"
 						className="feed-featured-event__badge"

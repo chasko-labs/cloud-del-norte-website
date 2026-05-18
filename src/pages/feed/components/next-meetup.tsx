@@ -221,7 +221,7 @@ export default function NextMeetup() {
 		if (locale === "mx") {
 			content = (
 				<SpaceBetween size="s">
-					<Box color="text-status-info" fontSize="body-s" fontWeight="bold">
+					<Box color="text-body-secondary" fontSize="body-s" fontWeight="bold">
 						{t("feedPage.pastMeetupBadge")}
 					</Box>
 					<Box fontWeight="bold" fontSize="heading-m">

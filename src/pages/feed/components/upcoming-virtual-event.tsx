@@ -41,7 +41,6 @@ export default function UpcomingVirtualEvent() {
 			>
 				<SpaceBetween size="s">
 					<Box
-						color="text-status-success"
 						fontWeight="bold"
 						fontSize="body-s"
 						className="feed-upcoming-virtual-event__badge"
