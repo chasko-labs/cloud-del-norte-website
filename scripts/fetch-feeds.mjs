@@ -56,6 +56,18 @@ const PODCAST_FEEDS = [
 		url: "https://letscast.fm/podcasts/rust-in-production-82281512/feed",
 	},
 	{ key: "onda_aws", url: "https://rss.art19.com/podcast-aws-latam" },
+	{
+		key: "writing_on_the_wall",
+		url: "https://feeds.captivate.fm/writing-on-the-wall/",
+	},
+	{
+		key: "el_sonido_kexp",
+		url: "https://www.omnycontent.com/d/playlist/bad5d079.../podcast.rss",
+	},
+	{
+		key: "fight_for_our_existence",
+		url: "https://media.rss.com/fight4ourexistence/feed.xml",
+	},
 ];
 
 const parser = new XMLParser({
