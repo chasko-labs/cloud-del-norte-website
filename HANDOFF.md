@@ -7,30 +7,49 @@
 
 ---
 
-## housekeeping 2026-05-18 16:25 UTC — dev parity + arch docs + multi-track in flight
+## housekeeping 2026-05-18 16:58 UTC — dev parity + arch docs + Stratia signoff + CSS polish (all shipped)
 
-Bryan: "dev.clouddelnorte.org is way behind clouddelnorte.org … be sure you've updated our stream architectures & technical documentation … on desktop some cards appear oddly because the info card doesn't adapt to its container leaving awkward weird white space / gaps & generally our card lighting / gradients / shaddows are really weak … extending babylon should be put on the backlog for after dev is up to date, the css stuff you can do in parallel … re 'your signoff' the 'your' there should be stratia not bryan."
+Bryan: "dev.clouddelnorte.org is way behind clouddelnorte.org … be sure you've updated our stream architectures & technical documentation … on desktop some cards appear oddly because the info card doesn't adapt to its container leaving awkward weird white space / gaps & generally our card lighting / gradients / shaddows are really weak, again check out the end credits of fiona scene the lighting around the elements on that are dope … extending babylon should be put on the backlog for after dev is up to date, the css stuff you can do in parallel … re 'your signoff' the 'your' there should be stratia not bryan."
 
 ### dev parity (closed)
 
 dev.clouddelnorte.org was 3 days stale (last-modified 2026-05-15T19:13Z). Brought to current via `bash scripts/deploy-manual.sh dev`:
-- new last-modified 2026-05-18T16:25:24Z
-- invalidation `IF2BKZUZTHPZVFLA9F4XHPZ76T`
+- 16:25 UTC: deployed Wave 23 main code → invalidation `IF2BKZUZTHPZVFLA9F4XHPZ76T`
+- 16:58 UTC: redeployed with chore/card-polish-2026-05-18 CSS → invalidation `I1QCPSXC32BR66QAOV41YJKCMD`
 - HTTP 200 verified
 
 Note: dev distribution `EEHVTUEQ97V0X` has **no response-headers-policy attached** — runs without CSP enforcement. Intentional for staging but means dev can't catch CSP regressions before production. Wave-25 candidate to attach a CSP that mirrors main.
 
 ### architecture documentation (shipped)
 
-`docs/streams-podcasts-architecture.md` (new, 293 lines): canonical reference covering subdomain map, StreamDef + RichMeta interfaces, shuffleOnce + curated discovery, parseMeta variants (icecast / NPR Composer / Zeno SSE / RSS), CSP architecture + 1784-char limit + sync mechanism, build-time fetch-feeds.mjs pipeline, stream health monitoring, resilience patterns shipped Waves 20-23, and what's queued for Wave 24.
+`docs/streams-podcasts-architecture.md` (new, 293 lines, commit 7763dff2 on main): canonical reference covering subdomain map, StreamDef + RichMeta interfaces, shuffleOnce + curated discovery, parseMeta variants (icecast / NPR Composer / Zeno SSE / RSS), CSP architecture + 1784-char limit + sync mechanism, build-time fetch-feeds.mjs pipeline, stream health monitoring, resilience patterns shipped Waves 20-23, and what's queued for Wave 24.
 
-### multi-track in flight
+### Stratia Wave 24 signoff (shipped on feature branch)
 
-| track | branch | dispatch |
-|---|---|---|
-| Wave 24 design signoff | feature/wave-24-radio-podcast-buildout | ghost-stratia-code-mapper reviewing `docs/wave-24-design.md` |
-| CSS card polish (gaps + lighting/gradients/shadows) | new chore branch | ghost-liora-css-repair |
-| Wave 24 implementation | feature/wave-24-radio-podcast-buildout | gated on Stratia signoff + Bryan answers to 7 open questions |
+`docs/wave-24-stratia-signoff.md` on `feature/wave-24-radio-podcast-buildout` (commit 33b3c804): 342-line architecture review.
+
+**Top-line verdict: APPROVED WITH CHANGES.**
+
+- 6 hard go/no-go items before sub-waves can proceed
+- 8 technical risks Liora missed (CSP ceiling, IndexedDB quota fragmentation, mid-download sign-out, multi-tab race, scroller/savePlayerState gap, SW absent, Triton signed URL expiry, CloudFront Function alternative)
+- 10 cross-cutting concerns surfaced (4 a11y, 2 security, 2 performance, 2 i18n)
+- Recommended answers to all 7 of Liora's open questions (defaults Bryan can accept or override)
+
+Sub-wave order revised: CSP profiling gate added inside 24a before podcast adds.
+
+### CSS card polish (shipped on chore branch + deployed to dev)
+
+`chore/card-polish-2026-05-18` branch (3 commits, deployed to https://dev.clouddelnorte.org/ for visual verification):
+
+- `be830b3d` — `style(cards): wave 23.5 polish — fix desktop whitespace + strengthen lighting/gradients/shadows (fiona-credits inspired)`
+  - `src/styles/tokens.css` — 5-layer shadow stack (close + medium + ambient depth), radial accent bloom on gradients (`radial-gradient(ellipse at 30% 0%, ...)`), dual-radius hover glow (inner 20px + outer 40px) inspired by fiona-bezel's 7-layer shadow stack
+  - `src/pages/feed/styles.css` — flex stretch on `.feed-grid__cell.cdn-card` so Cloudscape Container fills card height (fixes the desktop whitespace gap)
+- `ea62177f` — `chore(biome): pull biome fixes from feature branch` (organize imports + node: prefix + format — brings biome back to 0 errors)
+- `9138171c` — `chore: revert public/data/feeds.json transient artifact accidentally committed`
+
+Test gate after polish: 529 PASS / 0 FAIL. Biome: 0 errors / 447 warnings (baseline).
+
+PR-ready URL: https://github.com/chasko-labs/cloud-del-norte-website/pull/new/chore/card-polish-2026-05-18
 
 ### Babylon JS extension backlog (deferred to post-Wave-24)
 
@@ -45,6 +64,18 @@ Backlog ticket lives here in HANDOFF until decomposed into a wave. Sequence: shi
 ### corrections logged
 
 - "Liora signoff" was wrong in Wave 24 closeout messaging — should be **Stratia signoff** for architecture review. Adjusted dispatch pattern going forward: Liora is UX/CSS specialist (writes design docs + applies CSS fixes), **Stratia is the architecture reviewer / signoff authority** for design plans.
+
+### lessons logged
+
+- **Subagent dispatch overhead is real** — Bryan flagged that 88 minutes of agent handoff for a 5-minute mechanical CSP edit was the wrong tool. Going forward: pure infra/ JSON edits + AWS CLI calls within harald's scope are done directly. Reserve subagent dispatch for src/ source code + tests + design plans.
+- **Subagents may report "PENDING execution"** — Liora's CSS work was applied to disk but reported as "PENDING execution" because she didn't actually run the commit/push commands. Stratia returned her signoff content verbatim in the report but didn't write it to disk. Harald handles the write/commit/push in those cases. Future dispatch prompts should require explicit `git add` confirmation.
+- **`git add -A` is a footgun** — The biome cleanup commit on the chore branch picked up `public/data/feeds.json` (transient build artifact). Reverted via a follow-up commit, no force-push needed. Going forward: stage explicit file lists, never `-A`.
+
+### next session first actions
+
+1. Bryan reviews `docs/wave-24-stratia-signoff.md` + answers 6 go/no-go items + 7 open questions
+2. Bryan visually compares dev.clouddelnorte.org (with card polish) vs clouddelnorte.org (production) and decides merge/no-merge of `chore/card-polish-2026-05-18`
+3. After Bryan answers: harald dispatches Wave 24a (CSP profiling gate → 3 podcast adds + probe HEAD→GET fix)
 
 ---
 
