@@ -1,7 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import Badge from "@cloudscape-design/components/badge";
 import Box from "@cloudscape-design/components/box";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
@@ -84,7 +83,7 @@ export default function ArrowheadNews() {
 					className="feed-article-carousel__item"
 				>
 					<Box>
-						<Badge color="blue">{article.source}</Badge>{" "}
+						<span className="feed-arrowhead-source-tag">{article.source}</span>{" "}
 						<Box
 							color="text-status-inactive"
 							fontSize="body-s"

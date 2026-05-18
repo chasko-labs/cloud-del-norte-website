@@ -1042,3 +1042,29 @@
 	border-top: 1px solid var(--cdn-color-border);
 	margin-block: var(--cdn-space-lg, 24px);
 }
+
+/* --------------------------------------------------------------------------
+   Arrowhead Research Park — source tag (Arrowhead Center / NMSU Newsroom)
+   Replaces hideous Cloudscape <Badge color="blue"> with brand violet pill.
+   Light + dark mode parity, no !important needed because no Cloudscape
+   selector competes for this class.
+   -------------------------------------------------------------------------- */
+.feed-arrowhead-source-tag {
+	display: inline-block;
+	padding: 2px 10px;
+	border-radius: 999px;
+	background-color: rgba(90, 31, 138, 0.12);
+	border: 1px solid rgba(90, 31, 138, 0.35);
+	color: var(--cdn-purple, #5a1f8a);
+	font-size: var(--cdn-text-xs, 0.6875rem);
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	vertical-align: middle;
+}
+
+.awsui-dark-mode .feed-arrowhead-source-tag {
+	background-color: rgba(144, 96, 240, 0.18);
+	border-color: rgba(144, 96, 240, 0.5);
+	color: var(--cdn-lavender, #d7c7ee);
+}
