@@ -956,6 +956,33 @@
 	margin: 12px 0;
 }
 
+/* ---------- Upcoming virtual event card ---------- */
+
+.feed-upcoming-virtual-event {
+	border-left: 4px solid var(--cdn-aws-orange, #ff9900);
+}
+
+.feed-upcoming-virtual-event__badge {
+	display: inline-block;
+	padding: 4px 12px;
+	border-radius: 999px;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	background: rgba(255, 153, 0, 0.08);
+	border: 1px solid rgba(255, 153, 0, 0.3);
+}
+
+.feed-upcoming-virtual-event__image {
+	display: block;
+	width: 100%;
+	max-width: 600px;
+	height: auto;
+	aspect-ratio: 600 / 450;
+	object-fit: cover;
+	border-radius: var(--cdn-radius-md, 8px);
+	margin: 12px 0;
+}
+
 /* ---------- Next meetup card — stable height across loading/fallback/loaded ---------- */
 /* Reserve enough height for the loaded state (title + date + location + description)
    so the transition from loading does not shift the page layout. */

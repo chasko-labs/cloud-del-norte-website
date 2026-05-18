@@ -125,7 +125,14 @@
 		"featuredEventLocation": "Centro de El Paso, Texas",
 		"featuredEventDescription": "Acompáñanos para networking comunitario con comida, bebidas y conversación sobre AWS, carreras y el camino en la nube a través del borderplex.",
 		"featuredEventRsvp": "Registrarse en Meetup",
-		"featuredEventImageAlt": "Foto del evento comunitario AWS Cloud del Norte UG"
+		"featuredEventImageAlt": "Foto del evento comunitario AWS Cloud del Norte UG",
+		"upcomingVirtualEventHeader": "Próximo evento virtual AWS comunidad",
+		"upcomingVirtualEventBadge": "PRÓXIMO",
+		"upcomingVirtualEventTitle": "[En línea] Reunión Global de la Comunidad AWS #19",
+		"upcomingVirtualEventLocation": "Evento en línea — únete desde cualquier lugar",
+		"upcomingVirtualEventDescription": "Una reunión virtual global organizada por la comunidad AWS. Abierta a todos. Únete a la transmisión en vivo y conecta con builders de todo el mundo.",
+		"upcomingVirtualEventRsvp": "Registrarse en Meetup",
+		"upcomingVirtualEventImageAlt": "Banner del evento virtual Reunión Global de la Comunidad AWS"
 	},
 	"dashboardPage": {
 		"productionOverview": {

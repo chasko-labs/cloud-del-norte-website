@@ -125,7 +125,14 @@
 		"featuredEventLocation": "Downtown — El Paso, TX",
 		"featuredEventDescription": "Join us for community networking with food, drinks, and conversation about AWS, careers, and the cloud journey across the borderplex.",
 		"featuredEventRsvp": "RSVP on Meetup",
-		"featuredEventImageAlt": "AWS Cloud del Norte UG community event photo"
+		"featuredEventImageAlt": "AWS Cloud del Norte UG community event photo",
+		"upcomingVirtualEventHeader": "Upcoming virtual AWS community event",
+		"upcomingVirtualEventBadge": "UPCOMING",
+		"upcomingVirtualEventTitle": "[On-Line] AWS Global Community Gatherings #19",
+		"upcomingVirtualEventLocation": "Online event — join from anywhere",
+		"upcomingVirtualEventDescription": "A global virtual gathering hosted by the AWS community. Open to all. Join the live stream and connect with builders worldwide.",
+		"upcomingVirtualEventRsvp": "RSVP on Meetup",
+		"upcomingVirtualEventImageAlt": "AWS Global Community Gatherings virtual event banner"
 	},
 	"dashboardPage": {
 		"productionOverview": {

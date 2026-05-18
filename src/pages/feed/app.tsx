@@ -31,6 +31,7 @@ import AndresYoutubeLive from "./components/andres-youtube-live";
 import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
 import FeaturedEvent from "./components/featured-event";
+import UpcomingVirtualEvent from "./components/upcoming-virtual-event";
 import FeaturedVideoCard from "./components/featured-video-card";
 import { FeedAndmore, FeedAwsml } from "./components/feed-section";
 import NextMeetup from "./components/next-meetup";
@@ -270,6 +271,9 @@ function AppContent({
 			</div>
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<NextMeetup />
+			</div>
+			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
+				<UpcomingVirtualEvent />
 			</div>
 			<hr className="feed-section-divider" />
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
