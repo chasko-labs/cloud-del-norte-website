@@ -1,9 +1,57 @@
 # cloud del norte — handoff plan
 
-**date:** 2026-05-17  
+**date:** 2026-05-18  
 **branch:** main  
-**last commit:** 90386286 feat(feed): add AWS Community Builder women-in-tech video card (0PedFnnH_Ic)  
-**deploy:** verified 2026-05-17 23:57 UTC — main subdomain live with new featured-video card. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+**last commit:** 195c761a fix(chrome): wave 19 remove vinyl record ::before — was causing breadcrumb bump-down on mobile  
+**deploy:** verified 2026-05-18 00:13 UTC — all 3 subdomains live with vinyl regression removed. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-18 — Wave 19 (regression fix: vinyl record ::before pseudo)
+
+Bryan: "as if v 0.0.0143 may 17 1741 pm theres a funny artifact a record thats to the right of tthe hamburger and its causing the breadcrumbs to bump down"
+
+Wave 17 Track 3 (commit 664a9cfd) shipped the vinyl record icon via `[class*="awsui_breadcrumbs"]::before` — a 36×36 SVG pseudo-element with 8px right-margin. That injected 44px of horizontal space INTO the breadcrumb container, which on mobile pushed the breadcrumb text below the hamburger/info row. The placement was a misread of the original Wave 13 directive: "the breadcrumb should be big enough vertically for the records to fit in the same bar" — records were meant to fit IN THE BAR (chrome row), not INSIDE the breadcrumb container.
+
+| commit | description |
+|--------|-------------|
+| 195c761a | fix(chrome): wave 19 remove vinyl record ::before — was causing breadcrumb bump-down on mobile |
+
+### what shipped
+
+- Removed the entire vinyl block from `src/layouts/shell/styles.css` (31 lines deleted):
+  - `[class*="awsui_breadcrumbs"]::before` rule with vinyl SVG background
+  - `body.cdn-stream-playing [class*="awsui_breadcrumbs"]::before { animation: ... }` rule
+  - `@keyframes cdn-vinyl-spin`
+  - `@media (prefers-reduced-motion: reduce)` animation override
+- Kept intact: Wave 14's `body.cdn-scrolled` breadcrumb opacity-fade rule
+- Kept intact: Wave 17's `@media (min-width: 1024px) [class*="awsui_tools-toggle_"] { margin-top: 5px }` A3 desktop alignment
+- `body.cdn-stream-playing` class itself still drives the audio-reactive sigil (Wave 7) on the player widget — only its breadcrumb scoping was removed
+
+### deploy
+
+- main: invalidation `IEC8E8MPXPAYHNNLJLSFE34B9P`, last-modified 2026-05-18T00:10:32Z
+- awsug: invalidation `IE3LP42VSRA19EBO54KJ34WXIU`, last-modified 2026-05-18T00:11:43Z
+- auth: invalidation `ID9F587VCL2CQAEDVKKGNYE5AD`, last-modified 2026-05-18T00:13:16Z
+
+### lessons learned
+
+- "Records should fit IN the bar" is ambiguous between (a) inside a specific element vs (b) within the chrome row alongside other elements. Wave 17 picked (a) and shipped a regression. Future visual placements involving multi-element chrome rows: prefer screenshot-first dispatch (Wave 16 pattern) over guessing.
+- A pseudo-element on a flex/inline-block child injects horizontal space into its container. Cloudscape's breadcrumb container is sized to fit its content; adding 44px of pseudo content overflows on narrow viewports and forces wrapping.
+- Quick rollback is the right move when a feature ships a layout regression. Don't try to "fix the placement" on the fly without screenshot evidence — remove + ask Bryan where it should live, if anywhere.
+- Same-day Wave 17 → Wave 19: 6.5 hours from ship to roll-back. Verifier didn't catch it because Wave 17's verifier reported PASS on the vinyl rendering at viewports tested, but didn't measure the breadcrumb's horizontal overflow specifically.
+
+### items closed this wave
+
+- Bryan's bug report: "funny artifact a record thats to the right of tthe hamburger and its causing the breadcrumbs to bump down"
+
+### follow-ups (next session candidates)
+
+- **Records-in-breadcrumb placement (re-do, if Bryan still wants):** if the records concept is still desired, screenshot-first dispatch with Liora to design a placement that's NOT inside the breadcrumb container. Options: (a) separate flex sibling in the chrome row, (b) attached to the player widget, (c) decorative element positioned absolutely. Leave for Bryan to re-request.
+- Wave 17 first-action carry-over: add `?debug-passkey=1` diagnostic instrumentation per Track 5 audit spec
+- 1 remaining test failure: auth/callback timeout flake (pre-existing)
+- Real-device tests for Bryan: #185 passkey on Pixel 9 + #189 verification methods enrollment
+- Out of CDN PO scope: #157 Woodpecker recovery, #201 v3.14.x upgrade
 
 ---
 
