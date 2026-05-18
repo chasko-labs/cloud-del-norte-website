@@ -604,6 +604,53 @@ export const STREAMS: StreamDef[] = [
 			return t;
 		},
 	},
+	{
+		key: "radio_unam_961",
+		url: "https://tv.radiohosting.online:9484/stream",
+		label: "radio unam 96.1",
+		metaUrl: "https://tv.radiohosting.online:9484/status-json.xsl",
+		donateUrl: undefined, // public university radio, no donation channel
+		scheduleUrl: "https://www.radio.unam.mx/programacion/",
+		location: {
+			city: "Ciudad de México",
+			region: "Ciudad de México",
+			country: "México",
+		},
+		colors: {
+			// UNAM institutional palette: gold (PMS 7406) + dark institutional blue
+			// gold #FFCC00 already used by radio_udg_lagos — differentiate UNAM with a darker primary
+			primary: "#003366", // UNAM institutional blue
+			secondary: "#FFD700", // UNAM gold accent
+			accent: "#1a1a1a",
+			primaryLight: "#003366", // dark on cream is fine
+			primaryDark: "#5b8edb", // brighten on navy bg
+		},
+		parseMeta(data) {
+			// icecast status-json.xsl shape — same as krux + ibero_909
+			const d = data as {
+				icestats?: { source?: { title?: string } | Array<{ title?: string }> };
+			};
+			const src = d?.icestats?.source;
+			const s = Array.isArray(src) ? src[0] : src;
+			return s?.title ?? null;
+		},
+		parseMetaRich(data) {
+			// surface listeners count alongside title
+			const d = data as {
+				icestats?: {
+					source?:
+						| { title?: string; listeners?: number }
+						| Array<{ title?: string; listeners?: number }>;
+				};
+			};
+			const src = d?.icestats?.source;
+			const s = Array.isArray(src) ? src[0] : src;
+			if (!s) return null;
+			const out: RichMeta = { title: s.title ?? null };
+			if (typeof s.listeners === "number") return { ...out, listeners: s.listeners };
+			return out;
+		},
+	},
 	// ── Podcasts ────────────────────────────────────────────────────────────
 	// url = direct episode mp3 (playable immediately, no RSS fetch needed).
 	// rssFeedUrl = RSS feed for background title refresh (browser CORS may block;
@@ -843,10 +890,9 @@ export const STREAMS: StreamDef[] = [
 		// AWS LATAM podcast (Podcast AWS LATAM / Onda AWS) — hosted on Art19.
 		// RSS: https://rss.art19.com/podcast-aws-latam
 		// Audio served from rss.art19.com — added to CSP connect-src + media-src.
-		// curated: surfaces AWS LATAM podcast at position 0 sometimes; CSP allows
-		// rss.art19.com in media-src so audio plays. RSS title refresh is build-time
-		// cached via podcast-episodes.json since CSP doesn't allow connect-src to
-		// rss.art19.com (yet — Wave 22 adds it).
+		// curated: surfaces AWS LATAM podcast at position 0 sometimes. Audio (media-src)
+		// + RSS title refresh (connect-src) both allowed for rss.art19.com after Wave 22
+		// CSP refresh. parseMeta refreshes the latest episode title at runtime.
 		key: "onda_aws",
 		curated: true,
 		type: "podcast",

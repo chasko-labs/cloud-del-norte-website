@@ -1,0 +1,33 @@
+name: stream-health
+on:
+  schedule:
+    - cron: '0 14 * * 1' # Mondays 14:00 UTC = 8am MT
+  workflow_dispatch:
+permissions:
+  issues: write
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      - name: probe streams
+        id: probe
+        run: node scripts/probe-stream-health.mjs
+        continue-on-error: true
+      - name: open issue on failure
+        if: steps.probe.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const date = new Date().toISOString().slice(0, 10);
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `[stream-health] one or more stations broken (${date})`,
+              body: 'Weekly synthetic probe found broken stream URL(s). See run logs: ' +
+                `https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              labels: ['bug', 'stream-health'],
+            });

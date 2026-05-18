@@ -3,22 +3,22 @@
  * verify-phantom-nav-fix.mjs — Playwright verification for #162
  * Checks: access-denied card on /admin + 'create meeting' link hidden for non-moderators.
  */
-import { createRequire } from "module";
+import { createRequire } from "node:module";
 
 const require = createRequire(
 	"/home/bryanchasko/.nvm/versions/node/v24.14.0/lib/node_modules/playwright/",
 );
 const { chromium } = require("playwright");
 
-import { mkdirSync, writeFileSync } from "fs";
-import { dirname, join } from "path";
-import { fileURLToPath } from "url";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUTPUT_DIR = join(__dirname, "output");
 mkdirSync(OUTPUT_DIR, { recursive: true });
 
-const TS = new Date().toISOString().replace(/[-:]/g, "").slice(0, 13) + "Z";
+const TS = `${new Date().toISOString().replace(/[-:]/g, "").slice(0, 13)}Z`;
 const AUTH_URL = "https://auth.clouddelnorte.org/login/index.html";
 const AWSUG_URL = "https://awsug.clouddelnorte.org";
 const ADMIN_URL = "https://awsug.clouddelnorte.org/admin/index.html";
@@ -143,7 +143,6 @@ async function run() {
 		);
 
 		// Check the full page HTML to understand what's happening
-		const fullHtml = await page.content();
 		const rootContent = await page
 			.$eval("#root", (el) => el.innerHTML)
 			.catch(() => "NO_ROOT");
