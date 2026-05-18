@@ -14,7 +14,8 @@ import { getEvent, spotsRemaining } from "../../../lib/rsvp";
 
 const EVENT_ID = "happy-hour-2026-06-03";
 const EVENT_IMAGE = "/events/featured-2026-06-03.webp";
-const RSVP_PAGE_URL = `/rsvp/index.html?event=${EVENT_ID}`;
+const RSVP_RETURN_PATH = `/rsvp/?event=${EVENT_ID}`;
+const RSVP_PAGE_URL = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent(RSVP_RETURN_PATH)}`;
 
 export default function FeaturedEvent() {
 	const { t, locale } = useTranslation();

@@ -55,7 +55,6 @@ export default defineConfig({
 					__dirname,
 					"./src/pages/meeting-public/index.html",
 				),
-				rsvp: resolve(__dirname, "./src/pages/rsvp/index.html"),
 			},
 			output: {
 				// split BabylonJS + Cloudscape into long-lived named chunks so
