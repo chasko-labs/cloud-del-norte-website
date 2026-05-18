@@ -1,6 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import Spinner from "@cloudscape-design/components/spinner";
 import type React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
@@ -62,6 +63,7 @@ function PersistentPlayerBar({
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const [blocked, setBlocked] = useState(false);
 	const [playing, setPlaying] = useState(false);
+	const [connecting, setConnecting] = useState(false);
 	const [nowPlaying, setNowPlaying] = useState<string | null>(null);
 	const [rssAudioUrl, setRssAudioUrl] = useState<string | null>(null);
 	const [streamHealth, setStreamHealth] = useState<StreamHealth>("ok");
@@ -179,6 +181,7 @@ function PersistentPlayerBar({
 	useEffect(() => {
 		setNowPlaying(null);
 		setStreamHealth("ok");
+		setConnecting(false);
 		retryCountRef.current = 0;
 		hasConnectedRef.current = false;
 		if (errorTimerRef.current !== null) {
@@ -254,6 +257,7 @@ function PersistentPlayerBar({
 			}
 			// don't clear retryTimerRef — let the in-flight retry complete
 			setStreamHealth("ok");
+			setConnecting(false);
 		};
 
 		audio.addEventListener("error", tripError);
@@ -284,6 +288,7 @@ function PersistentPlayerBar({
 			document.body.classList.add("cdn-stream-playing");
 			if (isPodcast) document.body.classList.add("cdn-podcast-playing");
 			setPlaying(true);
+			setConnecting(false);
 			onPlayStateChangeRef.current?.(true);
 		};
 		const onStopEvt = () => {
@@ -422,7 +427,11 @@ function PersistentPlayerBar({
 	const play = useCallback(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
-		audio.play().catch(() => setBlocked(true));
+		setConnecting(true);
+		audio.play().catch(() => {
+			setConnecting(false);
+			setBlocked(true);
+		});
 	}, []);
 
 	const pause = useCallback(() => {
@@ -645,11 +654,22 @@ function PersistentPlayerBar({
 					</span>
 				) : showRetryingUI ? (
 					<span className="cdn-pp__sub" role="status" aria-live="polite">
+						<Spinner size="normal" />
 						<span
 							className="cdn-pp__eyebrow cdn-pp__eyebrow--warn"
 							aria-hidden="true"
 						>
-							{t("persistentPlayer.streamErrorRetrying")}
+							{t("persistentPlayer.retrying")}
+						</span>
+					</span>
+				) : connecting ? (
+					<span className="cdn-pp__sub" role="status" aria-live="polite">
+						<Spinner size="normal" />
+						<span
+							className="cdn-pp__eyebrow cdn-pp__eyebrow--warn"
+							aria-hidden="true"
+						>
+							{t("persistentPlayer.connecting")}
 						</span>
 					</span>
 				) : (
@@ -785,6 +805,7 @@ function PersistentPlayerBar({
 					className="cdn-pp__btn cdn-pp__btn--play"
 					onClick={play}
 					aria-label="play"
+					aria-disabled={connecting ? "true" : undefined}
 				>
 					{isPodcast ? <PodcastPlayIcon /> : <>&#9654;</>}
 				</button>

@@ -953,3 +953,16 @@ body.cdn-stream-playing .cdn-pp__sigil {
 		height: 16px;
 	}
 }
+
+/* Wave 24b — connecting spinner inside cdn-pp__sub */
+.cdn-pp__sub [class*="awsui_spinner"] {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-pp__sub [class*="awsui_spinner"] {
+		display: none;
+	}
+}

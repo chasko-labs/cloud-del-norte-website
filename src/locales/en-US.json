@@ -965,7 +965,10 @@
 		"streamErrorRetrying": "stream hiccup — retrying",
 		"streamErrorPersistent": "this station's stream is having a moment — try again or skip to another station",
 		"streamErrorRetryButton": "try again",
-		"streamErrorAdvancing": "station unavailable, advancing..."
+		"streamErrorAdvancing": "station unavailable, advancing...",
+		"connecting": "connecting",
+		"retrying": "retrying",
+		"connectingAria": "connecting to stream"
 	},
 	"rsvp": {
 		"breadcrumb": "RSVP",
