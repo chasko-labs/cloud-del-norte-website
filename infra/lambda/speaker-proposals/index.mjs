@@ -72,7 +72,7 @@ function hashIp(ip) {
 
 function decodeJwtSub(authHeader) {
 	try {
-		if (!authHeader || !authHeader.startsWith("Bearer ")) return null;
+		if (!authHeader?.startsWith("Bearer ")) return null;
 		const token = authHeader.slice(7);
 		const parts = token.split(".");
 		if (parts.length < 2) return null;
