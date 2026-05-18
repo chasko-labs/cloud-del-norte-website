@@ -42,6 +42,7 @@ import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
 import UpcomingVirtualEvent from "./components/upcoming-virtual-event";
 import YoutubeCarousel from "./components/youtube-carousel";
 import YouTubeChannelCarousel from "./components/youtube-channel-carousel";
+import YouTubeShortsCarousel from "./components/youtube-shorts-carousel";
 import "./styles.css";
 
 // builder center top-4 is rendered as its own pinned section (between two hr
@@ -58,7 +59,8 @@ type SectionKey =
 	| "arrowhead"
 	| "vbrownbag"
 	| "theZacsShow"
-	| "featuredVideo";
+	| "featuredVideo"
+	| "youtubeShorts";
 
 // priority order for live hero — first live item wins the top slot
 const LIVE_PRIORITY = [
@@ -82,6 +84,7 @@ const SECTION_KEYS: SectionKey[] = [
 	"vbrownbag",
 	"theZacsShow",
 	"featuredVideo",
+	"youtubeShorts",
 ];
 
 const VBROWNBAG_IDS = [
@@ -213,6 +216,7 @@ function AppContent({
 					thumbnailUrl="https://i.ytimg.com/vi/0PedFnnH_Ic/hqdefault.jpg"
 				/>
 			),
+			youtubeShorts: <YouTubeShortsCarousel />,
 		}),
 		[
 			markLive,

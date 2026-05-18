@@ -1,0 +1,160 @@
+/* ==========================================================================
+   Wave 24e — Mescalero YouTube Shorts carousel
+   Horizontal scroll-snap thumbnail strip with play overlay + Cloudscape Modal
+   embed. Uses CDN tokens for parity with surrounding feed cards. Light/dark
+   parity via :root:not(.awsui-dark-mode) / .awsui-dark-mode selectors,
+   matching the pattern in src/pages/feed/styles.css.
+   ========================================================================== */
+
+.feed-shorts-carousel {
+	position: relative;
+	width: 100%;
+}
+
+.feed-shorts-carousel__track {
+	display: flex;
+	gap: var(--cdn-space-md);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	scrollbar-width: thin;
+	-webkit-overflow-scrolling: touch;
+}
+
+.feed-shorts-carousel__item {
+	flex: 0 0 auto;
+	scroll-snap-align: start;
+}
+
+.feed-shorts-carousel__thumb {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--cdn-space-xs);
+	width: 200px;
+	padding: 0;
+	background: transparent;
+	border: 1px solid var(--cdn-color-border);
+	border-radius: var(--cdn-radius-md);
+	cursor: pointer;
+	color: inherit;
+	text-align: left;
+	overflow: hidden;
+}
+
+.feed-shorts-carousel__thumb:focus-visible {
+	outline: 2px solid var(--cdn-violet, #5a1f8a);
+	outline-offset: 2px;
+}
+
+.feed-shorts-carousel__thumb-img {
+	display: block;
+	width: 100%;
+	height: 112px;
+	object-fit: cover;
+	border-bottom: 1px solid var(--cdn-color-border);
+	transition:
+		transform 200ms ease,
+		opacity 200ms ease;
+}
+
+.feed-shorts-carousel__play-overlay {
+	position: absolute;
+	top: 38px;
+	left: 50%;
+	transform: translate(-50%, 0);
+	width: 36px;
+	height: 36px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: rgba(0, 0, 0, 0.55);
+	color: #fff;
+	font-size: 16px;
+	pointer-events: none;
+	transition:
+		background 200ms ease,
+		transform 200ms ease;
+}
+
+.feed-shorts-carousel__title {
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	padding: var(--cdn-space-xs) var(--cdn-space-sm) var(--cdn-space-sm);
+	font-size: var(--cdn-text-sm);
+	color: var(--cdn-color-text);
+	line-height: 1.3;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.feed-shorts-carousel__thumb:hover .feed-shorts-carousel__thumb-img,
+	.feed-shorts-carousel__thumb:focus-visible .feed-shorts-carousel__thumb-img {
+		transform: scale(1.03);
+	}
+
+	.feed-shorts-carousel__thumb:hover .feed-shorts-carousel__play-overlay,
+	.feed-shorts-carousel__thumb:focus-visible
+		.feed-shorts-carousel__play-overlay {
+		background: rgba(0, 0, 0, 0.75);
+		transform: translate(-50%, 0) scale(1.1);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.feed-shorts-carousel__thumb-img,
+	.feed-shorts-carousel__play-overlay {
+		transition: none;
+	}
+}
+
+/* Light-mode (default) — surface tint over the cream card background. */
+:root:not(.awsui-dark-mode) .feed-shorts-carousel__thumb {
+	background: rgba(255, 255, 255, 0.4);
+}
+
+:root:not(.awsui-dark-mode) .feed-shorts-carousel__thumb:hover,
+:root:not(.awsui-dark-mode) .feed-shorts-carousel__thumb:focus-visible {
+	background: rgba(255, 255, 255, 0.7);
+}
+
+/* Dark-mode parity — inverse tint, brighter title text, lighter borders. */
+.awsui-dark-mode .feed-shorts-carousel__thumb {
+	background: rgba(255, 255, 255, 0.04);
+	border-color: rgba(255, 255, 255, 0.18);
+}
+
+.awsui-dark-mode .feed-shorts-carousel__thumb:hover,
+.awsui-dark-mode .feed-shorts-carousel__thumb:focus-visible {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.awsui-dark-mode .feed-shorts-carousel__title {
+	color: rgba(255, 255, 255, 0.92);
+}
+
+.awsui-dark-mode .feed-shorts-carousel__thumb-img {
+	border-bottom-color: rgba(255, 255, 255, 0.18);
+}
+
+/* Modal iframe wrapper — vertical 9:16 mirrors a Short's native aspect. */
+.feed-shorts-carousel__modal-frame {
+	position: relative;
+	width: 100%;
+	max-width: 360px;
+	margin: 0 auto;
+	aspect-ratio: 9 / 16;
+}
+
+.feed-shorts-carousel__modal-frame iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+	border-radius: var(--cdn-radius-md);
+}
