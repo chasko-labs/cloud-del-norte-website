@@ -53,9 +53,6 @@ describe("FeaturedEvent", () => {
 			"AWS Cloud del Norte UG community event photo",
 		);
 		expect(img).toHaveAttribute("loading", "lazy");
-		expect(img).toHaveAttribute(
-			"src",
-			"https://secure.meetupstatic.com/photos/event/c/8/5/3/600_534291283.jpeg",
-		);
+		expect(img).toHaveAttribute("src", "/events/featured-2026-06-03.webp");
 	});
 });
