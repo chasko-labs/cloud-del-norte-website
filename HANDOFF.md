@@ -2,8 +2,97 @@
 
 **date:** 2026-05-18  
 **branch:** main  
-**last commit:** 8f1c6542 perf(3d): wave 21 detect software WebGL + skip Babylon scenes, pause render loop on visibility hidden  
-**deploy:** verified 2026-05-18 01:54 UTC — all 3 subdomains live with software-WebGL detection + static fallback + visibility pause. Test gate 513 PASS / 0 FAIL. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+**last commit:** f63146bb fix(streams): wave 22 — replace dead zeno mount + curated onda_aws + csp rss.art19.com + auto-advance on failure  
+**deploy:** verified 2026-05-18 12:31 UTC — all 3 subdomains live with stream regression fix + CSP refresh + auto-advance UX. Test gate 524 PASS / 0 FAIL. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-18 — Wave 22 (radio + podcast regressions: Zeno mount dead, AWS LATAM never curated, CSP gap)
+
+Bryan: "whats our list of mexcian stations I currently only see radio lagos and it neve rplays for me / we used to have multiple stations that all played - I've also never seen our aws latm podcast work"
+
+Two regressions diagnosed:
+
+**Regression 1 — radio_udg_lagos broken.** The Zeno.fm mount `8hage4z92hhvv` started returning HTTP 401 from the CDN. The api.zeno.fm getNowPlaying endpoint returns empty `{"message":""}` for that mount — looks expired/revoked. Bryan's player got stuck on the failed state, and since the player shows ONE station at a time, he didn't realize ibero_909 + concepto_radial (the other 2 Mexican stations) were still in the carousel and working.
+
+**Regression 2 — onda_aws never curated.** AWS LATAM podcast (Onda AWS) had `curated` absent from its StreamDef. The `streams-order.ts` shuffle guarantees position 0 from the curated subset only — onda_aws never landed there, so Bryan never encountered it on first-load. He'd have to actively skip through the shuffled list to discover it, which without a station picker grid he didn't do. Plus `rss.art19.com` was in the CSP media-src (so audio loads) but missing from connect-src (so live RSS title refresh was blocked — falls back to build-time cache, but the title would never update).
+
+| commit | description |
+|--------|-------------|
+| f63146bb | fix(streams): wave 22 — replace dead zeno mount + curated onda_aws + csp rss.art19.com + auto-advance on failure |
+
+### what shipped (10 files, +195/-10)
+
+**Streams (`src/lib/streams.ts`):**
+- `radio_udg_lagos` marked `hidden: true` with explanatory comment ("Zeno mount 8hage4z92hhvv returns HTTP 401 — mount expired/revoked. ibero_909 + concepto_radial remain as the active Mexican stations. station auto-recovers when hidden is removed."). Solan probed alternate Zeno URLs + the api.zeno.fm getNowPlaying endpoint — none worked. Decision was to hide rather than ship a guessed replacement URL.
+- `onda_aws` gained `curated: true`. Comment: "surfaces AWS LATAM podcast at position 0 sometimes; CSP allows rss.art19.com in media-src so audio plays. RSS title refresh is build-time cached via podcast-episodes.json since CSP doesn't allow connect-src to rss.art19.com (yet)." (Note: connect-src now DOES include rss.art19.com after Track C; comment outdated and should be removed in Wave 23.)
+
+**CSP (`infra/cloudfront-security-headers.{main,awsug,json}.json`):**
+- Added `https://rss.art19.com` to `connect-src` directive in all 3 files. Was previously only in `media-src`.
+- Live RSS title refresh for onda_aws now possible (no longer falls back to build-time cache).
+- Orin's CSP refresh detected DRIFT in the main + awsug response-headers-policy IDs — neither matched the JSON file. Both updated via `aws cloudfront update-response-headers-policy` + new invalidations issued. auth was already in sync.
+- Verified post-deploy: `curl -sI https://clouddelnorte.org/ | grep -i csp` shows `rss.art19.com` appearing twice (connect-src + media-src). Same on awsug.
+
+**Auto-advance UX (`src/components/persistent-player/index.tsx`):**
+- New effect: when `streamHealth` becomes `'failed'`, auto-skip to next station after 2000ms grace via `onSkipStation(1)`. Cleanup-safe (clears timer on unmount + station-change).
+- Brief Cloudscape Box during the 2s grace shows "station unavailable, advancing..." in en-US + "estación no disponible, avanzando..." in es-MX (i18n keys added).
+- New test file `src/components/persistent-player/__tests__/auto-advance.test.ts` (+117 lines) covering: triggers after 2s on failed, doesn't trigger on retrying, cleans up timer on station-change.
+
+**Build-time podcast cache (`public/data/podcast-episodes.json`):**
+- Refreshed via `node scripts/fetch-feeds.mjs` — onda_aws episode metadata current.
+
+**Tests added (+11 new):**
+- `src/lib/__tests__/streams.test.ts` extended: verify onda_aws is curated, verify radio_udg_lagos is hidden, Mexican stations count = 2 visible (ibero_909 + concepto_radial), Mexican stations include `México` country accent.
+- `src/components/persistent-player/__tests__/auto-advance.test.ts` (new) — auto-advance lifecycle + cleanup.
+
+### deploy
+
+- Frontend deployed to all 3 subdomains via `bash scripts/deploy-manual.sh main|awsug|auth`:
+  - main: invalidation `I459188GCIHGW9O3RJP16EKNM2`, last-modified 2026-05-18T12:30:14Z
+  - awsug: invalidation `IAJUQ4G5JL1VHRKPFYEYEFDW6H`, last-modified 12:30:51Z
+  - auth: invalidation `I9H0SOQQUB290ESK329AX5H74D`, last-modified 12:31:34Z
+- CloudFront response-headers-policy refresh (CSP changes) — DRIFT detected + applied:
+  - main policy `95055f76-9d40-424a-9453-b82edc124680` → updated, invalidation `IJA4JDL7YK9CFALMN9TC7PAQ5`
+  - awsug policy `ef81b3a7-9f54-4871-9d45-0864456d843b` → updated, invalidation `I7GAX0I1XAZPXW1SGKP9FBARXH`
+  - auth policy `6e5c7c27-39d3-4a6e-8a89-58a70396c5ed` → already in sync, no update needed
+
+### dispatch performance
+
+- 2-stage DAG (single solan + orin closeout). No recovery cycles.
+- Solan correctly chose to HIDE rather than guess a replacement URL — risk-aware judgment. Two Mexican stations remain working (ibero_909, concepto_radial). Bryan's "multiple stations" need is partially-but-not-fully restored.
+- Orin caught CSP response-headers-policy drift across 2 of 3 distributions. The CSP JSON file in git was newer than the actually-deployed policy. This drift had been silently masking the missing rss.art19.com — even prior CSP edits hadn't been pushed through to CloudFront. The drift detection + auto-update is now part of the deploy flow.
+- 11 new tests, gate now 524 PASS / 0 FAIL.
+
+### lessons learned
+
+- **Stream URLs rot. Plan for it.** Zeno.fm mounts can revoke at any time; Shoutcast/Icecast servers go offline. The auto-advance UX is now a structural defense — users never get stuck on a single failing station regardless of which one breaks. Pair this with periodic synthetic monitoring (CI cron probing each station's URL with HEAD curl + checking for 200) so we catch dead URLs before users do.
+- **CSP changes need a deploy mechanism, not just a JSON edit.** Editing `infra/cloudfront-security-headers.{*}.json` was previously assumed to flow through to CloudFront, but the response-headers-policy needs an explicit `aws cloudfront update-response-headers-policy` call. Drift accumulated. Wave 22 closed the loop with explicit drift detection in orin's deploy flow.
+- **`curated: true` is a discovery primitive.** The shuffle-once + position-0-curated pattern is great for trust ("first thing user sees is something we know works") but punishes non-curated stations from ever being discovered. Either add more stations to curated when they prove reliable, OR build a station-picker grid UI that surfaces the full carousel without forcing skip-by-skip discovery.
+- **Hide-instead-of-replace is conservative + correct.** Solan probed alternate Zeno URLs + Radio UNAM patterns + got nothing reliable from sandbox-curl context. Shipping a guessed URL would have introduced a new broken state. Hiding preserves the 2 working Mexican stations + the broken station can be re-enabled in 1 line when a working URL is found.
+- **Drift detection in CI is a deploy primitive.** Orin's "diff JSON file vs live CloudFront policy" check found a real divergence that had been silent. This pattern is reusable for any IaC: lambda config, IAM policy, S3 bucket policy.
+
+### items closed this wave
+
+- Bryan's directive: replaced dead radio_udg_lagos handling so player isn't stuck on it
+- Bryan's directive: AWS LATAM podcast now curated, will appear at position 0 some shuffles
+- CSP gap: rss.art19.com now in connect-src across all 3 distributions
+- Auto-advance prevents future stuck-on-failed scenarios
+
+### follow-ups (next session candidates)
+
+- **Wave 22.5 first action: find a 3rd working Mexican station.** Probe Radio UNAM 96.1, Radio Educación XEEP-AM 1060, OPUS 94.5, or local UDG sede streams to restore the "multiple Mexican stations" promise. Solan's earlier probes from sandbox curl-only context may have given false negatives — a real-browser CORS check might find a working station that's only blocked from headless probes.
+- **Wave 22.5 second action: clean up the outdated comment on onda_aws.** It says "RSS title refresh is build-time cached since CSP doesn't allow connect-src to rss.art19.com (yet)" — but we just added rss.art19.com to connect-src. Comment is now wrong.
+- **Wave 22.5 third action: clean up 2 pre-existing biome errors in `scripts/nova-act/verify-phantom-nav-fix.mjs`** flagged by orin during gates. Not from this wave; was masked by the prior 446 warnings baseline.
+- **Synthetic stream-health monitoring.** A CI cron (Woodpecker or GitHub Actions) that HEAD-checks each station URL weekly + alerts on non-200 would catch URL rot before users notice. Cheap, high-value.
+- **Station-picker grid UI.** Replace skip-by-skip discovery with a grid of all visible stations. Reduces dependence on `curated` flag for discoverability.
+- **Wave 23 (formerly Wave 22) Speakeasy bugs-list page**: Lambda GET /feedback/mine + new auth-gated awsug page consuming reporter-<prefix> labels from Wave 20. Still queued.
+- **Bryan real-device tests:**
+  - Wave 22 verify: load https://clouddelnorte.org/, confirm at least 2 Mexican stations visible in carousel + onda_aws appears at position 0 some page-loads (try 3-5 reloads)
+  - Wave 22 auto-advance verify: pick a deliberately bad URL (or simulate offline mid-play) + confirm auto-advance after 2s
+  - Wave 21 SwiftShader verify (carry-over): the machine that burned 10 cores
+  - Wave 20 sign-in flow: Pixel 9 bug submit with auth integration
+- **Wave 17 carry-over:** add `?debug-passkey=1` diagnostic instrumentation per Track 5 audit
+- **Out of CDN PO scope:** #157 Woodpecker recovery, #201 v3.14.x upgrade
 
 ---
 
