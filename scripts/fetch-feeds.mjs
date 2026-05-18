@@ -28,7 +28,7 @@ const FEEDS = [
 	{
 		key: "readysetcloud",
 		url: "https://www.readysetcloud.io/index.xml",
-		limit: 5,
+		limit: 10,
 	},
 ];
 
