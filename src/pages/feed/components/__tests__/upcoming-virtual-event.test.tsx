@@ -47,15 +47,28 @@ describe("UpcomingVirtualEvent", () => {
 		expect(btn).toHaveAttribute("target", "_blank");
 	});
 
-	it("renders the image with proper alt text and lazy loading", () => {
+	it("renders both light and dark image variants with proper alt text and lazy loading", () => {
 		renderWithLocale("us");
-		const img = screen.getByAltText(
+		const imgs = screen.getAllByAltText(
 			"AWS Global Community Gatherings virtual event banner",
 		);
-		expect(img).toHaveAttribute("loading", "lazy");
-		expect(img).toHaveAttribute(
+		expect(imgs).toHaveLength(2);
+		for (const img of imgs) {
+			expect(img).toHaveAttribute("loading", "lazy");
+		}
+		expect(imgs[0]).toHaveAttribute(
 			"src",
-			"https://secure.meetupstatic.com/photos/event/b/5/4/5/600_533746405.jpeg",
+			"/events/global-community-gatherings-light.webp",
+		);
+		expect(imgs[1]).toHaveAttribute(
+			"src",
+			"/events/global-community-gatherings-dark.webp",
+		);
+		expect(imgs[0].className).toContain(
+			"feed-upcoming-virtual-event__image--light",
+		);
+		expect(imgs[1].className).toContain(
+			"feed-upcoming-virtual-event__image--dark",
 		);
 	});
 });
