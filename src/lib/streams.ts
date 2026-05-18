@@ -549,9 +549,17 @@ export const STREAMS: StreamDef[] = [
 	},
 	{
 		key: "radio_udg_lagos",
+		// hidden: true — Zeno mount 8hage4z92hhvv returns HTTP 401 (mount expired/revoked).
+		// Wave 22 probe: alternate Zeno mounts (UNAM 0xrt7ehm9k8uv, OPUS ydtzts4h4kuuv)
+		// also return 401. No working replacement found within 5 probe attempts.
+		// ibero_909 + concepto_radial remain as the active Mexican stations.
+		// fallbackUrls preserves the dead mount so if Zeno re-issues the key
+		// the station auto-recovers when hidden is removed.
+		hidden: true,
 		// Zeno.fm CDN — base URL auto-redirects with JWT token per connection
 		url: "https://stream.zeno.fm/8hage4z92hhvv",
 		label: "radio udg lagos 104.7", // "lagos" disambiguates from main Guadalajara station
+		fallbackUrls: ["https://stream.zeno.fm/8hage4z92hhvv"],
 		// Zeno.fm exposes track metadata as Server-Sent Events (text/event-stream),
 		// not JSON polling. CORS open. Each event payload: {mount, streamTitle}.
 		// streamTitle may be " - " (placeholder) when a live show without inline
@@ -835,7 +843,12 @@ export const STREAMS: StreamDef[] = [
 		// AWS LATAM podcast (Podcast AWS LATAM / Onda AWS) — hosted on Art19.
 		// RSS: https://rss.art19.com/podcast-aws-latam
 		// Audio served from rss.art19.com — added to CSP connect-src + media-src.
+		// curated: surfaces AWS LATAM podcast at position 0 sometimes; CSP allows
+		// rss.art19.com in media-src so audio plays. RSS title refresh is build-time
+		// cached via podcast-episodes.json since CSP doesn't allow connect-src to
+		// rss.art19.com (yet — Wave 22 adds it).
 		key: "onda_aws",
+		curated: true,
 		type: "podcast",
 		url: "https://rss.art19.com/episodes/dcdecbda-f200-4c08-842e-40d9cf459dc5.mp3",
 		rssFeedUrl: "https://rss.art19.com/podcast-aws-latam",

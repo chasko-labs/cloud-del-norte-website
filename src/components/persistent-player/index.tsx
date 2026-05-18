@@ -191,6 +191,16 @@ function PersistentPlayerBar({
 		}
 	}, [state.stationKey]);
 
+	// auto-advance on persistent failure — when streamHealth reaches 'failed'
+	// (auto-retry exhausted), advance to the next station after a 2s grace
+	// period so the user is never permanently stuck. The 2s window lets them
+	// read the error state before the skip fires.
+	useEffect(() => {
+		if (streamHealth !== "failed") return;
+		const timer = window.setTimeout(() => onSkipStation(1), 2000);
+		return () => window.clearTimeout(timer);
+	}, [streamHealth, onSkipStation]);
+
 	// stream health monitor — listens for error / stalled / abort on the audio
 	// element. Brief network blips fire and clear quickly, so we only surface
 	// UI when an error condition persists past STREAM_ERROR_THRESHOLD_MS. Once
@@ -630,7 +640,7 @@ function PersistentPlayerBar({
 						title={t("persistentPlayer.streamErrorPersistent")}
 					>
 						<span className="cdn-pp__error-text">
-							{t("persistentPlayer.streamErrorPersistent")}
+							{t("persistentPlayer.streamErrorAdvancing")}
 						</span>
 					</span>
 				) : showRetryingUI ? (

@@ -934,6 +934,7 @@
 	"persistentPlayer": {
 		"streamErrorRetrying": "se trabó tantito — reintentando",
 		"streamErrorPersistent": "esta estación anda fallando — dale otra vez o pícale a otra estación",
-		"streamErrorRetryButton": "dale otra vez"
+		"streamErrorRetryButton": "dale otra vez",
+		"streamErrorAdvancing": "estación no disponible, avanzando..."
 	}
 }

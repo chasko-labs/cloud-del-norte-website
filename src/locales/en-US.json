@@ -934,6 +934,7 @@
 	"persistentPlayer": {
 		"streamErrorRetrying": "stream hiccup — retrying",
 		"streamErrorPersistent": "this station's stream is having a moment — try again or skip to another station",
-		"streamErrorRetryButton": "try again"
+		"streamErrorRetryButton": "try again",
+		"streamErrorAdvancing": "station unavailable, advancing..."
 	}
 }

@@ -5,9 +5,9 @@
     "display": "Hopp with Costa Alexoglou and Iason Paraskevopoulos — Allen Wyma talks with Costa Alexoglou and Iason Paraskevopoulos, creators of Hopp, a tool "
   },
   "syntax_fm": {
-    "title": "1004: TanHacked",
-    "subtitle": "Scott and Wes break down the “Mini Shai-Hulud” supply chain attack that compromised TanStack and other popular npm packa",
-    "display": "1004: TanHacked — Scott and Wes break down the “Mini Shai-Hulud” supply chain attack that compromised TanSta"
+    "title": "1005: Programatic and Skill based Video Creation with Remotion",
+    "subtitle": "Scott and Wes are joined by Jonny Burger, creator of Remotion, to talk about the explosion of programmatic video, going ",
+    "display": "1005: Programatic and Skill based Video Creation with Remotion — Scott and Wes are joined by Jonny Burger, creator of Remotion, to talk about the explosion"
   },
   "talk_python": {
     "title": "#548: Event Sourcing Design Pattern",
@@ -24,6 +24,11 @@
     "title": "[Video Episode] Simplifying Complexity with Serverless ft. Sushanth Mangalore",
     "subtitle": "In this episode, we sit down with Sushanth Mangalore , Architect & Technology Leader at AWS, to explore complexity and i",
     "display": "[Video Episode] Simplifying Complexity with Serverless ft. Sushanth Mangalore — In this episode, we sit down with Sushanth Mangalore , Architect & Technology Leader at AW"
+  },
+  "rust_in_production": {
+    "title": "NLnet Labs with Arya Khanna and Martin Hoffmann",
+    "subtitle": "About securing the internet with Rust",
+    "display": "NLnet Labs with Arya Khanna and Martin Hoffmann — About securing the internet with Rust"
   },
   "onda_aws": {
     "title": "EP334: DevOps Agent",
