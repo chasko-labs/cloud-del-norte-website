@@ -5,6 +5,7 @@ import Box from "@cloudscape-design/components/box";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
+import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useEffect, useId, useRef, useState } from "react";
 import { SkeletonLine, SkeletonTitle } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
@@ -39,7 +40,10 @@ function loadFeeds(): Promise<FeedsData | null> {
 	return feedsPromise;
 }
 
-function useFeed(key: "andmore" | "awsml" | "readysetcloud", limit = 5): {
+function useFeed(
+	key: "andmore" | "awsml" | "readysetcloud",
+	limit = 5,
+): {
 	posts: FeedPost[];
 	ready: boolean;
 } {
@@ -304,9 +308,7 @@ export function FeedReadysetcloud() {
 										color="text-body-secondary"
 										fontSize="body-s"
 									>
-										<span style={excerptClamp}>
-											{latestNewsletter.excerpt}
-										</span>
+										<span style={excerptClamp}>{latestNewsletter.excerpt}</span>
 									</Box>
 								)}
 							</>
