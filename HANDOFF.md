@@ -2,8 +2,57 @@
 
 **date:** 2026-05-17  
 **branch:** main  
-**last commit:** f14241fd test: fix AnyProps children type for ReactNode compatibility (Wave 17 type follow-up)  
-**deploy:** verified 2026-05-17 23:30 UTC — all 3 subdomains live with Wave 17 mega-dispatch (sentinel/player tuning + Twitch CSP + vinyl record + A3 alignment + 19 test fixes + TOTP/passkey verification methods + test coverage backfill). Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+**last commit:** 90386286 feat(feed): add AWS Community Builder women-in-tech video card (0PedFnnH_Ic)  
+**deploy:** verified 2026-05-17 23:57 UTC — main subdomain live with new featured-video card. Auto-deploy partial recovery; #201 tracks Woodpecker v3.14.x upgrade plan.
+
+---
+
+## completed 2026-05-17 — Wave 18 (single feature: featured video card)
+
+Bryan: "add a feed card for this video https://www.youtube.com/watch?v=0PedFnnH_Ic"
+
+Single 2-stage DAG. Pre-fetched YouTube oembed metadata (title: "How a Former Journalist Became an AWS Community Builder | Women in Tech Story", author: Shubham gour, channel @Shubhamgourtech, thumbnail i.ytimg.com/vi/0PedFnnH_Ic/hqdefault.jpg) so the dispatch had real data instead of placeholder.
+
+| commit | description |
+|--------|-------------|
+| 90386286 | feat(feed): add AWS Community Builder women-in-tech video card (0PedFnnH_Ic) |
+
+### what shipped
+
+- New component `src/pages/feed/components/featured-video-card.tsx` — reusable single-video card, accepts {videoId, title, author, authorUrl, thumbnailUrl} props. Uses LazyEmbed pattern for click-to-mount iframe, brand cdn-card frame, thumbnail with native `loading="lazy"`, modern `allow="fullscreen"` attribute (NOT legacy `allowfullscreen`).
+- Vitest coverage at `src/pages/feed/components/__tests__/featured-video-card.test.tsx`
+- Wired into feed cards array via `src/pages/feed/app.tsx`
+- CSP already permits youtube.com frame-src + i.ytimg.com img-src per Wave 17 — no CSP work needed
+- Component pattern is reusable: future single-video cards drop in via `<FeaturedVideoCard videoId="..." title="..." author="..." authorUrl="..." thumbnailUrl="..." />`
+
+### deploy
+
+- main subdomain via `bash scripts/deploy-manual.sh main`: invalidation `ILT5M6XES86EEE8GUYGMPRO6X`, last-modified 2026-05-17T23:57:49Z
+- Bundle smoke: `0PedFnnH_Ic` found in deployed `assets/feed-CCNHT602.js` (verified card ships)
+
+### dispatch performance
+
+- ghost-solan-rust-coder (Stage 1): clean. Investigated existing video card patterns, chose Option B (new component for reusability), 3 files modified/created, build + biome + test PASS.
+- ghost-orin-ci-cd (Stage 2): single atomic commit, push, deploy main, smoke verification via grep on deployed JS bundle. Clean.
+- 2-stage DAG completed cleanly without recovery cycles. Tight feature wave.
+
+### lessons learned
+
+- Pre-fetching video metadata (oembed) via curl before dispatch gave solan real data → no placeholder + no follow-up dispatch needed. Pattern: when dispatching for a feature that needs external data, fetch the data first if cheap, embed in prompt.
+- The `loading="lazy"` native attribute on `<img>` is the right primitive for thumbnails (no IntersectionObserver overhead). Reserve LazyEmbed for actual iframes which have larger memory + CPU impact.
+- Reusable component (Option B) > inline JSX entry (Option A) when the pattern will repeat. "Bryan drops in another video later" was a strong tiebreaker.
+- The `allow="fullscreen"` modern attribute > legacy `allowfullscreen` per Wave 13 finding (Twitch v1.js still uses legacy and we get its warning; we shouldn't add to that pile).
+
+### items closed this wave
+
+- Bryan's directive: "add a feed card for this video https://www.youtube.com/watch?v=0PedFnnH_Ic"
+
+### follow-ups (next session candidates)
+
+- Wave 17 first-action carry-over: add `?debug-passkey=1` diagnostic instrumentation per Track 5 audit spec (was queued but Bryan dropped video card directive first)
+- 1 remaining test failure: auth/callback timeout flake (pre-existing)
+- Real-device tests for Bryan: #185 passkey on Pixel 9 + #189 verification methods enrollment
+- Out of CDN PO scope: #157 Woodpecker recovery, #201 v3.14.x upgrade
 
 ---
 
