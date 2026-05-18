@@ -8,6 +8,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
     <title>Cloud Del Norte — Members</title>
+      <!-- cdn-theme-fouc-guard: critical-path theme apply (must run before React hydrates).
+         Reads localStorage['awsaerospace-theme'] (see src/utils/theme.ts THEME_KEY),
+         falls back to system prefers-color-scheme, and sets the awsui-dark-mode
+         class + colorScheme on <html> synchronously so the first paint matches
+         the user's saved theme. Idempotent: React's later applyTheme() on the
+         same class is a no-op classList toggle. Wrapped in try/catch because
+         localStorage throws in private-browsing modes. -->
+    <script>
+      (function () {
+        var t;
+        try {
+          t = localStorage.getItem('awsaerospace-theme');
+        } catch (e) { /* localStorage unavailable; safe fall-through */ }
+        if (t !== 'dark' && t !== 'light') {
+          t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        if (t === 'dark') {
+          document.documentElement.classList.add('awsui-dark-mode');
+          document.documentElement.style.colorScheme = 'dark';
+        } else {
+          document.documentElement.style.colorScheme = 'light';
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
