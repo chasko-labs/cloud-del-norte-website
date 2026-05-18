@@ -11,8 +11,8 @@ import { useTranslation } from "../../../hooks/useTranslation";
 
 const RSVP_URL =
 	"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/";
-const EVENT_IMAGE =
-	"https://secure.meetupstatic.com/photos/event/b/5/4/5/600_533746405.jpeg";
+const EVENT_IMAGE_LIGHT = "/events/global-community-gatherings-light.webp";
+const EVENT_IMAGE_DARK = "/events/global-community-gatherings-dark.webp";
 const EVENT_DATE = "2026-05-22T22:00:00+09:00";
 
 export default function UpcomingVirtualEvent() {
@@ -48,11 +48,19 @@ export default function UpcomingVirtualEvent() {
 						{t("feedPage.upcomingVirtualEventBadge")}
 					</Box>
 					<img
-						src={EVENT_IMAGE}
+						src={EVENT_IMAGE_LIGHT}
 						alt={t("feedPage.upcomingVirtualEventImageAlt")}
-						className="feed-upcoming-virtual-event__image"
-						width={600}
-						height={450}
+						className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--light"
+						width={1200}
+						height={630}
+						loading="lazy"
+					/>
+					<img
+						src={EVENT_IMAGE_DARK}
+						alt={t("feedPage.upcomingVirtualEventImageAlt")}
+						className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--dark"
+						width={1200}
+						height={630}
 						loading="lazy"
 					/>
 					<Box fontWeight="bold" fontSize="heading-m">
