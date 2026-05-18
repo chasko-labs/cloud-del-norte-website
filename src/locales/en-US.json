@@ -141,7 +141,11 @@
 		"upcomingVirtualEventFeaturedTalkBadge": "FEATURED TALK",
 		"upcomingVirtualEventFeaturedTalkSpeaker": "AWSUG Cloud Del Norte organizer Bryan Chasko",
 		"upcomingVirtualEventFeaturedTalkTitle": "A Migration Story: After 240 Consecutive Months, I Avoided a Charge From Microsoft",
-		"upcomingVirtualEventUgMarkLabel": "AWS User Group mark"
+		"upcomingVirtualEventUgMarkLabel": "AWS User Group mark",
+		"featuredEventInPersonLabel": "June 2026 in person: Downtown El Paso, Texas",
+		"featuredEventSpotsRemaining": "{count} of {capacity} spots remaining",
+		"featuredEventRsvpPrimary": "RSVP & sign up for CloudDelNorte.org speakeasy access",
+		"featuredEventRsvpMeetup": "RSVP on Meetup"
 	},
 	"dashboardPage": {
 		"productionOverview": {
@@ -263,7 +267,10 @@
 			"meetupRsvpUrl": "Meetup RSVP URL",
 			"save": "Save",
 			"cancel": "Cancel"
-		}
+		},
+		"myTicketsHeader": "Your tickets",
+		"myTicketsEmpty": "You haven't RSVPed to any in-person Cloud Del Norte events yet.",
+		"myTicketsShowAtDoor": "Show this code at the door"
 	},
 	"createMeeting": {
 		"breadcrumb": "Create meeting",
@@ -959,5 +966,27 @@
 		"streamErrorPersistent": "this station's stream is having a moment — try again or skip to another station",
 		"streamErrorRetryButton": "try again",
 		"streamErrorAdvancing": "station unavailable, advancing..."
+	},
+	"rsvp": {
+		"breadcrumb": "RSVP",
+		"pageTitle": "RSVP — Cloud Del Norte",
+		"header": "RSVP for in-person event",
+		"subheader": "Limited to the first 50 people. Save your QR ticket — show it at the door for entry.",
+		"checkingAuth": "Checking your sign-in...",
+		"eventNotFound": "Event not found",
+		"eventNotFoundDesc": "This RSVP page is no longer active. See upcoming events on the meetings page.",
+		"soldOutHeader": "This event is full",
+		"soldOutBody": "All 50 in-person spots are taken. Watch the feed for the next in-person event, or join the global virtual gathering linked below.",
+		"ticketHeader": "You're on the list",
+		"ticketSubheader": "Show this QR code at the door for entry. You can pull it back up any time from the meetings page.",
+		"ticketEvent": "Event",
+		"ticketDate": "Date",
+		"ticketLocation": "Location",
+		"ticketHolder": "Ticket holder",
+		"ticketCode": "Ticket code",
+		"viewMyTickets": "View my tickets",
+		"rsvpButton": "Confirm my RSVP",
+		"rsvpingNow": "Reserving your seat...",
+		"fallbackMeetupCta": "RSVP on Meetup instead"
 	}
 }

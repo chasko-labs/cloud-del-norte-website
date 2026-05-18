@@ -20,14 +20,14 @@ describe("FeaturedEvent", () => {
 		expect(screen.getByText("FEATURED")).toBeInTheDocument();
 	});
 
-	it("renders the event title with link to RSVP URL", () => {
+	it("renders the event title with link to internal RSVP page", () => {
 		renderWithLocale("us");
 		const link = screen.getByText(
 			"AWS Cloud del Norte UG — Community Happy Hour & Networking Night",
 		);
 		expect(link.closest("a")).toHaveAttribute(
 			"href",
-			"https://www.meetup.com/awsugclouddelnorte/events/314839263/rsvp/",
+			"/rsvp/index.html?event=happy-hour-2026-06-03",
 		);
 	});
 
@@ -38,7 +38,7 @@ describe("FeaturedEvent", () => {
 
 	it("renders the date in es-MX format", () => {
 		renderWithLocale("mx");
-		expect(screen.getByText(/junio/i)).toBeInTheDocument();
+		expect(screen.getAllByText(/junio/i).length).toBeGreaterThan(0);
 	});
 
 	it("renders the RSVP button with target=_blank", () => {
@@ -54,5 +54,29 @@ describe("FeaturedEvent", () => {
 		);
 		expect(img).toHaveAttribute("loading", "lazy");
 		expect(img).toHaveAttribute("src", "/events/featured-2026-06-03.webp");
+	});
+
+	it("renders the in-person location label", () => {
+		renderWithLocale("us");
+		expect(
+			screen.getByText(/in person: Downtown El Paso, Texas/i),
+		).toBeInTheDocument();
+	});
+
+	it("renders the primary speakeasy RSVP button linking to /rsvp", () => {
+		renderWithLocale("us");
+		const primary = screen.getByRole("link", {
+			name: /RSVP & sign up for CloudDelNorte\.org speakeasy access/i,
+		});
+		expect(primary).toHaveAttribute(
+			"href",
+			"/rsvp/index.html?event=happy-hour-2026-06-03",
+		);
+	});
+
+	it("renders the spots remaining counter (48 of 50 default baseline)", () => {
+		localStorage.clear();
+		renderWithLocale("us");
+		expect(screen.getByText(/48 of 50 spots remaining/i)).toBeInTheDocument();
 	});
 });

@@ -141,7 +141,11 @@
 		"upcomingVirtualEventFeaturedTalkBadge": "PRESENTACIÓN DESTACADA",
 		"upcomingVirtualEventFeaturedTalkSpeaker": "El organizador de AWSUG Cloud Del Norte, Bryan Chasko",
 		"upcomingVirtualEventFeaturedTalkTitle": "Una historia de migración: después de 240 meses consecutivos, evité un cargo de Microsoft",
-		"upcomingVirtualEventUgMarkLabel": "Marca AWS User Group"
+		"upcomingVirtualEventUgMarkLabel": "Marca AWS User Group",
+		"featuredEventInPersonLabel": "Junio de 2026 en persona: centro de El Paso, Texas",
+		"featuredEventSpotsRemaining": "{count} de {capacity} cupos disponibles",
+		"featuredEventRsvpPrimary": "RSVP y regístrate para el acceso speakeasy de CloudDelNorte.org",
+		"featuredEventRsvpMeetup": "RSVP en Meetup"
 	},
 	"dashboardPage": {
 		"productionOverview": {
@@ -263,7 +267,10 @@
 			"meetupRsvpUrl": "URL de RSVP en Meetup",
 			"save": "Guardar",
 			"cancel": "Cancelar"
-		}
+		},
+		"myTicketsHeader": "Tus boletos",
+		"myTicketsEmpty": "Aún no has confirmado asistencia a eventos presenciales de Cloud Del Norte.",
+		"myTicketsShowAtDoor": "Muestra este código en la puerta"
 	},
 	"createMeeting": {
 		"breadcrumb": "Crear junta",
@@ -959,5 +966,27 @@
 		"streamErrorPersistent": "esta estación anda fallando — dale otra vez o pícale a otra estación",
 		"streamErrorRetryButton": "dale otra vez",
 		"streamErrorAdvancing": "estación no disponible, avanzando..."
+	},
+	"rsvp": {
+		"breadcrumb": "RSVP",
+		"pageTitle": "RSVP — Cloud Del Norte",
+		"header": "RSVP para evento presencial",
+		"subheader": "Limitado a las primeras 50 personas. Guarda tu código QR — muéstralo en la puerta para entrar.",
+		"checkingAuth": "Verificando tu sesión...",
+		"eventNotFound": "Evento no encontrado",
+		"eventNotFoundDesc": "Esta página de RSVP ya no está activa. Consulta los próximos eventos en la página de reuniones.",
+		"soldOutHeader": "Este evento está lleno",
+		"soldOutBody": "Los 50 cupos presenciales están tomados. Revisa el feed para el próximo evento presencial, o únete a la reunión global virtual enlazada abajo.",
+		"ticketHeader": "Estás en la lista",
+		"ticketSubheader": "Muestra este código QR en la puerta para entrar. Puedes volver a verlo en cualquier momento desde la página de reuniones.",
+		"ticketEvent": "Evento",
+		"ticketDate": "Fecha",
+		"ticketLocation": "Ubicación",
+		"ticketHolder": "Titular",
+		"ticketCode": "Código del boleto",
+		"viewMyTickets": "Ver mis boletos",
+		"rsvpButton": "Confirmar mi RSVP",
+		"rsvpingNow": "Reservando tu lugar...",
+		"fallbackMeetupCta": "Mejor RSVP en Meetup"
 	}
 }
