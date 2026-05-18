@@ -484,4 +484,15 @@ export const variationsData: meeting[] = [
 		scheduledDate: "2026-06-03",
 		scheduledTime: "08:30",
 	},
+	{
+		name: "🍻 Cloud Del Norte UG — Community Happy Hour & Networking Night",
+		presenters: "Bryan Chasko",
+		happened: "false",
+		ondemand: "no",
+		eventlink: "https://www.meetup.com/awsugclouddelnorte/events/314839263/",
+		meetupRsvpUrl:
+			"https://www.meetup.com/awsugclouddelnorte/events/314839263/rsvp/",
+		scheduledDate: "2026-06-03",
+		scheduledTime: "18:00",
+	},
 ];

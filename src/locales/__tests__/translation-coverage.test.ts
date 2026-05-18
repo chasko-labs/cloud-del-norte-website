@@ -118,6 +118,8 @@ describe("translation coverage", () => {
 			"feedPage.builderCenterHeader", // "AWS Builder Center" - AWS program proper noun
 			"helpPanel.arrowheadPark", // "Arrowhead Research Park" - proper noun
 			"helpPanel.communityFoundedSuffix", // ", NMSU." - punctuation + acronym
+			"rsvp.breadcrumb", // "RSVP" - universal abbreviation
+			"rsvp.pageTitle", // "RSVP — Cloud Del Norte" - proper noun + universal abbreviation
 			"feedPage.pastMeetupSpeaker1Name", // proper name
 			"feedPage.pastMeetupSpeaker2Name", // proper name
 			"feedPage.pastMeetupSpeaker3Name", // proper name
