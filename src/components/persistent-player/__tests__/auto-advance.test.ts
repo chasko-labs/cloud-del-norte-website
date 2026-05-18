@@ -19,16 +19,16 @@
  */
 
 import { renderHook } from "@testing-library/react";
+import { useEffect } from "react";
 import {
 	afterEach,
 	beforeEach,
 	describe,
 	expect,
 	it,
-	vi,
 	type Mock,
+	vi,
 } from "vitest";
-import { useEffect } from "react";
 
 // Replicate the exact auto-advance hook shape from persistent-player/index.tsx
 function useAutoAdvanceOnFailed(
