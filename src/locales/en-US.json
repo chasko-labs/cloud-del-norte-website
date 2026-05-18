@@ -118,7 +118,14 @@
 		"streamKruxFallback": "Your browser does not support streaming audio. Visit kruxstream.nmsu.edu/KRUX to listen.",
 		"vbrownbagHeader": "vBrownBag",
 		"theZacsShowHeader": "the Zac's show",
-		"visitChannel": "visit channel"
+		"visitChannel": "visit channel",
+		"featuredEventHeader": "Featured event",
+		"featuredEventBadge": "FEATURED",
+		"featuredEventTitle": "AWS Cloud del Norte UG — Community Happy Hour & Networking Night",
+		"featuredEventLocation": "Downtown — El Paso, TX",
+		"featuredEventDescription": "Join us for community networking with food, drinks, and conversation about AWS, careers, and the cloud journey across the borderplex.",
+		"featuredEventRsvp": "RSVP on Meetup",
+		"featuredEventImageAlt": "AWS Cloud del Norte UG community event photo"
 	},
 	"dashboardPage": {
 		"productionOverview": {

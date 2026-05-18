@@ -32,6 +32,7 @@ import ArrowheadNews from "./components/arrowhead-news";
 import BuilderCenterCard from "./components/builder-center-card";
 import FeaturedVideoCard from "./components/featured-video-card";
 import { FeedAndmore, FeedAwsml } from "./components/feed-section";
+import FeaturedEvent from "./components/featured-event";
 import NextMeetup from "./components/next-meetup";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
 import YoutubeCarousel from "./components/youtube-carousel";
@@ -263,6 +264,9 @@ function AppContent({
 					</div>
 				))}
 				{liveToShow.length > 0 && <hr className="feed-section-divider" />}
+			</div>
+			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
+				<FeaturedEvent />
 			</div>
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<NextMeetup />

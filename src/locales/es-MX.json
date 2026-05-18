@@ -118,7 +118,14 @@
 		"streamKruxFallback": "Tu navegador no soporta audio en vivo. Visita kruxstream.nmsu.edu/KRUX para escuchar.",
 		"vbrownbagHeader": "vBrownBag",
 		"theZacsShowHeader": "the Zac's show",
-		"visitChannel": "visitar canal"
+		"visitChannel": "visitar canal",
+		"featuredEventHeader": "Evento destacado",
+		"featuredEventBadge": "DESTACADO",
+		"featuredEventTitle": "AWS Cloud del Norte UG — Hora Feliz Comunitaria y Networking",
+		"featuredEventLocation": "Centro de El Paso, Texas",
+		"featuredEventDescription": "Acompáñanos para networking comunitario con comida, bebidas y conversación sobre AWS, carreras y el camino en la nube a través del borderplex.",
+		"featuredEventRsvp": "Registrarse en Meetup",
+		"featuredEventImageAlt": "Foto del evento comunitario AWS Cloud del Norte UG"
 	},
 	"dashboardPage": {
 		"productionOverview": {
