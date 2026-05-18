@@ -952,7 +952,7 @@
 	width: 100%;
 	max-width: 600px;
 	height: auto;
-	aspect-ratio: 600 / 450;
+	aspect-ratio: 1200 / 630;
 	object-fit: cover;
 	border-radius: var(--cdn-radius-md, 8px);
 	margin: 12px 0;

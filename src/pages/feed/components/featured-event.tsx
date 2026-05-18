@@ -11,8 +11,7 @@ import { useTranslation } from "../../../hooks/useTranslation";
 
 const RSVP_URL =
 	"https://www.meetup.com/awsugclouddelnorte/events/314839263/rsvp/";
-const EVENT_IMAGE =
-	"https://secure.meetupstatic.com/photos/event/c/8/5/3/600_534291283.jpeg";
+const EVENT_IMAGE = "/events/featured-2026-06-03.webp";
 const EVENT_DATE = "2026-06-03T18:00:00-06:00";
 
 export default function FeaturedEvent() {
@@ -49,8 +48,8 @@ export default function FeaturedEvent() {
 						src={EVENT_IMAGE}
 						alt={t("feedPage.featuredEventImageAlt")}
 						className="feed-featured-event__image"
-						width={600}
-						height={450}
+						width={1200}
+						height={630}
 						loading="lazy"
 					/>
 					<Box fontWeight="bold" fontSize="heading-m">
