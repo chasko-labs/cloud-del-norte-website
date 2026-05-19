@@ -1891,7 +1891,597 @@
 	}
 }
 
-/* ---------- Upcoming virtual event card ---------- */
+/* ---------- Upcoming virtual event card — wave 33b uplift ----------
+   Brings this card up to the wave 32a featured-event quality bar with a
+   differentiated aesthetic: violet+lavender starfield-twinkle marquee
+   header (vs. featured's amber tungsten chasing-bulbs marquee), violet-
+   tinted date-plate VFX backplate, gradient/scrolling-tape title link,
+   and the same depth stack (perspective + preserve-3d, contain, GPU layer
+   promotion via translate3d + will-change, 1px stage-rim).
+
+   The wave 26a __bulbs-wrapper SVG overlay (light-bulbs over the dark
+   image) is preserved as-is — that's a separate visual layer that lives
+   inside the card body, not in the marquee header. The wave 29a brand
+   mark (animated UG disc) + featured-talk callout block are also
+   preserved as-is — those are already heavily styled and the brief
+   explicitly forbids touching them.
+
+   Local CSS variables scoped to .feed-upcoming-virtual-event keep the
+   featured-event card's --cdn-v2-* tokens untouched. Naming uses the
+   --cdn-uvirt-* prefix (short for upcoming-virtual) so a future reader
+   can tell at a glance which card a token belongs to. */
+
+.feed-upcoming-virtual-event {
+	/* light-mode tokens — violet bloom + lavender highlight, soft cosmic
+	   palette tuned for the international/global virtual event feel. */
+	--cdn-uvirt-stage-rim: rgba(255, 250, 235, 0.08);
+	--cdn-uvirt-spot-violet: rgba(144, 96, 240, 0.16);
+	--cdn-uvirt-spot-lavender: rgba(215, 199, 238, 0.14);
+	--cdn-uvirt-spot-sweep: rgba(144, 96, 240, 0.18);
+	--cdn-uvirt-ambient-bloom: rgba(90, 31, 138, 0.14);
+	--cdn-uvirt-date-plate-from: rgba(144, 96, 240, 0.18);
+	--cdn-uvirt-date-plate-to: rgba(215, 199, 238, 0.12);
+	--cdn-uvirt-date-plate-border: rgba(90, 31, 138, 0.4);
+	--cdn-uvirt-date-text: var(--cdn-purple-deep, #30006a);
+	--cdn-uvirt-date-glow: rgba(90, 31, 138, 0.38);
+	--cdn-uvirt-date-shimmer: rgba(255, 250, 235, 0.55);
+	--cdn-uvirt-title-tape: rgba(255, 250, 235, 0.45);
+
+	position: relative;
+	isolation: isolate;
+	border-left: 4px solid var(--cdn-aws-orange, #ff9900);
+	border-radius: var(--cdn-radius-md, 8px);
+	overflow: hidden;
+	/* Same depth stack as wave 27a v2 featured-event — perspective +
+	   preserve-3d enable child translateZ() pop without loading any 3D
+	   runtime. 1200px = subtle ambient depth. */
+	perspective: 1200px;
+	transform-style: preserve-3d;
+	/* GPU layer isolation (mirrors wave 30a featured-event hardening):
+	   - contain: layout paint style isolates this card's paint operations
+	     so reflow/repaint above/below doesn't cascade through the new
+	     sustained animations (twinkle, title tape, date plate breathe).
+	   - translate3d(0,0,0) forces the card onto its own GPU compositor
+	     layer so the stacked animations don't fight for the same layer
+	     during scroll.
+	   - will-change: transform proactively promotes the layer up-front
+	     so the first scroll into view doesn't trigger a synchronous
+	     layer reshuffle. */
+	contain: layout paint style;
+	transform: translate3d(0, 0, 0);
+	will-change: transform;
+	/* layered ambient bloom + 1px stage-rim — sits beneath the radial
+	   spotlight backplate (::before) and the cool sweep depth layer
+	   (::after) below. */
+	box-shadow:
+		0 1px 2px rgba(48, 0, 106, 0.08),
+		0 8px 28px -8px var(--cdn-uvirt-ambient-bloom),
+		0 18px 48px -12px var(--cdn-uvirt-ambient-bloom),
+		inset 0 0 0 1px var(--cdn-uvirt-stage-rim);
+}
+
+.awsui-dark-mode .feed-upcoming-virtual-event {
+	/* dark-mode tokens — deeper indigo bloom, lavender highlight. */
+	--cdn-uvirt-stage-rim: rgba(215, 199, 238, 0.1);
+	--cdn-uvirt-spot-violet: rgba(144, 96, 240, 0.28);
+	--cdn-uvirt-spot-lavender: rgba(215, 199, 238, 0.18);
+	--cdn-uvirt-spot-sweep: rgba(48, 0, 106, 0.42);
+	--cdn-uvirt-ambient-bloom: rgba(48, 0, 106, 0.32);
+	--cdn-uvirt-date-plate-from: rgba(48, 0, 106, 0.6);
+	--cdn-uvirt-date-plate-to: rgba(90, 31, 138, 0.4);
+	--cdn-uvirt-date-plate-border: rgba(199, 184, 232, 0.42);
+	--cdn-uvirt-date-text: var(--cdn-lavender, #d7c7ee);
+	--cdn-uvirt-date-glow: rgba(199, 184, 232, 0.55);
+	--cdn-uvirt-date-shimmer: rgba(215, 199, 238, 0.4);
+	--cdn-uvirt-title-tape: rgba(215, 199, 238, 0.42);
+
+	box-shadow:
+		0 2px 6px rgba(0, 0, 0, 0.5),
+		0 10px 30px -8px var(--cdn-uvirt-ambient-bloom),
+		0 22px 56px -12px var(--cdn-uvirt-ambient-bloom),
+		inset 0 0 0 1px var(--cdn-uvirt-stage-rim);
+}
+
+/* Stage-light gradient backplate — twin radial spotlights: violet key
+   from upper-left, lavender fill from lower-right. Sits behind all
+   content via z-index:0; children stack on z-index:1 below. */
+.feed-upcoming-virtual-event::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background:
+		radial-gradient(
+			ellipse 70% 50% at 14% 8%,
+			var(--cdn-uvirt-spot-violet) 0%,
+			transparent 62%
+		),
+		radial-gradient(
+			ellipse 65% 55% at 88% 92%,
+			var(--cdn-uvirt-spot-lavender) 0%,
+			transparent 65%
+		);
+	opacity: 0.95;
+}
+
+/* Slow violet/indigo sweep crosses the card on a 9s ease cycle. Slower
+   than the featured-event 7s sweep so the two cards don't lock-step
+   when stacked in the feed. translateZ(0) anchors the sweep on its own
+   GPU layer for parallax-on-hover. */
+.feed-upcoming-virtual-event::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		transparent 0%,
+		transparent 30%,
+		var(--cdn-uvirt-spot-sweep) 50%,
+		transparent 70%,
+		transparent 100%
+	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
+	opacity: 0.65;
+	transform: translateZ(0);
+	transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-uvirt-spotlight-sweep {
+		0% {
+			background-position: 120% 0;
+		}
+		60%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-upcoming-virtual-event::after {
+		animation: feed-uvirt-spotlight-sweep 9s cubic-bezier(0.4, 0, 0.2, 1)
+			infinite;
+	}
+
+	.feed-upcoming-virtual-event:hover::after {
+		transform: translateZ(8px);
+	}
+}
+
+/* All direct content children sit above the spotlight backplate. */
+.feed-upcoming-virtual-event > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* ---------- Wave 33b — Starfield-twinkle marquee header ----------
+   Replaces the Cloudscape <Header variant="h2"> chrome with a violet
+   backplate flecked with twinkling stars — a deliberate counterpoint to
+   the wave 32a featured-event amber tungsten + chasing-bulbs marquee:
+   same structural pattern (rounded backplate, 1px rim, depth shadow,
+   bold uppercase tight-tracked text), different palette + decoration
+   for the cosmic/global mood of an international virtual event.
+
+   Starfield: 14 dots spread across the backplate via inline left/top
+   percentages from the data array in the component. Each carries an
+   inline `--star-index` custom property that staggers the shared twinkle
+   keyframes (animation-delay = star-index * 0.18s). The base cycle is
+   3.6s with a brief peak — reads as a slow, irregular sparkle, not a
+   strobe. Reduced-motion gates the keyframes off and renders the stars
+   statically dim instead of twinkling.
+
+   Scope: marquee sign in the Container header. Card body (image, badge,
+   title, date plate, brand mark + featured-talk callout, RSVP button)
+   keeps its own styling. */
+.feed-upcoming-virtual-event__marquee {
+	/* Color tokens — light mode = soft violet+lavender backplate, deep
+	   purple text, pale-gold star cores so the stars still warm-pop
+	   against the cool-violet field. Tokens are scoped to the marquee
+	   block so the rest of the card's --cdn-uvirt-* tokens don't bleed
+	   into the sign. */
+	--cdn-uvirt-marquee-bg-from: #f1ebff;
+	--cdn-uvirt-marquee-bg-to: #d7c7ee;
+	--cdn-uvirt-marquee-rim: #5a1f8a;
+	--cdn-uvirt-marquee-rim-highlight: rgba(255, 250, 235, 0.55);
+	--cdn-uvirt-marquee-shadow: rgba(48, 0, 106, 0.32);
+	--cdn-uvirt-marquee-text: #30006a;
+	--cdn-uvirt-marquee-text-glow: rgba(215, 199, 238, 0.7);
+	--cdn-uvirt-star-core: #fff5e6;
+	--cdn-uvirt-star-rim: #d7c7ee;
+	--cdn-uvirt-star-halo: rgba(199, 184, 232, 0.7);
+	--cdn-uvirt-star-dim: rgba(199, 184, 232, 0.3);
+
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	padding: 8px 28px;
+	border-radius: 10px;
+	background: linear-gradient(
+		180deg,
+		var(--cdn-uvirt-marquee-bg-from) 0%,
+		var(--cdn-uvirt-marquee-bg-to) 100%
+	);
+	border: 2px solid var(--cdn-uvirt-marquee-rim);
+	box-shadow:
+		0 1px 0 var(--cdn-uvirt-marquee-rim-highlight) inset,
+		0 -1px 0 rgba(48, 0, 106, 0.18) inset,
+		0 2px 4px var(--cdn-uvirt-marquee-shadow),
+		0 8px 18px -6px var(--cdn-uvirt-marquee-shadow);
+}
+
+.awsui-dark-mode .feed-upcoming-virtual-event__marquee {
+	/* Dark mode = deep indigo backplate with a lavender rim. Stars stay
+	   warm cream-core (cosmic-twinkle is warm across both modes — what
+	   changes is the sign chrome, not the lights). */
+	--cdn-uvirt-marquee-bg-from: #1a0a30;
+	--cdn-uvirt-marquee-bg-to: #2a1148;
+	--cdn-uvirt-marquee-rim: #d7c7ee;
+	--cdn-uvirt-marquee-rim-highlight: rgba(215, 199, 238, 0.4);
+	--cdn-uvirt-marquee-shadow: rgba(0, 0, 0, 0.55);
+	--cdn-uvirt-marquee-text: #d7c7ee;
+	--cdn-uvirt-marquee-text-glow: rgba(255, 250, 235, 0.55);
+	--cdn-uvirt-star-core: #fff5e6;
+	--cdn-uvirt-star-rim: #d7c7ee;
+	--cdn-uvirt-star-halo: rgba(255, 250, 235, 0.65);
+	--cdn-uvirt-star-dim: rgba(199, 184, 232, 0.28);
+
+	box-shadow:
+		0 1px 0 var(--cdn-uvirt-marquee-rim-highlight) inset,
+		0 -1px 0 rgba(0, 0, 0, 0.6) inset,
+		0 2px 6px var(--cdn-uvirt-marquee-shadow),
+		0 12px 24px -6px var(--cdn-uvirt-marquee-shadow);
+}
+
+.feed-upcoming-virtual-event__marquee-text {
+	position: relative;
+	z-index: 1;
+	display: inline-block;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--cdn-uvirt-marquee-text);
+	text-shadow:
+		0 0 6px var(--cdn-uvirt-marquee-text-glow),
+		0 1px 0 rgba(255, 250, 235, 0.35);
+	line-height: 1.15;
+}
+
+/* Starfield — absolutely positioned over the marquee backplate. Stars
+   render as small round dots positioned via inline left/top percentages
+   from the data array in upcoming-virtual-event.tsx. The wrapper sits
+   under the headline text (z-index:0) so the text always reads on top. */
+.feed-upcoming-virtual-event__twinkle-wrapper {
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	overflow: hidden;
+	border-radius: inherit;
+}
+
+.feed-upcoming-virtual-event__twinkle-star {
+	position: absolute;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle at 50% 40%,
+		var(--cdn-uvirt-star-core) 0%,
+		var(--cdn-uvirt-star-rim) 70%,
+		rgba(144, 96, 240, 0.4) 100%
+	);
+	opacity: 0.45;
+	filter: drop-shadow(0 0 2px var(--cdn-uvirt-star-halo));
+	transform: translate(-50%, -50%);
+}
+
+.feed-upcoming-virtual-event__twinkle-star--s2 {
+	width: 2px;
+	height: 2px;
+}
+
+.feed-upcoming-virtual-event__twinkle-star--s3 {
+	width: 3px;
+	height: 3px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-uvirt-twinkle {
+		0%,
+		100% {
+			opacity: 0.25;
+			filter: drop-shadow(0 0 1px var(--cdn-uvirt-star-dim));
+		}
+		20% {
+			opacity: 1;
+			filter: drop-shadow(0 0 4px var(--cdn-uvirt-star-halo));
+		}
+		45% {
+			opacity: 0.4;
+			filter: drop-shadow(0 0 2px var(--cdn-uvirt-star-dim));
+		}
+	}
+
+	.feed-upcoming-virtual-event__twinkle-star {
+		animation: feed-uvirt-twinkle 3.6s ease-in-out infinite;
+		animation-delay: calc(var(--star-index, 0) * 0.18s);
+	}
+}
+
+/* Reduced-motion fallback — stars render statically dim (visible but
+   not animated). Mirrors the wave 32a marquee-bulb static-lit fallback. */
+@media (prefers-reduced-motion: reduce) {
+	.feed-upcoming-virtual-event__twinkle-star {
+		animation: none;
+		opacity: 0.6;
+		filter: drop-shadow(0 0 2px var(--cdn-uvirt-star-halo));
+	}
+}
+
+/* ---------- Wave 33b — title gradient/scrolling-tape (violet→lavender) ----------
+   Promotes the title link to the same scrolling-tape treatment as the
+   wave 27a v2 featured-event title, but with a violet→lavender→cream
+   gradient (vs. featured's purple→violet→cream) to differentiate. */
+.feed-upcoming-virtual-event__title {
+	letter-spacing: -0.005em;
+	line-height: 1.22;
+}
+
+.feed-upcoming-virtual-event__title a {
+	background-image: linear-gradient(
+		90deg,
+		var(--cdn-purple, #5a1f8a) 0%,
+		var(--cdn-violet, #9060f0) 38%,
+		var(--cdn-uvirt-title-tape) 50%,
+		var(--cdn-violet, #9060f0) 62%,
+		var(--cdn-purple, #5a1f8a) 100%
+	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+	text-decoration: none;
+	transition: filter 0.2s ease;
+	/* Same scroll-tearing mitigations as wave 30a featured-event title:
+	   optimizeSpeed favors the cheaper raster path and `antialiased`
+	   stabilizes subpixel position so the shimmer doesn't smear. */
+	text-rendering: optimizeSpeed;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.awsui-dark-mode .feed-upcoming-virtual-event__title a {
+	background-image: linear-gradient(
+		90deg,
+		var(--cdn-violet, #9060f0) 0%,
+		var(--cdn-lavender, #d7c7ee) 38%,
+		var(--cdn-uvirt-title-tape) 50%,
+		var(--cdn-lavender, #d7c7ee) 62%,
+		var(--cdn-violet, #9060f0) 100%
+	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-uvirt-title-tape {
+		0% {
+			background-position: 120% 0;
+		}
+		70%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-upcoming-virtual-event__title a {
+		animation: feed-uvirt-title-tape 11s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+	}
+}
+
+.feed-upcoming-virtual-event__title a:hover,
+.feed-upcoming-virtual-event__title a:focus-visible {
+	filter: brightness(1.1) saturate(1.08);
+}
+
+.feed-upcoming-virtual-event__title a:focus-visible {
+	outline: 2px solid var(--cdn-violet, #9060f0);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+/* ---------- Wave 33b — date VFX backplate (violet-tinted) ----------
+   Same backplate pattern as wave 27a v2 featured-event date plate but
+   violet-tinted (vs. featured's tungsten amber). The date string remains
+   plain HTML output from Intl.DateTimeFormat — no SVG, no canvas, no
+   string-split. Wrapper carries layout margin; inner span carries the
+   gradient backplate + shimmer pseudo-element. */
+.feed-upcoming-virtual-event__date {
+	display: block;
+	margin: 4px 0 2px;
+	font-variant-numeric: tabular-nums;
+}
+
+.feed-upcoming-virtual-event__date-plate {
+	position: relative;
+	display: inline-block;
+	padding: 6px 14px;
+	border-radius: 8px;
+	background: linear-gradient(
+		135deg,
+		var(--cdn-uvirt-date-plate-from) 0%,
+		var(--cdn-uvirt-date-plate-to) 100%
+	);
+	border: 1px solid var(--cdn-uvirt-date-plate-border);
+	color: var(--cdn-uvirt-date-text);
+	font-size: 1.25rem;
+	font-weight: 800;
+	line-height: 1.2;
+	letter-spacing: 0.01em;
+	font-variant-numeric: tabular-nums;
+	overflow: hidden;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 250, 235, 0.5),
+		0 2px 6px -1px rgba(48, 0, 106, 0.18),
+		0 6px 18px -6px var(--cdn-uvirt-date-glow);
+	transform: translateZ(4px);
+	will-change: transform, opacity;
+}
+
+.awsui-dark-mode .feed-upcoming-virtual-event__date-plate {
+	box-shadow:
+		inset 0 1px 0 rgba(215, 199, 238, 0.22),
+		0 2px 8px -2px rgba(0, 0, 0, 0.4),
+		0 6px 22px -6px var(--cdn-uvirt-date-glow);
+}
+
+.feed-upcoming-virtual-event__date-plate::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		transparent 0%,
+		transparent 38%,
+		var(--cdn-uvirt-date-shimmer) 50%,
+		transparent 62%,
+		transparent 100%
+	);
+	background-size: 240% 100%;
+	background-position: 120% 0;
+	mix-blend-mode: screen;
+	border-radius: inherit;
+	opacity: 0.6;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-uvirt-date-glow {
+		0%,
+		100% {
+			text-shadow:
+				0 0 0 transparent,
+				0 1px 0 rgba(255, 250, 235, 0.45);
+			box-shadow:
+				inset 0 1px 0 rgba(255, 250, 235, 0.5),
+				0 2px 6px -1px rgba(48, 0, 106, 0.18),
+				0 6px 18px -6px var(--cdn-uvirt-date-glow);
+		}
+		50% {
+			text-shadow:
+				0 0 6px var(--cdn-uvirt-date-glow),
+				0 1px 0 rgba(255, 250, 235, 0.45);
+			box-shadow:
+				inset 0 1px 0 rgba(255, 250, 235, 0.6),
+				0 2px 8px -1px rgba(48, 0, 106, 0.22),
+				0 8px 24px -6px var(--cdn-uvirt-date-glow);
+		}
+	}
+
+	@keyframes feed-uvirt-date-glow-dark {
+		0%,
+		100% {
+			text-shadow:
+				0 0 0 transparent,
+				0 1px 0 rgba(0, 0, 0, 0.35);
+			box-shadow:
+				inset 0 1px 0 rgba(215, 199, 238, 0.22),
+				0 2px 8px -2px rgba(0, 0, 0, 0.4),
+				0 6px 22px -6px var(--cdn-uvirt-date-glow);
+		}
+		50% {
+			text-shadow:
+				0 0 8px var(--cdn-uvirt-date-glow),
+				0 1px 0 rgba(0, 0, 0, 0.35);
+			box-shadow:
+				inset 0 1px 0 rgba(215, 199, 238, 0.3),
+				0 2px 10px -2px rgba(0, 0, 0, 0.45),
+				0 10px 28px -6px var(--cdn-uvirt-date-glow);
+		}
+	}
+
+	@keyframes feed-uvirt-date-shimmer {
+		0% {
+			background-position: 120% 0;
+		}
+		70%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-upcoming-virtual-event__date-plate {
+		animation: feed-uvirt-date-glow 4.4s ease-in-out infinite;
+	}
+
+	.awsui-dark-mode .feed-upcoming-virtual-event__date-plate {
+		animation: feed-uvirt-date-glow-dark 4.4s ease-in-out infinite;
+	}
+
+	.feed-upcoming-virtual-event__date-plate::after {
+		animation: feed-uvirt-date-shimmer 7s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+	}
+}
+
+/* ---------- Wave 33b — pause animations during fast scroll ----------
+   Same scroll-jank-mitigation hook wave 30a wired up for the featured-
+   event card. Skipped under prefers-reduced-motion since the animations
+   are already off in that branch. */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .feed-upcoming-virtual-event,
+	body.cdn-scrolling .feed-upcoming-virtual-event::after,
+	body.cdn-scrolling .feed-upcoming-virtual-event__twinkle-star,
+	body.cdn-scrolling .feed-upcoming-virtual-event__title a,
+	body.cdn-scrolling .feed-upcoming-virtual-event__date-plate,
+	body.cdn-scrolling .awsui-dark-mode .feed-upcoming-virtual-event__date-plate,
+	body.cdn-scrolling .feed-upcoming-virtual-event__date-plate::after {
+		animation-play-state: paused;
+	}
+}
+
+/* ---------- Wave 33b — dark-mode image CSS-filter STOPGAP ----------
+   TODO(bryan): replace this filter chain with a real dark render once
+   public/events/global-community-gatherings-dark.webp is regenerated.
+   At the time of wave 33b, public/events/global-community-gatherings-
+   dark.webp is byte-identical to the -light.webp variant (md5sum
+   confirms). Until a real dark asset lands, apply a CSS filter chain to
+   the dark <img> element that approximates the Ben-Day halftone dark
+   aesthetic Bryan described (charcoal substrate, indigo-black vignette,
+   ochre/ultramarine tone shifts).
+
+   Filter chain rationale (tuned vs. the brief's suggestion):
+   - invert(0.85): near-tonal-inversion without going full photonegative;
+     0.85 keeps a hint of the original luminance so faces + the AWS
+     Community badge don't read as ghostly silhouettes.
+   - hue-rotate(195deg): rotates the inverted yellows/cyans toward
+     indigo/ultramarine — the Ben-Day-halftone dark voice.
+   - saturate(1.35): pulls the indigo/ochre back up after invert
+     desaturated the midtones.
+   - brightness(0.88): slight luminance pull-down so the result still
+     reads as "dark mode" against the indigo card surface, not as a
+     bright inverted plate.
+   - contrast(1.12): edge-defines the AWS Community badge + global
+     network arc against the inverted background so the focal points
+     don't get muddy.
+
+   Scope: only the .feed-upcoming-virtual-event__image--dark variant.
+   The light variant is unfiltered. The wave 26a __bulbs-wrapper SVG
+   overlay sits on top of the filter at the wrapper level — the bulbs
+   are SVG circles, not the IMG, so they stay unfiltered. */
+.awsui-dark-mode .feed-upcoming-virtual-event__image--dark {
+	filter: invert(0.85) hue-rotate(195deg) saturate(1.35) brightness(0.88)
+		contrast(1.12);
+}
+
+/* ---------- Upcoming virtual event card — wave 26a base ---------- */
 
 .feed-upcoming-virtual-event {
 	border-left: 4px solid var(--cdn-aws-orange, #ff9900);
