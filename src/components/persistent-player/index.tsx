@@ -28,6 +28,7 @@ import {
 	SeekBackIcon,
 	SeekForwardIcon,
 } from "./podcast-player-icons";
+import { decidePodcastRecovery, pruneHistory } from "./podcast-recovery";
 import "./styles.css";
 
 const POLL_MS = 30_000;
@@ -85,7 +86,22 @@ function PersistentPlayerBar({
 	const kexpTrackSigRef = useRef<string | null>(null);
 	// build-time podcast episode cache — populated once from /data/podcast-episodes.json.
 	// used as fallback when live RSS fetch is CORS-blocked in the browser.
-	const episodeCacheRef = useRef<Record<string, string | null> | null>(null);
+	// wave 28c: cache now carries enclosureUrl so the player starts from the
+	// freshest URL (eliminating the stale-hardcoded-streams.ts failure mode)
+	// and can recover from runtime audio errors by refetching the latest
+	// enclosure URL on the fly.
+	const episodeCacheRef = useRef<Record<
+		string,
+		{ display: string | null; enclosureUrl: string | null } | null
+	> | null>(null);
+	// wave 28c: timestamps of recent podcast retry attempts (sliding 60s
+	// window). When >=3 attempts fall inside the window the player surfaces
+	// the existing failed UI (auto-advance + manual retry button). Tracked
+	// in a ref so it survives re-renders without re-arming effects.
+	const podcastRetryHistoryRef = useRef<number[]>([]);
+	// timer for delayed retry when the last attempt was less than 5s ago —
+	// enforces the 5s backoff floor without busy-looping
+	const podcastRetryTimerRef = useRef<number | null>(null);
 	// debounce + retry timers — refs so cleanup can clear them across renders
 	// without accidentally triggering re-renders or stale captures
 	const errorTimerRef = useRef<number | null>(null);
@@ -117,15 +133,33 @@ function PersistentPlayerBar({
 
 	// Load build-time podcast episode cache once on mount.
 	// Populated by scripts/fetch-feeds.mjs → public/data/podcast-episodes.json.
+	// wave 28c: also captures enclosureUrl per key so the runtime can prime
+	// rssAudioUrl with the freshest URL before first play and use it as a
+	// recovery target on audio errors.
 	useEffect(() => {
 		fetch("/data/podcast-episodes.json")
 			.then((r) => (r.ok ? r.json() : null))
-			.then((data: Record<string, { display?: string } | null> | null) => {
-				if (!data) return;
-				episodeCacheRef.current = Object.fromEntries(
-					Object.entries(data).map(([k, v]) => [k, v?.display ?? null]),
-				);
-			})
+			.then(
+				(
+					data: Record<
+						string,
+						{ display?: string; enclosureUrl?: string } | null
+					> | null,
+				) => {
+					if (!data) return;
+					episodeCacheRef.current = Object.fromEntries(
+						Object.entries(data).map(([k, v]) => [
+							k,
+							v
+								? {
+										display: v.display ?? null,
+										enclosureUrl: v.enclosureUrl ?? null,
+									}
+								: null,
+						]),
+					);
+				},
+			)
 			.catch(() => {});
 	}, []);
 
@@ -149,15 +183,32 @@ function PersistentPlayerBar({
 	// CORS-blocked feeds fall back to build-time episode cache (podcast-episodes.json).
 	// When the enclosure URL differs from the hardcoded stationUrl, rssAudioUrl
 	// overrides the audio src so the latest episode plays automatically.
+	// wave 28c: ALSO seeds rssAudioUrl from the build-time enclosureUrl cache
+	// before kicking off the live fetch — guarantees the audio element always
+	// starts from a build-time-verified URL even when the runtime RSS request
+	// is in flight or fails. This is the primary defense against stale
+	// hardcoded streams.ts URLs (Triton signed CDN expiry, captivate UUID
+	// rotation).
 	// biome-ignore lint/correctness/useExhaustiveDependencies: state.stationKey is the reset trigger
 	useEffect(() => {
 		if (streamDef?.type !== "podcast" || !streamDef.rssFeedUrl) return;
 		setRssAudioUrl(null); // reset on station change
 		const capturedKey = state.stationKey;
-		// corsBlocked feeds cannot be fetched in the browser — rely on build-time cache
+
+		// Prime audio src from the build-time enclosure cache if it differs from
+		// the hardcoded streams.ts url — this fires synchronously inside the
+		// effect, so the audio element renders with the freshest URL on first
+		// play. The live RSS fetch below may further refresh after a roundtrip.
+		const cached = episodeCacheRef.current?.[capturedKey] ?? null;
+		if (cached?.enclosureUrl && cached.enclosureUrl !== state.stationUrl) {
+			setRssAudioUrl(cached.enclosureUrl);
+		}
+		if (cached?.display) {
+			setNowPlaying(cached.display);
+		}
+
+		// corsBlocked feeds cannot be fetched in the browser — already primed above
 		if (streamDef.corsBlocked) {
-			const cached = episodeCacheRef.current?.[capturedKey];
-			if (cached) setNowPlaying(cached);
 			return;
 		}
 		fetch(streamDef.rssFeedUrl)
@@ -187,9 +238,7 @@ function PersistentPlayerBar({
 				}
 			})
 			.catch(() => {
-				// CORS-blocked — use build-time cache as fallback display string
-				const cached = episodeCacheRef.current?.[capturedKey];
-				if (cached) setNowPlaying(cached);
+				// CORS-blocked at runtime — already primed from cache above; nothing to do
 			});
 	}, [state.stationKey]);
 
@@ -200,6 +249,12 @@ function PersistentPlayerBar({
 		setConnecting(false);
 		retryCountRef.current = 0;
 		hasConnectedRef.current = false;
+		// wave 28c: reset podcast-specific retry budget + clear pending backoff timer
+		podcastRetryHistoryRef.current = [];
+		if (podcastRetryTimerRef.current !== null) {
+			window.clearTimeout(podcastRetryTimerRef.current);
+			podcastRetryTimerRef.current = null;
+		}
 		if (errorTimerRef.current !== null) {
 			window.clearTimeout(errorTimerRef.current);
 			errorTimerRef.current = null;
@@ -288,6 +343,121 @@ function PersistentPlayerBar({
 			audio.removeEventListener("abort", tripError);
 			audio.removeEventListener("playing", clearError);
 			audio.removeEventListener("canplay", clearError);
+		};
+	}, [isPodcast]);
+
+	// wave 28c — podcast-specific URL recovery.
+	//
+	// Supplements the existing tripError state machine (which cycles through
+	// fallbackUrls for radio streams). For podcasts the failure mode is
+	// usually a stale enclosure URL: captivate rotated the UUID, or a Triton
+	// signed CDN link expired. The fix is to refetch the RSS feed, pull the
+	// freshest enclosure URL, swap audio.src, and try again.
+	//
+	// Budget: PODCAST_RETRY_MAX_ATTEMPTS (3) within a 60s window with a 5s
+	// floor between attempts (decidePodcastRecovery). When the budget is
+	// exhausted we transition streamHealth to "failed" — the existing UI
+	// surfaces the manual retry button + auto-advance after 2s.
+	//
+	// Acts BEFORE the existing tripError debounce so the URL swap usually
+	// resolves the error before the 5s threshold fires; if a fresh URL also
+	// fails the existing path still runs and contributes to the same
+	// failed-state transition.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: isPodcast forces re-registration when audio element is recreated via key prop
+	useEffect(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+		if (!isPodcast) return;
+
+		const onError = () => {
+			const def = streamDefRef.current;
+			if (!def || def.type !== "podcast") return;
+			const errorCode = audio.error?.code ?? null;
+			const now = Date.now();
+			podcastRetryHistoryRef.current = pruneHistory(
+				podcastRetryHistoryRef.current,
+				now,
+			);
+			const decision = decidePodcastRecovery(
+				errorCode,
+				podcastRetryHistoryRef.current,
+				now,
+			);
+
+			if (decision.kind === "give-up") {
+				setStreamHealth("failed");
+				return;
+			}
+
+			const performRetry = () => {
+				const stamp = Date.now();
+				podcastRetryHistoryRef.current = [
+					...pruneHistory(podcastRetryHistoryRef.current, stamp),
+					stamp,
+				];
+				setStreamHealth("retrying");
+
+				// Pick the best fresh URL we can find:
+				// 1. Live RSS fetch (preferred — captures rotations within the session)
+				// 2. Build-time enclosure cache (always present after fetch-feeds run)
+				// 3. Hardcoded streams.ts url as last resort
+				const tryWithUrl = (nextUrl: string | null) => {
+					if (nextUrl && nextUrl !== audio.src) {
+						setRssAudioUrl(nextUrl);
+						audio.src = nextUrl;
+					}
+					try {
+						audio.load();
+						audio.play().catch(() => {
+							// surface the existing failed UI if even the fresh URL won't play
+							setStreamHealth("failed");
+						});
+					} catch {
+						setStreamHealth("failed");
+					}
+				};
+
+				const cached = episodeCacheRef.current?.[def.key]?.enclosureUrl ?? null;
+
+				if (def.rssFeedUrl && !def.corsBlocked) {
+					fetch(def.rssFeedUrl)
+						.then((r) => (r.ok ? r.text() : null))
+						.then((xml) => {
+							if (!xml) {
+								tryWithUrl(cached);
+								return;
+							}
+							const doc = new DOMParser().parseFromString(xml, "text/xml");
+							const encUrl =
+								doc
+									.querySelector("channel > item:first-child > enclosure")
+									?.getAttribute("url") ?? null;
+							tryWithUrl(encUrl ?? cached);
+						})
+						.catch(() => tryWithUrl(cached));
+				} else {
+					tryWithUrl(cached);
+				}
+			};
+
+			if (decision.kind === "retry-now") {
+				performRetry();
+				return;
+			}
+
+			// retry-after: schedule under the 5s spacing floor
+			if (podcastRetryTimerRef.current !== null) {
+				window.clearTimeout(podcastRetryTimerRef.current);
+			}
+			podcastRetryTimerRef.current = window.setTimeout(() => {
+				podcastRetryTimerRef.current = null;
+				performRetry();
+			}, decision.delayMs);
+		};
+
+		audio.addEventListener("error", onError);
+		return () => {
+			audio.removeEventListener("error", onError);
 		};
 	}, [isPodcast]);
 

@@ -146,7 +146,15 @@ async function fetchFeed(url, limit) {
 }
 
 /** Fetch latest episode metadata from a podcast RSS feed.
- *  Returns { title, subtitle, display } or null on failure. */
+ *  Returns { title, subtitle, display, enclosureUrl } or null on failure.
+ *
+ *  enclosureUrl (wave 28c): the playable audio URL for the latest episode,
+ *  pulled from <item><enclosure url="..."/></item>. Hydrated into
+ *  public/data/podcast-episodes.json so the runtime can always start from
+ *  the freshest URL — eliminating the stale-enclosure failure mode where a
+ *  hardcoded streams.ts URL points to an expired Triton signed CDN link or
+ *  a rotated captivate UUID. The frontend prefers this over the streams.ts
+ *  url and falls back to the streams.ts url only when this is missing. */
 async function fetchPodcastLatest(url) {
 	const res = await fetch(url, {
 		headers: { "User-Agent": "AWSUGCloudDelNorte-fetch-feeds" },
@@ -182,7 +190,22 @@ async function fetchPodcastLatest(url) {
 		? `${title} — ${subtitle.slice(0, 90)}`
 		: title || null;
 
-	return { title: title || null, subtitle, display };
+	// Extract the first enclosure URL — fast-xml-parser exposes attributes as
+	// @_url under the enclosure node. Some feeds emit a single object, others
+	// an array; normalize to the first item.
+	const rawEnclosure = item.enclosure;
+	const encNode = Array.isArray(rawEnclosure) ? rawEnclosure[0] : rawEnclosure;
+	const enclosureUrl =
+		encNode && typeof encNode === "object"
+			? String(encNode["@_url"] ?? "").trim() || null
+			: null;
+
+	return {
+		title: title || null,
+		subtitle,
+		display,
+		enclosureUrl,
+	};
 }
 
 // Ensure output directory exists
@@ -215,7 +238,9 @@ for (const { key, url } of PODCAST_FEEDS) {
 		const episode = await fetchPodcastLatest(url);
 		podcastOutput[key] = episode;
 		console.log(
-			`[fetch-feeds] podcast ${key}: ${episode?.display ?? "(no display)"}`,
+			`[fetch-feeds] podcast ${key}: ${episode?.display ?? "(no display)"}${
+				episode?.enclosureUrl ? ` [enc ok]` : ` [enc missing]`
+			}`,
 		);
 	} catch (err) {
 		console.warn(
