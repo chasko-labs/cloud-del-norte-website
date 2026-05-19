@@ -5,6 +5,12 @@ set -euo pipefail
 # Production traffic via API Gateway HTTP V2 (configured separately by
 # scripts/deploy-cdn-rsvp-apigw.sh).
 # Profile: jitsi-video-hosting (account 170473530355, us-west-2)
+#
+# NOTE: Environment variables are written to a tmp JSON file via jq and passed
+# as `--environment file:///tmp/cdn-rsvp-env.json` (instead of the AWS CLI
+# `Variables={k=v,...}` shorthand). EVENT_CAPACITIES contains JSON with commas,
+# which breaks the shorthand parser. The file:// pattern sidesteps it entirely.
+# See wave 35c.
 
 LAMBDA_ACCOUNT=170473530355
 LAMBDA_REGION=us-west-2
@@ -87,7 +93,19 @@ cd "$REPO_ROOT"
 
 echo "=== 4. Create/update Lambda function ==="
 ROLE_ARN="arn:aws:iam::${LAMBDA_ACCOUNT}:role/${ROLE_NAME}"
-ENV_VARS="Variables={EVENT_CAPACITIES=${EVENT_CAPACITIES},USER_POOL_ID=${USER_POOL_ID},RSVP_TABLE=${RSVP_TABLE}}"
+
+# Build the Environment payload as a tmp JSON file via jq. Passing complex
+# values inline via the AWS CLI `Variables={k=v,...}` shorthand fails when
+# any value contains a comma (e.g. EVENT_CAPACITIES JSON). jq handles all
+# the quote/escape rules correctly. See wave 35c.
+ENV_JSON_FILE=/tmp/cdn-rsvp-env.json
+jq -n \
+  --arg ec "$EVENT_CAPACITIES" \
+  --arg up "$USER_POOL_ID" \
+  --arg rt "$RSVP_TABLE" \
+  '{Variables: {EVENT_CAPACITIES: $ec, USER_POOL_ID: $up, RSVP_TABLE: $rt}}' \
+  > "$ENV_JSON_FILE"
+trap 'rm -f "$ENV_JSON_FILE" /tmp/cdn-rsvp.zip' EXIT
 
 if aws lambda get-function --function-name "$LAMBDA_NAME" \
     --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
@@ -100,7 +118,7 @@ if aws lambda get-function --function-name "$LAMBDA_NAME" \
     --region "$LAMBDA_REGION" --profile "$PROFILE"
   aws lambda update-function-configuration --function-name "$LAMBDA_NAME" \
     --role "$ROLE_ARN" \
-    --environment "$ENV_VARS" \
+    --environment "file://$ENV_JSON_FILE" \
     --timeout "$LAMBDA_TIMEOUT" --memory-size "$LAMBDA_MEMORY" \
     --region "$LAMBDA_REGION" --profile "$PROFILE"
 else
@@ -111,7 +129,7 @@ else
     --zip-file fileb:///tmp/cdn-rsvp.zip \
     --timeout "$LAMBDA_TIMEOUT" --memory-size "$LAMBDA_MEMORY" \
     --architectures x86_64 \
-    --environment "$ENV_VARS" \
+    --environment "file://$ENV_JSON_FILE" \
     --region "$LAMBDA_REGION" --profile "$PROFILE"
   aws lambda wait function-active \
     --function-name "$LAMBDA_NAME" \
