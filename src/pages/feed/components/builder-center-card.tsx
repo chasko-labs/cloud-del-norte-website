@@ -1,8 +1,6 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import Container from "@cloudscape-design/components/container";
-import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
@@ -12,6 +10,7 @@ import {
 	type BuilderCenterCard as Card,
 	deckForLocale,
 } from "./builder-center-data";
+import FeedCardShell from "./feed-card-shell";
 
 const MAX_TITLE = 90; // 2-line clamp handles wrap; this caps absurd outliers
 const truncate = (s: string) =>
@@ -139,20 +138,17 @@ export default function BuilderCenterCard() {
 		step(dir);
 	};
 
+	const headerActions = (
+		<Link href="https://builder.aws.com/" external fontSize="body-s">
+			{t("feedPage.builderCenterOpen")}
+		</Link>
+	);
+
 	return (
-		<Container
-			header={
-				<Header
-					variant="h2"
-					actions={
-						<Link href="https://builder.aws.com/" external fontSize="body-s">
-							{t("feedPage.builderCenterOpen")}
-						</Link>
-					}
-				>
-					{t("feedPage.builderCenterHeader")}
-				</Header>
-			}
+		<FeedCardShell
+			headerText={t("feedPage.builderCenterHeader")}
+			headerActions={headerActions}
+			palette="gold"
 		>
 			{/* biome-ignore lint/a11y/noStaticElementInteractions: pointer handlers only pause auto-advance — keyboard / SR users use the chevron buttons below */}
 			<div
@@ -201,6 +197,6 @@ export default function BuilderCenterCard() {
 					</div>
 				)}
 			</div>
-		</Container>
+		</FeedCardShell>
 	);
 }

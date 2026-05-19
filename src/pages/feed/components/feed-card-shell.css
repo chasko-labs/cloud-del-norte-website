@@ -1,0 +1,434 @@
+/* Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+   SPDX-License-Identifier: MIT-0
+
+   ============================================================================
+   Wave 36b — FeedCardShell shared chrome
+   ============================================================================
+
+   Lifts the depth-stack + marquee-header treatment proven in waves 32a / 33a /
+   33b on the three event cards into one primitive that the simpler non-event
+   feed cards can adopt. The cards in scope (arrowhead-news, andres-medium,
+   andres-youtube-live, builder-center, twitch panes, featured-video,
+   andmore/awsml/readysetcloud feed-section variants) previously rendered as
+   plain Cloudscape Containers with the default h2 header — visually flat
+   compared to the rizzed-up event cards above them. This file gives them all
+   the same dimensional vocabulary while keeping each card visually distinct
+   via a per-palette modifier class.
+
+   The .feed-card-shell wrapper sits *outside* the Cloudscape Container and
+   carries:
+     - perspective(1200px) + transform-style: preserve-3d so any child that
+       wants a translateZ pop can have one without loading a runtime 3D engine
+       (matches featured-event / next-meetup / upcoming-virtual-event)
+     - will-change: transform + contain: layout paint style + a translate3d
+       compositor hint so the card lives on its own GPU layer (same idiom
+       wave 30a deployed on the featured-event card to mitigate scroll
+       tearing — apply it everywhere so the rest of the feed scrolls with the
+       same stability)
+     - a 1px stage-rim inset on the box-shadow plus a layered ambient bloom
+       that picks up the palette accent at low opacity
+
+   The .feed-card-shell__marquee element replaces the Cloudscape <Header
+   variant="h2"> chrome. It carries a 2px palette-tinted rim, an inset
+   highlight on top + a darker shadow on the bottom (the "lit-from-above
+   sign" idiom), an emissive uppercase-tracked headline, and an optional
+   right-aligned actions slot. The wrapper announces itself as h2 to AT via
+   role="heading" + aria-level=2 — Cloudscape only renders an actual <h2>
+   through its Header component, so swapping in custom chrome means we
+   re-assert the role on the replacement.
+
+   Per-palette `.feed-card-shell--<name>` modifiers swap the eight CSS
+   custom properties. Both light and dark mode are covered for every palette.
+
+   ── Wave 36b TODO (deferred from this PR) ────────────────────────────────
+   The three YouTube carousels — youtube-carousel.tsx,
+   youtube-channel-carousel.tsx, youtube-shorts-carousel.tsx — were
+   intentionally not migrated to FeedCardShell in wave 36b. Their internal
+   layout (carousel viewport, frame ratio, custom chevrons) deserves a
+   separate consideration of how the shell's marquee header reads above
+   embedded video chrome before being wrapped. Pick this up in a follow-up
+   wave; shell adoption there is purely cosmetic, so deferring does not
+   block the wave 36b goal of "no plain Cloudscape Containers on the feed
+   page". The TODO is also recorded in src/pages/feed/styles.css per the
+   wave 36b brief. */
+
+.feed-card-shell {
+	/* Default tokens — overridden by the per-palette modifier classes
+	   below. Listed here so a card that forgets the palette modifier
+	   still renders something legible (graceful degradation). */
+	--fcs-bg-from: #f5f5f5;
+	--fcs-bg-to: #e5e5e5;
+	--fcs-rim: #888;
+	--fcs-rim-highlight: rgba(255, 255, 255, 0.6);
+	--fcs-shadow: rgba(0, 0, 0, 0.18);
+	--fcs-text: #1a1a1a;
+	--fcs-text-glow: rgba(255, 255, 255, 0.5);
+	--fcs-stage-rim: rgba(255, 255, 255, 0.08);
+	--fcs-ambient-bloom: rgba(0, 0, 0, 0.1);
+
+	position: relative;
+	isolation: isolate;
+	border-radius: var(--cdn-radius-md, 8px);
+	/* perspective + preserve-3d let descendant elements pop forward in
+	   z without loading a runtime 3D engine. 1200px = subtle ambient
+	   depth, same value waves 30a/33a/33b use on the event cards. */
+	perspective: 1200px;
+	transform-style: preserve-3d;
+	/* Compositor isolation — layered defense against scroll tearing.
+	   contain: layout paint style isolates the card's paint operations,
+	   translate3d forces its own GPU layer, will-change proactively
+	   promotes the layer up-front. Same idiom from wave 30a on the
+	   featured-event card; applying it to every shelled card so the
+	   whole feed page scrolls with the same stability. */
+	contain: layout paint style;
+	transform: translate3d(0, 0, 0);
+	will-change: transform;
+	/* Layered ambient bloom + 1px stage-rim inset — gives the card a
+	   visible "stage edge" line under varied page backgrounds without
+	   requiring the inner Cloudscape Container to opt in. The inset is
+	   palette-tinted via the --fcs-stage-rim variable so dark-mode
+	   variants get a brighter rim against deeper backplates. */
+	box-shadow:
+		0 1px 2px var(--fcs-shadow),
+		0 8px 24px -10px var(--fcs-ambient-bloom),
+		0 18px 44px -16px var(--fcs-ambient-bloom),
+		inset 0 0 0 1px var(--fcs-stage-rim);
+}
+
+/* Marquee header — replaces Cloudscape's <Header variant="h2"> chrome.
+   Layout: flex row, headline centered horizontally with optional
+   actions slot pinned to the right. Uses min-height instead of fixed
+   height so the actions slot can stack onto a second visual row at
+   narrow container widths without clipping. */
+.feed-card-shell__marquee {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	min-height: 40px;
+	padding: 8px 24px;
+	border-radius: 10px;
+	background: linear-gradient(
+		180deg,
+		var(--fcs-bg-from) 0%,
+		var(--fcs-bg-to) 100%
+	);
+	border: 2px solid var(--fcs-rim);
+	box-shadow:
+		0 1px 0 var(--fcs-rim-highlight) inset,
+		0 -1px 0 rgba(0, 0, 0, 0.18) inset,
+		0 2px 4px var(--fcs-shadow),
+		0 8px 18px -6px var(--fcs-shadow);
+}
+
+/* Headline text — bold uppercase, tight tracking, subtle text-shadow
+   so the lettering reads as emissive against the palette backplate.
+   Mirrors the typographic voice of the wave 32a featured-event marquee
+   so the family reads coherent across the page. */
+.feed-card-shell__marquee-text {
+	position: relative;
+	z-index: 1;
+	flex: 1 1 auto;
+	min-width: 0;
+	display: inline-block;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--fcs-text);
+	text-shadow:
+		0 0 6px var(--fcs-text-glow),
+		0 1px 0 rgba(255, 255, 255, 0.35);
+	line-height: 1.15;
+	text-align: center;
+}
+
+/* Right-aligned actions slot — hosts the optional "View all" / channel
+   link. Forced flex-shrink: 0 so the headline gives ground first if the
+   marquee runs out of horizontal space at narrow container widths. */
+.feed-card-shell__marquee-actions {
+	position: relative;
+	z-index: 1;
+	flex: 0 0 auto;
+	display: inline-flex;
+	align-items: center;
+	font-size: 0.8125rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	text-transform: none;
+}
+
+/* Inner Cloudscape Container — the shell wraps a Container so existing
+   inner content (SpaceBetween, Box, custom carousels) keeps Cloudscape's
+   surface tokens / padding / focus rings. The rules below are the only
+   tweaks: drop the Cloudscape Container's own outer border (the shell
+   carries the dimensional border via box-shadow inset stage-rim) so we
+   don't get a double rim, and let the Container's surface fill the
+   shell's rounded corners. */
+.feed-card-shell .awsui_root_2qdw9_122zh_141,
+.feed-card-shell [class*="awsui_root_"] {
+	/* Cloudscape Container class names are minified per-build so we match
+	   on the awsui_root_ prefix to keep this stable across releases. */
+	border: none;
+}
+
+/* ============================================================================
+   Palette modifiers
+   ============================================================================
+   Each modifier swaps the eight `--fcs-*` custom properties for both the
+   light and dark theme. Light is the default body styling; dark is gated
+   on the .awsui-dark-mode ancestor (Cloudscape's standard dark-mode hook).
+   Editorial mapping documented inline below + on FeedCardShellPalette in
+   feed-card-shell.tsx. */
+
+/* ── amber — warm dev/casual (feed-section andmore) ───────────────────── */
+.feed-card-shell--amber {
+	--fcs-bg-from: #fef3c7;
+	--fcs-bg-to: #fcd34d;
+	--fcs-rim: #d97706;
+	--fcs-rim-highlight: rgba(255, 251, 235, 0.7);
+	--fcs-shadow: rgba(120, 53, 15, 0.22);
+	--fcs-text: #78350f;
+	--fcs-text-glow: rgba(254, 240, 138, 0.55);
+	--fcs-stage-rim: rgba(217, 119, 6, 0.18);
+	--fcs-ambient-bloom: rgba(120, 53, 15, 0.16);
+}
+
+.awsui-dark-mode .feed-card-shell--amber {
+	--fcs-bg-from: #2a1a08;
+	--fcs-bg-to: #1a0f04;
+	--fcs-rim: #f59e0b;
+	--fcs-rim-highlight: rgba(254, 215, 170, 0.32);
+	--fcs-shadow: rgba(0, 0, 0, 0.55);
+	--fcs-text: #fde68a;
+	--fcs-text-glow: rgba(253, 230, 138, 0.55);
+	--fcs-stage-rim: rgba(245, 158, 11, 0.22);
+	--fcs-ambient-bloom: rgba(120, 53, 15, 0.42);
+}
+
+/* ── teal — cool ML/technical (feed-section awsml) ────────────────────── */
+.feed-card-shell--teal {
+	--fcs-bg-from: #ccfbf1;
+	--fcs-bg-to: #5eead4;
+	--fcs-rim: #0e7490;
+	--fcs-rim-highlight: rgba(236, 254, 255, 0.7);
+	--fcs-shadow: rgba(15, 76, 87, 0.22);
+	--fcs-text: #0e3a4a;
+	--fcs-text-glow: rgba(165, 243, 252, 0.55);
+	--fcs-stage-rim: rgba(14, 116, 144, 0.18);
+	--fcs-ambient-bloom: rgba(15, 76, 87, 0.16);
+}
+
+.awsui-dark-mode .feed-card-shell--teal {
+	--fcs-bg-from: #042f2e;
+	--fcs-bg-to: #021a1a;
+	--fcs-rim: #5eead4;
+	--fcs-rim-highlight: rgba(167, 243, 208, 0.32);
+	--fcs-shadow: rgba(0, 0, 0, 0.55);
+	--fcs-text: #ccfbf1;
+	--fcs-text-glow: rgba(94, 234, 212, 0.55);
+	--fcs-stage-rim: rgba(94, 234, 212, 0.22);
+	--fcs-ambient-bloom: rgba(15, 76, 87, 0.42);
+}
+
+/* ── violet — twitch brand purple (twitch-section) ────────────────────── */
+.feed-card-shell--violet {
+	--fcs-bg-from: #ede9fe;
+	--fcs-bg-to: #c4b5fd;
+	--fcs-rim: #7c3aed;
+	--fcs-rim-highlight: rgba(245, 243, 255, 0.7);
+	--fcs-shadow: rgba(76, 29, 149, 0.22);
+	--fcs-text: #312e81;
+	--fcs-text-glow: rgba(221, 214, 254, 0.55);
+	--fcs-stage-rim: rgba(124, 58, 237, 0.18);
+	--fcs-ambient-bloom: rgba(76, 29, 149, 0.16);
+}
+
+.awsui-dark-mode .feed-card-shell--violet {
+	--fcs-bg-from: #1e1b4b;
+	--fcs-bg-to: #0f0a35;
+	--fcs-rim: #a78bfa;
+	--fcs-rim-highlight: rgba(196, 181, 253, 0.32);
+	--fcs-shadow: rgba(0, 0, 0, 0.55);
+	--fcs-text: #ede9fe;
+	--fcs-text-glow: rgba(167, 139, 250, 0.55);
+	--fcs-stage-rim: rgba(167, 139, 250, 0.22);
+	--fcs-ambient-bloom: rgba(76, 29, 149, 0.42);
+}
+
+/* ── sage — research / academic green (arrowhead-news) ────────────────── */
+.feed-card-shell--sage {
+	--fcs-bg-from: #dcfce7;
+	--fcs-bg-to: #86efac;
+	--fcs-rim: #15803d;
+	--fcs-rim-highlight: rgba(240, 253, 244, 0.7);
+	--fcs-shadow: rgba(20, 83, 45, 0.22);
+	--fcs-text: #14532d;
+	--fcs-text-glow: rgba(187, 247, 208, 0.55);
+	--fcs-stage-rim: rgba(21, 128, 61, 0.18);
+	--fcs-ambient-bloom: rgba(20, 83, 45, 0.16);
+}
+
+.awsui-dark-mode .feed-card-shell--sage {
+	--fcs-bg-from: #052e16;
+	--fcs-bg-to: #022c1a;
+	--fcs-rim: #86efac;
+	--fcs-rim-highlight: rgba(187, 247, 208, 0.32);
+	--fcs-shadow: rgba(0, 0, 0, 0.55);
+	--fcs-text: #dcfce7;
+	--fcs-text-glow: rgba(134, 239, 172, 0.55);
+	--fcs-stage-rim: rgba(134, 239, 172, 0.22);
+	--fcs-ambient-bloom: rgba(20, 83, 45, 0.42);
+}
+
+/* ── rose — warm presence (andres-youtube-live) ──────────────────────── */
+.feed-card-shell--rose {
+	--fcs-bg-from: #ffe4e6;
+	--fcs-bg-to: #fda4af;
+	--fcs-rim: #be123c;
+	--fcs-rim-highlight: rgba(255, 241, 242, 0.7);
+	--fcs-shadow: rgba(127, 29, 29, 0.22);
+	--fcs-text: #7f1d1d;
+	--fcs-text-glow: rgba(254, 205, 211, 0.55);
+	--fcs-stage-rim: rgba(190, 18, 60, 0.18);
+	--fcs-ambient-bloom: rgba(127, 29, 29, 0.16);
+}
+
+.awsui-dark-mode .feed-card-shell--rose {
+	--fcs-bg-from: #3f0a17;
+	--fcs-bg-to: #2a0510;
+	--fcs-rim: #fda4af;
+	--fcs-rim-highlight: rgba(254, 205, 211, 0.32);
+	--fcs-shadow: rgba(0, 0, 0, 0.55);
+	--fcs-text: #ffe4e6;
+	--fcs-text-glow: rgba(253, 164, 175, 0.55);
+	--fcs-stage-rim: rgba(253, 164, 175, 0.22);
+	--fcs-ambient-bloom: rgba(127, 29, 29, 0.42);
+}
+
+/* ── navy — long-form / serious publication ──────────────────────────────
+   Used by both andres-medium AND feed-section readysetcloud. Bryan's
+   brief flagged this as an editorial choice — both sources are bylined
+   long-form tech publications (andmoredev's Medium archive, Allen
+   Helton's Ready Set Cloud blog/newsletter). Reusing the palette keeps
+   them visually paired as the "deep-read" cards in the feed without
+   demanding a 9th palette. */
+.feed-card-shell--navy {
+	--fcs-bg-from: #dbeafe;
+	--fcs-bg-to: #93c5fd;
+	--fcs-rim: #1e40af;
+	--fcs-rim-highlight: rgba(239, 246, 255, 0.7);
+	--fcs-shadow: rgba(30, 58, 138, 0.22);
+	--fcs-text: #1e293b;
+	--fcs-text-glow: rgba(219, 234, 254, 0.55);
+	--fcs-stage-rim: rgba(30, 64, 175, 0.18);
+	--fcs-ambient-bloom: rgba(30, 58, 138, 0.16);
+}
+
+.awsui-dark-mode .feed-card-shell--navy {
+	--fcs-bg-from: #0f172a;
+	--fcs-bg-to: #020617;
+	--fcs-rim: #93c5fd;
+	--fcs-rim-highlight: rgba(219, 234, 254, 0.32);
+	--fcs-shadow: rgba(0, 0, 0, 0.55);
+	--fcs-text: #dbeafe;
+	--fcs-text-glow: rgba(147, 197, 253, 0.55);
+	--fcs-stage-rim: rgba(147, 197, 253, 0.22);
+	--fcs-ambient-bloom: rgba(30, 58, 138, 0.42);
+}
+
+/* ── gold — AWS Builder Center ───────────────────────────────────────── */
+.feed-card-shell--gold {
+	--fcs-bg-from: #fef3c7;
+	--fcs-bg-to: #fbbf24;
+	--fcs-rim: #b45309;
+	--fcs-rim-highlight: rgba(255, 251, 235, 0.7);
+	--fcs-shadow: rgba(120, 53, 15, 0.24);
+	--fcs-text: #78350f;
+	--fcs-text-glow: rgba(254, 243, 199, 0.55);
+	--fcs-stage-rim: rgba(180, 83, 9, 0.2);
+	--fcs-ambient-bloom: rgba(120, 53, 15, 0.16);
+}
+
+.awsui-dark-mode .feed-card-shell--gold {
+	--fcs-bg-from: #451a03;
+	--fcs-bg-to: #2c0a02;
+	--fcs-rim: #fbbf24;
+	--fcs-rim-highlight: rgba(254, 215, 170, 0.34);
+	--fcs-shadow: rgba(0, 0, 0, 0.55);
+	--fcs-text: #fef3c7;
+	--fcs-text-glow: rgba(251, 191, 36, 0.55);
+	--fcs-stage-rim: rgba(251, 191, 36, 0.22);
+	--fcs-ambient-bloom: rgba(120, 53, 15, 0.42);
+}
+
+/* ── lavender — women in tech / featured (featured-video-card) ───────── */
+.feed-card-shell--lavender {
+	--fcs-bg-from: #ede9fe;
+	--fcs-bg-to: #ddd6fe;
+	--fcs-rim: #8b5cf6;
+	--fcs-rim-highlight: rgba(245, 243, 255, 0.7);
+	--fcs-shadow: rgba(76, 29, 149, 0.18);
+	--fcs-text: #3730a3;
+	--fcs-text-glow: rgba(221, 214, 254, 0.55);
+	--fcs-stage-rim: rgba(139, 92, 246, 0.18);
+	--fcs-ambient-bloom: rgba(76, 29, 149, 0.14);
+}
+
+.awsui-dark-mode .feed-card-shell--lavender {
+	--fcs-bg-from: #2a1147;
+	--fcs-bg-to: #1a0a30;
+	--fcs-rim: #c4b5fd;
+	--fcs-rim-highlight: rgba(196, 181, 253, 0.32);
+	--fcs-shadow: rgba(0, 0, 0, 0.55);
+	--fcs-text: #ede9fe;
+	--fcs-text-glow: rgba(196, 181, 253, 0.55);
+	--fcs-stage-rim: rgba(196, 181, 253, 0.22);
+	--fcs-ambient-bloom: rgba(76, 29, 149, 0.42);
+}
+
+/* ============================================================================
+   Scroll-pause integration
+   ============================================================================
+   The feed page wires scroll-jank-mitigation.ts → toggles body.cdn-scrolling
+   during a scroll burst and removes it 250ms after the burst settles. Mirror
+   the wave 30a featured-event approach: while body.cdn-scrolling is set,
+   freeze any sustained animation on the shelled card so the compositor can
+   spend its frame budget on the scroll itself.
+
+   The shell itself doesn't carry a sustained animation today, but per-palette
+   future enhancements may add one (a soft rim breathe is planned but out of
+   scope for wave 36b). The pause rule is wired now so the contract is
+   established; future animations only need to declare they animate, not
+   re-declare the scroll-pause integration. Skipped under reduced-motion
+   since animations are off in that branch. */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .feed-card-shell,
+	body.cdn-scrolling .feed-card-shell::before,
+	body.cdn-scrolling .feed-card-shell::after,
+	body.cdn-scrolling .feed-card-shell__marquee,
+	body.cdn-scrolling .feed-card-shell__marquee::before,
+	body.cdn-scrolling .feed-card-shell__marquee::after {
+		animation-play-state: paused;
+	}
+}
+
+/* ============================================================================
+   Reduced-motion fallback
+   ============================================================================
+   Strip the GPU compositor hints + perspective when the user has signalled
+   reduced motion. The dimensional pop has nothing to motion-pause to begin
+   with at this layer, but flattening the perspective stack means any future
+   per-card translateZ() doesn't kick the wrapper into a 3D space the user
+   has explicitly opted out of. The card stays fully legible — only the
+   subtle depth idiom is suppressed. */
+@media (prefers-reduced-motion: reduce) {
+	.feed-card-shell {
+		perspective: none;
+		transform-style: flat;
+		will-change: auto;
+		transform: none;
+	}
+}

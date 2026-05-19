@@ -3,7 +3,17 @@
 
 import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { LocaleProvider } from "../../../../contexts/locale-context";
 import FeaturedVideoCard from "../featured-video-card";
+
+// Wave 36b — FeaturedVideoCard now wraps its content in FeedCardShell, which
+// consumes useTranslation() to resolve the rsvp.error.generic fallback for
+// its internal error boundary. All renders below therefore need a locale
+// provider in scope; without it useTranslation throws "must be used within
+// a LocaleProvider" before the component reaches the assertions.
+function renderCard(ui: React.ReactElement) {
+	return render(<LocaleProvider locale="us">{ui}</LocaleProvider>);
+}
 
 // ── IntersectionObserver mock ─────────────────────────────────────────────────
 type IOCallback = (entries: IntersectionObserverEntry[]) => void;
@@ -38,25 +48,25 @@ const PROPS = {
 
 describe("FeaturedVideoCard", () => {
 	it("renders thumbnail with correct src", () => {
-		render(<FeaturedVideoCard {...PROPS} />);
+		renderCard(<FeaturedVideoCard {...PROPS} />);
 		const img = screen.getByTestId("featured-video-thumbnail");
 		expect(img).toHaveAttribute("src", PROPS.thumbnailUrl);
 	});
 
 	it("renders title and author", () => {
-		render(<FeaturedVideoCard {...PROPS} />);
+		renderCard(<FeaturedVideoCard {...PROPS} />);
 		expect(screen.getByText(PROPS.title)).toBeInTheDocument();
 		expect(screen.getByText(PROPS.author)).toBeInTheDocument();
 	});
 
 	it("does not render iframe before IntersectionObserver fires", () => {
-		render(<FeaturedVideoCard {...PROPS} />);
+		renderCard(<FeaturedVideoCard {...PROPS} />);
 		expect(screen.queryByTitle(PROPS.title)).toBeNull();
 	});
 
 	it("renders iframe with correct src after IntersectionObserver fires", async () => {
 		const { act } = await import("react");
-		render(<FeaturedVideoCard {...PROPS} />);
+		renderCard(<FeaturedVideoCard {...PROPS} />);
 		await act(async () => {
 			lastCallback?.([{ isIntersecting: true } as IntersectionObserverEntry]);
 		});

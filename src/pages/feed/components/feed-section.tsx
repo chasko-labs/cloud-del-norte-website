@@ -2,13 +2,12 @@
 // SPDX-License-Identifier: MIT-0
 
 import Box from "@cloudscape-design/components/box";
-import Container from "@cloudscape-design/components/container";
-import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useEffect, useId, useRef, useState } from "react";
 import { SkeletonLine, SkeletonTitle } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
+import FeedCardShell from "./feed-card-shell";
 
 export interface FeedPost {
 	title: string;
@@ -183,56 +182,72 @@ function PostCarousel({ posts, ready }: { posts: FeedPost[]; ready: boolean }) {
 	);
 }
 
+// Wave 36b — feed-section variants each pick a FeedCardShell palette via the
+// section-key-to-palette map below. Detection happens internally per variant
+// (no `palette` prop on the public FeedAndmore/FeedAwsml/FeedReadysetcloud
+// components — keeps app.tsx untouched). Mapping rationale:
+//   andmore       → amber  (warm dev/casual — andmore.dev is a personal /
+//                            project blog with a warm voice)
+//   awsml         → teal   (cool / technical — AWS ML blog reads cooler,
+//                            data-heavy)
+//   readysetcloud → navy   (long-form publication — Allen Helton's serious
+//                            serverless blog + newsletter; reuses the navy
+//                            palette already assigned to andres-medium since
+//                            both are bylined long-form tech publications,
+//                            an intentional family pairing)
+// Documented in feed-card-shell.tsx FeedCardShellPalette JSDoc + commit msg.
+
 export function FeedAndmore() {
 	const { t } = useTranslation();
 	const { posts, ready } = useFeed("andmore");
+
+	const headerText = (
+		<>
+			{t("feedPage.andmoreDevHeader")}
+			<span className="feed-card-header-sub">
+				{t("feedPage.andmoreByAndres")}
+			</span>
+		</>
+	);
+	const headerActions = (
+		<Link href="https://andmore.dev" external fontSize="body-s">
+			{t("feedPage.andresMediumAllPosts")}
+		</Link>
+	);
+
 	return (
-		<Container
-			header={
-				<Header
-					variant="h2"
-					actions={
-						<Link href="https://andmore.dev" external fontSize="body-s">
-							{t("feedPage.andresMediumAllPosts")}
-						</Link>
-					}
-				>
-					{t("feedPage.andmoreDevHeader")}
-					<span className="feed-card-header-sub">
-						{t("feedPage.andmoreByAndres")}
-					</span>
-				</Header>
-			}
+		<FeedCardShell
+			headerText={headerText}
+			headerActions={headerActions}
+			palette="amber"
 		>
 			<PostCarousel posts={posts} ready={ready} />
-		</Container>
+		</FeedCardShell>
 	);
 }
 
 export function FeedAwsml() {
 	const { t } = useTranslation();
 	const { posts, ready } = useFeed("awsml");
+
+	const headerActions = (
+		<Link
+			href="https://aws.amazon.com/blogs/machine-learning/"
+			external
+			fontSize="body-s"
+		>
+			{t("feedPage.awsMlBlogAllPosts")}
+		</Link>
+	);
+
 	return (
-		<Container
-			header={
-				<Header
-					variant="h2"
-					actions={
-						<Link
-							href="https://aws.amazon.com/blogs/machine-learning/"
-							external
-							fontSize="body-s"
-						>
-							{t("feedPage.awsMlBlogAllPosts")}
-						</Link>
-					}
-				>
-					{t("feedPage.awsMlBlog")}
-				</Header>
-			}
+		<FeedCardShell
+			headerText={t("feedPage.awsMlBlog")}
+			headerActions={headerActions}
+			palette="teal"
 		>
 			<PostCarousel posts={posts} ready={ready} />
-		</Container>
+		</FeedCardShell>
 	);
 }
 
@@ -250,8 +265,9 @@ export function FeedReadysetcloud() {
 	};
 
 	return (
-		<Container
-			header={<Header variant="h2">{t("feedPage.readysetcloudHeader")}</Header>}
+		<FeedCardShell
+			headerText={t("feedPage.readysetcloudHeader")}
+			palette="navy"
 		>
 			{!ready ? (
 				<>
@@ -320,7 +336,7 @@ export function FeedReadysetcloud() {
 					</SpaceBetween>
 				</SpaceBetween>
 			)}
-		</Container>
+		</FeedCardShell>
 	);
 }
 
