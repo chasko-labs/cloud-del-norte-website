@@ -157,7 +157,7 @@ describe("FeaturedEvent", () => {
 		expect(screen.getByText(/Limited space — RSVP now/i)).toBeInTheDocument();
 	});
 
-	it("inlines the AsciiSmirk SVG inside the description (after the 'game.' hook)", () => {
+	it("inlines the AsciiSmirk SVG inside the description (after the 'game' hook)", () => {
 		const { container } = renderWithLocale("us");
 		const desc = container.querySelector(".feed-featured-event__description");
 		expect(desc).not.toBeNull();
