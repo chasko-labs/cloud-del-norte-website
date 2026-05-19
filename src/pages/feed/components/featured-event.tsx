@@ -66,6 +66,17 @@ function hideBrokenImage(event: SyntheticEvent<HTMLImageElement>) {
 }
 
 /**
+ * Wave 37b — onLoad handler that flags the <img> as `is-loaded` so the
+ * CSS opacity transition can fade the binary in over 320ms. Avoids the
+ * harder skeleton-to-content snap when the image arrives. The CSS rule
+ * gates this behind prefers-reduced-motion so reduced-motion users see
+ * the image at full opacity immediately.
+ */
+function markImageLoaded(event: SyntheticEvent<HTMLImageElement>) {
+	event.currentTarget.classList.add("is-loaded");
+}
+
+/**
  * Wave 32a — Theater marquee header.
  *
  * Replaces Cloudscape's <Header variant="h2"> with a custom JSX block so
@@ -194,6 +205,7 @@ function FeaturedEventInner() {
 								width={1200}
 								height={630}
 								loading="lazy"
+								onLoad={markImageLoaded}
 								onError={hideBrokenImage}
 							/>
 							<img
@@ -203,6 +215,7 @@ function FeaturedEventInner() {
 								width={1200}
 								height={630}
 								loading="lazy"
+								onLoad={markImageLoaded}
 								onError={hideBrokenImage}
 							/>
 						</div>

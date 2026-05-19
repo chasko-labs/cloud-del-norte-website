@@ -3950,3 +3950,86 @@
 		animation: none !important;
 	}
 }
+
+/* ============================================================
+   Wave 37b — Image fade-in + date/image-area gentle ease-in
+   ============================================================
+   Bryan reported the dark featured-event banner takes a moment to load and
+   pops onto the card with a hard skeleton-to-content snap. Two changes
+   here:
+
+   (1) IMAGES — the .webp banners on FeaturedEvent + UpcomingVirtualEvent
+       start at opacity:0 and transition to opacity:1 over 320ms once the
+       <img> onLoad handler adds the `is-loaded` class. Replaces the
+       existing hard pop with a soft fade. The hideBrokenImage onError
+       handler from wave 30a still applies (display:none on broken
+       images), and the existing theme-driven display:none rules on the
+       off-theme variant are unaffected — opacity transitions don't fire
+       on a display:none element.
+
+   (2) DATE PLATES + IMAGE WRAPPERS — the date strings render synchronously
+       via Intl.DateTimeFormat, but Bryan wanted the same gentle ease-in
+       feel. A pure CSS keyframes animation with `animation-fill-mode:
+       backwards` covers the 60ms initial delay so the elements paint at
+       opacity 0 before the keyframes start. No JS state needed — the
+       animation runs once on first paint and never re-fires.
+
+   Both layers are gated behind prefers-reduced-motion: reduce — reduced-
+   motion users see images at full opacity immediately (transition:none)
+   and date/image-area wrappers without any animation.
+
+   Note: the `__image-area` wrapper on FeaturedEvent and the
+   `__bulbs-wrapper` on UpcomingVirtualEvent receive the wrapper-level
+   fade-in animation. The inner <img> elements still independently use
+   the opacity transition keyed off `is-loaded` (covers the actual image
+   binary load latency, which can outlast the 60ms wrapper fade). */
+
+/* (1) Image binary fade-in transition */
+.feed-featured-event__image,
+.feed-upcoming-virtual-event__image {
+	opacity: 0;
+	transition: opacity 320ms ease-out;
+}
+
+.feed-featured-event__image.is-loaded,
+.feed-upcoming-virtual-event__image.is-loaded {
+	opacity: 1;
+}
+
+/* (2) Pure-CSS fade-in keyframes for date plates + image wrappers */
+@keyframes feed-fade-in {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.feed-featured-event__date,
+.feed-next-meetup__date,
+.feed-upcoming-virtual-event__date,
+.feed-featured-event__image-area,
+.feed-upcoming-virtual-event__bulbs-wrapper {
+	animation: feed-fade-in 320ms ease-out 60ms backwards;
+}
+
+/* Reduced motion — make every Wave 37b animation disappear and ensure
+   the elements paint at full opacity immediately. */
+@media (prefers-reduced-motion: reduce) {
+	.feed-featured-event__image,
+	.feed-upcoming-virtual-event__image,
+	.feed-featured-event__image.is-loaded,
+	.feed-upcoming-virtual-event__image.is-loaded {
+		opacity: 1;
+		transition: none;
+	}
+
+	.feed-featured-event__date,
+	.feed-next-meetup__date,
+	.feed-upcoming-virtual-event__date,
+	.feed-featured-event__image-area,
+	.feed-upcoming-virtual-event__bulbs-wrapper {
+		animation: none;
+	}
+}
