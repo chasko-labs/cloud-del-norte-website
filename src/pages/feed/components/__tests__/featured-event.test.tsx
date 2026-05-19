@@ -156,10 +156,10 @@ describe("FeaturedEvent", () => {
 		expect(primary).toHaveAttribute("href", expected);
 	});
 
-	it("renders the spots remaining counter (48 of 50 default baseline)", () => {
+	it("renders the limited-space CTA", () => {
 		localStorage.clear();
 		renderWithLocale("us");
-		expect(screen.getByText(/48 of 50 spots remaining/i)).toBeInTheDocument();
+		expect(screen.getByText(/Limited space — RSVP now/i)).toBeInTheDocument();
 	});
 
 	it("inlines the AsciiSmirk SVG inside the description (after the 'game.' hook)", () => {
