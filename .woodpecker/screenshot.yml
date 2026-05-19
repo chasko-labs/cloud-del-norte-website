@@ -13,9 +13,6 @@ when:
 steps:
   - name: capture-dev
     image: mcr.microsoft.com/playwright:v1.60.0-noble
-    mem_limit: 4294967296
-    memswap_limit: 4294967296
-    init: true
     failure: ignore
     when:
       - event: [push, manual]
@@ -55,8 +52,6 @@ steps:
 
   - name: capture-prod
     image: mcr.microsoft.com/playwright:v1.49.0-jammy
-    mem_limit: 4294967296
-    memswap_limit: 4294967296
     failure: ignore
     when:
       - event: [push, manual]
