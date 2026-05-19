@@ -1,0 +1,130 @@
+/* --------------------------------------------------------------------------
+   Wave 38c — GlobalGlobe — inline pulsing globe SVG.
+
+   Sits inline next to the word "global" in the upcoming-virtual-event
+   description. ~16px tall, vertical-align: middle so it hugs the text
+   baseline like an emoji. Stroke + fill use currentColor so the parent
+   type token carries the brand-correct hue (deep cdn-purple on light,
+   lavender on dark — scoped under .feed-upcoming-virtual-event*). A
+   small backplate (cream on light / indigo on dark) sits behind the
+   glyph for legibility, mirroring the AsciiSmirk treatment.
+
+   Animations:
+     - outer halo (5.2s loop): subtle opacity + scale breathe — evokes a
+       slow planetary glow that times with the card's other 4–9s loops
+       without lock-stepping any of them
+     - meridian (24s loop): full 360° rotation around the planet center —
+       slow enough that the eye reads it as ambient rotation rather than
+       motion focus, but fast enough that it's discoverable on dwell
+     - prefers-reduced-motion: ALL animations off; static glyph still
+       reads as a globe (planet body + latitudes + meridian + halo all
+       paint at full opacity)
+   -------------------------------------------------------------------------- */
+
+.cdn-global-globe {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	margin: 0 var(--cdn-space-xs, 4px);
+	padding: 0 var(--cdn-space-xs, 4px);
+	border-radius: 6px;
+	background: rgba(255, 250, 235, 0.55);
+	box-shadow:
+		inset 0 0 0 1px rgba(90, 31, 138, 0.18),
+		0 1px 2px rgba(48, 0, 106, 0.08);
+	color: var(--cdn-purple, #5a1f8a);
+	line-height: 1;
+}
+
+.awsui-dark-mode .cdn-global-globe {
+	background: rgba(48, 0, 106, 0.55);
+	box-shadow:
+		inset 0 0 0 1px rgba(199, 184, 232, 0.22),
+		0 1px 2px rgba(0, 0, 0, 0.4);
+	color: var(--cdn-lavender, #d7c7ee);
+}
+
+.cdn-global-globe__svg {
+	display: block;
+	overflow: visible;
+}
+
+/* transform-origins so the breathe + spin animate around their geometric
+   center. The meridian rotates around the planet center (12, 12). */
+.cdn-global-globe__halo {
+	transform-origin: 12px 12px;
+}
+
+.cdn-global-globe__meridian {
+	transform-origin: 12px 12px;
+}
+
+/* ---------- Animations — only when motion is permitted ---------- */
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes cdn-global-globe-halo-breathe {
+		0%,
+		100% {
+			opacity: 0.35;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 0.7;
+			transform: scale(1.08);
+		}
+	}
+
+	@keyframes cdn-global-globe-meridian-spin {
+		from {
+			transform: rotateY(0deg);
+		}
+		to {
+			transform: rotateY(360deg);
+		}
+	}
+
+	.cdn-global-globe__halo {
+		animation: cdn-global-globe-halo-breathe 5.2s ease-in-out infinite;
+	}
+
+	/* Meridian spin uses scaleX as a 2D fake-3D — animating the rx via
+	   transform: scaleX makes the ellipse appear to flatten and re-widen,
+	   reading as a globe meridian rotating around its vertical axis. The
+	   24s loop is slow enough to be ambient (not motion focus) but fast
+	   enough that a curious user catches the rotation on dwell. */
+	@keyframes cdn-global-globe-meridian-rotate {
+		0%,
+		100% {
+			transform: scaleX(1);
+		}
+		25% {
+			transform: scaleX(0);
+		}
+		50% {
+			transform: scaleX(1);
+		}
+		75% {
+			transform: scaleX(0);
+		}
+	}
+
+	.cdn-global-globe__meridian {
+		animation: cdn-global-globe-meridian-rotate 12s ease-in-out infinite;
+	}
+}
+
+/* ---------- Reduced-motion fallback — strip animation, keep static glyph ---------- */
+@media (prefers-reduced-motion: reduce) {
+	.cdn-global-globe__halo,
+	.cdn-global-globe__meridian {
+		animation: none;
+	}
+}
+
+/* ---------- Pause animations during fast scroll ---------- */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .cdn-global-globe__halo,
+	body.cdn-scrolling .cdn-global-globe__meridian {
+		animation-play-state: paused;
+	}
+}
