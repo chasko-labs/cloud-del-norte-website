@@ -10,9 +10,18 @@ interface SpeakeasyRsvpButtonProps {
 }
 
 /**
- * On-site RSVP CTA with Cloud Del Norte brand identity. Renders a styled <a>
- * over a purple→violet gradient with a white 5-point star (the same star mark
- * carried in the UG glyph + favicon). Internal link, no new tab.
+ * On-site RSVP CTA — the PRIMARY action on event cards. Renders a styled <a>
+ * over a purple→violet gradient with the Cloud Del Norte brand logo (the
+ * animated violet star + bulbs) inline as the leading mark. Internal link,
+ * no new tab.
+ *
+ * Design intent: this button reads as PRIMARY (larger, glowing pulse ring)
+ * to encourage on-site signup over the secondary external Meetup CTA.
+ *
+ * The brand logo at /brand/logo.svg is referenced as <img>; modern browsers
+ * render the SVG's internal CSS animations (bulb blink, arm pulse) inside
+ * <img src> contexts, adding a subtle motion accent at the 22×22 mark size.
+ * `prefers-reduced-motion` is handled inside the SVG itself.
  */
 export default function SpeakeasyRsvpButton({
 	href,
@@ -24,20 +33,13 @@ export default function SpeakeasyRsvpButton({
 		.join(" ");
 	return (
 		<a className={cls} href={href} aria-label={label}>
-			<svg
-				className="cdn-brand-btn__mark"
-				viewBox="0 0 24 24"
-				width="22"
-				height="22"
-				aria-hidden="true"
-				focusable="false"
-			>
-				<title>Cloud Del Norte</title>
-				<path
-					d="M12 2 L14.6 9.2 L22 9.6 L16.2 14.2 L18.2 21.4 L12 17.3 L5.8 21.4 L7.8 14.2 L2 9.6 L9.4 9.2 Z"
-					fill="#FFFFFF"
-				/>
-			</svg>
+			<img
+				className="cdn-brand-btn__mark cdn-brand-btn__mark--logo"
+				src="/brand/logo.svg"
+				alt="Cloud Del Norte"
+				width={22}
+				height={22}
+			/>
 			<span className="cdn-brand-btn__label">{label}</span>
 			<svg
 				className="cdn-brand-btn__chevron"

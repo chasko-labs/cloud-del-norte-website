@@ -20,19 +20,50 @@ describe("MeetupRsvpButton", () => {
 		expect(a).toHaveAttribute("rel", "noreferrer");
 	});
 
-	it("renders the inline Meetup mark SVG (white M on red circle)", () => {
+	it("renders the canonical Simple Icons Meetup mark via inline SVG <title>", () => {
 		const { container } = render(
 			<MeetupRsvpButton href="#" label="RSVP on Meetup" />,
 		);
 		expect(container.querySelector("svg title")?.textContent).toBe("Meetup");
 	});
 
-	it("applies the meetup variant class for brand styling", () => {
+	it("Meetup mark path is filled white in both variants for visual consistency", () => {
+		const { container: redContainer } = render(
+			<MeetupRsvpButton href="#" label="RSVP on Meetup" />,
+		);
+		const redPath = redContainer.querySelector(
+			".cdn-brand-btn__mark path",
+		);
+		expect(redPath?.getAttribute("fill")).toBe("#FFFFFF");
+
+		const { container: violetContainer } = render(
+			<MeetupRsvpButton href="#" label="RSVP on Meetup" variant="violet" />,
+		);
+		const violetPath = violetContainer.querySelector(
+			".cdn-brand-btn__mark path",
+		);
+		expect(violetPath?.getAttribute("fill")).toBe("#FFFFFF");
+	});
+
+	it("applies the meetup variant class for brand styling (default red)", () => {
 		const { container } = render(
 			<MeetupRsvpButton href="#" label="RSVP on Meetup" />,
 		);
 		const link = container.querySelector("a");
 		expect(link?.className).toContain("cdn-brand-btn--meetup");
+		expect(link?.className).not.toContain("cdn-brand-btn--meetup-violet");
+	});
+
+	it("applies the meetup-violet variant class when variant='violet'", () => {
+		const { container } = render(
+			<MeetupRsvpButton
+				href="#"
+				label="RSVP on Meetup"
+				variant="violet"
+			/>,
+		);
+		const link = container.querySelector("a");
+		expect(link?.className).toContain("cdn-brand-btn--meetup-violet");
 	});
 
 	it("aria-label includes 'opens in new tab' for screen reader context", () => {
@@ -55,13 +86,14 @@ describe("SpeakeasyRsvpButton", () => {
 		expect(a).not.toHaveAttribute("target");
 	});
 
-	it("renders the brand star mark SVG", () => {
+	it("renders the brand logo as an <img> with 'Cloud Del Norte' alt", () => {
 		const { container } = render(
 			<SpeakeasyRsvpButton href="#" label="RSVP for Speakeasy" />,
 		);
-		expect(container.querySelector("svg title")?.textContent).toBe(
-			"Cloud Del Norte",
-		);
+		const img = container.querySelector("img.cdn-brand-btn__mark");
+		expect(img).not.toBeNull();
+		expect(img?.getAttribute("src")).toBe("/brand/logo.svg");
+		expect(img?.getAttribute("alt")).toBe("Cloud Del Norte");
 	});
 
 	it("applies the speakeasy variant class for brand styling", () => {
