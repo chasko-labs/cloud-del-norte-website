@@ -6,7 +6,14 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import { type ReactNode, useEffect, useState } from "react";
+import {
+	Component,
+	type ErrorInfo,
+	type ReactNode,
+	type SyntheticEvent,
+	useEffect,
+	useState,
+} from "react";
 import MeetupRsvpButton from "../../../components/brand-button/meetup-rsvp";
 import SpeakeasyRsvpButton from "../../../components/brand-button/speakeasy-rsvp";
 import { useTranslation } from "../../../hooks/useTranslation";
@@ -43,7 +50,18 @@ function renderDescription(text: string): ReactNode {
 	);
 }
 
-export default function FeaturedEvent() {
+/**
+ * Hide a broken event image gracefully. Used as the onError handler for the
+ * light + dark .webp event banners. If the asset 404s (e.g. missing from
+ * the deploy bucket) we fail silently — the rest of the card still RSVPs
+ * the user, which is the conversion goal.
+ */
+function hideBrokenImage(event: SyntheticEvent<HTMLImageElement>) {
+	const target = event.currentTarget;
+	target.style.display = "none";
+}
+
+function FeaturedEventInner() {
 	const { t, locale } = useTranslation();
 	const event = getEvent(EVENT_ID);
 	const [remaining, setRemaining] = useState<number | null>(null);
@@ -101,6 +119,7 @@ export default function FeaturedEvent() {
 						width={1200}
 						height={630}
 						loading="lazy"
+						onError={hideBrokenImage}
 					/>
 					<img
 						src={EVENT_IMAGE_DARK}
@@ -109,6 +128,7 @@ export default function FeaturedEvent() {
 						width={1200}
 						height={630}
 						loading="lazy"
+						onError={hideBrokenImage}
 					/>
 					<Box
 						fontWeight="bold"
@@ -165,5 +185,81 @@ export default function FeaturedEvent() {
 				</SpaceBetween>
 			</Container>
 		</div>
+	);
+}
+
+/**
+ * Wave 30a — error boundary scoped to the FeaturedEvent card.
+ *
+ * The featured event card is the most rizzed-up component on the feed page
+ * (perspective+preserve-3d, multiple stacked animations, Intl.DateTimeFormat,
+ * localStorage RSVP state lookup). If any of those upstream pieces throw at
+ * render time, this boundary catches it locally so the rest of the feed —
+ * NextMeetup, UpcomingVirtualEvent, BuilderCenterCard, the live hero, the
+ * shuffled grid — keeps rendering. The fallback UI is a quiet, accessible
+ * notice so users know an event was meant to be here without the page going
+ * blank.
+ *
+ * Lives inside this file (rather than app.tsx) so the boundary travels with
+ * the component — anyone who imports FeaturedEvent gets the protection by
+ * default. The Cloudscape Container/Header chrome is reused so the empty
+ * state still anchors visually in the same slot.
+ */
+interface FeaturedEventErrorBoundaryState {
+	hasError: boolean;
+}
+
+export class FeaturedEventErrorBoundary extends Component<
+	{ children: ReactNode; fallbackHeader: string; fallbackMessage: string },
+	FeaturedEventErrorBoundaryState
+> {
+	state: FeaturedEventErrorBoundaryState = { hasError: false };
+
+	static getDerivedStateFromError(): FeaturedEventErrorBoundaryState {
+		return { hasError: true };
+	}
+
+	componentDidCatch(error: Error, info: ErrorInfo): void {
+		// Single console.error so the failure is visible in devtools without
+		// piping crash data to a third-party endpoint. The boundary's render
+		// fallback is the user-visible signal; this is the developer signal.
+		console.error("[FeaturedEvent] render failure", error, info);
+	}
+
+	render(): ReactNode {
+		if (this.state.hasError) {
+			return (
+				<div className="feed-featured-event">
+					<Container
+						header={<Header variant="h2">{this.props.fallbackHeader}</Header>}
+					>
+						<Box color="text-body-secondary" fontSize="body-s">
+							{this.props.fallbackMessage}
+						</Box>
+					</Container>
+				</div>
+			);
+		}
+		return this.props.children;
+	}
+}
+
+/**
+ * Default export: the FeaturedEvent component wrapped in its own error
+ * boundary. The header copy resolves through the existing locale key so the
+ * empty state stays in the user's language; the body fallback message is
+ * hard-coded English (the wave 30a hard scope forbids adding new locale
+ * keys, and this path only fires on render errors — exceptional, brief,
+ * and primarily a dev-visible signal in console.error).
+ */
+export default function FeaturedEvent() {
+	const { t } = useTranslation();
+	return (
+		<FeaturedEventErrorBoundary
+			fallbackHeader={t("feedPage.featuredEventHeader")}
+			fallbackMessage="Event details temporarily unavailable. Please refresh the page."
+		>
+			<FeaturedEventInner />
+		</FeaturedEventErrorBoundary>
 	);
 }

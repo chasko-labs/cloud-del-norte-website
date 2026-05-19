@@ -1006,6 +1006,20 @@
 	   loading a runtime 3D engine. 1200px = subtle, ambient depth. */
 	perspective: 1200px;
 	transform-style: preserve-3d;
+	/* wave 30a — eliminate scroll tearing.
+	   - contain: layout paint style isolates this card's paint operations so
+	     reflow/repaint above/below doesn't cascade through the wave 27a v2
+	     stacking effects. NOT 'size' — the card has dynamic content height.
+	   - translate3d(0, 0, 0) forces the card onto its own GPU compositor
+	     layer so the multiple sustained animations (::after sweep, date
+	     plate breathe, spots pulse, title tape) don't fight for the same
+	     layer during scroll.
+	   - will-change: transform proactively promotes the card layer up-front
+	     so the first scroll into view doesn't trigger a synchronous layer
+	     reshuffle (the visible "tearing" Bryan reported on June 3 card). */
+	contain: layout paint style;
+	transform: translate3d(0, 0, 0);
+	will-change: transform;
 	/* layered ambient bloom — sits beneath the radial spotlight backplate
 	   (::before) and the cool sweep depth layer (::after). */
 	box-shadow:
@@ -1072,8 +1086,17 @@
 /* v2 depth layer — slow cool spotlight that crosses the card on a 7s ease
    cycle, paired with a translateZ(0) anchor so the GPU compositor treats
    this layer separately from the radial backplate (gives the parallax
-   feeling on hover translateZ pop). Keeps z-index:0 like ::before but
-   uses mix-blend-mode: screen to sit additively over the warm radials. */
+   feeling on hover translateZ pop). Keeps z-index:0 like ::before.
+
+   Wave 30a: dropped `mix-blend-mode: screen` — that mode forces the
+   compositor to re-blend the entire card-sized layer below it on every
+   frame, and stacked with the title's background-clip:text + the date
+   plate's mix-blend-mode shimmer + the badge mix-blend-mode shimmer it
+   was the dominant scroll-tearing source (the layer below was being
+   re-rasterized per frame as the card scrolled into view). The cool
+   sweep visual is preserved by raising opacity from 0.55 → 0.7 — the
+   gradient still reads as a stage-light pass without forcing real-time
+   compositing of the layer below. */
 .feed-featured-event::after {
 	content: "";
 	position: absolute;
@@ -1090,10 +1113,12 @@
 	);
 	background-size: 220% 100%;
 	background-position: 120% 0;
-	mix-blend-mode: screen;
-	opacity: 0.55;
+	opacity: 0.7;
 	transform: translateZ(0);
 	transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	/* wave 30a — proactively promote the sweep layer so the 7s animation
+	   doesn't share a compositor layer with the title gradient sweep. */
+	will-change: opacity, transform;
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1307,6 +1332,14 @@
 	-webkit-text-fill-color: transparent;
 	text-decoration: none;
 	transition: filter 0.2s ease;
+	/* wave 30a — mitigate background-clip:text tearing during scroll.
+	   Both Chrome and Safari re-rasterize text glyphs every frame when
+	   the source gradient is animated AND the layer is moving (scroll).
+	   optimizeSpeed favors the cheaper raster path and `antialiased`
+	   stabilizes the subpixel position so the shimmer doesn't smear. */
+	text-rendering: optimizeSpeed;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 .awsui-dark-mode .feed-featured-event__title a {
@@ -1392,6 +1425,10 @@
 	/* small CSS 3D pop — sits 4px above the card surface so the perspective
 	   on the parent gives it a stamped-floating-above feel. */
 	transform: translateZ(4px);
+	/* wave 30a — sustained 4s breathe on box-shadow + text-shadow plus a
+	   6.5s shimmer ::after; promote to its own GPU layer so its repaints
+	   stay local instead of dirtying the card-sized parent layer. */
+	will-change: transform, opacity;
 }
 
 .awsui-dark-mode .feed-featured-event__date-plate {
@@ -1554,6 +1591,9 @@
 		inset 0 1px 0 rgba(255, 250, 235, 0.4),
 		0 0 0 0 var(--cdn-rizz-spots-glow),
 		0 2px 8px -2px rgba(90, 31, 138, 0.22);
+	/* wave 30a — 3.4s box-shadow pulse + ::before ring breathe; isolate
+	   to its own GPU layer so the pulse repaints don't dirty the card. */
+	will-change: transform, opacity;
 }
 
 /* outer breathing ring — sits 4px outside the chip via ::before, same beat
@@ -1695,6 +1735,46 @@
 		animation: none;
 		transform: none;
 		opacity: 0.55;
+	}
+
+	/* wave 30a — drop the will-change GPU promotion hints when the user
+	   has requested reduced motion. With no sustained animation actually
+	   running, holding a dedicated GPU compositor layer is wasted memory
+	   (and on low-end devices, will-change itself can introduce its own
+	   tearing as the layer count grows). */
+	.feed-featured-event,
+	.feed-featured-event::after,
+	.feed-featured-event__date-plate,
+	.feed-featured-event__spots {
+		will-change: auto;
+	}
+}
+
+/* ---------- Wave 30a — pause animations during fast scroll ----------
+   The body.cdn-scrolling class is toggled by scroll-jank-mitigation.ts:
+   it is added on the first scroll event of a burst (rAF-throttled) and
+   removed 250ms after the last scroll event. While the class is present,
+   freeze every sustained animation on the card so the compositor can
+   spend its frame budget on the scroll itself. Scroll-end resumes them.
+
+   This is a layered defense on top of the will-change + contain GPU
+   layer isolation above — those alone fix most of the tearing, but
+   pausing animations during scroll is the cheapest insurance against
+   the long-tail case where the compositor still budget-thrashes on
+   slower hardware. Skipped under prefers-reduced-motion since the
+   animations are already off in that branch. */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .feed-featured-event,
+	body.cdn-scrolling .feed-featured-event::after,
+	body.cdn-scrolling .feed-featured-event__badge::after,
+	body.cdn-scrolling .feed-featured-event__date-plate,
+	body.cdn-scrolling .awsui-dark-mode .feed-featured-event__date-plate,
+	body.cdn-scrolling .feed-featured-event__date-plate::after,
+	body.cdn-scrolling .feed-featured-event__title a,
+	body.cdn-scrolling .feed-featured-event__spots,
+	body.cdn-scrolling .awsui-dark-mode .feed-featured-event__spots,
+	body.cdn-scrolling .feed-featured-event__spots::before {
+		animation-play-state: paused;
 	}
 }
 
