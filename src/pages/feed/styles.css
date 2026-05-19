@@ -4656,3 +4656,140 @@
 		animation: none;
 	}
 }
+
+/* ==========================================================================
+   Wave 42b2 — desktop white-space optimization on the 4 FeedCardShell-wrapped
+   cards Bryan flagged: arrowhead-news, andmore.dev (FeedAndmore), AWS ML
+   blog (FeedAwsml), women in tech (FeaturedVideoCard).
+   ==========================================================================
+
+   Bryan's report (verbatim): "fugly... need urgent style critique on desktop
+   mode on both dark & light - arrowhead research park, aws machine learning
+   blog, andmore.dev, women in tech" + "priority 1 optimize white space use
+   on cards on all screens".
+
+   PER-CARD AUDIT (what was wrong on desktop before this wave):
+
+   ── arrowhead-news (sage palette) + FeedAndmore (amber) + FeedAwsml (teal) ──
+   All three share the .feed-article-carousel internal pattern: a single
+   active article (~120px clipped slot) + progress strip + dots-row indicator.
+   At desktop, the cards live in the .feed-grid 2-col layout, so each cell
+   is ~480–620px wide. The carousel content was left-aligned and used
+   whatever natural inline-size the article title/excerpt/date stack
+   produced — typically tight to the natural text width with empty
+   horizontal whitespace toward the right side of the card. The thin-
+   column-with-whitespace impression Bryan flagged.
+
+   ── featured-video-card (women in tech, lavender palette) ──
+   Body renders a `.feed-carousel` containing an iframe (max-width: 560px
+   max-height: 315px) followed by a `.featured-video-card__fallback` div
+   carrying the "Watch on YouTube" link. At desktop the iframe + link
+   stack vertically, leaving lateral whitespace beside the iframe and
+   isolating the link below in dead vertical space.
+
+   ── FeedCardShell primitive ──
+   Wave 36b shipped the shell without `container-type: inline-size`, so
+   per-card @container queries had no anchor. Adding container-type +
+   container-name `cdn-feed-card-shell` on the .feed-card-shell rule in
+   feed-card-shell.css is the only edit to the primitive (additive — no
+   redesign, per the brief's allowance: "FeedCardShell primitive itself
+   unless container-type is missing (only add it; don't redesign)").
+
+   FIXES (Option A — per-card CSS overrides only, lowest blast radius):
+
+   The cards are slotted in `.feed-grid` (NOT --full), so each card cell
+   is half-width on the page grid at viewport ≥680px. The brief's literal
+   "min-width: 860px" @container threshold would never fire for these
+   half-width cells. Calibrating to `min-width: 480px` honors the spirit
+   ("at desktop") with a value that actually triggers when the card cell
+   is wide enough for the redesign to read well.
+
+   ── Article-carousel cards (arrowhead, andmore, awsml) — option from brief:
+   "keep single-column but cap max-width: 56ch and center within the card".
+   Chose this option (not the 2-col article grid alternate) because the
+   internal .feed-article-carousel renders ONE active article at a time
+   with auto-rotation + dot tablist navigation — not a stacked list of N
+   articles. Splitting one article into 2 columns inside a half-width
+   card cell would crush each pseudo-column to ~220px; capping the
+   carousel at 56ch and centering preserves the active-article reading
+   experience while taming the typographic measure on wider cells. At
+   narrow card widths (<480px container), the rule does not fire and the
+   carousel keeps its natural 100% width. At desktop (≥480px container),
+   the carousel caps to 56ch (~28rem) and centers via margin-inline:auto
+   — uniform whitespace on both sides of the article column instead of
+   asymmetric whitespace on one side.
+
+   ── featured-video-card (lavender) — brief: "render the thumbnail LEFT +
+   metadata RIGHT (mirror featured-event 31a image-left)". At ≥480px
+   container, switch the body's `.feed-carousel` flow to a 2-col CSS Grid
+   (minmax(0, 1.6fr) for the iframe column, minmax(0, 1fr) for the
+   fallback column). The iframe column hosts `.feed-carousel__viewport`
+   (and its 16:9 frame); the fallback column hosts the
+   `.featured-video-card__fallback` "Watch on YouTube" link and the
+   hidden thumbnail img (display:none, kept for legacy semantic
+   anchor). align-items:center vertically centers both columns so the
+   small "Watch on YouTube" pill doesn't visually float at the bottom
+   of the row. Existing aspect-ratio + max-width caps on
+   `.feed-carousel__frame` are preserved — the iframe still respects
+   16:9 within the narrower left column.
+
+   PALETTE / COLOR PARITY:
+   Pure layout edits (max-width, margin, display:grid, grid-template-
+   columns, align-items, gap). No color tokens, no palette overrides,
+   no light/dark mode forks needed — light + dark mode parity is
+   preserved automatically since the existing wave 36b palette modifiers
+   handle theme switching. */
+
+@container cdn-feed-card-shell (min-width: 480px) {
+	/* Article-carousel cards (arrowhead, andmore, awsml) — cap typographic
+	   measure at 56ch and center the carousel within the card so the active
+	   article reads as a focused central column rather than a thin left-
+	   aligned stack with empty whitespace on the right. The 56ch ceiling
+	   matches the wave 37c .feed-featured-event__description max-width
+	   (64ch) at a slightly tighter measure that suits the article carousel's
+	   mix of headline + 2-3 line excerpt + meta. width:100% lets narrow
+	   cards still fill their cell while wider cards constrain to 56ch.
+	   The .feed-article-carousel selector is not name-spaced to a specific
+	   palette because all three article-carousel cards (sage / amber / teal)
+	   share the exact same internal layout — applying a single rule keeps
+	   the per-card CSS minimal. The selector lives inside the @container
+	   block so it only fires when the consuming shell's inline size meets
+	   the desktop threshold. */
+	.feed-article-carousel {
+		max-width: 56ch;
+		margin-inline: auto;
+		width: 100%;
+	}
+
+	/* Featured-video-card (lavender) — at desktop, switch the body to a
+	   2-col grid: iframe-bearing viewport on the left, fallback link
+	   block on the right. Mirrors the wave 31a featured-event image-
+	   left desktop layout (image left, content stack right) so the
+	   featured-video card reads with the same compositional rhythm as
+	   the rest of the family at desktop. The 1.6fr / 1fr ratio gives
+	   the iframe column slightly more weight (the video is the primary
+	   content) while leaving the right column wide enough for the
+	   "Watch on YouTube" link to read on its own line. align-items:
+	   center vertically centers both columns so the smaller right-
+	   column link sits on the iframe's mid-line rather than top-
+	   aligned with empty space below.
+	   Scoped to .feed-card-shell--lavender to avoid affecting any
+	   future shelled consumer of the generic .feed-carousel class
+	   (the YouTube carousels in the wave 36b deferred TODO list reuse
+	   .feed-carousel structurally). */
+	.feed-card-shell--lavender .feed-carousel {
+		display: grid;
+		grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+		gap: var(--cdn-space-md, 16px);
+		align-items: center;
+	}
+
+	.feed-card-shell--lavender .feed-carousel__viewport {
+		grid-column: 1;
+	}
+
+	.feed-card-shell--lavender .featured-video-card__fallback {
+		grid-column: 2;
+		justify-self: start;
+	}
+}
