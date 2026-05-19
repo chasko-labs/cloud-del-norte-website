@@ -189,3 +189,50 @@
 .awsui-dark-mode .feed-shorts-carousel__sort {
 	color: rgba(255, 255, 255, 0.92);
 }
+
+/* ==========================================================================
+   Wave 42c — Cloudscape SegmentedControl banned-blue override (Mescalero card)
+   --------------------------------------------------------------------------
+   The Mescalero shorts card uses a Cloudscape <SegmentedControl> for the
+   newest/oldest sort flip. Cloudscape's default selected segment renders
+   on #006ce0 (the AWS console "banned blue") and its hover state pulls
+   #f0fbff / #002b66 sky+navy-blue tokens — both fall outside the Cloud Del
+   Norte palette. Bryan flagged the card as the trigger ("that fucking
+   banned blue I hate ... we only have navy colors in our style guide")
+   and wave 42c overrides the relevant Cloudscape design tokens at the
+   .feed-shorts-carousel__sort scope so the override only fires for the
+   shorts card. Per .kiro/steering/cloudscape-overrides.md the substring
+   attribute selector pattern with !important would work for direct rule
+   targeting; tokens are simpler — set --color-background-segment-active-*
+   on the wrapper and Cloudscape's own var() lookup picks up our value
+   without the need for !important or specificity battles.
+
+   Light mode → navy (#00002a) for the selected segment background — the
+   strong dark anchor Bryan asked for, with white inherited segment text
+   for AAA contrast (15.8:1 on near-black navy). Hover background dropped
+   to a soft amber tint (rgba(139,90,43,0.08)) matching the rest of the
+   feed card's warm-amber hover idiom; hover text uses --cdn-purple so the
+   non-selected hover state still reads in palette. Focus ring border
+   color flipped from Cloudscape's #006ce0 to --cdn-violet so keyboard
+   users see the same brand outline the .feed-shorts-carousel__thumb
+   focus-visible rule already declares.
+
+   Dark mode → --cdn-violet for the selected segment background (navy
+   would disappear on the dark navy page surface; violet is the brand-
+   adjacent dark-mode anchor used elsewhere on the card). Hover token
+   gets a soft violet tint, hover text picks up --cdn-lavender, and the
+   focus-ring border stays --cdn-violet for parity with light mode.
+   ========================================================================== */
+:root:not(.awsui-dark-mode) .feed-shorts-carousel__sort {
+	--color-background-segment-active-1u2ldl: var(--cdn-navy, #00002a);
+	--color-background-segment-hover-800sl4: rgba(139, 90, 43, 0.08);
+	--color-text-segment-hover-65a2x8: var(--cdn-purple, #5a1f8a);
+	--color-border-item-focused-uk47pl: var(--cdn-violet, #9060f0);
+}
+
+.awsui-dark-mode .feed-shorts-carousel__sort {
+	--color-background-segment-active-1u2ldl: var(--cdn-violet, #9060f0);
+	--color-background-segment-hover-800sl4: rgba(144, 96, 240, 0.16);
+	--color-text-segment-hover-65a2x8: var(--cdn-lavender, #d7c7ee);
+	--color-border-item-focused-uk47pl: var(--cdn-violet, #9060f0);
+}

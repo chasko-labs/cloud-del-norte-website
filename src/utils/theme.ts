@@ -12,6 +12,17 @@ const THEME_KEY = "awsaerospace-theme";
 let lastAppliedMode: Mode | null = null;
 let pendingApplyHandle: number | null = null;
 
+// Wave 42c — transition-window timer handle. The toggle handler adds
+// body.cdn-theme-transitioning for ~240ms so the CSS rule in tokens.css
+// can ease theme-bearing properties (background-color, color, border-color,
+// fill, stroke) during the swap. Stored at module scope so repeated rapid
+// toggles cancel the in-flight removal and re-arm a fresh window — without
+// the cancel a quick double-click would remove the class mid-transition on
+// the second flip and the second swap would snap instead of ease.
+let pendingTransitionHandle: number | null = null;
+const THEME_TRANSITION_CLASS = "cdn-theme-transitioning";
+const THEME_TRANSITION_DURATION_MS = 240;
+
 const getSystemPreference = (): Theme => {
 	if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
 		return "dark";
@@ -95,6 +106,36 @@ const scheduleApplyMode = (mode: Mode): void => {
 };
 
 export const applyTheme = (theme: Theme): void => {
+	// Wave 42c — open a transition window so theme-bearing properties
+	// (background-color, color, border-color, fill, stroke) ease to the
+	// new value instead of snapping. Skip on the very first apply: the
+	// wave 25c FOUC guard already aligned the awsui-dark-mode class on
+	// <html> at parse-time, so the class toggle below is a no-op for the
+	// initial mount and there is nothing to animate. Subsequent toggles
+	// (user clicks the picker, system preference change) are real swaps
+	// and benefit from the eased transition. Body availability is checked
+	// because applyTheme can run before body mounts in unusual entry
+	// orderings — the transition is a nice-to-have, not load-bearing.
+	const isFirstApply = lastAppliedMode === null;
+	if (
+		!isFirstApply &&
+		typeof document !== "undefined" &&
+		document.body !== null
+	) {
+		document.body.classList.add(THEME_TRANSITION_CLASS);
+		// Cancel any in-flight removal from a previous rapid toggle so the
+		// fresh window's full duration is honored. Without this, a quick
+		// double-click would strip the class mid-transition on the second
+		// flip and the second swap would snap instead of ease.
+		if (pendingTransitionHandle !== null) {
+			clearTimeout(pendingTransitionHandle);
+		}
+		pendingTransitionHandle = window.setTimeout(() => {
+			pendingTransitionHandle = null;
+			document.body.classList.remove(THEME_TRANSITION_CLASS);
+		}, THEME_TRANSITION_DURATION_MS);
+	}
+
 	// IMMEDIATE: toggle the html class so our CSS palette + the wallpaper
 	// MutationObserver react synchronously. User sees the surface flip
 	// (light ↔ dark) within the same frame they clicked.
