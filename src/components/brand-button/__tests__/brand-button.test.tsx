@@ -31,9 +31,7 @@ describe("MeetupRsvpButton", () => {
 		const { container: redContainer } = render(
 			<MeetupRsvpButton href="#" label="RSVP on Meetup" />,
 		);
-		const redPath = redContainer.querySelector(
-			".cdn-brand-btn__mark path",
-		);
+		const redPath = redContainer.querySelector(".cdn-brand-btn__mark path");
 		expect(redPath?.getAttribute("fill")).toBe("#FFFFFF");
 
 		const { container: violetContainer } = render(
@@ -56,11 +54,7 @@ describe("MeetupRsvpButton", () => {
 
 	it("applies the meetup-violet variant class when variant='violet'", () => {
 		const { container } = render(
-			<MeetupRsvpButton
-				href="#"
-				label="RSVP on Meetup"
-				variant="violet"
-			/>,
+			<MeetupRsvpButton href="#" label="RSVP on Meetup" variant="violet" />,
 		);
 		const link = container.querySelector("a");
 		expect(link?.className).toContain("cdn-brand-btn--meetup-violet");
