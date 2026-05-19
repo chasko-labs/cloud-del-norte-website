@@ -152,9 +152,7 @@ describe("UpcomingVirtualEvent", () => {
 			".feed-upcoming-virtual-event__marquee-text",
 		);
 		expect(marqueeText).not.toBeNull();
-		expect(marqueeText?.textContent).toMatch(
-			/Virtual AWS Community Events/i,
-		);
+		expect(marqueeText?.textContent).toMatch(/Virtual AWS Community Events/i);
 	});
 
 	it("wave 33b — marquee renders 14 twinkle stars inside an aria-hidden container, each with a --star-index custom property", () => {
