@@ -834,7 +834,8 @@
 			"signInButton": "Entrar",
 			"passkeyButton": "Iniciar sesión con clave de acceso",
 			"forgotPassword": "¿Olvidaste tu contraseña?",
-			"noAccount": "¿Primera vez? Solicita unirte",
+			"noAccount": "¿Primera vez?",
+			"signUpLink": "Solicita unirte",
 			"invalidCredentials": "Correo o contraseña incorrectos",
 			"genericError": "Algo salió mal. Intenta de nuevo.",
 			"mfaSetup": {
