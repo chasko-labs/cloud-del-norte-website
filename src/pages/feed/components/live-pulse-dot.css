@@ -1,0 +1,82 @@
+/* --------------------------------------------------------------------------
+   LivePulseDot — inline pulsing dot SVG.
+
+   Wave 38b — inline microcue rendered before the next-meetup date-plate.
+   Steel-blue/teal palette (light: #2c5282; dark: #5eead4) layered into
+   currentColor by the parent .feed-next-meetup__live-dot rule so this
+   file stays palette-neutral and the card scope owns the hue.
+
+   Sits inline like an emoji: vertical-align:middle so the 16x16 box hugs
+   the date-plate baseline. The wrapper span carries the inline-flex
+   alignment + a small right margin so the glyph + date string read as a
+   single horizontal cluster.
+
+   Animations:
+     - default loop (2s): outer halo ring pulses opacity 0.4 → 0.85 →
+       0.4 + scales 1 → 1.25 → 1, then settles. Reads as a "live now"
+       indicator beat — slower than a heart-rate pulse so the eye
+       registers it without strobing. The inner core stays solid.
+     - prefers-reduced-motion: animation off; static halo still reads
+       as a soft ring + solid core (no information lost).
+
+   Padding/margin token policy: --cdn-space-xs (4px) for the right margin
+   so the glyph sits on the 8pt grid alongside the date-plate's --cdn-
+   space-sm/--cdn-space-md padding. No backplate (unlike AsciiSmirk's
+   cream-rect background) — the dot is meant to read as a free-floating
+   indicator, not a chiclet.
+   -------------------------------------------------------------------------- */
+
+.cdn-live-pulse-dot {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	margin-inline-end: var(--cdn-space-xs, 4px);
+	line-height: 1;
+}
+
+.cdn-live-pulse-dot__svg {
+	display: block;
+	overflow: visible;
+}
+
+.cdn-live-pulse-dot__halo {
+	transform-origin: 8px 8px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes cdn-live-pulse-dot-halo {
+		0%,
+		100% {
+			opacity: 0.4;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 0.85;
+			transform: scale(1.25);
+		}
+	}
+
+	.cdn-live-pulse-dot__halo {
+		animation: cdn-live-pulse-dot-halo 2s ease-in-out infinite;
+	}
+}
+
+/* Reduced-motion fallback — strip animation, keep the static halo +
+   core so the indicator still reads as a soft "live" ring. */
+@media (prefers-reduced-motion: reduce) {
+	.cdn-live-pulse-dot__halo {
+		animation: none;
+		opacity: 0.55;
+		transform: none;
+	}
+}
+
+/* Pause during fast scroll — same scroll-jank-mitigation hook the rest
+   of the next-meetup card uses. Skipped under reduced-motion since the
+   animation isn't running there to begin with. */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .cdn-live-pulse-dot__halo {
+		animation-play-state: paused;
+	}
+}
