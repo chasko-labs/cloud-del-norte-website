@@ -16,7 +16,7 @@ import {
 	addRsvp,
 	buildTicketPayload,
 	getEvent,
-	getRsvp,
+	getRsvpForCurrentUser,
 	type RsvpRecord,
 	spotsRemaining,
 } from "../../../lib/rsvp";
@@ -28,38 +28,90 @@ function getEventIdFromQuery(): string {
 	return params.get("event") ?? "happy-hour-2026-06-03";
 }
 
+/**
+ * Map an Error.message thrown by the rsvp lib to a localized i18n key under
+ * the `rsvp.error.*` namespace. Unknown messages fall through to the generic
+ * bucket. Kept as a pure function so the test bench (and future error
+ * boundaries) can reuse it.
+ */
+function errorKeyFor(message: string): string {
+	switch (message) {
+		case "capacity_full":
+			return "rsvp.error.capacityFull";
+		case "network":
+			return "rsvp.error.network";
+		case "not_authenticated":
+		case "unauthorized":
+			return "rsvp.error.unauthorized";
+		default:
+			return "rsvp.error.generic";
+	}
+}
+
 function RsvpFlow({ auth }: { auth: AuthState }) {
 	const { t, locale } = useTranslation();
 	const [eventId] = useState<string>(() => getEventIdFromQuery());
 	const event = getEvent(eventId);
 	const [ticket, setTicket] = useState<RsvpRecord | null>(null);
-	const [submitting, setSubmitting] = useState(false);
-	const [remaining, setRemaining] = useState<number>(() =>
-		event ? spotsRemaining(eventId) : 0,
-	);
+	const [submitting, setSubmitting] = useState(true);
+	const [remaining, setRemaining] = useState<number>(Number.NaN);
+	const [errorKey, setErrorKey] = useState<string | null>(null);
 
 	// Auto-confirm RSVP on first visit (single-click flow once authenticated).
 	// Idempotent — repeat visits to /rsvp/?event=... show the existing ticket.
 	useEffect(() => {
-		if (!event) return;
-		const existing = getRsvp(eventId, auth.sub);
-		if (existing) {
-			setTicket(existing);
-			setRemaining(spotsRemaining(eventId));
+		if (!event) {
+			setSubmitting(false);
 			return;
 		}
-		if (remaining <= 0) return;
-		setSubmitting(true);
-		const record = addRsvp({
-			eventId,
-			userSub: auth.sub,
-			name: auth.name ?? null,
-			email: auth.email,
-		});
-		setTicket(record);
-		setRemaining(spotsRemaining(eventId));
-		setSubmitting(false);
-	}, [event, auth.sub, auth.name, auth.email, eventId, remaining]);
+
+		let cancelled = false;
+		(async () => {
+			try {
+				// Refresh the public spots counter alongside the auth'd lookup.
+				// Both kick off in parallel; spotsRemaining never throws (returns
+				// NaN on error) so we can Promise.all freely.
+				const [existing, freshSpots] = await Promise.all([
+					getRsvpForCurrentUser(eventId),
+					spotsRemaining(eventId),
+				]);
+				if (cancelled) return;
+				setRemaining(freshSpots);
+
+				if (existing) {
+					setTicket(existing);
+					setSubmitting(false);
+					return;
+				}
+
+				// No existing ticket — try to RSVP. The backend returns 409 with
+				// {error:'capacity_full'} when the event is full; we let that
+				// bubble up to the catch block which renders the localized alert.
+				const record = await addRsvp({
+					eventId,
+					name: auth.name ?? null,
+					email: auth.email,
+				});
+				if (cancelled) return;
+				setTicket(record);
+				// Refresh spots after our successful RSVP so the chip reflects
+				// the post-write count.
+				const after = await spotsRemaining(eventId);
+				if (cancelled) return;
+				setRemaining(after);
+				setSubmitting(false);
+			} catch (err) {
+				if (cancelled) return;
+				const message = err instanceof Error ? err.message : "generic";
+				setErrorKey(errorKeyFor(message));
+				setSubmitting(false);
+			}
+		})();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [event, auth.name, auth.email, eventId]);
 
 	if (!event) {
 		return (
@@ -89,7 +141,36 @@ function RsvpFlow({ auth }: { auth: AuthState }) {
 		);
 	}
 
-	if (!ticket && remaining <= 0) {
+	// Error state — render an Alert with the localized message and offer
+	// the Meetup fallback. capacity_full also lands here.
+	if (errorKey) {
+		return (
+			<Container
+				header={<Header variant="h2">{t("rsvp.soldOutHeader")}</Header>}
+			>
+				<SpaceBetween size="m">
+					<Alert
+						type={errorKey === "rsvp.error.capacityFull" ? "info" : "error"}
+					>
+						{t(errorKey)}
+					</Alert>
+					<Button
+						href={event.meetupRsvpUrl}
+						target="_blank"
+						iconAlign="right"
+						iconName="external"
+					>
+						{t("rsvp.fallbackMeetupCta")}
+					</Button>
+				</SpaceBetween>
+			</Container>
+		);
+	}
+
+	// remaining is NaN when the public spots endpoint failed; treat that as
+	// "unknown but not-yet-error" only when we already have a ticket. If we
+	// have no ticket and remaining is 0, render the sold-out fallback.
+	if (!ticket && remaining === 0) {
 		return (
 			<Container
 				header={<Header variant="h2">{t("rsvp.soldOutHeader")}</Header>}

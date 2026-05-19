@@ -1015,6 +1015,12 @@
 		"viewMyTickets": "Ver mis boletos",
 		"rsvpButton": "Confirmar mi RSVP",
 		"rsvpingNow": "Reservando tu lugar...",
-		"fallbackMeetupCta": "Mejor házlo por Meetup"
+		"fallbackMeetupCta": "Mejor házlo por Meetup",
+		"error": {
+			"capacityFull": "Disculpa — este evento ya se llenó. Checa el feed para el próximo.",
+			"network": "Falla de red — intenta de nuevo en un momento.",
+			"unauthorized": "Inicia sesión para hacer RSVP.",
+			"generic": "Algo salió mal — lo registramos. Intenta de nuevo o haz RSVP en Meetup."
+		}
 	}
 }
