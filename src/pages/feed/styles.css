@@ -1027,24 +1027,17 @@
 	border-left: 4px solid var(--cdn-violet, #9060f0);
 	border-radius: var(--cdn-radius-md, 8px);
 	overflow: hidden;
-	/* perspective + preserve-3d enable child translateZ() pop without
-	   loading a runtime 3D engine. 1200px = subtle, ambient depth. */
-	perspective: 1200px;
-	transform-style: preserve-3d;
-	/* wave 30a — eliminate scroll tearing.
-	   - contain: layout paint style isolates this card's paint operations so
-	     reflow/repaint above/below doesn't cascade through the wave 27a v2
-	     stacking effects. NOT 'size' — the card has dynamic content height.
-	   - translate3d(0, 0, 0) forces the card onto its own GPU compositor
-	     layer so the multiple sustained animations (::after sweep, date
-	     plate breathe, spots pulse, title tape) don't fight for the same
-	     layer during scroll.
-	   - will-change: transform proactively promotes the card layer up-front
-	     so the first scroll into view doesn't trigger a synchronous layer
-	     reshuffle (the visible "tearing" Bryan reported on June 3 card). */
-	contain: layout paint style;
-	transform: translate3d(0, 0, 0);
-	will-change: transform;
+	/* wave 37a — perspective + preserve-3d + contain + translate3d +
+	   will-change are now applied desktop-only via the @media (min-width:
+	   768px) gate at the bottom of this file. iOS Safari and Android Chrome
+	   have hard caps on simultaneous compositor layers; on small viewports
+	   a card-sized perspective+preserve-3d layer combined with sustained
+	   ::after sweep + title tape + date plate breathe + spots pulse blew
+	   past those caps, dropping rendering to a software fallback whose
+	   transition surfaces as the ghosting/tearing Bryan reported on
+	   clouddelnorte.org from mobile devices. Desktop GPUs handle the same
+	   stack fine — confirmed by Bryan's test that narrow desktop viewports
+	   did not exhibit the issue. */
 	/* wave 31a — establish a CSS Container Query context so the grid layout
 	   inside .feed-featured-event__layout can react to the card's own
 	   rendered width instead of viewport width. The card sits in a parent
@@ -1957,24 +1950,10 @@
 	border-left: 4px solid var(--cdn-aws-orange, #ff9900);
 	border-radius: var(--cdn-radius-md, 8px);
 	overflow: hidden;
-	/* Same depth stack as wave 27a v2 featured-event — perspective +
-	   preserve-3d enable child translateZ() pop without loading any 3D
-	   runtime. 1200px = subtle ambient depth. */
-	perspective: 1200px;
-	transform-style: preserve-3d;
-	/* GPU layer isolation (mirrors wave 30a featured-event hardening):
-	   - contain: layout paint style isolates this card's paint operations
-	     so reflow/repaint above/below doesn't cascade through the new
-	     sustained animations (twinkle, title tape, date plate breathe).
-	   - translate3d(0,0,0) forces the card onto its own GPU compositor
-	     layer so the stacked animations don't fight for the same layer
-	     during scroll.
-	   - will-change: transform proactively promotes the layer up-front
-	     so the first scroll into view doesn't trigger a synchronous
-	     layer reshuffle. */
-	contain: layout paint style;
-	transform: translate3d(0, 0, 0);
-	will-change: transform;
+	/* wave 37a — perspective + preserve-3d + contain + translate3d +
+	   will-change applied desktop-only via the @media (min-width: 768px)
+	   gate at the bottom of this file. See the matching note on
+	   .feed-featured-event for the iOS/Android compositor-cap rationale. */
 	/* layered ambient bloom + 1px stage-rim — sits beneath the radial
 	   spotlight backplate (::before) and the cool sweep depth layer
 	   (::after) below. */
@@ -3055,18 +3034,10 @@
 	border-left: 4px solid var(--cdn-nm-title-mid, #2c5282);
 	border-radius: var(--cdn-radius-md, 8px);
 	overflow: hidden;
-	/* perspective + preserve-3d enable child translateZ() pop without
-	   loading a runtime 3D engine. 1200px = subtle, ambient depth. Same
-	   value as featured-event for visual rhyme. */
-	perspective: 1200px;
-	transform-style: preserve-3d;
-	/* Mirror the wave 30a tearing mitigations from featured-event:
-	   - contain: layout paint style isolates this card's paint operations
-	   - translate3d(0,0,0) forces its own GPU compositor layer
-	   - will-change: transform proactively promotes the layer up-front */
-	contain: layout paint style;
-	transform: translate3d(0, 0, 0);
-	will-change: transform;
+	/* wave 37a — perspective + preserve-3d + contain + translate3d +
+	   will-change applied desktop-only via the @media (min-width: 768px)
+	   gate at the bottom of this file. See the matching note on
+	   .feed-featured-event for the iOS/Android compositor-cap rationale. */
 	/* Layered ambient bloom + 1px stage-rim inset (the same idiom featured
 	   uses to give the card a "stage edge" line under varied backgrounds). */
 	box-shadow:
@@ -3682,3 +3653,172 @@
 /* When the wrapping anchor is hovered, the existing image hover transforms
    still fire on the inner image since :hover propagates through anchor
    children — nothing to override here. */
+
+/* ==========================================================================
+   Wave 37a — Mobile ghosting/tearing fix on featured-event + next-meetup +
+   upcoming-virtual-event cards
+   ==========================================================================
+
+   Bryan reported (verbatim): "visually skipping I'm seeing is only mobile
+   devices - I checked mobile width on desktop device & didn't have the
+   issue - like a ghosting of the content tearing onto the screen for a
+   split second continually when you go to clouddelnorte.org & especially
+   when you scroll - only evident when next meetup or featured event are
+   visible on screen so it would seem one of these two are to blame."
+
+   Root cause — waves 30a + 33a + 33b promoted these three cards to GPU
+   compositor layers via:
+     - will-change: transform
+     - transform: translate3d(0, 0, 0)
+     - contain: layout paint style
+     - perspective(1200px) + transform-style: preserve-3d
+     - mix-blend-mode rules on ::after spotlight sweeps
+     - multiple sustained animations (tape shimmer, date plate breathe,
+       spots-remaining outer-ring pulse, ::after sweep, twinkle stars).
+
+   On desktop GPUs these promotions FIX scroll tearing. On mobile (iOS
+   Safari, Android Chrome) they often CAUSE it: hard caps on simultaneous
+   compositor layers + small VRAM mean the browser falls back to a slower
+   software-rendering path, and the fallback transition surfaces as the
+   ghosting/tearing Bryan saw. The "narrow viewport on desktop = no issue"
+   detail Bryan flagged confirms the cause is hardware, not viewport size.
+
+   The 768px gate is the smallest viewport where iPad portrait + entry
+   tablets reliably hand back enough GPU headroom to absorb the wave 27a
+   v2 / 30a / 33a/b stack. Below 768px we go FLAT — same gradients, same
+   colors, same marquee chrome, but no perspective trick, no will-change,
+   no contain, no translate3d, no sustained ::after sweep / title tape /
+   date plate breathe / spots ring pulse / twinkle animations. The cards
+   remain visually in-family (amber featured / teal next-meetup / violet
+   upcoming-virtual) — they just don't 3D-pop on phones.
+
+   prefers-reduced-motion gates upstream are unchanged and continue to
+   strip animations regardless of viewport (those gates remain the
+   accessibility contract; this gate is the mobile-hardware contract).
+   ========================================================================== */
+
+/* Desktop-only — re-apply the wave 30a / 33a / 33b GPU compositor layer
+   promotion stack on all three event cards. The base rules above no
+   longer carry these properties (see the wave 37a notes inline on each
+   card root). At ≥ 768px the desktop GPU swallows the layer count fine,
+   restoring the same scroll-tearing mitigation that the wave 30a fix
+   originally introduced for desktop. */
+@media (min-width: 768px) {
+	.feed-featured-event {
+		perspective: 1200px;
+		transform-style: preserve-3d;
+		contain: layout paint style;
+		transform: translate3d(0, 0, 0);
+		will-change: transform;
+	}
+
+	.feed-next-meetup {
+		perspective: 1200px;
+		transform-style: preserve-3d;
+		contain: layout paint style;
+		transform: translate3d(0, 0, 0);
+		will-change: transform;
+	}
+
+	.feed-upcoming-virtual-event {
+		perspective: 1200px;
+		transform-style: preserve-3d;
+		contain: layout paint style;
+		transform: translate3d(0, 0, 0);
+		will-change: transform;
+	}
+}
+
+/* Mobile-only — explicitly clamp will-change to auto on the card roots
+   AND on every child carrying its own will-change hint, AND disable
+   every sustained animation on these three cards. !important is required
+   because the existing prefers-reduced-motion: no-preference blocks
+   apply animations at the same specificity. The mobile path here is the
+   layer of last resort regardless of the user's motion preference; it
+   trades rizz for stability on devices that physically can't hold the
+   compositor stack. */
+@media (max-width: 767.98px) {
+	/* Card roots — disable will-change on the three event cards so the
+	   browser does not preemptively allocate a compositor layer. The base
+	   rules above no longer set will-change at this viewport, but a
+	   defensive auto override here guards against any future rule
+	   re-introducing a hint. */
+	.feed-featured-event,
+	.feed-next-meetup,
+	.feed-upcoming-virtual-event {
+		will-change: auto !important;
+	}
+
+	/* ::after spotlight sweeps — the cross-card 7s/9s gradient sweeps were
+	   identified as the most expensive sustained mobile animation in the
+	   root-cause analysis. Disable the animation, will-change, and the
+	   translateZ(0) anchor that promotes the sweep to its own layer. */
+	.feed-featured-event::after,
+	.feed-next-meetup::after,
+	.feed-upcoming-virtual-event::after {
+		animation: none !important;
+		will-change: auto !important;
+		transform: none !important;
+	}
+
+	/* Date-plate sustained breathe + diagonal-sweep shimmer — the plate
+	   keeps its gradient/border/text-glow (those are static), it just
+	   stops breathing + shimmering on mobile. */
+	.feed-featured-event__date-plate,
+	.feed-featured-event__date-plate::after,
+	.awsui-dark-mode .feed-featured-event__date-plate,
+	.feed-next-meetup__date-plate,
+	.feed-next-meetup__date-plate::after,
+	.awsui-dark-mode .feed-next-meetup__date-plate,
+	.feed-upcoming-virtual-event__date-plate,
+	.feed-upcoming-virtual-event__date-plate::after,
+	.awsui-dark-mode .feed-upcoming-virtual-event__date-plate {
+		animation: none !important;
+		will-change: auto !important;
+	}
+
+	/* Title scrolling-tape shimmer — disables the background-position
+	   animation. The gradient itself stays (a static still tape), so
+	   the title still reads as the gradient-clipped text it does on
+	   desktop, just without the left→right sweep. */
+	.feed-featured-event__title a,
+	.awsui-dark-mode .feed-featured-event__title a,
+	.feed-next-meetup__title a,
+	.awsui-dark-mode .feed-next-meetup__title a,
+	.feed-upcoming-virtual-event__title a,
+	.awsui-dark-mode .feed-upcoming-virtual-event__title a {
+		animation: none !important;
+	}
+
+	/* Spots-remaining outer-ring pulse + chip pulse — chip text + color
+	   stay; the pulses stop. */
+	.feed-featured-event__spots,
+	.feed-featured-event__spots::before,
+	.awsui-dark-mode .feed-featured-event__spots {
+		animation: none !important;
+		will-change: auto !important;
+	}
+
+	/* Image hover micro-tilt — already only fires on :hover (rare on
+	   mobile touch surfaces), but neutralize defensively to keep paint
+	   pressure off the image element. */
+	.feed-featured-event__image,
+	.feed-featured-event__image:hover {
+		transform: none !important;
+		transition: none !important;
+	}
+
+	/* Twinkle stars on upcoming-virtual-event — small but numerous; the
+	   3.6s opacity+filter loop on each star compounds repaint pressure.
+	   Drop the animation; static dim opacity reads similarly to the
+	   prefers-reduced-motion fallback. */
+	.feed-upcoming-virtual-event__twinkle-star {
+		animation: none !important;
+	}
+
+	/* Next-meetup marquee scrolling-tape (the wave 33a tape shimmer) —
+	   the marquee header stays; the tape stops scrolling. */
+	.feed-next-meetup__marquee-tape {
+		animation: none !important;
+	}
+}
