@@ -2,3 +2,11 @@
    shell/styles.css already sets navigation-container, side-navigation,
    awsui_layout-main, and awsui_content-layout to transparent (with !important
    on layout-main). No additional overrides needed here. */
+
+/* Wave 24c — podcast-episode-scroller sits between PendingApprovalBanner and
+   ContentLayout. The wrapper picks up the same transparent chrome by default;
+   we only need to give it a touch of horizontal breathing room so the
+   Container chrome doesn't crash into the AppLayout content gutters. */
+.cdn-podcast-scroller {
+	margin-bottom: 12px;
+}

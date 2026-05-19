@@ -145,8 +145,83 @@ async function fetchFeed(url, limit) {
 	}));
 }
 
+/** Parse iTunes duration string to seconds.
+ *  Accepts: "HH:MM:SS", "MM:SS", "M:SS", or a bare integer (seconds). */
+function parseDurationToSeconds(raw) {
+	if (raw === null || raw === undefined) return 0;
+	const s = String(raw).trim();
+	if (!s) return 0;
+	if (/^\d+$/.test(s)) return Number(s);
+	const parts = s.split(":").map((p) => Number(p.trim()));
+	if (parts.some((n) => Number.isNaN(n))) return 0;
+	if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
+	if (parts.length === 2) return parts[0] * 60 + parts[1];
+	if (parts.length === 1) return parts[0];
+	return 0;
+}
+
+/** Extract the first podcast:transcript URL from an item, if present.
+ *  Handles the colon-prefixed key fast-xml-parser preserves with
+ *  ignoreAttributes:false, plus the rare itunes:transcript fallback.
+ *  Returns null when no transcript tag is found. */
+function extractTranscriptUrl(item) {
+	const candidates = [
+		item["podcast:transcript"],
+		item.podcast_transcript,
+		item["itunes:transcript"],
+		item.itunes_transcript,
+	];
+	for (const cand of candidates) {
+		if (!cand) continue;
+		const list = Array.isArray(cand) ? cand : [cand];
+		for (const node of list) {
+			if (!node) continue;
+			if (typeof node === "string" && node) return node;
+			const url = node["@_url"];
+			if (typeof url === "string" && url) return url;
+		}
+	}
+	return null;
+}
+
+/** Build episode rows (up to MAX_EPISODES) from a parsed RSS items array. */
+const MAX_EPISODES = 50;
+function buildEpisodes(items) {
+	return items.slice(0, MAX_EPISODES).map((item, idx) => {
+		const title = decodeEntities(
+			getText(item.title)
+				.replace(/<!\[CDATA\[|\]\]>/g, "")
+				.trim(),
+		);
+		const enclosureUrl =
+			item?.enclosure?.["@_url"] ?? item?.enclosure?.url ?? "";
+		const guid = String(
+			item.guid?.["#text"] ?? item.guid ?? enclosureUrl ?? `idx-${idx}`,
+		).trim();
+		const pubDateRaw = item.pubDate ?? item.published ?? item.updated ?? null;
+		let pubDate = "";
+		try {
+			pubDate = pubDateRaw ? new Date(pubDateRaw).toISOString() : "";
+		} catch {
+			pubDate = String(pubDateRaw ?? "");
+		}
+		const duration = parseDurationToSeconds(
+			item["itunes:duration"] ?? item.itunes_duration ?? null,
+		);
+		const transcriptUrl = extractTranscriptUrl(item);
+		return {
+			guid: guid || `idx-${idx}`,
+			title: title || "(untitled)",
+			pubDate,
+			duration,
+			enclosureUrl: String(enclosureUrl || ""),
+			...(transcriptUrl ? { transcriptUrl } : {}),
+		};
+	});
+}
+
 /** Fetch latest episode metadata from a podcast RSS feed.
- *  Returns { title, subtitle, display, enclosureUrl } or null on failure.
+ *  Returns { title, subtitle, display, enclosureUrl, episodes } or null on failure.
  *
  *  enclosureUrl (wave 28c): the playable audio URL for the latest episode,
  *  pulled from <item><enclosure url="..."/></item>. Hydrated into
@@ -154,7 +229,11 @@ async function fetchFeed(url, limit) {
  *  the freshest URL — eliminating the stale-enclosure failure mode where a
  *  hardcoded streams.ts URL points to an expired Triton signed CDN link or
  *  a rotated captivate UUID. The frontend prefers this over the streams.ts
- *  url and falls back to the streams.ts url only when this is missing. */
+ *  url and falls back to the streams.ts url only when this is missing.
+ *
+ *  episodes (wave 24c): array (up to MAX_EPISODES) of EpisodeRow shapes
+ *  consumed by the podcast-episode-scroller. Existing consumers that only
+ *  read .display continue to work unchanged. */
 async function fetchPodcastLatest(url) {
 	const res = await fetch(url, {
 		headers: { "User-Agent": "AWSUGCloudDelNorte-fetch-feeds" },
@@ -200,11 +279,14 @@ async function fetchPodcastLatest(url) {
 			? String(encNode["@_url"] ?? "").trim() || null
 			: null;
 
+	const episodes = buildEpisodes(items);
+
 	return {
 		title: title || null,
 		subtitle,
 		display,
 		enclosureUrl,
+		episodes,
 	};
 }
 
@@ -240,7 +322,7 @@ for (const { key, url } of PODCAST_FEEDS) {
 		console.log(
 			`[fetch-feeds] podcast ${key}: ${episode?.display ?? "(no display)"}${
 				episode?.enclosureUrl ? ` [enc ok]` : ` [enc missing]`
-			}`,
+			} (${episode?.episodes?.length ?? 0} episodes)`,
 		);
 	} catch (err) {
 		console.warn(
