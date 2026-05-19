@@ -132,18 +132,23 @@
 	/* Cloudscape light-mode token overrides moved to :root:not(.awsui-dark-mode) block below
 	   to avoid !important bleeding into dark mode. See that block for the actual overrides. */
 
-	/* ---------- Warm shadow system — light mode ---------- */
+	/* ---------- Warm shadow system — light mode ----------
+	   wave 33d — reduced shadow alphas to ~70% of prior values across the
+	   card + container + nav stack. accumulating 0.10-0.18 alpha shadows
+	   across 5+ stacked feed cards on a cream page produced too much "pop"
+	   against the warm background. softening the alphas keeps the warm-amber
+	   directional-light feel without making every surface visually shout. */
 	--cdn-shadow-container-light:
-		0 1px 4px rgba(139, 90, 43, 0.1), 0 4px 12px rgba(139, 90, 43, 0.06);
+		0 1px 4px rgba(139, 90, 43, 0.07), 0 4px 12px rgba(139, 90, 43, 0.04);
 	--cdn-shadow-card-light:
-		0 1px 3px rgba(139, 90, 43, 0.1), 0 4px 10px -2px rgba(139, 90, 43, 0.12),
-		0 8px 20px -4px rgba(139, 90, 43, 0.08);
+		0 1px 3px rgba(139, 90, 43, 0.07), 0 4px 10px -2px rgba(139, 90, 43, 0.08),
+		0 8px 20px -4px rgba(139, 90, 43, 0.05);
 	--cdn-shadow-card-hover-light:
-		0 4px 8px rgba(139, 90, 43, 0.14), 0 12px 28px -4px rgba(139, 90, 43, 0.18),
-		0 20px 40px -8px rgba(139, 90, 43, 0.1),
-		0 0 0 1px rgba(139, 90, 43, 0.06);
-	--cdn-shadow-input-light: inset 0 1px 3px rgba(139, 90, 43, 0.08);
-	--cdn-shadow-nav-light: 2px 0 8px rgba(139, 90, 43, 0.08);
+		0 4px 8px rgba(139, 90, 43, 0.1), 0 12px 28px -4px rgba(139, 90, 43, 0.13),
+		0 20px 40px -8px rgba(139, 90, 43, 0.07),
+		0 0 0 1px rgba(139, 90, 43, 0.05);
+	--cdn-shadow-input-light: inset 0 1px 3px rgba(139, 90, 43, 0.06);
+	--cdn-shadow-nav-light: 2px 0 8px rgba(139, 90, 43, 0.06);
 
 	/* ---------- Typography scale ---------- */
 	--cdn-text-xs: 0.6875rem; /* 11px — micro labels, card meta */
@@ -210,17 +215,23 @@ html:not(.awsui-dark-mode) body {
 	--color-background-container-content-6u8rvp: #ede5d4 !important;
 	--color-background-container-header-gs3mbe: #ede5d4 !important;
 	--color-background-layout-panel-content-xto15e: #ede5d4 !important;
-	--color-background-input-default-ifz5bb: #fdfcf8 !important;
-	--color-background-control-default-4jb21l: #fdfcf8 !important;
+	/* wave 33d — unified near-white control/input/popover surfaces onto the
+	   warm-cream brand value #faf7f0 (was #fdfcf8 / #fefcf8). prior values
+	   sat 1-2pp away from pure white and produced cumulative eye-strain on
+	   light mode against the cream container backgrounds. #faf7f0 is already
+	   the brand card surface (see --color-background-card-p5vrq0 below)
+	   so this also unifies the surface palette. */
+	--color-background-input-default-ifz5bb: #faf7f0 !important;
+	--color-background-control-default-4jb21l: #faf7f0 !important;
 	--color-text-body-default-vvtq8u: #2c1a0e !important;
 	--color-text-heading-default-izpp46: #1a0f05 !important;
 	--color-border-divider-default-nr68jt: rgba(139, 90, 43, 0.18) !important;
 	--color-background-card-p5vrq0: #faf7f0 !important;
-	--color-background-popover-e20fy8: #fefcf8 !important;
-	--color-background-dropdown-item-default-qmc033: #fdfcf8 !important;
-	--color-background-button-normal-default-7f99mv: #fdfcf8 !important;
-	--color-background-button-normal-disabled-hl039l: #fdfcf8 !important;
-	--color-background-segment-default-b0r494: #fdfcf8 !important;
+	--color-background-popover-e20fy8: #faf7f0 !important;
+	--color-background-dropdown-item-default-qmc033: #faf7f0 !important;
+	--color-background-button-normal-default-7f99mv: #faf7f0 !important;
+	--color-background-button-normal-disabled-hl039l: #faf7f0 !important;
+	--color-background-segment-default-b0r494: #faf7f0 !important;
 	--color-background-table-header-hdjxos: #ede8db !important;
 }
 
@@ -645,29 +656,38 @@ html:not(.awsui-dark-mode) body {
 
 /* shared gradient + shadow tokens — single source of truth, both modes
    wave 23.5: strengthened gradients + layered shadow stack inspired by
-   fiona end-credits popout (multi-layer glow + radial accent bloom) */
+   fiona end-credits popout (multi-layer glow + radial accent bloom)
+   wave 33d: light-mode tokens softened — gradient stops dropped to ~70%
+   of prior alpha and rim-light inset highlight reduced from 0.85 → 0.6.
+   the bright cream highlight inset on every card surface was a primary
+   contributor to cumulative eye-strain on the feed page (5+ stacked
+   cards each painting an 0.85-alpha cream rim against the page cream).
+   dark-mode tokens unchanged. */
 :root {
 	/* light mode: warm cream → amber radial accent → cream edge
-	   stronger than prior 4-6% alpha — reads as warm directional light */
+	   softened from prior alpha set — reads as warm directional light
+	   without making the card "shout" against the page background */
 	--cdn-card-gradient-light:
 		radial-gradient(
 			ellipse at 30% 0%,
-			rgba(201, 162, 63, 0.1) 0%,
+			rgba(201, 162, 63, 0.07) 0%,
 			transparent 60%
 		),
 		linear-gradient(
 			135deg,
-			rgba(255, 250, 235, 0.7) 0%,
-			rgba(232, 215, 180, 0.28) 45%,
-			rgba(250, 244, 230, 0.6) 100%
+			rgba(255, 250, 235, 0.5) 0%,
+			rgba(232, 215, 180, 0.18) 45%,
+			rgba(250, 244, 230, 0.42) 100%
 		);
-	/* layered shadow: close contact + medium spread + ambient depth (fiona-credits inspired) */
+	/* layered shadow: close contact + medium spread + ambient depth.
+	   wave 33d — inset highlight 0.85 → 0.6, drop alphas reduced ~30%
+	   so cards no longer "pop" off the cream page surface. */
 	--cdn-card-rim-light:
-		inset 0 1px 0 rgba(255, 250, 235, 0.85),
-		inset 0 -1px 0 rgba(139, 90, 43, 0.08),
-		0 1px 2px rgba(139, 90, 43, 0.12),
-		0 4px 8px -2px rgba(139, 90, 43, 0.1),
-		0 8px 20px -4px rgba(139, 90, 43, 0.14);
+		inset 0 1px 0 rgba(255, 250, 235, 0.6),
+		inset 0 -1px 0 rgba(139, 90, 43, 0.06),
+		0 1px 2px rgba(139, 90, 43, 0.08),
+		0 4px 8px -2px rgba(139, 90, 43, 0.07),
+		0 8px 20px -4px rgba(139, 90, 43, 0.1);
 }
 
 .awsui-dark-mode {
