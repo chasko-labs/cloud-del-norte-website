@@ -1263,6 +1263,19 @@
 .feed-featured-event__title {
 	letter-spacing: -0.005em;
 	line-height: 1.22;
+	/* wave 41b — fluid type via clamp() keyed off container query width
+	   units (cqw). The .feed-featured-event card is the inline-size
+	   container above (container-name: cdn-feed-featured), so 1cqw ==
+	   1% of the card's rendered inline size. Floor 0.875rem (≈14px)
+	   keeps a 40-char title like "Community Happy Hour & Networking
+	   Night" legible at the narrowest single-column card widths
+	   (~280px); ceiling 1.5rem (≈24px) holds the Cloudscape heading-m
+	   max at the widest desktop image-left card widths (~720px). The
+	   3.4cqw middle term is the linear scaler between those bounds.
+	   white-space:nowrap prevents the title from wrapping to two
+	   lines at any viewport — the goal Bryan flagged. */
+	font-size: clamp(0.875rem, 3.4cqw, 1.5rem);
+	white-space: nowrap;
 }
 
 .feed-featured-event__title a {
@@ -1385,8 +1398,18 @@
 	);
 	border: 1px solid var(--cdn-v2-date-plate-border);
 	color: var(--cdn-v2-date-text);
-	/* baseline body-s in feed is ~14px; bump to 1.5x ≈ 21px for legibility. */
-	font-size: 1.5rem;
+	/* wave 41b — fluid type via clamp() + cqw. Floor 0.875rem (≈14px)
+	   keeps the ~36-char date string ("Wednesday, June 3, 2026 at
+	   6:00 PM MDT") on one line at narrow ~280px card widths; ceiling
+	   1.35rem (≈22px) holds visual rhyme with the title scale at
+	   wider desktop card widths. Replaces the prior fixed 1.5rem so
+	   the date no longer wraps to two lines at narrow viewports.
+	   text-overflow:ellipsis pairs with the existing overflow:hidden
+	   (kept for the ::after shimmer mask) and width:100% (set in
+	   wave 38e) so any sub-floor overflow truncates cleanly. */
+	font-size: clamp(0.875rem, 2.8cqw, 1.35rem);
+	white-space: nowrap;
+	text-overflow: ellipsis;
 	font-weight: 800;
 	line-height: 1.15;
 	letter-spacing: 0.01em;
@@ -1990,6 +2013,16 @@
 	   will-change applied desktop-only via the @media (min-width: 768px)
 	   gate at the bottom of this file. See the matching note on
 	   .feed-featured-event for the iOS/Android compositor-cap rationale. */
+	/* wave 41b — establish a CSS Container Query context so the
+	   wave 41b fluid-type clamp() rules on .feed-upcoming-virtual-
+	   event__title and .feed-upcoming-virtual-event__date-plate can
+	   scale via cqw against the card's own rendered inline width.
+	   Mirrors the wave 31a container-type setup on .feed-featured-
+	   event and the wave 41b setup on .feed-next-meetup. Container
+	   name is unique per card so future @container queries can target
+	   each card's body independently. */
+	container-type: inline-size;
+	container-name: cdn-feed-upcoming-virtual-event;
 	/* layered ambient bloom + 1px stage-rim — sits beneath the radial
 	   spotlight backplate (::before) and the cool sweep depth layer
 	   (::after) below. */
@@ -2313,6 +2346,15 @@
 .feed-upcoming-virtual-event__title {
 	letter-spacing: -0.005em;
 	line-height: 1.22;
+	/* wave 41b — fluid type via clamp() keyed off cqw against the
+	   .feed-upcoming-virtual-event container (container-name: cdn-
+	   feed-upcoming-virtual-event, set above). Same calibration as
+	   the featured-event + next-meetup titles so all three event
+	   cards share a single fluid-type curve (0.875rem floor, 1.5rem
+	   cap, 3.4cqw scaler). nowrap prevents the title from wrapping
+	   to two lines at any viewport. */
+	font-size: clamp(0.875rem, 3.4cqw, 1.5rem);
+	white-space: nowrap;
 }
 
 .feed-upcoming-virtual-event__title a {
@@ -2412,7 +2454,14 @@
 	);
 	border: 1px solid var(--cdn-uvirt-date-plate-border);
 	color: var(--cdn-uvirt-date-text);
-	font-size: 1.25rem;
+	/* wave 41b — fluid type via clamp() + cqw. Mirrors the wave 41b
+	   featured-event + next-meetup date-plates so all three event
+	   cards share a single fluid-type curve (0.875rem floor, 1.35rem
+	   cap, 2.8cqw scaler). Replaces the prior fixed 1.25rem so the
+	   date string no longer wraps to two lines at narrow viewport /
+	   card widths. */
+	font-size: clamp(0.875rem, 2.8cqw, 1.35rem);
+	white-space: nowrap;
 	font-weight: 800;
 	line-height: 1.2;
 	letter-spacing: 0.01em;
@@ -3281,6 +3330,15 @@
 	   will-change applied desktop-only via the @media (min-width: 768px)
 	   gate at the bottom of this file. See the matching note on
 	   .feed-featured-event for the iOS/Android compositor-cap rationale. */
+	/* wave 41b — establish a CSS Container Query context so the
+	   wave 41b fluid-type clamp() rules on .feed-next-meetup__title
+	   and .feed-next-meetup__date-plate can scale via cqw against
+	   the card's own rendered inline width. Mirrors the wave 31a
+	   container-type setup on .feed-featured-event. The container
+	   name is unique per card so future @container queries can target
+	   each card's body independently. */
+	container-type: inline-size;
+	container-name: cdn-feed-next-meetup;
 	/* Layered ambient bloom + 1px stage-rim inset (the same idiom featured
 	   uses to give the card a "stage edge" line under varied backgrounds). */
 	box-shadow:
@@ -3552,6 +3610,14 @@
 .feed-next-meetup__title {
 	letter-spacing: -0.005em;
 	line-height: 1.22;
+	/* wave 41b — fluid type via clamp() keyed off cqw against the
+	   .feed-next-meetup container (container-name: cdn-feed-next-
+	   meetup, set above). Same calibration as the featured-event
+	   title so all three event cards share a single fluid-type
+	   curve (0.875rem floor, 1.5rem cap, 3.4cqw scaler). nowrap
+	   prevents the title from wrapping to two lines at any viewport. */
+	font-size: clamp(0.875rem, 3.4cqw, 1.5rem);
+	white-space: nowrap;
 }
 
 .feed-next-meetup__title a {
@@ -3655,8 +3721,15 @@
 	);
 	border: 1px solid var(--cdn-nm-date-plate-border);
 	color: var(--cdn-nm-date-text);
-	/* Same scale as featured-event date plate for visual rhyme. */
-	font-size: 1.5rem;
+	/* wave 41b — fluid type via clamp() + cqw. Mirrors the wave 41b
+	   featured-event date-plate so the cool-palette next-meetup card
+	   shares the same fluid-type curve as the warm-palette featured
+	   card (0.875rem floor, 1.35rem cap, 2.8cqw scaler). Replaces
+	   the prior fixed 1.5rem so the date string ("Wednesday, June 3,
+	   2026 at 6:00 PM MDT") no longer wraps to two lines at narrow
+	   viewport / card widths. */
+	font-size: clamp(0.875rem, 2.8cqw, 1.35rem);
+	white-space: nowrap;
 	font-weight: 800;
 	line-height: 1.15;
 	letter-spacing: 0.01em;
