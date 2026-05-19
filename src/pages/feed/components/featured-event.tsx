@@ -5,7 +5,6 @@ import Box from "@cloudscape-design/components/box";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
-import SpaceBetween from "@cloudscape-design/components/space-between";
 import {
 	Component,
 	type ErrorInfo,
@@ -104,7 +103,20 @@ function FeaturedEventInner() {
 					<Header variant="h2">{t("feedPage.featuredEventHeader")}</Header>
 				}
 			>
-				<SpaceBetween size="s">
+				{/* Wave 31a — responsive CSS Grid layout. Replaces the previous
+				    single-column SpaceBetween stack so the card fills available
+				    horizontal space at tablet + desktop breakpoints (Bryan: "tons
+				    of white space that we could responsively fill with some grid
+				    type thinking"). DOM order is the logical reading order
+				    (badge → image → title → date → in-person → location → desc →
+				    spots → buttons); CSS Grid named areas in styles.css remap the
+				    visual placement per breakpoint while keeping screen-reader
+				    and tab order intact. Container queries (`container-type:
+				    inline-size` on .feed-featured-event) drive the breakpoints
+				    off the card's rendered width — the right tool for
+				    component-level responsive layout when the parent grid varies
+				    the card's own track size. */}
+				<div className="feed-featured-event__layout">
 					<Box
 						fontWeight="bold"
 						fontSize="body-s"
@@ -112,24 +124,32 @@ function FeaturedEventInner() {
 					>
 						{t("feedPage.featuredEventBadge")}
 					</Box>
-					<img
-						src={EVENT_IMAGE_LIGHT}
-						alt={t("feedPage.featuredEventImageAlt")}
-						className="feed-featured-event__image feed-featured-event__image--light"
-						width={1200}
-						height={630}
-						loading="lazy"
-						onError={hideBrokenImage}
-					/>
-					<img
-						src={EVENT_IMAGE_DARK}
-						alt={t("feedPage.featuredEventImageAlt")}
-						className="feed-featured-event__image feed-featured-event__image--dark"
-						width={1200}
-						height={630}
-						loading="lazy"
-						onError={hideBrokenImage}
-					/>
+					{/* Image area wraps both light + dark variants so the grid cell
+					    only owns one logical slot — the existing wave 28a theme-
+					    swap CSS (display:none on the off-theme variant) still
+					    decides which one paints. onError handlers from wave 30a
+					    remain on each <img> so a 404 on either asset is still
+					    handled per-image without dropping the wrapping cell. */}
+					<div className="feed-featured-event__image-area">
+						<img
+							src={EVENT_IMAGE_LIGHT}
+							alt={t("feedPage.featuredEventImageAlt")}
+							className="feed-featured-event__image feed-featured-event__image--light"
+							width={1200}
+							height={630}
+							loading="lazy"
+							onError={hideBrokenImage}
+						/>
+						<img
+							src={EVENT_IMAGE_DARK}
+							alt={t("feedPage.featuredEventImageAlt")}
+							className="feed-featured-event__image feed-featured-event__image--dark"
+							width={1200}
+							height={630}
+							loading="lazy"
+							onError={hideBrokenImage}
+						/>
+					</div>
 					<Box
 						fontWeight="bold"
 						fontSize="heading-m"
@@ -145,14 +165,23 @@ function FeaturedEventInner() {
 							{formattedDate}
 						</span>
 					</div>
+					{/* Wave 31a rename: this amber tungsten chip is the IN-PERSON
+					    pill, not the secondary location text. The class previously
+					    named __location was generic; __in-person-pill makes the
+					    semantic role explicit and frees __location-text below for
+					    the fine-print address row. */}
 					<Box
 						color="text-body-secondary"
 						fontSize="body-s"
-						className="feed-featured-event__location"
+						className="feed-featured-event__in-person-pill"
 					>
 						{t("feedPage.featuredEventInPersonLabel")}
 					</Box>
-					<Box color="text-body-secondary" fontSize="body-s">
+					<Box
+						color="text-body-secondary"
+						fontSize="body-s"
+						className="feed-featured-event__location-text"
+					>
 						{t("feedPage.featuredEventLocation")}
 					</Box>
 					<Box
@@ -182,7 +211,7 @@ function FeaturedEventInner() {
 							variant="violet"
 						/>
 					</div>
-				</SpaceBetween>
+				</div>
 			</Container>
 		</div>
 	);

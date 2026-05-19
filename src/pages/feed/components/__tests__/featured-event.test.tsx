@@ -83,6 +83,70 @@ describe("FeaturedEvent", () => {
 		).toBeInTheDocument();
 	});
 
+	it("renders the wave 31a responsive grid layout wrapper containing all card children", () => {
+		const { container } = renderWithLocale("us");
+		const layout = container.querySelector(".feed-featured-event__layout");
+		expect(layout).not.toBeNull();
+		// All 9 logical children must render inside the grid layout (badge,
+		// image-area, title, date, in-person, location, description, spots,
+		// buttons). DOM order is the logical reading order — preserved across
+		// the SpaceBetween → grid migration.
+		expect(layout?.querySelector(".feed-featured-event__badge")).not.toBeNull();
+		expect(
+			layout?.querySelector(".feed-featured-event__image-area"),
+		).not.toBeNull();
+		expect(layout?.querySelector(".feed-featured-event__title")).not.toBeNull();
+		expect(layout?.querySelector(".feed-featured-event__date")).not.toBeNull();
+		expect(
+			layout?.querySelector(".feed-featured-event__in-person-pill"),
+		).not.toBeNull();
+		expect(
+			layout?.querySelector(".feed-featured-event__location-text"),
+		).not.toBeNull();
+		expect(
+			layout?.querySelector(".feed-featured-event__description"),
+		).not.toBeNull();
+		expect(layout?.querySelector(".feed-featured-event__spots")).not.toBeNull();
+		expect(layout?.querySelector(".cdn-brand-btn-stack")).not.toBeNull();
+	});
+
+	it("wraps both light + dark image variants inside the __image-area grid cell wrapper (single grid slot for the pair)", () => {
+		const { container } = renderWithLocale("us");
+		const imageArea = container.querySelector(
+			".feed-featured-event__image-area",
+		);
+		expect(imageArea).not.toBeNull();
+		const lightImg = imageArea?.querySelector(
+			".feed-featured-event__image--light",
+		);
+		const darkImg = imageArea?.querySelector(
+			".feed-featured-event__image--dark",
+		);
+		expect(lightImg).not.toBeNull();
+		expect(darkImg).not.toBeNull();
+	});
+
+	it("preserves DOM reading order: badge → image → title → date → in-person → location → description → spots → buttons (a11y / screen-reader contract)", () => {
+		const { container } = renderWithLocale("us");
+		const layout = container.querySelector(".feed-featured-event__layout");
+		expect(layout).not.toBeNull();
+		const expected = [
+			"feed-featured-event__badge",
+			"feed-featured-event__image-area",
+			"feed-featured-event__title",
+			"feed-featured-event__date",
+			"feed-featured-event__in-person-pill",
+			"feed-featured-event__location-text",
+			"feed-featured-event__description",
+			"feed-featured-event__spots",
+			"cdn-brand-btn-stack",
+		];
+		const actual = Array.from(layout?.children ?? [])
+			.map((el) => Array.from(el.classList).find((c) => expected.includes(c)))
+			.filter((c): c is string => Boolean(c));
+		expect(actual).toEqual(expected);
+	});
+
 	it("renders the shortened primary speakeasy RSVP button label", () => {
 		renderWithLocale("us");
 		const primary = screen.getByRole("link", {
