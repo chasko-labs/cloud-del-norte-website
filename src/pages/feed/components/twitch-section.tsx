@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { SkeletonFrame } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { probeTwitchLive } from "../../../lib/twitch-channel-cache";
+import FeedCardShell from "./feed-card-shell";
 
 // Twitch Embed SDK types (loaded via script tag at runtime)
 interface TwitchEmbed {
@@ -175,7 +176,12 @@ function TwitchChannelCard({
 	if (probeLive === false) return null;
 
 	if (!hostname) {
-		// SSR / pre-hydration — show skeleton until hostname resolves
+		// SSR / pre-hydration — show skeleton until hostname resolves. The
+		// skeleton is intentionally rendered inside a bare Cloudscape Container
+		// (NOT FeedCardShell) so the loading state doesn't paint a marquee
+		// header for a card that may never reveal itself if the channel turns
+		// out to be offline. Once probeLive resolves we either return null
+		// (offline) or fall through to the FeedCardShell below.
 		return (
 			<Container>
 				<SkeletonFrame />
@@ -183,15 +189,20 @@ function TwitchChannelCard({
 		);
 	}
 
+	// Wave 36b — wrap the live embed in FeedCardShell with the violet palette
+	// (twitch brand purple). The marquee header carries the channel label so
+	// the card has a stable name plate even when the embed itself paints. The
+	// inner LIVE indicator stays inside TwitchChannelEmbed; the marquee just
+	// names the channel.
 	return (
-		<Container>
+		<FeedCardShell headerText={channel.label} palette="violet">
 			<TwitchChannelEmbed
 				channelId={channel.id}
 				hostname={hostname}
 				onLiveChange={onLiveChange}
 				onOfflineChange={onOfflineChange}
 			/>
-		</Container>
+		</FeedCardShell>
 	);
 }
 

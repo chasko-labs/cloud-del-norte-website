@@ -2,13 +2,12 @@
 // SPDX-License-Identifier: MIT-0
 
 import Box from "@cloudscape-design/components/box";
-import Container from "@cloudscape-design/components/container";
-import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import type React from "react";
 import { useEffect, useId, useRef, useState } from "react";
 import articles from "../../../data/arrowhead-news.json";
 import { useTranslation } from "../../../hooks/useTranslation";
+import FeedCardShell from "./feed-card-shell";
 
 export default function ArrowheadNews() {
 	const { t } = useTranslation();
@@ -53,17 +52,22 @@ export default function ArrowheadNews() {
 		}
 	}
 
+	// Wave 36b — header shifts from a Cloudscape <Header variant="h2"> with
+	// an inline secondary span ("at NMSU") to the FeedCardShell marquee. The
+	// shell's headerText prop accepts ReactNode so we pass the same JSX
+	// structure (label + sub-label span) through; the role="heading" /
+	// aria-level=2 contract is asserted by the shell on the marquee wrapper.
+	const headerText = (
+		<>
+			Arrowhead Research Park
+			<span className="feed-card-header-sub">
+				{t("feedPage.arrowheadAtNmsu")}
+			</span>
+		</>
+	);
+
 	return (
-		<Container
-			header={
-				<Header variant="h2">
-					Arrowhead Research Park
-					<span className="feed-card-header-sub">
-						{t("feedPage.arrowheadAtNmsu")}
-					</span>
-				</Header>
-			}
-		>
+		<FeedCardShell headerText={headerText} palette="sage">
 			{/* biome-ignore lint/a11y/noStaticElementInteractions: hover/focus pause is a progressive enhancement; keyboard users reach article links directly */}
 			<div
 				className="feed-article-carousel"
@@ -134,6 +138,6 @@ export default function ArrowheadNews() {
 					))}
 				</div>
 			</div>
-		</Container>
+		</FeedCardShell>
 	);
 }

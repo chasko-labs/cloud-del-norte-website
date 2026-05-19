@@ -1,10 +1,9 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import Container from "@cloudscape-design/components/container";
-import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import { LazyEmbed } from "../../../components/lazy-embed";
+import FeedCardShell from "./feed-card-shell";
 
 interface FeaturedVideoCardProps {
 	videoId: string;
@@ -21,26 +20,23 @@ export default function FeaturedVideoCard({
 	authorUrl,
 	thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
 }: FeaturedVideoCardProps) {
+	const headerActions = (
+		<Link
+			href={authorUrl}
+			external
+			fontSize="body-s"
+			rel="noopener noreferrer"
+			target="_blank"
+		>
+			{author}
+		</Link>
+	);
+
 	return (
-		<Container
-			header={
-				<Header
-					variant="h2"
-					actions={
-						<Link
-							href={authorUrl}
-							external
-							fontSize="body-s"
-							rel="noopener noreferrer"
-							target="_blank"
-						>
-							{author}
-						</Link>
-					}
-				>
-					{title}
-				</Header>
-			}
+		<FeedCardShell
+			headerText={title}
+			headerActions={headerActions}
+			palette="lavender"
 		>
 			<div className="feed-carousel">
 				<div className="feed-carousel__viewport">
@@ -67,6 +63,6 @@ export default function FeaturedVideoCard({
 					</Link>
 				</div>
 			</div>
-		</Container>
+		</FeedCardShell>
 	);
 }

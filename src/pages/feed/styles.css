@@ -3,6 +3,22 @@
    Uses CDN token system: var(--cdn-space-*), var(--cdn-text-*), etc.
    ========================================================================== */
 
+/* ── Wave 36b — FeedCardShell adoption follow-up ────────────────────────────
+   Wave 36b introduced src/pages/feed/components/feed-card-shell.tsx + .css
+   as a shared depth-stack/marquee-header primitive for the simpler non-event
+   feed cards (arrowhead-news, andres-medium, andres-youtube-live, builder-
+   center, twitch panes, featured-video, andmore/awsml/readysetcloud). The
+   three carousel cards below were intentionally NOT migrated this wave:
+     - youtube-carousel.tsx
+     - youtube-channel-carousel.tsx
+     - youtube-shorts-carousel.tsx
+   Their internal layouts (carousel viewport, frame ratio, custom chevrons,
+   shorts vertical aspect) need separate consideration of how the marquee
+   header reads above embedded video chrome. Picked up in a follow-up wave;
+   shell adoption there is purely cosmetic so deferring does not block the
+   wave 36b "no plain Cloudscape Containers" goal. Matching note lives in
+   feed-card-shell.css for symmetry. */
+
 .feed-carousel {
 	position: relative;
 	width: 100%;

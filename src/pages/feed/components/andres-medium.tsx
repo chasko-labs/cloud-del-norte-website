@@ -2,13 +2,12 @@
 // SPDX-License-Identifier: MIT-0
 
 import Box from "@cloudscape-design/components/box";
-import Container from "@cloudscape-design/components/container";
-import Header from "@cloudscape-design/components/header";
 import Icon from "@cloudscape-design/components/icon";
 import Link from "@cloudscape-design/components/link";
 import { useEffect, useState } from "react";
 import posts from "../../../data/andres-medium.json";
 import { useTranslation } from "../../../hooks/useTranslation";
+import FeedCardShell from "./feed-card-shell";
 
 interface Post {
 	title: string;
@@ -32,24 +31,20 @@ export default function AndresMedium() {
 
 	const post = items[index];
 
+	// Wave 36b — actions slot mirrors Cloudscape Header's `actions` prop. The
+	// shell's marquee renders this in its right-aligned slot so the "All
+	// posts →" link still reads as a peer of the heading.
+	const headerActions = (
+		<Link href="https://andmoredev.medium.com/" external fontSize="body-s">
+			{t("feedPage.andresMediumAllPosts")} <Icon name="external" />
+		</Link>
+	);
+
 	return (
-		<Container
-			header={
-				<Header
-					variant="h2"
-					actions={
-						<Link
-							href="https://andmoredev.medium.com/"
-							external
-							fontSize="body-s"
-						>
-							{t("feedPage.andresMediumAllPosts")} <Icon name="external" />
-						</Link>
-					}
-				>
-					{t("feedPage.andresMediumHeader")}
-				</Header>
-			}
+		<FeedCardShell
+			headerText={t("feedPage.andresMediumHeader")}
+			headerActions={headerActions}
+			palette="navy"
 		>
 			{/* biome-ignore lint/a11y/noStaticElementInteractions: hover/focus pause is a progressive enhancement; keyboard users reach the link directly */}
 			<div
@@ -82,6 +77,6 @@ export default function AndresMedium() {
 					{index + 1} / {items.length}
 				</span>
 			</div>
-		</Container>
+		</FeedCardShell>
 	);
 }
