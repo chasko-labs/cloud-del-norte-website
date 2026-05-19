@@ -17,9 +17,19 @@ function renderWithLocale(locale: "us" | "mx") {
 }
 
 describe("UpcomingVirtualEvent", () => {
-	it("renders the UPCOMING badge", () => {
-		renderWithLocale("us");
-		expect(screen.getByText("UPCOMING")).toBeInTheDocument();
+	it("does not render the wave 33b 'UPCOMING' badge (wave 42a — locale key + JSX block removed at Bryan's direction)", () => {
+		const { container } = renderWithLocale("us");
+		// The ALL-CAPS pill that read "UPCOMING" under the marquee header
+		// is gone. The marquee header itself (with the wave 42a renamed
+		// copy "Free & Open Virtual AWS Community Events") is the only
+		// announcement of the section's editorial role.
+		expect(screen.queryByText("UPCOMING")).toBeNull();
+		// The badge backplate CSS class still exists in styles.css as
+		// orphaned chrome (no JSX consumer) — assert there's no element
+		// rendering it.
+		expect(
+			container.querySelector(".feed-upcoming-virtual-event__badge"),
+		).toBeNull();
 	});
 
 	it("renders the event title with link to RSVP URL", () => {
@@ -146,13 +156,15 @@ describe("UpcomingVirtualEvent", () => {
 		expect(marquee?.getAttribute("aria-level")).toBe("2");
 	});
 
-	it("wave 33b — marquee text contains the localized header string", () => {
+	it("wave 33b — marquee text contains the localized header string (wave 42a — renamed to 'Free & Open Virtual AWS Community Events')", () => {
 		const { container } = renderWithLocale("us");
 		const marqueeText = container.querySelector(
 			".feed-upcoming-virtual-event__marquee-text",
 		);
 		expect(marqueeText).not.toBeNull();
-		expect(marqueeText?.textContent).toMatch(/Virtual AWS Community Events/i);
+		expect(marqueeText?.textContent).toMatch(
+			/Free & Open Virtual AWS Community Events/i,
+		);
 	});
 
 	it("wave 33b — marquee renders 14 twinkle stars inside an aria-hidden container, each with a --star-index custom property", () => {
