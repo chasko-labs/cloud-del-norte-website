@@ -20,14 +20,10 @@ describe("FeaturedEvent", () => {
 		expect(screen.getByText("DON'T MISS")).toBeInTheDocument();
 	});
 
-	it("renders the event title with link to auth.clouddelnorte.org signup with rsvp return_to", () => {
+	it("renders the v2 event title with link to auth.clouddelnorte.org signup with rsvp return_to", () => {
 		renderWithLocale("us");
-		const link = screen.getByText(
-			"Speakeasy Happy Hour — June Networking Night",
-		);
-		const expected =
-			"https://auth.clouddelnorte.org/signup/index.html?return_to=" +
-			encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03");
+		const link = screen.getByText("Community Happy Hour & Networking Night");
+		const expected = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03")}`;
 		expect(link.closest("a")).toHaveAttribute("href", expected);
 	});
 
@@ -41,10 +37,19 @@ describe("FeaturedEvent", () => {
 		expect(screen.getAllByText(/junio/i).length).toBeGreaterThan(0);
 	});
 
-	it("renders the RSVP button with target=_blank", () => {
+	it("renders the date inside the date-plate VFX wrapper", () => {
+		const { container } = renderWithLocale("us");
+		const plate = container.querySelector(".feed-featured-event__date-plate");
+		expect(plate).not.toBeNull();
+		expect(plate?.textContent).toMatch(/June 3, 2026/);
+	});
+
+	it("renders the Meetup RSVP button with target=_blank (violet variant — no red)", () => {
 		renderWithLocale("us");
 		const btn = screen.getByRole("link", { name: /RSVP on Meetup/i });
 		expect(btn).toHaveAttribute("target", "_blank");
+		expect(btn.className).toContain("cdn-brand-btn--meetup-violet");
+		expect(btn.className).not.toMatch(/cdn-brand-btn--meetup\b(?!-)/);
 	});
 
 	it("renders the image with proper alt text and lazy loading", () => {
@@ -63,14 +68,12 @@ describe("FeaturedEvent", () => {
 		).toBeInTheDocument();
 	});
 
-	it("renders the primary speakeasy RSVP button linking to auth.clouddelnorte.org signup", () => {
+	it("renders the shortened primary speakeasy RSVP button label", () => {
 		renderWithLocale("us");
 		const primary = screen.getByRole("link", {
-			name: /RSVP & sign up for CloudDelNorte\.org speakeasy access/i,
+			name: /RSVP on CloudDelNorte\.org/i,
 		});
-		const expected =
-			"https://auth.clouddelnorte.org/signup/index.html?return_to=" +
-			encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03");
+		const expected = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03")}`;
 		expect(primary).toHaveAttribute("href", expected);
 	});
 
@@ -78,5 +81,25 @@ describe("FeaturedEvent", () => {
 		localStorage.clear();
 		renderWithLocale("us");
 		expect(screen.getByText(/48 of 50 spots remaining/i)).toBeInTheDocument();
+	});
+
+	it("inlines the AsciiSmirk SVG inside the description (after the 'game.' hook)", () => {
+		const { container } = renderWithLocale("us");
+		const desc = container.querySelector(".feed-featured-event__description");
+		expect(desc).not.toBeNull();
+		const smirk = desc?.querySelector(".cdn-ascii-smirk");
+		expect(smirk).not.toBeNull();
+		const smirkSvg = smirk?.querySelector('svg[aria-label="smirk"]');
+		expect(smirkSvg).not.toBeNull();
+	});
+
+	it("description begins with the new 'Hop the trolley' copy in en-US", () => {
+		renderWithLocale("us");
+		expect(screen.getByText(/Hop the trolley/i)).toBeInTheDocument();
+	});
+
+	it("description begins with the new 'Cáele en el trolley' copy in es-MX", () => {
+		renderWithLocale("mx");
+		expect(screen.getByText(/Cáele en el trolley/i)).toBeInTheDocument();
 	});
 });

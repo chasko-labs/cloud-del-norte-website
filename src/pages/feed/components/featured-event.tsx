@@ -6,16 +6,41 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import MeetupRsvpButton from "../../../components/brand-button/meetup-rsvp";
 import SpeakeasyRsvpButton from "../../../components/brand-button/speakeasy-rsvp";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { getEvent, spotsRemaining } from "../../../lib/rsvp";
+import AsciiSmirk from "./ascii-smirk";
 
 const EVENT_ID = "happy-hour-2026-06-03";
 const EVENT_IMAGE = "/events/featured-2026-06-03.webp";
 const RSVP_RETURN_PATH = `/rsvp/?event=${EVENT_ID}`;
 const RSVP_PAGE_URL = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent(RSVP_RETURN_PATH)}`;
+/** Anchor inside the description string after which the inline smirk renders. */
+const SMIRK_ANCHOR = '"game."';
+
+/**
+ * Render the description, splicing the AsciiSmirk SVG in after the
+ * smirk-line hook (`"game."`). If the anchor is absent (defensive fallback
+ * for any future copy revision that drops it), render the raw description.
+ *
+ * Returns a single span wrapper so the parent Cloudscape Box receives one
+ * child (avoids React.Children "missing key" array iteration warnings).
+ */
+function renderDescription(text: string): ReactNode {
+	const idx = text.indexOf(SMIRK_ANCHOR);
+	if (idx < 0) return text;
+	const head = text.slice(0, idx + SMIRK_ANCHOR.length);
+	const tail = text.slice(idx + SMIRK_ANCHOR.length);
+	return (
+		<span className="feed-featured-event__description-inner">
+			{head}
+			<AsciiSmirk />
+			{tail}
+		</span>
+	);
+}
 
 export default function FeaturedEvent() {
 	const { t, locale } = useTranslation();
@@ -83,13 +108,14 @@ export default function FeaturedEvent() {
 					>
 						<Link href={RSVP_PAGE_URL}>{t("feedPage.featuredEventTitle")}</Link>
 					</Box>
-					<Box
-						color="text-body-secondary"
-						fontSize="body-s"
-						className="feed-featured-event__date"
-					>
-						{formattedDate}
-					</Box>
+					{/* Date VFX — pure HTML/Intl output wrapped in a backplate that
+					    carries the tungsten/indigo gradient + shimmer pseudo-element.
+					    Text remains plain (no SVG, no canvas, no string-split). */}
+					<div className="feed-featured-event__date">
+						<span className="feed-featured-event__date-plate">
+							{formattedDate}
+						</span>
+					</div>
 					<Box
 						color="text-body-secondary"
 						fontSize="body-s"
@@ -105,7 +131,7 @@ export default function FeaturedEvent() {
 						fontSize="body-s"
 						className="feed-featured-event__description"
 					>
-						{t("feedPage.featuredEventDescription")}
+						{renderDescription(t("feedPage.featuredEventDescription"))}
 					</Box>
 					{spotsCopy && (
 						<Box
@@ -124,6 +150,7 @@ export default function FeaturedEvent() {
 						<MeetupRsvpButton
 							href={meetupUrl}
 							label={t("feedPage.featuredEventRsvpMeetup")}
+							variant="violet"
 						/>
 					</div>
 				</SpaceBetween>

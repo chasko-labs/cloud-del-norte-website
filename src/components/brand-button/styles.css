@@ -7,17 +7,26 @@
    - 44px minimum touch target height
    - focus-visible ring for keyboard nav
    - prefers-reduced-motion respected on hover transform
+   - box-sizing: border-box so padding doesn't push past max-width
+   - label clamps to a single line with ellipsis on narrow viewports
    -------------------------------------------------------------------------- */
 
 .cdn-brand-btn {
+	box-sizing: border-box;
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	gap: 10px;
-	padding: 10px 18px;
+	/* slightly tightened horizontal padding so a 320px-wide card has room for
+	   the mark + label + external icon without horizontal overflow. */
+	padding: 10px 14px;
 	min-height: 44px;
 	width: 100%;
 	max-width: 480px;
+	/* min-width: 0 lets the flex item shrink below its content width so the
+	   ellipsis on .cdn-brand-btn__label can engage instead of forcing the
+	   button past its parent. */
+	min-width: 0;
 	border-radius: 999px;
 	font-family: inherit;
 	font-size: var(--cdn-text-sm, 0.875rem);
@@ -31,6 +40,7 @@
 		box-shadow 160ms ease,
 		background 160ms ease;
 	user-select: none;
+	overflow: hidden;
 }
 
 .cdn-brand-btn:focus-visible {
@@ -45,8 +55,12 @@
 
 .cdn-brand-btn__label {
 	flex: 1 1 auto;
+	min-width: 0;
 	text-align: center;
 	line-height: 1.2;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
 }
 
 .cdn-brand-btn__external,
@@ -66,8 +80,9 @@
 }
 
 /* --------------------------------------------------------------------------
-   Variant — Meetup
+   Variant — Meetup (default red)
    Brand red (#ED1C40), white mark + label, hover darken slightly.
+   Used on surfaces that are happy with the Meetup brand red.
    -------------------------------------------------------------------------- */
 
 .cdn-brand-btn--meetup {
@@ -91,6 +106,47 @@
 
 .awsui-dark-mode .cdn-brand-btn--meetup {
 	box-shadow: 0 2px 8px rgba(237, 28, 64, 0.4);
+}
+
+/* --------------------------------------------------------------------------
+   Variant — Meetup-violet
+   Same M mark + label, but on the Cloud Del Norte purple→violet gradient.
+   Used on surfaces (e.g. featured-event card) that exclude red entirely.
+   Mirrors the speakeasy gradient palette so the two CTAs read as a stack.
+   -------------------------------------------------------------------------- */
+
+.cdn-brand-btn--meetup-violet {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-purple, #5a1f8a) 0%,
+		var(--cdn-violet, #9060f0) 100%
+	);
+	color: #faf7f0;
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.4),
+		0 4px 14px rgba(90, 31, 138, 0.3);
+}
+
+.cdn-brand-btn--meetup-violet:hover,
+.cdn-brand-btn--meetup-violet:focus-visible {
+	background: linear-gradient(135deg, #491678 0%, #7e4ee4 100%);
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.7),
+		0 8px 20px rgba(90, 31, 138, 0.45);
+	transform: translateY(-1px);
+}
+
+.cdn-brand-btn--meetup-violet:active {
+	transform: translateY(0);
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.55),
+		0 2px 6px rgba(90, 31, 138, 0.35);
+}
+
+.awsui-dark-mode .cdn-brand-btn--meetup-violet {
+	box-shadow:
+		0 0 0 2px rgba(255, 153, 0, 0.55),
+		0 4px 18px rgba(144, 96, 240, 0.45);
 }
 
 /* --------------------------------------------------------------------------
@@ -139,4 +195,9 @@
 	flex-direction: column;
 	gap: 10px;
 	align-items: stretch;
+	/* clamp the stack so buttons never bleed past the card edge regardless
+	   of the parent's content-box; matches the per-button max-width rail. */
+	width: 100%;
+	max-width: 480px;
+	min-width: 0;
 }
