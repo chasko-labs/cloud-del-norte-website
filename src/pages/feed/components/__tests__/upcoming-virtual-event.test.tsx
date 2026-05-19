@@ -41,10 +41,34 @@ describe("UpcomingVirtualEvent", () => {
 		expect(screen.getByText(/mayo/i)).toBeInTheDocument();
 	});
 
-	it("renders the RSVP button with target=_blank", () => {
+	it("renders the RSVP button with target=_blank and the violet (no-red) variant", () => {
 		renderWithLocale("us");
 		const btn = screen.getByRole("link", { name: /RSVP on Meetup/i });
 		expect(btn).toHaveAttribute("target", "_blank");
+		expect(btn).toHaveAttribute(
+			"href",
+			"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/",
+		);
+		// Wave 29a — must NOT use the red variant on this card.
+		expect(btn.className).toContain("cdn-brand-btn--meetup-violet");
+		expect(btn.className).not.toMatch(/cdn-brand-btn--meetup(?!-violet)/);
+	});
+
+	it("renders the brand mark (not literal 'UG' text) with the AWS UG aria-label", () => {
+		const { container } = renderWithLocale("us");
+		// New class name reflects the brand semantic.
+		const mark = container.querySelector(
+			".feed-upcoming-virtual-event__brand-mark",
+		);
+		expect(mark).not.toBeNull();
+		// Brand logo image is the mark content.
+		const img = mark?.querySelector("img");
+		expect(img).not.toBeNull();
+		expect(img?.getAttribute("src")).toBe("/brand/logo.svg");
+		// Old literal 'UG' span must be gone.
+		expect(mark?.textContent ?? "").not.toMatch(/\bUG\b/);
+		// Accessible label (AWS User Group mark) is preserved on the wrapper.
+		expect(mark?.getAttribute("aria-label")).toBe("AWS User Group mark");
 	});
 
 	it("renders both light and dark image variants with proper alt text and lazy loading", () => {

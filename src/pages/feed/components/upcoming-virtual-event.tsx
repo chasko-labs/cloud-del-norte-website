@@ -83,11 +83,18 @@ export default function UpcomingVirtualEvent() {
 					</Box>
 					<div className="feed-upcoming-virtual-event__featured-talk">
 						<span
-							className="feed-upcoming-virtual-event__ug-mark"
+							className="feed-upcoming-virtual-event__brand-mark"
 							role="img"
 							aria-label={t("feedPage.upcomingVirtualEventUgMarkLabel")}
 						>
-							<span aria-hidden="true">UG</span>
+							<img
+								src="/brand/logo.svg"
+								alt=""
+								aria-hidden="true"
+								className="feed-upcoming-virtual-event__brand-mark-img"
+								width={40}
+								height={40}
+							/>
 						</span>
 						<div className="feed-upcoming-virtual-event__featured-talk-body">
 							<span className="feed-upcoming-virtual-event__featured-talk-badge">
@@ -105,6 +112,7 @@ export default function UpcomingVirtualEvent() {
 						<MeetupRsvpButton
 							href={RSVP_URL}
 							label={t("feedPage.upcomingVirtualEventRsvp")}
+							variant="violet"
 						/>
 					</div>
 				</SpaceBetween>

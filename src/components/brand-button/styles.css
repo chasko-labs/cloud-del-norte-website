@@ -9,6 +9,13 @@
    - prefers-reduced-motion respected on hover transform
    - box-sizing: border-box so padding doesn't push past max-width
    - label clamps to a single line with ellipsis on narrow viewports
+
+   Wave 29a hierarchy:
+   - Speakeasy (on-site, primary): elevated — larger padding, heavier weight,
+     pulsing glow ring to draw the eye to the on-site signup path.
+   - Meetup violet (secondary): demoted — smaller max-width, lighter weight,
+     muted opacity. Reads as the "alternative" path on the same card.
+   - Meetup red (default outside event cards): unchanged — Meetup brand red.
    -------------------------------------------------------------------------- */
 
 .cdn-brand-btn {
@@ -41,6 +48,7 @@
 		background 160ms ease;
 	user-select: none;
 	overflow: hidden;
+	position: relative;
 }
 
 .cdn-brand-btn:focus-visible {
@@ -51,6 +59,13 @@
 .cdn-brand-btn__mark {
 	flex-shrink: 0;
 	display: block;
+}
+
+.cdn-brand-btn__mark--logo {
+	/* The brand logo is a 1024×1024 raster-of-violet artwork. At 22×22 it
+	   renders as a tiny accent. A subtle drop-shadow lifts it off the
+	   purple→violet gradient bg so the white star arms still read. */
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.45));
 }
 
 .cdn-brand-btn__label {
@@ -87,8 +102,12 @@
 
 .cdn-brand-btn--meetup {
 	background-color: #ed1c40;
-	color: #ffffff;
+	color: #ffffff !important;
 	box-shadow: 0 2px 6px rgba(237, 28, 64, 0.25);
+}
+
+.cdn-brand-btn--meetup .cdn-brand-btn__label {
+	color: #ffffff !important;
 }
 
 .cdn-brand-btn--meetup:hover,
@@ -109,10 +128,15 @@
 }
 
 /* --------------------------------------------------------------------------
-   Variant — Meetup-violet
-   Same M mark + label, but on the Cloud Del Norte purple→violet gradient.
-   Used on surfaces (e.g. featured-event card) that exclude red entirely.
-   Mirrors the speakeasy gradient palette so the two CTAs read as a stack.
+   Variant — Meetup-violet (secondary CTA)
+   Same Meetup mark, on the Cloud Del Norte purple→violet gradient. Visually
+   demoted vs the Speakeasy primary: narrower (max-width 360px), lighter
+   weight (600), slightly muted opacity (0.92). The Speakeasy CTA is the
+   on-site primary path; this is the alternative route to RSVP via Meetup.
+   The cream label color is forced (!important) and a subtle text-shadow
+   lifts it off the purple gradient — fixes the "purple text on purple bg"
+   contrast complaint where some inherited Cloudscape link/cascade rules
+   bled the brand purple onto the label.
    -------------------------------------------------------------------------- */
 
 .cdn-brand-btn--meetup-violet {
@@ -121,15 +145,24 @@
 		var(--cdn-purple, #5a1f8a) 0%,
 		var(--cdn-violet, #9060f0) 100%
 	);
-	color: #faf7f0;
+	color: #faf7f0 !important;
+	max-width: 360px;
+	font-weight: 600;
+	opacity: 0.92;
 	box-shadow:
 		0 0 0 2px rgba(255, 153, 0, 0.4),
 		0 4px 14px rgba(90, 31, 138, 0.3);
 }
 
+.cdn-brand-btn--meetup-violet .cdn-brand-btn__label {
+	color: #faf7f0 !important;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
 .cdn-brand-btn--meetup-violet:hover,
 .cdn-brand-btn--meetup-violet:focus-visible {
 	background: linear-gradient(135deg, #491678 0%, #7e4ee4 100%);
+	opacity: 1;
 	box-shadow:
 		0 0 0 2px rgba(255, 153, 0, 0.7),
 		0 8px 20px rgba(90, 31, 138, 0.45);
@@ -150,8 +183,14 @@
 }
 
 /* --------------------------------------------------------------------------
-   Variant — Speakeasy (on-site Cloud Del Norte RSVP)
-   Brand purple→violet gradient, white star mark, AWS-orange focus ring.
+   Variant — Speakeasy (on-site Cloud Del Norte RSVP, PRIMARY)
+   Brand purple→violet gradient with the brand logo as the mark. Promoted
+   visually:
+     - Slightly increased padding (12px 18px) and font-size (1rem)
+     - Cream label forced (!important) + text-shadow for contrast
+     - Pulsing outer glow ring (cdn-speakeasy-glow) to draw the eye
+   Goal: this primary CTA outweighs the secondary Meetup violet button so
+   on-site signup is visibly the encouraged path.
    -------------------------------------------------------------------------- */
 
 .cdn-brand-btn--speakeasy {
@@ -160,32 +199,65 @@
 		var(--cdn-purple, #5a1f8a) 0%,
 		var(--cdn-violet, #9060f0) 100%
 	);
-	color: #faf7f0;
+	color: #faf7f0 !important;
+	padding: 12px 18px;
+	font-size: var(--cdn-text-base, 1rem);
+	font-weight: 700;
 	box-shadow:
-		0 0 0 2px rgba(255, 153, 0, 0.4),
-		0 4px 14px rgba(90, 31, 138, 0.3);
+		0 0 0 2px rgba(255, 153, 0, 0.55),
+		0 6px 18px rgba(90, 31, 138, 0.35);
+	animation: cdn-speakeasy-glow 3.2s ease-in-out infinite;
+}
+
+.cdn-brand-btn--speakeasy .cdn-brand-btn__label {
+	color: #faf7f0 !important;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 }
 
 .cdn-brand-btn--speakeasy:hover,
 .cdn-brand-btn--speakeasy:focus-visible {
 	background: linear-gradient(135deg, #491678 0%, #7e4ee4 100%);
 	box-shadow:
-		0 0 0 2px rgba(255, 153, 0, 0.7),
-		0 8px 20px rgba(90, 31, 138, 0.45);
+		0 0 0 2px rgba(255, 153, 0, 0.85),
+		0 10px 24px rgba(90, 31, 138, 0.5);
 	transform: translateY(-1px);
 }
 
 .cdn-brand-btn--speakeasy:active {
 	transform: translateY(0);
 	box-shadow:
-		0 0 0 2px rgba(255, 153, 0, 0.55),
-		0 2px 6px rgba(90, 31, 138, 0.35);
+		0 0 0 2px rgba(255, 153, 0, 0.7),
+		0 2px 8px rgba(90, 31, 138, 0.35);
 }
 
 .awsui-dark-mode .cdn-brand-btn--speakeasy {
 	box-shadow:
-		0 0 0 2px rgba(255, 153, 0, 0.55),
-		0 4px 18px rgba(144, 96, 240, 0.45);
+		0 0 0 2px rgba(255, 153, 0, 0.7),
+		0 6px 22px rgba(144, 96, 240, 0.55);
+}
+
+/* Outer glow pulse — gently breathing AWS-orange ring around the primary
+   CTA. Same cadence as the brand bulbs (~3s) so the rhythm feels native. */
+@keyframes cdn-speakeasy-glow {
+	0%,
+	100% {
+		box-shadow:
+			0 0 0 2px rgba(255, 153, 0, 0.55),
+			0 6px 18px rgba(90, 31, 138, 0.35),
+			0 0 0 0 rgba(255, 153, 0, 0.35);
+	}
+	50% {
+		box-shadow:
+			0 0 0 2px rgba(255, 153, 0, 0.75),
+			0 8px 22px rgba(90, 31, 138, 0.45),
+			0 0 0 8px rgba(255, 153, 0, 0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-brand-btn--speakeasy {
+		animation: none;
+	}
 }
 
 /* Stack adjustment — when two brand buttons sit in a vertical SpaceBetween
@@ -194,7 +266,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: 10px;
-	align-items: stretch;
+	align-items: center;
 	/* clamp the stack so buttons never bleed past the card edge regardless
 	   of the parent's content-box; matches the per-button max-width rail. */
 	width: 100%;
