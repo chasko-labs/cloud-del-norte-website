@@ -1270,6 +1270,13 @@
 }
 
 .feed-featured-event__title a {
+	/* wave 38e — promote the underlying anchor from default inline to
+	   block so the link element spans the full grid cell width,
+	   matching the in-person pill banner below. background-clip:text
+	   still clips the gradient to the glyph silhouettes (block display
+	   affects layout, not the clip target) so the scrolling-tape
+	   shimmer and hover/focus styles below are unchanged. */
+	display: block;
 	/* v2 — title gradient gets a 3rd cream stop so animating background-position
 	   sweeps the highlight from left → right every 9s, giving a subtle scrolling
 	   tape feel without redrawing the text. The clip-to-text mask keeps the
@@ -1362,7 +1369,14 @@
 
 .feed-featured-event__date-plate {
 	position: relative;
-	display: inline-block;
+	/* wave 38e — was inline-block; switch to block + width:100% so the
+	   plate spans the full grid cell width and the date string can use
+	   the full row instead of wrapping to two lines at narrow card
+	   widths. box-sizing:border-box keeps padding+border inside the
+	   100% width so the plate doesn't overflow the cell. */
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
 	/* wave 37c — round padding from raw 6px / 14px to the 8pt grid:
 	   --cdn-space-sm (8px) vertical, --cdn-space-md (16px) horizontal.
 	   Border-radius pinned to --cdn-radius-md (8px) token. */
@@ -1511,12 +1525,22 @@
 
 /* ---------- In-person pill — strengthened amber tungsten chip ----------
    Wave 31a rename: was .feed-featured-event__location, but that name was
-   generic and collided semantically with the secondary fine-print location
-   row. The class is now __in-person-pill (the bold uppercase chip that
-   reads "IN PERSON: Downtown El Paso"); the secondary location row uses
-   __location-text below. Visual treatment is unchanged from wave 27a. */
+   generic; the class is now __in-person-pill (the bold uppercase banner
+   that reads "IN PERSON: Downtown El Paso"). Wave 38e — the secondary
+   __location-text row that used to live below this pill was removed
+   (redundant with the address already in this pill); the pill is now
+   the sole location source on the card. Visual treatment unchanged from
+   wave 27a — only display/width changed in 38e. */
 .feed-featured-event__in-person-pill {
-	display: inline-block;
+	/* wave 38e — was inline-block; switch to block so the pill spans
+	   the full grid cell width as a rounded banner that matches the
+	   title link width above and the date plate below. justify-self:
+	   start on the layout-grid rule is removed in tandem so the cell
+	   stretches to its default `stretch` instead of shrinking to the
+	   chip's content width. box-sizing:border-box keeps padding+border
+	   inside the 100% cell width. */
+	display: block;
+	box-sizing: border-box;
 	/* wave 37c — round padding from raw 3px / 12px to the 8pt grid:
 	   --cdn-space-xs (4px) vertical, --cdn-space-12 (12px) horizontal.
 	   The 1px vertical bump is invisible against the cap-height of an
@@ -1777,8 +1801,9 @@
    - <520px container width → mobile single-column (one cell per row),
      unchanged from the pre-wave-31a vertical stack.
    - 520–859px → tablet 2-column hybrid: image full-width hero on top,
-     then meta/content split into two columns below (badge|date,
-     in-person|spots, location|desc), buttons span both columns.
+     then meta/content split into two columns below (title|date,
+     in-person|spots), description spans both columns, buttons span
+     both columns.
    - ≥860px → desktop image-left + content-right hero: image occupies
      the left column for the full row height, content stack fills the
      right column. align-self:start on both areas so neither floats in
@@ -1786,11 +1811,14 @@
      left clean (no decorative fill, per brief: "Don't introduce new
      visual elements just to fill space").
 
-   DOM order is the logical reading order (badge → image → title → date
-   → in-person → location → desc → spots → buttons). Grid named-areas
+   DOM order is the logical reading order (image → title → date
+   → in-person → desc → spots → buttons). Grid named-areas
    reflow the visual placement per breakpoint without touching DOM order,
    so screen-reader and tab order stay correct (title link → primary
-   button → secondary button on tab traversal). */
+   button → secondary button on tab traversal). Wave 38e dropped the
+   legacy `location` row from every breakpoint when the redundant
+   __location-text JSX was removed — the in-person pill above already
+   carries the full address. */
 .feed-featured-event__layout {
 	display: grid;
 	grid-template-columns: 1fr;
@@ -1799,7 +1827,6 @@
 		"title"
 		"date"
 		"in-person"
-		"location"
 		"desc"
 		"spots"
 		"buttons";
@@ -1808,16 +1835,18 @@
 	     image     → title    : --cdn-space-md  (16px)
 	     title     → date     : --cdn-space-12  (12px)
 	     date      → in-person: --cdn-space-sm  (8px)
-	     in-person → location : --cdn-space-xs  (4px)  cluster meta
-	     location  → desc     : --cdn-space-12  (12px)
+	     in-person → desc     : --cdn-space-12  (12px)
 	     desc      → spots    : --cdn-space-md  (16px)
 	     spots     → buttons  : --cdn-space-lg  (24px) primary action
-	   Smaller gaps cluster related metadata (in-person/location); the
-	   24px gap before the button stack gives the CTA breathing room as
-	   the primary action. Tablet + desktop @container queries below
+	   The 24px gap before the button stack gives the CTA breathing room
+	   as the primary action. Tablet + desktop @container queries below
 	   override these per-item margins back to 0 and use the grid `gap`
 	   shorthand (also tokenized) so the 2-col layouts read row-by-row
-	   without ragged inter-cell spacing. */
+	   without ragged inter-cell spacing.
+	   Wave 38e — the legacy `location` row was dropped from the
+	   grid-template-areas at every breakpoint when the redundant
+	   __location-text JSX was removed; the __in-person pill already
+	   carries the full "Downtown El Paso, Texas" label. */
 	gap: 0;
 	/* Min-width:0 so the grid can shrink inside its Cloudscape Container
 	   parent without inner content (long event titles, wide date strings)
@@ -1883,16 +1912,14 @@
 
 .feed-featured-event__in-person-pill {
 	grid-area: in-person;
-	justify-self: start;
-	/* wave 37c — in-person → location cluster step (4px). The two
-	   metadata rows are gestalt-grouped — the smaller 4px gap reads
-	   them as related fine print rather than independent items. */
-	margin-block-end: var(--cdn-space-xs, 4px);
-}
-
-.feed-featured-event__location-text {
-	grid-area: location;
-	/* wave 37c — location → description step (12px). */
+	/* wave 38e — was `justify-self: start` (chip shrunk to its content
+	   width). Removed so the pill stretches to the default `stretch`
+	   alignment and spans the full cell width, matching the title link
+	   above. */
+	/* wave 37c / 38e — in-person → description hierarchy step. The
+	   legacy 4px cluster gap to a now-removed __location-text row is
+	   replaced with the standard 12px (--cdn-space-12) step that
+	   __location-text used to own to the description. */
 	margin-block-end: var(--cdn-space-12, 12px);
 }
 
@@ -1926,14 +1953,16 @@
 			"image image"
 			"title date"
 			"in-person spots"
-			"location desc"
+			"desc desc"
 			"buttons buttons";
 		/* wave 37c — tokenize the legacy raw `12px 16px` to the 8pt scale.
 		   Row gap = --cdn-space-12 (12px), column gap = --cdn-space-md
 		   (16px). The 2-col layout reads row-by-row at this breakpoint, so
 		   uniform grid gap is the right primitive — per-item margin-block-
 		   end is reset to 0 below so the row spacing stays even across
-		   the title/date and in-person/spots row pairs. */
+		   the title/date and in-person/spots row pairs.
+		   Wave 38e — `location` row dropped; the description now spans
+		   both columns on its own row. */
 		gap: var(--cdn-space-12, 12px) var(--cdn-space-md, 16px);
 	}
 
@@ -1948,7 +1977,6 @@
 	.feed-featured-event__layout .feed-featured-event__title,
 	.feed-featured-event__layout .feed-featured-event__date,
 	.feed-featured-event__layout .feed-featured-event__in-person-pill,
-	.feed-featured-event__layout .feed-featured-event__location-text,
 	.feed-featured-event__layout .feed-featured-event__description,
 	.feed-featured-event__layout .feed-featured-event__spots {
 		margin-block-end: 0;
@@ -1986,7 +2014,6 @@
 			"image title"
 			"image date"
 			"image in-person"
-			"image location"
 			"image desc"
 			"image spots"
 			"image buttons";
