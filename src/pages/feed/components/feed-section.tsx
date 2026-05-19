@@ -3,7 +3,6 @@
 
 import Box from "@cloudscape-design/components/box";
 import Link from "@cloudscape-design/components/link";
-import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useEffect, useId, useRef, useState } from "react";
 import { SkeletonLine, SkeletonTitle } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
@@ -257,13 +256,6 @@ export function FeedReadysetcloud() {
 	const latestBlog = posts.find((p) => p.link.includes("/blog/"));
 	const latestNewsletter = posts.find((p) => p.link.includes("/newsletter/"));
 
-	const excerptClamp: React.CSSProperties = {
-		display: "-webkit-box",
-		WebkitLineClamp: 3,
-		WebkitBoxOrient: "vertical",
-		overflow: "hidden",
-	};
-
 	return (
 		<FeedCardShell
 			headerText={t("feedPage.readysetcloudHeader")}
@@ -277,66 +269,84 @@ export function FeedReadysetcloud() {
 					<SkeletonLine />
 				</>
 			) : (
-				<SpaceBetween size="m">
-					<SpaceBetween size="xs">
-						<Box variant="h3" fontWeight="bold" fontSize="heading-s">
-							{t("feedPage.readysetcloudLatestBlog")}
+				// Wave 42a — Bryan: "on allen's panel instead of this & the blog
+				// version taking 3 lines each Latest newsletter / Think again
+				// about running agents locally / 2026-05-18 work to make that 1
+				// line each responsively".
+				//
+				// Each entry now renders as a single inline-flex row:
+				//   {label} — {title} · {date}
+				// with white-space: nowrap + text-overflow: ellipsis on the
+				// title at desktop. At narrow viewports the rule drops nowrap
+				// + caps to 2 lines via -webkit-line-clamp so the entry stays
+				// readable on phones (the responsive-but-truncate brief).
+				// Replaces the wave 36b SpaceBetween + 3-Box-children stack that
+				// was forcing 3 lines per entry.
+				<div className="feed-rsc__entries">
+					{latestBlog ? (
+						<RscEntry
+							label={t("feedPage.readysetcloudLatestBlog")}
+							title={latestBlog.title}
+							link={latestBlog.link}
+							date={latestBlog.pubDate}
+						/>
+					) : (
+						<Box color="text-status-inactive" fontSize="body-s">
+							{t("feedPage.readysetcloudNoBlog")}
 						</Box>
-						{latestBlog ? (
-							<>
-								<Link href={latestBlog.link} external>
-									{latestBlog.title}
-								</Link>
-								<Box color="text-status-inactive" fontSize="body-s">
-									{latestBlog.pubDate}
-								</Box>
-								{latestBlog.excerpt && (
-									<Box
-										variant="p"
-										color="text-body-secondary"
-										fontSize="body-s"
-									>
-										<span style={excerptClamp}>{latestBlog.excerpt}</span>
-									</Box>
-								)}
-							</>
-						) : (
-							<Box color="text-status-inactive" fontSize="body-s">
-								{t("feedPage.readysetcloudNoBlog")}
-							</Box>
-						)}
-					</SpaceBetween>
-					<SpaceBetween size="xs">
-						<Box variant="h3" fontWeight="bold" fontSize="heading-s">
-							{t("feedPage.readysetcloudLatestNewsletter")}
+					)}
+					{latestNewsletter ? (
+						<RscEntry
+							label={t("feedPage.readysetcloudLatestNewsletter")}
+							title={latestNewsletter.title}
+							link={latestNewsletter.link}
+							date={latestNewsletter.pubDate}
+						/>
+					) : (
+						<Box color="text-status-inactive" fontSize="body-s">
+							{t("feedPage.readysetcloudNoNewsletter")}
 						</Box>
-						{latestNewsletter ? (
-							<>
-								<Link href={latestNewsletter.link} external>
-									{latestNewsletter.title}
-								</Link>
-								<Box color="text-status-inactive" fontSize="body-s">
-									{latestNewsletter.pubDate}
-								</Box>
-								{latestNewsletter.excerpt && (
-									<Box
-										variant="p"
-										color="text-body-secondary"
-										fontSize="body-s"
-									>
-										<span style={excerptClamp}>{latestNewsletter.excerpt}</span>
-									</Box>
-								)}
-							</>
-						) : (
-							<Box color="text-status-inactive" fontSize="body-s">
-								{t("feedPage.readysetcloudNoNewsletter")}
-							</Box>
-						)}
-					</SpaceBetween>
-				</SpaceBetween>
+					)}
+				</div>
 			)}
 		</FeedCardShell>
+	);
+}
+
+/**
+ * Wave 42a — single-line ReadySetCloud entry row.
+ *
+ * Renders one feed item as: {label} — {title} · {date} on a single
+ * horizontal line. The .feed-rsc__entry CSS rule (in feed/styles.css)
+ * applies white-space: nowrap + text-overflow: ellipsis on the title
+ * at desktop and switches to a -webkit-line-clamp: 2 fallback at narrow
+ * viewports so the row stays readable on phones.
+ */
+function RscEntry({
+	label,
+	title,
+	link,
+	date,
+}: {
+	label: string;
+	title: string;
+	link: string;
+	date: string;
+}) {
+	return (
+		<div className="feed-rsc__entry">
+			<span className="feed-rsc__entry-label">{label}</span>
+			<span className="feed-rsc__entry-sep" aria-hidden="true">
+				{" — "}
+			</span>
+			<Link href={link} external>
+				<span className="feed-rsc__entry-title">{title}</span>
+			</Link>
+			<span className="feed-rsc__entry-sep" aria-hidden="true">
+				{" · "}
+			</span>
+			<span className="feed-rsc__entry-date">{date}</span>
+		</div>
 	);
 }
 

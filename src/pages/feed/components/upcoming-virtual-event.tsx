@@ -195,13 +195,18 @@ function UpcomingVirtualEventInner() {
 				    wave 33b/29a featured-talk callout block is its own visual
 				    anchor that doesn't need re-flow at tablet+ breakpoints). */}
 				<div className="feed-upcoming-virtual-event__layout">
-					<Box
-						fontWeight="bold"
-						fontSize="body-s"
-						className="feed-upcoming-virtual-event__badge"
-					>
-						{t("feedPage.upcomingVirtualEventBadge")}
-					</Box>
+					{/* Wave 42a — the wave 33b "UPCOMING" badge JSX block + its
+					    locale key (feedPage.upcomingVirtualEventBadge) was
+					    removed at Bryan's direction: the marquee header copy
+					    was renamed from "Virtual AWS Community Events" to
+					    "Free & Open Virtual AWS Community Events", and the
+					    redundant ALL-CAPS "UPCOMING" pill below the marquee
+					    no longer earns its visual weight. The
+					    .feed-upcoming-virtual-event__badge CSS rule remains
+					    in styles.css as orphaned chrome (no JSX consumer);
+					    leaving it in place keeps the diff minimal and avoids
+					    spelunking through the badge backplate VFX in this
+					    copy-only batch. */}
 					{/* Wave 33c — both visible image variants are wrapped in
 					    anchors pointing at the AWS Global Community Gatherings
 					    Meetup page (target=_blank since this is an external

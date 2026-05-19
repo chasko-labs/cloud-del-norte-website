@@ -122,26 +122,49 @@
 		0 8px 18px -6px var(--fcs-shadow);
 }
 
-/* Headline text — bold uppercase, tight tracking, subtle text-shadow
+/* Headline text — bold tight tracking, subtle text-shadow
    so the lettering reads as emissive against the palette backplate.
    Mirrors the typographic voice of the wave 32a featured-event marquee
-   so the family reads coherent across the page. */
+   so the family reads coherent across the page.
+
+   Wave 42a — three changes at Bryan's direction:
+   1) text-transform: uppercase removed. Only the featured-event marquee
+      keeps ALL CAPS so "FEATURED EVENT" reads "more special" against
+      the rest of the page. All FeedCardShell-wrapped cards (twitch,
+      arrowhead-news, andres-medium, andres-youtube-live, builder-center,
+      andmore, awsml, readysetcloud, featured-video) render their header
+      copy in the authored case from the locale strings.
+   2) Switched display: inline-block → display: -webkit-box plus
+      -webkit-line-clamp: 2 + -webkit-box-orient: vertical so longer
+      header strings (e.g. the wave 42a Andres rename
+      "Andres Moreno, Cloud Del Norte Community Co-organizer") wrap to a
+      maximum of 2 lines at every viewport without overflowing the
+      marquee chrome. Short headers stay on a single line — the
+      line-clamp only kicks in past the 2nd line.
+   3) font-size becomes a clamp() so the headline scales between mobile
+      and desktop without media queries. The typographic floor preserves
+      legibility on the smallest phones and the ceiling matches the
+      wave 38b 1.0625rem desktop size used by the next-meetup +
+      upcoming-virtual-event marquees so the family reads cohesive. */
 .feed-card-shell__marquee-text {
 	position: relative;
 	z-index: 1;
 	flex: 1 1 auto;
 	min-width: 0;
-	display: inline-block;
+	display: -webkit-box;
+	-webkit-line-clamp: 2;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	white-space: normal;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 1rem;
+	font-size: clamp(0.875rem, 0.78rem + 0.4cqw, 1.0625rem);
 	font-weight: 800;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
+	letter-spacing: 0.04em;
 	color: var(--fcs-text);
 	text-shadow:
 		0 0 6px var(--fcs-text-glow),
 		0 1px 0 rgba(255, 255, 255, 0.35);
-	line-height: 1.15;
+	line-height: 1.2;
 	text-align: center;
 }
 

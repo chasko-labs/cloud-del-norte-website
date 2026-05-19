@@ -319,6 +319,96 @@
 	color: var(--cdn-color-text-muted);
 }
 
+/* ---------- Wave 42a — ReadySetCloud single-line entries ----------------
+   Bryan: "on allen's panel instead of this & the blog version taking 3
+   lines each Latest newsletter / Think again about running agents
+   locally / 2026-05-18 work to make that 1 line each responsively".
+
+   Each FeedReadysetcloud entry now renders as:
+     {label} — {title} · {date}
+   on a single horizontal row at desktop. The title is the flexible
+   element — it ellipses when the row runs out of horizontal space.
+   The label + date are flex-shrink: 0 so they always read in full
+   (they're short anchors that frame the title in the middle).
+
+   At narrow viewports (≤520px) the row drops the inline-flex layout
+   and falls back to a -webkit-line-clamp: 2 wrapping presentation so
+   the entry stays readable on phones rather than ellipsing the title
+   to near-nothing. This satisfies the "responsively" half of Bryan's
+   ask — desktop = 1 line, phone = ≤2 lines, never the original 3.
+   ----------------------------------------------------------------------- */
+.feed-rsc__entries {
+	display: flex;
+	flex-direction: column;
+	gap: var(--cdn-space-sm, 8px);
+}
+
+.feed-rsc__entry {
+	display: flex;
+	align-items: baseline;
+	gap: 0;
+	min-width: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	font-size: var(--cdn-text-sm, 0.875rem);
+	line-height: 1.4;
+}
+
+.feed-rsc__entry-label {
+	flex: 0 0 auto;
+	font-weight: 600;
+	color: var(--cdn-color-text);
+}
+
+.feed-rsc__entry-sep {
+	flex: 0 0 auto;
+	color: var(--cdn-color-text-muted);
+}
+
+.feed-rsc__entry-title {
+	display: inline-block;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	max-width: 100%;
+	vertical-align: bottom;
+}
+
+.feed-rsc__entry > a {
+	flex: 1 1 auto;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.feed-rsc__entry-date {
+	flex: 0 0 auto;
+	color: var(--cdn-color-text-muted);
+	font-variant-numeric: tabular-nums;
+}
+
+/* Narrow-viewport fallback — drop the nowrap row and let the entry wrap
+   to a maximum of 2 lines via line-clamp so phones don't render the
+   title as 3 ellipsed characters. */
+@media (max-width: 520px) {
+	.feed-rsc__entry {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		white-space: normal;
+		overflow: hidden;
+	}
+
+	.feed-rsc__entry-title,
+	.feed-rsc__entry > a {
+		display: inline;
+		white-space: normal;
+		overflow: visible;
+	}
+}
+
 /* ---------- Builder center card ---------- */
 
 .feed-builder-card {
@@ -2227,7 +2317,12 @@
 	font-size: 1rem;
 	font-weight: 800;
 	letter-spacing: 0.06em;
-	text-transform: uppercase;
+	/* Wave 42a — text-transform: uppercase removed at Bryan's direction:
+	   only the FEATURED EVENT marquee on the featured-event card keeps
+	   ALL CAPS so it reads "more special" against the rest of the page.
+	   Other section headers render in their authored case from the
+	   locale strings (en-US: "Free & Open Virtual AWS Community Events"
+	   — title-case with AWS preserved as the acronym). */
 	color: var(--cdn-uvirt-marquee-text);
 	text-shadow:
 		0 0 6px var(--cdn-uvirt-marquee-text-glow),
@@ -3529,7 +3624,7 @@
 		0 12px 24px -6px var(--cdn-nm-marquee-shadow);
 }
 
-/* Headline text — bold uppercase, tight tracking. Subtle text-shadow so
+/* Headline text — bold tight tracking. Subtle text-shadow so
    the lettering reads as emissive against the steel/teal backplate. */
 .feed-next-meetup__marquee-text {
 	position: relative;
@@ -3539,7 +3634,10 @@
 	font-size: 1rem;
 	font-weight: 800;
 	letter-spacing: 0.06em;
-	text-transform: uppercase;
+	/* Wave 42a — text-transform: uppercase removed at Bryan's direction:
+	   only the FEATURED EVENT marquee keeps ALL CAPS to retain its visual
+	   primacy. Locale string "Next Meetup" is already title-case so it
+	   renders as authored. */
 	color: var(--cdn-nm-marquee-text);
 	text-shadow:
 		0 0 6px var(--cdn-nm-marquee-text-glow),
