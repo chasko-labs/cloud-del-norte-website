@@ -455,11 +455,6 @@ function SignupWizard() {
 							onChange={({ detail }) => setConfirmPassword(detail.value)}
 						/>
 					</FormField>
-					<Box textAlign="center">
-						<Link href="/login/index.html">
-							{t("auth.signup.alreadyHaveAccount")}
-						</Link>
-					</Box>
 				</SpaceBetween>
 			),
 		},
@@ -662,6 +657,12 @@ function SignupWizard() {
 
 	return (
 		<div className={`cdn-auth-submit-state ${submitState}`}>
+			{activeStepIndex === 0 && (
+				<Box variant="small" textAlign="right" margin={{ bottom: "s" }}>
+					{t("auth.signup.alreadyMember")}{" "}
+					<Link href="/login/index.html">{t("auth.signup.signInLink")}</Link>
+				</Box>
+			)}
 			<StepDots current={activeStepIndex} total={steps.length} />
 			<div className="cdn-auth-stepper__title">
 				{steps[activeStepIndex].title}
