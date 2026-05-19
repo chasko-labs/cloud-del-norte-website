@@ -163,6 +163,14 @@ export default function YouTubeShortsCarousel({
 		<Container
 			header={<Header variant="h2">{t("feedPage.shortsHeader")}</Header>}
 		>
+			<Box
+				variant="p"
+				color="text-body-secondary"
+				fontSize="body-s"
+				margin={{ bottom: "s" }}
+			>
+				{t("feedPage.shortsHostBlurb")}
+			</Box>
 			{orderedShorts.length === 0 ? (
 				<Box
 					color="text-status-inactive"

@@ -85,6 +85,13 @@ describe("YouTubeShortsCarousel", () => {
 		expect(screen.queryAllByTestId("shorts-thumb")).toHaveLength(0);
 	});
 
+	it("renders the host-attribution blurb above the carousel", () => {
+		renderWith(SAMPLE_SHORTS);
+		expect(
+			screen.getByText(/Hosted by Ma-tonth \(Rolling Fox\)/i),
+		).toBeInTheDocument();
+	});
+
 	it("opens the modal embed when a thumbnail is clicked", () => {
 		renderWith(SAMPLE_SHORTS);
 		const thumbs = screen.getAllByTestId("shorts-thumb");
