@@ -162,27 +162,40 @@ function FeaturedEventInner() {
 					    swap CSS (display:none on the off-theme variant) still
 					    decides which one paints. onError handlers from wave 30a
 					    remain on each <img> so a 404 on either asset is still
-					    handled per-image without dropping the wrapping cell. */}
-					<div className="feed-featured-event__image-area">
-						<img
-							src={EVENT_IMAGE_LIGHT}
-							alt={t("feedPage.featuredEventImageAlt")}
-							className="feed-featured-event__image feed-featured-event__image--light"
-							width={1200}
-							height={630}
-							loading="lazy"
-							onError={hideBrokenImage}
-						/>
-						<img
-							src={EVENT_IMAGE_DARK}
-							alt={t("feedPage.featuredEventImageAlt")}
-							className="feed-featured-event__image feed-featured-event__image--dark"
-							width={1200}
-							height={630}
-							loading="lazy"
-							onError={hideBrokenImage}
-						/>
-					</div>
+					    handled per-image without dropping the wrapping cell.
+					    Wave 33c — the entire image pair is wrapped in an anchor
+					    pointing at the same speakeasy RSVP URL as the primary
+					    CTA button, so clicking the photo (light or dark variant)
+					    routes to /signup?return_to=/rsvp/. The <img> alt
+					    attributes describe the image content; the wrapping <a>
+					    aria-label describes the link action via a new locale
+					    key so screen readers announce both axes correctly. */}
+					<a
+						href={RSVP_PAGE_URL}
+						aria-label={t("feedPage.featuredEventImageLinkLabel")}
+						className="feed-featured-event__image-link"
+					>
+						<div className="feed-featured-event__image-area">
+							<img
+								src={EVENT_IMAGE_LIGHT}
+								alt={t("feedPage.featuredEventImageAlt")}
+								className="feed-featured-event__image feed-featured-event__image--light"
+								width={1200}
+								height={630}
+								loading="lazy"
+								onError={hideBrokenImage}
+							/>
+							<img
+								src={EVENT_IMAGE_DARK}
+								alt={t("feedPage.featuredEventImageAlt")}
+								className="feed-featured-event__image feed-featured-event__image--dark"
+								width={1200}
+								height={630}
+								loading="lazy"
+								onError={hideBrokenImage}
+							/>
+						</div>
+					</a>
 					<Box
 						fontWeight="bold"
 						fontSize="heading-m"

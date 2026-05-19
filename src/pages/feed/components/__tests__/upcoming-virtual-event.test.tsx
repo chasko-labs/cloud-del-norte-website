@@ -98,6 +98,42 @@ describe("UpcomingVirtualEvent", () => {
 		);
 	});
 
+	// ---------- Wave 33c — clickable image RSVP link ----------
+
+	it("wave 33c — wraps both light + dark image variants in anchors pointing at the meetup RSVP URL with target=_blank, rel='noreferrer', and a shared aria-label locale key", () => {
+		const { container } = renderWithLocale("us");
+		const links = container.querySelectorAll(
+			".feed-upcoming-virtual-event__image-link",
+		);
+		// Two image variants → two anchors (light img wrapper + bulbs-wrapper
+		// for the dark variant + EventBulbsOverlay).
+		expect(links.length).toBe(2);
+		const expectedHref =
+			"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/";
+		const expectedAriaLabel =
+			"RSVP for AWS Global Community Gatherings on Meetup";
+		links.forEach((link) => {
+			expect(link.getAttribute("href")).toBe(expectedHref);
+			expect(link.getAttribute("target")).toBe("_blank");
+			// rel must include noreferrer so the external Meetup nav can't
+			// see document.referrer back into the SPA.
+			expect(link.getAttribute("rel") ?? "").toContain("noreferrer");
+			// Both anchors share the same aria-label from the new locale key.
+			expect(link.getAttribute("aria-label")).toBe(expectedAriaLabel);
+		});
+		// First anchor wraps the light variant standalone <img>.
+		expect(
+			links[0].querySelector(".feed-upcoming-virtual-event__image--light"),
+		).not.toBeNull();
+		// Second anchor wraps the bulbs-wrapper (dark img + bulbs overlay).
+		expect(
+			links[1].querySelector(".feed-upcoming-virtual-event__bulbs-wrapper"),
+		).not.toBeNull();
+		expect(
+			links[1].querySelector(".feed-upcoming-virtual-event__image--dark"),
+		).not.toBeNull();
+	});
+
 	// ---------- Wave 33b — starfield-twinkle marquee header ----------
 
 	it("wave 33b — renders the marquee header with role=heading aria-level=2", () => {

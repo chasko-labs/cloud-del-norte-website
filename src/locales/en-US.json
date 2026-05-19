@@ -159,6 +159,8 @@
 		"featuredEventSpotsRemaining": "Limited space — RSVP now",
 		"featuredEventRsvpPrimary": "RSVP on CloudDelNorte.org",
 		"featuredEventRsvpMeetup": "RSVP on Meetup",
+		"featuredEventImageLinkLabel": "RSVP for the Community Happy Hour & Networking Night",
+		"upcomingVirtualEventImageLinkLabel": "RSVP for AWS Global Community Gatherings on Meetup",
 		"episodeScroller": {
 			"headerSuffix": " — episodes",
 			"sortNewest": "Newest first",

@@ -71,6 +71,31 @@ describe("FeaturedEvent", () => {
 		);
 	});
 
+	// ---------- Wave 33c — clickable image RSVP link ----------
+
+	it("wave 33c — wraps the image-area in an anchor pointing at the speakeasy /signup?return_to=/rsvp/ flow with the new aria-label locale key", () => {
+		const { container } = renderWithLocale("us");
+		const link = container.querySelector(".feed-featured-event__image-link");
+		expect(link).not.toBeNull();
+		// href matches the same speakeasy CTA URL the primary RSVP button
+		// uses (encoded /rsvp/?event=happy-hour-2026-06-03 return path).
+		const expectedHref = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03")}`;
+		expect(link?.getAttribute("href")).toBe(expectedHref);
+		// aria-label resolves through the new feedPage.featuredEventImageLinkLabel
+		// locale key — describes the link action; the inner <img> alt text
+		// continues to describe the image content.
+		expect(link?.getAttribute("aria-label")).toBe(
+			"RSVP for the Community Happy Hour & Networking Night",
+		);
+		// Both image variants live inside the anchor.
+		expect(
+			link?.querySelector(".feed-featured-event__image--light"),
+		).not.toBeNull();
+		expect(
+			link?.querySelector(".feed-featured-event__image--dark"),
+		).not.toBeNull();
+	});
+
 	it("renders the in-person location label", () => {
 		renderWithLocale("us");
 		expect(
@@ -122,12 +147,16 @@ describe("FeaturedEvent", () => {
 		expect(darkImg).not.toBeNull();
 	});
 
-	it("preserves DOM reading order: image → title → date → in-person → location → description → spots → buttons (a11y / screen-reader contract; wave 32a dropped badge slot)", () => {
+	it("preserves DOM reading order: image → title → date → in-person → location → description → spots → buttons (a11y / screen-reader contract; wave 32a dropped badge slot, wave 33c wraps image in anchor)", () => {
 		const { container } = renderWithLocale("us");
 		const layout = container.querySelector(".feed-featured-event__layout");
 		expect(layout).not.toBeNull();
+		// Wave 33c — the first direct grid child is now the wrapping
+		// <a class="feed-featured-event__image-link"> anchor (the inner
+		// __image-area div is nested inside it). The reading order intent
+		// is preserved: the image link reads before the title, date, etc.
 		const expected = [
-			"feed-featured-event__image-area",
+			"feed-featured-event__image-link",
 			"feed-featured-event__title",
 			"feed-featured-event__date",
 			"feed-featured-event__in-person-pill",
