@@ -834,7 +834,8 @@
 			"signInButton": "Sign in",
 			"passkeyButton": "Sign in with passkey",
 			"forgotPassword": "Forgot password?",
-			"noAccount": "New here? Apply to join",
+			"noAccount": "New here?",
+			"signUpLink": "Apply to join",
 			"invalidCredentials": "Email or password is incorrect",
 			"genericError": "Something went wrong. Try again.",
 			"mfaSetup": {

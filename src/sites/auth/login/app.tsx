@@ -431,6 +431,10 @@ function LoginForm() {
 
 	return (
 		<div className="cdn-auth-form-inner">
+			<Box variant="small" textAlign="right" margin={{ bottom: "s" }}>
+				{t("auth.login.noAccount")}{" "}
+				<Link href="/signup/index.html">{t("auth.login.signUpLink")}</Link>
+			</Box>
 			<form
 				onSubmit={(e) => {
 					void handleCredentialsSubmit(e);
@@ -485,7 +489,6 @@ function LoginForm() {
 					<Link href="/forgot-password/index.html">
 						{t("auth.login.forgotPassword")}
 					</Link>
-					<Link href="/signup/index.html">{t("auth.login.noAccount")}</Link>
 				</SpaceBetween>
 			</Box>
 			{window.PublicKeyCredential && (
