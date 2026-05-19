@@ -7,6 +7,7 @@ import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import {
 	Component,
+	type CSSProperties,
 	type ErrorInfo,
 	type ReactNode,
 	type SyntheticEvent,
@@ -26,6 +27,10 @@ const RSVP_RETURN_PATH = `/rsvp/?event=${EVENT_ID}`;
 const RSVP_PAGE_URL = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent(RSVP_RETURN_PATH)}`;
 /** Anchor inside the description string after which the inline smirk renders. */
 const SMIRK_ANCHOR = '"game."';
+/** Wave 32a — bulb count traced around the marquee perimeter. 16 spaces evenly
+ *  on a top + bottom row (8 each) so the chase sweep reads as a clean ring at
+ *  every container-query breakpoint without crowding the trapezoid corners. */
+const MARQUEE_BULB_COUNT = 16;
 
 /**
  * Render the description, splicing the AsciiSmirk SVG in after the
@@ -58,6 +63,41 @@ function renderDescription(text: string): ReactNode {
 function hideBrokenImage(event: SyntheticEvent<HTMLImageElement>) {
 	const target = event.currentTarget;
 	target.style.display = "none";
+}
+
+/**
+ * Wave 32a — Theater marquee header.
+ *
+ * Replaces Cloudscape's <Header variant="h2"> with a custom JSX block so
+ * the "FEATURED EVENT" string sits inside a vintage marquee sign with
+ * chasing perimeter bulbs. The wrapper still announces itself as an h2 to
+ * screen readers via role="heading" + aria-level=2 — Cloudscape only
+ * renders an actual <h2> element via its Header component, so the explicit
+ * ARIA role keeps the AT semantics intact when we trade the Cloudscape
+ * heading chrome for custom marquee chrome.
+ *
+ * The bulbs render as decorative children (aria-hidden) and lean on a
+ * shared keyframes animation; per-bulb animation-delay is computed via the
+ * `--bulb-index` custom property so all 16 bulbs share one keyframes rule.
+ * Reduced-motion is handled in CSS — bulbs render statically lit instead
+ * of chasing.
+ */
+function MarqueeHeader({ text }: { text: string }) {
+	return (
+		<div className="feed-featured-event__marquee" role="heading" aria-level={2}>
+			<span className="feed-featured-event__marquee-text">{text}</span>
+			<div className="feed-featured-event__marquee-bulbs" aria-hidden="true">
+				{Array.from({ length: MARQUEE_BULB_COUNT }).map((_, i) => (
+					<span
+						// biome-ignore lint/suspicious/noArrayIndexKey: bulbs are a fixed-length decorative ring
+						key={i}
+						className="feed-featured-event__marquee-bulb"
+						style={{ "--bulb-index": i } as CSSProperties}
+					/>
+				))}
+			</div>
+		</div>
+	);
 }
 
 function FeaturedEventInner() {
@@ -99,31 +139,24 @@ function FeaturedEventInner() {
 	return (
 		<div className="feed-featured-event">
 			<Container
-				header={
-					<Header variant="h2">{t("feedPage.featuredEventHeader")}</Header>
-				}
+				header={<MarqueeHeader text={t("feedPage.featuredEventHeader")} />}
 			>
 				{/* Wave 31a — responsive CSS Grid layout. Replaces the previous
 				    single-column SpaceBetween stack so the card fills available
 				    horizontal space at tablet + desktop breakpoints (Bryan: "tons
 				    of white space that we could responsively fill with some grid
 				    type thinking"). DOM order is the logical reading order
-				    (badge → image → title → date → in-person → location → desc →
-				    spots → buttons); CSS Grid named areas in styles.css remap the
-				    visual placement per breakpoint while keeping screen-reader
-				    and tab order intact. Container queries (`container-type:
-				    inline-size` on .feed-featured-event) drive the breakpoints
-				    off the card's rendered width — the right tool for
-				    component-level responsive layout when the parent grid varies
-				    the card's own track size. */}
+				    (image → title → date → in-person → location → desc → spots →
+				    buttons); CSS Grid named areas in styles.css remap the visual
+				    placement per breakpoint while keeping screen-reader and tab
+				    order intact. Container queries (`container-type: inline-size`
+				    on .feed-featured-event) drive the breakpoints off the card's
+				    rendered width — the right tool for component-level responsive
+				    layout when the parent grid varies the card's own track size.
+				    Wave 32a — the "DON'T MISS" badge slot was removed; locale
+				    key feedPage.featuredEventBadge is preserved for parity but
+				    no longer referenced in this component. */}
 				<div className="feed-featured-event__layout">
-					<Box
-						fontWeight="bold"
-						fontSize="body-s"
-						className="feed-featured-event__badge"
-					>
-						{t("feedPage.featuredEventBadge")}
-					</Box>
 					{/* Image area wraps both light + dark variants so the grid cell
 					    only owns one logical slot — the existing wave 28a theme-
 					    swap CSS (display:none on the off-theme variant) still

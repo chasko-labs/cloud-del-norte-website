@@ -1161,77 +1161,6 @@
 	z-index: 1;
 }
 
-/* ---------- FEATURED badge — pill with stronger gradient + shimmer sweep ---------- */
-.feed-featured-event__badge {
-	position: relative;
-	display: inline-block;
-	padding: 4px 14px;
-	border-radius: 999px;
-	background-image: linear-gradient(
-		135deg,
-		var(--cdn-purple, #5a1f8a) 0%,
-		var(--cdn-violet, #9060f0) 100%
-	);
-	background-color: var(--cdn-purple, #5a1f8a);
-	color: #faf7f0;
-	font-size: var(--cdn-text-sm, 0.75rem);
-	font-weight: 700;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	overflow: hidden;
-	box-shadow:
-		0 1px 2px rgba(48, 0, 106, 0.3),
-		0 4px 12px -2px var(--cdn-rizz-badge-glow),
-		inset 0 1px 0 rgba(255, 250, 235, 0.32),
-		inset 0 -1px 0 rgba(48, 0, 106, 0.4);
-}
-
-.awsui-dark-mode .feed-featured-event__badge {
-	box-shadow:
-		0 1px 2px rgba(0, 0, 0, 0.5),
-		0 4px 14px -2px var(--cdn-rizz-badge-glow),
-		inset 0 1px 0 rgba(215, 199, 238, 0.28),
-		inset 0 -1px 0 rgba(0, 0, 0, 0.4);
-}
-
-/* Animated shimmer sweep — diagonal highlight crosses the badge every 4.6s.
-   Suppressed in prefers-reduced-motion below. */
-.feed-featured-event__badge::after {
-	content: "";
-	position: absolute;
-	inset: 0;
-	pointer-events: none;
-	background: linear-gradient(
-		115deg,
-		transparent 0%,
-		transparent 38%,
-		var(--cdn-rizz-shimmer) 50%,
-		transparent 62%,
-		transparent 100%
-	);
-	background-size: 220% 100%;
-	background-position: 120% 0;
-	mix-blend-mode: screen;
-	border-radius: inherit;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-	@keyframes feed-featured-badge-shimmer {
-		0% {
-			background-position: 120% 0;
-		}
-		60%,
-		100% {
-			background-position: -40% 0;
-		}
-	}
-
-	.feed-featured-event__badge::after {
-		animation: feed-featured-badge-shimmer 4.6s cubic-bezier(0.4, 0, 0.2, 1)
-			infinite;
-	}
-}
-
 /* ---------- Event image — twin-bloom rim + micro-tilt easter egg ---------- */
 /* wave 28a: vignette-blend mask radial-feathers the image edges into the
    surrounding glass card so the rectangular crop dissolves into the backplate.
@@ -1702,12 +1631,6 @@
 /* ---------- Reduced-motion fallback — strip all animation, keep static
    visuals so the rizz still reads (gradients + glow + shadows remain). */
 @media (prefers-reduced-motion: reduce) {
-	.feed-featured-event__badge::after {
-		animation: none;
-		background-position: 50% 0;
-		opacity: 0.5;
-	}
-
 	.feed-featured-event::after {
 		animation: none;
 		background-position: 50% 0;
@@ -1782,7 +1705,6 @@
 @media (prefers-reduced-motion: no-preference) {
 	body.cdn-scrolling .feed-featured-event,
 	body.cdn-scrolling .feed-featured-event::after,
-	body.cdn-scrolling .feed-featured-event__badge::after,
 	body.cdn-scrolling .feed-featured-event__date-plate,
 	body.cdn-scrolling .awsui-dark-mode .feed-featured-event__date-plate,
 	body.cdn-scrolling .feed-featured-event__date-plate::after,
@@ -1829,7 +1751,6 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-areas:
-		"badge"
 		"image"
 		"title"
 		"date"
@@ -1850,12 +1771,9 @@
    area so the grid-template-areas declaration stays the single source of
    truth for placement. justify-self: start on chip-style children keeps
    pills tight to their natural width instead of stretching to fill the
-   cell (preserves the wave 27a v2 inline-block visual). */
-.feed-featured-event__badge {
-	grid-area: badge;
-	justify-self: start;
-}
-
+   cell (preserves the wave 27a v2 inline-block visual). Wave 32a — the
+   "DON'T MISS" badge slot was removed; the layout shifts up one row at
+   every breakpoint. */
 .feed-featured-event__image-area {
 	grid-area: image;
 	/* Wrap both light + dark images. Wave 28a's theme-driven display:none
@@ -1915,8 +1833,7 @@
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 		grid-template-areas:
 			"image image"
-			"badge date"
-			"title title"
+			"title date"
 			"in-person spots"
 			"location desc"
 			"buttons buttons";
@@ -1948,7 +1865,6 @@
 	.feed-featured-event__layout {
 		grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
 		grid-template-areas:
-			"image badge"
 			"image title"
 			"image date"
 			"image in-person"
@@ -2271,3 +2187,232 @@
    block above for the consolidated rules (location pill stage-light tint,
    spots-remaining pulsing chip). Older standalone definitions removed in
    wave 25a — all .feed-featured-event__* styling is colocated above. */
+
+/* ---------- Wave 32a — Theater marquee header (FEATURED EVENT) ----------
+   Replaces the Cloudscape <Header variant="h2"> chrome on the June 3
+   featured event card with a vintage marquee sign aesthetic: a rounded
+   backplate with a 2px gold/amber rim on light (deep violet + lavender
+   rim on dark), 3D depth shadow + inset highlight, bold uppercase tight-
+   tracked text, and a chasing string of perimeter bulbs.
+
+   Cloudscape's Container places its `header` slot inside an internal
+   wrapper class (awsui_header_*) with its own padding and bottom-divider.
+   The marquee sits inside that slot; we reset the divider via the wave
+   30a-style attribute selector and let the marquee's own border + shadow
+   carry the visual weight. Typography is locked to the marquee's own
+   font-size + spacing so it doesn't inherit the Cloudscape h2 tokens.
+
+   Bulb chase: 16 bulbs (8 top row + 8 bottom row) traced via flexbox.
+   A shared keyframes (`feed-featured-marquee-chase`) cycles each bulb's
+   opacity 0.3 → 1 → 0.3 over 1.8s; per-bulb animation-delay is computed
+   from the inline `--bulb-index` custom property at calc(var * 0.12s).
+   With 16 bulbs * 120ms stagger = 1.92s sweep, the 1.8s base cycle gives
+   a continuous wrap-around chase with a slight overlap (sprightly, not
+   strobing). Reduced-motion gates the keyframes off and renders bulbs
+   statically lit.
+
+   Scope: only the marquee sign in the Container header. Card body
+   (image, title, date plate, spots chip, buttons) is wave 27a-31a turf
+   and is not touched here. */
+.feed-featured-event__marquee {
+	/* Color tokens — light mode = warm amber + gold rim, the vintage
+	   theater marquee voice. Tokens are scoped to the marquee block so
+	   the rest of the card's purple/violet rizz tokens don't bleed into
+	   the sign. */
+	--cdn-marquee-bg-from: #fff5d6;
+	--cdn-marquee-bg-to: #f4d986;
+	--cdn-marquee-rim: #c98b1b;
+	--cdn-marquee-rim-highlight: rgba(255, 247, 220, 0.85);
+	--cdn-marquee-shadow: rgba(124, 64, 8, 0.32);
+	--cdn-marquee-text: #5a2a06;
+	--cdn-marquee-text-glow: rgba(253, 230, 138, 0.65);
+	--cdn-marquee-bulb-core: #fde68a;
+	--cdn-marquee-bulb-rim: #f59e0b;
+	--cdn-marquee-bulb-halo: rgba(253, 230, 138, 0.7);
+	--cdn-marquee-bulb-dim: rgba(253, 230, 138, 0.32);
+
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	padding: 8px 28px;
+	border-radius: 10px;
+	background: linear-gradient(
+		180deg,
+		var(--cdn-marquee-bg-from) 0%,
+		var(--cdn-marquee-bg-to) 100%
+	);
+	border: 2px solid var(--cdn-marquee-rim);
+	box-shadow:
+		0 1px 0 var(--cdn-marquee-rim-highlight) inset,
+		0 -1px 0 rgba(124, 64, 8, 0.18) inset,
+		0 2px 4px var(--cdn-marquee-shadow),
+		0 8px 18px -6px var(--cdn-marquee-shadow);
+}
+
+.awsui-dark-mode .feed-featured-event__marquee {
+	/* Dark mode = deep violet backplate with a lavender rim. Bulbs stay
+	   warm amber (the chasing-bulb idiom is warm-tungsten across both
+	   modes — what changes is the sign chrome, not the lights). */
+	--cdn-marquee-bg-from: #2a1148;
+	--cdn-marquee-bg-to: #1a0a30;
+	--cdn-marquee-rim: #d7c7ee;
+	--cdn-marquee-rim-highlight: rgba(215, 199, 238, 0.4);
+	--cdn-marquee-shadow: rgba(0, 0, 0, 0.55);
+	--cdn-marquee-text: #fde68a;
+	--cdn-marquee-text-glow: rgba(253, 230, 138, 0.55);
+	--cdn-marquee-bulb-core: #fde68a;
+	--cdn-marquee-bulb-rim: #fbbf24;
+	--cdn-marquee-bulb-halo: rgba(253, 230, 138, 0.6);
+	--cdn-marquee-bulb-dim: rgba(253, 230, 138, 0.28);
+
+	box-shadow:
+		0 1px 0 var(--cdn-marquee-rim-highlight) inset,
+		0 -1px 0 rgba(0, 0, 0, 0.6) inset,
+		0 2px 6px var(--cdn-marquee-shadow),
+		0 12px 24px -6px var(--cdn-marquee-shadow);
+}
+
+/* Headline text — bold uppercase, tight tracking, subtle text-shadow so
+   the lettering reads as emissive against the warm/violet backplate. */
+.feed-featured-event__marquee-text {
+	position: relative;
+	z-index: 1;
+	display: inline-block;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--cdn-marquee-text);
+	text-shadow:
+		0 0 6px var(--cdn-marquee-text-glow),
+		0 1px 0 rgba(255, 247, 220, 0.45);
+	line-height: 1.15;
+}
+
+/* Bulb perimeter container — absolutely positioned over the marquee so
+   the bulbs frame the rim without interfering with the centered text.
+   Top + bottom 4px insets place the bulb rows just inside the rim. The
+   grid carries 8 columns × 3 rows: row 1 = top bulbs, row 2 = empty
+   spacer (the marquee text sits behind, visually between rows), row 3
+   = bottom bulbs. Grid auto-placement fills row 1 cols 1-8 with bulbs
+   0-7, then row 3 cols 1-8 with bulbs 8-15. */
+.feed-featured-event__marquee-bulbs {
+	position: absolute;
+	inset: 4px 8px;
+	pointer-events: none;
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	grid-template-columns: repeat(8, 1fr);
+	align-items: center;
+	justify-items: center;
+}
+
+/* Each bulb is a 6px round dot with a warm amber gradient core + drop-
+   shadow halo. The chase animation oscillates opacity 0.3 → 1 → 0.3 with
+   a brief peak so a single bright bulb appears to travel the rim. */
+.feed-featured-event__marquee-bulb {
+	display: block;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: radial-gradient(
+		circle at 50% 40%,
+		var(--cdn-marquee-bulb-core) 0%,
+		var(--cdn-marquee-bulb-rim) 70%,
+		rgba(245, 158, 11, 0.6) 100%
+	);
+	opacity: 0.6;
+	filter: drop-shadow(0 0 3px var(--cdn-marquee-bulb-halo));
+}
+
+/* Split bulbs into top + bottom rows. Grid auto-flow handles column
+   distribution within each row (cols 1-8 left-to-right). The chase
+   sweeps both rows in parallel left-to-right — reads as twin marquee
+   light strings rather than a single ring traversal, which is the
+   intended bulb-band aesthetic for this short-headline marquee box. */
+.feed-featured-event__marquee-bulb:nth-child(-n + 8) {
+	grid-row: 1;
+}
+
+.feed-featured-event__marquee-bulb:nth-child(n + 9) {
+	grid-row: 3;
+}
+
+/* Chase animation — gated behind prefers-reduced-motion. The chase
+   sweeps the rim by staggering animation-delay per bulb. */
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-featured-marquee-chase {
+		0%,
+		100% {
+			opacity: 0.3;
+			filter: drop-shadow(0 0 2px var(--cdn-marquee-bulb-dim));
+		}
+		15% {
+			opacity: 1;
+			filter: drop-shadow(0 0 6px var(--cdn-marquee-bulb-halo));
+		}
+		35% {
+			opacity: 0.45;
+			filter: drop-shadow(0 0 3px var(--cdn-marquee-bulb-dim));
+		}
+	}
+
+	.feed-featured-event__marquee-bulb {
+		animation: feed-featured-marquee-chase 1.8s linear infinite;
+		animation-delay: calc(var(--bulb-index, 0) * 0.12s);
+	}
+}
+
+/* Reduced-motion fallback — bulbs render statically lit (warm + visible)
+   instead of chasing. Same treatment used elsewhere on this card. */
+@media (prefers-reduced-motion: reduce) {
+	.feed-featured-event__marquee-bulb {
+		animation: none;
+		opacity: 0.85;
+		filter: drop-shadow(0 0 4px var(--cdn-marquee-bulb-halo));
+	}
+}
+
+/* Pause the chase during fast scroll — same scroll-jank-mitigation hook
+   wave 30a wired up for the rest of the card. Skipped under reduced-
+   motion since the animation isn't running there to begin with. */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .feed-featured-event__marquee-bulb {
+		animation-play-state: paused;
+	}
+}
+
+/* Responsive sizing — scale the marquee text + box height at the same
+   container-query breakpoints the card body uses, so the sign reads
+   proportional to the card width across mobile / tablet / desktop. */
+@container cdn-feed-featured (min-width: 520px) {
+	.feed-featured-event__marquee {
+		min-height: 44px;
+		padding: 10px 36px;
+	}
+
+	.feed-featured-event__marquee-text {
+		font-size: 1.0625rem;
+		letter-spacing: 0.07em;
+	}
+}
+
+@container cdn-feed-featured (min-width: 860px) {
+	.feed-featured-event__marquee {
+		min-height: 48px;
+		padding: 12px 44px;
+	}
+
+	.feed-featured-event__marquee-text {
+		font-size: 1.125rem;
+		letter-spacing: 0.08em;
+	}
+
+	.feed-featured-event__marquee-bulb {
+		width: 7px;
+		height: 7px;
+	}
+}
