@@ -1020,6 +1020,17 @@
 	contain: layout paint style;
 	transform: translate3d(0, 0, 0);
 	will-change: transform;
+	/* wave 31a — establish a CSS Container Query context so the grid layout
+	   inside .feed-featured-event__layout can react to the card's own
+	   rendered width instead of viewport width. The card sits in a parent
+	   feed grid that varies its track width per breakpoint, and inside a
+	   `--full` cell that spans both columns at viewport ≥ 680px — so the
+	   card's actual render width can range from ~360px (mobile) to ~1100px
+	   (wide desktop) without the viewport size telling the whole story.
+	   container-type: inline-size + container-name lets the layout queries
+	   in the wave 31a block target the card's own inline size precisely. */
+	container-type: inline-size;
+	container-name: cdn-feed-featured;
 	/* layered ambient bloom — sits beneath the radial spotlight backplate
 	   (::before) and the cool sweep depth layer (::after). */
 	box-shadow:
@@ -1534,8 +1545,13 @@
 	max-width: 56ch;
 }
 
-/* ---------- Location pill — strengthened amber tungsten chip ---------- */
-.feed-featured-event__location {
+/* ---------- In-person pill — strengthened amber tungsten chip ----------
+   Wave 31a rename: was .feed-featured-event__location, but that name was
+   generic and collided semantically with the secondary fine-print location
+   row. The class is now __in-person-pill (the bold uppercase chip that
+   reads "IN PERSON: Downtown El Paso"); the secondary location row uses
+   __location-text below. Visual treatment is unchanged from wave 27a. */
+.feed-featured-event__in-person-pill {
 	display: inline-block;
 	padding: 3px 12px;
 	border-radius: 999px;
@@ -1555,7 +1571,7 @@
 		0 2px 6px -1px rgba(139, 90, 43, 0.18);
 }
 
-.awsui-dark-mode .feed-featured-event__location {
+.awsui-dark-mode .feed-featured-event__in-person-pill {
 	background: linear-gradient(
 		135deg,
 		rgba(255, 153, 0, 0.18) 0%,
@@ -1775,6 +1791,185 @@
 	body.cdn-scrolling .awsui-dark-mode .feed-featured-event__spots,
 	body.cdn-scrolling .feed-featured-event__spots::before {
 		animation-play-state: paused;
+	}
+}
+
+/* ---------- Wave 31a — Responsive CSS Grid layout ----------
+   Replaces the previous single-column SpaceBetween stack on the June 3
+   featured event card with a CSS Grid that fills available horizontal
+   space at tablet + desktop. Bryan's framing: "tons of white space that
+   we could responsively fill with some grid type thinking".
+
+   Container queries (not viewport breakpoints) drive the layout switch
+   because the card's own render width depends on its grid-cell parent
+   (.feed-grid__cell--full) AND the page's max content width — viewport
+   alone doesn't tell us how wide the card actually is. The query target
+   is `.feed-featured-event` (container-type: inline-size set above) and
+   the queried element is `.feed-featured-event__layout`.
+
+   Breakpoint calibration:
+   - <520px container width → mobile single-column (one cell per row),
+     unchanged from the pre-wave-31a vertical stack.
+   - 520–859px → tablet 2-column hybrid: image full-width hero on top,
+     then meta/content split into two columns below (badge|date,
+     in-person|spots, location|desc), buttons span both columns.
+   - ≥860px → desktop image-left + content-right hero: image occupies
+     the left column for the full row height, content stack fills the
+     right column. align-self:start on both areas so neither floats in
+     the middle of dead space — empty space below the shorter side is
+     left clean (no decorative fill, per brief: "Don't introduce new
+     visual elements just to fill space").
+
+   DOM order is the logical reading order (badge → image → title → date
+   → in-person → location → desc → spots → buttons). Grid named-areas
+   reflow the visual placement per breakpoint without touching DOM order,
+   so screen-reader and tab order stay correct (title link → primary
+   button → secondary button on tab traversal). */
+.feed-featured-event__layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-areas:
+		"badge"
+		"image"
+		"title"
+		"date"
+		"in-person"
+		"location"
+		"desc"
+		"spots"
+		"buttons";
+	gap: var(--cdn-space-sm, 8px);
+	/* Min-width:0 so the grid can shrink inside its Cloudscape Container
+	   parent without inner content (long event titles, wide date strings)
+	   pushing the track wider than the card. Mirrors the .feed-grid__cell
+	   pattern used on the page-level grid. */
+	min-width: 0;
+}
+
+/* Per-child grid-area assignments. Each child class maps to one named
+   area so the grid-template-areas declaration stays the single source of
+   truth for placement. justify-self: start on chip-style children keeps
+   pills tight to their natural width instead of stretching to fill the
+   cell (preserves the wave 27a v2 inline-block visual). */
+.feed-featured-event__badge {
+	grid-area: badge;
+	justify-self: start;
+}
+
+.feed-featured-event__image-area {
+	grid-area: image;
+	/* Wrap both light + dark images. Wave 28a's theme-driven display:none
+	   on the off-theme variant still decides which paints; this wrapper is
+	   purely a grid-cell anchor so the pair lives in one slot. min-width:0
+	   keeps the wrapper from forcing the image's natural 1200px width
+	   onto the column track. */
+	min-width: 0;
+}
+
+/* Override the legacy 12px vertical margin on the image now that grid
+   gap handles spacing. Width caps and aspect ratio are preserved so the
+   wave 27a/28a visual treatment (bloom shadows, vignette mask, hover
+   tilt) is unchanged. */
+.feed-featured-event__image-area .feed-featured-event__image {
+	margin: 0;
+	max-width: 100%;
+}
+
+.feed-featured-event__title {
+	grid-area: title;
+}
+
+.feed-featured-event__date {
+	grid-area: date;
+}
+
+.feed-featured-event__in-person-pill {
+	grid-area: in-person;
+	justify-self: start;
+}
+
+.feed-featured-event__location-text {
+	grid-area: location;
+}
+
+.feed-featured-event__description {
+	grid-area: desc;
+}
+
+.feed-featured-event__spots {
+	grid-area: spots;
+	justify-self: start;
+}
+
+.feed-featured-event__layout .cdn-brand-btn-stack {
+	grid-area: buttons;
+}
+
+/* Tablet — 2-column hybrid. Image stays full-width hero across both
+   columns; meta/content rows split into a 2-col grid; buttons span both
+   columns again to anchor the call-to-action. Calibrated to ~520px
+   container width because below that, the 2-col split crushes the date
+   string + spots chip into wrap territory. */
+@container cdn-feed-featured (min-width: 520px) {
+	.feed-featured-event__layout {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+		grid-template-areas:
+			"image image"
+			"badge date"
+			"title title"
+			"in-person spots"
+			"location desc"
+			"buttons buttons";
+		gap: 12px 16px;
+	}
+
+	/* Center the buttons stack across the 2-col span so it reads as a
+	   single CTA anchor rather than drifting to one column edge. */
+	.feed-featured-event__layout .cdn-brand-btn-stack {
+		justify-self: center;
+	}
+}
+
+/* Desktop — image-left + content-right hero. Image occupies the left
+   column for all 8 content rows; content stack fills the right column.
+   align-items: start on the grid + align-self: start on the image area
+   so when content is taller than the image (the common case given the
+   description + spots + buttons stack), the image sits at the top of
+   the left column rather than centering and floating in the middle of
+   dead space.
+
+   Calibrated to ≥860px container width because below that, splitting
+   into two equal-ish columns leaves the right column too narrow to fit
+   the title heading + description without aggressive wrapping. minmax(0,
+   1.1fr) on the image column gives it slightly more weight so the
+   focal photography (pool table, AWS Community badge, violet star)
+   dominates the left half. */
+@container cdn-feed-featured (min-width: 860px) {
+	.feed-featured-event__layout {
+		grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+		grid-template-areas:
+			"image badge"
+			"image title"
+			"image date"
+			"image in-person"
+			"image location"
+			"image desc"
+			"image spots"
+			"image buttons";
+		align-items: start;
+		gap: 8px 24px;
+	}
+
+	.feed-featured-event__image-area {
+		align-self: start;
+	}
+
+	/* Drop the centered buttons override from the tablet rule — at
+	   desktop the buttons live in their own right-column cell, so
+	   left-aligning to that cell reads cleaner against the rest of the
+	   left-aligned content stack. */
+	.feed-featured-event__layout .cdn-brand-btn-stack {
+		justify-self: start;
 	}
 }
 
