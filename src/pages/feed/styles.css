@@ -1470,8 +1470,10 @@
 }
 
 .feed-featured-event__description {
-	line-height: 1.5;
-	max-width: 56ch;
+	font-size: var(--cdn-text-base, 0.9375rem);
+	line-height: 1.6;
+	max-width: 64ch;
+	letter-spacing: 0.005em;
 }
 
 /* ---------- In-person pill — strengthened amber tungsten chip ----------

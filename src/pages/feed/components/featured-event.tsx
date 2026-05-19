@@ -26,7 +26,7 @@ const EVENT_IMAGE_DARK = "/events/featured-2026-06-03-dark.webp";
 const RSVP_RETURN_PATH = `/rsvp/?event=${EVENT_ID}`;
 const RSVP_PAGE_URL = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent(RSVP_RETURN_PATH)}`;
 /** Anchor inside the description string after which the inline smirk renders. */
-const SMIRK_ANCHOR = '"game."';
+const SMIRK_ANCHOR = "game";
 /** Wave 32a — bulb count traced around the marquee perimeter. 16 spaces evenly
  *  on a top + bottom row (8 each) so the chase sweep reads as a clean ring at
  *  every container-query breakpoint without crowding the trapezoid corners. */
@@ -34,7 +34,7 @@ const MARQUEE_BULB_COUNT = 16;
 
 /**
  * Render the description, splicing the AsciiSmirk SVG in after the
- * smirk-line hook (`"game."`). If the anchor is absent (defensive fallback
+ * smirk-line hook (`game`). If the anchor is absent (defensive fallback
  * for any future copy revision that drops it), render the raw description.
  *
  * Returns a single span wrapper so the parent Cloudscape Box receives one
