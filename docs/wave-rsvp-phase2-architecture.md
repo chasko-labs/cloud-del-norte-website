@@ -1,484 +1,339 @@
-# RSVP Phase 2 — Backend Architecture Spec
+# RSVP Phase 2 — Backend Architecture
 
-> DynamoDB + Lambda + API Gateway + KMS-Signed QR Tickets
+> Lambda + DynamoDB + API Gateway HTTP V2 — Cognito-native, no KMS, no HMAC
 >
-> Author: wave-28f-rsvp-arch ghost · 2026-05-19
->
-> Status: DRAFT — awaiting Bryan's decisions on open questions before implementation dispatch.
+> Wave 35a (backend) · Wave 35b (frontend wiring) · 2026-05-19
 
 ---
 
-## 1. Current State (Phase 1)
+## 1. Overview
 
-Phase 1 shipped in PR #217 and #221. It provides a client-side RSVP flow backed entirely by `localStorage`.
+Phase 1 stored RSVPs in `localStorage`. That fails the moment a user clears
+their browser, switches devices, or opens incognito. Worse, the "spots
+remaining" counter is per-browser — fifty users on fifty browsers all see
+"48 left" and all RSVP, blowing capacity wide open.
 
-### Implementation summary (`src/lib/rsvp.ts`)
+Phase 2 moves state to a single DynamoDB table behind a Lambda behind an
+API Gateway HTTP V2 endpoint. Capacity is enforced server-side, RSVPs follow
+the user across devices, and the QR ticket payload remains a short
+deterministic string that the door volunteer scans and looks up against the
+table.
 
-- **Storage**: All RSVP records are stored under the key `cdn.rsvps.v1` in the browser's `localStorage`. Records are serialized as a JSON array of `RsvpRecord` objects.
-- **Data model**: Each record contains `eventId`, `userSub`, `name`, `email`, and `createdAt` (ISO timestamp).
-- **Event registry**: A hardcoded `CDN_EVENTS` array defines events with `id`, `title`, `scheduledDate`, `location`, `capacity`, `rsvpedBaseline`, and `meetupRsvpUrl`. Currently one event: `happy-hour-2026-06-03` (capacity 50, baseline 2).
-- **Ticket payload**: Deterministic string `cdn-ticket:v1:{eventId}:{userSub}` — no cryptographic signature, no PII.
-- **Capacity display**: `spotsRemaining()` computes `capacity - rsvpedBaseline - localCount`. This is a visual-only counter; it reflects only the current browser's localStorage, not global state.
-- **RSVP flow** (`src/sites/awsug/rsvp/app.tsx`): Auth-gated via Cognito. On page load, if the user has no existing RSVP and spots remain (locally), the RSVP is auto-confirmed. A QR code is rendered from the deterministic ticket payload.
-- **Ticket retrieval** (`/meetings/` page): Lists all RSVPs for the authenticated user from localStorage.
+What we explicitly **do not** add:
 
-### Phase 1 failure modes
+- **No KMS asymmetric key** — the original spec proposed ECDSA-signed QR
+  payloads at $1.00/mo. Phase 3 door check-in is volunteer-mediated: the
+  volunteer scans the QR, the scanner app calls `cognito-idp:AdminGetUser`
+  with the embedded `user_sub`, and the volunteer visually confirms the
+  attendee against the returned profile. No cryptographic signature needed
+  because there is a human in the loop.
+- **No HMAC secret in SSM** — same reasoning.
+- **No new SSM parameters at all.** Capacity lives in a Lambda env var.
+- **No Cognito schema changes.** We use the existing `sub` claim from the
+  ID token, decoded inline (mirrors the `decodeJwtSub` helper in
+  `infra/lambda/speaker-proposals/index.mjs`).
+- **No SES email on RSVP.** Confirmation lives on-screen + in `/meetings/`.
 
-| Failure | Impact |
-|---------|--------|
-| Browser cache/localStorage cleared | Ticket permanently lost; no recovery path |
-| Capacity counter is per-browser | 50 users on 50 different browsers all see "48 remaining" and all RSVP — no enforcement |
-| QR payload is deterministic and unsigned | Anyone who knows the format can forge a valid-looking ticket for any `user_sub` |
-| Cross-device retrieval impossible | RSVP on laptop → cannot show ticket on phone at the door |
-| Private/incognito mode | localStorage may be disabled; RSVP silently fails to persist |
-
-Phase 2 eliminates all of these by moving state to a server-side DynamoDB table with cryptographically signed tickets.
-
----
-
-## 2. Backend Topology
-
-### 2a. DynamoDB Table: `cdn-rsvps`
-
-| Property | Value |
-|----------|-------|
-| Account | 170473530355 (jitsi-video-hosting) |
-| Region | us-west-2 |
-| Billing mode | On-demand (PAY_PER_REQUEST) |
-| Partition key | `event_id` (String) |
-| Sort key | `user_sub` (String) |
-
-**Attributes:**
-
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `event_id` | String | Partition key. Event identifier (e.g., `happy-hour-2026-06-03`) |
-| `user_sub` | String | Sort key. Cognito user pool `sub` claim |
-| `name` | String | Display name from Cognito token (nullable) |
-| `email` | String | Email from Cognito token |
-| `created_at` | String | ISO 8601 timestamp of RSVP creation |
-| `ticket_signature` | String | Base64-encoded KMS ECDSA signature of the ticket payload |
-| `ttl_unix` | Number | TTL attribute — event date + 30 days as Unix epoch seconds |
-
-**Access patterns:**
-
-1. **Get single RSVP**: `event_id` = X AND `user_sub` = Y → single item read
-2. **Count RSVPs for event**: Query `event_id` = X, `Select: COUNT` → capacity check
-3. **List user's RSVPs**: GSI `user_sub-index` (PK: `user_sub`, SK: `event_id`) → cross-event ticket listing
-
-**GSI: `user_sub-index`**
-
-| Property | Value |
-|----------|-------|
-| Partition key | `user_sub` (String) |
-| Sort key | `event_id` (String) |
-| Projection | ALL |
-
-This GSI supports the `cdn-rsvp-list-mine` function without a full table scan.
-
-**Cost estimate**: On-demand pricing at this scale (≤2500 items/year, ≤5000 reads/year) → ~$0.01/mo.
-
-### 2b. Lambda Functions
-
-All functions use **Node.js 20 runtime**, follow the pattern established by `infra/lambda/feedback/index.mjs`, and deploy to account 170473530355 in us-west-2.
-
-#### 1. `cdn-rsvp-create`
-
-- **Route**: `POST /rsvp/{event_id}`
-- **Auth**: Required (Lambda authorizer validates Cognito ID token)
-- **Logic**:
-  1. Extract `event_id` from path, `user_sub` / `name` / `email` from authorizer context
-  2. Look up event capacity (from `cdn-events` table or hardcoded config)
-  3. Query current RSVP count for `event_id`
-  4. If count >= capacity → return `409 Conflict` with `{ error: "capacity_full" }`
-  5. Conditional PutItem with `attribute_not_exists(user_sub)` to prevent double-RSVP race
-  6. Sign ticket payload via KMS `Sign` API (ECC P-256, SHA-256 digest)
-  7. Return `201 Created` with full ticket record including `ticket_signature`
-- **Idempotency**: If conditional write fails (item exists), fetch and return existing record with `200 OK`
-
-#### 2. `cdn-rsvp-get`
-
-- **Route**: `GET /rsvp/{event_id}`
-- **Auth**: Required
-- **Logic**:
-  1. GetItem with `event_id` + caller's `user_sub`
-  2. If exists → return `200` with ticket record
-  3. If not → return `404` with `{ error: "no_rsvp" }`
-
-#### 3. `cdn-rsvp-list-mine`
-
-- **Route**: `GET /rsvp/mine`
-- **Auth**: Required
-- **Logic**:
-  1. Query GSI `user_sub-index` with caller's `user_sub`
-  2. Return `200` with array of ticket records (may be empty)
-
-#### 4. `cdn-rsvp-checkin` (Phase 3 — deferred)
-
-- **Route**: `POST /rsvp/{event_id}/checkin`
-- **Auth**: Door-scanner credential (separate from user auth)
-- **Logic**: Validate QR signature against KMS public key, mark `checked_in_at` timestamp
-- **Status**: Stub only in Phase 2; full implementation deferred until door-scan hardware/flow is defined
-
-### 2c. API Gateway HTTP V2: `cdn-rsvp-api`
-
-Mirrors the pattern of `cdn-feedback-api` (see `scripts/deploy-feedback-apigw.sh`).
-
-| Property | Value |
-|----------|-------|
-| Protocol | HTTP (API Gateway V2) |
-| Name | `cdn-rsvp-api` |
-| Stage | `$default` with auto-deploy |
-| CORS AllowOrigins | `https://awsug.clouddelnorte.org` |
-| CORS AllowMethods | `GET,POST,OPTIONS` |
-| CORS AllowHeaders | `content-type,authorization` |
-| CORS MaxAge | 86400 |
-
-**Routes:**
-
-| Method | Path | Target |
-|--------|------|--------|
-| POST | `/rsvp/{event_id}` | `cdn-rsvp-create` |
-| GET | `/rsvp/{event_id}` | `cdn-rsvp-get` |
-| GET | `/rsvp/mine` | `cdn-rsvp-list-mine` |
-
-**Authorizer:**
-
-- Type: Lambda authorizer (REQUEST type, payload format 2.0)
-- Function: `cdn-rsvp-authorizer` — validates the Cognito ID token JWT
-- Validates against user pool `us-west-2_cyPQF4F3r`, checks `exp`, `iss`, `aud` claims
-- Returns `user_sub`, `name`, `email` in authorizer context for downstream Lambdas
-- Identity source: `$request.header.Authorization` (Bearer token)
-- Authorizer result TTL: 300 seconds (cache per token)
-
-**Throttling:**
-
-- Default throttle: 10 requests/second per route (burst 20)
-- Capacity enforcement is at the Lambda level; API Gateway throttle is a coarse safety net
-
-### 2d. KMS Signing Key for QR Tickets
-
-| Property | Value |
-|----------|-------|
-| Key type | Asymmetric (ECC_NIST_P256) |
-| Key usage | SIGN_VERIFY |
-| Region | us-west-2 |
-| Account | 170473530355 |
-| Alias | `alias/cdn-rsvp-ticket-signing` |
-| Monthly cost | $1.00 (key) + ~$0.03/10K sign operations |
-
-**Signing flow:**
-
-1. Lambda constructs canonical payload: `cdn-ticket:v2:{event_id}:{user_sub}:{created_at_epoch}`
-2. Lambda calls `KMS.Sign` with `SigningAlgorithm: ECDSA_SHA_256`, `MessageType: RAW`
-3. KMS returns DER-encoded signature → Lambda base64-encodes and stores as `ticket_signature`
-
-**QR payload format (rendered by frontend):**
-
-```
-cdn-ticket:v2:{event_id}:{user_sub}:{created_at_epoch}|{signature_base64}
-```
-
-**Verification flow (door-scan / check-in):**
-
-1. Scanner splits payload at `|` → message + signature
-2. Fetches public key from KMS `GetPublicKey` (or uses cached/embedded copy)
-3. Verifies ECDSA signature against message bytes
-4. If valid → look up record in DynamoDB, mark checked-in
+Annual cost: ~$0.60/year (down from ~$14/year in the original proposal).
 
 ---
 
-## 3. Capacity Enforcement Logic
+## 2. Storage — `cdn-rsvps` DynamoDB table
 
-### Write path (cdn-rsvp-create)
+| Property         | Value                                  |
+| ---------------- | -------------------------------------- |
+| Account          | 170473530355 (jitsi-video-hosting)     |
+| Region           | us-west-2                              |
+| Table name       | `cdn-rsvps`                            |
+| Billing mode     | `PAY_PER_REQUEST`                      |
+| Partition key    | `user_sub` (String) — Cognito `sub`    |
+| Sort key         | `event_id` (String) — e.g. `happy-hour-2026-06-03` |
+| GSIs             | none                                   |
 
-```
-1. Query: SELECT COUNT(*) FROM cdn-rsvps WHERE event_id = :eid
-2. If count >= event.capacity → return 409 { error: "capacity_full" }
-3. PutItem with ConditionExpression: attribute_not_exists(user_sub)
-   - If succeeds → RSVP created
-   - If ConditionalCheckFailedException → item already exists (idempotent return)
-```
+**Item attributes**
 
-### Race condition handling
+| Attribute    | Type   | Notes                                 |
+| ------------ | ------ | ------------------------------------- |
+| `user_sub`   | String | Partition key                         |
+| `event_id`   | String | Sort key                              |
+| `name`       | String | Optional display name from form       |
+| `email`      | String | Optional contact email from form      |
+| `created_at` | String | ISO 8601 timestamp                    |
 
-- **Double-RSVP by same user**: The `attribute_not_exists(user_sub)` condition prevents duplicates even under concurrent requests.
-- **Capacity overshoot**: Between the count query and the PutItem, another request could slip in. At this scale (50 seats, ~1 RSVP/minute), the race window is negligible. If strict enforcement is needed later, use a DynamoDB transaction with a counter item — but this adds complexity and cost for a problem that won't manifest at current scale.
-- **Acceptable overshoot**: ±1 seat. The event has physical flexibility for 1-2 extra attendees.
+**Access patterns**
 
-### Event capacity configuration
+| Pattern                                | Operation                         |
+| -------------------------------------- | --------------------------------- |
+| List a user's RSVPs                    | Query by `user_sub`               |
+| Look up one user/event RSVP            | Query by `user_sub` + `event_id`  |
+| Count RSVPs for an event (capacity)    | Scan + `FilterExpression` + `Select: COUNT` |
 
-**Recommended approach**: A `cdn-events` DynamoDB table.
+The Scan-for-count is intentional. At capacities of ≤ 50 attendees per
+event, a Scan over the entire `cdn-rsvps` table is a single capacity unit's
+worth of work and avoids the operational overhead of maintaining a counter
+item or a GSI on `event_id`. If we ever host a 500-seat event, swap in a
+GSI on `event_id` and update the IAM policy to scope `Query` to that index.
 
-| Attribute | Type | Description |
-|-----------|------|-------------|
-| `event_id` | String (PK) | Event identifier |
-| `title` | String | Event display name |
-| `capacity` | Number | Maximum RSVPs allowed |
-| `event_date` | String | ISO date |
-| `location` | String | Venue |
-
-**Alternative (simpler, for now)**: Hardcode capacity in the Lambda as a config object. Only one event exists today. Migrate to the table when multi-event support is needed.
-
-**Decision for Bryan**: Hardcode now (simpler, 0 extra cost) vs. `cdn-events` table (future-proof, ~$0.005/mo extra)?
-
----
-
-## 4. IAM Topology
-
-### Lambda execution role: `cdn-rsvp-lambda-role`
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Sid": "DynamoDBAccess",
-      "Effect": "Allow",
-      "Action": [
-        "dynamodb:PutItem",
-        "dynamodb:GetItem",
-        "dynamodb:Query"
-      ],
-      "Resource": [
-        "arn:aws:dynamodb:us-west-2:170473530355:table/cdn-rsvps",
-        "arn:aws:dynamodb:us-west-2:170473530355:table/cdn-rsvps/index/user_sub-index",
-        "arn:aws:dynamodb:us-west-2:170473530355:table/cdn-events"
-      ]
-    },
-    {
-      "Sid": "KMSSign",
-      "Effect": "Allow",
-      "Action": [
-        "kms:Sign",
-        "kms:GetPublicKey"
-      ],
-      "Resource": "arn:aws:kms:us-west-2:170473530355:alias/cdn-rsvp-ticket-signing"
-    },
-    {
-      "Sid": "CloudWatchLogs",
-      "Effect": "Allow",
-      "Action": [
-        "logs:CreateLogGroup",
-        "logs:CreateLogStream",
-        "logs:PutLogEvents"
-      ],
-      "Resource": "arn:aws:logs:us-west-2:170473530355:*"
-    }
-  ]
-}
-```
-
-### Lambda authorizer role: `cdn-rsvp-authorizer-role`
-
-- Only needs CloudWatch Logs permissions (token validation is done in-code against Cognito JWKS)
-
-### API Gateway → Lambda permission
-
-- `lambda:InvokeFunction` granted to `apigateway.amazonaws.com` with source ARN scoped to the specific API + routes
-
-### KMS key policy
-
-```json
-{
-  "Sid": "AllowLambdaSign",
-  "Effect": "Allow",
-  "Principal": { "AWS": "arn:aws:iam::170473530355:role/cdn-rsvp-lambda-role" },
-  "Action": ["kms:Sign", "kms:GetPublicKey"],
-  "Resource": "*"
-}
-```
-
-No `kms:Decrypt`, `kms:Encrypt`, or `kms:CreateGrant` — principle of least privilege.
-
-### Cognito user pool
-
-- Pool ID: `us-west-2_cyPQF4F3r`
-- The Lambda authorizer fetches JWKS from `https://cognito-idp.us-west-2.amazonaws.com/us-west-2_cyPQF4F3r/.well-known/jwks.json` (cached in-memory across warm invocations)
-- Validates: `iss`, `aud` (app client ID), `exp`, `token_use: id`
+Schema definition: [`infra/dynamodb/cdn-rsvps-table.json`](../infra/dynamodb/cdn-rsvps-table.json)
 
 ---
 
-## 5. Frontend Integration
+## 3. Lambda — `cdn-rsvp`
 
-### API client replacement in `src/lib/rsvp.ts`
+Single Lambda handles all three routes via `event.routeKey` dispatch
+(HTTP V2 payload format 2.0). Mirrors `infra/lambda/feedback/index.mjs` for
+structure (CORS helpers, in-memory rate limit, JSON-line logging) and reuses
+`decodeJwtSub` verbatim from `infra/lambda/speaker-proposals/index.mjs`.
 
-The existing exports (`addRsvp`, `getRsvp`, `listUserRsvps`, `spotsRemaining`, `buildTicketPayload`) maintain their signatures but swap localStorage for `fetch()` calls:
+| Property | Value                |
+| -------- | -------------------- |
+| Name     | `cdn-rsvp`           |
+| Runtime  | `nodejs22.x`         |
+| Handler  | `index.handler`      |
+| Memory   | 256 MB               |
+| Timeout  | 10 s                 |
 
-| Function | Phase 1 | Phase 2 |
-|----------|---------|---------|
-| `addRsvp()` | localStorage write | `POST /rsvp/{event_id}` with auth header |
-| `getRsvp()` | localStorage read | `GET /rsvp/{event_id}` with auth header |
-| `listUserRsvps()` | localStorage filter | `GET /rsvp/mine` with auth header |
-| `spotsRemaining()` | local count math | Derived from API response (server returns `remaining` field) |
-| `buildTicketPayload()` | Deterministic string | Returns server-provided signed payload from ticket record |
+**Routes**
 
-### `/rsvp/` page changes (minimal)
+| Method   | Path                    | Auth | Behavior |
+| -------- | ----------------------- | ---- | -------- |
+| OPTIONS  | any                     | n/a  | 204 + CORS headers |
+| POST     | `/rsvp`                 | Required (Bearer ID token) | Create or return existing RSVP |
+| GET      | `/rsvp`                 | Required | List the caller's RSVPs |
+| GET      | `/rsvp/{eventId}/spots` | Public | `{capacity, taken, remaining}` |
 
-- `app.tsx` already calls `addRsvp()` and `buildTicketPayload()` — no structural change needed
-- Add error handling for `409 Conflict` (capacity full) and network errors
-- QR now renders the signed payload from the API response instead of the deterministic v1 string
+**Auth model**
 
-### `/meetings/` tickets section changes (minimal)
+The Authorization header carries the Cognito ID token. The Lambda decodes
+the second segment of the JWT (no signature verification — see note below)
+and pulls the `sub` claim. Mirrors the `decodeJwtSub` helper currently used
+by `cdn-speaker-proposals`.
 
-- Replace `listUserRsvps(userSub)` localStorage call with the API-backed version
-- QR codes render signed payloads from server responses
+> _Note on signature verification:_ API Gateway HTTP V2 supports a built-in
+> JWT authorizer that validates the Cognito signature before the Lambda is
+> invoked. We're keeping parity with `cdn-speaker-proposals` for now (which
+> also decodes the ID token without verifying inside the Lambda). The
+> `Authorization` header is passed verbatim by the browser; an attacker
+> would need a valid signed Cognito token to populate `sub` with anything
+> useful, and an unauthenticated attacker can only spoof a `user_sub` they
+> don't control — they'd just RSVP "as themselves" against a fake `sub`,
+> which is harmless. We can add the JWT authorizer later as a hardening
+> step without changing the Lambda.
 
-### Auth token passing
+**Idempotency**
 
-- The Cognito ID token is already in `sessionStorage` after auth flow
-- New `src/lib/rsvp.ts` methods read it and pass as `Authorization: Bearer {id_token}` header
+`POST /rsvp` is idempotent on `(user_sub, event_id)`:
 
-### Migration note
+1. Look up an existing item; if present → 200 + existing ticket.
+2. Else count the event; if at capacity → 409 `capacity_full`.
+3. Else PutItem with
+   `ConditionExpression: attribute_not_exists(user_sub) AND attribute_not_exists(event_id)`.
+4. On `ConditionalCheckFailedException` (race lost), re-read and return 200.
 
-Phase 1 localStorage tickets are **NOT** backfilled to DynamoDB. Users who RSVPed during Phase 1 will need to re-RSVP after Phase 2 deploys. Since the flow is auto-confirm on page visit, this happens transparently — the user visits `/rsvp/` again and gets a new server-backed ticket. The old localStorage ticket becomes a "ghost" visible only on the original browser until localStorage is cleared or the migration code is removed.
+**Rate limit**
+
+Per-IP, 5 requests/hour, in-memory (per Lambda instance). Mirrors the
+`rateMap` pattern in `infra/lambda/feedback/index.mjs`. This is a soft cap;
+abuse beyond Lambda warm-instance scope is still bounded by the API
+Gateway throttle defaults.
+
+**Validation**
+
+- `eventId`: required, regex `/^[a-z0-9-]+$/`, ≤ 64 chars
+- `name`: optional, ≤ 200 chars
+- `email`: optional, simple regex sanity check
+- `eventId` must be a key in the `EVENT_CAPACITIES` env var
+
+**Ticket payload**
+
+Same wire format as Phase 1: `cdn-ticket:v1:{eventId}:{userSub}`. No
+signature. Phase 3 check-in (separate wave) validates by calling
+`cognito-idp:AdminGetUser` against the embedded `userSub` — the volunteer
+sees the user's name/email and visually confirms.
+
+**Environment variables**
+
+| Variable           | Value                                       |
+| ------------------ | ------------------------------------------- |
+| `RSVP_TABLE`       | `cdn-rsvps`                                 |
+| `USER_POOL_ID`     | `us-west-2_cyPQF4F3r`                       |
+| `EVENT_CAPACITIES` | JSON map: `{"happy-hour-2026-06-03":50}`    |
+
+`EVENT_CAPACITIES` is a JSON-encoded string. Editing it is a one-line
+change to `scripts/deploy-cdn-rsvp.sh` plus a redeploy. The 4 KB Lambda env
+var ceiling fits dozens of events comfortably; we'll migrate to a
+`cdn-events` table if we ever exceed it.
+
+Source: [`infra/lambda/cdn-rsvp/index.mjs`](../infra/lambda/cdn-rsvp/index.mjs)
 
 ---
 
-## 6. Migration Strategy
+## 4. API Gateway HTTP V2 — `cdn-rsvp-api`
 
-A 4-day phased rollout minimizes risk:
+Single HTTP V2 API. No Lambda authorizer (auth is in the Lambda).
+OPTIONS preflights return from the Lambda's `OPTIONS` branch with the
+correct `Access-Control-Allow-Origin` for the request — there is no
+API-level CORS configuration that would otherwise shadow the OPTIONS
+routes.
 
-### Day 1: Deploy backend + dual-write
+| Property      | Value             |
+| ------------- | ----------------- |
+| API name      | `cdn-rsvp-api`    |
+| Protocol      | HTTP              |
+| Stage         | `prod` (auto-deploy) |
+| Integration   | `AWS_PROXY` → `cdn-rsvp` Lambda |
+| Payload fmt   | 2.0               |
 
-- Deploy DynamoDB table, Lambda functions, API Gateway, KMS key
-- Frontend update: `addRsvp()` writes to BOTH localStorage AND the API
-- Reads still come from localStorage (no user-visible change)
-- If API call fails, localStorage write still succeeds (graceful degradation)
+**Routes**
 
-### Day 2: Monitor
+```
+OPTIONS /rsvp
+POST    /rsvp
+GET     /rsvp
+OPTIONS /rsvp/{eventId}/spots
+GET     /rsvp/{eventId}/spots
+```
 
-- Check CloudWatch logs for Lambda errors
-- Verify DynamoDB items are being created correctly
-- Confirm KMS signatures are valid
-- Check API Gateway metrics (latency, 4xx/5xx rates)
+Invoke URL pattern: `https://{api-id}.execute-api.us-west-2.amazonaws.com/prod`.
 
-### Day 3: Switch reads to API
+The API id is generated at first deploy; the deploy script prints it for
+copy/paste into the awsug CSP.
 
-- `getRsvp()` and `listUserRsvps()` now read from API
-- localStorage becomes write-only fallback (for offline resilience)
-- QR codes now show signed v2 payloads
-- If API is unreachable, fall back to localStorage read (degraded: unsigned QR)
+Deploy script: [`scripts/deploy-cdn-rsvp-apigw.sh`](../scripts/deploy-cdn-rsvp-apigw.sh)
 
-### Day 4: Remove localStorage path
+---
 
-- Remove all localStorage read/write code from `src/lib/rsvp.ts`
-- Remove `STORAGE_KEY` constant and `readAll()`/`writeAll()` helpers
-- Clean up the `CDN_EVENTS` hardcoded array (capacity now lives server-side)
-- Final deploy — Phase 2 is fully live
+## 5. IAM Topology
+
+**Trust policy** — reuses `infra/iam/speaker-proposals-trust-policy.json`
+verbatim (Lambda-service trust). No new trust policy file.
+
+**Execution policy** — [`infra/iam/cdn-rsvp-execution-policy.json`](../infra/iam/cdn-rsvp-execution-policy.json)
+
+| Statement Sid        | Allows                                                    | On                                              |
+| -------------------- | --------------------------------------------------------- | ----------------------------------------------- |
+| `DynamoDBRsvps`      | `PutItem`, `GetItem`, `Query`, `Scan`                     | `cdn-rsvps` table                               |
+| `CognitoAdminGetUser`| `cognito-idp:AdminGetUser`                                | `us-west-2_cyPQF4F3r` (Phase 3 readiness)       |
+| `CloudWatchLogs`     | `CreateLogGroup`, `CreateLogStream`, `PutLogEvents`       | `arn:aws:logs:us-west-2:170473530355:*`         |
+
+`Scan` is needed for the `spots` endpoint (count RSVPs per event). At ≤ 50
+items this costs a single read capacity unit per call. If table size ever
+becomes an issue, add a GSI on `event_id` and tighten this to `Query` only.
+
+`AdminGetUser` is granted now but unused in Phase 2; it's included so
+Phase 3 (volunteer door scanner) doesn't need an IAM change. The Lambda
+exports a `lookupUser(userSub)` helper that's not wired to any current
+route.
+
+No `ses:*`, no `ssm:*`, no `kms:*`.
+
+**Role name:** `cdn-rsvp-lambda-role`.
+
+**API Gateway → Lambda** invoke permission is added by
+`scripts/deploy-cdn-rsvp-apigw.sh` (statement IDs
+`apigw-cdn-rsvp-invoke` and `apigw-cdn-rsvp-spots-invoke`).
+
+---
+
+## 6. Frontend Integration Plan (separate wave)
+
+Wave 35a ships the backend only. Wave 35b wires it up.
+
+`src/lib/rsvp.ts` keeps the same export signatures and swaps localStorage
+for `fetch()`:
+
+| Function              | Phase 1 (current)         | Phase 2 (wave 35b)                                |
+| --------------------- | ------------------------- | ------------------------------------------------- |
+| `addRsvp(input)`      | localStorage push         | `POST /rsvp` with Bearer ID token                 |
+| `getRsvp(evt, sub)`   | localStorage filter       | call `listUserRsvps`, find by `eventId`           |
+| `listUserRsvps(sub)`  | localStorage filter       | `GET /rsvp` with Bearer ID token                  |
+| `spotsRemaining(evt)` | `capacity - localCount`   | `GET /rsvp/{evt}/spots` (public)                  |
+| `buildTicketPayload`  | `cdn-ticket:v1:{e}:{u}`   | unchanged — wire format already matches           |
+
+Wave 35b also adds the API Gateway origin to
+`infra/cloudfront-security-headers.awsug.json` `connect-src`. The deploy
+script prints the exact origin to add (it's
+`https://{api-id}.execute-api.us-west-2.amazonaws.com`, where `{api-id}`
+is whatever HTTP V2 hands back at first deploy).
+
+Phase 1 RSVPs already in localStorage are not migrated. The auto-confirm
+flow on `/rsvp/` will write a fresh server-side record the next time the
+user visits.
 
 ---
 
 ## 7. Cost Estimate
 
-| Service | Monthly cost | Assumptions |
-|---------|-------------|-------------|
-| DynamoDB (on-demand) | ~$0.01 | 2500 writes/year, 5000 reads/year |
-| Lambda | ~$0.02 | 5000 invocations × 100ms × 128MB |
-| API Gateway HTTP V2 | ~$0.10 | 5000 requests × $1.00/million |
-| KMS asymmetric key | $1.00 | Fixed monthly charge per key |
-| KMS Sign operations | ~$0.03 | 2500 sign ops/year × $0.15/10K |
-| CloudWatch Logs | ~$0.01 | Minimal log volume |
-| **Total** | **~$1.17/mo** | |
+| Service                | Monthly | Notes                                |
+| ---------------------- | ------- | ------------------------------------ |
+| DynamoDB on-demand     | ~$0.01  | Tiny item count, sub-1 RCU avg       |
+| Lambda                 | ~$0.02  | 5 K invokes × 100 ms × 256 MB        |
+| API Gateway HTTP V2    | ~$0.02  | ~$1.00 per million requests          |
+| CloudWatch Logs        | ~$0.01  |                                      |
+| **Total**              | **~$0.05/mo** | ~$0.60/year                    |
 
-**Annual**: ~$14/year
-
-**Alternative (HMAC in SSM instead of KMS)**:
-- Replace KMS key ($1.00/mo) with an HMAC-SHA256 secret stored in SSM Parameter Store ($0.05/mo for the parameter)
-- Signing done in Lambda code (no KMS API call cost)
-- Total drops to ~$0.19/mo
-- Tradeoff: symmetric secret means if Lambda is compromised, attacker can forge tickets. KMS keeps the private key in hardware — Lambda never sees it.
+Original proposal (with KMS asymmetric, cross-account SES, dedicated
+authorizer Lambda) was ~$1.17/mo. We deleted all that.
 
 ---
 
-## 8. Open Questions for Bryan
+## 8. Phase Scope
 
-1. **Account placement**: Comfortable hosting the RSVP backend in the jitsi-video-hosting account (170473530355) alongside `cdn-feedback` and `cdn-speaker-proposals`? This follows the established pattern but concentrates more services in one account.
+**Phase 1 (shipped):** localStorage + deterministic v1 ticket payload.
+No capacity enforcement. Single-browser only.
 
-2. **KMS vs. HMAC**: The KMS asymmetric key costs $1.00/mo but provides hardware-backed signing where the private key never leaves KMS. Alternative: HMAC secret in SSM at ~$0.05/mo — simpler, cheaper, but the secret is accessible to Lambda code (less defense-in-depth). At this scale and threat model, HMAC is likely sufficient. Which do you prefer?
+**Phase 2 (this wave + next wave):**
 
-3. **Check-in / door-scan flow**: Build the `cdn-rsvp-checkin` endpoint in Phase 2, or defer to Phase 3? Building it now means the scanner app can be developed in parallel. Deferring keeps Phase 2 scope smaller.
+- Wave 35a (this PR) — Lambda + DDB + IAM + API Gateway HTTP V2 + deploy
+  scripts. Source code only; nothing deployed yet.
+- Wave 35b (separate PR) — flip `src/lib/rsvp.ts` from localStorage to
+  `fetch()`, update CSP, deploy.
 
-4. **Email notifications**: Send a confirmation email on RSVP? Could use the existing SES setup in account 211125425201 (cross-account send). Adds ~1 day of implementation. In scope or defer?
+Capabilities delivered: capacity-enforced RSVP create, idempotent return
+of existing tickets, list-mine across devices, public spots-remaining
+counter, per-IP rate limit.
 
-5. **Event capacity config**: Hardcode capacity in Lambda (simpler, one event today) or create a `cdn-events` DynamoDB table (future-proof for multi-event)? Recommendation: table, since the cost is negligible and it avoids a Lambda redeploy to change capacity.
+**Phase 3 (deferred):** volunteer-mediated door check-in.
 
----
-
-## 9. Implementation Effort
-
-| Phase | Effort | Details |
-|-------|--------|---------|
-| Backend infrastructure | 1 day | DynamoDB table + GSI, KMS key, IAM roles, API Gateway setup |
-| Lambda functions | 1-2 days | `create`, `get`, `list-mine`, authorizer — including unit tests |
-| Deploy script | 0.5 day | `scripts/deploy-rsvp-apigw.sh` mirroring feedback pattern |
-| Frontend integration | 1 day | Replace `src/lib/rsvp.ts` methods, error handling, CSP update |
-| E2E testing | 1 day | Auth flow → RSVP → capacity enforcement → QR validation |
-| Migration rollout | 4 days | Phased dual-write → API-primary → localStorage removal |
-| **Total** | **~1 week active dev** | Plus 4-day migration window |
-
----
-
-## 10. Files This Would Touch
-
-For a future implementation dispatch's reference:
-
-### New files
-
-| Path | Purpose |
-|------|---------|
-| `infra/lambda/cdn-rsvp/create.mjs` | RSVP creation Lambda |
-| `infra/lambda/cdn-rsvp/get.mjs` | Single ticket retrieval Lambda |
-| `infra/lambda/cdn-rsvp/list-mine.mjs` | User's tickets listing Lambda |
-| `infra/lambda/cdn-rsvp/authorizer.mjs` | Cognito ID token validator |
-| `infra/cdn-rsvp-iac.yml` | CloudFormation/SAM template for DDB + KMS + IAM |
-| `scripts/deploy-rsvp-apigw.sh` | API Gateway V2 deploy script (mirrors `deploy-feedback-apigw.sh`) |
-
-### Modified files
-
-| Path | Change |
-|------|--------|
-| `src/lib/rsvp.ts` | Replace localStorage with `fetch()` API calls; keep same export signatures |
-| `src/sites/awsug/rsvp/app.tsx` | Add error handling for 409/network errors; QR renders signed payload |
-| `src/sites/awsug/meetings/components/my-tickets.tsx` | Use API-backed `listUserRsvps()`; render signed QR payloads |
-| `infra/cloudfront-security-headers.awsug.json` | Add RSVP API Gateway URL to `connect-src` CSP directive |
-| `src/locales/en.json` | New keys: `rsvp.error.capacityFull`, `rsvp.error.network`, `rsvp.error.unauthorized` |
-| `src/locales/es.json` | Spanish translations for new error keys |
-
-### Environment variables
-
-| Variable | Value | Where |
-|----------|-------|-------|
-| `VITE_RSVP_API_URL` | `https://{api-id}.execute-api.us-west-2.amazonaws.com` | `.env.production` |
+The volunteer's scanner app reads the QR (`cdn-ticket:v1:{e}:{u}`),
+extracts `user_sub`, and calls
+`cognito-idp:AdminGetUser` against the user pool. The returned profile
+(name, email) is shown to the volunteer who visually confirms. A
+"checked-in" flag can be flipped on the DynamoDB record by a separate
+Lambda + route. **No HMAC, no signature** — the volunteer is the
+verification step. The IAM policy already grants `AdminGetUser`, so
+Phase 3 only needs the new Lambda + route, not an IAM change.
 
 ---
 
-## Appendix: Sequence Diagrams
+## 9. Files Touched
 
-### RSVP Creation (happy path)
+### Wave 35a (this PR — source only)
+
+| Path                                              | Status  |
+| ------------------------------------------------- | ------- |
+| `infra/lambda/cdn-rsvp/index.mjs`                 | added   |
+| `infra/dynamodb/cdn-rsvps-table.json`             | added   |
+| `infra/iam/cdn-rsvp-execution-policy.json`        | added   |
+| `scripts/deploy-cdn-rsvp.sh`                      | added (executable) |
+| `scripts/deploy-cdn-rsvp-apigw.sh`                | added (executable) |
+| `docs/wave-rsvp-phase2-architecture.md`           | rewritten |
+
+### Wave 35b (follow-up — deploy + frontend wiring)
+
+| Path                                              | Status  |
+| ------------------------------------------------- | ------- |
+| `src/lib/rsvp.ts`                                 | rewrite localStorage → `fetch()` |
+| `infra/cloudfront-security-headers.awsug.json`    | add API Gateway origin to `connect-src` |
+| `.env.production`                                 | add `VITE_RSVP_API_URL` |
+| `src/locales/en-US.json` / `es-MX.json`           | new error keys (`rsvp.error.capacityFull`, etc.) |
+
+Bryan runs the deploy after wave 35a merges:
 
 ```
-User → Frontend → API Gateway → Authorizer → cdn-rsvp-create → DynamoDB
-                                                              → KMS (Sign)
-                                                              ← ticket record
-                  ← 201 { ticket + signature }
-       ← render QR with signed payload
+./scripts/deploy-cdn-rsvp.sh        # Lambda + DDB + IAM + env vars
+./scripts/deploy-cdn-rsvp-apigw.sh  # HTTP V2 API + routes + permissions
 ```
 
-### Capacity Full (rejection path)
-
-```
-User → Frontend → API Gateway → Authorizer → cdn-rsvp-create → DynamoDB (count query)
-                                                              ← count >= capacity
-                  ← 409 { error: "capacity_full" }
-       ← show "Event is full" message + Meetup RSVP link fallback
-```
-
-### Cross-device Ticket Retrieval
-
-```
-User (phone) → Frontend → API Gateway → Authorizer → cdn-rsvp-get → DynamoDB
-                                                                    ← ticket record
-                          ← 200 { ticket + signature }
-              ← render QR with signed payload (same as laptop)
-```
+The second script prints the API id and the exact CSP `connect-src` value
+to update in wave 35b.
