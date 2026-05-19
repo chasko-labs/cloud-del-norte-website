@@ -361,11 +361,15 @@
 :root:not(.awsui-dark-mode) .cdn-card {
 	background-color: var(--cdn-color-surface, #faf7f0);
 	background-image: var(--cdn-card-gradient-light);
+	/* wave 33d — softened the additional inline cream highlight from 0.85 to
+	   0.55 so it doesn't double-up on top of the already-softened rim-light
+	   inset (now 0.6 in tokens.css). prior 0.85 here + 0.85 in --cdn-card-rim-light
+	   stacked into a near-opaque cream rim that read as "everything pops". */
 	box-shadow:
 		var(--cdn-card-rim-light),
-		inset 0 1px 0 rgba(255, 250, 235, 0.85);
+		inset 0 1px 0 rgba(255, 250, 235, 0.55);
 	border-radius: var(--cdn-radius-md, 8px);
-	border: 1px solid rgba(139, 90, 43, 0.22);
+	border: 1px solid rgba(139, 90, 43, 0.18);
 }
 
 @supports (backdrop-filter: blur(0)) {
@@ -974,28 +978,33 @@
    prefers-reduced-motion. Light + dark mode parity. */
 
 .feed-featured-event {
-	/* light-mode rizz tokens — warm tungsten stage light + brand violet bloom */
-	--cdn-rizz-spot-warm: rgba(201, 162, 63, 0.22);
-	--cdn-rizz-spot-violet: rgba(144, 96, 240, 0.16);
-	--cdn-rizz-bloom-purple: rgba(90, 31, 138, 0.22);
-	--cdn-rizz-bloom-gold: rgba(201, 162, 63, 0.28);
-	--cdn-rizz-shimmer: rgba(255, 250, 235, 0.6);
-	--cdn-rizz-badge-glow: rgba(144, 96, 240, 0.45);
-	--cdn-rizz-image-rim-1: rgba(90, 31, 138, 0.32);
-	--cdn-rizz-image-rim-2: rgba(201, 162, 63, 0.28);
-	--cdn-rizz-spots-glow: rgba(144, 96, 240, 0.4);
-	/* wave-27a v2 depth + sweep tokens — light mode */
-	--cdn-v2-stage-rim: rgba(255, 250, 235, 0.08);
-	--cdn-v2-spot-sweep: rgba(144, 96, 240, 0.18);
-	--cdn-v2-ambient-bloom: rgba(90, 31, 138, 0.14);
-	--cdn-v2-date-plate-from: rgba(201, 162, 63, 0.22);
-	--cdn-v2-date-plate-to: rgba(255, 184, 71, 0.14);
-	--cdn-v2-date-plate-border: rgba(139, 90, 43, 0.42);
+	/* light-mode rizz tokens — warm tungsten stage light + brand violet bloom.
+	   wave 33d — softened spot-warm / spot-violet / bloom alphas to ~70% of
+	   prior values. on cream the prior 0.22 / 0.16 / 0.22 / 0.28 stack added
+	   to the page-wide light-mode eye-strain Bryan flagged. token-only edit;
+	   the radial spotlight + bloom geometry is unchanged. */
+	--cdn-rizz-spot-warm: rgba(201, 162, 63, 0.15);
+	--cdn-rizz-spot-violet: rgba(144, 96, 240, 0.11);
+	--cdn-rizz-bloom-purple: rgba(90, 31, 138, 0.16);
+	--cdn-rizz-bloom-gold: rgba(201, 162, 63, 0.2);
+	--cdn-rizz-shimmer: rgba(255, 250, 235, 0.5);
+	--cdn-rizz-badge-glow: rgba(144, 96, 240, 0.36);
+	--cdn-rizz-image-rim-1: rgba(90, 31, 138, 0.24);
+	--cdn-rizz-image-rim-2: rgba(201, 162, 63, 0.22);
+	--cdn-rizz-spots-glow: rgba(144, 96, 240, 0.32);
+	/* wave-27a v2 depth + sweep tokens — light mode
+	   wave 33d — also softened ambient-bloom + date-plate shimmer alphas */
+	--cdn-v2-stage-rim: rgba(255, 250, 235, 0.06);
+	--cdn-v2-spot-sweep: rgba(144, 96, 240, 0.13);
+	--cdn-v2-ambient-bloom: rgba(90, 31, 138, 0.1);
+	--cdn-v2-date-plate-from: rgba(201, 162, 63, 0.16);
+	--cdn-v2-date-plate-to: rgba(255, 184, 71, 0.1);
+	--cdn-v2-date-plate-border: rgba(139, 90, 43, 0.36);
 	--cdn-v2-date-text: var(--cdn-purple-deep, #30006a);
-	--cdn-v2-date-glow: rgba(90, 31, 138, 0.38);
-	--cdn-v2-date-shimmer: rgba(255, 250, 235, 0.55);
-	--cdn-v2-title-tape: rgba(255, 250, 235, 0.45);
-	--cdn-v2-spots-ring: rgba(144, 96, 240, 0.22);
+	--cdn-v2-date-glow: rgba(90, 31, 138, 0.3);
+	--cdn-v2-date-shimmer: rgba(255, 250, 235, 0.45);
+	--cdn-v2-title-tape: rgba(255, 250, 235, 0.38);
+	--cdn-v2-spots-ring: rgba(144, 96, 240, 0.18);
 
 	position: relative;
 	isolation: isolate;
@@ -2220,14 +2229,19 @@
 	/* Color tokens — light mode = warm amber + gold rim, the vintage
 	   theater marquee voice. Tokens are scoped to the marquee block so
 	   the rest of the card's purple/violet rizz tokens don't bleed into
-	   the sign. */
-	--cdn-marquee-bg-from: #fff5d6;
-	--cdn-marquee-bg-to: #f4d986;
+	   the sign.
+	   wave 33d — toned bg-from / bg-to away from the prior #fff5d6 → #f4d986
+	   range. those values pushed into vibrant near-yellow saturation that
+	   "vibrated" against the cream feed page background, contributing to
+	   the cumulative light-mode eye-strain. softer values keep the warm
+	   tungsten marquee voice without the saturation peak. */
+	--cdn-marquee-bg-from: #f5ead0;
+	--cdn-marquee-bg-to: #e8c97a;
 	--cdn-marquee-rim: #c98b1b;
-	--cdn-marquee-rim-highlight: rgba(255, 247, 220, 0.85);
-	--cdn-marquee-shadow: rgba(124, 64, 8, 0.32);
+	--cdn-marquee-rim-highlight: rgba(255, 247, 220, 0.7);
+	--cdn-marquee-shadow: rgba(124, 64, 8, 0.24);
 	--cdn-marquee-text: #5a2a06;
-	--cdn-marquee-text-glow: rgba(253, 230, 138, 0.65);
+	--cdn-marquee-text-glow: rgba(253, 230, 138, 0.55);
 	--cdn-marquee-bulb-core: #fde68a;
 	--cdn-marquee-bulb-rim: #f59e0b;
 	--cdn-marquee-bulb-halo: rgba(253, 230, 138, 0.7);
