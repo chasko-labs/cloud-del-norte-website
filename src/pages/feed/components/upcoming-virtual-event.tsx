@@ -64,6 +64,16 @@ function hideBrokenImage(event: SyntheticEvent<HTMLImageElement>) {
 }
 
 /**
+ * Wave 37b — onLoad handler that flags the <img> as `is-loaded` so the
+ * CSS opacity transition can fade the binary in over 320ms. The CSS rule
+ * gates this behind prefers-reduced-motion so reduced-motion users see
+ * the image at full opacity immediately.
+ */
+function markImageLoaded(event: SyntheticEvent<HTMLImageElement>) {
+	event.currentTarget.classList.add("is-loaded");
+}
+
+/**
  * Wave 33b — Starfield-twinkle marquee header.
  *
  * Replaces Cloudscape's <Header variant="h2"> with a custom JSX block so the
@@ -172,6 +182,7 @@ function UpcomingVirtualEventInner() {
 							width={1200}
 							height={630}
 							loading="lazy"
+							onLoad={markImageLoaded}
 							onError={hideBrokenImage}
 						/>
 					</a>
@@ -190,6 +201,7 @@ function UpcomingVirtualEventInner() {
 								width={1200}
 								height={630}
 								loading="lazy"
+								onLoad={markImageLoaded}
 								onError={hideBrokenImage}
 							/>
 							<EventBulbsOverlay />
