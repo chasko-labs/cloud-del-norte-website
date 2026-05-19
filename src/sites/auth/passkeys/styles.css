@@ -97,8 +97,8 @@
 		135deg,
 		var(--cdn-gradient-nav-start) 0%,
 		var(--cdn-gradient-nav-mid) 100%
-	) !important;
-	border: 1.5px solid #c9a23f80 !important;
+	);
+	border: 1.5px solid #c9a23f80;
 	box-shadow:
 		0 2px 12px rgba(201, 162, 63, 0.3),
 		inset 0 1px rgba(255, 255, 255, 0.15);
@@ -119,8 +119,8 @@
 .awsui-dark-mode
 	.cdn-passkeys-wrap
 	button[class*="awsui_button_"][class*="variant-primary"] {
-	background: linear-gradient(135deg, #9060f0 0%, #6330c8 100%) !important;
-	border: 1.5px solid #9060f080 !important;
+	background: linear-gradient(135deg, #9060f0 0%, #6330c8 100%);
+	border: 1.5px solid #9060f080;
 	box-shadow:
 		0 2px 12px rgba(144, 96, 240, 0.4),
 		inset 0 1px rgba(215, 199, 238, 0.2);

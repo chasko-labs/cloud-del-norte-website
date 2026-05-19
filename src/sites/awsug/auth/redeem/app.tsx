@@ -61,7 +61,7 @@ export default function App() {
 
 		const returnTo = params.get("return_to");
 		window.location.assign(
-			returnTo && returnTo.startsWith("/") ? returnTo : "/index.html",
+			returnTo?.startsWith("/") ? returnTo : "/index.html",
 		);
 	}, []);
 

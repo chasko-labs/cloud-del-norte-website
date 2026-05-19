@@ -162,8 +162,8 @@
    Override with !important because Cloudscape applies these as inline styles. */
 /* restored post-fc3edc19 — load-bearing for logged-in footer gap elimination */
 main[class*="awsui_layout"] {
-	min-block-size: auto !important;
-	block-size: auto !important;
+	min-block-size: auto;
+	block-size: auto;
 }
 
 /* Light mode: warm cream fills the layout seam between nav and content containers.
@@ -431,7 +431,7 @@ main[class*="awsui_layout"] {
 main[class*="awsui_layout"] > [class*="navigation-container"],
 main[class*="awsui_layout"] > [class*="tools-container"],
 main[class*="awsui_layout"] > [class*="content-container"] {
-	block-size: auto !important;
+	block-size: auto;
 }
 
 /* Side panels: clear persistent player (~72px) + footer (~48px) so panels
@@ -448,7 +448,7 @@ main[class*="awsui_layout"] > [class*="tools-container"] {
 [class*="awsui_tools_"][class*="awsui_root"],
 [class*="awsui_tools-container"],
 [class*="awsui_tools_"] [class*="awsui_help-panel"] {
-	overflow-y: auto !important;
+	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
 	touch-action: pan-y;
@@ -472,7 +472,7 @@ main[class*="awsui_layout"] > [class*="tools-container"] {
 		   to grow beyond content height. Replaces min-block-size:100% which
 		   caused viewport-fill on short-content pages (AWSUG home gap). */
 		align-self: stretch;
-		min-block-size: 0 !important;
+		min-block-size: 0;
 	}
 }
 
@@ -1999,20 +1999,20 @@ nav[class*="awsui_navigation_"]:not(
 button[class*="awsui_navigation-toggle"],
 [class*="awsui_tools-toggle_"] button,
 button[class*="awsui_tools-toggle"] {
-	width: 32px !important;
-	height: 32px !important;
-	min-width: 32px !important;
-	min-height: 32px !important;
-	max-width: 32px !important;
-	max-height: 32px !important;
-	padding: 6px !important;
-	box-sizing: content-box !important;
-	aspect-ratio: 1 !important;
-	border-radius: 50% !important;
-	transition: none !important;
-	display: flex !important;
-	align-items: center !important;
-	justify-content: center !important;
+	width: 32px;
+	height: 32px;
+	min-width: 32px;
+	min-height: 32px;
+	max-width: 32px;
+	max-height: 32px;
+	padding: 6px;
+	box-sizing: content-box;
+	aspect-ratio: 1;
+	border-radius: 50%;
+	transition: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 #top-nav [class*="utility-wrapper"] a[class*="awsui_link"] {
@@ -2033,14 +2033,14 @@ button[class*="awsui_tools-toggle"] {
 	[class*="awsui_universal-toolbar"] button[class*="awsui_navigation-toggle"],
 	[class*="awsui_universal-toolbar"] [class*="awsui_tools-toggle_"] button,
 	[class*="awsui_universal-toolbar"] button[class*="awsui_tools-toggle"] {
-		flex-shrink: 0 !important;
-		width: 32px !important;
-		height: 32px !important;
-		min-width: 32px !important;
-		padding: 6px !important;
-		box-sizing: content-box !important;
-		aspect-ratio: 1 !important;
-		border-radius: 50% !important;
+		flex-shrink: 0;
+		width: 32px;
+		height: 32px;
+		min-width: 32px;
+		padding: 6px;
+		box-sizing: content-box;
+		aspect-ratio: 1;
+		border-radius: 50%;
 	}
 }
 
@@ -2054,7 +2054,7 @@ button[class*="awsui_tools-toggle"] {
 /* A3 fix — desktop toolbar inner flex row vertical alignment */
 [class*="awsui_universal-toolbar"] > *,
 [class*="awsui_mobile-toolbar"] > * {
-	align-items: center !important;
+	align-items: center;
 }
 
 /* 3. Breadcrumb + menu open icons vertically centered in shared chrome bar */

@@ -63,7 +63,7 @@
 /* Click twinkle-burst — one-shot, replaces the looping flicker for ~600ms. */
 .cdn-bulb--twinkling {
 	animation-name: cdn-bulb-twinkle-burst;
-	animation-duration: 600ms !important;
+	animation-duration: 600ms;
 	animation-iteration-count: 1;
 	animation-timing-function: ease-out;
 	animation-direction: normal;

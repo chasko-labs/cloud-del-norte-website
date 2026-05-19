@@ -211,28 +211,28 @@
    lives on <html>).
    -------------------------------------------------------------------------- */
 html:not(.awsui-dark-mode) body {
-	--color-background-layout-main-5ilwcb: #f4f1fa !important;
-	--color-background-container-content-6u8rvp: #ede5d4 !important;
-	--color-background-container-header-gs3mbe: #ede5d4 !important;
-	--color-background-layout-panel-content-xto15e: #ede5d4 !important;
+	--color-background-layout-main-5ilwcb: #f4f1fa;
+	--color-background-container-content-6u8rvp: #ede5d4;
+	--color-background-container-header-gs3mbe: #ede5d4;
+	--color-background-layout-panel-content-xto15e: #ede5d4;
 	/* wave 33d — unified near-white control/input/popover surfaces onto the
 	   warm-cream brand value #faf7f0 (was #fdfcf8 / #fefcf8). prior values
 	   sat 1-2pp away from pure white and produced cumulative eye-strain on
 	   light mode against the cream container backgrounds. #faf7f0 is already
 	   the brand card surface (see --color-background-card-p5vrq0 below)
 	   so this also unifies the surface palette. */
-	--color-background-input-default-ifz5bb: #faf7f0 !important;
-	--color-background-control-default-4jb21l: #faf7f0 !important;
-	--color-text-body-default-vvtq8u: #2c1a0e !important;
-	--color-text-heading-default-izpp46: #1a0f05 !important;
-	--color-border-divider-default-nr68jt: rgba(139, 90, 43, 0.18) !important;
-	--color-background-card-p5vrq0: #faf7f0 !important;
-	--color-background-popover-e20fy8: #faf7f0 !important;
-	--color-background-dropdown-item-default-qmc033: #faf7f0 !important;
-	--color-background-button-normal-default-7f99mv: #faf7f0 !important;
-	--color-background-button-normal-disabled-hl039l: #faf7f0 !important;
-	--color-background-segment-default-b0r494: #faf7f0 !important;
-	--color-background-table-header-hdjxos: #ede8db !important;
+	--color-background-input-default-ifz5bb: #faf7f0;
+	--color-background-control-default-4jb21l: #faf7f0;
+	--color-text-body-default-vvtq8u: #2c1a0e;
+	--color-text-heading-default-izpp46: #1a0f05;
+	--color-border-divider-default-nr68jt: rgba(139, 90, 43, 0.18);
+	--color-background-card-p5vrq0: #faf7f0;
+	--color-background-popover-e20fy8: #faf7f0;
+	--color-background-dropdown-item-default-qmc033: #faf7f0;
+	--color-background-button-normal-default-7f99mv: #faf7f0;
+	--color-background-button-normal-disabled-hl039l: #faf7f0;
+	--color-background-segment-default-b0r494: #faf7f0;
+	--color-background-table-header-hdjxos: #ede8db;
 }
 
 /* --------------------------------------------------------------------------
@@ -779,112 +779,112 @@ body.cdn-stream-playing
 
 /* Primary button — purple/violet gradient (matches .cdn-card--cta pattern) */
 [class*="awsui_dialog"] [class*="awsui_button"][class*="variant-primary"] {
-	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-color: var(--cdn-purple, #5a1f8a);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-purple, #5a1f8a),
 		var(--cdn-violet, #9060f0)
-	) !important;
-	border-color: var(--cdn-purple, #5a1f8a) !important;
-	color: #fff !important;
-	box-shadow: 0 2px 8px rgba(90, 31, 138, 0.35) !important;
+	);
+	border-color: var(--cdn-purple, #5a1f8a);
+	color: #fff;
+	box-shadow: 0 2px 8px rgba(90, 31, 138, 0.35);
 }
 
 [class*="awsui_dialog"]
 	[class*="awsui_button"][class*="variant-primary"]:hover {
-	background-color: var(--cdn-violet, #9060f0) !important;
+	background-color: var(--cdn-violet, #9060f0);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-violet, #9060f0),
 		var(--cdn-purple, #5a1f8a)
-	) !important;
-	border-color: var(--cdn-violet, #9060f0) !important;
-	color: #fff !important;
-	box-shadow: 0 4px 14px rgba(144, 96, 240, 0.45) !important;
+	);
+	border-color: var(--cdn-violet, #9060f0);
+	color: #fff;
+	box-shadow: 0 4px 14px rgba(144, 96, 240, 0.45);
 }
 
 [class*="awsui_dialog"]
 	[class*="awsui_button"][class*="variant-primary"]:focus-visible {
-	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-color: var(--cdn-purple, #5a1f8a);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-purple, #5a1f8a),
 		var(--cdn-violet, #9060f0)
-	) !important;
-	border-color: var(--cdn-purple, #5a1f8a) !important;
-	color: #fff !important;
+	);
+	border-color: var(--cdn-purple, #5a1f8a);
+	color: #fff;
 }
 
 [class*="awsui_dialog"]
 	[class*="awsui_button"][class*="variant-primary"]:active {
-	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-color: var(--cdn-purple, #5a1f8a);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-purple, #5a1f8a),
 		var(--cdn-violet, #9060f0)
-	) !important;
-	border-color: var(--cdn-purple, #5a1f8a) !important;
-	color: #fff !important;
+	);
+	border-color: var(--cdn-purple, #5a1f8a);
+	color: #fff;
 }
 
 /* Inner label span */
 [class*="awsui_dialog"]
 	[class*="awsui_button"][class*="variant-primary"]
 	[class*="awsui_content"] {
-	color: #fff !important;
+	color: #fff;
 }
 
 /* Link/cancel button — brand violet instead of Cloudscape blue */
 [class*="awsui_dialog"] [class*="awsui_button"][class*="variant-link"] {
-	color: var(--cdn-purple, #5a1f8a) !important;
+	color: var(--cdn-purple, #5a1f8a);
 }
 
 [class*="awsui_dialog"] [class*="awsui_button"][class*="variant-link"]:hover {
-	color: var(--cdn-violet, #9060f0) !important;
+	color: var(--cdn-violet, #9060f0);
 }
 
 [class*="awsui_dialog"]
 	[class*="awsui_button"][class*="variant-link"]
 	[class*="awsui_content"] {
-	color: inherit !important;
+	color: inherit;
 }
 
 /* Dark mode — violet leads */
 .awsui-dark-mode [class*="awsui_dialog"]
 	[class*="awsui_button"][class*="variant-primary"] {
-	background-color: var(--cdn-violet, #9060f0) !important;
+	background-color: var(--cdn-violet, #9060f0);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-violet, #9060f0),
 		var(--cdn-purple, #5a1f8a)
-	) !important;
-	border-color: var(--cdn-violet, #9060f0) !important;
-	color: #fff !important;
-	box-shadow: 0 2px 10px rgba(144, 96, 240, 0.45) !important;
+	);
+	border-color: var(--cdn-violet, #9060f0);
+	color: #fff;
+	box-shadow: 0 2px 10px rgba(144, 96, 240, 0.45);
 }
 
 .awsui-dark-mode
 	[class*="awsui_dialog"]
 	[class*="awsui_button"][class*="variant-primary"]:hover {
-	background-color: #a878ff !important;
+	background-color: #a878ff;
 	background-image: linear-gradient(
 		135deg,
 		#a878ff,
 		var(--cdn-violet, #9060f0)
-	) !important;
-	border-color: #a878ff !important;
-	color: #fff !important;
-	box-shadow: 0 4px 16px rgba(168, 120, 255, 0.5) !important;
+	);
+	border-color: #a878ff;
+	color: #fff;
+	box-shadow: 0 4px 16px rgba(168, 120, 255, 0.5);
 }
 
 .awsui-dark-mode
 	[class*="awsui_dialog"]
 	[class*="awsui_button"][class*="variant-link"] {
-	color: var(--cdn-lavender, #d7c7ee) !important;
+	color: var(--cdn-lavender, #d7c7ee);
 }
 
 .awsui-dark-mode
 	[class*="awsui_dialog"]
 	[class*="awsui_button"][class*="variant-link"]:hover {
-	color: var(--cdn-violet, #9060f0) !important;
+	color: var(--cdn-violet, #9060f0);
 }

@@ -496,82 +496,82 @@ a:focus-visible > .hp-social-pill--brand {
    scoped to .hp-role-card--cta so no other buttons are affected.
    -------------------------------------------------------------------------- */
 .hp-role-card--cta [class*="awsui_button"][class*="variant-primary"] {
-	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-color: var(--cdn-purple, #5a1f8a);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-purple, #5a1f8a),
 		var(--cdn-violet, #9060f0)
-	) !important;
-	border-color: var(--cdn-purple, #5a1f8a) !important;
-	color: #fff !important;
-	box-shadow: 0 2px 8px rgba(90, 31, 138, 0.35) !important;
+	);
+	border-color: var(--cdn-purple, #5a1f8a);
+	color: #fff;
+	box-shadow: 0 2px 8px rgba(90, 31, 138, 0.35);
 }
 
 .hp-role-card--cta [class*="awsui_button"][class*="variant-primary"]:hover {
-	background-color: var(--cdn-violet, #9060f0) !important;
+	background-color: var(--cdn-violet, #9060f0);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-violet, #9060f0),
 		var(--cdn-purple, #5a1f8a)
-	) !important;
-	border-color: var(--cdn-violet, #9060f0) !important;
-	color: #fff !important;
-	box-shadow: 0 4px 14px rgba(144, 96, 240, 0.45) !important;
+	);
+	border-color: var(--cdn-violet, #9060f0);
+	color: #fff;
+	box-shadow: 0 4px 14px rgba(144, 96, 240, 0.45);
 }
 
 .hp-role-card--cta
 	[class*="awsui_button"][class*="variant-primary"]:focus-visible {
-	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-color: var(--cdn-purple, #5a1f8a);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-purple, #5a1f8a),
 		var(--cdn-violet, #9060f0)
-	) !important;
-	border-color: var(--cdn-purple, #5a1f8a) !important;
-	color: #fff !important;
+	);
+	border-color: var(--cdn-purple, #5a1f8a);
+	color: #fff;
 }
 
 .hp-role-card--cta [class*="awsui_button"][class*="variant-primary"]:active {
-	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-color: var(--cdn-purple, #5a1f8a);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-purple, #5a1f8a),
 		var(--cdn-violet, #9060f0)
-	) !important;
-	border-color: var(--cdn-purple, #5a1f8a) !important;
-	color: #fff !important;
+	);
+	border-color: var(--cdn-purple, #5a1f8a);
+	color: #fff;
 }
 
 .hp-role-card--cta
 	[class*="awsui_button"][class*="variant-primary"]
 	[class*="awsui_content"] {
-	color: #fff !important;
+	color: #fff;
 }
 
 /* Dark mode — violet leads */
 .awsui-dark-mode .hp-role-card--cta
 	[class*="awsui_button"][class*="variant-primary"] {
-	background-color: var(--cdn-violet, #9060f0) !important;
+	background-color: var(--cdn-violet, #9060f0);
 	background-image: linear-gradient(
 		135deg,
 		var(--cdn-violet, #9060f0),
 		var(--cdn-purple, #5a1f8a)
-	) !important;
-	border-color: var(--cdn-violet, #9060f0) !important;
-	color: #fff !important;
-	box-shadow: 0 2px 10px rgba(144, 96, 240, 0.45) !important;
+	);
+	border-color: var(--cdn-violet, #9060f0);
+	color: #fff;
+	box-shadow: 0 2px 10px rgba(144, 96, 240, 0.45);
 }
 
 .awsui-dark-mode
 	.hp-role-card--cta
 	[class*="awsui_button"][class*="variant-primary"]:hover {
-	background-color: #a878ff !important;
+	background-color: #a878ff;
 	background-image: linear-gradient(
 		135deg,
 		#a878ff,
 		var(--cdn-violet, #9060f0)
-	) !important;
-	border-color: #a878ff !important;
-	color: #fff !important;
-	box-shadow: 0 4px 16px rgba(168, 120, 255, 0.5) !important;
+	);
+	border-color: #a878ff;
+	color: #fff;
+	box-shadow: 0 4px 16px rgba(168, 120, 255, 0.5);
 }

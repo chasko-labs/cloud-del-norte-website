@@ -41,10 +41,10 @@ body.cdn-auth-subdomain
 [class*="awsui_scrolling-background"]:not(#\9):not(#\10):not(#\11),
 body.cdn-auth-subdomain
 	[class*="awsui_has-default-background"]:not(#\9):not(#\10):not(#\11) {
-	background: transparent !important;
-	background-color: transparent !important;
-	backdrop-filter: none !important;
-	-webkit-backdrop-filter: none !important;
+	background: transparent;
+	background-color: transparent;
+	backdrop-filter: none;
+	-webkit-backdrop-filter: none;
 }
 
 /* ── Make layout background transparent on auth pages ─────────────────────
@@ -1030,7 +1030,7 @@ body.cdn-auth-subdomain:not(#\9):not(#\9) .cdn-footer {
    ========================================================================== */
 
 body.cdn-auth-subdomain .cdn-player-slot {
-	display: none !important;
+	display: none;
 }
 
 body.cdn-auth-subdomain:not(#\9):not(#\9) [class*="awsui_content-wrapper"] {
@@ -1072,7 +1072,7 @@ body.cdn-auth-subdomain .cdn-logo-hero {
 }
 
 body.cdn-auth-subdomain .cdn-logo-hero cdn-star-logo {
-	display: none !important;
+	display: none;
 }
 
 /* ==========================================================================
