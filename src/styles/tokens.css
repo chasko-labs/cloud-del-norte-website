@@ -896,3 +896,64 @@ body.cdn-stream-playing
 	[class*="awsui_button"][class*="variant-link"]:hover {
 	color: var(--cdn-violet, #9060f0) !important;
 }
+
+/* ==========================================================================
+   Wave 42c — Light/dark mode transition smoothness
+   --------------------------------------------------------------------------
+   Bryan flagged "transition between light & dark mode is still not smooth
+   enough". Wave 25c already made the FOUC guard + initial applyMode sync
+   on first paint, so the surface lands correctly on initial load — the
+   remaining gap is the *toggle* moment: every theme-bearing property
+   (background-color, color, border-color, fill, stroke) snaps instantly
+   when the user clicks the picker, and Cloudscape's runtime applyMode()
+   walks its design-token table on a microtask so multiple surfaces flip
+   on slightly different ticks — staggered swap reads as abrupt.
+
+   Approach — a brief "transition window": src/utils/theme.ts adds the
+   .cdn-theme-transitioning class to <body> for ~240ms during the toggle
+   handler, and the rule below eases the theme-bearing properties for
+   every descendant during that window. Outside the window the class is
+   absent and there is no blanket transition cost during scroll, hover,
+   or other ambient interactions — the rule only pays for itself when
+   the user actually flips the theme.
+
+   Properties chosen — only the ones the theme actually animates:
+     - background-color + background    swaps the surface
+     - color                            swaps the prose
+     - border-color                     swaps card/button rims
+     - fill / stroke                    swaps inline SVG (icons, glyphs)
+
+   Duration 200ms ease-in-out — fast enough to feel responsive, slow
+   enough that the eye doesn't register the staggered Cloudscape token-
+   table walk as separate flips. The setTimeout in theme.ts removes the
+   class at 240ms (200ms transition + 40ms slack so the final frame
+   commits before the rule disappears).
+
+   Opt-out hook — descendants that own their own transition timing can
+   carry .no-theme-transition to skip the blanket easing during the
+   toggle window. None today; reserved for future surfaces that paint
+   their own theme animation (the wave 33b twinkle stars, fiona LEDs,
+   etc. would each have to opt out if they ever needed bespoke timing).
+
+   prefers-reduced-motion: reduce — strip the transition entirely; the
+   theme still flips, just instantly. Mirrors the rest of the site's
+   reduced-motion contract.
+   ========================================================================== */
+
+body.cdn-theme-transitioning,
+body.cdn-theme-transitioning *:not(.no-theme-transition) {
+	transition:
+		background-color 200ms ease-in-out,
+		background 200ms ease-in-out,
+		color 200ms ease-in-out,
+		border-color 200ms ease-in-out,
+		fill 200ms ease-in-out,
+		stroke 200ms ease-in-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	body.cdn-theme-transitioning,
+	body.cdn-theme-transitioning *:not(.no-theme-transition) {
+		transition: none;
+	}
+}
