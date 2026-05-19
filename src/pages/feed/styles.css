@@ -3313,7 +3313,12 @@
 	align-items: center;
 	justify-content: center;
 	min-height: 40px;
-	padding: 8px 28px;
+	/* wave 38b — tokenize raw 8px / 28px padding onto the 8pt grid.
+	   Mobile: --cdn-space-12 (12px) vertical, --cdn-space-md (16px)
+	   horizontal. Mirrors the wave 37c featured-event marquee. The
+	   original 8/28 was off-grid (28px is not a multiple of 8) and
+	   the 8px vertical was tight against the 40px min-height. */
+	padding: var(--cdn-space-12, 12px) var(--cdn-space-md, 16px);
 	border-radius: 10px;
 	overflow: hidden;
 	background: linear-gradient(
@@ -3507,16 +3512,27 @@
    div carries the layout margin; the inner span is the backplate.
    prefers-reduced-motion: no-preference gates the breathe + shimmer. */
 .feed-next-meetup__date {
-	display: block;
-	margin: 4px 0 2px;
+	display: flex;
+	align-items: center;
+	/* wave 38b — drop the legacy asymmetric 4px / 0 / 2px margin (off-grid
+	   2px). Inter-element spacing is now owned by the
+	   .feed-next-meetup__layout flex-column per-element margin-block-end
+	   tokens (date → location = --cdn-space-sm = 8px). Switching to
+	   display:flex aligns the wave 38b inline LivePulseDot microcue with
+	   the date-plate baseline as a single horizontal cluster. */
+	margin: 0;
 	font-variant-numeric: tabular-nums;
 }
 
 .feed-next-meetup__date-plate {
 	position: relative;
 	display: inline-block;
-	padding: 6px 14px;
-	border-radius: 8px;
+	/* wave 38b — round padding from raw 6px / 14px to the 8pt grid:
+	   --cdn-space-sm (8px) vertical, --cdn-space-md (16px) horizontal.
+	   Mirrors the wave 37c featured-event date-plate. Border-radius
+	   pinned to --cdn-radius-md (8px) token. */
+	padding: var(--cdn-space-sm, 8px) var(--cdn-space-md, 16px);
+	border-radius: var(--cdn-radius-md, 8px);
 	background: linear-gradient(
 		135deg,
 		var(--cdn-nm-date-plate-from) 0%,
@@ -3709,7 +3725,11 @@
 @media (min-width: 520px) {
 	.feed-next-meetup__marquee {
 		min-height: 44px;
-		padding: 10px 36px;
+		/* wave 38b — tokenize raw 10px / 36px → 12px / 24px (--cdn-space-12 /
+		   --cdn-space-lg). Mirrors the wave 37c featured-event tablet
+		   marquee padding. 36px was off-grid; 24px falls on the canonical
+		   8pt scale and matches Cloudscape SpaceBetween size="l". */
+		padding: var(--cdn-space-12, 12px) var(--cdn-space-lg, 24px);
 	}
 
 	.feed-next-meetup__marquee-text {
@@ -3721,13 +3741,154 @@
 @media (min-width: 860px) {
 	.feed-next-meetup__marquee {
 		min-height: 48px;
-		padding: 12px 44px;
+		/* wave 38b — tokenize raw 12px / 44px → 16px / 24px (--cdn-space-md /
+		   --cdn-space-lg). Mirrors the wave 37c featured-event desktop
+		   marquee padding. 44px was off-grid; the new 16/24 pair gives
+		   the sign desktop-class breathing room while keeping the box
+		   rhythm on the 8pt scale. */
+		padding: var(--cdn-space-md, 16px) var(--cdn-space-lg, 24px);
 	}
 
 	.feed-next-meetup__marquee-text {
 		font-size: 1.125rem;
 		letter-spacing: 0.08em;
 	}
+}
+
+/* ==========================================================================
+   Wave 38b — Next meetup layout grid + spacing hierarchy + description
+   personality + LivePulseDot inline microcue
+   ==========================================================================
+
+   Brings the wave 33a next meetup card up to the wave 37c spacing baseline
+   the featured-event card got. Bryan's framing: "all the upcoming meetup
+   cards are pretty amateur looking & lacking our signature styling — keep
+   critiquing & improving them".
+
+   AUDIT (what was hackey on this card before this wave):
+     - Marquee padding mobile / tablet / desktop = 8/28, 10/36, 12/44 →
+       all off the 8pt grid (28, 36, 44 are not multiples of 8; the
+       vertical 8/10/12 mixed half-grid + on-grid).
+     - Date plate padding 6px 14px → both values off-grid (6 + 14 are
+       not multiples of 4; featured-event uses 8/16 token-tier).
+     - Date wrapper margin: 4 / 0 / 2 → asymmetric, the 2px lower
+       margin was off the 4-unit grid entirely.
+     - The loaded-event branch wrapped its content in
+       <SpaceBetween size="s"> which forced a uniform 12px gap between
+       every pair of children — no spacing hierarchy, the title and
+       date string read at the same beat as the location and
+       description. Wave 37c on featured-event had moved past flat
+       gap onto a per-element margin-block-end ladder so the cluster
+       reads as "headline → time → fine-print metadata → prose".
+
+   TOKEN-BASED HIERARCHY (mirrors wave 37c featured-event):
+     past-label → title    : --cdn-space-sm  (8px)  small cluster step
+     title     → date     : --cdn-space-12  (12px) hero hierarchy
+     date      → location : --cdn-space-sm  (8px)  meta cluster
+     location  → desc     : --cdn-space-12  (12px) close prose to context
+     description (last)   : 0 (no margin-block-end on the final item)
+
+   Smaller gaps cluster related metadata; the larger 12px steps mark
+   semantic boundaries (headline beat, prose beat). The next-meetup card
+   does not have an in-card CTA in the loaded-event branch (the title
+   itself is the click target via the external Meetup link), so the
+   wave 37c "spots → buttons = 24px primary-action breathing room" step
+   does not apply here. The en-US fallback branch keeps its
+   <SpaceBetween size="s"> primitive — it's a simple 2-element stack
+   (CTA copy + button) where uniform 12px reads correctly. Same for the
+   es-MX past-meetup spotlight: SpaceBetween size="s" gives a flat 12px
+   that reads as evenly-pitched paragraphs.
+
+   DESCRIPTION PERSONALITY:
+     The optional event.description Box (wave 33a rendered it as a
+     muted text-body-secondary body-s line) is promoted to color="inherit"
+     + fontSize="body-m" in the JSX, paired with the .feed-next-meetup__
+     description CSS rule below — explicit --cdn-text-base font-size +
+     line-height: 1.65 + 64ch max-width + var(--cdn-color-text). Mirrors
+     the wave 37c featured-event description treatment so the meetup
+     copy reads as deliberate voice rather than fine-print metadata.
+
+   LIVEPULSEDOT MICROCUE:
+     A small inline pulsing-dot SVG component (~16px, aria-hidden,
+     prefers-reduced-motion gated) sits before the date-plate as a "next
+     live session" indicator. Owns its own component file
+     (live-pulse-dot.tsx + live-pulse-dot.css) and inherits the steel-
+     blue / teal palette via the .feed-next-meetup__date currentColor
+     rule below. Adjacent in spirit to featured-event's inline AsciiSmirk
+     after "game" — a tiny idiosyncratic glyph that gives the card a
+     quiet bit of character. */
+
+/* Layout primitive — flex column with per-element margin-block-end.
+   Replaces the wave 33a SpaceBetween size="s" wrapper on the loaded-
+   event branch. min-width: 0 lets the column shrink inside its
+   Cloudscape Container parent without long event titles forcing the
+   track wider than the card (mirrors the .feed-featured-event__layout
+   pattern). */
+.feed-next-meetup__layout {
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+	min-width: 0;
+}
+
+.feed-next-meetup__past-label {
+	/* past-label → title : 8px (small cluster step). Keeps the past-
+	   event indicator visually attached to the title it modifies. */
+	margin-block-end: var(--cdn-space-sm, 8px);
+}
+
+/* wave 38b — title → date : 12px (hero hierarchy step). The wave 33a
+   .feed-next-meetup__title rule above carries the steel-blue / cyan
+   gradient + scrolling-tape animation; this rule only adds the
+   margin-block-end so the spacing hierarchy is explicit at the call
+   site. Compound selector (.feed-next-meetup__layout descendant) so
+   the rule does not affect the title in the fallback / past-meetup
+   branches that still use SpaceBetween. */
+.feed-next-meetup__layout .feed-next-meetup__title {
+	margin-block-end: var(--cdn-space-12, 12px);
+}
+
+/* wave 38b — date → location : 8px (meta cluster step). Same scope-
+   to-layout pattern as the title rule. */
+.feed-next-meetup__layout .feed-next-meetup__date {
+	margin-block-end: var(--cdn-space-sm, 8px);
+	/* Steel-blue currentColor for the inline LivePulseDot; the dot
+	   inherits this hue so its halo + core paint in-palette without
+	   the component file owning brand tokens. Dark-mode override
+	   below shifts to the lighter teal --cdn-nm-title-mid. */
+	color: var(--cdn-nm-title-mid, #2c5282);
+}
+
+.awsui-dark-mode .feed-next-meetup__layout .feed-next-meetup__date {
+	color: var(--cdn-nm-title-mid, #99f6e4);
+}
+
+.feed-next-meetup__location {
+	/* location → description : 12px (semantic boundary step). */
+	margin-block-end: var(--cdn-space-12, 12px);
+}
+
+/* Wave 38b — description personality uplift. Mirrors the wave 37c
+   .feed-featured-event__description treatment so both event cards read
+   with the same prose voice.
+     line-height 1.65         — open vertical rhythm for body prose
+     font-size --cdn-text-base — explicit token (14px); replaces the
+                                 inherited body-s metadata-tier value
+     color    var(--cdn-color-text) — high-contrast text token; pairs
+                                 with the JSX color="inherit" prop so
+                                 Cloudscape's secondary-color override
+                                 doesn't paint over the deliberate token
+     letter-spacing 0.005em   — subtle, matches featured-event
+     max-width 64ch            — comfortable reading measure for prose
+   The description Box is the last item in the layout, so no margin-
+   block-end is needed (the card body's own bottom padding handles the
+   tail spacing). */
+.feed-next-meetup__description {
+	font-size: var(--cdn-text-base, 0.875rem);
+	line-height: 1.65;
+	max-width: 64ch;
+	letter-spacing: 0.005em;
+	color: var(--cdn-color-text);
 }
 
 /* ==========================================================================

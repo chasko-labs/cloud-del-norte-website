@@ -184,3 +184,129 @@ describe("NextMeetup — wave 33a CSS hooks (prefers-reduced-motion + cdn-scroll
 		expect(stylesText).toMatch(/--cdn-nm-marquee-rim: #5eead4/);
 	});
 });
+
+describe("NextMeetup — wave 38b spacing redesign + description personality", () => {
+	// jsdom doesn't apply external CSS to the cascade, so we read the
+	// stylesheet text directly and assert the wave 38b spacing-token
+	// substitutions + the new layout/description rules are wired in.
+	const stylesPath = join(__dirname, "..", "..", "styles.css");
+	const stylesText = readFileSync(stylesPath, "utf8");
+
+	it("replaces the wave 33a raw-px marquee padding with --cdn-space-* tokens at all three breakpoints (mobile 12/16, tablet 12/24, desktop 16/24)", () => {
+		// Mobile — 12 / 16. The mobile rule lives inside the .feed-next-
+		// meetup__marquee block, not inside a media query. Match the
+		// padding line within that block.
+		const mobileBlock = stylesText.match(
+			/\.feed-next-meetup__marquee \{[\s\S]*?padding: var\(--cdn-space-12, 12px\) var\(--cdn-space-md, 16px\);/,
+		);
+		expect(mobileBlock).not.toBeNull();
+
+		// Tablet — 12 / 24
+		const tabletBlock = stylesText.match(
+			/@media \(min-width: 520px\)[\s\S]*?\.feed-next-meetup__marquee \{[\s\S]*?padding: var\(--cdn-space-12, 12px\) var\(--cdn-space-lg, 24px\);/,
+		);
+		expect(tabletBlock).not.toBeNull();
+
+		// Desktop — 16 / 24
+		const desktopBlock = stylesText.match(
+			/@media \(min-width: 860px\)[\s\S]*?\.feed-next-meetup__marquee \{[\s\S]*?padding: var\(--cdn-space-md, 16px\) var\(--cdn-space-lg, 24px\);/,
+		);
+		expect(desktopBlock).not.toBeNull();
+	});
+
+	it("replaces the wave 33a raw-px date-plate padding with --cdn-space-sm / --cdn-space-md tokens", () => {
+		const datePlateBlock = stylesText.match(
+			/\.feed-next-meetup__date-plate \{[\s\S]*?padding: var\(--cdn-space-sm, 8px\) var\(--cdn-space-md, 16px\);/,
+		);
+		expect(datePlateBlock).not.toBeNull();
+	});
+
+	it("removes the wave 33a asymmetric date wrapper margin (4 / 0 / 2) — spacing is now owned by the layout grid hierarchy", () => {
+		expect(stylesText).not.toMatch(
+			/\.feed-next-meetup__date \{[\s\S]*?margin: 4px 0 2px;/,
+		);
+	});
+
+	it("declares the wave 38b __layout flex-column primitive that replaces the loaded-event SpaceBetween wrapper", () => {
+		const layoutBlock = stylesText.match(
+			/\.feed-next-meetup__layout \{[\s\S]*?display: flex;[\s\S]*?flex-direction: column;[\s\S]*?gap: 0;/,
+		);
+		expect(layoutBlock).not.toBeNull();
+	});
+
+	it("encodes the spacing hierarchy ladder via per-element margin-block-end on the wave 38b layout children (title→date 12, date→location 8, location→desc 12)", () => {
+		// title → date : 12px
+		expect(stylesText).toMatch(
+			/\.feed-next-meetup__layout \.feed-next-meetup__title \{[\s\S]*?margin-block-end: var\(--cdn-space-12, 12px\);/,
+		);
+		// date → location : 8px
+		expect(stylesText).toMatch(
+			/\.feed-next-meetup__layout \.feed-next-meetup__date \{[\s\S]*?margin-block-end: var\(--cdn-space-sm, 8px\);/,
+		);
+		// location → description : 12px
+		expect(stylesText).toMatch(
+			/\.feed-next-meetup__location \{[\s\S]*?margin-block-end: var\(--cdn-space-12, 12px\);/,
+		);
+	});
+
+	it("declares the wave 38b description personality rule (line-height 1.65, --cdn-text-base, var(--cdn-color-text), 64ch max-width)", () => {
+		const descriptionBlock = stylesText.match(
+			/\.feed-next-meetup__description \{[\s\S]*?font-size: var\(--cdn-text-base, 0\.875rem\);[\s\S]*?line-height: 1\.65;[\s\S]*?max-width: 64ch;[\s\S]*?color: var\(--cdn-color-text\);/,
+		);
+		expect(descriptionBlock).not.toBeNull();
+	});
+});
+
+describe("NextMeetup — wave 38b LivePulseDot inline microcue integration", () => {
+	// Stub the static-data fetch so the loaded-event branch renders
+	// (and the LivePulseDot gets mounted). Without this, the component
+	// stays in the "loading" state and the layout / dot don't render.
+	function mockSuccessfulFetch() {
+		const futureIso = new Date(
+			Date.now() + 7 * 24 * 60 * 60 * 1000,
+		).toISOString();
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({
+					summary: "AWS UG Cloud Del Norte — Test Meetup",
+					dtstart: futureIso,
+					url: "https://www.meetup.com/awsugclouddelnorte/events/test/",
+					location: "Downtown El Paso",
+					description: "Test description for wave 38b layout.",
+				}),
+				text: async () => "",
+			}),
+		);
+	}
+
+	it("renders the LivePulseDot SVG inside the date wrapper as aria-hidden once the loaded-event branch mounts", async () => {
+		mockSuccessfulFetch();
+		const { container, findByRole } = render(
+			<LocaleProvider locale="us">
+				<NextMeetup />
+			</LocaleProvider>,
+		);
+		// Wait for the date-plate to render (signals the loaded branch is up).
+		// findByRole on the heading lets vitest poll until the iCal stub resolves.
+		await findByRole("heading", { level: 2 });
+		// Poll for the date wrapper since the static-fetch effect is async.
+		// The LivePulseDot renders inside .feed-next-meetup__date.
+		const start = Date.now();
+		let dot: Element | null = null;
+		while (Date.now() - start < 1500) {
+			dot = container.querySelector(
+				".feed-next-meetup__date .cdn-live-pulse-dot",
+			);
+			if (dot) break;
+			await new Promise((r) => setTimeout(r, 25));
+		}
+		expect(dot).not.toBeNull();
+		expect(dot?.getAttribute("aria-hidden")).toBe("true");
+		// Two circles inside the dot's SVG (halo + core).
+		const circles = dot?.querySelectorAll("circle");
+		expect(circles?.length).toBe(2);
+		vi.unstubAllGlobals();
+	});
+});

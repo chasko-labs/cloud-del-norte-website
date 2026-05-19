@@ -56,6 +56,7 @@ import {
 } from "react";
 import { SkeletonLine, SkeletonTitle } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
+import LivePulseDot from "./live-pulse-dot";
 
 const MEETUP_GROUP = "awsugclouddelnorte";
 const MEETUP_ICAL = `https://www.meetup.com/${MEETUP_GROUP}/events/ical/`;
@@ -335,10 +336,26 @@ function NextMeetupInner() {
 			);
 		}
 	} else {
+		// Wave 38b — loaded-event branch is rebuilt as a flex column layout
+		// with per-element margin-block-end so the spacing hierarchy mirrors
+		// the wave 37c featured-event treatment:
+		//   past-label → title    : --cdn-space-sm  (8px)  small cluster step
+		//   title     → date     : --cdn-space-12  (12px) hero hierarchy
+		//   date      → location : --cdn-space-sm  (8px)  meta cluster
+		//   location  → desc     : --cdn-space-12  (12px) close prose to context
+		// SpaceBetween size="s" (the wave 33a primitive) gave a uniform 12px
+		// gap which read as flat — the wave 37c hierarchy is what gives the
+		// cluster a deliberate ladder. The loading + en-US fallback + es-MX
+		// past-meetup-spotlight branches keep their SpaceBetween primitives
+		// — those are simpler stacks where uniform 12px reads correctly.
 		content = (
-			<SpaceBetween size="s">
+			<div className="feed-next-meetup__layout">
 				{event.isPast && (
-					<Box color="text-status-inactive" fontSize="body-s">
+					<Box
+						color="text-status-inactive"
+						fontSize="body-s"
+						className="feed-next-meetup__past-label"
+					>
 						{t("feedPage.nextMeetupPastLabel")}
 					</Box>
 				)}
@@ -355,28 +372,49 @@ function NextMeetupInner() {
 						event.summary
 					)}
 				</Box>
-				{/* Wave 33a — date-plate VFX. Date string itself is plain HTML
-				    output from Intl.DateTimeFormat (no SVG, no canvas, no string
-				    splitting). The wrapper div carries the layout margin; the
-				    inner span is the steel-blue / deep-teal backplate with a
-				    soft pulsing text-shadow glow + diagonal sweep shimmer. */}
+				{/* Wave 33a — date-plate VFX + wave 38b — inline LivePulseDot
+				    microcue. Date string itself is plain HTML output from
+				    Intl.DateTimeFormat (no SVG, no canvas, no string
+				    splitting). The wrapper div carries the layout margin;
+				    the LivePulseDot sits inline before the plate as a
+				    "next live session" indicator; the plate span is the
+				    steel-blue / deep-teal backplate with the breathe + sweep
+				    VFX defined in styles.css. */}
 				<div className="feed-next-meetup__date">
+					<LivePulseDot />
 					<span className="feed-next-meetup__date-plate">
 						{formatDate(event.dtstart)}
 					</span>
 				</div>
 				{event.location && (
-					<Box color="text-body-secondary" fontSize="body-s">
+					<Box
+						color="text-body-secondary"
+						fontSize="body-s"
+						className="feed-next-meetup__location"
+					>
 						{event.location}
 					</Box>
 				)}
+				{/* Wave 38b — description copy gets the wave 37c personality
+				    uplift: color="inherit" (was "text-body-secondary" muted
+				    gray) so the .feed-next-meetup__description CSS rule —
+				    which sets color: var(--cdn-color-text) — actually
+				    paints. fontSize="body-m" (was body-s) bumps the inherited
+				    text size onto the --cdn-text-base tier; the same CSS
+				    rule layers an explicit var(--cdn-text-base) font-size +
+				    line-height: 1.65 + 64ch max-width on top so the prose
+				    reads as deliberate voice rather than fine-print metadata. */}
 				{event.description && (
-					<Box color="text-body-secondary" fontSize="body-s">
+					<Box
+						color="inherit"
+						fontSize="body-m"
+						className="feed-next-meetup__description"
+					>
 						{event.description}
 						{event.description.length >= MAX_DESCRIPTION_CHARS ? "…" : ""}
 					</Box>
 				)}
-			</SpaceBetween>
+			</div>
 		);
 	}
 
