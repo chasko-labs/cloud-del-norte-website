@@ -132,9 +132,9 @@
 		"shortsNowShowing": "ahorita pasando video",
 		"featuredEventHeader": "Evento destacado",
 		"featuredEventBadge": "NO TE LO PIERDAS",
-		"featuredEventTitle": "Happy Hour del Speakeasy — Noche de Networking en Junio",
+		"featuredEventTitle": "Hora Feliz Comunitaria y Noche de Networking",
 		"featuredEventLocation": "Centro de El Paso, TX — tráete a tu raza",
-		"featuredEventDescription": "Cáele — tacos, chelas, y builders echando plática real sobre AWS, carreras, y el camino en la nube por todo el borderplex",
+		"featuredEventDescription": "Cáele en el trolley, píllate un Lyft, en bici, o tráete tu nave para finger-foods, bebidas (incluyendo opciones sin alcohol), y platícale casual sobre. AWS Builder Center Cards van a estar disponibles para cualquiera que esté \"game.\"",
 		"featuredEventRsvp": "Registrarse en Meetup",
 		"featuredEventImageAlt": "Foto del evento comunitario AWS Cloud del Norte UG",
 		"upcomingVirtualEventHeader": "Próximo evento virtual AWS comunidad",
@@ -150,7 +150,7 @@
 		"upcomingVirtualEventUgMarkLabel": "Marca AWS User Group",
 		"featuredEventInPersonLabel": "Junio 2026 presencial: centro de El Paso, Texas",
 		"featuredEventSpotsRemaining": "Quedan {count} de {capacity} cupos",
-		"featuredEventRsvpPrimary": "RSVP y regístrate al speakeasy de CloudDelNorte.org",
+		"featuredEventRsvpPrimary": "RSVP en CloudDelNorte.org",
 		"featuredEventRsvpMeetup": "RSVP en Meetup"
 	},
 	"dashboardPage": {

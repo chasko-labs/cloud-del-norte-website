@@ -1,0 +1,150 @@
+/* --------------------------------------------------------------------------
+   AsciiSmirk — inline animated ASCII-style smirk SVG.
+
+   Sits inline next to the "game." quoted hook in the featured-event
+   description. ~16px tall, vertical-align: middle so it hugs the baseline
+   like an emoji. Stroke + fill use currentColor so the parent type token
+   carries the brand-correct hue (deep cdn-purple on light, lavender on
+   dark — scoped under .feed-featured-event*). Backplate drops a small cream
+   (light) / indigo (dark) rounded rect behind the glyph for legibility.
+
+   Animations:
+     - default loop (4.6s): subtle blink on the left eye + tiny smirk widen
+     - intermittent twitch (15s): right eyebrow raises ~1px and settles
+     - hover (no-preference only): both eyes squint, mouth widens a touch,
+       spark ring fades in for ~280ms then settles
+     - prefers-reduced-motion: ALL animations off; static glyph still reads
+   -------------------------------------------------------------------------- */
+
+.cdn-ascii-smirk {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	margin: 0 4px 0 4px;
+	padding: 0 4px;
+	border-radius: 6px;
+	background: rgba(255, 250, 235, 0.55);
+	box-shadow:
+		inset 0 0 0 1px rgba(90, 31, 138, 0.18),
+		0 1px 2px rgba(48, 0, 106, 0.08);
+	color: var(--cdn-purple, #5a1f8a);
+	line-height: 1;
+}
+
+.awsui-dark-mode .cdn-ascii-smirk {
+	background: rgba(48, 0, 106, 0.55);
+	box-shadow:
+		inset 0 0 0 1px rgba(199, 184, 232, 0.22),
+		0 1px 2px rgba(0, 0, 0, 0.4);
+	color: var(--cdn-lavender, #d7c7ee);
+}
+
+.cdn-ascii-smirk__svg {
+	display: block;
+	overflow: visible;
+}
+
+/* ---------- transform-origins so squint + blink scale around their center ---------- */
+.cdn-ascii-smirk__eye--left {
+	transform-origin: 9.5px 8px;
+}
+
+.cdn-ascii-smirk__eye--right {
+	transform-origin: 22.5px 8px;
+}
+
+.cdn-ascii-smirk__brow {
+	transform-origin: 22.5px 4px;
+}
+
+.cdn-ascii-smirk__mouth {
+	transform-origin: 15px 15px;
+	transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.cdn-ascii-smirk__spark {
+	transform-origin: 16px 11px;
+	transition:
+		opacity 220ms ease,
+		transform 280ms ease;
+}
+
+/* ---------- Animations — only when motion is permitted ---------- */
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes cdn-ascii-smirk-blink {
+		0%,
+		88%,
+		100% {
+			transform: scaleY(1);
+		}
+		92% {
+			transform: scaleY(0.08);
+		}
+	}
+
+	@keyframes cdn-ascii-smirk-brow-twitch {
+		0%,
+		94%,
+		100% {
+			transform: translateY(0);
+		}
+		96% {
+			transform: translateY(-1px);
+		}
+		98% {
+			transform: translateY(-0.5px);
+		}
+	}
+
+	@keyframes cdn-ascii-smirk-mouth-widen {
+		0%,
+		88%,
+		100% {
+			transform: scaleX(1);
+		}
+		92% {
+			transform: scaleX(1.05);
+		}
+	}
+
+	.cdn-ascii-smirk__eye--left {
+		animation: cdn-ascii-smirk-blink 4.6s ease-in-out infinite;
+	}
+
+	.cdn-ascii-smirk__brow {
+		animation: cdn-ascii-smirk-brow-twitch 15s ease-in-out infinite;
+	}
+
+	.cdn-ascii-smirk__mouth {
+		animation: cdn-ascii-smirk-mouth-widen 4.6s ease-in-out infinite;
+	}
+
+	/* ---------- Hover flourish ---------- */
+	.cdn-ascii-smirk:hover .cdn-ascii-smirk__eye--left,
+	.cdn-ascii-smirk:hover .cdn-ascii-smirk__eye--right {
+		transform: scaleY(0.45);
+		transition: transform 180ms cubic-bezier(0.4, 0, 0.2, 1);
+	}
+
+	.cdn-ascii-smirk:hover .cdn-ascii-smirk__mouth {
+		transform: scaleX(1.12);
+	}
+
+	.cdn-ascii-smirk:hover .cdn-ascii-smirk__spark {
+		opacity: 0.85;
+		transform: scale(1.15);
+	}
+}
+
+/* ---------- Reduced-motion fallback — strip animation, keep static glyph ---------- */
+@media (prefers-reduced-motion: reduce) {
+	.cdn-ascii-smirk__eye--left,
+	.cdn-ascii-smirk__eye--right,
+	.cdn-ascii-smirk__brow,
+	.cdn-ascii-smirk__mouth,
+	.cdn-ascii-smirk__spark {
+		animation: none;
+		transition: none;
+	}
+}

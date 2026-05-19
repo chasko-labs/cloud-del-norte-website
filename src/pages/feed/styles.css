@@ -952,17 +952,26 @@
 	}
 }
 
-/* ---------- Featured event card — wave 25a "rizz" upgrade ----------
-   Brings the featured event card up to the fiona end-credits visual standard:
-   stage-light gradient backplate (warm tungsten on light, cool stage-spot
-   violet on dark), multi-layer ambient bloom, animated shimmer sweep on the
-   FEATURED badge, image with twin-bloom rim (purple + AWS gold to echo the
-   Copilot artwork) + micro-tilt easter-egg on hover, marquee-feel typography
-   on title/date, pulsing chip on the spots-remaining counter.
+/* ---------- Featured event card — wave 27a "v2" upgrade ----------
+   Builds on the wave 25a base ("rizz" upgrade) and pushes the card up to
+   the fiona end-credits dimensional standard:
+     - perspective + preserve-3d so child layers can translateZ for parallax
+     - second ::after pseudo carries a slow cool spotlight sweep (7s cycle)
+     - inset 1px stage rim (cream/lavender mode-flipped at 8% alpha)
+     - layered outer shadow stack (existing rizz halos + new ambient bloom)
+     - image gets rotateY(-1.4deg) + translateZ(6px) tilt on hover (CSS 3D)
+     - title link inherits a scrolling-tape shimmer (left→right, 9s)
+     - date renders inside a backplate (tungsten amber light / indigo dark)
+       with a soft pulsing text-shadow glow + diagonal sweep shimmer for
+       extreme legibility. Date string itself stays plain HTML/Intl text.
+     - spots counter pulses (existing) + a faint outer breathing ring.
 
    Local CSS variables scoped to .feed-featured-event keep the wave-23.5 token
    baseline untouched (per hard scope: do NOT mutate src/styles/tokens.css).
-   All motion respects prefers-reduced-motion. Light + dark mode parity. */
+   "dashes of babylon" interpretation: depth via CSS transforms (perspective,
+   preserve-3d, translateZ) + multi-layer shadows + animated gradient sweeps.
+   No babylon runtime is loaded on this surface. All motion respects
+   prefers-reduced-motion. Light + dark mode parity. */
 
 .feed-featured-event {
 	/* light-mode rizz tokens — warm tungsten stage light + brand violet bloom */
@@ -975,12 +984,35 @@
 	--cdn-rizz-image-rim-1: rgba(90, 31, 138, 0.32);
 	--cdn-rizz-image-rim-2: rgba(201, 162, 63, 0.28);
 	--cdn-rizz-spots-glow: rgba(144, 96, 240, 0.4);
+	/* wave-27a v2 depth + sweep tokens — light mode */
+	--cdn-v2-stage-rim: rgba(255, 250, 235, 0.08);
+	--cdn-v2-spot-sweep: rgba(144, 96, 240, 0.18);
+	--cdn-v2-ambient-bloom: rgba(90, 31, 138, 0.14);
+	--cdn-v2-date-plate-from: rgba(201, 162, 63, 0.22);
+	--cdn-v2-date-plate-to: rgba(255, 184, 71, 0.14);
+	--cdn-v2-date-plate-border: rgba(139, 90, 43, 0.42);
+	--cdn-v2-date-text: var(--cdn-purple-deep, #30006a);
+	--cdn-v2-date-glow: rgba(90, 31, 138, 0.38);
+	--cdn-v2-date-shimmer: rgba(255, 250, 235, 0.55);
+	--cdn-v2-title-tape: rgba(255, 250, 235, 0.45);
+	--cdn-v2-spots-ring: rgba(144, 96, 240, 0.22);
 
 	position: relative;
 	isolation: isolate;
 	border-left: 4px solid var(--cdn-violet, #9060f0);
 	border-radius: var(--cdn-radius-md, 8px);
 	overflow: hidden;
+	/* perspective + preserve-3d enable child translateZ() pop without
+	   loading a runtime 3D engine. 1200px = subtle, ambient depth. */
+	perspective: 1200px;
+	transform-style: preserve-3d;
+	/* layered ambient bloom — sits beneath the radial spotlight backplate
+	   (::before) and the cool sweep depth layer (::after). */
+	box-shadow:
+		0 1px 2px rgba(48, 0, 106, 0.08),
+		0 8px 28px -8px var(--cdn-v2-ambient-bloom),
+		0 18px 48px -12px var(--cdn-v2-ambient-bloom),
+		inset 0 0 0 1px var(--cdn-v2-stage-rim);
 }
 
 .awsui-dark-mode .feed-featured-event {
@@ -994,6 +1026,24 @@
 	--cdn-rizz-image-rim-1: rgba(144, 96, 240, 0.42);
 	--cdn-rizz-image-rim-2: rgba(255, 153, 0, 0.22);
 	--cdn-rizz-spots-glow: rgba(199, 184, 232, 0.45);
+	/* wave-27a v2 depth + sweep tokens — dark mode */
+	--cdn-v2-stage-rim: rgba(215, 199, 238, 0.1);
+	--cdn-v2-spot-sweep: rgba(48, 0, 106, 0.42);
+	--cdn-v2-ambient-bloom: rgba(48, 0, 106, 0.32);
+	--cdn-v2-date-plate-from: rgba(48, 0, 106, 0.6);
+	--cdn-v2-date-plate-to: rgba(90, 31, 138, 0.4);
+	--cdn-v2-date-plate-border: rgba(199, 184, 232, 0.42);
+	--cdn-v2-date-text: var(--cdn-lavender, #d7c7ee);
+	--cdn-v2-date-glow: rgba(199, 184, 232, 0.55);
+	--cdn-v2-date-shimmer: rgba(215, 199, 238, 0.4);
+	--cdn-v2-title-tape: rgba(215, 199, 238, 0.42);
+	--cdn-v2-spots-ring: rgba(199, 184, 232, 0.32);
+
+	box-shadow:
+		0 2px 6px rgba(0, 0, 0, 0.5),
+		0 10px 30px -8px var(--cdn-v2-ambient-bloom),
+		0 22px 56px -12px var(--cdn-v2-ambient-bloom),
+		inset 0 0 0 1px var(--cdn-v2-stage-rim);
 }
 
 /* Stage-light gradient backplate — two cross-faded radial spotlights:
@@ -1017,6 +1067,56 @@
 			transparent 65%
 		);
 	opacity: 0.95;
+}
+
+/* v2 depth layer — slow cool spotlight that crosses the card on a 7s ease
+   cycle, paired with a translateZ(0) anchor so the GPU compositor treats
+   this layer separately from the radial backplate (gives the parallax
+   feeling on hover translateZ pop). Keeps z-index:0 like ::before but
+   uses mix-blend-mode: screen to sit additively over the warm radials. */
+.feed-featured-event::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		transparent 0%,
+		transparent 30%,
+		var(--cdn-v2-spot-sweep) 50%,
+		transparent 70%,
+		transparent 100%
+	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
+	mix-blend-mode: screen;
+	opacity: 0.55;
+	transform: translateZ(0);
+	transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-featured-spotlight-sweep {
+		0% {
+			background-position: 120% 0;
+		}
+		60%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-featured-event::after {
+		animation: feed-featured-spotlight-sweep 7s cubic-bezier(0.4, 0, 0.2, 1)
+			infinite;
+	}
+
+	/* On hover, push the depth layer 8px toward the viewer for a parallax
+	   feeling — only meaningful with perspective on the parent. */
+	.feed-featured-event:hover::after {
+		transform: translateZ(8px);
+	}
 }
 
 /* All direct content children sit above the spotlight backplate. */
@@ -1129,11 +1229,13 @@
 		0 0 0 1px var(--cdn-rizz-image-rim-1);
 }
 
-/* hover micro-tilt easter egg (1.4deg) + intensified bloom. flat fallback
-   in @media (prefers-reduced-motion: reduce) below. */
+/* hover micro-tilt easter egg + intensified bloom. v2 swaps the 2D rotate
+   for a CSS 3D rotateY + translateZ to read as a stamped/floating-above-card
+   pop in concert with the parent perspective. Flat fallback in
+   @media (prefers-reduced-motion: reduce) below. */
 @media (prefers-reduced-motion: no-preference) {
 	.feed-featured-event__image:hover {
-		transform: rotate(-1.4deg) translateY(-2px);
+		transform: rotateY(-1.4deg) translateZ(6px) translateY(-2px);
 		filter: brightness(1.04) saturate(1.06);
 		box-shadow:
 			inset 0 0 0 1px rgba(255, 250, 235, 0.28),
@@ -1151,11 +1253,20 @@
 }
 
 .feed-featured-event__title a {
+	/* v2 — title gradient gets a 3rd cream stop so animating background-position
+	   sweeps the highlight from left → right every 9s, giving a subtle scrolling
+	   tape feel without redrawing the text. The clip-to-text mask keeps the
+	   shimmer constrained to the glyph silhouettes. */
 	background-image: linear-gradient(
 		90deg,
 		var(--cdn-purple, #5a1f8a) 0%,
-		var(--cdn-violet, #9060f0) 100%
+		var(--cdn-violet, #9060f0) 38%,
+		var(--cdn-v2-title-tape) 50%,
+		var(--cdn-violet, #9060f0) 62%,
+		var(--cdn-purple, #5a1f8a) 100%
 	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
 	background-clip: text;
 	-webkit-background-clip: text;
 	color: transparent;
@@ -1168,8 +1279,29 @@
 	background-image: linear-gradient(
 		90deg,
 		var(--cdn-violet, #9060f0) 0%,
-		var(--cdn-lavender, #d7c7ee) 100%
+		var(--cdn-lavender, #d7c7ee) 38%,
+		var(--cdn-v2-title-tape) 50%,
+		var(--cdn-lavender, #d7c7ee) 62%,
+		var(--cdn-violet, #9060f0) 100%
 	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-featured-title-tape {
+		0% {
+			background-position: 120% 0;
+		}
+		70%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-featured-event__title a {
+		animation: feed-featured-title-tape 9s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+	}
 }
 
 .feed-featured-event__title a:hover,
@@ -1184,9 +1316,146 @@
 	border-radius: 2px;
 }
 
+/* ---------- Date VFX — extreme legibility backplate + glow + shimmer ----------
+   The date string itself is plain HTML output from Intl.DateTimeFormat (no
+   SVG, no canvas, no string splitting). The wrapper div carries the layout
+   margin. The inner span is the backplate: tungsten amber gradient on light,
+   indigo gradient on dark. Bold tabular figures, slightly tightened tracking
+   for a marquee feel. A soft pulsing text-shadow ring breathes the legibility
+   up without pulling motion focus, and a faint diagonal sweep shimmer rides
+   the backplate on a slow loop (paired with the global ::after spotlight,
+   timed differently so they don't collide). All animation gated behind
+   prefers-reduced-motion: no-preference. */
 .feed-featured-event__date {
-	letter-spacing: 0.04em;
+	display: block;
+	margin: 4px 0 2px;
 	font-variant-numeric: tabular-nums;
+}
+
+.feed-featured-event__date-plate {
+	position: relative;
+	display: inline-block;
+	padding: 6px 14px;
+	border-radius: 8px;
+	background: linear-gradient(
+		135deg,
+		var(--cdn-v2-date-plate-from) 0%,
+		var(--cdn-v2-date-plate-to) 100%
+	);
+	border: 1px solid var(--cdn-v2-date-plate-border);
+	color: var(--cdn-v2-date-text);
+	/* baseline body-s in feed is ~14px; bump to 1.5x ≈ 21px for legibility. */
+	font-size: 1.5rem;
+	font-weight: 800;
+	line-height: 1.15;
+	letter-spacing: 0.01em;
+	font-variant-numeric: tabular-nums;
+	overflow: hidden;
+	box-shadow:
+		inset 0 1px 0 rgba(255, 250, 235, 0.5),
+		0 2px 6px -1px rgba(139, 90, 43, 0.18),
+		0 6px 18px -6px var(--cdn-v2-date-glow);
+	/* small CSS 3D pop — sits 4px above the card surface so the perspective
+	   on the parent gives it a stamped-floating-above feel. */
+	transform: translateZ(4px);
+}
+
+.awsui-dark-mode .feed-featured-event__date-plate {
+	box-shadow:
+		inset 0 1px 0 rgba(215, 199, 238, 0.22),
+		0 2px 8px -2px rgba(0, 0, 0, 0.4),
+		0 6px 22px -6px var(--cdn-v2-date-glow);
+}
+
+/* Diagonal shimmer sweep across the date plate — slower than the badge
+   (badge: 4.6s, date: 6.5s) so the eye registers the glow individually. */
+.feed-featured-event__date-plate::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		transparent 0%,
+		transparent 38%,
+		var(--cdn-v2-date-shimmer) 50%,
+		transparent 62%,
+		transparent 100%
+	);
+	background-size: 240% 100%;
+	background-position: 120% 0;
+	mix-blend-mode: screen;
+	border-radius: inherit;
+	opacity: 0.65;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-featured-date-glow {
+		0%,
+		100% {
+			text-shadow:
+				0 0 0 transparent,
+				0 1px 0 rgba(255, 250, 235, 0.45);
+			box-shadow:
+				inset 0 1px 0 rgba(255, 250, 235, 0.5),
+				0 2px 6px -1px rgba(139, 90, 43, 0.18),
+				0 6px 18px -6px var(--cdn-v2-date-glow);
+		}
+		50% {
+			text-shadow:
+				0 0 6px var(--cdn-v2-date-glow),
+				0 1px 0 rgba(255, 250, 235, 0.45);
+			box-shadow:
+				inset 0 1px 0 rgba(255, 250, 235, 0.6),
+				0 2px 8px -1px rgba(139, 90, 43, 0.22),
+				0 8px 24px -6px var(--cdn-v2-date-glow);
+		}
+	}
+
+	@keyframes feed-featured-date-glow-dark {
+		0%,
+		100% {
+			text-shadow:
+				0 0 0 transparent,
+				0 1px 0 rgba(0, 0, 0, 0.35);
+			box-shadow:
+				inset 0 1px 0 rgba(215, 199, 238, 0.22),
+				0 2px 8px -2px rgba(0, 0, 0, 0.4),
+				0 6px 22px -6px var(--cdn-v2-date-glow);
+		}
+		50% {
+			text-shadow:
+				0 0 8px var(--cdn-v2-date-glow),
+				0 1px 0 rgba(0, 0, 0, 0.35);
+			box-shadow:
+				inset 0 1px 0 rgba(215, 199, 238, 0.3),
+				0 2px 10px -2px rgba(0, 0, 0, 0.45),
+				0 10px 28px -6px var(--cdn-v2-date-glow);
+		}
+	}
+
+	@keyframes feed-featured-date-shimmer {
+		0% {
+			background-position: 120% 0;
+		}
+		70%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-featured-event__date-plate {
+		animation: feed-featured-date-glow 4s ease-in-out infinite;
+	}
+
+	.awsui-dark-mode .feed-featured-event__date-plate {
+		animation: feed-featured-date-glow-dark 4s ease-in-out infinite;
+	}
+
+	.feed-featured-event__date-plate::after {
+		animation: feed-featured-date-shimmer 6.5s cubic-bezier(0.4, 0, 0.2, 1)
+			infinite;
+	}
 }
 
 .feed-featured-event__description {
@@ -1228,8 +1497,12 @@
 		0 2px 8px -2px rgba(255, 153, 0, 0.32);
 }
 
-/* ---------- Spots-remaining — chip with stage-light pulse ---------- */
+/* ---------- Spots-remaining — chip with stage-light pulse + outer ring ----------
+   v2 adds a faint outer ring (via outline + box-shadow ring) that breathes
+   in concert with the existing inner pulse — same period (3.4s) so the
+   eye reads them as one harmonized "the seats are filling" beat. */
 .feed-featured-event__spots {
+	position: relative;
 	display: inline-block;
 	padding: 4px 12px;
 	border-radius: 999px;
@@ -1247,6 +1520,18 @@
 		inset 0 1px 0 rgba(255, 250, 235, 0.4),
 		0 0 0 0 var(--cdn-rizz-spots-glow),
 		0 2px 8px -2px rgba(90, 31, 138, 0.22);
+}
+
+/* outer breathing ring — sits 4px outside the chip via ::before, same beat
+   as the inner pulse so they read as a single emissive halo. */
+.feed-featured-event__spots::before {
+	content: "";
+	position: absolute;
+	inset: -3px;
+	border-radius: inherit;
+	border: 1px solid var(--cdn-v2-spots-ring);
+	opacity: 0.55;
+	pointer-events: none;
 }
 
 .awsui-dark-mode .feed-featured-event__spots {
@@ -1303,6 +1588,25 @@
 	.awsui-dark-mode .feed-featured-event__spots {
 		animation: feed-featured-spots-pulse-dark 3.4s ease-in-out infinite;
 	}
+
+	/* breathing outer ring — same 3.4s beat, opacity + scale offset 180° so
+	   the ring expands as the inner glow lifts. Reads as harmonized halo. */
+	@keyframes feed-featured-spots-ring-breathe {
+		0%,
+		100% {
+			opacity: 0.45;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 0.85;
+			transform: scale(1.05);
+		}
+	}
+
+	.feed-featured-event__spots::before {
+		animation: feed-featured-spots-ring-breathe 3.4s ease-in-out infinite;
+		transform-origin: center;
+	}
 }
 
 /* ---------- Reduced-motion fallback — strip all animation, keep static
@@ -1314,6 +1618,34 @@
 		opacity: 0.5;
 	}
 
+	.feed-featured-event::after {
+		animation: none;
+		background-position: 50% 0;
+		opacity: 0.4;
+		transform: none;
+	}
+
+	.feed-featured-event:hover::after {
+		transform: none;
+	}
+
+	.feed-featured-event__title a,
+	.awsui-dark-mode .feed-featured-event__title a {
+		animation: none;
+		background-position: 0 0;
+	}
+
+	.feed-featured-event__date-plate,
+	.awsui-dark-mode .feed-featured-event__date-plate {
+		animation: none;
+	}
+
+	.feed-featured-event__date-plate::after {
+		animation: none;
+		background-position: 50% 0;
+		opacity: 0.4;
+	}
+
 	.feed-featured-event__image,
 	.feed-featured-event__image:hover {
 		transform: none;
@@ -1323,6 +1655,12 @@
 	.feed-featured-event__spots,
 	.awsui-dark-mode .feed-featured-event__spots {
 		animation: none;
+	}
+
+	.feed-featured-event__spots::before {
+		animation: none;
+		transform: none;
+		opacity: 0.55;
 	}
 }
 
