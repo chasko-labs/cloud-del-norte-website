@@ -71,7 +71,13 @@ describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
 
 	it("renders without crashing inside a tall scrollable container", () => {
 		expect(() => renderInsideTallScrollContainer()).not.toThrow();
-		expect(screen.getByText("DON'T MISS")).toBeInTheDocument();
+		// Wave 32a — the original wave 30a regression assert on "DON'T MISS"
+		// (the wave 27a badge copy) is replaced with a marquee-text assert,
+		// since wave 32a removed the in-card badge and replaced the Cloudscape
+		// Header with a custom marquee. The scroll-stability contract is
+		// unchanged: after mount, a stable visible element from the card must
+		// remain in the document.
+		expect(screen.getByText(/Featured event/i)).toBeInTheDocument();
 	});
 
 	it("survives a programmatic window.scrollTo(0, 1000) without unmounting or throwing", () => {
@@ -83,7 +89,9 @@ describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
 
 		// Card is still in the document — the scroll did not blow up the tree.
 		expect(container.querySelector(".feed-featured-event")).not.toBeNull();
-		expect(screen.getByText("DON'T MISS")).toBeInTheDocument();
+		// Wave 32a — see note above; assert on the marquee header text instead
+		// of the removed DON'T MISS badge.
+		expect(screen.getByText(/Featured event/i)).toBeInTheDocument();
 	});
 
 	it("renders the structural class names that wave 30a CSS targets for tearing mitigation", () => {
