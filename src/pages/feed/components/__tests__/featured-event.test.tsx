@@ -52,13 +52,28 @@ describe("FeaturedEvent", () => {
 		expect(btn.className).not.toMatch(/cdn-brand-btn--meetup\b(?!-)/);
 	});
 
-	it("renders the image with proper alt text and lazy loading", () => {
+	it("renders both the light and dark image variants with proper alt text and lazy loading", () => {
 		renderWithLocale("us");
-		const img = screen.getByAltText(
+		const imgs = screen.getAllByAltText(
 			"AWS Cloud del Norte UG community event photo",
 		);
-		expect(img).toHaveAttribute("loading", "lazy");
-		expect(img).toHaveAttribute("src", "/events/featured-2026-06-03.webp");
+		expect(imgs).toHaveLength(2);
+		for (const img of imgs) {
+			expect(img).toHaveAttribute("loading", "lazy");
+		}
+		const lightImg = imgs.find((i) =>
+			i.className.includes("feed-featured-event__image--light"),
+		);
+		const darkImg = imgs.find((i) =>
+			i.className.includes("feed-featured-event__image--dark"),
+		);
+		expect(lightImg).toBeDefined();
+		expect(darkImg).toBeDefined();
+		expect(lightImg).toHaveAttribute("src", "/events/featured-2026-06-03.webp");
+		expect(darkImg).toHaveAttribute(
+			"src",
+			"/events/featured-2026-06-03-dark.webp",
+		);
 	});
 
 	it("renders the in-person location label", () => {

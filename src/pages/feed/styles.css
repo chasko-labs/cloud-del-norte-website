@@ -1197,6 +1197,13 @@
 }
 
 /* ---------- Event image — twin-bloom rim + micro-tilt easter egg ---------- */
+/* wave 28a: vignette-blend mask radial-feathers the image edges into the
+   surrounding glass card so the rectangular crop dissolves into the backplate.
+   Hard 1px rim outlines (inset + outer) were dropped because box-shadow follows
+   the border-box, not the mask — leaving them in place would re-draw a hard
+   rectangle around the feathered silhouette and cancel the blend. The colored
+   purple/gold halo shadows are kept; they read as soft atmospheric bloom rather
+   than a defining edge. */
 .feed-featured-event__image {
 	display: block;
 	width: 100%;
@@ -1206,14 +1213,29 @@
 	object-fit: cover;
 	border-radius: var(--cdn-radius-md, 8px);
 	margin: 12px 0;
-	/* twin-bloom: inner cream rim + outer purple+gold halos that echo the
-	   Copilot artwork (violet star, AWS Community gold accents). */
+	/* vignette-blend: keep the focal subject (pool table, AWS Community badge,
+	   violet star) fully opaque; feather the corners to transparent so the
+	   image bleeds into the card surface. Same stops for both modes — the
+	   light artwork's halftone falloff and the dark artwork's indigo rolloff
+	   both land cleanly under this curve. */
+	-webkit-mask-image: radial-gradient(
+		ellipse 75% 80% at center,
+		#000 55%,
+		rgba(0, 0, 0, 0.7) 78%,
+		transparent 100%
+	);
+	mask-image: radial-gradient(
+		ellipse 75% 80% at center,
+		#000 55%,
+		rgba(0, 0, 0, 0.7) 78%,
+		transparent 100%
+	);
+	/* twin-bloom (softened): outer purple+gold halos that echo the Copilot
+	   artwork (violet star, AWS Community gold accents). No hard 1px rings. */
 	box-shadow:
-		inset 0 0 0 1px rgba(255, 250, 235, 0.18),
 		0 1px 3px rgba(48, 0, 106, 0.18),
 		0 8px 22px -6px var(--cdn-rizz-image-rim-1),
-		0 16px 36px -10px var(--cdn-rizz-image-rim-2),
-		0 0 0 1px var(--cdn-rizz-image-rim-1);
+		0 16px 36px -10px var(--cdn-rizz-image-rim-2);
 	transition:
 		transform 0.4s cubic-bezier(0.4, 0, 0.2, 1),
 		box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1),
@@ -1222,11 +1244,25 @@
 
 .awsui-dark-mode .feed-featured-event__image {
 	box-shadow:
-		inset 0 0 0 1px rgba(215, 199, 238, 0.16),
 		0 2px 6px rgba(0, 0, 0, 0.5),
 		0 10px 26px -6px var(--cdn-rizz-image-rim-1),
-		0 18px 42px -10px var(--cdn-rizz-image-rim-2),
-		0 0 0 1px var(--cdn-rizz-image-rim-1);
+		0 18px 42px -10px var(--cdn-rizz-image-rim-2);
+}
+
+/* Theme-driven image swap — show only the variant that matches the active
+   color scheme. Mirrors .feed-upcoming-virtual-event__image--light/--dark
+   pattern; .awsui-dark-mode is toggled on the document body by the site's
+   theme switcher, not OS-level prefers-color-scheme. */
+.feed-featured-event__image--dark {
+	display: none;
+}
+
+.awsui-dark-mode .feed-featured-event__image--light {
+	display: none;
+}
+
+.awsui-dark-mode .feed-featured-event__image--dark {
+	display: block;
 }
 
 /* hover micro-tilt easter egg + intensified bloom. v2 swaps the 2D rotate
@@ -1238,11 +1274,9 @@
 		transform: rotateY(-1.4deg) translateZ(6px) translateY(-2px);
 		filter: brightness(1.04) saturate(1.06);
 		box-shadow:
-			inset 0 0 0 1px rgba(255, 250, 235, 0.28),
 			0 2px 4px rgba(48, 0, 106, 0.22),
 			0 12px 30px -6px var(--cdn-rizz-image-rim-1),
-			0 22px 48px -10px var(--cdn-rizz-image-rim-2),
-			0 0 0 1.5px var(--cdn-rizz-image-rim-1);
+			0 22px 48px -10px var(--cdn-rizz-image-rim-2);
 	}
 }
 

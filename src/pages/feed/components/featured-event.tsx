@@ -14,7 +14,8 @@ import { getEvent, spotsRemaining } from "../../../lib/rsvp";
 import AsciiSmirk from "./ascii-smirk";
 
 const EVENT_ID = "happy-hour-2026-06-03";
-const EVENT_IMAGE = "/events/featured-2026-06-03.webp";
+const EVENT_IMAGE_LIGHT = "/events/featured-2026-06-03.webp";
+const EVENT_IMAGE_DARK = "/events/featured-2026-06-03-dark.webp";
 const RSVP_RETURN_PATH = `/rsvp/?event=${EVENT_ID}`;
 const RSVP_PAGE_URL = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent(RSVP_RETURN_PATH)}`;
 /** Anchor inside the description string after which the inline smirk renders. */
@@ -94,9 +95,17 @@ export default function FeaturedEvent() {
 						{t("feedPage.featuredEventBadge")}
 					</Box>
 					<img
-						src={EVENT_IMAGE}
+						src={EVENT_IMAGE_LIGHT}
 						alt={t("feedPage.featuredEventImageAlt")}
-						className="feed-featured-event__image"
+						className="feed-featured-event__image feed-featured-event__image--light"
+						width={1200}
+						height={630}
+						loading="lazy"
+					/>
+					<img
+						src={EVENT_IMAGE_DARK}
+						alt={t("feedPage.featuredEventImageAlt")}
+						className="feed-featured-event__image feed-featured-event__image--dark"
 						width={1200}
 						height={630}
 						loading="lazy"
