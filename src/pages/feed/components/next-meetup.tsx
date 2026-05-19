@@ -20,6 +20,25 @@
  *     the CTA card if the file is absent or stale (>30 days old)
  *   - File schema: { summary, dtstart (ISO 8601), location, url, description }
  *   - Dispatch to Harald as issue: "feat(feed): CI step for next-meetup.json static gen"
+ *
+ * Wave 33a — visual uplift to match the wave 32a featured-event card. The
+ * card now carries:
+ *   - A theater-marquee header (cooler steel-blue / deep-teal palette) with
+ *     a scrolling-tape shimmer across the backplate (no chasing bulbs — the
+ *     adjacent-but-distinct mood vs. featured's warm amber + bulb chase).
+ *   - A date-plate VFX backplate behind the meetup date string in the same
+ *     cooler palette.
+ *   - The title link gets a steel-blue → cyan gradient with the same
+ *     scrolling-tape treatment used on the featured-event title.
+ *   - The same depth stack: perspective(1200px) + preserve-3d on the card
+ *     root, will-change/contain/translate3d compositing hints, and a 1px
+ *     stage-rim inset in the box-shadow.
+ *   - An error boundary mirroring FeaturedEventErrorBoundary so a render
+ *     failure shows fallback chrome instead of crashing the feed.
+ *   - All animations gated behind prefers-reduced-motion: no-preference;
+ *     reduced-motion users see a static, fully-legible fallback.
+ *   - The body.cdn-scrolling pause integration is extended to cover the
+ *     new sustained animations (marquee shimmer, title tape, date breathe).
  */
 
 import Box from "@cloudscape-design/components/box";
@@ -28,8 +47,13 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import type React from "react";
-import { useEffect, useState } from "react";
+import {
+	Component,
+	type ErrorInfo,
+	type ReactNode,
+	useEffect,
+	useState,
+} from "react";
 import { SkeletonLine, SkeletonTitle } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
 
@@ -134,7 +158,29 @@ function parseIcal(text: string): MeetupEvent | null {
 
 type LoadState = "loading" | "loaded" | "fallback";
 
-export default function NextMeetup() {
+/**
+ * Wave 33a — Theater marquee header (steel-blue / deep-teal palette).
+ *
+ * Mirrors the spirit of the wave 32a featured-event marquee but with a
+ * deliberately different mood: cooler palette + a scrolling-tape shimmer
+ * sweep instead of chasing bulbs. The header still announces itself as
+ * an h2 to assistive tech via role="heading" + aria-level=2.
+ *
+ * The scrolling-tape shimmer is a single ::after gradient band defined
+ * in styles.css; it travels horizontally across the marquee backplate on
+ * a slow loop. Reduced-motion gates the keyframes off and the shimmer
+ * settles to a static centered glow.
+ */
+function MarqueeHeader({ text }: { text: string }) {
+	return (
+		<div className="feed-next-meetup__marquee" role="heading" aria-level={2}>
+			<span className="feed-next-meetup__marquee-text">{text}</span>
+			<span className="feed-next-meetup__marquee-tape" aria-hidden="true" />
+		</div>
+	);
+}
+
+function NextMeetupInner() {
 	const { t, locale } = useTranslation();
 	const [state, setState] = useState<LoadState>("loading");
 	const [event, setEvent] = useState<MeetupEvent | null>(null);
@@ -201,9 +247,9 @@ export default function NextMeetup() {
 		}
 	};
 
-	const header = <Header variant="h2">{t("feedPage.nextMeetupHeader")}</Header>;
+	const header = <MarqueeHeader text={t("feedPage.nextMeetupHeader")} />;
 
-	let content: React.ReactNode;
+	let content: ReactNode;
 
 	if (state === "loading") {
 		content = (
@@ -224,7 +270,11 @@ export default function NextMeetup() {
 					<Box color="text-body-secondary" fontSize="body-s" fontWeight="bold">
 						{t("feedPage.pastMeetupBadge")}
 					</Box>
-					<Box fontWeight="bold" fontSize="heading-m">
+					<Box
+						fontWeight="bold"
+						fontSize="heading-m"
+						className="feed-next-meetup__title"
+					>
 						<Link href={PAST_MEETUP_MX_URL} external>
 							{t("feedPage.pastMeetupTitle")}
 						</Link>
@@ -292,7 +342,11 @@ export default function NextMeetup() {
 						{t("feedPage.nextMeetupPastLabel")}
 					</Box>
 				)}
-				<Box fontWeight="bold" fontSize="heading-m">
+				<Box
+					fontWeight="bold"
+					fontSize="heading-m"
+					className="feed-next-meetup__title"
+				>
 					{event.url ? (
 						<Link href={event.url} external>
 							{event.summary}
@@ -301,9 +355,16 @@ export default function NextMeetup() {
 						event.summary
 					)}
 				</Box>
-				<Box color="text-body-secondary" fontSize="body-s">
-					{formatDate(event.dtstart)}
-				</Box>
+				{/* Wave 33a — date-plate VFX. Date string itself is plain HTML
+				    output from Intl.DateTimeFormat (no SVG, no canvas, no string
+				    splitting). The wrapper div carries the layout margin; the
+				    inner span is the steel-blue / deep-teal backplate with a
+				    soft pulsing text-shadow glow + diagonal sweep shimmer. */}
+				<div className="feed-next-meetup__date">
+					<span className="feed-next-meetup__date-plate">
+						{formatDate(event.dtstart)}
+					</span>
+				</div>
 				{event.location && (
 					<Box color="text-body-secondary" fontSize="body-s">
 						{event.location}
@@ -323,5 +384,76 @@ export default function NextMeetup() {
 		<div className="feed-next-meetup">
 			<Container header={header}>{content}</Container>
 		</div>
+	);
+}
+
+/**
+ * Wave 33a — error boundary scoped to the NextMeetup card.
+ *
+ * Mirrors FeaturedEventErrorBoundary in featured-event.tsx. The card now
+ * carries the same depth stack + sustained animations as the featured
+ * event card, plus the iCal/static-JSON fetch path + Intl.DateTimeFormat;
+ * if any of those pieces throw at render time, this boundary catches it
+ * locally so the rest of the feed (FeaturedEvent, UpcomingVirtualEvent,
+ * BuilderCenterCard, the live hero, the shuffled grid) keeps rendering.
+ *
+ * The fallback UI reuses the standard Cloudscape Container + Header chrome
+ * so the empty state still anchors visually in the same slot. The header
+ * resolves through the existing locale key (no new locale strings); the
+ * body fallback message is hard-coded English (the wave 33a hard scope
+ * forbids new locale keys, and this path only fires on render errors —
+ * exceptional, brief, primarily a dev-visible signal in console.error).
+ */
+interface NextMeetupErrorBoundaryState {
+	hasError: boolean;
+}
+
+export class NextMeetupErrorBoundary extends Component<
+	{ children: ReactNode; fallbackHeader: string; fallbackMessage: string },
+	NextMeetupErrorBoundaryState
+> {
+	state: NextMeetupErrorBoundaryState = { hasError: false };
+
+	static getDerivedStateFromError(): NextMeetupErrorBoundaryState {
+		return { hasError: true };
+	}
+
+	componentDidCatch(error: Error, info: ErrorInfo): void {
+		// Single console.error so the failure is visible in devtools without
+		// piping crash data to a third-party endpoint. The boundary's render
+		// fallback is the user-visible signal; this is the developer signal.
+		console.error("[NextMeetup] render failure", error, info);
+	}
+
+	render(): ReactNode {
+		if (this.state.hasError) {
+			return (
+				<div className="feed-next-meetup">
+					<Container
+						header={<Header variant="h2">{this.props.fallbackHeader}</Header>}
+					>
+						<Box color="text-body-secondary" fontSize="body-s">
+							{this.props.fallbackMessage}
+						</Box>
+					</Container>
+				</div>
+			);
+		}
+		return this.props.children;
+	}
+}
+
+/**
+ * Default export: NextMeetup wrapped in its own error boundary.
+ */
+export default function NextMeetup() {
+	const { t } = useTranslation();
+	return (
+		<NextMeetupErrorBoundary
+			fallbackHeader={t("feedPage.nextMeetupHeader")}
+			fallbackMessage="Meetup details temporarily unavailable. Please refresh the page."
+		>
+			<NextMeetupInner />
+		</NextMeetupErrorBoundary>
 	);
 }

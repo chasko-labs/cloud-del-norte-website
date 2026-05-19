@@ -1970,12 +1970,12 @@
 	display: none;
 }
 
-/* ---------- Next meetup card — stable height across loading/fallback/loaded ---------- */
-/* Reserve enough height for the loaded state (title + date + location + description)
-   so the transition from loading does not shift the page layout. */
-.feed-next-meetup {
-	min-height: 180px;
-}
+/* ---------- Next meetup card — base styling consolidated into wave 33a block ----------
+   The wave 33a uplift block at the bottom of this file owns all .feed-next-meetup
+   rules now (depth stack, marquee header, date-plate VFX, gradient title, scroll
+   pause hooks, reduced-motion fallbacks). The legacy stable-height min-height
+   rule was folded into the wave 33a card-root declaration so the same selector
+   isn't duplicated across the file. */
 
 /* ---------- Past meetup spotlight (es-MX fallback) ---------- */
 /* Renders inside the NextMeetup container when locale === "mx" + no upcoming
@@ -2416,5 +2416,631 @@
 	.feed-featured-event__marquee-bulb {
 		width: 7px;
 		height: 7px;
+	}
+}
+
+/* ==========================================================================
+   Wave 33a — Next meetup card uplift
+   ==========================================================================
+
+   Brings the Next Meetup card up to the visual standard set by the wave 32a
+   featured-event card, but with a deliberately differentiated mood: cooler
+   palette (steel-blue gradient on light, deep teal on dark) and a scrolling-
+   tape shimmer instead of chasing bulbs on the marquee header.
+
+   Mirrors in style/spirit (NOT copy-paste) the featured-event treatments:
+     - perspective(1200px) + preserve-3d on card root
+     - will-change / contain / translate3d GPU compositing hints
+     - 1px stage-rim inset on the box-shadow
+     - title link gets a gradient + scrolling-tape sweep
+     - date-plate VFX backplate behind the meetup date string
+     - theater-marquee header chrome (cooler palette, shimmer instead of bulbs)
+     - cdn-scrolling pause hooks for sustained animations
+     - prefers-reduced-motion gates on every animation; static fallbacks read
+
+   Class prefix: .feed-next-meetup__ (per wave 33a naming discipline).
+   Local CSS variables scoped to .feed-next-meetup keep the wave-23.5 token
+   baseline untouched (do NOT mutate src/styles/tokens.css). Light + dark
+   mode parity. */
+
+.feed-next-meetup {
+	/* Wave 33a — light-mode cool tokens. Steel blue stage-light + a soft
+	   cyan bloom replaces the warm tungsten / violet of featured-event. */
+	--cdn-nm-stage-rim: rgba(245, 250, 255, 0.1);
+	--cdn-nm-spot-cool: rgba(56, 110, 165, 0.18);
+	--cdn-nm-spot-cyan: rgba(94, 234, 212, 0.12);
+	--cdn-nm-ambient-bloom: rgba(44, 82, 130, 0.16);
+	--cdn-nm-date-plate-from: rgba(190, 215, 240, 0.55);
+	--cdn-nm-date-plate-to: rgba(220, 240, 248, 0.32);
+	--cdn-nm-date-plate-border: rgba(44, 82, 130, 0.42);
+	--cdn-nm-date-text: #0f3457;
+	--cdn-nm-date-glow: rgba(56, 110, 165, 0.4);
+	--cdn-nm-date-shimmer: rgba(245, 252, 255, 0.6);
+	--cdn-nm-title-from: #0f3457;
+	--cdn-nm-title-mid: #2c5282;
+	--cdn-nm-title-tape: rgba(245, 252, 255, 0.5);
+
+	/* Wave 33a — keep the existing reserved min-height so the loading →
+	   loaded state transition does not shift page layout. */
+	min-height: 180px;
+
+	position: relative;
+	isolation: isolate;
+	border-left: 4px solid var(--cdn-nm-title-mid, #2c5282);
+	border-radius: var(--cdn-radius-md, 8px);
+	overflow: hidden;
+	/* perspective + preserve-3d enable child translateZ() pop without
+	   loading a runtime 3D engine. 1200px = subtle, ambient depth. Same
+	   value as featured-event for visual rhyme. */
+	perspective: 1200px;
+	transform-style: preserve-3d;
+	/* Mirror the wave 30a tearing mitigations from featured-event:
+	   - contain: layout paint style isolates this card's paint operations
+	   - translate3d(0,0,0) forces its own GPU compositor layer
+	   - will-change: transform proactively promotes the layer up-front */
+	contain: layout paint style;
+	transform: translate3d(0, 0, 0);
+	will-change: transform;
+	/* Layered ambient bloom + 1px stage-rim inset (the same idiom featured
+	   uses to give the card a "stage edge" line under varied backgrounds). */
+	box-shadow:
+		0 1px 2px rgba(15, 52, 87, 0.08),
+		0 8px 28px -8px var(--cdn-nm-ambient-bloom),
+		0 18px 48px -12px var(--cdn-nm-ambient-bloom),
+		inset 0 0 0 1px var(--cdn-nm-stage-rim);
+}
+
+.awsui-dark-mode .feed-next-meetup {
+	/* Wave 33a — dark-mode cool tokens. Deep teal/forest + lighter teal
+	   highlights replace the indigo/violet of featured-event. */
+	--cdn-nm-stage-rim: rgba(167, 243, 208, 0.1);
+	--cdn-nm-spot-cool: rgba(20, 83, 81, 0.42);
+	--cdn-nm-spot-cyan: rgba(94, 234, 212, 0.22);
+	--cdn-nm-ambient-bloom: rgba(6, 78, 59, 0.36);
+	--cdn-nm-date-plate-from: rgba(6, 78, 59, 0.62);
+	--cdn-nm-date-plate-to: rgba(20, 83, 81, 0.42);
+	--cdn-nm-date-plate-border: rgba(94, 234, 212, 0.48);
+	--cdn-nm-date-text: #99f6e4;
+	--cdn-nm-date-glow: rgba(94, 234, 212, 0.55);
+	--cdn-nm-date-shimmer: rgba(167, 243, 208, 0.42);
+	--cdn-nm-title-from: #5eead4;
+	--cdn-nm-title-mid: #99f6e4;
+	--cdn-nm-title-tape: rgba(232, 252, 247, 0.5);
+
+	box-shadow:
+		0 2px 6px rgba(0, 0, 0, 0.5),
+		0 10px 30px -8px var(--cdn-nm-ambient-bloom),
+		0 22px 56px -12px var(--cdn-nm-ambient-bloom),
+		inset 0 0 0 1px var(--cdn-nm-stage-rim);
+}
+
+/* Stage-light gradient backplate — two cross-faded radial spotlights:
+   cool steel-blue key from upper-left, soft cyan fill from lower-right.
+   Sits behind all content via z-index:0. Children stack on z-index:1. */
+.feed-next-meetup::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background:
+		radial-gradient(
+			ellipse 70% 50% at 14% 8%,
+			var(--cdn-nm-spot-cool) 0%,
+			transparent 62%
+		),
+		radial-gradient(
+			ellipse 65% 55% at 88% 92%,
+			var(--cdn-nm-spot-cyan) 0%,
+			transparent 65%
+		);
+	opacity: 0.95;
+}
+
+/* Slow cool spotlight depth layer — crosses the card on a 7s ease cycle.
+   Mirrors featured-event's ::after but with the cooler palette. Sits
+   behind content (z-index:0). Same translateZ(0) layer-isolation +
+   will-change as featured to keep the sweep on its own GPU layer. */
+.feed-next-meetup::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		transparent 0%,
+		transparent 30%,
+		var(--cdn-nm-spot-cool) 50%,
+		transparent 70%,
+		transparent 100%
+	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
+	opacity: 0.7;
+	transform: translateZ(0);
+	transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+	will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-next-meetup-spotlight-sweep {
+		0% {
+			background-position: 120% 0;
+		}
+		60%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-next-meetup::after {
+		animation: feed-next-meetup-spotlight-sweep 7s cubic-bezier(0.4, 0, 0.2, 1)
+			infinite;
+	}
+
+	/* Hover parallax — same pattern as featured-event. */
+	.feed-next-meetup:hover::after {
+		transform: translateZ(8px);
+	}
+}
+
+/* All direct content children sit above the spotlight backplate. */
+.feed-next-meetup > * {
+	position: relative;
+	z-index: 1;
+}
+
+/* ---------- Wave 33a — Theater marquee header (cooler palette, shimmer)
+   ----------
+
+   Replaces the Cloudscape <Header variant="h2"> chrome on the next-meetup
+   card with a marquee sign aesthetic that rhymes with featured-event but
+   carries a cooler mood: steel-blue gradient backplate + steel/cyan rim on
+   light mode; deep-teal backplate + lighter teal rim on dark mode. Where
+   featured uses 16 chasing perimeter bulbs, next-meetup uses a single
+   horizontal scrolling-tape shimmer that slides across the backplate on
+   a slow loop — adjacent in spirit, distinct in execution.
+
+   Cloudscape's Container places its `header` slot inside an internal
+   wrapper class; the marquee sits inside that slot and carries its own
+   border + shadow + typography so it doesn't inherit the Cloudscape h2
+   tokens. The wrapping div announces itself to assistive tech as h2 via
+   role="heading" + aria-level=2 (handled in the React component).
+
+   Reduced-motion gates the keyframes off; the shimmer settles to a
+   static centered glow that still reads as a soft highlight. */
+.feed-next-meetup__marquee {
+	/* Color tokens — light-mode steel-blue marquee chrome. Scoped here so
+	   they don't bleed into the rest of the card's cool tokens. */
+	--cdn-nm-marquee-bg-from: #e8f0f8;
+	--cdn-nm-marquee-bg-to: #b9d2e6;
+	--cdn-nm-marquee-rim: #2c5282;
+	--cdn-nm-marquee-rim-highlight: rgba(245, 250, 255, 0.85);
+	--cdn-nm-marquee-shadow: rgba(15, 52, 87, 0.32);
+	--cdn-nm-marquee-text: #0f3457;
+	--cdn-nm-marquee-text-glow: rgba(245, 252, 255, 0.7);
+	--cdn-nm-marquee-tape: rgba(245, 252, 255, 0.55);
+	--cdn-nm-marquee-tape-edge: rgba(245, 252, 255, 0);
+
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	padding: 8px 28px;
+	border-radius: 10px;
+	overflow: hidden;
+	background: linear-gradient(
+		180deg,
+		var(--cdn-nm-marquee-bg-from) 0%,
+		var(--cdn-nm-marquee-bg-to) 100%
+	);
+	border: 2px solid var(--cdn-nm-marquee-rim);
+	box-shadow:
+		0 1px 0 var(--cdn-nm-marquee-rim-highlight) inset,
+		0 -1px 0 rgba(15, 52, 87, 0.18) inset,
+		0 2px 4px var(--cdn-nm-marquee-shadow),
+		0 8px 18px -6px var(--cdn-nm-marquee-shadow);
+	/* Sustained shimmer animation — promote to its own GPU layer so the
+	   sweep doesn't dirty the card-sized parent layer. */
+	will-change: transform;
+}
+
+.awsui-dark-mode .feed-next-meetup__marquee {
+	/* Dark-mode deep-teal marquee chrome with lighter teal rim. */
+	--cdn-nm-marquee-bg-from: #064e3b;
+	--cdn-nm-marquee-bg-to: #042f2e;
+	--cdn-nm-marquee-rim: #5eead4;
+	--cdn-nm-marquee-rim-highlight: rgba(167, 243, 208, 0.4);
+	--cdn-nm-marquee-shadow: rgba(0, 0, 0, 0.55);
+	--cdn-nm-marquee-text: #d6fff4;
+	--cdn-nm-marquee-text-glow: rgba(94, 234, 212, 0.55);
+	--cdn-nm-marquee-tape: rgba(167, 243, 208, 0.42);
+	--cdn-nm-marquee-tape-edge: rgba(167, 243, 208, 0);
+
+	box-shadow:
+		0 1px 0 var(--cdn-nm-marquee-rim-highlight) inset,
+		0 -1px 0 rgba(0, 0, 0, 0.6) inset,
+		0 2px 6px var(--cdn-nm-marquee-shadow),
+		0 12px 24px -6px var(--cdn-nm-marquee-shadow);
+}
+
+/* Headline text — bold uppercase, tight tracking. Subtle text-shadow so
+   the lettering reads as emissive against the steel/teal backplate. */
+.feed-next-meetup__marquee-text {
+	position: relative;
+	z-index: 2;
+	display: inline-block;
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 1rem;
+	font-weight: 800;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--cdn-nm-marquee-text);
+	text-shadow:
+		0 0 6px var(--cdn-nm-marquee-text-glow),
+		0 1px 0 rgba(245, 252, 255, 0.45);
+	line-height: 1.15;
+}
+
+/* Scrolling-tape shimmer — a horizontal gradient band that slides across
+   the marquee backplate. This is the differentiator vs. featured-event's
+   chasing perimeter bulbs: same theater-marquee mood, different mechanic.
+   The band is wider than the marquee so the entry/exit eased gradient
+   doesn't pop on each loop. */
+.feed-next-meetup__marquee-tape {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		var(--cdn-nm-marquee-tape-edge) 0%,
+		var(--cdn-nm-marquee-tape-edge) 38%,
+		var(--cdn-nm-marquee-tape) 50%,
+		var(--cdn-nm-marquee-tape-edge) 62%,
+		var(--cdn-nm-marquee-tape-edge) 100%
+	);
+	background-size: 240% 100%;
+	background-position: 120% 0;
+	opacity: 0.85;
+	border-radius: inherit;
+	mix-blend-mode: screen;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-next-meetup-marquee-tape-sweep {
+		0% {
+			background-position: 120% 0;
+		}
+		70%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-next-meetup__marquee-tape {
+		animation: feed-next-meetup-marquee-tape-sweep 5.6s
+			cubic-bezier(0.4, 0, 0.2, 1) infinite;
+	}
+}
+
+/* Reduced-motion fallback — tape settles to a soft centered highlight
+   instead of sweeping. Still reads as a subtle marquee glow. */
+@media (prefers-reduced-motion: reduce) {
+	.feed-next-meetup__marquee-tape {
+		animation: none;
+		background-position: 50% 0;
+		opacity: 0.4;
+	}
+}
+
+/* ---------- Wave 33a — Title link — gradient + scrolling-tape ----------
+
+   Mirrors .feed-featured-event__title a in mechanic (background-clip: text
+   over an animated gradient that shifts background-position) but uses the
+   cooler steel-blue → cyan palette so the two cards read as a family with
+   distinct moods. Applied via .feed-next-meetup__title a, where the title
+   wrapper carries the class on the loaded-state and past-meetup-spotlight
+   branches in the component. */
+.feed-next-meetup__title {
+	letter-spacing: -0.005em;
+	line-height: 1.22;
+}
+
+.feed-next-meetup__title a {
+	background-image: linear-gradient(
+		90deg,
+		var(--cdn-nm-title-from, #0f3457) 0%,
+		var(--cdn-nm-title-mid, #2c5282) 38%,
+		var(--cdn-nm-title-tape, rgba(245, 252, 255, 0.5)) 50%,
+		var(--cdn-nm-title-mid, #2c5282) 62%,
+		var(--cdn-nm-title-from, #0f3457) 100%
+	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
+	background-clip: text;
+	-webkit-background-clip: text;
+	color: transparent;
+	-webkit-text-fill-color: transparent;
+	text-decoration: none;
+	transition: filter 0.2s ease;
+	/* Scroll-tearing mitigation — same hints featured-event uses. */
+	text-rendering: optimizeSpeed;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.awsui-dark-mode .feed-next-meetup__title a {
+	background-image: linear-gradient(
+		90deg,
+		var(--cdn-nm-title-from, #5eead4) 0%,
+		var(--cdn-nm-title-mid, #99f6e4) 38%,
+		var(--cdn-nm-title-tape, rgba(232, 252, 247, 0.5)) 50%,
+		var(--cdn-nm-title-mid, #99f6e4) 62%,
+		var(--cdn-nm-title-from, #5eead4) 100%
+	);
+	background-size: 220% 100%;
+	background-position: 120% 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-next-meetup-title-tape {
+		0% {
+			background-position: 120% 0;
+		}
+		70%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-next-meetup__title a {
+		animation: feed-next-meetup-title-tape 9s cubic-bezier(0.4, 0, 0.2, 1)
+			infinite;
+	}
+}
+
+.feed-next-meetup__title a:hover,
+.feed-next-meetup__title a:focus-visible {
+	filter: brightness(1.1) saturate(1.08);
+}
+
+.feed-next-meetup__title a:focus-visible {
+	outline: 2px solid var(--cdn-nm-title-mid, #2c5282);
+	outline-offset: 3px;
+	border-radius: 2px;
+}
+
+/* ---------- Wave 33a — Date VFX — cool-palette backplate + glow + shimmer
+   ----------
+
+   Same pattern as .feed-featured-event__date-plate but in the cooler
+   steel/teal palette. Date string itself stays plain HTML output from
+   Intl.DateTimeFormat (no SVG, no canvas, no string-split). The wrapper
+   div carries the layout margin; the inner span is the backplate.
+   prefers-reduced-motion: no-preference gates the breathe + shimmer. */
+.feed-next-meetup__date {
+	display: block;
+	margin: 4px 0 2px;
+	font-variant-numeric: tabular-nums;
+}
+
+.feed-next-meetup__date-plate {
+	position: relative;
+	display: inline-block;
+	padding: 6px 14px;
+	border-radius: 8px;
+	background: linear-gradient(
+		135deg,
+		var(--cdn-nm-date-plate-from) 0%,
+		var(--cdn-nm-date-plate-to) 100%
+	);
+	border: 1px solid var(--cdn-nm-date-plate-border);
+	color: var(--cdn-nm-date-text);
+	/* Same scale as featured-event date plate for visual rhyme. */
+	font-size: 1.5rem;
+	font-weight: 800;
+	line-height: 1.15;
+	letter-spacing: 0.01em;
+	font-variant-numeric: tabular-nums;
+	overflow: hidden;
+	box-shadow:
+		inset 0 1px 0 rgba(245, 252, 255, 0.5),
+		0 2px 6px -1px rgba(15, 52, 87, 0.18),
+		0 6px 18px -6px var(--cdn-nm-date-glow);
+	/* Small CSS 3D pop — sits 4px above the card surface so the perspective
+	   on the parent gives it a stamped-floating-above feel. */
+	transform: translateZ(4px);
+	will-change: transform, opacity;
+}
+
+.awsui-dark-mode .feed-next-meetup__date-plate {
+	box-shadow:
+		inset 0 1px 0 rgba(167, 243, 208, 0.22),
+		0 2px 8px -2px rgba(0, 0, 0, 0.4),
+		0 6px 22px -6px var(--cdn-nm-date-glow);
+}
+
+/* Diagonal shimmer sweep across the date plate — slower than the marquee
+   tape (5.6s) so the eye registers each glow individually. */
+.feed-next-meetup__date-plate::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	background: linear-gradient(
+		115deg,
+		transparent 0%,
+		transparent 38%,
+		var(--cdn-nm-date-shimmer) 50%,
+		transparent 62%,
+		transparent 100%
+	);
+	background-size: 240% 100%;
+	background-position: 120% 0;
+	mix-blend-mode: screen;
+	border-radius: inherit;
+	opacity: 0.65;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes feed-next-meetup-date-glow {
+		0%,
+		100% {
+			text-shadow:
+				0 0 0 transparent,
+				0 1px 0 rgba(245, 252, 255, 0.45);
+			box-shadow:
+				inset 0 1px 0 rgba(245, 252, 255, 0.5),
+				0 2px 6px -1px rgba(15, 52, 87, 0.18),
+				0 6px 18px -6px var(--cdn-nm-date-glow);
+		}
+		50% {
+			text-shadow:
+				0 0 6px var(--cdn-nm-date-glow),
+				0 1px 0 rgba(245, 252, 255, 0.45);
+			box-shadow:
+				inset 0 1px 0 rgba(245, 252, 255, 0.6),
+				0 2px 8px -1px rgba(15, 52, 87, 0.22),
+				0 8px 24px -6px var(--cdn-nm-date-glow);
+		}
+	}
+
+	@keyframes feed-next-meetup-date-glow-dark {
+		0%,
+		100% {
+			text-shadow:
+				0 0 0 transparent,
+				0 1px 0 rgba(0, 0, 0, 0.35);
+			box-shadow:
+				inset 0 1px 0 rgba(167, 243, 208, 0.22),
+				0 2px 8px -2px rgba(0, 0, 0, 0.4),
+				0 6px 22px -6px var(--cdn-nm-date-glow);
+		}
+		50% {
+			text-shadow:
+				0 0 8px var(--cdn-nm-date-glow),
+				0 1px 0 rgba(0, 0, 0, 0.35);
+			box-shadow:
+				inset 0 1px 0 rgba(167, 243, 208, 0.3),
+				0 2px 10px -2px rgba(0, 0, 0, 0.45),
+				0 10px 28px -6px var(--cdn-nm-date-glow);
+		}
+	}
+
+	@keyframes feed-next-meetup-date-shimmer {
+		0% {
+			background-position: 120% 0;
+		}
+		70%,
+		100% {
+			background-position: -40% 0;
+		}
+	}
+
+	.feed-next-meetup__date-plate {
+		animation: feed-next-meetup-date-glow 4s ease-in-out infinite;
+	}
+
+	.awsui-dark-mode .feed-next-meetup__date-plate {
+		animation: feed-next-meetup-date-glow-dark 4s ease-in-out infinite;
+	}
+
+	.feed-next-meetup__date-plate::after {
+		animation: feed-next-meetup-date-shimmer 6.5s cubic-bezier(0.4, 0, 0.2, 1)
+			infinite;
+	}
+}
+
+/* ---------- Wave 33a — Reduced-motion fallback ----------
+   Strip every new sustained animation, keep static visuals (gradients, glow,
+   shadows) so the rizz still reads. Drop the will-change GPU hints since
+   no animation is running — holding a dedicated compositor layer per element
+   would be wasted memory. */
+@media (prefers-reduced-motion: reduce) {
+	.feed-next-meetup::after {
+		animation: none;
+		background-position: 50% 0;
+		opacity: 0.4;
+		transform: none;
+	}
+
+	.feed-next-meetup:hover::after {
+		transform: none;
+	}
+
+	.feed-next-meetup__title a,
+	.awsui-dark-mode .feed-next-meetup__title a {
+		animation: none;
+		background-position: 0 0;
+	}
+
+	.feed-next-meetup__date-plate,
+	.awsui-dark-mode .feed-next-meetup__date-plate {
+		animation: none;
+	}
+
+	.feed-next-meetup__date-plate::after {
+		animation: none;
+		background-position: 50% 0;
+		opacity: 0.4;
+	}
+
+	.feed-next-meetup,
+	.feed-next-meetup::after,
+	.feed-next-meetup__marquee,
+	.feed-next-meetup__date-plate {
+		will-change: auto;
+	}
+}
+
+/* ---------- Wave 33a — Pause animations during fast scroll ----------
+   Extends the existing body.cdn-scrolling pause list (wave 30a featured-
+   event) to cover the new sustained animations on the next-meetup card.
+   Skipped under prefers-reduced-motion since those animations are already
+   off in that branch. */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .feed-next-meetup,
+	body.cdn-scrolling .feed-next-meetup::after,
+	body.cdn-scrolling .feed-next-meetup__marquee-tape,
+	body.cdn-scrolling .feed-next-meetup__title a,
+	body.cdn-scrolling .feed-next-meetup__date-plate,
+	body.cdn-scrolling .awsui-dark-mode .feed-next-meetup__date-plate,
+	body.cdn-scrolling .feed-next-meetup__date-plate::after {
+		animation-play-state: paused;
+	}
+}
+
+/* ---------- Wave 33a — Responsive marquee sizing ----------
+   Scale the marquee text + box height with the card's rendered width so
+   the sign reads proportional across mobile / tablet / desktop. Uses
+   plain min-width media queries since .feed-next-meetup is not yet a
+   CSS container query context (no internal grid layout to query — the
+   card body is still a SpaceBetween stack). If a future wave adds a
+   container-query layout to the next-meetup card, swap these for
+   @container rules to mirror the featured-event pattern. */
+@media (min-width: 520px) {
+	.feed-next-meetup__marquee {
+		min-height: 44px;
+		padding: 10px 36px;
+	}
+
+	.feed-next-meetup__marquee-text {
+		font-size: 1.0625rem;
+		letter-spacing: 0.07em;
+	}
+}
+
+@media (min-width: 860px) {
+	.feed-next-meetup__marquee {
+		min-height: 48px;
+		padding: 12px 44px;
+	}
+
+	.feed-next-meetup__marquee-text {
+		font-size: 1.125rem;
+		letter-spacing: 0.08em;
 	}
 }
