@@ -1,0 +1,32 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "DynamoDBRsvps",
+			"Effect": "Allow",
+			"Action": [
+				"dynamodb:PutItem",
+				"dynamodb:GetItem",
+				"dynamodb:Query",
+				"dynamodb:Scan"
+			],
+			"Resource": "arn:aws:dynamodb:us-west-2:170473530355:table/cdn-rsvps"
+		},
+		{
+			"Sid": "CognitoAdminGetUser",
+			"Effect": "Allow",
+			"Action": ["cognito-idp:AdminGetUser"],
+			"Resource": "arn:aws:cognito-idp:us-west-2:170473530355:userpool/us-west-2_cyPQF4F3r"
+		},
+		{
+			"Sid": "CloudWatchLogs",
+			"Effect": "Allow",
+			"Action": [
+				"logs:CreateLogGroup",
+				"logs:CreateLogStream",
+				"logs:PutLogEvents"
+			],
+			"Resource": "arn:aws:logs:us-west-2:170473530355:*"
+		}
+	]
+}

@@ -1,0 +1,124 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Deploy cdn-rsvp Lambda (code + DynamoDB + IAM + env vars).
+# Production traffic via API Gateway HTTP V2 (configured separately by
+# scripts/deploy-cdn-rsvp-apigw.sh).
+# Profile: jitsi-video-hosting (account 170473530355, us-west-2)
+
+LAMBDA_ACCOUNT=170473530355
+LAMBDA_REGION=us-west-2
+LAMBDA_NAME=cdn-rsvp
+LAMBDA_RUNTIME=nodejs22.x
+LAMBDA_HANDLER=index.handler
+LAMBDA_TIMEOUT=10
+LAMBDA_MEMORY=256
+ROLE_NAME=cdn-rsvp-lambda-role
+PROFILE=jitsi-video-hosting
+
+RSVP_TABLE=cdn-rsvps
+USER_POOL_ID=us-west-2_cyPQF4F3r
+
+# EVENT_CAPACITIES is a JSON map: eventId → seat capacity. Bryan edits this
+# inline when launching a new event. Stays well under the 4 KB Lambda env
+# var limit (current size: a few dozen bytes per event).
+EVENT_CAPACITIES='{"happy-hour-2026-06-03":50}'
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+LAMBDA_DIR="$REPO_ROOT/infra/lambda/cdn-rsvp"
+DYNAMODB_DIR="$REPO_ROOT/infra/dynamodb"
+IAM_DIR="$REPO_ROOT/infra/iam"
+
+trap 'echo "ERROR: deploy failed at line $LINENO" >&2' ERR
+
+echo "=== 0. SSO check ==="
+aws sts get-caller-identity --profile "$PROFILE" --region "$LAMBDA_REGION" \
+  --query 'Account' --output text | grep -q "$LAMBDA_ACCOUNT" \
+  || { echo "ERROR: profile $PROFILE is not authenticated to account $LAMBDA_ACCOUNT" >&2; exit 1; }
+echo "Authenticated to account $LAMBDA_ACCOUNT via $PROFILE"
+
+echo "=== 1. Create DynamoDB table (idempotent) ==="
+for TABLE_JSON in "$DYNAMODB_DIR/cdn-rsvps-table.json"; do
+  TABLE_NAME=$(jq -r '.TableName' "$TABLE_JSON")
+  if aws dynamodb describe-table --table-name "$TABLE_NAME" \
+      --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
+    echo "Table $TABLE_NAME already exists, skipping."
+  else
+    echo "Creating table $TABLE_NAME..."
+    aws dynamodb create-table \
+      --cli-input-json "file://$TABLE_JSON" \
+      --region "$LAMBDA_REGION" --profile "$PROFILE"
+    aws dynamodb wait table-exists \
+      --table-name "$TABLE_NAME" \
+      --region "$LAMBDA_REGION" --profile "$PROFILE"
+    echo "Table $TABLE_NAME created."
+  fi
+done
+
+echo "=== 2. Create/update IAM role ==="
+TRUST_POLICY="file://$IAM_DIR/speaker-proposals-trust-policy.json"
+EXEC_POLICY="file://$IAM_DIR/cdn-rsvp-execution-policy.json"
+
+if aws iam get-role --role-name "$ROLE_NAME" --profile "$PROFILE" 2>/dev/null; then
+  echo "Role $ROLE_NAME exists, updating trust policy..."
+  aws iam update-assume-role-policy --role-name "$ROLE_NAME" \
+    --policy-document "$TRUST_POLICY" \
+    --profile "$PROFILE"
+else
+  echo "Creating role $ROLE_NAME..."
+  aws iam create-role --role-name "$ROLE_NAME" \
+    --assume-role-policy-document "$TRUST_POLICY" \
+    --profile "$PROFILE"
+fi
+
+aws iam put-role-policy --role-name "$ROLE_NAME" \
+  --policy-name cdn-rsvp-execution \
+  --policy-document "$EXEC_POLICY" \
+  --profile "$PROFILE"
+
+echo "Waiting 10s for IAM propagation..."
+sleep 10
+
+echo "=== 3. Package Lambda ==="
+cd "$LAMBDA_DIR"
+zip -j /tmp/cdn-rsvp.zip index.mjs
+cd "$REPO_ROOT"
+
+echo "=== 4. Create/update Lambda function ==="
+ROLE_ARN="arn:aws:iam::${LAMBDA_ACCOUNT}:role/${ROLE_NAME}"
+ENV_VARS="Variables={EVENT_CAPACITIES=${EVENT_CAPACITIES},USER_POOL_ID=${USER_POOL_ID},RSVP_TABLE=${RSVP_TABLE}}"
+
+if aws lambda get-function --function-name "$LAMBDA_NAME" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE" 2>/dev/null; then
+  echo "Lambda $LAMBDA_NAME exists — updating code + config..."
+  aws lambda update-function-code --function-name "$LAMBDA_NAME" \
+    --zip-file fileb:///tmp/cdn-rsvp.zip \
+    --region "$LAMBDA_REGION" --profile "$PROFILE"
+  aws lambda wait function-updated \
+    --function-name "$LAMBDA_NAME" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE"
+  aws lambda update-function-configuration --function-name "$LAMBDA_NAME" \
+    --role "$ROLE_ARN" \
+    --environment "$ENV_VARS" \
+    --timeout "$LAMBDA_TIMEOUT" --memory-size "$LAMBDA_MEMORY" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE"
+else
+  echo "Creating Lambda $LAMBDA_NAME..."
+  aws lambda create-function --function-name "$LAMBDA_NAME" \
+    --runtime "$LAMBDA_RUNTIME" --handler "$LAMBDA_HANDLER" \
+    --role "$ROLE_ARN" \
+    --zip-file fileb:///tmp/cdn-rsvp.zip \
+    --timeout "$LAMBDA_TIMEOUT" --memory-size "$LAMBDA_MEMORY" \
+    --architectures x86_64 \
+    --environment "$ENV_VARS" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE"
+  aws lambda wait function-active \
+    --function-name "$LAMBDA_NAME" \
+    --region "$LAMBDA_REGION" --profile "$PROFILE"
+fi
+
+echo "=== 5. Done ==="
+echo ""
+echo "Lambda code + DynamoDB + IAM + env vars deployed."
+echo "Next: run scripts/deploy-cdn-rsvp-apigw.sh to attach the HTTP V2 API."
