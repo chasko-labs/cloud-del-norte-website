@@ -158,7 +158,16 @@
 		"featuredEventInPersonLabel": "Junio 2026 presencial: centro de El Paso, Texas",
 		"featuredEventSpotsRemaining": "Quedan {count} de {capacity} cupos",
 		"featuredEventRsvpPrimary": "RSVP en CloudDelNorte.org",
-		"featuredEventRsvpMeetup": "RSVP en Meetup"
+		"featuredEventRsvpMeetup": "RSVP en Meetup",
+		"episodeScroller": {
+			"headerSuffix": " — episodios",
+			"sortNewest": "Reciente primero",
+			"sortOldest": "Más viejo primero",
+			"loadMore": "Cargar más",
+			"transcriptLink": "transcripción",
+			"empty": "Aún no hay episodios",
+			"playEpisodeAria": "Reproducir {title}"
+		}
 	},
 	"dashboardPage": {
 		"productionOverview": {

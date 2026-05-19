@@ -31,6 +31,76 @@ import {
 import { decidePodcastRecovery, pruneHistory } from "./podcast-recovery";
 import "./styles.css";
 
+/**
+ * Wave 24c — episode-swap event name. The episode scroller dispatches this
+ * with detail.url + detail.title when the user picks a back-catalog episode
+ * to play. The persistent player listens (see effect inside
+ * PersistentPlayerBar) and overrides the audio src + plays. Lives on window
+ * so the scroller doesn't need a direct ref into the player tree.
+ */
+const EPISODE_SWAP_EVENT = "cdn:player:swap-episode";
+
+/**
+ * Wave 24c — read-only hook that surfaces the active stream's identifying
+ * fields for sibling components (notably the podcast-episode-scroller). The
+ * scroller cannot import the persisted state directly without polling, so
+ * we publish state changes via a `cdn:player:state` window event from the
+ * player's own state effect and replay the latest snapshot here.
+ *
+ * Returns nullable fields — the player may not have hydrated yet on the
+ * very first paint after a cold load.
+ */
+export interface ActivePlayerStream {
+	readonly stationKey: string | null;
+	readonly stationLabel: string | null;
+	readonly isPodcast: boolean;
+	readonly currentEpisodeUrl: string | null;
+}
+
+const PLAYER_STATE_EVENT = "cdn:player:state";
+
+export function useActivePlayerStream(): ActivePlayerStream {
+	const [snapshot, setSnapshot] = useState<ActivePlayerStream>(() =>
+		readActivePlayerStream(),
+	);
+	useEffect(() => {
+		const handler = () => setSnapshot(readActivePlayerStream());
+		// Window-level focus + storage listeners catch out-of-band updates
+		// (other tabs, hydration races) without requiring the player tree to
+		// share React context with consumers.
+		window.addEventListener(PLAYER_STATE_EVENT, handler);
+		window.addEventListener("storage", handler);
+		// Initial fetch in case the publishing effect already fired before
+		// this hook mounted (race on first paint).
+		handler();
+		return () => {
+			window.removeEventListener(PLAYER_STATE_EVENT, handler);
+			window.removeEventListener("storage", handler);
+		};
+	}, []);
+	return snapshot;
+}
+
+function readActivePlayerStream(): ActivePlayerStream {
+	const persisted = loadPlayerState();
+	if (!persisted) {
+		return {
+			stationKey: null,
+			stationLabel: null,
+			isPodcast: false,
+			currentEpisodeUrl: null,
+		};
+	}
+	const def = STREAMS.find((s) => s.key === persisted.stationKey) ?? null;
+	return {
+		stationKey: persisted.stationKey,
+		stationLabel: persisted.stationLabel ?? def?.label ?? null,
+		isPodcast: def?.type === "podcast",
+		currentEpisodeUrl:
+			persisted.podcastEpisodeUrl ?? persisted.stationUrl ?? null,
+	};
+}
+
 const POLL_MS = 30_000;
 /** how long an audio error/stall must persist before we surface UI to the user */
 const STREAM_ERROR_THRESHOLD_MS = 5_000;
@@ -264,6 +334,40 @@ function PersistentPlayerBar({
 			retryTimerRef.current = null;
 		}
 	}, [state.stationKey]);
+
+	// Wave 24c — episode-swap listener. The podcast-episode-scroller dispatches
+	// `cdn:player:swap-episode` when the user picks a back-catalog episode;
+	// we override the audio src + start playback. Gated to the active podcast
+	// only — radio stations ignore the event entirely.
+	useEffect(() => {
+		if (!isPodcast) return;
+		const handler = (ev: Event) => {
+			const detail = (ev as CustomEvent<{ url?: string; title?: string }>)
+				.detail;
+			if (!detail?.url) return;
+			setRssAudioUrl(detail.url);
+			if (detail.title) setNowPlaying(detail.title);
+			// best-effort autoplay — same pattern as the play() callback below.
+			// failure (e.g. browser blocks autoplay) sets the blocked state via
+			// the existing audio.play() catch chain.
+			const audio = audioRef.current;
+			if (audio) {
+				// give React a tick to flush the new src before kicking play
+				queueMicrotask(() => {
+					try {
+						audio.load();
+						audio.play().catch(() => setBlocked(true));
+					} catch {
+						setBlocked(true);
+					}
+				});
+			}
+		};
+		window.addEventListener(EPISODE_SWAP_EVENT, handler as EventListener);
+		return () => {
+			window.removeEventListener(EPISODE_SWAP_EVENT, handler as EventListener);
+		};
+	}, [isPodcast]);
 
 	// auto-advance on persistent failure — when streamHealth reaches 'failed'
 	// (auto-retry exhausted), advance to the next station after a 2s grace
@@ -1108,6 +1212,15 @@ function PersistentPlayerInner() {
 			metaUrl: first.metaUrl,
 		});
 	}, []);
+
+	// Wave 24c — publish the active stream snapshot for sibling consumers
+	// (podcast-episode-scroller). Re-fires whenever the resolved station
+	// changes so useActivePlayerStream can pick up the new identity.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: state is the change-detection trigger; the effect body intentionally just signals
+	useEffect(() => {
+		if (typeof window === "undefined") return;
+		window.dispatchEvent(new CustomEvent(PLAYER_STATE_EVENT));
+	}, [state]);
 
 	// skip station — direction +1 advances, -1 rewinds. Checks reachability
 	// before switching; skips up to 3 unreachable stations. If all 3 fail,
