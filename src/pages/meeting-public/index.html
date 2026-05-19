@@ -14,7 +14,7 @@
          same class is a no-op classList toggle. Wrapped in try/catch because
          localStorage throws in private-browsing modes. -->
     <script>
-      (function () {
+      (() => {
         var t;
         try {
           t = localStorage.getItem('awsaerospace-theme');
