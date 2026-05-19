@@ -95,9 +95,17 @@
 		0 12px 28px -6px rgba(90, 31, 138, 0.16),
 		0 4px 12px -3px rgba(0, 0, 0, 0.08);
 
-	/* ---------- Spacing tokens — reserved for future use ---------- */
+	/* ---------- Spacing tokens ----------
+	   8pt grid scale used for component padding, margin, gap. The base scale
+	   (xs/sm/md/lg/xl) covers the major tiers; --cdn-space-12 fills the
+	   missing 12px tier between sm (8px) and md (16px) — Cloudscape's
+	   SpaceBetween size="s" maps to 12px and the wave 37c featured-event
+	   spacing redesign needs a token for it (title→date hierarchy step).
+	   Numeric suffix keeps the t-shirt scale unambiguous for the existing
+	   xs/sm/md/lg/xl callers. */
 	--cdn-space-xs: 4px;
 	--cdn-space-sm: 8px;
+	--cdn-space-12: 12px;
 	--cdn-space-md: 16px;
 	--cdn-space-lg: 24px;
 	--cdn-space-xl: 40px;

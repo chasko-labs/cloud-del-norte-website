@@ -1360,15 +1360,21 @@
    prefers-reduced-motion: no-preference. */
 .feed-featured-event__date {
 	display: block;
-	margin: 4px 0 2px;
+	/* wave 37c — drop the legacy asymmetric 4px / 0 / 2px margin. Inter-
+	   element spacing is now owned by the layout grid's per-element
+	   margin-block-end tokens (date → in-person = --cdn-space-sm = 8px). */
+	margin: 0;
 	font-variant-numeric: tabular-nums;
 }
 
 .feed-featured-event__date-plate {
 	position: relative;
 	display: inline-block;
-	padding: 6px 14px;
-	border-radius: 8px;
+	/* wave 37c — round padding from raw 6px / 14px to the 8pt grid:
+	   --cdn-space-sm (8px) vertical, --cdn-space-md (16px) horizontal.
+	   Border-radius pinned to --cdn-radius-md (8px) token. */
+	padding: var(--cdn-space-sm, 8px) var(--cdn-space-md, 16px);
+	border-radius: var(--cdn-radius-md, 8px);
 	background: linear-gradient(
 		135deg,
 		var(--cdn-v2-date-plate-from) 0%,
@@ -1494,11 +1500,20 @@
 	}
 }
 
+/* Wave 37c — description personality uplift.
+   line-height 1.65 (was 1.6) for slightly more open vertical rhythm.
+   Explicit --cdn-text-base (14px) replaces the 0.9375rem (15px) raw
+   fallback so the inherited token rules instead of a hard-coded value.
+   Color flips from inherited text-body-secondary muted gray (set via the
+   <Box color> prop in JSX, also wave 37c) to --cdn-color-text high-contrast
+   so the prose actually reads. Letter-spacing kept at 0.005em (subtle, not
+   exaggerated). Max-width 64ch unchanged from wave 32a copy work. */
 .feed-featured-event__description {
-	font-size: var(--cdn-text-base, 0.9375rem);
-	line-height: 1.6;
+	font-size: var(--cdn-text-base, 0.875rem);
+	line-height: 1.65;
 	max-width: 64ch;
 	letter-spacing: 0.005em;
+	color: var(--cdn-color-text);
 }
 
 /* ---------- In-person pill — strengthened amber tungsten chip ----------
@@ -1509,7 +1524,11 @@
    __location-text below. Visual treatment is unchanged from wave 27a. */
 .feed-featured-event__in-person-pill {
 	display: inline-block;
-	padding: 3px 12px;
+	/* wave 37c — round padding from raw 3px / 12px to the 8pt grid:
+	   --cdn-space-xs (4px) vertical, --cdn-space-12 (12px) horizontal.
+	   The 1px vertical bump is invisible against the cap-height of an
+	   uppercase 11px chip but pulls the pill onto the documented scale. */
+	padding: var(--cdn-space-xs, 4px) var(--cdn-space-12, 12px);
 	border-radius: 999px;
 	background: linear-gradient(
 		135deg,
@@ -1547,7 +1566,9 @@
 .feed-featured-event__spots {
 	position: relative;
 	display: inline-block;
-	padding: 4px 12px;
+	/* wave 37c — token-ize raw 4px / 12px padding onto the 8pt scale.
+	   Border-radius is the pill 999px sentinel (kept as-is, no token). */
+	padding: var(--cdn-space-xs, 4px) var(--cdn-space-12, 12px);
 	border-radius: 999px;
 	background: linear-gradient(
 		135deg,
@@ -1573,7 +1594,10 @@
 .feed-featured-event__spots::before {
 	content: "";
 	position: absolute;
-	inset: -3px;
+	/* wave 37c — round breathing-ring inset from raw -3px to the 8pt
+	   --cdn-space-xs (4px) tier. The 1px expansion harmonizes the ring
+	   with the parent chip's now-also-tokenized 4px vertical padding. */
+	inset: calc(-1 * var(--cdn-space-xs, 4px));
 	border-radius: inherit;
 	border: 1px solid var(--cdn-v2-spots-ring);
 	opacity: 0.55;
@@ -1786,12 +1810,44 @@
 		"desc"
 		"spots"
 		"buttons";
-	gap: var(--cdn-space-sm, 8px);
+	/* wave 37c — set base gap to 0 and use per-element margin-block-end
+	   on each grid item to encode the spacing hierarchy on the 8pt grid:
+	     image     → title    : --cdn-space-md  (16px)
+	     title     → date     : --cdn-space-12  (12px)
+	     date      → in-person: --cdn-space-sm  (8px)
+	     in-person → location : --cdn-space-xs  (4px)  cluster meta
+	     location  → desc     : --cdn-space-12  (12px)
+	     desc      → spots    : --cdn-space-md  (16px)
+	     spots     → buttons  : --cdn-space-lg  (24px) primary action
+	   Smaller gaps cluster related metadata (in-person/location); the
+	   24px gap before the button stack gives the CTA breathing room as
+	   the primary action. Tablet + desktop @container queries below
+	   override these per-item margins back to 0 and use the grid `gap`
+	   shorthand (also tokenized) so the 2-col layouts read row-by-row
+	   without ragged inter-cell spacing. */
+	gap: 0;
 	/* Min-width:0 so the grid can shrink inside its Cloudscape Container
 	   parent without inner content (long event titles, wide date strings)
 	   pushing the track wider than the card. Mirrors the .feed-grid__cell
 	   pattern used on the page-level grid. */
 	min-width: 0;
+}
+
+/* wave 37c — per-element hierarchy spacing. Each rule sets the distance
+   FROM that element TO the next one in the grid via margin-block-end.
+   Justified on every element so the 8pt rhythm is explicit at the call
+   site rather than buried in a single grid-template-rows declaration.
+   The image-area + image-link target the same single grid cell (33c
+   wraps the area in an anchor); apply the margin to whichever one ends
+   up as the grid item — both rules use single-class selectors to stay
+   on the same specificity tier as the existing rules below in the file
+   (biome no-descending-specificity). */
+.feed-featured-event__image-link {
+	margin-block-end: var(--cdn-space-md, 16px);
+}
+
+.feed-featured-event__image-area {
+	margin-block-end: var(--cdn-space-md, 16px);
 }
 
 /* Per-child grid-area assignments. Each child class maps to one named
@@ -1822,28 +1878,43 @@
 
 .feed-featured-event__title {
 	grid-area: title;
+	/* wave 37c — title → date hierarchy step (12px). */
+	margin-block-end: var(--cdn-space-12, 12px);
 }
 
 .feed-featured-event__date {
 	grid-area: date;
+	/* wave 37c — date → in-person hierarchy step (8px). */
+	margin-block-end: var(--cdn-space-sm, 8px);
 }
 
 .feed-featured-event__in-person-pill {
 	grid-area: in-person;
 	justify-self: start;
+	/* wave 37c — in-person → location cluster step (4px). The two
+	   metadata rows are gestalt-grouped — the smaller 4px gap reads
+	   them as related fine print rather than independent items. */
+	margin-block-end: var(--cdn-space-xs, 4px);
 }
 
 .feed-featured-event__location-text {
 	grid-area: location;
+	/* wave 37c — location → description step (12px). */
+	margin-block-end: var(--cdn-space-12, 12px);
 }
 
 .feed-featured-event__description {
 	grid-area: desc;
+	/* wave 37c — description → spots step (16px). */
+	margin-block-end: var(--cdn-space-md, 16px);
 }
 
 .feed-featured-event__spots {
 	grid-area: spots;
 	justify-self: start;
+	/* wave 37c — spots → buttons step (24px). The largest gap in the
+	   stack so the primary CTA row reads as a deliberate next beat. */
+	margin-block-end: var(--cdn-space-lg, 24px);
 }
 
 .feed-featured-event__layout .cdn-brand-btn-stack {
@@ -1864,7 +1935,34 @@
 			"in-person spots"
 			"location desc"
 			"buttons buttons";
-		gap: 12px 16px;
+		/* wave 37c — tokenize the legacy raw `12px 16px` to the 8pt scale.
+		   Row gap = --cdn-space-12 (12px), column gap = --cdn-space-md
+		   (16px). The 2-col layout reads row-by-row at this breakpoint, so
+		   uniform grid gap is the right primitive — per-item margin-block-
+		   end is reset to 0 below so the row spacing stays even across
+		   the title/date and in-person/spots row pairs. */
+		gap: var(--cdn-space-12, 12px) var(--cdn-space-md, 16px);
+	}
+
+	/* wave 37c — at tablet+, hand inter-row spacing back to the grid
+	   `gap` shorthand. The mobile per-item margin-block-end stack would
+	   otherwise produce ragged row spacing across the 2-col rows (item
+	   A's 12px margin vs. item B's 4px margin in the same row). The
+	   spots → buttons step is preserved via an extra block-start on the
+	   button stack so the CTA still gets its big-anchor breathing room. */
+	.feed-featured-event__layout .feed-featured-event__image-link,
+	.feed-featured-event__layout .feed-featured-event__image-area,
+	.feed-featured-event__layout .feed-featured-event__title,
+	.feed-featured-event__layout .feed-featured-event__date,
+	.feed-featured-event__layout .feed-featured-event__in-person-pill,
+	.feed-featured-event__layout .feed-featured-event__location-text,
+	.feed-featured-event__layout .feed-featured-event__description,
+	.feed-featured-event__layout .feed-featured-event__spots {
+		margin-block-end: 0;
+	}
+
+	.feed-featured-event__layout .cdn-brand-btn-stack {
+		margin-block-start: var(--cdn-space-12, 12px);
 	}
 
 	/* Center the buttons stack across the 2-col span so it reads as a
@@ -1900,11 +1998,26 @@
 			"image spots"
 			"image buttons";
 		align-items: start;
-		gap: 8px 24px;
+		/* wave 37c — tokenize legacy raw `8px 24px` onto the 8pt scale.
+		   Right-column row gap = --cdn-space-sm (8px) keeps the title→
+		   date→in-person→…→spots stack tight against the focal image;
+		   column gap = --cdn-space-lg (24px) sets the breathing space
+		   between the photo and the content stack. Per-item margin-
+		   block-end is reset (above @container 520px rule still applies
+		   here since the desktop query inherits) so the right-column
+		   stack reads as evenly-pitched rows. */
+		gap: var(--cdn-space-sm, 8px) var(--cdn-space-lg, 24px);
 	}
 
 	.feed-featured-event__image-area {
 		align-self: start;
+	}
+
+	/* wave 37c — at desktop, restore the spots → buttons hierarchy step
+	   to 24px (--cdn-space-lg). The tablet override gave it 12px which
+	   reads as cramped against the wider desktop-column right stack. */
+	.feed-featured-event__layout .cdn-brand-btn-stack {
+		margin-block-start: var(--cdn-space-md, 16px);
 	}
 
 	/* Drop the centered buttons override from the tablet rule — at
@@ -2824,7 +2937,14 @@
 	align-items: center;
 	justify-content: center;
 	min-height: 40px;
-	padding: 8px 28px;
+	/* wave 37c — tokenize raw 8px / 28px padding onto the 8pt grid.
+	   Mobile: --cdn-space-12 (12px) vertical, --cdn-space-md (16px)
+	   horizontal. The original 28px horizontal pad was off-grid and the
+	   8px vertical was too tight for the 40px min-height (crowded the
+	   headline against the marquee rim). 12 / 16 sits the text
+	   comfortably between the rim highlights and falls on the Cloudscape
+	   SpaceBetween size="s" / size="m" rhythm. */
+	padding: var(--cdn-space-12, 12px) var(--cdn-space-md, 16px);
 	border-radius: 10px;
 	background: linear-gradient(
 		180deg,
@@ -2979,7 +3099,10 @@
 @container cdn-feed-featured (min-width: 520px) {
 	.feed-featured-event__marquee {
 		min-height: 44px;
-		padding: 10px 36px;
+		/* wave 37c — tokenize raw 10px / 36px → 12px / 24px (--cdn-space-12 /
+		   --cdn-space-lg). 36px was off-grid; 24px falls on the canonical
+		   8pt scale and matches Cloudscape SpaceBetween size="l". */
+		padding: var(--cdn-space-12, 12px) var(--cdn-space-lg, 24px);
 	}
 
 	.feed-featured-event__marquee-text {
@@ -2991,7 +3114,12 @@
 @container cdn-feed-featured (min-width: 860px) {
 	.feed-featured-event__marquee {
 		min-height: 48px;
-		padding: 12px 44px;
+		/* wave 37c — tokenize raw 12px / 44px → 16px / 24px (--cdn-space-md /
+		   --cdn-space-lg). 44px was off-grid; the new 16/24 pair gives the
+		   sign desktop-class breathing room while keeping the box rhythm
+		   on the 8pt grid (matches the Cloudscape size="m" / size="l"
+		   pairing the rest of the desktop layout uses for column gap). */
+		padding: var(--cdn-space-md, 16px) var(--cdn-space-lg, 24px);
 	}
 
 	.feed-featured-event__marquee-text {
