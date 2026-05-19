@@ -2,9 +2,11 @@
 // SPDX-License-Identifier: MIT-0
 
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
-import UpcomingVirtualEvent from "../upcoming-virtual-event";
+import UpcomingVirtualEvent, {
+	UpcomingVirtualEventErrorBoundary,
+} from "../upcoming-virtual-event";
 
 function renderWithLocale(locale: "us" | "mx") {
 	return render(
@@ -94,5 +96,122 @@ describe("UpcomingVirtualEvent", () => {
 		expect(imgs[1].className).toContain(
 			"feed-upcoming-virtual-event__image--dark",
 		);
+	});
+
+	// ---------- Wave 33b — starfield-twinkle marquee header ----------
+
+	it("wave 33b — renders the marquee header with role=heading aria-level=2", () => {
+		const { container } = renderWithLocale("us");
+		const marquee = container.querySelector(
+			".feed-upcoming-virtual-event__marquee",
+		);
+		expect(marquee).not.toBeNull();
+		expect(marquee?.getAttribute("role")).toBe("heading");
+		expect(marquee?.getAttribute("aria-level")).toBe("2");
+	});
+
+	it("wave 33b — marquee text contains the localized header string", () => {
+		const { container } = renderWithLocale("us");
+		const marqueeText = container.querySelector(
+			".feed-upcoming-virtual-event__marquee-text",
+		);
+		expect(marqueeText).not.toBeNull();
+		expect(marqueeText?.textContent).toMatch(
+			/Upcoming virtual AWS community event/i,
+		);
+	});
+
+	it("wave 33b — marquee renders 14 twinkle stars inside an aria-hidden container, each with a --star-index custom property", () => {
+		const { container } = renderWithLocale("us");
+		const wrapper = container.querySelector(
+			".feed-upcoming-virtual-event__twinkle-wrapper",
+		);
+		expect(wrapper).not.toBeNull();
+		expect(wrapper?.getAttribute("aria-hidden")).toBe("true");
+		const stars = wrapper?.querySelectorAll(
+			".feed-upcoming-virtual-event__twinkle-star",
+		);
+		expect(stars?.length).toBe(14);
+		stars?.forEach((star, i) => {
+			// jsdom serializes inline custom properties on the style attribute.
+			const style = star.getAttribute("style") ?? "";
+			expect(style).toMatch(new RegExp(`--star-index:\\s*${i}`));
+		});
+	});
+
+	it("wave 33b — renders the date inside the violet date-plate VFX backplate wrapper", () => {
+		const { container } = renderWithLocale("us");
+		const plate = container.querySelector(
+			".feed-upcoming-virtual-event__date-plate",
+		);
+		expect(plate).not.toBeNull();
+		expect(plate?.textContent).toMatch(/May 22/);
+	});
+
+	it("wave 33b — title link sits inside .feed-upcoming-virtual-event__title for the gradient/scrolling-tape treatment", () => {
+		const { container } = renderWithLocale("us");
+		const title = container.querySelector(
+			".feed-upcoming-virtual-event__title",
+		);
+		expect(title).not.toBeNull();
+		const link = title?.querySelector("a");
+		expect(link).not.toBeNull();
+		expect(link?.getAttribute("href")).toBe(
+			"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/",
+		);
+	});
+});
+
+// ---------- Wave 33b — error boundary fallback ----------
+
+describe("UpcomingVirtualEventErrorBoundary", () => {
+	it("renders the children when no error is thrown", () => {
+		render(
+			<UpcomingVirtualEventErrorBoundary
+				fallbackHeader="header"
+				fallbackMessage="boom"
+			>
+				<div>healthy</div>
+			</UpcomingVirtualEventErrorBoundary>,
+		);
+		expect(screen.getByText("healthy")).toBeInTheDocument();
+	});
+
+	it("renders the localized fallback header + message when a child throws at render time", () => {
+		// Suppress the React error-boundary console.error noise inside this
+		// test so the test runner output stays readable. The boundary itself
+		// still calls console.error (wired through the spy below) — that's
+		// the developer signal we contract for in componentDidCatch.
+		const errSpy = vi.spyOn(console, "error").mockImplementation(() => {
+			/* swallowed for test output cleanliness */
+		});
+
+		function Boom(): never {
+			throw new Error("boom");
+		}
+
+		render(
+			<UpcomingVirtualEventErrorBoundary
+				fallbackHeader="Upcoming virtual AWS community event"
+				fallbackMessage="Event details temporarily unavailable. Please refresh the page."
+			>
+				<Boom />
+			</UpcomingVirtualEventErrorBoundary>,
+		);
+
+		// Fallback header still announces the section in user language.
+		expect(
+			screen.getByText("Upcoming virtual AWS community event"),
+		).toBeInTheDocument();
+		// Fallback message renders so the slot doesn't go silently blank.
+		expect(
+			screen.getByText(
+				"Event details temporarily unavailable. Please refresh the page.",
+			),
+		).toBeInTheDocument();
+		// componentDidCatch logged the error (developer signal).
+		expect(errSpy).toHaveBeenCalled();
+
+		errSpy.mockRestore();
 	});
 });
