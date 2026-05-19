@@ -2456,40 +2456,6 @@
 	}
 }
 
-/* ---------- Wave 33b — dark-mode image CSS-filter STOPGAP ----------
-   TODO(bryan): replace this filter chain with a real dark render once
-   public/events/global-community-gatherings-dark.webp is regenerated.
-   At the time of wave 33b, public/events/global-community-gatherings-
-   dark.webp is byte-identical to the -light.webp variant (md5sum
-   confirms). Until a real dark asset lands, apply a CSS filter chain to
-   the dark <img> element that approximates the Ben-Day halftone dark
-   aesthetic Bryan described (charcoal substrate, indigo-black vignette,
-   ochre/ultramarine tone shifts).
-
-   Filter chain rationale (tuned vs. the brief's suggestion):
-   - invert(0.85): near-tonal-inversion without going full photonegative;
-     0.85 keeps a hint of the original luminance so faces + the AWS
-     Community badge don't read as ghostly silhouettes.
-   - hue-rotate(195deg): rotates the inverted yellows/cyans toward
-     indigo/ultramarine — the Ben-Day-halftone dark voice.
-   - saturate(1.35): pulls the indigo/ochre back up after invert
-     desaturated the midtones.
-   - brightness(0.88): slight luminance pull-down so the result still
-     reads as "dark mode" against the indigo card surface, not as a
-     bright inverted plate.
-   - contrast(1.12): edge-defines the AWS Community badge + global
-     network arc against the inverted background so the focal points
-     don't get muddy.
-
-   Scope: only the .feed-upcoming-virtual-event__image--dark variant.
-   The light variant is unfiltered. The wave 26a __bulbs-wrapper SVG
-   overlay sits on top of the filter at the wrapper level — the bulbs
-   are SVG circles, not the IMG, so they stay unfiltered. */
-.awsui-dark-mode .feed-upcoming-virtual-event__image--dark {
-	filter: invert(0.85) hue-rotate(195deg) saturate(1.35) brightness(0.88)
-		contrast(1.12);
-}
-
 /* ---------- Upcoming virtual event card — wave 26a base ---------- */
 
 .feed-upcoming-virtual-event {
