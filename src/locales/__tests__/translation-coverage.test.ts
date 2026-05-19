@@ -108,6 +108,7 @@ describe("translation coverage", () => {
 			"feedPage.infoLink", // "Info" - universal abbreviation
 			"helpPanel.andresWebsite", // "andmore.dev" - proper domain name
 			"feedPage.andmoreDevHeader", // "andmore.dev" - proper domain name
+			"feedPage.readysetcloudHeader", // "Ready, Set, Cloud" - proper noun / brand name (suffix dropped wave 36a)
 			"helpPanel.andresMoreno", // Proper name
 			"helpPanel.aslLeadRole", // "ASL" - acronym
 			"helpPanel.lsmLead", // "LSM" - acronym
@@ -128,7 +129,7 @@ describe("translation coverage", () => {
 			"auth.login.mfaSetup.googleAndroid", // "Google Authenticator (Android)" - proper product name
 			// Loanwords, acronyms, and proper nouns legitimately identical in both locales
 			"admin.proposals.status.virtual", // "virtual" - same in Spanish
-			"feedPage.theZacsShowHeader", // "the Zac's show" - proper name
+			"feedPage.theZacsShowHeader", // "The Zacs' Show" - proper name
 			"feedPage.vbrownbagHeader", // "vBrownBag" - proper noun / brand name
 			"feedbackForm.fileUpload.errorIconAriaLabel", // "Error" - universal tech term
 			"meetings.rsvpButton", // "RSVP" - universal abbreviation

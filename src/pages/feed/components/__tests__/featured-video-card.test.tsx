@@ -29,8 +29,7 @@ afterEach(() => {
 
 const PROPS = {
 	videoId: "0PedFnnH_Ic",
-	title:
-		"How a Former Journalist Became an AWS Community Builder | Women in Tech Story",
+	title: "Women in Tech",
 	author: "Shubham gour",
 	authorUrl: "https://www.youtube.com/@Shubhamgourtech",
 	thumbnailUrl: "https://i.ytimg.com/vi/0PedFnnH_Ic/hqdefault.jpg",

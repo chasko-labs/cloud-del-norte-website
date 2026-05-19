@@ -153,7 +153,7 @@ describe("UpcomingVirtualEvent", () => {
 		);
 		expect(marqueeText).not.toBeNull();
 		expect(marqueeText?.textContent).toMatch(
-			/Upcoming virtual AWS community event/i,
+			/Virtual AWS Community Events/i,
 		);
 	});
 
