@@ -130,6 +130,13 @@
 		"shortsModalTitle": "short mescalero",
 		"shortsModalClose": "cerrar reproductor",
 		"shortsNowShowing": "ahorita pasando video",
+		"shortsSort": {
+			"legend": "Ordenar por",
+			"newest": "Reciente primero",
+			"oldest": "Más viejo primero",
+			"changedAriaNewest": "Ordenado: reciente primero",
+			"changedAriaOldest": "Ordenado: más viejo primero"
+		},
 		"featuredEventHeader": "Evento destacado",
 		"featuredEventBadge": "NO TE LO PIERDAS",
 		"featuredEventTitle": "Hora Feliz Comunitaria y Noche de Networking",

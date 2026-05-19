@@ -130,6 +130,13 @@
 		"shortsModalTitle": "Mescalero short",
 		"shortsModalClose": "Close player",
 		"shortsNowShowing": "Now showing video",
+		"shortsSort": {
+			"legend": "Sort by",
+			"newest": "Newest first",
+			"oldest": "Oldest first",
+			"changedAriaNewest": "Sorted newest first",
+			"changedAriaOldest": "Sorted oldest first"
+		},
 		"featuredEventHeader": "Featured event",
 		"featuredEventBadge": "DON'T MISS",
 		"featuredEventTitle": "Community Happy Hour & Networking Night",
