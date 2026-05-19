@@ -1007,7 +1007,6 @@
 	--cdn-rizz-badge-glow: rgba(144, 96, 240, 0.36);
 	--cdn-rizz-image-rim-1: rgba(90, 31, 138, 0.24);
 	--cdn-rizz-image-rim-2: rgba(201, 162, 63, 0.22);
-	--cdn-rizz-spots-glow: rgba(144, 96, 240, 0.32);
 	/* wave-27a v2 depth + sweep tokens — light mode
 	   wave 33d — also softened ambient-bloom + date-plate shimmer alphas */
 	--cdn-v2-stage-rim: rgba(255, 250, 235, 0.06);
@@ -1020,7 +1019,6 @@
 	--cdn-v2-date-glow: rgba(90, 31, 138, 0.3);
 	--cdn-v2-date-shimmer: rgba(255, 250, 235, 0.45);
 	--cdn-v2-title-tape: rgba(255, 250, 235, 0.38);
-	--cdn-v2-spots-ring: rgba(144, 96, 240, 0.18);
 
 	position: relative;
 	isolation: isolate;
@@ -1068,7 +1066,6 @@
 	--cdn-rizz-badge-glow: rgba(199, 184, 232, 0.52);
 	--cdn-rizz-image-rim-1: rgba(144, 96, 240, 0.42);
 	--cdn-rizz-image-rim-2: rgba(255, 153, 0, 0.22);
-	--cdn-rizz-spots-glow: rgba(199, 184, 232, 0.45);
 	/* wave-27a v2 depth + sweep tokens — dark mode */
 	--cdn-v2-stage-rim: rgba(215, 199, 238, 0.1);
 	--cdn-v2-spot-sweep: rgba(48, 0, 106, 0.42);
@@ -1080,7 +1077,6 @@
 	--cdn-v2-date-glow: rgba(199, 184, 232, 0.55);
 	--cdn-v2-date-shimmer: rgba(215, 199, 238, 0.4);
 	--cdn-v2-title-tape: rgba(215, 199, 238, 0.42);
-	--cdn-v2-spots-ring: rgba(199, 184, 232, 0.32);
 
 	box-shadow:
 		0 2px 6px rgba(0, 0, 0, 0.5),
@@ -1576,124 +1572,37 @@
 		0 2px 8px -2px rgba(255, 153, 0, 0.32);
 }
 
-/* ---------- Spots-remaining — chip with stage-light pulse + outer ring ----------
-   v2 adds a faint outer ring (via outline + box-shadow ring) that breathes
-   in concert with the existing inner pulse — same period (3.4s) so the
-   eye reads them as one harmonized "the seats are filling" beat. */
+/* ---------- Spots-remaining — passive urgency label ----------
+   Wave 39a — de-button-ified per Bryan: "Limited space — RSVP now looks
+   distracting as a button — if it's going to be a button it should
+   double as RSVP for signup". Stripped the button affordances (3.4s
+   pulse animation, outer breathing ring, pill 999px radius, gradient
+   background, drop shadow) so the chip reads as a static label, not a
+   third clickable CTA. The two real buttons (Speakeasy primary +
+   Meetup secondary) keep their button affordances exclusively.
+   Typography (bold + tracking + tabular-nums + theme color) is
+   preserved — only the container affordances changed. */
 .feed-featured-event__spots {
-	position: relative;
 	display: inline-block;
-	/* wave 37c — token-ize raw 4px / 12px padding onto the 8pt scale.
-	   Border-radius is the pill 999px sentinel (kept as-is, no token). */
+	/* wave 37c — token-ize raw 4px / 12px padding onto the 8pt scale. */
 	padding: var(--cdn-space-xs, 4px) var(--cdn-space-12, 12px);
-	border-radius: 999px;
-	background: linear-gradient(
-		135deg,
-		rgba(144, 96, 240, 0.14) 0%,
-		rgba(90, 31, 138, 0.1) 100%
-	);
-	border: 1px solid rgba(144, 96, 240, 0.42);
+	/* wave 39a — small radius (was 999px pill) so it reads as a label,
+	   not a clickable pill. */
+	border-radius: var(--cdn-radius-sm, 4px);
+	/* wave 39a — flat warm tone (was a violet linear-gradient) matched
+	   to the in-person pill amber family but flatter / non-button. */
+	background-color: rgba(139, 90, 43, 0.08);
+	border: 1px solid rgba(139, 90, 43, 0.18);
 	color: var(--cdn-purple, #5a1f8a);
 	font-weight: 700;
 	letter-spacing: 0.02em;
 	font-variant-numeric: tabular-nums;
-	box-shadow:
-		inset 0 1px 0 rgba(255, 250, 235, 0.4),
-		0 0 0 0 var(--cdn-rizz-spots-glow),
-		0 2px 8px -2px rgba(90, 31, 138, 0.22);
-	/* wave 30a — 3.4s box-shadow pulse + ::before ring breathe; isolate
-	   to its own GPU layer so the pulse repaints don't dirty the card. */
-	will-change: transform, opacity;
-}
-
-/* outer breathing ring — sits 4px outside the chip via ::before, same beat
-   as the inner pulse so they read as a single emissive halo. */
-.feed-featured-event__spots::before {
-	content: "";
-	position: absolute;
-	/* wave 37c — round breathing-ring inset from raw -3px to the 8pt
-	   --cdn-space-xs (4px) tier. The 1px expansion harmonizes the ring
-	   with the parent chip's now-also-tokenized 4px vertical padding. */
-	inset: calc(-1 * var(--cdn-space-xs, 4px));
-	border-radius: inherit;
-	border: 1px solid var(--cdn-v2-spots-ring);
-	opacity: 0.55;
-	pointer-events: none;
 }
 
 .awsui-dark-mode .feed-featured-event__spots {
-	background: linear-gradient(
-		135deg,
-		rgba(199, 184, 232, 0.14) 0%,
-		rgba(144, 96, 240, 0.1) 100%
-	);
-	border-color: rgba(199, 184, 232, 0.4);
+	background-color: rgba(255, 153, 0, 0.12);
+	border-color: rgba(255, 153, 0, 0.28);
 	color: var(--cdn-lavender, #d7c7ee);
-	box-shadow:
-		inset 0 1px 0 rgba(215, 199, 238, 0.18),
-		0 0 0 0 var(--cdn-rizz-spots-glow),
-		0 2px 10px -2px rgba(144, 96, 240, 0.34);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-	@keyframes feed-featured-spots-pulse {
-		0%,
-		100% {
-			box-shadow:
-				inset 0 1px 0 rgba(255, 250, 235, 0.4),
-				0 0 0 0 var(--cdn-rizz-spots-glow),
-				0 2px 8px -2px rgba(90, 31, 138, 0.22);
-		}
-		50% {
-			box-shadow:
-				inset 0 1px 0 rgba(255, 250, 235, 0.5),
-				0 0 0 6px transparent,
-				0 4px 14px -2px var(--cdn-rizz-spots-glow);
-		}
-	}
-
-	@keyframes feed-featured-spots-pulse-dark {
-		0%,
-		100% {
-			box-shadow:
-				inset 0 1px 0 rgba(215, 199, 238, 0.18),
-				0 0 0 0 var(--cdn-rizz-spots-glow),
-				0 2px 10px -2px rgba(144, 96, 240, 0.34);
-		}
-		50% {
-			box-shadow:
-				inset 0 1px 0 rgba(215, 199, 238, 0.28),
-				0 0 0 6px transparent,
-				0 4px 18px -2px var(--cdn-rizz-spots-glow);
-		}
-	}
-
-	.feed-featured-event__spots {
-		animation: feed-featured-spots-pulse 3.4s ease-in-out infinite;
-	}
-
-	.awsui-dark-mode .feed-featured-event__spots {
-		animation: feed-featured-spots-pulse-dark 3.4s ease-in-out infinite;
-	}
-
-	/* breathing outer ring — same 3.4s beat, opacity + scale offset 180° so
-	   the ring expands as the inner glow lifts. Reads as harmonized halo. */
-	@keyframes feed-featured-spots-ring-breathe {
-		0%,
-		100% {
-			opacity: 0.45;
-			transform: scale(1);
-		}
-		50% {
-			opacity: 0.85;
-			transform: scale(1.05);
-		}
-	}
-
-	.feed-featured-event__spots::before {
-		animation: feed-featured-spots-ring-breathe 3.4s ease-in-out infinite;
-		transform-origin: center;
-	}
 }
 
 /* ---------- Reduced-motion fallback — strip all animation, keep static
@@ -1733,26 +1642,16 @@
 		transition: none;
 	}
 
-	.feed-featured-event__spots,
-	.awsui-dark-mode .feed-featured-event__spots {
-		animation: none;
-	}
-
-	.feed-featured-event__spots::before {
-		animation: none;
-		transform: none;
-		opacity: 0.55;
-	}
-
 	/* wave 30a — drop the will-change GPU promotion hints when the user
 	   has requested reduced motion. With no sustained animation actually
 	   running, holding a dedicated GPU compositor layer is wasted memory
 	   (and on low-end devices, will-change itself can introduce its own
-	   tearing as the layer count grows). */
+	   tearing as the layer count grows). Wave 39a removed
+	   .feed-featured-event__spots from this list — the chip no longer
+	   carries a will-change hint since it is now a passive label. */
 	.feed-featured-event,
 	.feed-featured-event::after,
-	.feed-featured-event__date-plate,
-	.feed-featured-event__spots {
+	.feed-featured-event__date-plate {
 		will-change: auto;
 	}
 }
@@ -1776,10 +1675,7 @@
 	body.cdn-scrolling .feed-featured-event__date-plate,
 	body.cdn-scrolling .awsui-dark-mode .feed-featured-event__date-plate,
 	body.cdn-scrolling .feed-featured-event__date-plate::after,
-	body.cdn-scrolling .feed-featured-event__title a,
-	body.cdn-scrolling .feed-featured-event__spots,
-	body.cdn-scrolling .awsui-dark-mode .feed-featured-event__spots,
-	body.cdn-scrolling .feed-featured-event__spots::before {
+	body.cdn-scrolling .feed-featured-event__title a {
 		animation-play-state: paused;
 	}
 }
@@ -4296,15 +4192,6 @@
 	.feed-upcoming-virtual-event__title a,
 	.awsui-dark-mode .feed-upcoming-virtual-event__title a {
 		animation: none !important;
-	}
-
-	/* Spots-remaining outer-ring pulse + chip pulse — chip text + color
-	   stay; the pulses stop. */
-	.feed-featured-event__spots,
-	.feed-featured-event__spots::before,
-	.awsui-dark-mode .feed-featured-event__spots {
-		animation: none !important;
-		will-change: auto !important;
 	}
 
 	/* Image hover micro-tilt — already only fires on :hover (rare on
