@@ -241,9 +241,21 @@ function FeaturedEventInner() {
 					>
 						{t("feedPage.featuredEventLocation")}
 					</Box>
+					{/* Wave 37c — description copy gets the personality uplift:
+					    color="inherit" (was "text-body-secondary" muted gray) so the
+					    .feed-featured-event__description CSS rule below — which sets
+					    color: var(--cdn-color-text) — actually paints. fontSize="body-m"
+					    (was body-s) bumps the inherited text size onto the
+					    --cdn-text-base tier; the same CSS rule layers an explicit
+					    var(--cdn-text-base) font-size + line-height: 1.65 + 64ch
+					    max-width on top so the prose reads as the deliberate voice
+					    the card hangs its narrative on rather than fine-print
+					    metadata. Cloudscape Box.Color does not expose a
+					    "text-body-default" enum member; "inherit" is the canonical
+					    way to opt out of Cloudscape's secondary-color override. */}
 					<Box
-						color="text-body-secondary"
-						fontSize="body-s"
+						color="inherit"
+						fontSize="body-m"
 						className="feed-featured-event__description"
 					>
 						{renderDescription(t("feedPage.featuredEventDescription"))}
