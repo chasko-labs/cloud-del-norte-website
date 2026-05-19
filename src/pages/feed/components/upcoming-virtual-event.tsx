@@ -148,27 +148,53 @@ function UpcomingVirtualEventInner() {
 					>
 						{t("feedPage.upcomingVirtualEventBadge")}
 					</Box>
-					<img
-						src={EVENT_IMAGE_LIGHT}
-						alt={t("feedPage.upcomingVirtualEventImageAlt")}
-						className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--light"
-						width={1200}
-						height={630}
-						loading="lazy"
-						onError={hideBrokenImage}
-					/>
-					<div className="feed-upcoming-virtual-event__bulbs-wrapper">
+					{/* Wave 33c — both visible image variants are wrapped in
+					    anchors pointing at the AWS Global Community Gatherings
+					    Meetup page (target=_blank since this is an external
+					    Meetup destination, mirroring the RSVP button below).
+					    The image alt text describes the image content; the
+					    wrapping anchor's aria-label describes the link action
+					    via a new locale key so AT users hear both. The bulbs-
+					    wrapper anchor sits ABOVE the dark img + EventBulbsOverlay
+					    so the entire wrapper (including the bulb overlay area)
+					    is one click target. */}
+					<a
+						href={RSVP_URL}
+						aria-label={t("feedPage.upcomingVirtualEventImageLinkLabel")}
+						target="_blank"
+						rel="noreferrer"
+						className="feed-upcoming-virtual-event__image-link"
+					>
 						<img
-							src={EVENT_IMAGE_DARK}
+							src={EVENT_IMAGE_LIGHT}
 							alt={t("feedPage.upcomingVirtualEventImageAlt")}
-							className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--dark"
+							className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--light"
 							width={1200}
 							height={630}
 							loading="lazy"
 							onError={hideBrokenImage}
 						/>
-						<EventBulbsOverlay />
-					</div>
+					</a>
+					<a
+						href={RSVP_URL}
+						aria-label={t("feedPage.upcomingVirtualEventImageLinkLabel")}
+						target="_blank"
+						rel="noreferrer"
+						className="feed-upcoming-virtual-event__image-link"
+					>
+						<div className="feed-upcoming-virtual-event__bulbs-wrapper">
+							<img
+								src={EVENT_IMAGE_DARK}
+								alt={t("feedPage.upcomingVirtualEventImageAlt")}
+								className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--dark"
+								width={1200}
+								height={630}
+								loading="lazy"
+								onError={hideBrokenImage}
+							/>
+							<EventBulbsOverlay />
+						</div>
+					</a>
 					<Box
 						fontWeight="bold"
 						fontSize="heading-m"

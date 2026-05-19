@@ -3648,3 +3648,55 @@
 		letter-spacing: 0.08em;
 	}
 }
+
+/* ==========================================================================
+   Wave 33c — Clickable event card image links
+   ==========================================================================
+
+   Wraps the event-card images in anchors so clicking the photo routes to
+   the same RSVP destination as the primary CTA button:
+     - .feed-featured-event__image-link → speakeasy /signup?return_to=/rsvp/
+     - .feed-upcoming-virtual-event__image-link → external Meetup page
+
+   The featured-event link is the new direct grid-item child of
+   .feed-featured-event__layout (the inner __image-area div is no longer
+   the grid item itself), so the link MUST carry `grid-area: image` to
+   land in the same cell the wrapper div used to occupy. min-width:0
+   mirrors the legacy .feed-featured-event__image-area rule so the cell
+   can shrink inside its column track without the image's intrinsic
+   1200px width forcing the track wider than the card.
+
+   Both link classes share base block-level + reset styling. The
+   focus-visible ring uses the AWS amber token at a 3px outline + 3px
+   offset so keyboard users get the same conspicuous focus signal the
+   primary CTA button carries elsewhere on the card. */
+
+.feed-featured-event__image-link,
+.feed-upcoming-virtual-event__image-link {
+	display: block;
+	text-decoration: none;
+	border-radius: var(--cdn-radius-md, 8px);
+	cursor: pointer;
+	/* preserve the perspective/3d transform stack from the parent — the
+	   wave 27a v2 hover micro-tilt still fires on the inner image since
+	   :hover propagates through the wrapping anchor's children. */
+}
+
+/* Featured-event link is the grid-item child of .feed-featured-event__layout
+   now that the .feed-featured-event__image-area div is wrapped. Place it in
+   the `image` named grid area so the existing wave 31a / 32a layout pours
+   into the same cell. */
+.feed-featured-event__image-link {
+	grid-area: image;
+	min-width: 0;
+}
+
+.feed-featured-event__image-link:focus-visible,
+.feed-upcoming-virtual-event__image-link:focus-visible {
+	outline: 3px solid var(--cdn-aws-orange, #ff9900);
+	outline-offset: 3px;
+}
+
+/* When the wrapping anchor is hovered, the existing image hover transforms
+   still fire on the inner image since :hover propagates through anchor
+   children — nothing to override here. */
