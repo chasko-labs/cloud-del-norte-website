@@ -3056,6 +3056,23 @@
 .feed-upcoming-virtual-event__layout {
 	display: grid;
 	grid-template-columns: 1fr;
+	/* Wave 42b1 — explicit grid-template-areas at base so the desktop
+	   @container query below can remap visual placement without touching
+	   DOM order. At base (mobile + tablet) the areas render top-to-bottom
+	   in a single column; at desktop the @container rule reflows into
+	   image-left + content-right. The two image-link anchors (light +
+	   dark theme variants) share grid-area: image — they stack in the
+	   same cell and the existing :has() theme-swap rules display:none
+	   the off-theme anchor so only one paints per theme. */
+	grid-template-areas:
+		"badge"
+		"image"
+		"title"
+		"date"
+		"location"
+		"description"
+		"featured-talk"
+		"buttons";
 	gap: 0;
 	min-width: 0;
 }
@@ -3066,6 +3083,7 @@
    explicit at the call site rather than buried in a single declaration. */
 .feed-upcoming-virtual-event__badge {
 	/* badge → image: 12px */
+	grid-area: badge;
 	margin-block-end: var(--cdn-space-12, 12px);
 }
 
@@ -3074,22 +3092,28 @@
 	   link wraps the light img; the second wraps the dark bulbs-wrapper.
 	   Both render in DOM order; only the active one paints (the other is
 	   display:none via the wave 28a/34a theme swap). The 16px margin is
-	   applied to whichever one is visible. */
+	   applied to whichever one is visible. Wave 42b1 — both anchors get
+	   grid-area: image so they land in the same cell at every breakpoint;
+	   only the visible one paints (off-theme is display:none). */
+	grid-area: image;
 	margin-block-end: var(--cdn-space-md, 16px);
 }
 
 .feed-upcoming-virtual-event__title {
 	/* title → date: 12px */
+	grid-area: title;
 	margin-block-end: var(--cdn-space-12, 12px);
 }
 
 .feed-upcoming-virtual-event__date {
 	/* date → location: 8px (cluster meta) */
+	grid-area: date;
 	margin-block-end: var(--cdn-space-sm, 8px);
 }
 
 .feed-upcoming-virtual-event__location {
 	/* location → description: 12px */
+	grid-area: location;
 	margin-block-end: var(--cdn-space-12, 12px);
 }
 
@@ -3097,6 +3121,7 @@
 	/* description → featured-talk callout: 24px (secondary primary
 	   action — the featured-talk gets the same big-anchor breathing
 	   room as the wave 37c featured-event spots → buttons step). */
+	grid-area: description;
 	margin-block-end: var(--cdn-space-lg, 24px);
 	/* Wave 38c — description personality uplift (mirrors the wave 37c
 	   featured-event description). font-size --cdn-text-base (14px) on
@@ -3114,7 +3139,87 @@
 .feed-upcoming-virtual-event__layout
 	.feed-upcoming-virtual-event__featured-talk {
 	/* featured-talk callout → cta button stack: 24px (primary action). */
+	grid-area: featured-talk;
 	margin-block-end: var(--cdn-space-lg, 24px);
+}
+
+/* Wave 42b1 — place the brand button stack into the named `buttons`
+   grid area so the wave 31a-style desktop @container reflow below can
+   pour it into the right column at desktop widths. Compound selector
+   matches the JSX: <div class="cdn-brand-btn-stack"> sits as a direct
+   child of .feed-upcoming-virtual-event__layout. */
+.feed-upcoming-virtual-event__layout .cdn-brand-btn-stack {
+	grid-area: buttons;
+}
+
+/* ---------- Wave 42b1 — Upcoming-virtual-event desktop @container reflow ----------
+   Bryan's wave 42 priority 1: "optimize white space use on cards on all
+   screens" + "virtual aws community events … on desktop mode … fugly".
+   At desktop widths (≥860px container width) the single-column layout
+   put the 1200×630 image as a full-width hero and stacked all content
+   below it — the card became top-heavy with a wide image and a thin
+   stack of text underneath. Mirrors the wave 31a featured-event ≥860px
+   image-left + content-right reflow exactly: image fills the left column
+   for the full row span, content (badge → title → date → location →
+   description → featured-talk → buttons) stacks in the right column.
+
+   Both image-link anchors (light + dark theme variants) share grid-area:
+   image — they stack in the same cell and the existing :has() theme-
+   swap rules display:none the off-theme anchor so only one paints per
+   theme. align-items: start so when the right-column content stack is
+   taller than the image (the common case given the description +
+   featured-talk + button stack), the image sits at the top of the left
+   column rather than centering and floating in the middle of dead space.
+
+   Calibrated to ≥860px (matches the wave 31a featured-event breakpoint)
+   because below that, splitting into two equal-ish columns leaves the
+   right column too narrow to fit the title + featured-talk callout
+   without aggressive wrapping. minmax(0, 1.1fr) on the image column
+   gives it slightly more weight so the focal artwork dominates the
+   left half — same ratios as featured-event for visual consistency
+   across the two image-bearing event cards.
+
+   Per-element margin-block-end rules above are zeroed at this breakpoint
+   so grid `gap` drives the row spacing without margins double-counting.
+   Token-only colors / spacing — no new visuals introduced; light + dark
+   mode share the same grid math and the existing theme-swap rules
+   above continue to gate which image variant paints. */
+@container cdn-feed-upcoming-virtual-event (min-width: 860px) {
+	.feed-upcoming-virtual-event__layout {
+		grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+		grid-template-areas:
+			"image badge"
+			"image title"
+			"image date"
+			"image location"
+			"image description"
+			"image featured-talk"
+			"image buttons";
+		align-items: start;
+		gap: var(--cdn-space-sm, 8px) var(--cdn-space-lg, 24px);
+	}
+
+	.feed-upcoming-virtual-event__layout
+		.feed-upcoming-virtual-event__image-link {
+		align-self: start;
+	}
+
+	/* Reset per-element margin-block-end so grid `gap` drives row
+	   spacing — mirrors the wave 31a tablet+/desktop pattern on
+	   .feed-featured-event__layout. The mobile per-item margin stack
+	   would otherwise produce ragged row spacing inside the right
+	   column at desktop. */
+	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__badge,
+	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__image-link,
+	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__title,
+	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__date,
+	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__location,
+	.feed-upcoming-virtual-event__layout
+		.feed-upcoming-virtual-event__description,
+	.feed-upcoming-virtual-event__layout
+		.feed-upcoming-virtual-event__featured-talk {
+		margin-block-end: 0;
+	}
 }
 
 /* Featured event location pill + spots counter — see "wave 25a rizz upgrade"
@@ -4104,20 +4209,44 @@
      after "game" — a tiny idiosyncratic glyph that gives the card a
      quiet bit of character. */
 
-/* Layout primitive — flex column with per-element margin-block-end.
-   Replaces the wave 33a SpaceBetween size="s" wrapper on the loaded-
-   event branch. min-width: 0 lets the column shrink inside its
-   Cloudscape Container parent without long event titles forcing the
-   track wider than the card (mirrors the .feed-featured-event__layout
-   pattern). */
+/* Layout primitive — wave 42b1 converted from flex column to CSS Grid
+   so the desktop @container query below can reflow into a 2-col image-
+   less layout (identity left, prose right) at ≥860px container width.
+   At base (mobile + tablet) the grid renders as a single column and the
+   per-element margin-block-end rules below still drive the spacing
+   hierarchy (gap: 0 + per-item margins). At desktop the @container
+   rule resets those margins and uses grid `gap` so the 2-col rows pitch
+   evenly.
+
+   min-width: 0 lets the grid shrink inside its Cloudscape Container
+   parent without long event titles forcing the track wider than the
+   card (mirrors .feed-featured-event__layout). DOM order = logical
+   reading order; grid named-areas remap the visual placement at desktop
+   without touching DOM order so screen-reader + tab order stay correct. */
 .feed-next-meetup__layout {
-	display: flex;
-	flex-direction: column;
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-areas:
+		"past-label"
+		"title"
+		"date"
+		"location"
+		"description";
 	gap: 0;
 	min-width: 0;
 }
 
+/* wave 42b1 — grid-area assignments for the loaded-event branch. Single
+   column at base; the @container rule below remaps these into a 2-col
+   layout at desktop. The grid-area declarations sit on the single-class
+   global rules below (rather than compound .feed-next-meetup__layout
+   descendant rules here) to avoid the noDescendingSpecificity lint rule
+   — grid-area only takes effect when the parent is a grid container, so
+   the fallback / past-meetup-spotlight branches that use SpaceBetween
+   are unaffected. */
+
 .feed-next-meetup__past-label {
+	grid-area: past-label;
 	/* past-label → title : 8px (small cluster step). Keeps the past-
 	   event indicator visually attached to the title it modifies. */
 	margin-block-end: var(--cdn-space-sm, 8px);
@@ -4131,12 +4260,14 @@
    the rule does not affect the title in the fallback / past-meetup
    branches that still use SpaceBetween. */
 .feed-next-meetup__layout .feed-next-meetup__title {
+	grid-area: title;
 	margin-block-end: var(--cdn-space-12, 12px);
 }
 
 /* wave 38b — date → location : 8px (meta cluster step). Same scope-
    to-layout pattern as the title rule. */
 .feed-next-meetup__layout .feed-next-meetup__date {
+	grid-area: date;
 	margin-block-end: var(--cdn-space-sm, 8px);
 	/* Steel-blue currentColor for the inline LivePulseDot; the dot
 	   inherits this hue so its halo + core paint in-palette without
@@ -4150,6 +4281,7 @@
 }
 
 .feed-next-meetup__location {
+	grid-area: location;
 	/* location → description : 12px (semantic boundary step). */
 	margin-block-end: var(--cdn-space-12, 12px);
 }
@@ -4170,11 +4302,64 @@
    block-end is needed (the card body's own bottom padding handles the
    tail spacing). */
 .feed-next-meetup__description {
+	grid-area: description;
 	font-size: var(--cdn-text-base, 0.875rem);
 	line-height: 1.65;
 	max-width: 64ch;
 	letter-spacing: 0.005em;
 	color: var(--cdn-color-text);
+}
+
+/* ---------- Wave 42b1 — Next-meetup desktop @container reflow ----------
+   Bryan's wave 42 priority 1: "optimize white space use on cards on all
+   screens" + "next meetup … on desktop mode … fugly". At desktop widths
+   (≥860px container width) the single-column layout left a wide gutter
+   to the right of the date/location with the description capped at 64ch
+   stranded above it. This @container query reflows the loaded-event
+   branch into a 2-col grid: identity stack (past-label + title + date +
+   location) on the left at ~42%, prose (description) on the right at
+   ~58%. Mirrors the wave 31a featured-event ≥860px breakpoint in spirit
+   without the image cell since this card has no image asset.
+
+   Gated by :has(.feed-next-meetup__description) so events without a
+   description (rare but defensible) stay single-column rather than
+   leaving a dead right column. The fallback / past-meetup-spotlight
+   branches use SpaceBetween (no .feed-next-meetup__layout class) so
+   they are unaffected and remain single-column at every width.
+
+   align-items: start prevents short identity stacks from centering
+   vertically against tall description blocks (no content floating in
+   the middle of dead space). The per-element margin-block-end rules
+   above are zeroed at this breakpoint so grid `gap` drives row spacing
+   without margins double-counting against grid rows. Container query
+   binds to the cdn-feed-next-meetup container set on .feed-next-meetup
+   (wave 41b) so the breakpoint reads off the card's own rendered inline
+   width, not the viewport. Token-only colors / spacing — no new visuals
+   introduced; light + dark mode share the same grid math. */
+@container cdn-feed-next-meetup (min-width: 860px) {
+	.feed-next-meetup__layout:has(.feed-next-meetup__description) {
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+		grid-template-areas:
+			"past-label  description"
+			"title       description"
+			"date        description"
+			"location    description";
+		align-items: start;
+		gap: var(--cdn-space-sm, 8px) var(--cdn-space-lg, 24px);
+	}
+
+	.feed-next-meetup__layout:has(.feed-next-meetup__description)
+		.feed-next-meetup__past-label,
+	.feed-next-meetup__layout:has(.feed-next-meetup__description)
+		.feed-next-meetup__title,
+	.feed-next-meetup__layout:has(.feed-next-meetup__description)
+		.feed-next-meetup__date,
+	.feed-next-meetup__layout:has(.feed-next-meetup__description)
+		.feed-next-meetup__location,
+	.feed-next-meetup__layout:has(.feed-next-meetup__description)
+		.feed-next-meetup__description {
+		margin-block-end: 0;
+	}
 }
 
 /* ==========================================================================

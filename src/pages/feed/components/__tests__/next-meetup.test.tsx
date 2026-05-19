@@ -227,11 +227,23 @@ describe("NextMeetup — wave 38b spacing redesign + description personality", (
 		);
 	});
 
-	it("declares the wave 38b __layout flex-column primitive that replaces the loaded-event SpaceBetween wrapper", () => {
+	it("declares the wave 42b1 __layout grid primitive (replaces wave 38b flex-column so the desktop @container query can reflow into a 2-col image-less layout)", () => {
 		const layoutBlock = stylesText.match(
-			/\.feed-next-meetup__layout \{[\s\S]*?display: flex;[\s\S]*?flex-direction: column;[\s\S]*?gap: 0;/,
+			/\.feed-next-meetup__layout \{[\s\S]*?display: grid;[\s\S]*?grid-template-columns: 1fr;[\s\S]*?grid-template-areas:[\s\S]*?"past-label"[\s\S]*?"title"[\s\S]*?"date"[\s\S]*?"location"[\s\S]*?"description"[\s\S]*?gap: 0;/,
 		);
 		expect(layoutBlock).not.toBeNull();
+	});
+
+	it("declares the wave 42b1 desktop @container query (≥860px container width reflows the loaded-event branch into a 2-col image-less layout: identity left, prose right)", () => {
+		// @container cdn-feed-next-meetup (min-width: 860px) gates the reflow
+		// off the card's own rendered inline width (container-name set in
+		// wave 41b). :has(.feed-next-meetup__description) keeps the 2-col
+		// split conditional on prose presence so events without a description
+		// don't leave a dead right column.
+		const containerBlock = stylesText.match(
+			/@container cdn-feed-next-meetup \(min-width: 860px\)[\s\S]*?\.feed-next-meetup__layout:has\(\.feed-next-meetup__description\) \{[\s\S]*?grid-template-columns: minmax\(0, 1fr\) minmax\(0, 1\.4fr\);[\s\S]*?grid-template-areas:[\s\S]*?"past-label  description"[\s\S]*?"title       description"[\s\S]*?"date        description"[\s\S]*?"location    description";/,
+		);
+		expect(containerBlock).not.toBeNull();
 	});
 
 	it("encodes the spacing hierarchy ladder via per-element margin-block-end on the wave 38b layout children (title→date 12, date→location 8, location→desc 12)", () => {
