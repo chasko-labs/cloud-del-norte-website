@@ -720,6 +720,16 @@ function PersistentPlayerBar({
 	// Stale-data guard: if the API returns the same song/artist signature on
 	// the next poll, we skip the setState call so React does not re-render
 	// the <img> (which would otherwise re-trigger the lazy-load decode).
+	//
+	// Wave 40a — Page Visibility integration. The poll is suspended while
+	// document.visibilityState === "hidden" (backgrounded tab) so we don't
+	// burn api.kexp.org quota or battery while the UI cannot be seen. On
+	// return to "visible" we kick an immediate fetch and restart the 30s
+	// cadence so the album-art surface reflects whatever spun while the tab
+	// was backgrounded. Cadence is unchanged — only the gating envelope
+	// expands. If the tab is already hidden when the effect mounts (rare:
+	// user pre-paused tab before navigating), we just attach the listener
+	// and wait for the next visible transition.
 	useEffect(() => {
 		if (state.stationKey !== "kexp" || !playing) {
 			// any non-KEXP station OR paused state immediately drops the album
@@ -730,6 +740,7 @@ function PersistentPlayerBar({
 			return;
 		}
 		let cancelled = false;
+		let intervalId: number | null = null;
 		const poll = async () => {
 			const result = await fetchKexpNowPlaying();
 			if (cancelled) return;
@@ -748,11 +759,37 @@ function PersistentPlayerBar({
 			kexpTrackSigRef.current = sig;
 			setKexpArt(result);
 		};
-		poll();
-		const id = window.setInterval(poll, POLL_MS);
+		const startPolling = () => {
+			if (intervalId !== null) return; // already running — guard against double-start
+			poll();
+			intervalId = window.setInterval(poll, POLL_MS);
+		};
+		const stopPolling = () => {
+			if (intervalId !== null) {
+				window.clearInterval(intervalId);
+				intervalId = null;
+			}
+		};
+		const onVisibilityChange = () => {
+			if (document.visibilityState === "hidden") {
+				stopPolling();
+			} else {
+				// visible — resume with an immediate fetch so the album art
+				// surface catches up before the next 30s tick
+				startPolling();
+			}
+		};
+		// Initial mount: only kick polling if the tab is currently visible.
+		// If it's already hidden, the visibilitychange listener below will
+		// pick up the next visible transition.
+		if (document.visibilityState !== "hidden") {
+			startPolling();
+		}
+		document.addEventListener("visibilitychange", onVisibilityChange);
 		return () => {
 			cancelled = true;
-			window.clearInterval(id);
+			stopPolling();
+			document.removeEventListener("visibilitychange", onVisibilityChange);
 		};
 	}, [state.stationKey, playing]);
 
