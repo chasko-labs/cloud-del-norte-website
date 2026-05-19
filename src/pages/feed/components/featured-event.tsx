@@ -168,7 +168,7 @@ function FeaturedEventInner() {
 				    horizontal space at tablet + desktop breakpoints (Bryan: "tons
 				    of white space that we could responsively fill with some grid
 				    type thinking"). DOM order is the logical reading order
-				    (image → title → date → in-person → location → desc → spots →
+				    (image → title → date → in-person → desc → spots →
 				    buttons); CSS Grid named areas in styles.css remap the visual
 				    placement per breakpoint while keeping screen-reader and tab
 				    order intact. Container queries (`container-type: inline-size`
@@ -236,23 +236,14 @@ function FeaturedEventInner() {
 						</span>
 					</div>
 					{/* Wave 31a rename: this amber tungsten chip is the IN-PERSON
-					    pill, not the secondary location text. The class previously
-					    named __location was generic; __in-person-pill makes the
-					    semantic role explicit and frees __location-text below for
-					    the fine-print address row. */}
+					    pill. The class previously named __location was generic;
+					    __in-person-pill makes the semantic role explicit. */}
 					<Box
 						color="text-body-secondary"
 						fontSize="body-s"
 						className="feed-featured-event__in-person-pill"
 					>
 						{t("feedPage.featuredEventInPersonLabel")}
-					</Box>
-					<Box
-						color="text-body-secondary"
-						fontSize="body-s"
-						className="feed-featured-event__location-text"
-					>
-						{t("feedPage.featuredEventLocation")}
 					</Box>
 					{/* Wave 37c — description copy gets the personality uplift:
 					    color="inherit" (was "text-body-secondary" muted gray) so the

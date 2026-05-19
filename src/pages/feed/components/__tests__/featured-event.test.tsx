@@ -133,12 +133,15 @@ describe("FeaturedEvent", () => {
 		const { container } = renderWithLocale("us");
 		const layout = container.querySelector(".feed-featured-event__layout");
 		expect(layout).not.toBeNull();
-		// Wave 32a — badge slot was removed; 8 logical children remain inside
-		// the grid layout (image-area, title, date, in-person, location,
-		// description, spots, buttons). DOM order is the logical reading
-		// order — preserved across the SpaceBetween → grid migration.
+		// Wave 32a — badge slot was removed; logical children remain inside
+		// the grid layout (image-area, title, date, in-person, description,
+		// spots, buttons). DOM order is the logical reading order —
+		// preserved across the SpaceBetween → grid migration.
 		// Wave 35b — the spots chip renders only after the async
 		// spotsRemaining fetch resolves; await it before asserting.
+		// Wave 38e — the redundant __location-text Box was removed
+		// (its content duplicated the in-person pill above); the
+		// __location-text assertion is gone.
 		expect(
 			layout?.querySelector(".feed-featured-event__image-area"),
 		).not.toBeNull();
@@ -146,9 +149,6 @@ describe("FeaturedEvent", () => {
 		expect(layout?.querySelector(".feed-featured-event__date")).not.toBeNull();
 		expect(
 			layout?.querySelector(".feed-featured-event__in-person-pill"),
-		).not.toBeNull();
-		expect(
-			layout?.querySelector(".feed-featured-event__location-text"),
 		).not.toBeNull();
 		expect(
 			layout?.querySelector(".feed-featured-event__description"),
@@ -179,7 +179,7 @@ describe("FeaturedEvent", () => {
 		expect(darkImg).not.toBeNull();
 	});
 
-	it("preserves DOM reading order: image → title → date → in-person → location → description → spots → buttons (a11y / screen-reader contract; wave 32a dropped badge slot, wave 33c wraps image in anchor)", async () => {
+	it("preserves DOM reading order: image → title → date → in-person → description → spots → buttons (a11y / screen-reader contract; wave 32a dropped badge slot, wave 33c wraps image in anchor, wave 38e dropped redundant location-text row)", async () => {
 		const { container } = renderWithLocale("us");
 		const layout = container.querySelector(".feed-featured-event__layout");
 		expect(layout).not.toBeNull();
@@ -188,6 +188,9 @@ describe("FeaturedEvent", () => {
 		// __image-area div is nested inside it). The reading order intent
 		// is preserved: the image link reads before the title, date, etc.
 		// Wave 35b — spots chip is async; wait for it before asserting order.
+		// Wave 38e — the redundant __location-text row was removed (its
+		// content duplicated the in-person pill above); the expected DOM
+		// order shrinks by one slot.
 		await waitFor(() => {
 			expect(
 				layout?.querySelector(".feed-featured-event__spots"),
@@ -198,7 +201,6 @@ describe("FeaturedEvent", () => {
 			"feed-featured-event__title",
 			"feed-featured-event__date",
 			"feed-featured-event__in-person-pill",
-			"feed-featured-event__location-text",
 			"feed-featured-event__description",
 			"feed-featured-event__spots",
 			"cdn-brand-btn-stack",
