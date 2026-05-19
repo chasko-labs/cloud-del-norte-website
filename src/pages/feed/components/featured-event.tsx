@@ -106,8 +106,19 @@ function FeaturedEventInner() {
 	const [remaining, setRemaining] = useState<number | null>(null);
 
 	useEffect(() => {
-		// localStorage is browser-only; compute on mount to avoid hydration drift.
-		setRemaining(spotsRemaining(EVENT_ID));
+		// spotsRemaining now talks to the public cdn-rsvp API. It returns NaN
+		// on any error (network, 404, parse) so the UI's `remaining > 0`
+		// gating already fail-safes — we just store whatever it produces.
+		// Effect is fire-and-forget; if the user navigates away before the
+		// fetch resolves the cancelled flag prevents a no-op setState warning.
+		let cancelled = false;
+		(async () => {
+			const value = await spotsRemaining(EVENT_ID);
+			if (!cancelled) setRemaining(value);
+		})();
+		return () => {
+			cancelled = true;
+		};
 	}, []);
 
 	const langTag = locale === "mx" ? "es-MX" : "en-US";
@@ -130,7 +141,7 @@ function FeaturedEventInner() {
 		"https://www.meetup.com/awsugclouddelnorte/events/314839263/rsvp/";
 
 	const spotsCopy =
-		event && remaining !== null
+		event && remaining !== null && Number.isFinite(remaining)
 			? t("feedPage.featuredEventSpotsRemaining")
 					.replace("{count}", String(remaining))
 					.replace("{capacity}", String(event.capacity))

@@ -1015,6 +1015,12 @@
 		"viewMyTickets": "View my tickets",
 		"rsvpButton": "Confirm my RSVP",
 		"rsvpingNow": "Reserving your seat...",
-		"fallbackMeetupCta": "RSVP on Meetup instead"
+		"fallbackMeetupCta": "RSVP on Meetup instead",
+		"error": {
+			"capacityFull": "Sorry — this event is full. Watch the feed for the next one.",
+			"network": "Network hiccup — try again in a moment.",
+			"unauthorized": "Sign in to RSVP.",
+			"generic": "Something went wrong — we logged it. Try again or RSVP on Meetup."
+		}
 	}
 }

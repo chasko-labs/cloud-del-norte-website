@@ -1,35 +1,78 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
+import Spinner from "@cloudscape-design/components/spinner";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../../../hooks/useTranslation";
 import {
 	buildTicketPayload,
 	getEvent,
-	listUserRsvps,
+	listMyRsvps,
 	type RsvpRecord,
 } from "../../../../lib/rsvp";
 import type { AuthState } from "../../_shared/auth";
 
+/** Map a thrown error message to the locale key the UI should render. */
+function errorKeyFor(message: string): string {
+	switch (message) {
+		case "network":
+			return "rsvp.error.network";
+		case "not_authenticated":
+		case "unauthorized":
+			return "rsvp.error.unauthorized";
+		default:
+			return "rsvp.error.generic";
+	}
+}
+
 export default function MyTickets({ auth }: { auth: AuthState }) {
 	const { t } = useTranslation();
 	const [tickets, setTickets] = useState<RsvpRecord[]>([]);
+	const [loading, setLoading] = useState(true);
+	const [errorKey, setErrorKey] = useState<string | null>(null);
 
 	useEffect(() => {
-		setTickets(listUserRsvps(auth.sub));
+		let cancelled = false;
+		(async () => {
+			try {
+				const list = await listMyRsvps();
+				if (cancelled) return;
+				// Defensive filter: the cache fallback inside listMyRsvps may have
+				// returned records belonging to a different sub from a prior
+				// session on a shared device. The server response is already
+				// scoped, but the cache is not.
+				setTickets(list.filter((r) => r.userSub === auth.sub));
+				setLoading(false);
+			} catch (err) {
+				if (cancelled) return;
+				const message = err instanceof Error ? err.message : "generic";
+				setErrorKey(errorKeyFor(message));
+				setLoading(false);
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
 	}, [auth.sub]);
 
 	return (
 		<Container
 			header={<Header variant="h2">{t("meetings.myTicketsHeader")}</Header>}
 		>
-			{tickets.length === 0 ? (
+			{loading ? (
+				<Box padding="m" textAlign="center">
+					<Spinner />
+				</Box>
+			) : errorKey ? (
+				<Alert type="error">{t(errorKey)}</Alert>
+			) : tickets.length === 0 ? (
 				<Box color="text-status-inactive">{t("meetings.myTicketsEmpty")}</Box>
 			) : (
 				<SpaceBetween size="m">

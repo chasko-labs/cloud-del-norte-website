@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import FeaturedEvent from "../featured-event";
 
@@ -13,6 +13,32 @@ function renderWithLocale(locale: "us" | "mx") {
 		</LocaleProvider>,
 	);
 }
+
+// Wave 35b — spotsRemaining() now hits the public cdn-rsvp API. Stub fetch
+// so the spots-remaining chip renders in tests; without the stub the call
+// would return NaN and the chip element would be hidden, breaking layout
+// assertions that expect .feed-featured-event__spots.
+const fetchMock = vi.fn();
+
+beforeEach(() => {
+	fetchMock.mockReset();
+	fetchMock.mockResolvedValue(
+		new Response(
+			JSON.stringify({
+				eventId: "happy-hour-2026-06-03",
+				capacity: 50,
+				taken: 0,
+				remaining: 50,
+			}),
+			{ status: 200, headers: { "Content-Type": "application/json" } },
+		),
+	);
+	globalThis.fetch = fetchMock as unknown as typeof fetch;
+});
+
+afterEach(() => {
+	fetchMock.mockReset();
+});
 
 describe("FeaturedEvent", () => {
 	it("renders the v2 event title with link to auth.clouddelnorte.org signup with rsvp return_to", () => {
@@ -103,7 +129,7 @@ describe("FeaturedEvent", () => {
 		).toBeInTheDocument();
 	});
 
-	it("renders the wave 31a responsive grid layout wrapper containing all card children", () => {
+	it("renders the wave 31a responsive grid layout wrapper containing all card children", async () => {
 		const { container } = renderWithLocale("us");
 		const layout = container.querySelector(".feed-featured-event__layout");
 		expect(layout).not.toBeNull();
@@ -111,6 +137,8 @@ describe("FeaturedEvent", () => {
 		// the grid layout (image-area, title, date, in-person, location,
 		// description, spots, buttons). DOM order is the logical reading
 		// order — preserved across the SpaceBetween → grid migration.
+		// Wave 35b — the spots chip renders only after the async
+		// spotsRemaining fetch resolves; await it before asserting.
 		expect(
 			layout?.querySelector(".feed-featured-event__image-area"),
 		).not.toBeNull();
@@ -125,7 +153,11 @@ describe("FeaturedEvent", () => {
 		expect(
 			layout?.querySelector(".feed-featured-event__description"),
 		).not.toBeNull();
-		expect(layout?.querySelector(".feed-featured-event__spots")).not.toBeNull();
+		await waitFor(() => {
+			expect(
+				layout?.querySelector(".feed-featured-event__spots"),
+			).not.toBeNull();
+		});
 		expect(layout?.querySelector(".cdn-brand-btn-stack")).not.toBeNull();
 		// Wave 32a — badge was removed entirely.
 		expect(layout?.querySelector(".feed-featured-event__badge")).toBeNull();
@@ -147,7 +179,7 @@ describe("FeaturedEvent", () => {
 		expect(darkImg).not.toBeNull();
 	});
 
-	it("preserves DOM reading order: image → title → date → in-person → location → description → spots → buttons (a11y / screen-reader contract; wave 32a dropped badge slot, wave 33c wraps image in anchor)", () => {
+	it("preserves DOM reading order: image → title → date → in-person → location → description → spots → buttons (a11y / screen-reader contract; wave 32a dropped badge slot, wave 33c wraps image in anchor)", async () => {
 		const { container } = renderWithLocale("us");
 		const layout = container.querySelector(".feed-featured-event__layout");
 		expect(layout).not.toBeNull();
@@ -155,6 +187,12 @@ describe("FeaturedEvent", () => {
 		// <a class="feed-featured-event__image-link"> anchor (the inner
 		// __image-area div is nested inside it). The reading order intent
 		// is preserved: the image link reads before the title, date, etc.
+		// Wave 35b — spots chip is async; wait for it before asserting order.
+		await waitFor(() => {
+			expect(
+				layout?.querySelector(".feed-featured-event__spots"),
+			).not.toBeNull();
+		});
 		const expected = [
 			"feed-featured-event__image-link",
 			"feed-featured-event__title",
@@ -180,10 +218,14 @@ describe("FeaturedEvent", () => {
 		expect(primary).toHaveAttribute("href", expected);
 	});
 
-	it("renders the limited-space CTA", () => {
+	it("renders the limited-space CTA", async () => {
 		localStorage.clear();
 		renderWithLocale("us");
-		expect(screen.getByText(/Limited space — RSVP now/i)).toBeInTheDocument();
+		// Wave 35b — copy comes from the spotsCopy slot which is hidden
+		// until spotsRemaining() resolves; await it.
+		expect(
+			await screen.findByText(/Limited space — RSVP now/i),
+		).toBeInTheDocument();
 	});
 
 	it("inlines the AsciiSmirk SVG inside the description (after the 'game' hook)", () => {
