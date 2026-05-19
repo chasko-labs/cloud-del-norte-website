@@ -4306,61 +4306,22 @@
 	font-size: var(--cdn-text-base, 0.875rem);
 	line-height: 1.65;
 	max-width: 64ch;
+	margin-inline: auto;
 	letter-spacing: 0.005em;
 	color: var(--cdn-color-text);
 }
 
-/* ---------- Wave 42b1 — Next-meetup desktop @container reflow ----------
-   Bryan's wave 42 priority 1: "optimize white space use on cards on all
-   screens" + "next meetup … on desktop mode … fugly". At desktop widths
-   (≥860px container width) the single-column layout left a wide gutter
-   to the right of the date/location with the description capped at 64ch
-   stranded above it. This @container query reflows the loaded-event
-   branch into a 2-col grid: identity stack (past-label + title + date +
-   location) on the left at ~42%, prose (description) on the right at
-   ~58%. Mirrors the wave 31a featured-event ≥860px breakpoint in spirit
-   without the image cell since this card has no image asset.
-
-   Gated by :has(.feed-next-meetup__description) so events without a
-   description (rare but defensible) stay single-column rather than
-   leaving a dead right column. The fallback / past-meetup-spotlight
-   branches use SpaceBetween (no .feed-next-meetup__layout class) so
-   they are unaffected and remain single-column at every width.
-
-   align-items: start prevents short identity stacks from centering
-   vertically against tall description blocks (no content floating in
-   the middle of dead space). The per-element margin-block-end rules
-   above are zeroed at this breakpoint so grid `gap` drives row spacing
-   without margins double-counting against grid rows. Container query
-   binds to the cdn-feed-next-meetup container set on .feed-next-meetup
-   (wave 41b) so the breakpoint reads off the card's own rendered inline
-   width, not the viewport. Token-only colors / spacing — no new visuals
-   introduced; light + dark mode share the same grid math. */
-@container cdn-feed-next-meetup (min-width: 860px) {
-	.feed-next-meetup__layout:has(.feed-next-meetup__description) {
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
-		grid-template-areas:
-			"past-label  description"
-			"title       description"
-			"date        description"
-			"location    description";
-		align-items: start;
-		gap: var(--cdn-space-sm, 8px) var(--cdn-space-lg, 24px);
-	}
-
-	.feed-next-meetup__layout:has(.feed-next-meetup__description)
-		.feed-next-meetup__past-label,
-	.feed-next-meetup__layout:has(.feed-next-meetup__description)
-		.feed-next-meetup__title,
-	.feed-next-meetup__layout:has(.feed-next-meetup__description)
-		.feed-next-meetup__date,
-	.feed-next-meetup__layout:has(.feed-next-meetup__description)
-		.feed-next-meetup__location,
-	.feed-next-meetup__layout:has(.feed-next-meetup__description)
-		.feed-next-meetup__description {
-		margin-block-end: 0;
-	}
-}
+/* TODO wave 43b: re-enable 2-col reflow once image lands.
+   The @container cdn-feed-next-meetup (min-width: 860px) grid rule that
+   split the loaded-event branch into identity-left / prose-right columns
+   was removed in wave 43a because the left identity stack felt airy on
+   desktop without an image to balance it. When the wave 43b event image
+   lands, restore the 2-col grid here (identity ~42% / prose ~58%) and
+   add a third grid area for the image cell, mirroring the wave 31a
+   featured-event ≥860px image-left layout. Description stacks
+   single-column below date/location for now, with max-width 64ch +
+   margin-inline auto for centering (see .feed-next-meetup__description
+   rule above). */
 
 /* ==========================================================================
    Wave 33c — Clickable event card image links

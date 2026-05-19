@@ -37,7 +37,7 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeAll, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import NextMeetup, { NextMeetupErrorBoundary } from "../next-meetup";
 
@@ -234,16 +234,17 @@ describe("NextMeetup — wave 38b spacing redesign + description personality", (
 		expect(layoutBlock).not.toBeNull();
 	});
 
-	it("declares the wave 42b1 desktop @container query (≥860px container width reflows the loaded-event branch into a 2-col image-less layout: identity left, prose right)", () => {
-		// @container cdn-feed-next-meetup (min-width: 860px) gates the reflow
-		// off the card's own rendered inline width (container-name set in
-		// wave 41b). :has(.feed-next-meetup__description) keeps the 2-col
-		// split conditional on prose presence so events without a description
-		// don't leave a dead right column.
-		const containerBlock = stylesText.match(
-			/@container cdn-feed-next-meetup \(min-width: 860px\)[\s\S]*?\.feed-next-meetup__layout:has\(\.feed-next-meetup__description\) \{[\s\S]*?grid-template-columns: minmax\(0, 1fr\) minmax\(0, 1\.4fr\);[\s\S]*?grid-template-areas:[\s\S]*?"past-label  description"[\s\S]*?"title       description"[\s\S]*?"date        description"[\s\S]*?"location    description";/,
+	it("declares the wave 42b1 desktop @container query as a TODO comment — 2-col reflow removed in wave 43a pending wave 43b image add", () => {
+		// wave 43a removed the @container cdn-feed-next-meetup (min-width: 860px)
+		// 2-col grid rule; confirmed absence keeps the single-column layout until
+		// the image lands in wave 43b.
+		expect(stylesText).not.toMatch(
+			/@container cdn-feed-next-meetup \(min-width: 860px\)[\s\S]*?grid-template-columns: minmax\(0, 1fr\) minmax\(0, 1\.4fr\)/,
 		);
-		expect(containerBlock).not.toBeNull();
+		// The TODO comment must be present so future devs know where to restore.
+		expect(stylesText).toMatch(
+			/TODO wave 43b: re-enable 2-col reflow once image lands/,
+		);
 	});
 
 	it("encodes the spacing hierarchy ladder via per-element margin-block-end on the wave 38b layout children (title→date 12, date→location 8, location→desc 12)", () => {
@@ -320,5 +321,37 @@ describe("NextMeetup — wave 38b LivePulseDot inline microcue integration", () 
 		const circles = dot?.querySelectorAll("circle");
 		expect(circles?.length).toBe(2);
 		vi.unstubAllGlobals();
+	});
+});
+
+describe("stripMarkdown — wave 43a markdown cleanup", () => {
+	// Import the exported helper directly for unit testing.
+	// We use a dynamic require here so the rest of the file's vi.stubGlobal
+	// calls don't interfere with a top-level import.
+	let stripMarkdown: (raw: string) => string;
+	beforeAll(async () => {
+		const mod = await import("../next-meetup");
+		stripMarkdown = mod.stripMarkdown;
+	});
+
+	it("strips **bold** asterisk markers and keeps the inner text", () => {
+		const result = stripMarkdown("Hello **world** today");
+		expect(result).toBe("Hello world today");
+		expect(result).not.toContain("**");
+	});
+
+	it("strips leading `> ` blockquote markers and keeps the text", () => {
+		const result = stripMarkdown("> Important note here");
+		expect(result).toBe("Important note here");
+		expect(result).not.toContain("> ");
+	});
+
+	it("drops the entire [text](https://www.google.com/search?...) span and keeps only the label text", () => {
+		const input =
+			"Explore the [Cloud Del Norte source code](https://www.google.com/search?q=https://github.com/clouddelnorte).";
+		const result = stripMarkdown(input);
+		expect(result).toContain("Cloud Del Norte source code");
+		expect(result).not.toContain("google.com/search");
+		expect(result).not.toMatch(/\[.*?\]\(https?:\/\/www\.google\.com/);
 	});
 });

@@ -157,14 +157,12 @@ function selectMeetup(events) {
 
 function shapeForOutput(meetup) {
 	if (!meetup) return null;
-	// Description excerpt cap — bumped from 240 → 2000 in wave 39c so the
-	// full meetup body (markdown links, RSVP-doesn't-grant-entry note,
-	// architecture credit, etc.) survives. Below 2000 the iCal DESCRIPTION
-	// for these (co)Work Wednesday entries was being severed mid-URL
-	// ("…[CloudDelNorte.org](https://cloudde"), making the card visibly
-	// truncated. Whitespace is collapsed and control chars are stripped.
+	// Description excerpt cap — wave 43a lowered 2000 → 320. The
+	// renderDescriptionWithLinks helper now strips markdown noise before
+	// render, so we can trim earlier; 320 keeps a useful teaser while
+	// cutting the bulk of the raw markdown that cluttered the card.
 	const description = meetup.description
-		? String(meetup.description).replace(/\s+/g, " ").trim().slice(0, 2000)
+		? String(meetup.description).replace(/\s+/g, " ").trim().slice(0, 320)
 		: "";
 	return {
 		status: meetup.status,
