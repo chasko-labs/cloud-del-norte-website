@@ -1,9 +1,9 @@
 {
   "status": "upcoming",
   "summary": "🌐 Website (co)Work Wednesday",
-  "url": "https://www.meetup.com/awsugclouddelnorte/events/314648333/",
+  "url": "https://www.meetup.com/awsugclouddelnorte/events/314789709/",
   "location": "",
-  "description": "AWS UG Cloud Del Norte **Building websites? Want to start?** Get a boost working alongside fellow builders. **Sesión en inglés** (All levels welcome) Join us for an hour+ of virtual co-working. Developing [CloudDelNorte.org](https://cloudde",
-  "dtstart": "2026-05-20T14:30:00.000Z",
-  "dtend": "2026-05-20T16:00:00.000Z"
+  "description": "AWS UG Cloud Del Norte **Building websites? Want to start?** Get a boost working alongside fellow builders. **Sesión en inglés** (All levels welcome) Join us for an hour+ of virtual co-working. Developing [CloudDelNorte.org](https://clouddelnorte.org), portfolios, & professional projects. * **Rubber Ducks:** Vent your random questions & bugs * **Show & Tell:** Show off your latest website progress **access:** **RSVP on Meetup does not grant entry.** sign up at [CloudDelNorte.org](https://clouddelnorte.org) grants members permanent access (click \"Sign In\"). > **Early signup** is encouraged as an organizer must approve your AWS UG Cloud Del Norte account before you can access the \"meet-ups\" section Explore the [Cloud Del Norte source code](https://www.google.com/search?q=https://github.com/clouddelnorte). The site leverages [Cloudscape Design System](https://cloudscape.design/) and is built using **KIRO-CLI AI-assisted development** (Claude Opus, DeepSeek V3.2, and Amazon Nova). **CloudDelNorte.Org Architecture** * **Hosting:** Jitsi on Amazon ECS with Cognito security * **Compute:** Firecracker microVM rust functions, dockerized MCP servers * **Testing:** AWS Device Farm + Amazon Nova Act for AI-driven UX testing, bug finding **No prior knowledge needed—everyone is encouraged to hang out & learn**",
+  "dtstart": "2026-05-27T14:30:00.000Z",
+  "dtend": "2026-05-27T16:00:00.000Z"
 }

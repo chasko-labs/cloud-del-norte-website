@@ -89,6 +89,63 @@ interface MeetupEvent {
 	isPast: boolean;
 }
 
+/**
+ * Wave 39c — render a meetup description that may contain markdown links
+ * (`[text](url)`) as a React fragment with clickable <a> elements for the
+ * link spans and plain strings for the surrounding prose.
+ *
+ * Why a tiny in-component helper instead of a markdown library: the only
+ * markdown construct the static JSON (or the in-browser iCal fallback)
+ * meaningfully carries today is `[text](url)` link syntax. Other inline
+ * markdown (`**bold**`, `*list*`, `>` blockquotes) survives as raw text —
+ * acceptable per wave 39c brief: "the card displays it as plain text;
+ * markdown can land in a follow-up". A markdown dep would be heavier than
+ * the carry it earns at this surface area.
+ *
+ * Security: only http(s) URLs render as links; any other scheme falls
+ * back to the original `[text](url)` literal so we don't accidentally
+ * surface javascript: or data: URIs from upstream content. The <a> uses
+ * target="_blank" rel="noopener noreferrer" so the meetup-hosted link
+ * opens in a new tab without leaking the opener context.
+ */
+function renderDescriptionWithLinks(text: string): ReactNode[] {
+	// Fresh regex per call (stateful global flag would otherwise survive
+	// between renders / event changes).
+	const re = /\[([^\]]+)\]\(([^)]+)\)/g;
+	const out: ReactNode[] = [];
+	let lastIdx = 0;
+	let key = 0;
+	let match: RegExpExecArray | null = re.exec(text);
+	while (match !== null) {
+		if (match.index > lastIdx) {
+			out.push(text.slice(lastIdx, match.index));
+		}
+		const [, label, url] = match;
+		if (/^https?:\/\//i.test(url)) {
+			out.push(
+				<a
+					key={`md-link-${key++}`}
+					href={url}
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{label}
+				</a>,
+			);
+		} else {
+			// Unknown scheme — preserve the literal so the user can still see
+			// the URL text and copy it manually if they need to.
+			out.push(`[${label}](${url})`);
+		}
+		lastIdx = re.lastIndex;
+		match = re.exec(text);
+	}
+	if (lastIdx < text.length) {
+		out.push(text.slice(lastIdx));
+	}
+	return out;
+}
+
 /** Parse a VEVENT block from an iCal string. Returns the single event
  *  with the nearest future DTSTART, or the most recent past event as fallback. */
 function parseIcal(text: string): MeetupEvent | null {
@@ -403,15 +460,26 @@ function NextMeetupInner() {
 				    text size onto the --cdn-text-base tier; the same CSS
 				    rule layers an explicit var(--cdn-text-base) font-size +
 				    line-height: 1.65 + 64ch max-width on top so the prose
-				    reads as deliberate voice rather than fine-print metadata. */}
+				    reads as deliberate voice rather than fine-print metadata.
+
+				    Wave 39c — description body now carries the FULL meetup
+				    copy (script bumped 240→2000 chars in
+				    scripts/fetch-next-meetup.mjs) and is rendered through
+				    renderDescriptionWithLinks() so `[text](url)` markdown
+				    spans surface as clickable <a> elements. The wave 38b
+				    ellipsis indicator (length >= MAX_DESCRIPTION_CHARS) is
+				    dropped: with full-text in the static JSON the check
+				    would always fire, becoming a misleading "more on meetup"
+				    cue when the entire body is already on-card. The header
+				    title link still anchors to the meetup event for users
+				    who want the canonical page. */}
 				{event.description && (
 					<Box
 						color="inherit"
 						fontSize="body-m"
 						className="feed-next-meetup__description"
 					>
-						{event.description}
-						{event.description.length >= MAX_DESCRIPTION_CHARS ? "…" : ""}
+						{renderDescriptionWithLinks(event.description)}
 					</Box>
 				)}
 			</div>
