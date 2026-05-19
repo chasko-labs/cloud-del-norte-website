@@ -5,7 +5,6 @@ import Box from "@cloudscape-design/components/box";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
-import SpaceBetween from "@cloudscape-design/components/space-between";
 import {
 	Component,
 	type CSSProperties,
@@ -17,12 +16,22 @@ import {
 import MeetupRsvpButton from "../../../components/brand-button/meetup-rsvp";
 import { useTranslation } from "../../../hooks/useTranslation";
 import EventBulbsOverlay from "./event-bulbs-overlay";
+import GlobalGlobe from "./global-globe";
 
 const RSVP_URL =
 	"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/";
 const EVENT_IMAGE_LIGHT = "/events/global-community-gatherings-light.webp";
 const EVENT_IMAGE_DARK = "/events/global-community-gatherings-dark.webp";
 const EVENT_DATE = "2026-05-22T22:00:00+09:00";
+/**
+ * Wave 38c — anchor inside the description string after which the inline
+ * GlobalGlobe SVG renders. "global" sits in the second word of the en-US
+ * + es-MX strings; placing the glyph immediately after it ties the icon
+ * to the word it qualifies (analogous to wave 27a featured-event smirk
+ * after "game"). If the anchor is absent (defensive fallback for any
+ * future copy revision that drops it), the description renders raw.
+ */
+const GLOBE_ANCHOR = "global";
 
 /**
  * Wave 33b — twinkle-star count rendered behind the marquee headline.
@@ -127,6 +136,28 @@ function MarqueeHeader({ text }: { text: string }) {
 	);
 }
 
+/**
+ * Wave 38c — render the description splicing the GlobalGlobe SVG in
+ * after the GLOBE_ANCHOR ("global") substring. Returns a single span
+ * wrapper so the parent Cloudscape Box receives one child (avoids
+ * React.Children "missing key" array iteration warnings). If the
+ * anchor is absent in the localized string (defensive), the raw text
+ * renders unchanged.
+ */
+function renderDescription(text: string): ReactNode {
+	const idx = text.indexOf(GLOBE_ANCHOR);
+	if (idx < 0) return text;
+	const head = text.slice(0, idx + GLOBE_ANCHOR.length);
+	const tail = text.slice(idx + GLOBE_ANCHOR.length);
+	return (
+		<span className="feed-upcoming-virtual-event__description-inner">
+			{head}
+			<GlobalGlobe />
+			{tail}
+		</span>
+	);
+}
+
 function UpcomingVirtualEventInner() {
 	const { t, locale } = useTranslation();
 	const [brandMarkBroken, setBrandMarkBroken] = useState(false);
@@ -150,7 +181,20 @@ function UpcomingVirtualEventInner() {
 					<MarqueeHeader text={t("feedPage.upcomingVirtualEventHeader")} />
 				}
 			>
-				<SpaceBetween size="s">
+				{/* Wave 38c — replaces the wave 33b <SpaceBetween size="s"> stack
+				    with a custom layout div. SpaceBetween's uniform 12px gap was
+				    too flat for the card's narrative arc — every step read the
+				    same. The new __layout div sets gap:0 and each direct child
+				    carries its own margin-block-end token in styles.css so the
+				    spacing hierarchy reads as deliberate beats: smaller gaps
+				    cluster related metadata (date→location), the largest gaps
+				    set off the secondary primary action (description→featured-
+				    talk callout) and the CTA (callout→buttons). Mirrors the
+				    wave 37c featured-event pattern (which uses CSS Grid named
+				    areas — this card stays in DOM order without grid since the
+				    wave 33b/29a featured-talk callout block is its own visual
+				    anchor that doesn't need re-flow at tablet+ breakpoints). */}
+				<div className="feed-upcoming-virtual-event__layout">
 					<Box
 						fontWeight="bold"
 						fontSize="body-s"
@@ -226,11 +270,33 @@ function UpcomingVirtualEventInner() {
 							{formattedDate}
 						</span>
 					</div>
-					<Box color="text-body-secondary" fontSize="body-s">
+					<Box
+						color="text-body-secondary"
+						fontSize="body-s"
+						className="feed-upcoming-virtual-event__location"
+					>
 						{t("feedPage.upcomingVirtualEventLocation")}
 					</Box>
-					<Box color="text-body-secondary" fontSize="body-s">
-						{t("feedPage.upcomingVirtualEventDescription")}
+					{/* Wave 38c — description copy gets the wave 37c personality
+					    uplift (mirrors featured-event): color="inherit" so the
+					    .feed-upcoming-virtual-event__description CSS rule below
+					    — which sets color: var(--cdn-color-text) — actually
+					    paints (Cloudscape's "text-body-secondary" was muting the
+					    prose to fine-print gray). fontSize="body-m" bumps the
+					    inherited size onto the --cdn-text-base tier; the same
+					    CSS rule layers an explicit font-size + line-height: 1.65
+					    + 64ch max-width on top so the prose reads as the
+					    deliberate voice the card hangs its narrative on rather
+					    than secondary metadata. The inline GlobalGlobe SVG
+					    splices in after the word "global" via renderDescription
+					    (the upcoming-virtual-event signature personality detail
+					    — in-family with the featured-event AsciiSmirk). */}
+					<Box
+						color="inherit"
+						fontSize="body-m"
+						className="feed-upcoming-virtual-event__description"
+					>
+						{renderDescription(t("feedPage.upcomingVirtualEventDescription"))}
 					</Box>
 					<div className="feed-upcoming-virtual-event__featured-talk">
 						<span
@@ -275,7 +341,7 @@ function UpcomingVirtualEventInner() {
 							variant="violet"
 						/>
 					</div>
-				</SpaceBetween>
+				</div>
 			</Container>
 		</div>
 	);

@@ -194,6 +194,62 @@ describe("UpcomingVirtualEvent", () => {
 			"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/",
 		);
 	});
+
+	// ---------- Wave 38c — signature personality detail (GlobalGlobe) ----------
+
+	it("wave 38c — renders the inline GlobalGlobe SVG inside the description, anchored after the word 'global', as an aria-hidden decorative glyph", () => {
+		const { container } = renderWithLocale("us");
+		const description = container.querySelector(
+			".feed-upcoming-virtual-event__description",
+		);
+		expect(description).not.toBeNull();
+		// The wave 38c renderDescription helper splits on "global" and
+		// inserts the GlobalGlobe inside a __description-inner span so
+		// the parent Cloudscape Box receives a single child.
+		const inner = description?.querySelector(
+			".feed-upcoming-virtual-event__description-inner",
+		);
+		expect(inner).not.toBeNull();
+		const globe = inner?.querySelector(".cdn-global-globe");
+		expect(globe).not.toBeNull();
+		// Decorative — aria-hidden so screen readers skip it; the inline
+		// SVG carries an aria-label="globe" via its <title> for ATs that
+		// surface SVG titles even on aria-hidden ancestors (defense in
+		// depth, mirrors the wave 27a featured-event AsciiSmirk pattern).
+		expect(globe?.getAttribute("aria-hidden")).toBe("true");
+		const svg = globe?.querySelector("svg");
+		expect(svg).not.toBeNull();
+		expect(svg?.getAttribute("aria-label")).toBe("globe");
+		// Description prose still reads coherently when the glyph is
+		// stripped — the head text ends with the anchor "global" and the
+		// tail picks up the rest of the en-US sentence. The SVG <title>
+		// element ("globe") serializes into textContent as a contiguous
+		// "globalglobe" splice, so the test asserts on the leading "A
+		// global" + the trailing " virtual gathering" segments rather
+		// than a strict regex over the raw textContent.
+		const text = inner?.textContent ?? "";
+		expect(text).toMatch(/^A global/);
+		expect(text).toMatch(/virtual gathering hosted by the AWS community/);
+	});
+
+	it("wave 38c — GlobalGlobe also renders in es-MX since the anchor word 'global' appears in both locales", () => {
+		const { container } = renderWithLocale("mx");
+		const description = container.querySelector(
+			".feed-upcoming-virtual-event__description",
+		);
+		expect(description).not.toBeNull();
+		const inner = description?.querySelector(
+			".feed-upcoming-virtual-event__description-inner",
+		);
+		// es-MX description: "Una reunión virtual global organizada por la
+		// comunidad AWS..." — the anchor "global" is the 4th word, so the
+		// helper still splices the GlobalGlobe in for Spanish-language
+		// readers (the icon is locale-neutral; the anchor word happens to
+		// transliterate identically).
+		expect(inner).not.toBeNull();
+		const globe = inner?.querySelector(".cdn-global-globe");
+		expect(globe).not.toBeNull();
+	});
 });
 
 // ---------- Wave 33b — error boundary fallback ----------

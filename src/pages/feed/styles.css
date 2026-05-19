@@ -2217,7 +2217,15 @@
 	align-items: center;
 	justify-content: center;
 	min-height: 40px;
-	padding: 8px 28px;
+	/* wave 38c — tokenize raw 8px / 28px marquee padding onto the 8pt grid.
+	   Mobile: --cdn-space-12 (12px) vertical, --cdn-space-md (16px)
+	   horizontal. Mirrors the wave 37c featured-event marquee treatment.
+	   The original 28px horizontal pad was off-grid; 12 / 16 sits the
+	   headline comfortably between the rim highlights and falls on the
+	   Cloudscape SpaceBetween size="s" / size="m" rhythm. Tablet +
+	   desktop overrides live in the @media blocks at the bottom of this
+	   marquee section. */
+	padding: var(--cdn-space-12, 12px) var(--cdn-space-md, 16px);
 	border-radius: 10px;
 	background: linear-gradient(
 		180deg,
@@ -2269,6 +2277,40 @@
 		0 0 6px var(--cdn-uvirt-marquee-text-glow),
 		0 1px 0 rgba(255, 250, 235, 0.35);
 	line-height: 1.15;
+}
+
+/* Wave 38c — responsive marquee sizing (mobile baseline above; tablet +
+   desktop here). Plain min-width media queries since the upcoming-virtual-
+   event card is not a CSS container query context (no internal grid layout
+   to query — the card body is the wave 38c __layout block-stack, which
+   stays single-column at every breakpoint since the wave 29a/33b featured-
+   talk callout is its own visual anchor that doesn't reflow). Mirrors the
+   wave 33a next-meetup pattern. If a future wave adds a container-query
+   layout to this card, swap these for @container rules to mirror the
+   featured-event pattern. Padding scale matches the brief: 12/16 mobile
+   (above), 12/24 tablet, 16/24 desktop. */
+@media (min-width: 520px) {
+	.feed-upcoming-virtual-event__marquee {
+		min-height: 44px;
+		padding: var(--cdn-space-12, 12px) var(--cdn-space-lg, 24px);
+	}
+
+	.feed-upcoming-virtual-event__marquee-text {
+		font-size: 1.0625rem;
+		letter-spacing: 0.07em;
+	}
+}
+
+@media (min-width: 860px) {
+	.feed-upcoming-virtual-event__marquee {
+		min-height: 48px;
+		padding: var(--cdn-space-md, 16px) var(--cdn-space-lg, 24px);
+	}
+
+	.feed-upcoming-virtual-event__marquee-text {
+		font-size: 1.125rem;
+		letter-spacing: 0.08em;
+	}
 }
 
 /* Starfield — absolutely positioned over the marquee backplate. Stars
@@ -2423,15 +2465,23 @@
    gradient backplate + shimmer pseudo-element. */
 .feed-upcoming-virtual-event__date {
 	display: block;
-	margin: 4px 0 2px;
+	/* wave 38c — drop the legacy asymmetric 4px / 0 / 2px margin. Inter-
+	   element spacing is now owned by the __layout block-stack's per-
+	   element margin-block-end tokens (title → date = 12px, date →
+	   location = 8px). Mirrors the wave 37c featured-event date wrapper. */
+	margin: 0;
 	font-variant-numeric: tabular-nums;
 }
 
 .feed-upcoming-virtual-event__date-plate {
 	position: relative;
 	display: inline-block;
-	padding: 6px 14px;
-	border-radius: 8px;
+	/* wave 38c — round padding from raw 6px / 14px to the 8pt grid:
+	   --cdn-space-sm (8px) vertical, --cdn-space-md (16px) horizontal.
+	   Border-radius pinned to --cdn-radius-md (8px) token. Mirrors the
+	   wave 37c featured-event date-plate treatment. */
+	padding: var(--cdn-space-sm, 8px) var(--cdn-space-md, 16px);
+	border-radius: var(--cdn-radius-md, 8px);
 	background: linear-gradient(
 		135deg,
 		var(--cdn-uvirt-date-plate-from) 0%,
@@ -2572,7 +2622,11 @@
 
 .feed-upcoming-virtual-event__badge {
 	display: inline-block;
-	padding: 4px 12px;
+	/* wave 38c — tokenize raw 4px / 12px badge padding onto the 8pt grid.
+	   Pill border-radius (999px) is the sentinel value, kept as-is (no
+	   token). justify-self handled by the parent __layout rule below so
+	   the pill sits tight to its natural width inside the block stack. */
+	padding: var(--cdn-space-xs, 4px) var(--cdn-space-12, 12px);
 	border-radius: 999px;
 	background-color: var(--cdn-aws-orange, #ff9900);
 	color: #1a1a1a;
@@ -2592,7 +2646,12 @@
 	object-position: center;
 	background-color: rgba(0, 0, 0, 0.04);
 	border-radius: var(--cdn-radius-md, 8px);
-	margin: 12px 0;
+	/* wave 38c — drop the legacy 12px vertical margin. The __layout
+	   block-stack now owns inter-element spacing via per-element margin-
+	   block-end tokens; the image wrapper's own margin is reset to 0 so
+	   spacing isn't doubled. Mirrors the wave 37c featured-event image
+	   treatment. */
+	margin: 0;
 }
 
 .awsui-dark-mode .feed-upcoming-virtual-event__image {
@@ -2625,7 +2684,10 @@
 	display: block;
 	width: 100%;
 	max-width: 600px;
-	margin: 12px 0;
+	/* wave 38c — drop the legacy 12px vertical margin to match the wave
+	   38c image margin reset above. The __layout block-stack owns inter-
+	   element spacing via per-element margin-block-end tokens. */
+	margin: 0;
 }
 
 /* The wrapped image keeps its own margin/aspect rules — but inside the
@@ -2641,6 +2703,43 @@
    removes the SVG overlay so it never paints over the light image). */
 :not(.awsui-dark-mode) .feed-upcoming-virtual-event__bulbs-wrapper {
 	display: none;
+}
+
+/* Wave 38c — extend the wave 28a/34a theme swap to the wave 33c image-
+   link anchor wrappers. Without this, the off-theme anchor stays visible
+   (its inner img/wrapper is display:none, so the anchor renders empty
+   at height 0) and contributes its wave 38c margin-block-end token to
+   the layout — doubling the image → title spacing. The :has() relational
+   selector targets each anchor by the class of its inner content. */
+.feed-upcoming-virtual-event__image-link:has(
+		.feed-upcoming-virtual-event__bulbs-wrapper
+	) {
+	/* Light-mode default: the second anchor wraps the bulbs-wrapper +
+	   dark img + bulbs overlay — hide it whole so the anchor's margin-
+	   block-end doesn't stack with the visible light anchor's margin-
+	   block-end. */
+	display: none;
+}
+
+.awsui-dark-mode
+	.feed-upcoming-virtual-event__image-link:has(
+		.feed-upcoming-virtual-event__image--light
+	) {
+	/* Dark-mode: the first anchor wraps the standalone light img — its
+	   inner img is already display:none via the wave 28a rule, so the
+	   anchor is empty/zero-height. Hide the anchor itself so its margin-
+	   block-end token doesn't stack with the visible dark anchor's. */
+	display: none;
+}
+
+.awsui-dark-mode
+	.feed-upcoming-virtual-event__image-link:has(
+		.feed-upcoming-virtual-event__bulbs-wrapper
+	) {
+	/* Dark-mode: re-show the anchor wrapping the bulbs-wrapper (the
+	   light-mode default rule above hid it; the dark-mode branch
+	   restores it). */
+	display: block;
 }
 
 /* ---------- Next meetup card — base styling consolidated into wave 33a block ----------
@@ -2732,8 +2831,14 @@
    -------------------------------------------------------------------------- */
 .feed-upcoming-virtual-event__featured-talk {
 	display: flex;
-	gap: 16px;
+	gap: var(--cdn-space-md, 16px);
 	align-items: flex-start;
+	/* wave 38c — featured-talk callout internal padding (wave 29a) stays.
+	   The brand-mark UG disc + featured-talk-body internals are explicitly
+	   off-limits per the wave 38c brief. Outer top-margin removed since
+	   the __layout block-stack now owns inter-element spacing via per-
+	   element margin-block-end tokens (description → featured-talk = 24px,
+	   the secondary primary action's deliberate breathing room). */
 	padding: 14px 16px;
 	border-radius: 12px;
 	background: linear-gradient(
@@ -2742,7 +2847,7 @@
 		rgba(144, 96, 240, 0.06) 100%
 	);
 	border: 1px solid rgba(90, 31, 138, 0.22);
-	margin-top: 4px;
+	margin-top: 0;
 }
 
 .awsui-dark-mode .feed-upcoming-virtual-event__featured-talk {
@@ -2856,6 +2961,93 @@
 
 .awsui-dark-mode .feed-upcoming-virtual-event__featured-talk-title {
 	color: var(--cdn-lavender, #d7c7ee);
+}
+
+/* ---------- Wave 38c — block-stack layout + spacing hierarchy ----------
+   Replaces the wave 33b <SpaceBetween size="s"> uniform 12px stack with
+   a single-column block container whose direct children carry their own
+   margin-block-end token. The block-stack is a CSS Grid with one column
+   so the per-element margins can compose with grid `gap: 0` cleanly
+   (mirrors the wave 37c featured-event __layout pattern; that one uses
+   named-area placement for tablet+ image-left reflow — this card stays
+   single-column at every breakpoint since the wave 29a/33b featured-talk
+   callout is its own visual anchor that doesn't reflow).
+
+   Spacing hierarchy (mirrors the wave 37c featured-event card):
+     marquee   → badge        : 16px (Cloudscape Container body padding)
+     badge     → image        : --cdn-space-12 (12px)
+     image     → title        : --cdn-space-md  (16px)
+     title     → date         : --cdn-space-12 (12px)
+     date      → location     : --cdn-space-sm  (8px)   cluster meta
+     location  → description  : --cdn-space-12 (12px)
+     description → featured-talk : --cdn-space-lg (24px) secondary CTA
+     featured-talk → buttons  : --cdn-space-lg  (24px)  primary CTA
+
+   Smaller gaps (8px, 12px) cluster related metadata; the largest gaps
+   (24px) anchor the secondary primary action (featured-talk callout)
+   and the CTA button stack as deliberate next beats. */
+.feed-upcoming-virtual-event__layout {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 0;
+	min-width: 0;
+}
+
+/* Per-element margin-block-end — encodes the spacing hierarchy on the
+   8pt grid. Each rule sets the distance FROM that element TO the next
+   one in the block stack. Justified on every element so the rhythm is
+   explicit at the call site rather than buried in a single declaration. */
+.feed-upcoming-virtual-event__badge {
+	/* badge → image: 12px */
+	margin-block-end: var(--cdn-space-12, 12px);
+}
+
+.feed-upcoming-virtual-event__image-link {
+	/* image-link → next sibling: 16px (image → title). The first image-
+	   link wraps the light img; the second wraps the dark bulbs-wrapper.
+	   Both render in DOM order; only the active one paints (the other is
+	   display:none via the wave 28a/34a theme swap). The 16px margin is
+	   applied to whichever one is visible. */
+	margin-block-end: var(--cdn-space-md, 16px);
+}
+
+.feed-upcoming-virtual-event__title {
+	/* title → date: 12px */
+	margin-block-end: var(--cdn-space-12, 12px);
+}
+
+.feed-upcoming-virtual-event__date {
+	/* date → location: 8px (cluster meta) */
+	margin-block-end: var(--cdn-space-sm, 8px);
+}
+
+.feed-upcoming-virtual-event__location {
+	/* location → description: 12px */
+	margin-block-end: var(--cdn-space-12, 12px);
+}
+
+.feed-upcoming-virtual-event__description {
+	/* description → featured-talk callout: 24px (secondary primary
+	   action — the featured-talk gets the same big-anchor breathing
+	   room as the wave 37c featured-event spots → buttons step). */
+	margin-block-end: var(--cdn-space-lg, 24px);
+	/* Wave 38c — description personality uplift (mirrors the wave 37c
+	   featured-event description). font-size --cdn-text-base (14px) on
+	   the inherited base tier; line-height 1.65 for an open vertical
+	   rhythm; max-width 64ch keeps the prose at a comfortable measure;
+	   color --cdn-color-text high-contrast so the prose actually reads
+	   (Cloudscape's "text-body-secondary" was muting it to gray). */
+	font-size: var(--cdn-text-base, 0.875rem);
+	line-height: 1.65;
+	max-width: 64ch;
+	letter-spacing: 0.005em;
+	color: var(--cdn-color-text);
+}
+
+.feed-upcoming-virtual-event__layout
+	.feed-upcoming-virtual-event__featured-talk {
+	/* featured-talk callout → cta button stack: 24px (primary action). */
+	margin-block-end: var(--cdn-space-lg, 24px);
 }
 
 /* Featured event location pill + spots counter — see "wave 25a rizz upgrade"
