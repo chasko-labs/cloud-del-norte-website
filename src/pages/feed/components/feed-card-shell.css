@@ -69,6 +69,21 @@
 	position: relative;
 	isolation: isolate;
 	border-radius: var(--cdn-radius-md, 8px);
+	/* Wave 42b2 — establish a CSS Container Query context so per-card
+	   @container queries (defined in src/pages/feed/styles.css under the
+	   "Wave 42b2" section) can react to the shell's own rendered inline
+	   size rather than the viewport. The shell is consumed by many cards
+	   that live in the half-width feed-grid 2-col layout at desktop, so
+	   each shelled card's actual render width can range from ~340px
+	   (entry tablet) to ~620px (wide desktop) without the viewport size
+	   telling the whole story. container-type: inline-size + container-
+	   name lets per-card layout queries target the shell's own inline
+	   size precisely. Mirrors the wave 31a featured-event +
+	   wave 41b next-meetup container-query setup; container-name is
+	   unique per primitive so future @container queries can target each
+	   primitive's body independently. */
+	container-type: inline-size;
+	container-name: cdn-feed-card-shell;
 	/* perspective + preserve-3d let descendant elements pop forward in
 	   z without loading a runtime 3D engine. 1200px = subtle ambient
 	   depth, same value waves 30a/33a/33b use on the event cards. */
