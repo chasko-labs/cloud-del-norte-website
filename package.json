@@ -21,7 +21,8 @@
 		"test:watch": "vitest",
 		"test:ui": "vitest --ui",
 		"coverage": "vitest run --coverage",
-		"prefetch": "node scripts/fetch-releases.mjs"
+		"prefetch": "node scripts/fetch-releases.mjs",
+		"prepare": "husky"
 	},
 	"dependencies": {
 		"@babylonjs/core": "^9.4.1",
@@ -46,10 +47,15 @@
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^6.0.1",
 		"@vitest/ui": "^4.1.5",
+		"husky": "^9.1.7",
 		"jsdom": "^28.1.0",
+		"lint-staged": "^17.0.5",
 		"playwright": "^1.55.1",
 		"typescript": "^6.0.3",
 		"vite": "^8.0.10",
 		"vitest": "^4.1.5"
+	},
+	"lint-staged": {
+		"*.{js,jsx,ts,tsx,css,html,json}": "biome check --write --no-errors-on-unmatched"
 	}
 }
