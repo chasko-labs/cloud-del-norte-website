@@ -8,6 +8,7 @@ import "../../styles/tokens.css";
 import "../../styles/cdn-skeleton.css";
 
 import App from "./app";
+import { initScrollJankMitigation } from "./scroll-jank-mitigation";
 
 const root = ReactDOM.createRoot(document.getElementById("root")!);
 
@@ -16,3 +17,8 @@ root.render(
 		<App />
 	</React.StrictMode>,
 );
+
+// wave 30a — pause the wave 27a v2 featured-event animations during fast
+// scroll so the compositor can focus on the scroll itself. Animations
+// resume 250ms after scroll settles. Self-skips under prefers-reduced-motion.
+initScrollJankMitigation();
