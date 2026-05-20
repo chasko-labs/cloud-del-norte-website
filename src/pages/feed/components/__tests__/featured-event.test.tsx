@@ -44,7 +44,7 @@ describe("FeaturedEvent", () => {
 	it("renders the v2 event title with link to auth.clouddelnorte.org signup with rsvp return_to", () => {
 		renderWithLocale("us");
 		const link = screen.getByText("Community Happy Hour & Networking Night");
-		const expected = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03")}`;
+		const expected = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/index.html?event=happy-hour-2026-06-03")}`;
 		expect(link.closest("a")).toHaveAttribute("href", expected);
 	});
 
@@ -104,8 +104,8 @@ describe("FeaturedEvent", () => {
 		const link = container.querySelector(".feed-featured-event__image-link");
 		expect(link).not.toBeNull();
 		// href matches the same speakeasy CTA URL the primary RSVP button
-		// uses (encoded /rsvp/?event=happy-hour-2026-06-03 return path).
-		const expectedHref = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03")}`;
+		// uses (encoded /rsvp/index.html?event=happy-hour-2026-06-03 return path).
+		const expectedHref = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/index.html?event=happy-hour-2026-06-03")}`;
 		expect(link?.getAttribute("href")).toBe(expectedHref);
 		// aria-label resolves through the new feedPage.featuredEventImageLinkLabel
 		// locale key — describes the link action; the inner <img> alt text
@@ -216,7 +216,7 @@ describe("FeaturedEvent", () => {
 		const primary = screen.getByRole("link", {
 			name: /RSVP on CloudDelNorte\.org/i,
 		});
-		const expected = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/?event=happy-hour-2026-06-03")}`;
+		const expected = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/index.html?event=happy-hour-2026-06-03")}`;
 		expect(primary).toHaveAttribute("href", expected);
 	});
 
