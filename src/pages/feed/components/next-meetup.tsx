@@ -108,17 +108,48 @@ interface MeetupEvent {
  * target="_blank" rel="noopener noreferrer" so the meetup-hosted link
  * opens in a new tab without leaking the opener context.
  */
+/**
+ * Wave 43a — strip markdown noise before link extraction:
+ * - Drop placeholder google-search spans: [text](https://www.google.com/search?...)
+ * - Strip leading `* ` bullet markers (per line)
+ * - Strip leading `> ` blockquote markers (per line)
+ * - Strip **bold** and *italic* asterisk markers (keep inner text)
+ * - Collapse repeated whitespace
+ */
+export function stripMarkdown(raw: string): string {
+	return (
+		raw
+			// Drop entire [text](https://www.google.com/search?...) spans — keep label only
+			.replace(
+				/\[([^\]]+)\]\(https?:\/\/www\.google\.com\/search[^)]*\)/g,
+				"$1",
+			)
+			// Strip leading `* ` bullet markers
+			.replace(/(?:^|\n)\* /g, " ")
+			// Strip leading `> ` blockquote markers
+			.replace(/(?:^|\n)> /g, " ")
+			// Strip **bold** (non-greedy)
+			.replace(/\*\*(.+?)\*\*/g, "$1")
+			// Strip *italic* (non-greedy, single asterisk)
+			.replace(/\*(.+?)\*/g, "$1")
+			// Collapse repeated whitespace
+			.replace(/\s+/g, " ")
+			.trim()
+	);
+}
+
 function renderDescriptionWithLinks(text: string): ReactNode[] {
+	const cleaned = stripMarkdown(text);
 	// Fresh regex per call (stateful global flag would otherwise survive
 	// between renders / event changes).
 	const re = /\[([^\]]+)\]\(([^)]+)\)/g;
 	const out: ReactNode[] = [];
 	let lastIdx = 0;
 	let key = 0;
-	let match: RegExpExecArray | null = re.exec(text);
+	let match: RegExpExecArray | null = re.exec(cleaned);
 	while (match !== null) {
 		if (match.index > lastIdx) {
-			out.push(text.slice(lastIdx, match.index));
+			out.push(cleaned.slice(lastIdx, match.index));
 		}
 		const [, label, url] = match;
 		if (/^https?:\/\//i.test(url)) {
@@ -138,10 +169,10 @@ function renderDescriptionWithLinks(text: string): ReactNode[] {
 			out.push(`[${label}](${url})`);
 		}
 		lastIdx = re.lastIndex;
-		match = re.exec(text);
+		match = re.exec(cleaned);
 	}
-	if (lastIdx < text.length) {
-		out.push(text.slice(lastIdx));
+	if (lastIdx < cleaned.length) {
+		out.push(cleaned.slice(lastIdx));
 	}
 	return out;
 }
