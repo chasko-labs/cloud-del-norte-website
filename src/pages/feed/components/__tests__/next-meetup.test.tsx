@@ -36,7 +36,7 @@
 
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import NextMeetup, { NextMeetupErrorBoundary } from "../next-meetup";
@@ -94,11 +94,89 @@ describe("NextMeetup — wave 33a uplift", () => {
 		).not.toBeNull();
 	});
 
-	it("does not render an <img> element in the loading or fallback states (wave 33a brief: 'onError handler hides broken images, or whatever applies if there's no image element' — documenting the deliberate absence)", () => {
-		const { container: us } = renderWithLocale("us");
-		expect(us.querySelectorAll("img").length).toBe(0);
-		const { container: mx } = renderWithLocale("mx");
-		expect(mx.querySelectorAll("img").length).toBe(0);
+	it("renders the event image with alt text and onError fallback in the loaded-event branch (wave 44 image add)", async () => {
+		const futureIso = new Date(
+			Date.now() + 7 * 24 * 60 * 60 * 1000,
+		).toISOString();
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({
+					summary: "Website (co)Work Wednesday",
+					dtstart: futureIso,
+					url: "https://www.meetup.com/awsugclouddelnorte/events/test/",
+					location: "Online",
+					description: "Test description.",
+				}),
+				text: async () => "",
+			}),
+		);
+		const { container, findByRole } = render(
+			<LocaleProvider locale="us">
+				<NextMeetup />
+			</LocaleProvider>,
+		);
+		await findByRole("heading", { level: 2 });
+		const start = Date.now();
+		let img: HTMLImageElement | null = null;
+		while (Date.now() - start < 1500) {
+			img = container.querySelector(
+				".feed-next-meetup__image",
+			) as HTMLImageElement | null;
+			if (img) break;
+			await new Promise((r) => setTimeout(r, 25));
+		}
+		expect(img).not.toBeNull();
+		expect(img?.getAttribute("alt")).toBe(
+			"Website (co)Work Wednesday meetup event",
+		);
+		expect(img?.getAttribute("src")).toBe("/events/cowork-wednesday.webp");
+		vi.unstubAllGlobals();
+	});
+
+	it("hides the image via state when onError fires (wave 44 no-image fallback)", async () => {
+		const futureIso = new Date(
+			Date.now() + 7 * 24 * 60 * 60 * 1000,
+		).toISOString();
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({
+					summary: "Website (co)Work Wednesday",
+					dtstart: futureIso,
+					url: "https://www.meetup.com/awsugclouddelnorte/events/test/",
+					location: "Online",
+					description: "Test.",
+				}),
+				text: async () => "",
+			}),
+		);
+		const { container, findByRole } = render(
+			<LocaleProvider locale="us">
+				<NextMeetup />
+			</LocaleProvider>,
+		);
+		await findByRole("heading", { level: 2 });
+		const start = Date.now();
+		let img: HTMLImageElement | null = null;
+		while (Date.now() - start < 1500) {
+			img = container.querySelector(
+				".feed-next-meetup__image",
+			) as HTMLImageElement | null;
+			if (img) break;
+			await new Promise((r) => setTimeout(r, 25));
+		}
+		expect(img).not.toBeNull();
+		fireEvent.error(img!);
+		// After onError, the img should be removed from DOM
+		expect(container.querySelector(".feed-next-meetup__image")).toBeNull();
+		// The wrapper slot still carries aria-label for AT
+		const slot = container.querySelector(".feed-next-meetup__image-slot");
+		expect(slot).not.toBeNull();
+		expect(slot?.getAttribute("aria-label")).toBeTruthy();
+		vi.unstubAllGlobals();
 	});
 
 	it("renders the NextMeetupErrorBoundary fallback when a child throws (wave 33a render-failure containment)", () => {
@@ -227,22 +305,21 @@ describe("NextMeetup — wave 38b spacing redesign + description personality", (
 		);
 	});
 
-	it("declares the wave 42b1 __layout grid primitive (replaces wave 38b flex-column so the desktop @container query can reflow into a 2-col image-less layout)", () => {
+	it("declares the wave 42b1 __layout grid primitive (replaces wave 38b flex-column so the desktop @container query can reflow into a 2-col image-left layout)", () => {
 		const layoutBlock = stylesText.match(
-			/\.feed-next-meetup__layout \{[\s\S]*?display: grid;[\s\S]*?grid-template-columns: 1fr;[\s\S]*?grid-template-areas:[\s\S]*?"past-label"[\s\S]*?"title"[\s\S]*?"date"[\s\S]*?"location"[\s\S]*?"description"[\s\S]*?gap: 0;/,
+			/\.feed-next-meetup__layout \{[\s\S]*?display: grid;[\s\S]*?grid-template-columns: 1fr;[\s\S]*?grid-template-areas:[\s\S]*?"image"[\s\S]*?"past-label"[\s\S]*?"title"[\s\S]*?"date"[\s\S]*?"location"[\s\S]*?"description"[\s\S]*?gap: 0;/,
 		);
 		expect(layoutBlock).not.toBeNull();
 	});
 
-	it("declares the wave 42b1 desktop @container query as a TODO comment — 2-col reflow removed in wave 43a pending wave 43b image add", () => {
-		// wave 43a removed the @container cdn-feed-next-meetup (min-width: 860px)
-		// 2-col grid rule; confirmed absence keeps the single-column layout until
-		// the image lands in wave 43b.
-		expect(stylesText).not.toMatch(
-			/@container cdn-feed-next-meetup \(min-width: 860px\)[\s\S]*?grid-template-columns: minmax\(0, 1fr\) minmax\(0, 1\.4fr\)/,
-		);
-		// The TODO comment must be present so future devs know where to restore.
+	it("declares the wave 44 desktop @container query — 2-col image-left reflow restored with event image", () => {
+		// wave 44 restored the @container cdn-feed-next-meetup (min-width: 860px)
+		// 2-col grid rule now that the event image is present.
 		expect(stylesText).toMatch(
+			/@container cdn-feed-next-meetup \(min-width: 860px\)/,
+		);
+		// The wave 43a TODO comment should be gone.
+		expect(stylesText).not.toMatch(
 			/TODO wave 43b: re-enable 2-col reflow once image lands/,
 		);
 	});
@@ -342,8 +419,7 @@ describe("stripMarkdown — wave 43a markdown cleanup", () => {
 
 	it("strips leading `> ` blockquote markers and keeps the text", () => {
 		const result = stripMarkdown("> Important note here");
-		expect(result).toBe("Important note here");
-		expect(result).not.toContain("> ");
+		expect(result).toBe("");
 	});
 
 	it("drops the entire [text](https://www.google.com/search?...) span and keeps only the label text", () => {
@@ -353,5 +429,29 @@ describe("stripMarkdown — wave 43a markdown cleanup", () => {
 		expect(result).toContain("Cloud Del Norte source code");
 		expect(result).not.toContain("google.com/search");
 		expect(result).not.toMatch(/\[.*?\]\(https?:\/\/www\.google\.com/);
+	});
+
+	it("drops entire `* ...` bullet lines from the output (wave 44)", () => {
+		const input =
+			"Welcome to the meetup.\n* Rubber Ducks: Vent your frustrations\n* Lightning Talks: Share something cool\nJoin us online.";
+		const result = stripMarkdown(input);
+		expect(result).not.toContain("Rubber Ducks");
+		expect(result).not.toContain("Lightning Talks");
+		expect(result).toContain("Welcome to the meetup.");
+		expect(result).toContain("Join us online.");
+	});
+
+	it("drops entire `> ...` blockquote lines from the output (wave 44)", () => {
+		const input = "Hello world.\n> This is a blockquote line.\nGoodbye.";
+		const result = stripMarkdown(input);
+		expect(result).not.toContain("blockquote");
+		expect(result).toContain("Hello world.");
+		expect(result).toContain("Goodbye.");
+	});
+
+	it("collapses whitespace after dropping bullets and blockquotes (wave 44)", () => {
+		const input = "Start.\n* bullet one\n* bullet two\nEnd.";
+		const result = stripMarkdown(input);
+		expect(result).toBe("Start. End.");
 	});
 });

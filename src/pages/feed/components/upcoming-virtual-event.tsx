@@ -63,16 +63,6 @@ const TWINKLE_STARS: ReadonlyArray<{ left: number; top: number; size: 2 | 3 }> =
 	];
 
 /**
- * Hide a broken event image gracefully — used as the onError handler for the
- * light + dark .webp banners so a missing asset doesn't leave a broken-image
- * icon visible on the card.
- */
-function hideBrokenImage(event: SyntheticEvent<HTMLImageElement>) {
-	const target = event.currentTarget;
-	target.style.display = "none";
-}
-
-/**
  * Wave 37b — onLoad handler that flags the <img> as `is-loaded` so the
  * CSS opacity transition can fade the binary in over 320ms. The CSS rule
  * gates this behind prefers-reduced-motion so reduced-motion users see
@@ -161,6 +151,8 @@ function renderDescription(text: string): ReactNode {
 function UpcomingVirtualEventInner() {
 	const { t, locale } = useTranslation();
 	const [brandMarkBroken, setBrandMarkBroken] = useState(false);
+	const [lightImageBroken, setLightImageBroken] = useState(false);
+	const [darkImageBroken, setDarkImageBroken] = useState(false);
 
 	const langTag = locale === "mx" ? "es-MX" : "en-US";
 	const formattedDate = new Intl.DateTimeFormat(langTag, {
@@ -224,16 +216,18 @@ function UpcomingVirtualEventInner() {
 						rel="noreferrer"
 						className="feed-upcoming-virtual-event__image-link"
 					>
-						<img
-							src={EVENT_IMAGE_LIGHT}
-							alt={t("feedPage.upcomingVirtualEventImageAlt")}
-							className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--light"
-							width={1200}
-							height={630}
-							loading="lazy"
-							onLoad={markImageLoaded}
-							onError={hideBrokenImage}
-						/>
+						{!lightImageBroken && (
+							<img
+								src={EVENT_IMAGE_LIGHT}
+								alt={t("feedPage.upcomingVirtualEventImageAlt")}
+								className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--light"
+								width={1200}
+								height={630}
+								loading="lazy"
+								onLoad={markImageLoaded}
+								onError={() => setLightImageBroken(true)}
+							/>
+						)}
 					</a>
 					<a
 						href={RSVP_URL}
@@ -243,16 +237,18 @@ function UpcomingVirtualEventInner() {
 						className="feed-upcoming-virtual-event__image-link"
 					>
 						<div className="feed-upcoming-virtual-event__bulbs-wrapper">
-							<img
-								src={EVENT_IMAGE_DARK}
-								alt={t("feedPage.upcomingVirtualEventImageAlt")}
-								className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--dark"
-								width={1200}
-								height={630}
-								loading="lazy"
-								onLoad={markImageLoaded}
-								onError={hideBrokenImage}
-							/>
+							{!darkImageBroken && (
+								<img
+									src={EVENT_IMAGE_DARK}
+									alt={t("feedPage.upcomingVirtualEventImageAlt")}
+									className="feed-upcoming-virtual-event__image feed-upcoming-virtual-event__image--dark"
+									width={1200}
+									height={630}
+									loading="lazy"
+									onLoad={markImageLoaded}
+									onError={() => setDarkImageBroken(true)}
+								/>
+							)}
 							<EventBulbsOverlay />
 						</div>
 					</a>

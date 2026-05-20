@@ -55,17 +55,6 @@ function renderDescription(text: string): ReactNode {
 }
 
 /**
- * Hide a broken event image gracefully. Used as the onError handler for the
- * light + dark .webp event banners. If the asset 404s (e.g. missing from
- * the deploy bucket) we fail silently — the rest of the card still RSVPs
- * the user, which is the conversion goal.
- */
-function hideBrokenImage(event: SyntheticEvent<HTMLImageElement>) {
-	const target = event.currentTarget;
-	target.style.display = "none";
-}
-
-/**
  * Wave 37b — onLoad handler that flags the <img> as `is-loaded` so the
  * CSS opacity transition can fade the binary in over 320ms. Avoids the
  * harder skeleton-to-content snap when the image arrives. The CSS rule
@@ -115,6 +104,8 @@ function FeaturedEventInner() {
 	const { t, locale } = useTranslation();
 	const event = getEvent(EVENT_ID);
 	const [remaining, setRemaining] = useState<number | null>(null);
+	const [lightImageBroken, setLightImageBroken] = useState(false);
+	const [darkImageBroken, setDarkImageBroken] = useState(false);
 
 	useEffect(() => {
 		// spotsRemaining now talks to the public cdn-rsvp API. It returns NaN
@@ -197,27 +188,35 @@ function FeaturedEventInner() {
 						aria-label={t("feedPage.featuredEventImageLinkLabel")}
 						className="feed-featured-event__image-link"
 					>
-						<div className="feed-featured-event__image-area">
-							<img
-								src={EVENT_IMAGE_LIGHT}
-								alt={t("feedPage.featuredEventImageAlt")}
-								className="feed-featured-event__image feed-featured-event__image--light"
-								width={1200}
-								height={630}
-								loading="lazy"
-								onLoad={markImageLoaded}
-								onError={hideBrokenImage}
-							/>
-							<img
-								src={EVENT_IMAGE_DARK}
-								alt={t("feedPage.featuredEventImageAlt")}
-								className="feed-featured-event__image feed-featured-event__image--dark"
-								width={1200}
-								height={630}
-								loading="lazy"
-								onLoad={markImageLoaded}
-								onError={hideBrokenImage}
-							/>
+						<div
+							className="feed-featured-event__image-area"
+							role="img"
+							aria-label={t("feedPage.featuredEventImageAlt")}
+						>
+							{!lightImageBroken && (
+								<img
+									src={EVENT_IMAGE_LIGHT}
+									alt={t("feedPage.featuredEventImageAlt")}
+									className="feed-featured-event__image feed-featured-event__image--light"
+									width={1200}
+									height={630}
+									loading="lazy"
+									onLoad={markImageLoaded}
+									onError={() => setLightImageBroken(true)}
+								/>
+							)}
+							{!darkImageBroken && (
+								<img
+									src={EVENT_IMAGE_DARK}
+									alt={t("feedPage.featuredEventImageAlt")}
+									className="feed-featured-event__image feed-featured-event__image--dark"
+									width={1200}
+									height={630}
+									loading="lazy"
+									onLoad={markImageLoaded}
+									onError={() => setDarkImageBroken(true)}
+								/>
+							)}
 						</div>
 					</a>
 					<Box
