@@ -6,8 +6,26 @@ import Header from "@cloudscape-design/components/header";
 import { useEffect, useState } from "react";
 import { SkeletonFrame } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
+import { YouTubeSpinPlaceholder } from "./youtube-spin-placeholder";
 
 const VIDEO_IDS = ["yQNrgpIp1Fs", "WUJUvTu2Qjo", "S2G6eDE4Jok"];
+
+// Wave 52 — static metadata for newest/oldest spin preview cards.
+// These mirror the hardcoded VIDEO_IDS above; no fetch script needed.
+const SPIN_ITEMS = [
+	{
+		videoId: VIDEO_IDS[0],
+		title: "Featured video 1",
+		thumbnailUrl: `https://i.ytimg.com/vi/${VIDEO_IDS[0]}/hqdefault.jpg`,
+		publishedAt: "2026-05-01",
+	},
+	{
+		videoId: VIDEO_IDS[VIDEO_IDS.length - 1],
+		title: "Featured video 3",
+		thumbnailUrl: `https://i.ytimg.com/vi/${VIDEO_IDS[VIDEO_IDS.length - 1]}/hqdefault.jpg`,
+		publishedAt: "2025-11-01",
+	},
+];
 
 export default function YoutubeCarousel() {
 	const { t } = useTranslation();
@@ -28,8 +46,22 @@ export default function YoutubeCarousel() {
 		<Container
 			header={<Header variant="h2">{t("feedPage.youtubeHeader")}</Header>}
 		>
+			{/* Wave 52 — spin placeholder shown before SSR mount */}
 			{!mounted ? (
-				<SkeletonFrame />
+				<YouTubeSpinPlaceholder
+					newest={SPIN_ITEMS[0]}
+					oldest={SPIN_ITEMS[1]}
+					spinLabel={t("feedPage.spinBtnLabel")}
+					ariaLabel={t("feedPage.spinPlaceholderAriaLabel")}
+					onSelect={(id) => {
+						const idx = VIDEO_IDS.indexOf(id);
+						if (idx !== -1) setCurrent(idx);
+					}}
+					i18n={{
+						newestBadge: t("feedPage.spinNewestBadge"),
+						oldestBadge: t("feedPage.spinOldestBadge"),
+					}}
+				/>
 			) : (
 				<div className="feed-carousel">
 					<div className="feed-carousel__viewport">
