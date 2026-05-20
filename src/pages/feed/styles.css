@@ -105,10 +105,9 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--cdn-space-xs);
-	/* fixed height — min-height lets long excerpts push the container taller,
-     causing the card to jump height on rotation. overflow:hidden clips cleanly.
-     120px accommodates 2-line titles (≈42px) + excerpt (≈20px) + date (≈20px) + gaps. */
-	height: 120px;
+	/* Wave 45: bumped from 120px to 148px to accommodate body-m excerpts
+	   (2-line title ~44px + body-m excerpt ~2 lines ~52px + date ~20px + gaps). */
+	height: 148px;
 	overflow: hidden;
 }
 
@@ -300,7 +299,11 @@
 }
 
 .feed-posts__title {
-	font-size: var(--cdn-text-base);
+	font-size: clamp(
+		var(--cdn-text-base, 0.875rem),
+		2.8cqw,
+		var(--cdn-text-lg, 1rem)
+	);
 	font-weight: var(--cdn-weight-medium);
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
@@ -311,6 +314,14 @@
 
 .feed-posts__excerpt {
 	font-size: var(--cdn-text-sm);
+	color: var(--cdn-color-text-secondary);
+}
+
+/* Wave 45 — task 1.4 / task 2: larger excerpt copy for PostCarousel (body-m size + 1.65 line-height).
+   Bryan: "show less words from the blog but have the words be legible". */
+.feed-posts__excerpt--body-m {
+	font-size: var(--cdn-text-base, 0.875rem);
+	line-height: 1.65;
 	color: var(--cdn-color-text-secondary);
 }
 
@@ -549,6 +560,65 @@
 }
 .awsui-dark-mode .feed-card-header-sub {
 	color: rgba(214, 197, 238, 0.7);
+}
+
+/* Wave 45 — task 1: andmore.dev brand star header row */
+.feed-andmore-header-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.feed-andmore-brand-star {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background: linear-gradient(
+		135deg,
+		var(--cdn-amber, #e8a000),
+		var(--cdn-gold, #f0c040)
+	);
+	flex-shrink: 0;
+}
+
+.feed-andmore-brand-star img {
+	object-fit: contain;
+}
+
+/* Wave 45 — task 2: AWS ML Blog header tint (AWS orange) to signal official AWS content */
+.feed-awsml-header {
+	color: #ff9900;
+}
+
+.awsui-dark-mode .feed-awsml-header {
+	color: #ffb84d;
+}
+
+/* Wave 45 — task 3: ReadySetCloud 2-sentence excerpt */
+.feed-rsc__entry-group {
+	display: flex;
+	flex-direction: column;
+	gap: var(--cdn-space-xs, 4px);
+}
+
+.feed-rsc__entry-excerpt {
+	margin: 0;
+	font-size: var(--cdn-text-sm, 0.75rem);
+	line-height: 1.55;
+	color: var(--cdn-color-text);
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+	-webkit-line-clamp: 4; /* allows flow at desktop; clamps at narrow */
+}
+
+@media (max-width: 520px) {
+	.feed-rsc__entry-excerpt {
+		-webkit-line-clamp: 2;
+	}
 }
 
 @media (min-width: 680px) {
