@@ -11,38 +11,25 @@
 	width: 100%;
 }
 
-/* ----- Wave 42a — host attribution header --------------------------------
-   Bryan asked to replace the Cloudscape <Header variant="h2">"Mescalero
-   shorts on YouTube"</Header> with the host blurb, and to "ensure it
-   responsively fits all text on 2 lines at all screen sizes — there's
-   some wasted / awkward spacing on this card". The youtube-shorts-
-   carousel.tsx Container now renders this div as its header slot. The
-   role="heading" + aria-level=2 attributes in the JSX preserve the h2
-   ARIA contract that Cloudscape Header provided.
-   - clamp() font-size scales between mobile (~14px) and desktop (~17px)
-     without media queries; the floor preserves legibility on phones,
-     the ceiling matches the wave 38b headline tier on the event cards.
-   - display: -webkit-box + -webkit-line-clamp: 2 + -webkit-box-orient:
-     vertical caps the rendering at 2 lines — the longest blurb today
-     ("Hosted by Ma-tonth (Rolling Fox), this channel shares real
-     conversations on Oak Flat, Indigenous culture, and the MMIP
-     movement.") wraps to 2 lines at desktop and stays at 2 lines via
-     ellipsis at the narrowest mobile widths.
-   - line-height: 1.25 keeps the two lines tight without crowding.
-   - color + font-weight match the other shell marquee headers so the
-     family read stays cohesive across the feed grid.
+/* ----- Wave 42a / Wave 68 — host attribution header ---------------------
+   Wave 68: blurb expanded to full podcast name ("Fight For Our Existence
+   Podcast, hosted by Ma-tonth, ..."); -webkit-line-clamp bumped to 3 so
+   the longer text fills 3 lines at all breakpoints without overflow.
+   font-size clamp() floor lowered to 0.8rem so the full text fits 3 tight
+   lines even at narrow mobile; line-height tightened to 1.3 (was 1.25)
+   to prevent the 3-line block from dominating vertical space.
    ------------------------------------------------------------------------ */
 .feed-shorts__attribution-header {
 	display: -webkit-box;
-	-webkit-line-clamp: 2;
+	-webkit-line-clamp: 3;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
 	white-space: normal;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: clamp(0.875rem, 0.78rem + 0.4cqw, 1.0625rem);
+	font-size: clamp(0.8rem, 0.72rem + 0.5cqw, 1.0625rem);
 	font-weight: 700;
 	letter-spacing: 0.01em;
-	line-height: 1.25;
+	line-height: 1.3;
 	color: var(--cdn-color-text);
 	margin: 0;
 }
