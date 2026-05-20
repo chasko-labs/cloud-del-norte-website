@@ -1,0 +1,126 @@
+/* Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+   SPDX-License-Identifier: MIT-0
+
+   Wave 48b — andres-youtube-live fanfare
+   ============================================================================
+   Depth stack: perspective + preserve-3d already live on .feed-card-shell.
+   This file adds:
+     1. Live-broadcast sigil (concentric rose arcs) — personality detail SVG
+        animated with a sustained breathing pulse, reduced-motion gated,
+        body.cdn-scrolling paused.
+     2. GPU compositing hints scoped to desktop (min-width: 768px) per wave
+        37a discipline — iOS/Android ghosting fix.
+   ============================================================================ */
+
+/* ── live-broadcast sigil ──────────────────────────────────────────────────── */
+
+.ayl-sigil {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	vertical-align: middle;
+	margin-inline-end: var(--cdn-space-xs, 4px);
+	line-height: 1;
+	/* palette-tinted via currentColor on the SVG arcs — parent marquee
+	   already sets color: var(--fcs-text) so arcs pick up the rose tone. */
+	color: var(--fcs-rim, #be123c);
+}
+
+.ayl-sigil__svg {
+	display: block;
+	overflow: visible;
+}
+
+/* inner-most arc — solid, no animation */
+.ayl-sigil__arc-core {
+	transform-origin: 14px 14px;
+}
+
+/* middle + outer arcs breathe on staggered 2.4s loops */
+.ayl-sigil__arc-mid {
+	transform-origin: 14px 14px;
+}
+
+.ayl-sigil__arc-outer {
+	transform-origin: 14px 14px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	@keyframes ayl-sigil-breathe {
+		0%,
+		100% {
+			opacity: 0.55;
+			transform: scale(1);
+		}
+		50% {
+			opacity: 0.9;
+			transform: scale(1.08);
+		}
+	}
+
+	.ayl-sigil__arc-mid {
+		animation: ayl-sigil-breathe 2.4s ease-in-out infinite;
+	}
+
+	.ayl-sigil__arc-outer {
+		animation: ayl-sigil-breathe 2.4s ease-in-out 0.6s infinite;
+	}
+}
+
+/* Pause during scroll burst */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .ayl-sigil__arc-mid,
+	body.cdn-scrolling .ayl-sigil__arc-outer {
+		animation-play-state: paused;
+	}
+}
+
+/* Reduced-motion: static arcs at moderate opacity */
+@media (prefers-reduced-motion: reduce) {
+	.ayl-sigil__arc-mid,
+	.ayl-sigil__arc-outer {
+		animation: none;
+		opacity: 0.45;
+	}
+}
+
+/* ── brand-star wrapper ────────────────────────────────────────────────────── */
+
+.ayl-brand-star {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #be123c 0%, #e11d48 100%);
+	flex-shrink: 0;
+	margin-inline-end: 6px;
+}
+
+.ayl-brand-star img {
+	object-fit: contain;
+	/* tint the white star rose via mix-blend-mode on dark bg */
+	filter: brightness(0) invert(1);
+}
+
+/* ── header row ────────────────────────────────────────────────────────────── */
+
+.ayl-header-row {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+}
+
+/* ── desktop GPU compositing hints (wave 37a — mobile ghosting gate) ──────── */
+
+@media (min-width: 768px) {
+	.ayl-container {
+		perspective: 1200px;
+		transform-style: preserve-3d;
+		contain: layout paint style;
+		transform: translate3d(0, 0, 0);
+		will-change: transform;
+	}
+}

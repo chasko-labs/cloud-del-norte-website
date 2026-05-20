@@ -48,6 +48,9 @@ export default function FeaturedVideoCard({
 						/>
 					</div>
 				</div>
+				{/* Wave 48c — right column: thumbnail (hidden fallback) + link with
+				    descriptive label so the touch target is larger and the column
+				    reads as a companion panel rather than just "Watch on YouTube". */}
 				<div className="featured-video-card__fallback">
 					<img
 						src={thumbnailUrl}
