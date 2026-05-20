@@ -1,32 +1,27 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-// Wave 56 tests:
-//   A — BuilderCenterCard click-to-play modal (svvgLNWGlEI)
+// Wave 56 tests (post-wave-69 rollback):
 //   B — FeaturedVideoCard palette prop
 //   C — feed/app.tsx SECTION_KEYS includes 'howToPlayBuildercards'
+//
+// Wave 56A — BuilderCenterCard click-to-play modal (svvgLNWGlEI) removed in
+// wave 69 per Bryan: 'remove watch builder cards intro from builder center
+// card, thats not what I meant and carlos blocks us from embedding his video'.
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
-import BuilderCenterCard from "../builder-center-card";
 import FeaturedVideoCard from "../featured-video-card";
 
 function withLocale(ui: React.ReactElement) {
 	return render(<LocaleProvider locale="us">{ui}</LocaleProvider>);
 }
 
-// IntersectionObserver stub required by LazyEmbed
-type IOCallback = (entries: IntersectionObserverEntry[]) => void;
-let lastIOCb: IOCallback | null = null;
-
+// IntersectionObserver stub required by LazyEmbed (used inside FeaturedVideoCard)
 beforeEach(() => {
-	lastIOCb = null;
 	class IOMock {
 		disconnect = vi.fn();
-		constructor(cb: IOCallback) {
-			lastIOCb = cb;
-		}
 		observe() {}
 	}
 	globalThis.IntersectionObserver =
@@ -35,87 +30,6 @@ beforeEach(() => {
 
 afterEach(() => {
 	vi.restoreAllMocks();
-});
-
-// ---------------------------------------------------------------------------
-// A — BuilderCenterCard modal
-// ---------------------------------------------------------------------------
-
-describe("Wave 56A — BuilderCenterCard click-to-play modal", () => {
-	it("renders 'Watch BuilderCards intro' button", () => {
-		withLocale(<BuilderCenterCard />);
-		expect(
-			screen.getByTestId("builder-center-watch-intro"),
-		).toBeInTheDocument();
-	});
-
-	it("modal is not visible before button click", () => {
-		withLocale(<BuilderCenterCard />);
-		// Cloudscape Modal always renders in DOM but adds awsui_hidden_* class
-		// when visible=false. Check the dialog exists but is visually hidden.
-		const dialog = document.querySelector("[role='dialog']") as HTMLElement;
-		expect(dialog).not.toBeNull();
-		// hidden class contains "hidden"
-		expect(dialog.className).toMatch(/hidden/);
-	});
-
-	it("clicking Watch intro button opens the modal", async () => {
-		withLocale(<BuilderCenterCard />);
-		const btn = screen.getByTestId("builder-center-watch-intro");
-		fireEvent.click(btn);
-		await waitFor(() => {
-			expect(
-				screen.getByText("Building AWS Architectures with BuilderCards"),
-			).toBeInTheDocument();
-		});
-	});
-
-	it("open modal contains iframe with svvgLNWGlEI src after IntersectionObserver fires", async () => {
-		const { act } = await import("react");
-		withLocale(<BuilderCenterCard />);
-		const btn = screen.getByTestId("builder-center-watch-intro");
-		fireEvent.click(btn);
-		await waitFor(() => {
-			expect(
-				screen.getByText("Building AWS Architectures with BuilderCards"),
-			).toBeInTheDocument();
-		});
-		// trigger IntersectionObserver so LazyEmbed renders the iframe
-		await act(async () => {
-			lastIOCb?.([{ isIntersecting: true } as IntersectionObserverEntry]);
-		});
-		const iframe = screen.getByTitle(
-			"Building AWS Architectures with BuilderCards",
-		);
-		expect(iframe.getAttribute("src")).toContain("svvgLNWGlEI");
-	});
-
-	it("modal contains author attribution link to Ajolotes en la Nube", async () => {
-		withLocale(<BuilderCenterCard />);
-		fireEvent.click(screen.getByTestId("builder-center-watch-intro"));
-		await waitFor(() => {
-			expect(screen.getByText("Ajolotes en la Nube")).toBeInTheDocument();
-		});
-	});
-
-	it("dismissing modal re-hides the dialog", async () => {
-		withLocale(<BuilderCenterCard />);
-		fireEvent.click(screen.getByTestId("builder-center-watch-intro"));
-		await waitFor(() => {
-			// Modal should be visible — no hidden class
-			const dialog = document.querySelector("[role='dialog']") as HTMLElement;
-			expect(dialog.className).not.toMatch(/hidden/);
-		});
-		const closeBtn = document.querySelector(
-			'[class*="dismiss-control"]',
-		) as HTMLElement;
-		expect(closeBtn).not.toBeNull();
-		fireEvent.click(closeBtn);
-		await waitFor(() => {
-			const dialog = document.querySelector("[role='dialog']") as HTMLElement;
-			expect(dialog.className).toMatch(/hidden/);
-		});
-	});
 });
 
 // ---------------------------------------------------------------------------
