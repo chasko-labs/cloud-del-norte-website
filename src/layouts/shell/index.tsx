@@ -16,6 +16,7 @@ import PersistentPlayer from "../../components/persistent-player";
 import { AuthProvider } from "../../contexts/auth-context";
 import { LocaleProvider } from "../../contexts/locale-context";
 import { useAuth } from "../../hooks/useAuth";
+import { dispatchNavState } from "../../hooks/usePanelOpen";
 import { useTranslation } from "../../hooks/useTranslation";
 import { AUTH_LOGIN_URL } from "../../lib/auth";
 import {
@@ -330,6 +331,8 @@ function ShellContent({
 			const newState = event.detail.open;
 			setNavOpen(newState);
 			setStoredNavState(newState);
+			// Wave 66: notify Navigation component so it can gate FionaFrame mount
+			dispatchNavState(newState);
 		},
 		[],
 	);
