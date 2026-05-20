@@ -204,33 +204,38 @@ export function FeedAndmore() {
 	const { t } = useTranslation();
 	const { posts, ready } = useFeed("andmore");
 
+	// Wave 48b — brand star + co-organizer sub-label consolidated onto a
+	// single horizontal header line (was wave 45 stacked vertical with
+	// feed-card-header-sub on a second row, causing double vertical space
+	// in the marquee). Now: [★] andmore.dev · co-organizer in one flex row.
 	const headerText = (
-		<>
-			<span className="feed-andmore-header-row">
-				{/* Wave 45 — brand star: reuse /brand/logo.svg with onError fallback.
-				    Mirrors the wave 33b upcoming-virtual-event primitive. */}
-				<span
-					className="feed-andmore-brand-star"
-					role="img"
-					aria-label={t("feedPage.upcomingVirtualEventUgMarkLabel")}
-				>
-					<img
-						src="/brand/logo.svg"
-						alt=""
-						aria-hidden="true"
-						width={32}
-						height={32}
-						onError={(e) => {
-							(e.currentTarget as HTMLImageElement).style.display = "none";
-						}}
-					/>
-				</span>
-				{t("feedPage.andmoreDevHeader")}
+		<span className="feed-andmore-header-row">
+			{/* Wave 45 — brand star: reuse /brand/logo.svg with onError fallback. */}
+			<span
+				className="feed-andmore-brand-star"
+				role="img"
+				aria-label={t("feedPage.upcomingVirtualEventUgMarkLabel")}
+			>
+				<img
+					src="/brand/logo.svg"
+					alt=""
+					aria-hidden="true"
+					width={24}
+					height={24}
+					onError={(e) => {
+						(e.currentTarget as HTMLImageElement).style.display = "none";
+					}}
+				/>
 			</span>
-			<span className="feed-card-header-sub">
+			{t("feedPage.andmoreDevHeader")}
+			<span className="feed-andmore-header-sep" aria-hidden="true">
+				{" "}
+				·{" "}
+			</span>
+			<span className="feed-andmore-coorg">
 				{t("feedPage.andmoreCoOrganizer")}
 			</span>
-		</>
+		</span>
 	);
 	const headerActions = (
 		<Link href="https://andmore.dev" external fontSize="body-s">

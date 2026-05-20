@@ -105,9 +105,11 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--cdn-space-xs);
-	/* Wave 45: bumped from 120px to 148px to accommodate body-m excerpts
-	   (2-line title ~44px + body-m excerpt ~2 lines ~52px + date ~20px + gaps). */
-	height: 148px;
+	/* Wave 48b: reduced from 148px (wave 45) → 128px now that brand star +
+	   co-organizer no longer occupy a second marquee row, reclaiming ~20px
+	   of vertical space. 2-line title ~40px + body-m excerpt ~2 lines ~48px +
+	   date ~20px + gaps ≈ 128px. */
+	height: 128px;
 	overflow: hidden;
 }
 
@@ -562,19 +564,23 @@
 	color: rgba(214, 197, 238, 0.7);
 }
 
-/* Wave 45 — task 1: andmore.dev brand star header row */
+/* Wave 45/48b — task 1: andmore.dev brand star header row.
+   Wave 48b: consolidated into a single horizontal line (brand star + title + sep + co-org).
+   Brand star now 24px (was 32px) so it reads at-scale with the marquee font. */
 .feed-andmore-header-row {
 	display: inline-flex;
 	align-items: center;
-	gap: 6px;
+	gap: 4px;
+	flex-wrap: nowrap;
+	min-width: 0;
 }
 
 .feed-andmore-brand-star {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 32px;
-	height: 32px;
+	width: 24px;
+	height: 24px;
 	border-radius: 50%;
 	background: linear-gradient(
 		135deg,
@@ -586,6 +592,25 @@
 
 .feed-andmore-brand-star img {
 	object-fit: contain;
+}
+
+/* separator dot between title + co-organizer label */
+.feed-andmore-header-sep {
+	flex-shrink: 0;
+	opacity: 0.55;
+	font-weight: 400;
+}
+
+/* co-organizer label — smaller weight so it reads as secondary within the row */
+.feed-andmore-coorg {
+	font-size: 0.78em;
+	font-weight: 500;
+	opacity: 0.75;
+	letter-spacing: 0.01em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	min-width: 0;
 }
 
 /* Wave 45 — task 2: AWS ML Blog header tint (AWS orange) to signal official AWS content */
@@ -4863,25 +4888,18 @@
 
 	/* Featured-video-card (lavender) — at desktop, switch the body to a
 	   2-col grid: iframe-bearing viewport on the left, fallback link
-	   block on the right. Mirrors the wave 31a featured-event image-
-	   left desktop layout (image left, content stack right) so the
-	   featured-video card reads with the same compositional rhythm as
-	   the rest of the family at desktop. The 1.6fr / 1fr ratio gives
-	   the iframe column slightly more weight (the video is the primary
-	   content) while leaving the right column wide enough for the
-	   "Watch on YouTube" link to read on its own line. align-items:
-	   center vertically centers both columns so the smaller right-
-	   column link sits on the iframe's mid-line rather than top-
-	   aligned with empty space below.
+	   block on the right. Wave 48c fix: align-items changed from center →
+	   start so the right-column link anchors to the top of the iframe
+	   rather than floating to the vertical midpoint and leaving dead space
+	   above and below. Right column also gets padding-top: 8px (8pt token)
+	   so the link aligns optically with the iframe top edge.
 	   Scoped to .feed-card-shell--lavender to avoid affecting any
-	   future shelled consumer of the generic .feed-carousel class
-	   (the YouTube carousels in the wave 36b deferred TODO list reuse
-	   .feed-carousel structurally). */
+	   future shelled consumer of the generic .feed-carousel class. */
 	.feed-card-shell--lavender .feed-carousel {
 		display: grid;
 		grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
 		gap: var(--cdn-space-md, 16px);
-		align-items: center;
+		align-items: start;
 	}
 
 	.feed-card-shell--lavender .feed-carousel__viewport {
@@ -4891,5 +4909,9 @@
 	.feed-card-shell--lavender .featured-video-card__fallback {
 		grid-column: 2;
 		justify-self: start;
+		display: flex;
+		flex-direction: column;
+		gap: var(--cdn-space-xs, 4px);
+		padding-top: 8px;
 	}
 }
