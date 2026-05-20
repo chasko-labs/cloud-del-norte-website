@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
+import BabylonGate from "../babylon-gate";
 import "../navigation/fiona.css";
 
 function withFallback(value: string, key: string, fallback: string): string {
@@ -198,12 +199,15 @@ export default function FionaFrame() {
 							</span>
 						</span>
 					</div>
-					<canvas
-						id="fiona-canvas"
-						className="fiona-canvas"
-						aria-hidden="true"
-						tabIndex={-1}
-					/>
+					{/* Wave 53: gate the Babylon end-credit canvas behind device tier ≥ medium */}
+					<BabylonGate tier="medium" fallback={null}>
+						<canvas
+							id="fiona-canvas"
+							className="fiona-canvas"
+							aria-hidden="true"
+							tabIndex={-1}
+						/>
+					</BabylonGate>
 				</div>
 				<div
 					id="fiona-status-bar"

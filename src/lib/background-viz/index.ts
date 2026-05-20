@@ -1,3 +1,4 @@
+import { isSoftwareWebGL } from "../device-capabilities.js";
 import { createAudioBridge, resumeCtx } from "./audio.js";
 import { initCanvas, rebuildStatic } from "./canvas.js";
 import {
@@ -6,6 +7,9 @@ import {
 	mountDuneScene,
 } from "./dune-scene.js";
 import { preloadLogo } from "./static.js";
+
+// Re-export for callers that previously imported from here.
+export { isSoftwareWebGL };
 
 let mounted = false;
 
@@ -37,28 +41,6 @@ function reducedMotion(): boolean {
 	return matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-// Detect software-rendered WebGL (SwiftShader / llvmpipe / Mesa software
-// rasteriser). On these GPUs the dune scene will never hit the 16ms budget,
-// and the perf gate's tear-down can race with the static-canvas opacity flip
-// in ways that surprise the user. Skip the dune mount entirely instead.
-function isSoftwareRendering(): boolean {
-	try {
-		const probe = document.createElement("canvas");
-		const gl = (probe.getContext("webgl2") ||
-			probe.getContext("webgl")) as WebGLRenderingContext | null;
-		if (!gl) return false;
-		const debugInfo = gl.getExtension("WEBGL_debug_renderer_info");
-		const renderer = debugInfo
-			? String(gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL))
-			: "";
-		return /SwiftShader|llvmpipe|Software|Microsoft Basic Render/i.test(
-			renderer,
-		);
-	} catch {
-		return false;
-	}
-}
-
 // Escape hatch for verification harnesses (CI screenshot pipeline + ad-hoc
 // capture scripts) running headless on rocm-aibox where ANGLE reports
 // SwiftShader ("ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)
@@ -68,7 +50,7 @@ function isSoftwareRendering(): boolean {
 function shouldSkipDune(): boolean {
 	const params = new URLSearchParams(window.location.search);
 	if (params.get("__cdn_force_wallpaper") === "1") return false;
-	return isSoftwareRendering();
+	return isSoftwareWebGL();
 }
 
 export function mount(): () => void {
