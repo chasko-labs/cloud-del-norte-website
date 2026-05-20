@@ -3273,81 +3273,21 @@
 	grid-area: buttons;
 }
 
-/* ---------- Wave 42b1 — Upcoming-virtual-event desktop @container reflow ----------
-   Bryan's wave 42 priority 1: "optimize white space use on cards on all
-   screens" + "virtual aws community events … on desktop mode … fugly".
-   At desktop widths (≥860px container width) the single-column layout
-   put the 1200×630 image as a full-width hero and stacked all content
-   below it — the card became top-heavy with a wide image and a thin
-   stack of text underneath. Mirrors the wave 31a featured-event ≥860px
-   image-left + content-right reflow exactly: image fills the left column
-   for the full row span, content (badge → title → date → location →
-   description → featured-talk → buttons) stacks in the right column.
+/* Wave 69 — reverted wave 42b1 @container ≥860px image-left 2-col grid.
+   Bryan: 'the aws global community gatherings banner should be same width
+   as the free & open aws virtual aws community events block above it'.
+   The card now stacks single-column at all widths so the banner image
+   spans the same full-card width as the marquee header.
 
-   Both image-link anchors (light + dark theme variants) share grid-area:
-   image — they stack in the same cell and the existing :has() theme-
-   swap rules display:none the off-theme anchor so only one paints per
-   theme. align-items: start so when the right-column content stack is
-   taller than the image (the common case given the description +
-   featured-talk + button stack), the image sits at the top of the left
-   column rather than centering and floating in the middle of dead space.
-
-   Calibrated to ≥860px (matches the wave 31a featured-event breakpoint)
-   because below that, splitting into two equal-ish columns leaves the
-   right column too narrow to fit the title + featured-talk callout
-   without aggressive wrapping. minmax(0, 1.1fr) on the image column
-   gives it slightly more weight so the focal artwork dominates the
-   left half — same ratios as featured-event for visual consistency
-   across the two image-bearing event cards.
-
-   Per-element margin-block-end rules above are zeroed at this breakpoint
-   so grid `gap` drives the row spacing without margins double-counting.
-   Token-only colors / spacing — no new visuals introduced; light + dark
-   mode share the same grid math and the existing theme-swap rules
-   above continue to gate which image variant paints. */
+   The @container block below is preserved to keep the wave 44/57 min-width:0
+   overflow guards on __title, __date, .cdn-brand-btn-stack, and
+   __featured-talk. They are harmless in a single-column layout and protect
+   against future re-introduction of a 2-col grid. */
 @container cdn-feed-upcoming-virtual-event (min-width: 860px) {
-	.feed-upcoming-virtual-event__layout {
-		grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-		grid-template-areas:
-			"image badge"
-			"image title"
-			"image date"
-			"image location"
-			"image description"
-			"image featured-talk"
-			"image buttons";
-		align-items: start;
-		gap: var(--cdn-space-sm, 8px) var(--cdn-space-lg, 24px);
-	}
-
-	.feed-upcoming-virtual-event__layout
-		.feed-upcoming-virtual-event__image-link {
-		align-self: start;
-	}
-
-	/* Reset per-element margin-block-end so grid `gap` drives row
-	   spacing — mirrors the wave 31a tablet+/desktop pattern on
-	   .feed-featured-event__layout. The mobile per-item margin stack
-	   would otherwise produce ragged row spacing inside the right
-	   column at desktop. */
-	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__badge,
-	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__image-link,
-	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__title,
-	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__date,
-	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__location,
-	.feed-upcoming-virtual-event__layout
-		.feed-upcoming-virtual-event__description,
-	.feed-upcoming-virtual-event__layout
-		.feed-upcoming-virtual-event__featured-talk {
-		margin-block-end: 0;
-	}
-
-	/* Wave 44 — prevent right-column grid items from overflowing their
-	   track. Grid items default to min-width:auto which respects content
-	   min-content size; the date-plate's white-space:nowrap + long timezone
-	   string (e.g. "MDT") pushed the column past the container edge,
-	   clipping the MeetupRsvpButton below it. min-width:0 lets items
-	   shrink within their minmax(0,1fr) track. */
+	/* Wave 44 / 57 — prevent grid items from overflowing their track if
+	   a 2-col layout is ever re-introduced. min-width:0 lets items shrink
+	   within a minmax(0,1fr) track. Harmless in the current single-column
+	   layout. */
 	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__title,
 	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__date,
 	.feed-upcoming-virtual-event__layout .cdn-brand-btn-stack,
