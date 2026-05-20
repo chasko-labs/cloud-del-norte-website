@@ -106,6 +106,22 @@ echo "✓ ${LIB_PATH}/index.html exists"
 echo ""
 
 # ── S3 sync ───────────────────────────────────────────────────────────────────
+# Wave 49 — 4-pass Cache-Control tiering for El Paso regional perf.
+#
+# Prior state: 2-pass (assets/* immutable, everything else no-cache).
+# Problem: /events/*.webp, /brand/*, /icons/* all served no-cache → every
+# viewer hit origin every request, x-cache: Miss from cloudfront across the board.
+#
+# New tiering:
+#   pass 1: app shell (html + everything not matched below)  → no-cache
+#   pass 2: /events/, /brand/, /icons/ (media)               → 24h + must-revalidate
+#   pass 3: /data/ (build-time JSON feeds)                   → 5min + must-revalidate
+#   pass 4: /assets/ (vite hashed bundles)                   → 1y immutable
+#
+# Each non-shell pass is gated on directory existence so subdomains without
+# those paths (auth, dev) don't fail.
+# ──────────────────────────────────────────────────────────────────────────────
+
 if [[ "${DRY_RUN}" == "true" ]]; then
   echo "[dry-run] Would sync ${LIB_PATH}/ → s3://${BUCKET}/"
   echo "[dry-run] Would invalidate distribution ${DIST}"
@@ -113,10 +129,15 @@ if [[ "${DRY_RUN}" == "true" ]]; then
   exit 0
 fi
 
-echo "Syncing non-asset files (no-cache)…"
+# pass 1: app shell — everything except tiered paths (no-cache)
+echo "Pass 1/4: app shell (no-cache)…"
 aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/" \
   --delete \
   --exclude "assets/*" \
+  --exclude "events/*" \
+  --exclude "brand/*" \
+  --exclude "icons/*" \
+  --exclude "data/*" \
   --exclude "liora/*" \
   --exclude "liora-embed/*" \
   --exclude "fiona/*" \
@@ -124,11 +145,38 @@ aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/" \
   --exclude "screenshots/*" \
   --cache-control "no-cache"
 
-echo ""
-echo "Syncing assets (immutable)…"
-aws s3 sync "${LIB_PATH}/assets/" "s3://${BUCKET}/assets/" \
-  --delete \
-  --cache-control "public, max-age=31536000, immutable"
+# pass 2: media assets — 24h cache (events, brand, icons)
+if [[ -d "${LIB_PATH}/events" ]] || [[ -d "${LIB_PATH}/brand" ]] || [[ -d "${LIB_PATH}/icons" ]]; then
+  echo ""
+  echo "Pass 2/4: media (24h, must-revalidate)…"
+  [[ -d "${LIB_PATH}/events" ]] && aws s3 sync "${LIB_PATH}/events/" "s3://${BUCKET}/events/" \
+    --delete \
+    --cache-control "public, max-age=86400, must-revalidate"
+  [[ -d "${LIB_PATH}/brand" ]] && aws s3 sync "${LIB_PATH}/brand/" "s3://${BUCKET}/brand/" \
+    --delete \
+    --cache-control "public, max-age=86400, must-revalidate"
+  [[ -d "${LIB_PATH}/icons" ]] && aws s3 sync "${LIB_PATH}/icons/" "s3://${BUCKET}/icons/" \
+    --delete \
+    --cache-control "public, max-age=86400, must-revalidate"
+fi
+
+# pass 3: build-time data feeds — 5min cache
+if [[ -d "${LIB_PATH}/data" ]]; then
+  echo ""
+  echo "Pass 3/4: data feeds (5min, must-revalidate)…"
+  aws s3 sync "${LIB_PATH}/data/" "s3://${BUCKET}/data/" \
+    --delete \
+    --cache-control "public, max-age=300, must-revalidate"
+fi
+
+# pass 4: vite hashed bundles — immutable 1y
+if [[ -d "${LIB_PATH}/assets" ]]; then
+  echo ""
+  echo "Pass 4/4: hashed bundles (immutable, 1y)…"
+  aws s3 sync "${LIB_PATH}/assets/" "s3://${BUCKET}/assets/" \
+    --delete \
+    --cache-control "public, max-age=31536000, immutable"
+fi
 
 echo ""
 
