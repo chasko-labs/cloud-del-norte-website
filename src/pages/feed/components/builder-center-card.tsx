@@ -1,8 +1,12 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import Button from "@cloudscape-design/components/button";
 import Link from "@cloudscape-design/components/link";
+import Modal from "@cloudscape-design/components/modal";
+import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { LazyEmbed } from "../../../components/lazy-embed";
 import { useTranslation } from "../../../hooks/useTranslation";
 import BuilderBadge from "./builder-badge";
 import {
@@ -32,6 +36,10 @@ const AUTO_ADVANCE_MS = 7000;
 // corner pill chip + #-prefix variant looked terrible compared to the prior
 // big-numeral hierarchy. Each card shows: big serif #, 2-line title clamp,
 // 1-line excerpt from blurb, author + badge.
+//
+// wave 56 — add 'Watch BuilderCards intro' button in headerActions slot that
+// opens a Cloudscape Modal with a lazy YouTube iframe for svvgLNWGlEI.
+// prefers-reduced-motion: autoplay disabled when reduced motion preferred.
 
 interface VisibleCard extends Card {
 	rank: number; // 1..N visible rank stays stable per source-array index
@@ -68,6 +76,8 @@ function CardItem({ card }: { card: VisibleCard }) {
 		</li>
 	);
 }
+
+const VIDEO_ID = "svvgLNWGlEI";
 
 export default function BuilderCenterCard() {
 	const { t, locale } = useTranslation();
@@ -138,65 +148,104 @@ export default function BuilderCenterCard() {
 		step(dir);
 	};
 
+	// wave 56 — modal state
+	const [modalOpen, setModalOpen] = useState(false);
+
+	// prefers-reduced-motion: disable autoplay when user prefers it
+	const embedSrc = `https://www.youtube.com/embed/${VIDEO_ID}?autoplay=${reducedMotion ? 0 : 1}`;
+
 	const headerActions = (
-		<Link href="https://builder.aws.com/" external fontSize="body-s">
-			{t("feedPage.builderCenterOpen")}
-		</Link>
+		<SpaceBetween direction="horizontal" size="xs">
+			<Button
+				variant="inline-link"
+				iconName="caret-right-filled"
+				onClick={() => setModalOpen(true)}
+				data-testid="builder-center-watch-intro"
+			>
+				{t("feedPage.builderCenterWatchIntro")}
+			</Button>
+			<Link href="https://builder.aws.com/" external fontSize="body-s">
+				{t("feedPage.builderCenterOpen")}
+			</Link>
+		</SpaceBetween>
 	);
 
 	return (
-		<FeedCardShell
-			headerText={t("feedPage.builderCenterHeader")}
-			headerActions={headerActions}
-			palette="gold"
-		>
-			{/* biome-ignore lint/a11y/noStaticElementInteractions: pointer handlers only pause auto-advance — keyboard / SR users use the chevron buttons below */}
-			<div
-				className="feed-builder-deck"
-				onMouseEnter={() => setPaused(true)}
-				onMouseLeave={() => setPaused(false)}
+		<>
+			<FeedCardShell
+				headerText={t("feedPage.builderCenterHeader")}
+				headerActions={headerActions}
+				palette="gold"
 			>
-				<ol
-					// key forces remount per window so the fade-in animation re-runs
-					key={`window-${windowIndex}`}
-					className="feed-mini-grid feed-mini-grid--window"
-					aria-label={t("feedPage.builderCenterHeader")}
-					aria-live="polite"
+				{/* biome-ignore lint/a11y/noStaticElementInteractions: pointer handlers only pause auto-advance — keyboard / SR users use the chevron buttons below */}
+				<div
+					className="feed-builder-deck"
+					onMouseEnter={() => setPaused(true)}
+					onMouseLeave={() => setPaused(false)}
 				>
-					{visible.map((card) => (
-						<CardItem key={card.url} card={card} />
-					))}
-				</ol>
-
-				{canRotate && (
-					<div
-						className="feed-builder-deck__controls"
-						role="group"
+					<ol
+						// key forces remount per window so the fade-in animation re-runs
+						key={`window-${windowIndex}`}
+						className="feed-mini-grid feed-mini-grid--window"
 						aria-label={t("feedPage.builderCenterHeader")}
+						aria-live="polite"
 					>
-						<button
-							type="button"
-							className="feed-builder-deck__chev"
-							onClick={() => handleUserStep(-1)}
-							aria-label={t("feedPage.previousArticle")}
+						{visible.map((card) => (
+							<CardItem key={card.url} card={card} />
+						))}
+					</ol>
+
+					{canRotate && (
+						<div
+							className="feed-builder-deck__controls"
+							role="group"
+							aria-label={t("feedPage.builderCenterHeader")}
 						>
-							‹
-						</button>
-						<span
-							className="feed-builder-deck__counter"
-							aria-hidden="true"
-						>{`${windowIndex + 1} / ${windowCount}`}</span>
-						<button
-							type="button"
-							className="feed-builder-deck__chev"
-							onClick={() => handleUserStep(1)}
-							aria-label={t("feedPage.nextArticle")}
-						>
-							›
-						</button>
-					</div>
-				)}
-			</div>
-		</FeedCardShell>
+							<button
+								type="button"
+								className="feed-builder-deck__chev"
+								onClick={() => handleUserStep(-1)}
+								aria-label={t("feedPage.previousArticle")}
+							>
+								‹
+							</button>
+							<span
+								className="feed-builder-deck__counter"
+								aria-hidden="true"
+							>{`${windowIndex + 1} / ${windowCount}`}</span>
+							<button
+								type="button"
+								className="feed-builder-deck__chev"
+								onClick={() => handleUserStep(1)}
+								aria-label={t("feedPage.nextArticle")}
+							>
+								›
+							</button>
+						</div>
+					)}
+				</div>
+			</FeedCardShell>
+
+			{/* wave 56 — click-to-play modal. Only mounted when open so LazyEmbed
+			    never loads the iframe until the user triggers it. */}
+			<Modal
+				visible={modalOpen}
+				onDismiss={() => setModalOpen(false)}
+				size="large"
+				header={t("feedPage.builderCenterVideoTitle")}
+				aria-label={t("feedPage.builderCenterModalAriaLabel")}
+			>
+				<LazyEmbed
+					src={embedSrc}
+					title={t("feedPage.builderCenterVideoTitle")}
+					allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
+				/>
+				<div style={{ marginTop: "8px" }}>
+					<Link href={`https://www.youtube.com/watch?v=${VIDEO_ID}`} external>
+						{t("feedPage.builderCenterVideoAuthor")}
+					</Link>
+				</div>
+			</Modal>
+		</>
 	);
 }

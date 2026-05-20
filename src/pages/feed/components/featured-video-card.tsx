@@ -3,6 +3,7 @@
 
 import Link from "@cloudscape-design/components/link";
 import { LazyEmbed } from "../../../components/lazy-embed";
+import type { FeedCardShellPalette } from "./feed-card-shell";
 import FeedCardShell from "./feed-card-shell";
 
 interface FeaturedVideoCardProps {
@@ -11,6 +12,10 @@ interface FeaturedVideoCardProps {
 	author: string;
 	authorUrl: string;
 	thumbnailUrl?: string;
+	/** wave 56 — palette override; defaults to 'lavender' to preserve the
+	 *  existing Women in Tech card appearance. Pass 'gold' for the
+	 *  AWS BuilderCards how-to-play card. */
+	palette?: FeedCardShellPalette;
 }
 
 export default function FeaturedVideoCard({
@@ -19,6 +24,7 @@ export default function FeaturedVideoCard({
 	author,
 	authorUrl,
 	thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+	palette = "lavender",
 }: FeaturedVideoCardProps) {
 	const headerActions = (
 		<Link
@@ -36,7 +42,7 @@ export default function FeaturedVideoCard({
 		<FeedCardShell
 			headerText={title}
 			headerActions={headerActions}
-			palette="lavender"
+			palette={palette}
 		>
 			<div className="feed-carousel">
 				<div className="feed-carousel__viewport">
