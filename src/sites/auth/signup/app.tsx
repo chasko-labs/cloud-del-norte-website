@@ -660,7 +660,11 @@ function SignupWizard() {
 			{activeStepIndex === 0 && (
 				<Box variant="small" textAlign="right" margin={{ bottom: "s" }}>
 					{t("auth.signup.alreadyMember")}{" "}
-					<Link href="/login/index.html">{t("auth.signup.signInLink")}</Link>
+					<Link
+						href={`/login/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
+					>
+						{t("auth.signup.signInLink")}
+					</Link>
 				</Box>
 			)}
 			<StepDots current={activeStepIndex} total={steps.length} />

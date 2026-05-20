@@ -433,7 +433,11 @@ function LoginForm() {
 		<div className="cdn-auth-form-inner">
 			<Box variant="small" textAlign="right" margin={{ bottom: "s" }}>
 				{t("auth.login.noAccount")}{" "}
-				<Link href="/signup/index.html">{t("auth.login.signUpLink")}</Link>
+				<Link
+					href={`/signup/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
+				>
+					{t("auth.login.signUpLink")}
+				</Link>
 			</Box>
 			<form
 				onSubmit={(e) => {
