@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
-import Weather from "../weather";
 import "../navigation/fiona.css";
 
 function withFallback(value: string, key: string, fallback: string): string {
@@ -280,7 +279,6 @@ export default function FionaFrame() {
 					) : null}
 				</button>
 			</div>
-			<Weather />
 		</div>
 	);
 }
