@@ -27,6 +27,7 @@ import {
 	verifySoftwareToken,
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
+import { stashReturnTo } from "../_shared/return-to";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
 
@@ -42,7 +43,10 @@ function redirectWithTokens() {
 	// After new account email verify, send to verification-setup before the feed
 	if (sessionStorage.getItem("cdn.needsVerificationSetup") === "1") {
 		sessionStorage.removeItem("cdn.needsVerificationSetup");
-		window.location.assign("/verification-setup/index.html");
+		stashReturnTo(returnTo);
+		window.location.assign(
+			`/verification-setup/index.html${window.location.search}`,
+		);
 		return;
 	}
 

@@ -20,6 +20,7 @@ import {
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
 import CodeInput from "../_layout/CodeInput";
+import { stashReturnTo } from "../_shared/return-to";
 
 /* 120s gives users time to switch to authenticator/email apps and back
    without missing the resend window — was 30s, too short for app-switch UX */
@@ -84,6 +85,9 @@ function VerifyForm() {
 			setSubmitState("success");
 			window.setTimeout(() => setDone(true), 500);
 			// Flag for login to redirect to verification-setup after sign-in
+			const returnTo =
+				new URLSearchParams(window.location.search).get("return_to") ?? "";
+			stashReturnTo(returnTo);
 			sessionStorage.setItem("cdn.needsVerificationSetup", "1");
 		} catch (err) {
 			if (err instanceof AuthError) {

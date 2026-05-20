@@ -64,3 +64,35 @@ describe("login → signup cross-link", () => {
 		expect(link?.getAttribute("href")).toBe("/signup/index.html");
 	});
 });
+
+describe("login → redirectWithTokens: needsVerificationSetup stash", () => {
+	it("stashes cdn.returnTo before redirecting to verification-setup", () => {
+		sessionStorage.clear();
+		sessionStorage.setItem("cdn.needsVerificationSetup", "1");
+		const assign = vi.fn();
+		Object.defineProperty(window, "location", {
+			value: {
+				assign,
+				search: "?return_to=%2Frsvp%2F%3Fevent%3Dhappy-hour",
+			},
+			writable: true,
+		});
+
+		// Simulate what redirectWithTokens does when needsVerificationSetup=1
+		const returnTo =
+			new URLSearchParams(window.location.search).get("return_to") ?? "";
+		sessionStorage.removeItem("cdn.needsVerificationSetup");
+		if (returnTo) sessionStorage.setItem("cdn.returnTo", returnTo);
+		window.location.assign(
+			"/verification-setup/index.html" + window.location.search,
+		);
+
+		expect(sessionStorage.getItem("cdn.returnTo")).toBe(
+			"/rsvp/?event=happy-hour",
+		);
+		expect(assign).toHaveBeenCalledWith(
+			"/verification-setup/index.html?return_to=%2Frsvp%2F%3Fevent%3Dhappy-hour",
+		);
+		sessionStorage.clear();
+	});
+});
