@@ -55,6 +55,39 @@
 	color: #fff !important;
 }
 
+/* Wave 45 — task 5: subtle bounce animation on the CTA card.
+   Bryan: "make the speak at cloud del norte card on the feed bounce slightly
+   when you get to it to excite people to try it".
+   - ~3-4px vertical translate amplitude, 3s loop, ease-in-out.
+   - Gated behind prefers-reduced-motion: no-preference (Bryan epilepsy discipline).
+   - body.cdn-scrolling pauses the animation (matches wave 33a/33b/33c fast-scroll pause). */
+
+@keyframes cdn-cta-bounce {
+	0%,
+	100% {
+		transform: translateY(0);
+		box-shadow: 0 2px 8px rgba(90, 31, 138, 0.18);
+	}
+	45% {
+		transform: translateY(-3px);
+		box-shadow: 0 6px 16px rgba(90, 31, 138, 0.28);
+	}
+	65% {
+		transform: translateY(-1px);
+		box-shadow: 0 4px 10px rgba(90, 31, 138, 0.22);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.cdn-card--cta {
+		animation: cdn-cta-bounce 3s ease-in-out infinite;
+	}
+
+	body.cdn-scrolling .cdn-card--cta {
+		animation-play-state: paused;
+	}
+}
+
 /* Dark mode — slightly brighter violet lead */
 .awsui-dark-mode .cdn-card--cta
 	[class*="awsui_button"][class*="variant-primary"] {

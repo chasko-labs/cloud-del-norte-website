@@ -86,6 +86,12 @@ function PostCarousel({ posts, ready }: { posts: FeedPost[]; ready: boolean }) {
 	// Single panel for the carousel — tabs all reference it; content swaps inside.
 	const panelId = `${panelIdBase}-panel`;
 
+	// Task 1.4 / Task 2: cap excerpt to ~140 chars, bump to body-m for legibility.
+	const excerpt =
+		post.excerpt && post.excerpt.length > 140
+			? `${post.excerpt.slice(0, 140).trimEnd()}…`
+			: post.excerpt;
+
 	function focusTab(next: number) {
 		setIndex(next);
 		setPaused(true);
@@ -136,10 +142,8 @@ function PostCarousel({ posts, ready }: { posts: FeedPost[]; ready: boolean }) {
 						{post.title}
 					</Link>
 				</div>
-				{post.excerpt && (
-					<Box color="text-body-secondary" fontSize="body-s">
-						{post.excerpt}
-					</Box>
+				{excerpt && (
+					<div className="feed-posts__excerpt--body-m">{excerpt}</div>
 				)}
 				<Box color="text-status-inactive" fontSize="body-s">
 					{post.pubDate}
@@ -202,9 +206,29 @@ export function FeedAndmore() {
 
 	const headerText = (
 		<>
-			{t("feedPage.andmoreDevHeader")}
+			<span className="feed-andmore-header-row">
+				{/* Wave 45 — brand star: reuse /brand/logo.svg with onError fallback.
+				    Mirrors the wave 33b upcoming-virtual-event primitive. */}
+				<span
+					className="feed-andmore-brand-star"
+					role="img"
+					aria-label={t("feedPage.upcomingVirtualEventUgMarkLabel")}
+				>
+					<img
+						src="/brand/logo.svg"
+						alt=""
+						aria-hidden="true"
+						width={32}
+						height={32}
+						onError={(e) => {
+							(e.currentTarget as HTMLImageElement).style.display = "none";
+						}}
+					/>
+				</span>
+				{t("feedPage.andmoreDevHeader")}
+			</span>
 			<span className="feed-card-header-sub">
-				{t("feedPage.andmoreByAndres")}
+				{t("feedPage.andmoreCoOrganizer")}
 			</span>
 		</>
 	);
@@ -241,7 +265,9 @@ export function FeedAwsml() {
 
 	return (
 		<FeedCardShell
-			headerText={t("feedPage.awsMlBlog")}
+			headerText={
+				<span className="feed-awsml-header">{t("feedPage.awsMlBlog")}</span>
+			}
 			headerActions={headerActions}
 			palette="teal"
 		>
@@ -289,6 +315,7 @@ export function FeedReadysetcloud() {
 							title={latestBlog.title}
 							link={latestBlog.link}
 							date={latestBlog.pubDate}
+							excerpt={latestBlog.excerpt}
 						/>
 					) : (
 						<Box color="text-status-inactive" fontSize="body-s">
@@ -301,6 +328,7 @@ export function FeedReadysetcloud() {
 							title={latestNewsletter.title}
 							link={latestNewsletter.link}
 							date={latestNewsletter.pubDate}
+							excerpt={latestNewsletter.excerpt}
 						/>
 					) : (
 						<Box color="text-status-inactive" fontSize="body-s">
@@ -315,37 +343,48 @@ export function FeedReadysetcloud() {
 
 /**
  * Wave 42a — single-line ReadySetCloud entry row.
- *
- * Renders one feed item as: {label} — {title} · {date} on a single
- * horizontal line. The .feed-rsc__entry CSS rule (in feed/styles.css)
- * applies white-space: nowrap + text-overflow: ellipsis on the title
- * at desktop and switches to a -webkit-line-clamp: 2 fallback at narrow
- * viewports so the row stays readable on phones.
+ * Wave 45 — adds 2-sentence excerpt below the title row.
  */
 function RscEntry({
 	label,
 	title,
 	link,
 	date,
+	excerpt,
 }: {
 	label: string;
 	title: string;
 	link: string;
 	date: string;
+	excerpt?: string;
 }) {
+	// Task 3: split on `. `, take first 2 sentences, cap at 140 chars.
+	const twoSentences = (() => {
+		if (!excerpt) return "";
+		const chunks = excerpt.split(/\.\s+/);
+		const joined =
+			chunks.length >= 2 ? `${chunks[0]}. ${chunks[1]}.` : chunks[0];
+		return joined.length > 140 ? `${joined.slice(0, 140).trimEnd()}…` : joined;
+	})();
+
 	return (
-		<div className="feed-rsc__entry">
-			<span className="feed-rsc__entry-label">{label}</span>
-			<span className="feed-rsc__entry-sep" aria-hidden="true">
-				{" — "}
-			</span>
-			<Link href={link} external>
-				<span className="feed-rsc__entry-title">{title}</span>
-			</Link>
-			<span className="feed-rsc__entry-sep" aria-hidden="true">
-				{" · "}
-			</span>
-			<span className="feed-rsc__entry-date">{date}</span>
+		<div className="feed-rsc__entry-group">
+			<div className="feed-rsc__entry">
+				<span className="feed-rsc__entry-label">{label}</span>
+				<span className="feed-rsc__entry-sep" aria-hidden="true">
+					{" — "}
+				</span>
+				<Link href={link} external>
+					<span className="feed-rsc__entry-title">{title}</span>
+				</Link>
+				<span className="feed-rsc__entry-sep" aria-hidden="true">
+					{" · "}
+				</span>
+				<span className="feed-rsc__entry-date">{date}</span>
+			</div>
+			{twoSentences && (
+				<p className="feed-rsc__entry-excerpt">{twoSentences}</p>
+			)}
 		</div>
 	);
 }

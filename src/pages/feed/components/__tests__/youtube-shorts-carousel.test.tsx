@@ -87,9 +87,7 @@ describe("YouTubeShortsCarousel", () => {
 
 	it("renders the host-attribution blurb above the carousel", () => {
 		renderWith(SAMPLE_SHORTS);
-		expect(
-			screen.getByText(/Hosted by Ma-tonth \(Rolling Fox\)/i),
-		).toBeInTheDocument();
+		expect(screen.getByText(/Hosted by Ma-tonth,/i)).toBeInTheDocument();
 	});
 
 	it("opens the modal embed when a thumbnail is clicked", () => {
