@@ -2,14 +2,12 @@
 // SPDX-License-Identifier: MIT-0
 
 import { lazy, useCallback, useEffect, useRef, useState } from "react";
-import BabylonGate from "../babylon-gate";
 import { getBandBass } from "../../lib/background-viz/audio";
+import BabylonGate from "../babylon-gate";
 import { CITIES, type City } from "./cities";
 import "./styles.css";
 
-const AtmosphereScene = lazy(
-	() => import("./atmosphere-scene"),
-);
+const AtmosphereScene = lazy(() => import("./atmosphere-scene"));
 
 /** Extract the current local hour (0–23) in the given IANA timezone. */
 function localHour(timezone: string): number {
@@ -375,10 +373,7 @@ export default function Weather() {
 			onKeyDown={onKeyDown}
 			style={{ position: "relative", overflow: "hidden" }}
 		>
-			<BabylonGate
-				tier="medium"
-				fallback={null}
-			>
+			<BabylonGate tier="medium" fallback={null}>
 				<AtmosphereScene
 					weatherCode={cur.weather_code}
 					timezone={city.timezone}

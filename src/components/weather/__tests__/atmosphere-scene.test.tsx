@@ -18,9 +18,17 @@ vi.mock("@babylonjs/core", () => {
 	const scene = { clearColor: null, render: vi.fn(), beginAnimation };
 
 	// biome-ignore lint/complexity/noStaticOnlyClass: vitest requires class syntax for constructable mocks
-	class Engine { constructor() { Object.assign(this, eng); } }
+	class Engine {
+		constructor() {
+			Object.assign(this, eng);
+		}
+	}
 	// biome-ignore lint/complexity/noStaticOnlyClass: same
-	class Scene { constructor() { Object.assign(this, scene); } }
+	class Scene {
+		constructor() {
+			Object.assign(this, scene);
+		}
+	}
 	// biome-ignore lint/complexity/noStaticOnlyClass: vitest requires class syntax for constructable mocks
 	class ArcRotateCamera {
 		inputs = { clear: vi.fn() };
@@ -28,11 +36,27 @@ vi.mock("@babylonjs/core", () => {
 		constructor() {}
 	}
 	// biome-ignore lint/complexity/noStaticOnlyClass: same
-	class HemisphericLight { constructor() { Object.assign(this, { intensity: 1, diffuse: null }); } }
+	class HemisphericLight {
+		constructor() {
+			Object.assign(this, { intensity: 1, diffuse: null });
+		}
+	}
 	// biome-ignore lint/complexity/noStaticOnlyClass: same
-	class DirectionalLight { constructor() { Object.assign(this, { intensity: 1, diffuse: null }); } }
+	class DirectionalLight {
+		constructor() {
+			Object.assign(this, { intensity: 1, diffuse: null });
+		}
+	}
 	// biome-ignore lint/complexity/noStaticOnlyClass: same
-	class StandardMaterial { constructor() { Object.assign(this, { emissiveColor: null, alpha: 1, disableLighting: false }); } }
+	class StandardMaterial {
+		constructor() {
+			Object.assign(this, {
+				emissiveColor: null,
+				alpha: 1,
+				disableLighting: false,
+			});
+		}
+	}
 	// biome-ignore lint/complexity/noStaticOnlyClass: same
 	class Animation {
 		constructor(public name: string) {}
@@ -59,7 +83,9 @@ vi.mock("@babylonjs/core", () => {
 		return m;
 	};
 
-	(globalThis as unknown as { __babylonMeshes: typeof meshes }).__babylonMeshes = meshes;
+	(
+		globalThis as unknown as { __babylonMeshes: typeof meshes }
+	).__babylonMeshes = meshes;
 	(globalThis as unknown as { __babylonEng: typeof eng }).__babylonEng = eng;
 
 	return {
@@ -69,9 +95,21 @@ vi.mock("@babylonjs/core", () => {
 		HemisphericLight,
 		DirectionalLight,
 		Animation,
-		Color4: class Color4 { constructor() {} },
-		Color3: class Color3 { constructor() {} static White() { return {}; } },
-		Vector3: class Vector3 { static Zero() { return {}; } constructor() {} },
+		Color4: class Color4 {
+			constructor() {}
+		},
+		Color3: class Color3 {
+			constructor() {}
+			static White() {
+				return {};
+			}
+		},
+		Vector3: class Vector3 {
+			static Zero() {
+				return {};
+			}
+			constructor() {}
+		},
 		MeshBuilder: {
 			CreateSphere: vi.fn((name: string) => mockMesh(name)),
 			CreateCylinder: vi.fn((name: string) => mockMesh(name)),
@@ -108,11 +146,13 @@ afterEach(() => {
 // ── codeToVariantExact unit ──────────────────────────────────────────────────
 describe("codeToVariantExact", () => {
 	it("0 → clear", () => expect(codeToVariantExact(0)).toBe("clear"));
-	it("2 → partly-cloudy", () => expect(codeToVariantExact(2)).toBe("partly-cloudy"));
+	it("2 → partly-cloudy", () =>
+		expect(codeToVariantExact(2)).toBe("partly-cloudy"));
 	it("45 → fog", () => expect(codeToVariantExact(45)).toBe("fog"));
 	it("61 → rain", () => expect(codeToVariantExact(61)).toBe("rain"));
 	it("73 → snow", () => expect(codeToVariantExact(73)).toBe("snow"));
-	it("95 → thunderstorm", () => expect(codeToVariantExact(95)).toBe("thunderstorm"));
+	it("95 → thunderstorm", () =>
+		expect(codeToVariantExact(95)).toBe("thunderstorm"));
 });
 
 // ── Canvas mount ─────────────────────────────────────────────────────────────
@@ -128,7 +168,9 @@ describe("AtmosphereScene", () => {
 		const { container } = render(
 			<AtmosphereScene weatherCode={0} timezone="America/Denver" hour={14} />,
 		);
-		expect(container.querySelector("canvas")?.getAttribute("aria-hidden")).toBe("true");
+		expect(container.querySelector("canvas")?.getAttribute("aria-hidden")).toBe(
+			"true",
+		);
 	});
 
 	it("unmounts without throwing (no engine leaks)", () => {
@@ -153,7 +195,9 @@ describe("AtmosphereScene", () => {
 		// The async Babylon import fires asynchronously after render; synchronously
 		// the render loop has not been started, and with reduced motion the async
 		// branch only calls scene.render() once (static frame) rather than runRenderLoop.
-		const g = globalThis as unknown as { __babylonEng: { runRenderLoop: ReturnType<typeof vi.fn> } };
+		const g = globalThis as unknown as {
+			__babylonEng: { runRenderLoop: ReturnType<typeof vi.fn> };
+		};
 		expect(g.__babylonEng.runRenderLoop).not.toHaveBeenCalled();
 		unmount();
 	});

@@ -1,0 +1,84 @@
+/* wave 61 — CSS-shader neon-sign typography on sidepanel menu labels
+   Bryan: 'think adding shaders to 2d to make 3d, thats our approach'
+   Inspiration: babylon playground 8BQJH7 area-light signs
+
+   Design call: flat text color (no background-clip:text gradient) to
+   guarantee WCAG AA 4.5:1 contrast. The 3D depth comes entirely from
+   the multi-layer text-shadow stack. */
+
+/* ── Light mode: warm cream-on-amber ─────────────────────────────────── */
+:root:not(.awsui-dark-mode)
+	[class*="awsui_side-navigation"]
+	[class*="awsui_link"] {
+	text-shadow:
+		0 0 3px rgba(90, 31, 138, 0.18),
+		0 2px 0 rgba(90, 58, 20, 0.25) !important;
+	transition: text-shadow 240ms ease-out !important;
+}
+
+:root:not(.awsui-dark-mode)
+	[class*="awsui_side-navigation"]
+	[class*="awsui_link"]:hover,
+:root:not(.awsui-dark-mode)
+	[class*="awsui_side-navigation"]
+	[class*="awsui_link"]:focus-visible {
+	text-shadow:
+		0 0 4px rgba(90, 31, 138, 0.35),
+		0 0 8px rgba(144, 96, 240, 0.2),
+		0 2px 0 rgba(90, 58, 20, 0.3),
+		0 0 14px rgba(201, 162, 63, 0.15) !important;
+}
+
+/* Active/current page — persistent low glow */
+:root:not(.awsui-dark-mode)
+	[class*="awsui_side-navigation"]
+	[class*="awsui_link"][class*="active"],
+:root:not(.awsui-dark-mode)
+	[class*="awsui_side-navigation"]
+	[class*="awsui_link"][aria-current="page"] {
+	text-shadow:
+		0 0 4px rgba(90, 31, 138, 0.25),
+		0 2px 0 rgba(90, 58, 20, 0.28),
+		0 0 10px rgba(144, 96, 240, 0.12) !important;
+}
+
+/* ── Dark mode: violet-on-navy with amber accent on hover ────────────── */
+.awsui-dark-mode [class*="awsui_side-navigation"] [class*="awsui_link"] {
+	text-shadow:
+		0 0 3px rgba(144, 96, 240, 0.22),
+		0 2px 0 rgba(20, 10, 40, 0.4) !important;
+	transition: text-shadow 240ms ease-out !important;
+}
+
+.awsui-dark-mode [class*="awsui_side-navigation"] [class*="awsui_link"]:hover,
+.awsui-dark-mode
+	[class*="awsui_side-navigation"]
+	[class*="awsui_link"]:focus-visible {
+	text-shadow:
+		0 0 5px rgba(144, 96, 240, 0.4),
+		0 0 10px rgba(90, 31, 138, 0.3),
+		0 2px 0 rgba(20, 10, 40, 0.45),
+		0 0 16px rgba(201, 162, 63, 0.2) !important;
+}
+
+/* Active/current page — persistent low glow */
+.awsui-dark-mode [class*="awsui_side-navigation"]
+	[class*="awsui_link"][class*="active"],
+.awsui-dark-mode
+	[class*="awsui_side-navigation"]
+	[class*="awsui_link"][aria-current="page"] {
+	text-shadow:
+		0 0 4px rgba(144, 96, 240, 0.3),
+		0 2px 0 rgba(20, 10, 40, 0.42),
+		0 0 12px rgba(90, 31, 138, 0.15) !important;
+}
+
+/* ── prefers-reduced-motion: no transitions ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+	:root:not(.awsui-dark-mode)
+		[class*="awsui_side-navigation"]
+		[class*="awsui_link"],
+	.awsui-dark-mode [class*="awsui_side-navigation"] [class*="awsui_link"] {
+		transition: none !important;
+	}
+}

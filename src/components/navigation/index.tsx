@@ -8,6 +8,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useTranslation } from "../../hooks/useTranslation";
 import FionaFrame from "../fiona-frame";
 import "./fiona.css";
+import "./menu-signage.css";
 
 // w24 v0.0.0098 added contributor article cards (andres / bryan / wayne) here
 // as a floating <nav> sibling to SideNavigation. v0.0.0104 moved them to the
