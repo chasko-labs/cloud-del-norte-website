@@ -19,9 +19,9 @@ import Container from "@cloudscape-design/components/container";
 import Modal from "@cloudscape-design/components/modal";
 import SegmentedControl from "@cloudscape-design/components/segmented-control";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { SkeletonLine, SkeletonTitle } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
 import "./youtube-shorts-carousel.css";
-import { YouTubeSpinPlaceholder } from "./youtube-spin-placeholder";
 
 export interface YouTubeShort {
 	videoId: string;
@@ -159,32 +159,9 @@ export default function YouTubeShortsCarousel({
 			: t("feedPage.shortsEmpty")
 		: "";
 
-	// Wave 52 — newest/oldest for the spin placeholder.
-	// posts[0] = newest (RSS order), posts[posts.length-1] = oldest.
-	const newestShort = shorts.length > 0 ? shorts[0] : null;
-	const oldestShort = shorts.length > 1 ? shorts[shorts.length - 1] : null;
-
 	return (
 		<Container
 			header={
-				// Wave 42a — Bryan asked: "instead of putting Hosted by Ma-tonth
-				// (Rolling Fox)... under 'Mescalero shorts on YouTube' replace
-				// 'Mescalero shorts on YouTube' with it". The wave 24e
-				// Cloudscape <Header variant="h2"> + the wave 41a body Box that
-				// rendered the host blurb under the header are both retired —
-				// the host attribution IS the header now. role="heading" +
-				// aria-level=2 reasserts the h2 ARIA contract since we're
-				// trading Cloudscape's <h2> chrome for the custom div. The
-				// .feed-shorts__attribution-header CSS rule (in
-				// youtube-shorts-carousel.css) clamps the font-size with
-				// clamp() and caps at 2 lines via -webkit-line-clamp so the
-				// blurb fits responsively at every viewport — addressing
-				// Bryan's "wasted / awkward spacing on this card" note.
-				// feedPage.shortsHeader is preserved as the aria-label on the
-				// inner carousel <div role="group"> below so AT users still
-				// hear "Mescalero shorts on YouTube" as the carousel
-				// description even though the visible header is now the host
-				// blurb.
 				<div
 					className="feed-shorts__attribution-header"
 					role="heading"
@@ -194,51 +171,21 @@ export default function YouTubeShortsCarousel({
 				</div>
 			}
 		>
-			{/* Wave 52 — spin placeholder shown while loading or when data is empty */}
 			{!ready ? (
-				<YouTubeSpinPlaceholder
-					newest={null}
-					oldest={null}
-					spinLabel={t("feedPage.spinBtnLabel")}
-					ariaLabel={t("feedPage.spinPlaceholderAriaLabel")}
-					i18n={{
-						newestBadge: t("feedPage.spinNewestBadge"),
-						oldestBadge: t("feedPage.spinOldestBadge"),
-					}}
-				/>
-			) : orderedShorts.length === 0 ? (
 				<>
-					<YouTubeSpinPlaceholder
-						newest={null}
-						oldest={null}
-						spinLabel={t("feedPage.spinBtnLabel")}
-						ariaLabel={t("feedPage.spinPlaceholderAriaLabel")}
-						i18n={{
-							newestBadge: t("feedPage.spinNewestBadge"),
-							oldestBadge: t("feedPage.spinOldestBadge"),
-						}}
-					/>
-					<Box
-						color="text-status-inactive"
-						fontSize="body-s"
-						data-testid="shorts-empty-state"
-					>
-						{t("feedPage.shortsEmpty")}
-					</Box>
+					<SkeletonTitle />
+					<SkeletonLine />
 				</>
+			) : orderedShorts.length === 0 ? (
+				<Box
+					color="text-status-inactive"
+					fontSize="body-s"
+					data-testid="shorts-empty-state"
+				>
+					{t("feedPage.shortsEmpty")}
+				</Box>
 			) : (
 				<>
-					<YouTubeSpinPlaceholder
-						newest={newestShort}
-						oldest={oldestShort}
-						spinLabel={t("feedPage.spinBtnLabel")}
-						ariaLabel={t("feedPage.spinPlaceholderAriaLabel")}
-						onSelect={(id) => setModalShortId(id)}
-						i18n={{
-							newestBadge: t("feedPage.spinNewestBadge"),
-							oldestBadge: t("feedPage.spinOldestBadge"),
-						}}
-					/>
 					<div className="feed-shorts-carousel__sort" data-testid="shorts-sort">
 						<Box
 							fontSize="body-s"

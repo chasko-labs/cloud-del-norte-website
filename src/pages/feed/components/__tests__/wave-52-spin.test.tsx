@@ -14,9 +14,6 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
-import YouTubeShortsCarousel, {
-	type YouTubeShort,
-} from "../youtube-shorts-carousel";
 import {
 	type SpinItem,
 	YouTubeSpinPlaceholder,
@@ -43,27 +40,6 @@ const OLDEST: SpinItem = {
 	thumbnailUrl: "https://i.ytimg.com/vi/v-old/hqdefault.jpg",
 	publishedAt: "2024-01-10",
 };
-
-const SHORTS: YouTubeShort[] = [
-	{
-		videoId: "v-new",
-		title: "Newest video title",
-		thumbnailUrl: "https://i.ytimg.com/vi/v-new/hqdefault.jpg",
-		publishedAt: "2026-05-15",
-	},
-	{
-		videoId: "v-mid",
-		title: "Middle video title",
-		thumbnailUrl: "https://i.ytimg.com/vi/v-mid/hqdefault.jpg",
-		publishedAt: "2025-06-01",
-	},
-	{
-		videoId: "v-old",
-		title: "Oldest video title",
-		thumbnailUrl: "https://i.ytimg.com/vi/v-old/hqdefault.jpg",
-		publishedAt: "2024-01-10",
-	},
-];
 
 // ---------------------------------------------------------------------------
 // 1. Skeleton placeholder renders when no data
@@ -364,44 +340,8 @@ describe("Wave 52 — CSS guards", () => {
 });
 
 // ---------------------------------------------------------------------------
-// 5. YouTubeShortsCarousel — placeholder integration
+// 5. (removed wave 68) — YouTubeShortsCarousel no longer renders
+//    YouTubeSpinPlaceholder. Tests for the primitive itself stay above (1–4).
+//    Tests for its usage on youtube-carousel + youtube-channel-carousel live
+//    in their own test files.
 // ---------------------------------------------------------------------------
-
-describe("Wave 52 — YouTubeShortsCarousel placeholder", () => {
-	it("renders spin placeholder (spin-btn) while data is loading (no shorts prop)", () => {
-		// No shorts prop → ready=false, should show placeholder
-		withLocale(
-			<LocaleProvider locale="us">
-				<YouTubeShortsCarousel dataUrl="/data/nonexistent.json" />
-			</LocaleProvider>,
-		);
-		// spin-btn is present in the placeholder even before data arrives
-		expect(screen.getByTestId("spin-btn")).toBeInTheDocument();
-	});
-
-	it("renders newest spin card after data arrives", () => {
-		withLocale(<YouTubeShortsCarousel shorts={SHORTS} />);
-		const cards = screen.getAllByTestId("spin-card");
-		expect(cards[0]).toHaveAttribute("aria-label", SHORTS[0].title);
-	});
-
-	it("renders oldest spin card after data arrives", () => {
-		withLocale(<YouTubeShortsCarousel shorts={SHORTS} />);
-		const cards = screen.getAllByTestId("spin-card");
-		expect(cards[1]).toHaveAttribute(
-			"aria-label",
-			SHORTS[SHORTS.length - 1].title,
-		);
-	});
-
-	it("renders empty-state message when shorts array is empty", () => {
-		withLocale(<YouTubeShortsCarousel shorts={[]} />);
-		expect(screen.getByTestId("shorts-empty-state")).toBeInTheDocument();
-	});
-
-	it("spin placeholder uses data-spin-anchor for wave 53 Babylon mount", () => {
-		withLocale(<YouTubeShortsCarousel shorts={SHORTS} />);
-		const anchor = document.querySelector("[data-spin-anchor='true']");
-		expect(anchor).toBeInTheDocument();
-	});
-});
