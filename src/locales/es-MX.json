@@ -108,14 +108,14 @@
 		"pastMeetupBadge": "EVENTO ANTERIOR",
 		"pastMeetupTitle": "¿Te apasiona compartir conocimiento sobre AWS?",
 		"pastMeetupIntroP1": "¿Ya estás dando charlas, escribiendo contenido o ayudando a otros a aprender sobre la nube?",
-		"pastMeetupIntroP2": "Te invitamos a un evento especial donde conocerás el programa AWS Community Builders de la mano de Community Builders de LATAM que llevan años compartiendo conocimiento y aprovechando los beneficios del programa.",
+		"pastMeetupIntroP2": "Cáele a un evento especial donde vas a conocer el programa AWS Community Builders de la mano de Community Builders de LATAM que llevan años compartiendo y aprovechando los beneficios del programa.",
 		"pastMeetupSpeakersHeader": "Ponentes",
 		"pastMeetupSpeaker1Name": "Carolina Herrera Monteza",
-		"pastMeetupSpeaker1Role": "Technical Leader / Cloud Engineer + Global Team Leader. Ayuda a empresas a operar sistemas en la nube y enseña a equipos a colaborar entre países y culturas. Mentora a mujeres y comparte en charlas comunitarias.",
+		"pastMeetupSpeaker1Role": "Technical Leader / Cloud Engineer + Global Team Leader. Ayuda a empresas a operar en la nube y enseña a equipos a jalar entre países y culturas. Mentora a mujeres y comparte en charlas comunitarias.",
 		"pastMeetupSpeaker2Name": "Verónica Rivera",
 		"pastMeetupSpeaker2Role": "Cloud Engineer + Community Leader. Comparte tecnología en la nube con explicaciones claras y aprendizaje práctico. Combina lo técnico con narrativa visual.",
 		"pastMeetupSpeaker3Name": "Sary Libreros",
-		"pastMeetupSpeaker3Role": "Cloud Coach + Women in Tech Mentor. Acompaña a personas y equipos nuevos mientras aprenden la nube, enfocándose en claridad, confianza y crecimiento.",
+		"pastMeetupSpeaker3Role": "Cloud Coach + Women in Tech Mentor. Acompaña a raza nueva y equipos mientras aprenden la nube, enfocándose en claridad, confianza y crecimiento.",
 		"pastMeetupSpeaker4Name": "Brenda Galicia",
 		"pastMeetupSpeaker4Role": "AI + Cloud Educator. Explica cómo construir aplicaciones útiles usando herramientas en la nube (pago por uso). Crea tutoriales simples y amigables.",
 		"pastMeetupViewEvent": "Ver evento en Meetup →",
@@ -149,7 +149,7 @@
 		"upcomingVirtualEventHeader": "Eventos Virtuales Libres y Abiertos de la Comunidad AWS",
 		"upcomingVirtualEventTitle": "[En línea] Reunión Global de la Comunidad AWS #19",
 		"upcomingVirtualEventLocation": "Evento en línea — únete desde cualquier lugar",
-		"upcomingVirtualEventDescription": "Una reunión virtual global organizada por la comunidad AWS. Abierta a todos. Únete a la transmisión en vivo y conecta con builders de todo el mundo.",
+		"upcomingVirtualEventDescription": "Reunión virtual global de la comunidad AWS. Abierta a todos. Únete al stream y conecta con builders de todo el mundo.",
 		"upcomingVirtualEventRsvp": "Registrarse en Meetup",
 		"upcomingVirtualEventImageAlt": "Banner del evento virtual Reunión Global de la Comunidad AWS",
 		"upcomingVirtualEventFeaturedTalkBadge": "PRESENTACIÓN DESTACADA",
@@ -228,13 +228,13 @@
 	},
 	"meetings": {
 		"connection": {
-			"coldStart": "La sala se está iniciando, por favor espere…",
+			"coldStart": "La sala se está iniciando, espérate tantito…",
 			"unreachableHeader": "No se puede conectar",
-			"unreachableBody": "La sala de reuniones puede no estar disponible.",
+			"unreachableBody": "La sala puede que no esté disponible.",
 			"retryButton": "Reintentar",
 			"permissionBlocked": {
-				"header": "Acceso a cámara o micrófono bloqueado",
-				"body": "Haga clic en el icono de candado en la barra de direcciones para permitir acceso, luego actualice."
+				"header": "Cámara o micrófono bloqueados",
+				"body": "Dale clic al candadito en la barra de tu navegador pa' dar permiso, y luego recarga."
 			}
 		},
 		"breadcrumb": "Juntas",
@@ -376,10 +376,10 @@
 		"andresMorenoBioPrefix": "Arquitecto Principal de Software en Caylent. Especialista en serverless — Lambda, Step Functions, CI/CD y experiencia de desarrollador. Escribe en",
 		"andresMorenoBioSuffix": "sobre patrones serverless del mundo real en sistemas de producción",
 		"bryanChaskoRole": "Fundador · AWS Hero",
-		"bryanChaskoBio": "Organizador enfocado en builders, radicado en El Paso. Reconocimiento AWS Hero por contribuciones a la comunidad en la región fronteriza. Crea contenido práctico sobre contenedores, serverless e infraestructura de IA/ML. Coordina la programación técnica y el pipeline de speakers del grupo",
+		"bryanChaskoBio": "Organizador enfocado en builders, radicado en El Paso. AWS Hero por contribuciones a la comunidad en la frontera. Crea contenido práctico de contenedores, serverless e IA/ML. Coordina la programación técnica y el pipeline de speakers del grupo.",
 		"awsHeroProfile": "Perfil de AWS Hero",
 		"jacobWrightRole": "Fundador · Líder del Condado de Doña Ana",
-		"jacobWrightBio": "Experto en sistemas de voz y comunicación con 10 años de experiencia integrando IA en sistemas críticos. Polímata, inventor y Aggie de NMSU con bases en Física, Ingeniería Eléctrica, Matemáticas y Astronomía. Aporta especialidades en programación, observabilidad y seguridad de la información, combinando pensamiento de dispositivos edge, robótica y arquitecturas cloud resilientes en eventos públicos como AWS re:Invent y CES. Mentor certificado en AWS y liderazgo Ágil",
+		"jacobWrightBio": "Experto en sistemas de voz y comunicación con 10 años integrando IA en sistemas críticos. Polímata Aggie de NMSU, inventor con bases en Física, Ingeniería Eléctrica, Mates y Astronomía. Trae especialidades en programación, observabilidad y seguridad, combinando edge devices, robótica y cloud resiliente en eventos como AWS re:Invent y CES. Mentor certificado en AWS y liderazgo Ágil.",
 		"wayneSavageRole": "Co-Fundador, Organizador Jubilado",
 		"wayneSavageBioPrefix": "Estableció el primer AWS User Group de Nuevo México, hospedándonos en",
 		"wayneSavageBioMiddle": ". Wayne es un defensor del financiamiento para emprendedores de toda la región y recientemente dio vida al",
@@ -694,7 +694,7 @@
 			"projectedNextRelease": "Próximo Release Proyectado",
 			"projectedNextLTS": "Próximo LTS Proyectado"
 		},
-		"releaseNotes": "Release notes",
+		"releaseNotes": "Notas de release",
 		"source": "Fuente"
 	},
 	"themePage": {
@@ -822,8 +822,8 @@
 	"auth": {
 		"siteTitle": "Nube del Norte",
 		"sessionExpired": {
-			"title": "Su sesión ha expirado",
-			"body": "Por favor inicie sesión nuevamente para continuar.",
+			"title": "Tu sesión expiró",
+			"body": "Inicia sesión de nuevo pa' continuar.",
 			"loginButton": "Iniciar sesión"
 		},
 		"login": {
@@ -833,7 +833,7 @@
 			"emailPlaceholder": "tu@ejemplo.com",
 			"passwordLabel": "Contraseña",
 			"signInButton": "Entrar",
-			"passkeyButton": "Iniciar sesión con clave de acceso",
+			"passkeyButton": "Entrar con clave de acceso",
 			"forgotPassword": "¿Olvidaste tu contraseña?",
 			"noAccount": "¿Primera vez?",
 			"signUpLink": "Solicita unirte",
@@ -920,14 +920,14 @@
 		"verificationSetup": {
 			"title": "Configura verificación adicional",
 			"pageContext": "Configura verificación adicional",
-			"description": "Agrega un segundo factor para mantener tu cuenta segura. Puedes omitirlo ahora y configurarlo después.",
+			"description": "Agrega un segundo factor pa' mantener tu cuenta segura. Si quieres lo haces después.",
 			"chooseLabel": "Elige un método de verificación",
 			"totpLabel": "App autenticadora (TOTP)",
-			"totpDescription": "Usa Google Authenticator, Microsoft Authenticator o Authy para generar códigos de 6 dígitos.",
+			"totpDescription": "Usa Google Authenticator, Microsoft Authenticator o Authy pa' generar códigos de 6 dígitos.",
 			"passkeyLabel": "Clave de acceso (biométrica / dispositivo)",
-			"passkeyDescription": "Inicia sesión con Face ID, huella dactilar o Windows Hello — sin contraseña.",
+			"passkeyDescription": "Entra con Face ID, huella o Windows Hello — sin contraseña.",
 			"skipLabel": "Omitir por ahora",
-			"skipDescription": "Puedes configurar esto después desde los ajustes de tu cuenta.",
+			"skipDescription": "Lo puedes configurar después desde los ajustes de tu cuenta.",
 			"continueButton": "Continuar",
 			"skipButton": "Omitir por ahora",
 			"backButton": "Atrás",
@@ -942,7 +942,7 @@
 	"awsug": {
 		"pendingApproval": {
 			"header": "Tu cuenta está pendiente de aprobación.",
-			"body": "Un administrador revisará tu solicitud. Este es un proceso manual, así que por favor espera un momento.",
+			"body": "Un admin va a revisar tu solicitud. Es proceso manual, así que dale chance.",
 			"noRelogin": "Verás nuevas funciones desbloquearse aquí una vez aprobado — sin necesidad de volver a iniciar sesión."
 		},
 		"pending": {
@@ -969,18 +969,18 @@
 			"banButton": "Bloquear",
 			"unbanButton": "Desbloquear",
 			"banPopoverTitle": "Usuario bloqueado",
-			"banPopoverBody": "Bloqueado de sesiones futuras. Para remover de una llamada activa, únete como moderador y usa los controles de participantes.",
+			"banPopoverBody": "Bloqueado de sesiones futuras. Pa' sacarlo de una llamada activa, únete como moderador y usa los controles de participantes.",
 			"emptyPending": "Sin solicitudes pendientes",
 			"emptyMembers": "Sin miembros",
 			"emptyBanned": "Sin usuarios bloqueados",
-			"moderatorAccessRequired": "No tienes acceso al área de administración. Esta área es solo para moderadores.",
+			"moderatorAccessRequired": "No tienes acceso al área de admin. Esto es solo pa' moderadores.",
 			"approveSuccess": "{{email}} aprobado/a y notificado/a por correo.",
 			"approveSuccessNoEmail": "Usuario aprobado. Notificación por correo no disponible."
 		},
 		"meetings": {
-			"pendingApproval": "tu solicitud está pendiente de aprobación. las reuniones estarán disponibles una vez aprobada.",
-			"createPendingApproval": "tu solicitud está pendiente de aprobación. la creación de reuniones estará disponible una vez aprobada.",
-			"pendingJoinError": "Su cuenta está pendiente de aprobación del administrador. Podrá unirse a reuniones una vez aprobada."
+			"pendingApproval": "tu solicitud está pendiente. las juntas van a estar disponibles cuando te aprueben.",
+			"createPendingApproval": "tu solicitud está pendiente. crear juntas va a estar disponible cuando te aprueben.",
+			"pendingJoinError": "Tu cuenta está pendiente de aprobación. Vas a poder unirte a las juntas cuando te aprueben."
 		}
 	},
 	"fiona": {
