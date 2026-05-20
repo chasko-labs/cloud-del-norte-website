@@ -9,6 +9,7 @@
 // and a single 12-s ease arc for thunderstorm.
 
 import { useEffect, useRef } from "react";
+import { getTOD, isNight, skyColor } from "../../lib/time-of-day";
 
 export interface AtmosphereSceneProps {
 	weatherCode: number;
@@ -48,36 +49,12 @@ export function codeToVariantExact(code: number): WeatherVariant {
 	return "partly-cloudy";
 }
 
-// Time-of-day band: 0–4 night, 5–7 dawn, 8–17 day, 18–20 dusk, 21–23 night
-type TOD = "night" | "dawn" | "day" | "dusk";
-
-function getTOD(hour: number): TOD {
-	if (hour >= 5 && hour <= 7) return "dawn";
-	if (hour >= 8 && hour <= 17) return "day";
-	if (hour >= 18 && hour <= 20) return "dusk";
-	return "night";
-}
-
-// Sky background color per time-of-day (RGBA cleared as scene background)
-function skyColor(tod: TOD): [number, number, number, number] {
-	switch (tod) {
-		case "dawn": return [0.96, 0.74, 0.65, 1]; // warm pink/mauve
-		case "day": return [0.53, 0.81, 0.98, 1];  // light blue
-		case "dusk": return [0.95, 0.6, 0.3, 1];   // amber
-		case "night": return [0.06, 0.06, 0.22, 1]; // dark indigo
-	}
-}
-
 // Directional-light position: sun/moon arc across the sky
 function sunPosition(hour: number): [number, number, number] {
 	// 6am = right (1,0.5,0), noon = overhead (0,1,0), 6pm = left (-1,0.5,0)
 	// Map 6→0, 12→π/2, 18→π
 	const t = ((hour - 6) / 12) * Math.PI;
 	return [Math.cos(t), Math.sin(t) * 0.8 + 0.2, 0.3];
-}
-
-function isNight(hour: number): boolean {
-	return hour >= 21 || hour <= 5;
 }
 
 export default function AtmosphereScene({
@@ -340,7 +317,7 @@ export default function AtmosphereScene({
 				eng.dispose();
 			}
 		};
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [weatherCode, hour]);
 
 	return (
