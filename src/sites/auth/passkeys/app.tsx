@@ -207,9 +207,7 @@ function PasskeyManager() {
 	}
 
 	if (!getAccessToken()) {
-		window.location.assign(
-			"/login/index.html?return_to=%2Fpasskeys%2Findex.html",
-		);
+		window.location.assign(`/login/index.html${window.location.search}`);
 		return null;
 	}
 

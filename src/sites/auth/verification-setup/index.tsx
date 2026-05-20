@@ -13,6 +13,7 @@ import {
 	setUserAttribute,
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
+import { clearReturnTo, getReturnTo } from "../_shared/return-to";
 import TotpStep from "./totp-step";
 
 const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
@@ -34,7 +35,9 @@ function redirectToFeed() {
 	const idToken = sessionStorage.getItem("cdn.idToken") ?? "";
 	const accessToken = sessionStorage.getItem("cdn.accessToken") ?? "";
 	const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
-	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=`;
+	const returnTo = getReturnTo();
+	clearReturnTo();
+	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
 	window.location.assign(`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`);
 }
 

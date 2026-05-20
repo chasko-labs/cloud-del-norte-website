@@ -6,6 +6,7 @@
 import Box from "@cloudscape-design/components/box";
 import Spinner from "@cloudscape-design/components/spinner";
 import { useEffect, useState } from "react";
+import { clearReturnTo, getReturnTo } from "../../../auth/_shared/return-to";
 import {
 	getAuthState,
 	isBanned,
@@ -59,9 +60,10 @@ export default function App() {
 			return;
 		}
 
-		const returnTo = params.get("return_to");
+		const returnTo = params.get("return_to") || getReturnTo();
+		clearReturnTo();
 		window.location.assign(
-			returnTo && returnTo.startsWith("/") ? returnTo : "/index.html",
+			returnTo?.startsWith("/") ? returnTo : "/index.html",
 		);
 	}, []);
 
