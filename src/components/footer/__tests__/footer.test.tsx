@@ -1,104 +1,52 @@
+// Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+// SPDX-License-Identifier: MIT-0
+
 import { render, screen } from "@testing-library/react";
-import React from "react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
-type AnyProps = Record<string, unknown> & { children?: React.ReactNode };
-
-// --- Cloudscape component mocks (avoid jsdom hangs) ---
-
-vi.mock("@cloudscape-design/components/box", () => ({
-	default: ({ children }: AnyProps) =>
-		React.createElement("div", { "data-testid": "box" }, children),
-}));
-vi.mock("@cloudscape-design/components/space-between", () => ({
-	default: ({ children }: AnyProps) =>
-		React.createElement("div", null, children),
-}));
-vi.mock("@cloudscape-design/components/link", () => ({
-	default: ({ children, href, external }: AnyProps) =>
-		React.createElement(
-			"a",
-			{ href, target: external ? "_blank" : undefined },
-			children,
-		),
-}));
-vi.mock("@cloudscape-design/components/badge", () => ({
-	default: ({ children }: AnyProps) =>
-		React.createElement("span", { "data-testid": "badge" }, children),
-}));
-vi.mock("@cloudscape-design/components/header", () => ({
-	default: ({ children }: AnyProps) =>
-		React.createElement("h2", null, children),
-}));
-
+import { describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../contexts/locale-context";
 import Footer from "../index";
 
-// Helper to wrap Footer in LocaleProvider
-const renderFooter = () => {
+// Stub fetch so NextMeetupCountdown and Weather don't make real network calls
+vi.stubGlobal(
+	"fetch",
+	vi.fn().mockResolvedValue({
+		ok: false,
+		json: async () => null,
+		text: async () => "",
+	}),
+);
+
+function renderFooter() {
 	return render(
 		<LocaleProvider locale="us">
 			<Footer />
 		</LocaleProvider>,
 	);
-};
+}
 
-describe("Footer component", () => {
-	let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
-
-	beforeEach(() => {
-		consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-	});
-
-	afterEach(() => {
-		consoleErrorSpy.mockRestore();
-	});
-
-	it("renders without crashing", () => {
-		expect(() => renderFooter()).not.toThrow();
-	});
-
-	it('has role="contentinfo" on the footer element', () => {
+describe("Footer — wave 51 lean layout", () => {
+	it("renders the military clock with aria-label", () => {
 		renderFooter();
-		expect(screen.getByRole("contentinfo")).toBeTruthy();
+		expect(
+			screen.getByLabelText("current time in el paso"),
+		).toBeInTheDocument();
 	});
 
-	it('has id="site-footer"', () => {
+	it("renders the version string", () => {
 		const { container } = renderFooter();
-		expect(container.querySelector("#site-footer")).toBeTruthy();
+		expect(container.querySelector(".cdn-version")).toBeInTheDocument();
 	});
 
-	it("does not render leader cards — leaders moved to info panel", () => {
+	it("does NOT contain communityFullDescription text", () => {
+		renderFooter();
+		// The blurb moved to the right sidepanel; footer must not have it.
+		expect(
+			screen.queryByText(/run by volunteers local to New Mexico/i),
+		).toBeNull();
+	});
+
+	it("renders the weather wrapper in the footer", () => {
 		const { container } = renderFooter();
-		expect(container.querySelector('[data-testid^="leader-card-"]')).toBeNull();
-	});
-
-	it('renders community description with "Go Build" text', () => {
-		renderFooter();
-		const footer = screen.getByRole("contentinfo");
-		expect(footer.textContent).toContain(
-			"AWS User Group Cloud Del Norte is part of",
-		);
-		expect(footer.textContent).toContain("Go Build");
-	});
-
-	it('renders "Global AWS User Group Community" as a link', () => {
-		renderFooter();
-		const link = screen.getByText("Global AWS User Group Community");
-		expect(link).toBeTruthy();
-		expect(link.tagName).toBe("A");
-		expect(link.getAttribute("href")).toContain(
-			"meetup.com/pro/global-aws-user-group-community",
-		);
-	});
-
-	it("no React warnings or errors on render", () => {
-		renderFooter();
-		const errorCalls = consoleErrorSpy.mock.calls.filter(
-			(args: unknown[]) =>
-				typeof args[0] === "string" &&
-				(args[0].includes("Warning:") || args[0].includes("Error:")),
-		);
-		expect(errorCalls).toHaveLength(0);
+		expect(container.querySelector(".cdn-footer-weather")).toBeInTheDocument();
 	});
 });

@@ -284,6 +284,22 @@ export const HelpPanelHome = () => {
 						</div>
 					</ExpandableSection>
 				</div>
+
+				{/* Community blurb — relocated from footer (wave 51) */}
+				<div className="hp-community-blurb">
+					<p className="hp-body">
+						{t("footer.communityDescription")}{" "}
+						<Link
+							href="https://www.meetup.com/pro/global-aws-user-group-community/"
+							external
+							variant="primary"
+						>
+							{t("footer.globalCommunity")}
+						</Link>
+						. {t("footer.communityFullDescription")}{" "}
+						<strong>{t("footer.goBuild")}</strong>.
+					</p>
+				</div>
 			</SpaceBetween>
 		</HelpPanel>
 	);
