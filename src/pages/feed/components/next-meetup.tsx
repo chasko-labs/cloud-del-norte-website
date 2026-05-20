@@ -63,6 +63,7 @@ const MEETUP_ICAL = `https://www.meetup.com/${MEETUP_GROUP}/events/ical/`;
 const MEETUP_GROUP_URL = `https://www.meetup.com/${MEETUP_GROUP}/`;
 const STATIC_DATA_URL = "/data/next-meetup.json";
 const MAX_DESCRIPTION_CHARS = 200;
+const EVENT_IMAGE = "/events/cowork-wednesday.webp";
 
 // Static past-meetup payload — surfaces in es-MX locale when no upcoming event
 // is available. Hard-coded per bryan: simpler than another data-source while
@@ -124,10 +125,10 @@ export function stripMarkdown(raw: string): string {
 				/\[([^\]]+)\]\(https?:\/\/www\.google\.com\/search[^)]*\)/g,
 				"$1",
 			)
-			// Strip leading `* ` bullet markers
-			.replace(/(?:^|\n)\* /g, " ")
-			// Strip leading `> ` blockquote markers
-			.replace(/(?:^|\n)> /g, " ")
+			// Drop entire `* ...` bullet lines (marker + content to end of line)
+			.replace(/(^|\n)\* [^\n]*/g, "$1")
+			// Drop entire `> ...` blockquote lines
+			.replace(/(^|\n)> [^\n]*/g, "$1")
 			// Strip **bold** (non-greedy)
 			.replace(/\*\*(.+?)\*\*/g, "$1")
 			// Strip *italic* (non-greedy, single asterisk)
@@ -273,6 +274,7 @@ function NextMeetupInner() {
 	const { t, locale } = useTranslation();
 	const [state, setState] = useState<LoadState>("loading");
 	const [event, setEvent] = useState<MeetupEvent | null>(null);
+	const [imageBroken, setImageBroken] = useState(false);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -438,6 +440,23 @@ function NextMeetupInner() {
 		// — those are simpler stacks where uniform 12px reads correctly.
 		content = (
 			<div className="feed-next-meetup__layout">
+				<span
+					className="feed-next-meetup__image-slot"
+					role="img"
+					aria-label={t("feedPage.nextMeetupHeader")}
+				>
+					{!imageBroken && (
+						<img
+							src={EVENT_IMAGE}
+							alt="Website (co)Work Wednesday meetup event"
+							className="feed-next-meetup__image"
+							width={1200}
+							height={675}
+							loading="lazy"
+							onError={() => setImageBroken(true)}
+						/>
+					)}
+				</span>
 				{event.isPast && (
 					<Box
 						color="text-status-inactive"

@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import UpcomingVirtualEvent, {
@@ -315,5 +315,24 @@ describe("UpcomingVirtualEventErrorBoundary", () => {
 		expect(errSpy).toHaveBeenCalled();
 
 		errSpy.mockRestore();
+	});
+});
+
+describe("UpcomingVirtualEvent — wave 44 no-image fallback", () => {
+	it("hides the light image via state when onError fires", () => {
+		const { container } = renderWithLocale("us");
+		const lightImg = container.querySelector(
+			".feed-upcoming-virtual-event__image--light",
+		);
+		expect(lightImg).not.toBeNull();
+		fireEvent.error(lightImg!);
+		expect(
+			container.querySelector(".feed-upcoming-virtual-event__image--light"),
+		).toBeNull();
+		// The image-link wrapper still carries aria-label for AT
+		const link = container.querySelector(
+			".feed-upcoming-virtual-event__image-link",
+		);
+		expect(link?.getAttribute("aria-label")).toBeTruthy();
 	});
 });

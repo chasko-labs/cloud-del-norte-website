@@ -1896,6 +1896,16 @@
 	   keeps the wrapper from forcing the image's natural 1200px width
 	   onto the column track. */
 	min-width: 0;
+	/* Wave 44 — gradient fallback when both images fail to load. The
+	   warm amber/indigo gradient carries the slot's visual weight so the
+	   card doesn't collapse to empty space. */
+	border-radius: var(--cdn-radius-md, 8px);
+	overflow: hidden;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 153, 0, 0.12) 0%,
+		rgba(99, 51, 153, 0.1) 100%
+	);
 }
 
 /* Override the legacy 12px vertical margin on the image now that grid
@@ -3220,6 +3230,19 @@
 		.feed-upcoming-virtual-event__featured-talk {
 		margin-block-end: 0;
 	}
+
+	/* Wave 44 — prevent right-column grid items from overflowing their
+	   track. Grid items default to min-width:auto which respects content
+	   min-content size; the date-plate's white-space:nowrap + long timezone
+	   string (e.g. "MDT") pushed the column past the container edge,
+	   clipping the MeetupRsvpButton below it. min-width:0 lets items
+	   shrink within their minmax(0,1fr) track. */
+	.feed-upcoming-virtual-event__layout .feed-upcoming-virtual-event__date,
+	.feed-upcoming-virtual-event__layout .cdn-brand-btn-stack,
+	.feed-upcoming-virtual-event__layout
+		.feed-upcoming-virtual-event__featured-talk {
+		min-width: 0;
+	}
 }
 
 /* Featured event location pill + spots counter — see "wave 25a rizz upgrade"
@@ -4227,6 +4250,7 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	grid-template-areas:
+		"image"
 		"past-label"
 		"title"
 		"date"
@@ -4250,6 +4274,28 @@
 	/* past-label → title : 8px (small cluster step). Keeps the past-
 	   event indicator visually attached to the title it modifies. */
 	margin-block-end: var(--cdn-space-sm, 8px);
+}
+
+.feed-next-meetup__image-slot {
+	grid-area: image;
+	margin-block-end: var(--cdn-space-md, 16px);
+	min-width: 0;
+	border-radius: var(--cdn-radius-md, 8px);
+	overflow: hidden;
+	/* Gradient fallback when image fails to load */
+	background: linear-gradient(
+		135deg,
+		var(--cdn-nm-spot-cool, rgba(56, 110, 165, 0.22)) 0%,
+		var(--cdn-nm-spot-cyan, rgba(94, 234, 212, 0.12)) 100%
+	);
+}
+
+.feed-next-meetup__image {
+	display: block;
+	width: 100%;
+	height: auto;
+	border-radius: var(--cdn-radius-md, 8px);
+	object-fit: cover;
 }
 
 /* wave 38b — title → date : 12px (hero hierarchy step). The wave 33a
@@ -4311,17 +4357,40 @@
 	color: var(--cdn-color-text);
 }
 
-/* TODO wave 43b: re-enable 2-col reflow once image lands.
-   The @container cdn-feed-next-meetup (min-width: 860px) grid rule that
-   split the loaded-event branch into identity-left / prose-right columns
-   was removed in wave 43a because the left identity stack felt airy on
-   desktop without an image to balance it. When the wave 43b event image
-   lands, restore the 2-col grid here (identity ~42% / prose ~58%) and
-   add a third grid area for the image cell, mirroring the wave 31a
-   featured-event ≥860px image-left layout. Description stacks
-   single-column below date/location for now, with max-width 64ch +
-   margin-inline auto for centering (see .feed-next-meetup__description
-   rule above). */
+/* Wave 44 — image-left 2-col reflow at desktop. The cowork-wednesday
+   event image fills the left column; title/date/location/description
+   stack in the right column. Mirrors the wave 31a featured-event ≥860px
+   image-left layout for visual consistency across event cards. */
+@container cdn-feed-next-meetup (min-width: 860px) {
+	.feed-next-meetup__layout {
+		grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr);
+		grid-template-areas:
+			"image past-label"
+			"image title"
+			"image date"
+			"image location"
+			"image description";
+		align-items: start;
+		gap: var(--cdn-space-sm, 8px) var(--cdn-space-lg, 24px);
+	}
+
+	.feed-next-meetup__layout .feed-next-meetup__image-slot {
+		align-self: start;
+		margin-block-end: 0;
+	}
+
+	.feed-next-meetup__layout .feed-next-meetup__past-label,
+	.feed-next-meetup__layout .feed-next-meetup__title,
+	.feed-next-meetup__layout .feed-next-meetup__date,
+	.feed-next-meetup__layout .feed-next-meetup__location,
+	.feed-next-meetup__layout .feed-next-meetup__description {
+		margin-block-end: 0;
+	}
+
+	.feed-next-meetup__layout .feed-next-meetup__description {
+		margin-inline: 0;
+	}
+}
 
 /* ==========================================================================
    Wave 33c — Clickable event card image links

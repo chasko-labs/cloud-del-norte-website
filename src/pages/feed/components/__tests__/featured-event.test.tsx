@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import FeaturedEvent from "../featured-event";
@@ -296,5 +296,23 @@ describe("FeaturedEvent", () => {
 			const style = dot.getAttribute("style") ?? "";
 			expect(style).toMatch(new RegExp(`--bulb-index:\\s*${i}`));
 		});
+	});
+});
+
+describe("FeaturedEvent — wave 44 no-image fallback", () => {
+	it("hides the light image via state when onError fires and preserves aria-label on wrapper", () => {
+		const { container } = renderWithLocale("us");
+		const lightImg = container.querySelector(
+			".feed-featured-event__image--light",
+		);
+		expect(lightImg).not.toBeNull();
+		fireEvent.error(lightImg!);
+		// After onError, the light img should be removed from DOM
+		expect(
+			container.querySelector(".feed-featured-event__image--light"),
+		).toBeNull();
+		// The image-area wrapper preserves aria-label for AT
+		const area = container.querySelector(".feed-featured-event__image-area");
+		expect(area?.getAttribute("aria-label")).toBeTruthy();
 	});
 });
