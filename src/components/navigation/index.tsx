@@ -5,6 +5,7 @@ import SideNavigation, {
 	type SideNavigationProps,
 } from "@cloudscape-design/components/side-navigation";
 import { useAuth } from "../../hooks/useAuth";
+import { usePanelOpen } from "../../hooks/usePanelOpen";
 import { useTranslation } from "../../hooks/useTranslation";
 import FionaFrame from "../fiona-frame";
 import "./fiona.css";
@@ -34,6 +35,10 @@ if (typeof console !== "undefined") {
 export default function Navigation() {
 	const { t } = useTranslation();
 	const { isModerator } = useAuth();
+	// Wave 66: only mount FionaFrame (which owns a WebGL context) when the
+	// navigation drawer is open. Saves a context on every page where the panel
+	// is closed (the default on mobile and narrow viewports).
+	const panelOpen = usePanelOpen();
 
 	const currentPath = location.pathname;
 	const isOnPlans =
@@ -169,7 +174,7 @@ export default function Navigation() {
 					}
 				}}
 			/>
-			<FionaFrame />
+			{panelOpen && <FionaFrame />}
 		</>
 	);
 }

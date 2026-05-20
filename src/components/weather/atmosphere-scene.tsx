@@ -5,10 +5,21 @@
 // foundation. Background atmosphere behind the weather card text, driven by
 // weather code + local time-of-day. ~165 lines.
 //
+// Wave 66 — IntersectionObserver gate + babylon-budget integration.
+// Engine created only when weather card is on-screen; disposed when off-screen.
+//
+// Wave 66 stable-key fix: useEffect deps are [] (mount/unmount only).
+// When the weather carousel changes city, props update via ref — the scene
+// reads them on the next render frame without disposing + recreating the engine.
+//
 // Epilepsy rules: NO flicker, NO strobe. Only steady glows, slow animations,
 // and a single 12-s ease arc for thunderstorm.
 
 import { useEffect, useRef } from "react";
+import {
+	releaseActivation,
+	requestActivation,
+} from "../../lib/babylon-budget";
 import { getTOD, isNight, skyColor } from "../../lib/time-of-day";
 
 export interface AtmosphereSceneProps {
@@ -57,6 +68,8 @@ function sunPosition(hour: number): [number, number, number] {
 	return [Math.cos(t), Math.sin(t) * 0.8 + 0.2, 0.3];
 }
 
+const SCENE_ID = "atmosphere-scene";
+
 export default function AtmosphereScene({
 	weatherCode,
 	timezone: _timezone,
@@ -65,27 +78,60 @@ export default function AtmosphereScene({
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
 	const engRef = useRef<any>(null);
+	// Stable ref so the IO callback always reads current props without re-running the effect
+	const propsRef = useRef({ weatherCode, hour });
+	propsRef.current = { weatherCode, hour };
 
+	// Mount/unmount only — city changes propagate via propsRef without engine disposal
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
+
 		let disposed = false;
 		// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
 		let eng: any = null;
+		let ro: ResizeObserver | null = null;
+		let io: IntersectionObserver | null = null;
 
 		const reduced = window.matchMedia(
 			"(prefers-reduced-motion: reduce)",
 		).matches;
 
-		const variant = codeToVariantExact(weatherCode);
-		const tod = getTOD(hour);
-		const night = isNight(hour);
-		const [sr, sg, sb, sa] = skyColor(tod);
-		const [lx, ly, lz] = sunPosition(hour);
+		function teardown() {
+			if (eng) {
+				eng.stopRenderLoop();
+				document.removeEventListener("visibilitychange", eng.__onVis);
+				document.body.removeEventListener(
+					"cdn-scroll-start",
+					eng.__scrollStart,
+				);
+				document.body.removeEventListener("cdn-scroll-end", eng.__scrollEnd);
+				ro?.disconnect();
+				ro = null;
+				eng.dispose();
+				eng = null;
+				engRef.current = null;
+			}
+			releaseActivation(SCENE_ID);
+		}
 
-		void (async () => {
+		async function startEngine() {
+			if (disposed || !canvas) return;
+			if (!requestActivation(SCENE_ID)) return;
+
 			const B = await import("@babylonjs/core");
-			if (disposed) return;
+			if (disposed) {
+				releaseActivation(SCENE_ID);
+				return;
+			}
+
+			// Read current props at engine-creation time
+			const { weatherCode: wc, hour: h } = propsRef.current;
+			const variant = codeToVariantExact(wc);
+			const tod = getTOD(h);
+			const night = isNight(h);
+			const [sr, sg, sb, sa] = skyColor(tod);
+			const [lx, ly, lz] = sunPosition(h);
 
 			eng = new B.Engine(canvas, true, { preserveDrawingBuffer: false });
 			engRef.current = eng;
@@ -138,7 +184,6 @@ export default function AtmosphereScene({
 				meshes.push(sphere);
 
 				if (!reduced) {
-					// 4-second gentle breathing — no flicker, smooth sine
 					const anim = new B.Animation(
 						"breathe",
 						"scaling",
@@ -254,7 +299,6 @@ export default function AtmosphereScene({
 					scene,
 				);
 				arc.color = new B.Color3(0.7, 0.8, 1.0);
-				// Fade in/out on 12s loop — NOT a flicker/strobe
 				const alphaAnim = new B.Animation(
 					"arc-fade",
 					"visibility",
@@ -290,35 +334,41 @@ export default function AtmosphereScene({
 			eng.__scrollEnd = onScrollEnd;
 
 			// ResizeObserver
-			const ro = new ResizeObserver(() => {
+			ro = new ResizeObserver(() => {
 				eng.resize();
 			});
 			ro.observe(canvas);
 			eng.__ro = ro;
 
 			if (reduced) {
-				// Single static frame
 				scene.render();
 			} else {
 				eng.runRenderLoop(render);
 			}
-		})();
+		}
+
+		// IntersectionObserver: only run when weather card is on-screen
+		io = new IntersectionObserver(
+			(entries) => {
+				const intersecting = entries[0]?.isIntersecting ?? false;
+				if (intersecting) {
+					void startEngine();
+				} else {
+					teardown();
+				}
+			},
+			{ threshold: 0.1 },
+		);
+		io.observe(canvas);
 
 		return () => {
 			disposed = true;
-			if (eng) {
-				document.removeEventListener("visibilitychange", eng.__onVis);
-				document.body.removeEventListener(
-					"cdn-scroll-start",
-					eng.__scrollStart,
-				);
-				document.body.removeEventListener("cdn-scroll-end", eng.__scrollEnd);
-				eng.__ro?.disconnect();
-				eng.dispose();
-			}
+			io?.disconnect();
+			io = null;
+			teardown();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [weatherCode, hour]);
+	}, []); // stable — city prop changes do NOT remount engine; propsRef carries current values
 
 	return (
 		// biome-ignore lint/a11y/noAriaHiddenOnFocusable: decorative background canvas; pointerEvents:none, non-interactive

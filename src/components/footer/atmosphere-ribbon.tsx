@@ -2,8 +2,14 @@
 // Thin strip (32–48px) between page content and docked footer.
 // El Paso (America/Denver) time-of-day drives sky gradient + sun/moon disc.
 // Babylon scene gated at tier='medium'; CSS-only gradient visible at all tiers.
+//
+// Wave 66 — added IntersectionObserver gate + babylon-budget integration.
 
 import { useEffect, useRef, useState } from "react";
+import {
+	releaseActivation,
+	requestActivation,
+} from "../../lib/babylon-budget";
 import {
 	elPasoHour,
 	getTOD,
@@ -42,6 +48,8 @@ function RibbonFallback() {
 
 // ── Babylon scene ─────────────────────────────────────────────────────────────
 
+const SCENE_ID = "atmosphere-ribbon";
+
 function RibbonScene({ hour }: { hour: number }) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
@@ -50,9 +58,12 @@ function RibbonScene({ hour }: { hour: number }) {
 	useEffect(() => {
 		const canvas = canvasRef.current;
 		if (!canvas) return;
+
 		let disposed = false;
 		// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
 		let eng: any = null;
+		let ro: ResizeObserver | null = null;
+		let io: IntersectionObserver | null = null;
 
 		const reduced = window.matchMedia(
 			"(prefers-reduced-motion: reduce)",
@@ -63,9 +74,33 @@ function RibbonScene({ hour }: { hour: number }) {
 		const [sr, sg, sb, sa] = skyColor(tod);
 		const xNorm = sunHourToX(hour); // 0=left, 1=right
 
-		void (async () => {
+		function teardown() {
+			if (eng) {
+				eng.stopRenderLoop();
+				document.removeEventListener("visibilitychange", eng.__onVis);
+				document.body.removeEventListener(
+					"cdn-scroll-start",
+					eng.__scrollStart,
+				);
+				document.body.removeEventListener("cdn-scroll-end", eng.__scrollEnd);
+				ro?.disconnect();
+				ro = null;
+				eng.dispose();
+				eng = null;
+				engRef.current = null;
+			}
+			releaseActivation(SCENE_ID);
+		}
+
+		async function startEngine() {
+			if (disposed || !canvas) return;
+			if (!requestActivation(SCENE_ID)) return;
+
 			const B = await import("@babylonjs/core");
-			if (disposed) return;
+			if (disposed) {
+				releaseActivation(SCENE_ID);
+				return;
+			}
 
 			eng = new B.Engine(canvas, true, { preserveDrawingBuffer: false });
 			engRef.current = eng;
@@ -141,7 +176,7 @@ function RibbonScene({ hour }: { hour: number }) {
 			eng.__scrollStart = onScrollStart;
 			eng.__scrollEnd = onScrollEnd;
 
-			const ro = new ResizeObserver(() => eng.resize());
+			ro = new ResizeObserver(() => eng.resize());
 			ro.observe(canvas);
 			eng.__ro = ro;
 
@@ -150,20 +185,27 @@ function RibbonScene({ hour }: { hour: number }) {
 			} else {
 				eng.runRenderLoop(render);
 			}
-		})();
+		}
+
+		// IntersectionObserver: only run when ribbon is on-screen
+		io = new IntersectionObserver(
+			(entries) => {
+				const intersecting = entries[0]?.isIntersecting ?? false;
+				if (intersecting) {
+					void startEngine();
+				} else {
+					teardown();
+				}
+			},
+			{ threshold: 0.1 },
+		);
+		io.observe(canvas);
 
 		return () => {
 			disposed = true;
-			if (eng) {
-				document.removeEventListener("visibilitychange", eng.__onVis);
-				document.body.removeEventListener(
-					"cdn-scroll-start",
-					eng.__scrollStart,
-				);
-				document.body.removeEventListener("cdn-scroll-end", eng.__scrollEnd);
-				eng.__ro?.disconnect();
-				eng.dispose();
-			}
+			io?.disconnect();
+			io = null;
+			teardown();
 		};
 		// hour-driven palette changes on mount only — ribbon re-reads hour each minute via parent
 		// eslint-disable-next-line react-hooks/exhaustive-deps

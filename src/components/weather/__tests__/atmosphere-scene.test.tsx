@@ -1,4 +1,5 @@
 // Wave 59 — AtmosphereScene tests
+// Wave 66 — extended: IntersectionObserver gate, budget integration, dispose-on-unmount.
 // @babylonjs/core is stubbed — verifies mount/unmount contract,
 // weather-code differentiation, and prefers-reduced-motion behaviour.
 import { render, screen } from "@testing-library/react";
@@ -6,7 +7,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import AtmosphereScene, { codeToVariantExact } from "../atmosphere-scene";
 
 // ── Babylon stub ─────────────────────────────────────────────────────────────
-// All constructors must use class syntax so `new Ctor()` works in vitest.
 vi.mock("@babylonjs/core", () => {
 	const runRenderLoop = vi.fn();
 	const stopRenderLoop = vi.fn();
@@ -119,6 +119,39 @@ vi.mock("@babylonjs/core", () => {
 	};
 });
 
+// ── babylon-budget stub ───────────────────────────────────────────────────────
+const mockRequestActivation = vi.fn(() => true);
+const mockReleaseActivation = vi.fn();
+
+vi.mock("../../../lib/babylon-budget", () => ({
+	get requestActivation() {
+		return mockRequestActivation;
+	},
+	get releaseActivation() {
+		return mockReleaseActivation;
+	},
+	activeScenes: new Set(),
+	MAX_ACTIVE_SCENES: 2,
+}));
+
+// ── IntersectionObserver stub ─────────────────────────────────────────────────
+type IOCallback = (entries: { isIntersecting: boolean }[]) => void;
+let lastIOCallback: IOCallback | null = null;
+let lastIOObserve: ReturnType<typeof vi.fn> | null = null;
+let lastIODisconnect: ReturnType<typeof vi.fn> | null = null;
+
+class IntersectionObserverMock {
+	observe: ReturnType<typeof vi.fn>;
+	disconnect: ReturnType<typeof vi.fn>;
+	constructor(cb: IOCallback) {
+		lastIOCallback = cb;
+		this.observe = vi.fn();
+		this.disconnect = vi.fn();
+		lastIOObserve = this.observe;
+		lastIODisconnect = this.disconnect;
+	}
+}
+
 // ── matchMedia stub ──────────────────────────────────────────────────────────
 function setReducedMotion(reduced: boolean) {
 	vi.mocked(window.matchMedia).mockImplementation((query: string) => ({
@@ -135,12 +168,20 @@ function setReducedMotion(reduced: boolean) {
 
 beforeEach(() => {
 	setReducedMotion(false);
+	mockRequestActivation.mockClear();
+	mockRequestActivation.mockReturnValue(true);
+	mockReleaseActivation.mockClear();
 	const g = globalThis as unknown as { __babylonMeshes: { name: string }[] };
 	if (g.__babylonMeshes) g.__babylonMeshes.length = 0;
+	lastIOCallback = null;
+	lastIOObserve = null;
+	lastIODisconnect = null;
+	vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);
 });
 
 afterEach(() => {
 	vi.clearAllMocks();
+	vi.unstubAllGlobals();
 });
 
 // ── codeToVariantExact unit ──────────────────────────────────────────────────
@@ -186,20 +227,51 @@ describe("AtmosphereScene", () => {
 		expect(codeToVariantExact(0)).not.toBe(codeToVariantExact(95));
 	});
 
-	it("does NOT start render loop when prefers-reduced-motion is set", () => {
-		setReducedMotion(true);
-		const { container, unmount } = render(
+	it("does NOT request budget activation before IntersectionObserver fires", () => {
+		// Wave 66: engine is created lazily; IO never fires in jsdom
+		render(
 			<AtmosphereScene weatherCode={0} timezone="America/Denver" hour={10} />,
 		);
-		expect(container.querySelector("canvas")).toBeInTheDocument();
-		// The async Babylon import fires asynchronously after render; synchronously
-		// the render loop has not been started, and with reduced motion the async
-		// branch only calls scene.render() once (static frame) rather than runRenderLoop.
-		const g = globalThis as unknown as {
-			__babylonEng: { runRenderLoop: ReturnType<typeof vi.fn> };
-		};
-		expect(g.__babylonEng.runRenderLoop).not.toHaveBeenCalled();
+		// IO never fires in jsdom → requestActivation never called
+		expect(mockRequestActivation).not.toHaveBeenCalled();
+	});
+
+	it("sets up IntersectionObserver on the canvas", () => {
+		render(
+			<AtmosphereScene weatherCode={0} timezone="America/Denver" hour={14} />,
+		);
+		expect(lastIOObserve).toHaveBeenCalled();
+	});
+
+	it("releaseActivation is called on unmount", () => {
+		const { unmount } = render(
+			<AtmosphereScene weatherCode={0} timezone="America/Denver" hour={14} />,
+		);
 		unmount();
+		expect(mockReleaseActivation).toHaveBeenCalledWith("atmosphere-scene");
+	});
+
+	it("disconnects IntersectionObserver on unmount", () => {
+		const { unmount } = render(
+			<AtmosphereScene weatherCode={0} timezone="America/Denver" hour={14} />,
+		);
+		unmount();
+		expect(lastIODisconnect).toHaveBeenCalled();
+	});
+
+	it("engine does NOT start when budget is full (requestActivation returns false)", () => {
+		mockRequestActivation.mockReturnValue(false);
+
+		render(
+			<AtmosphereScene weatherCode={0} timezone="America/Denver" hour={10} />,
+		);
+		// Simulate intersection — budget is full so startEngine should bail out
+		lastIOCallback?.([{ isIntersecting: true }]);
+
+		// requestActivation was called but returned false → no engine
+		expect(mockRequestActivation).toHaveBeenCalled();
+		// releaseActivation NOT called — activation was denied, no slot taken
+		expect(mockReleaseActivation).not.toHaveBeenCalled();
 	});
 });
 
@@ -216,7 +288,6 @@ describe("BabylonGate fallback in weather context", () => {
 			</BabylonGate>,
 		);
 		expect(screen.getByRole("status")).toBeInTheDocument();
-		// AtmosphereScene is NOT mounted — its canvas should not appear
 		expect(document.querySelector("canvas")).not.toBeInTheDocument();
 
 		vi.restoreAllMocks();

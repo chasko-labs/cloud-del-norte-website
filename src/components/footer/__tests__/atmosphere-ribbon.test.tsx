@@ -1,9 +1,9 @@
 // Wave 60 — AtmosphereRibbon tests
-// Covers: canvas mount, BabylonGate fallback, sun-position math, DOM order, visibility pause.
+// Wave 66 — extended: IntersectionObserver gate, budget integration, dispose-on-unmount.
 import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// ── Babylon stub (same pattern as atmosphere-scene.test.tsx) ─────────────────
+// ── Babylon stub ─────────────────────────────────────────────────────────────
 vi.mock("@babylonjs/core", () => {
 	const runRenderLoop = vi.fn();
 	const stopRenderLoop = vi.fn();
@@ -96,6 +96,21 @@ vi.mock("@babylonjs/core", () => {
 	};
 });
 
+// ── babylon-budget stub ───────────────────────────────────────────────────────
+const mockRequestActivation = vi.fn(() => true);
+const mockReleaseActivation = vi.fn();
+
+vi.mock("../../../lib/babylon-budget", () => ({
+	get requestActivation() {
+		return mockRequestActivation;
+	},
+	get releaseActivation() {
+		return mockReleaseActivation;
+	},
+	activeScenes: new Set(),
+	MAX_ACTIVE_SCENES: 2,
+}));
+
 // ── device-capabilities stub ─────────────────────────────────────────────────
 vi.mock("../../../lib/device-capabilities", () => ({
 	getDeviceTier: vi.fn(() => "high"),
@@ -105,6 +120,22 @@ vi.mock("../../../lib/device-capabilities", () => ({
 	prefersReducedMotion: vi.fn(() => false),
 	isCapableForBabylon: vi.fn(() => true),
 }));
+
+// ── IntersectionObserver stub ─────────────────────────────────────────────────
+type IOCallback = (entries: { isIntersecting: boolean }[]) => void;
+let lastIODisconnect: ReturnType<typeof vi.fn> | null = null;
+let lastIOObserve: ReturnType<typeof vi.fn> | null = null;
+
+class IntersectionObserverMock {
+	observe: ReturnType<typeof vi.fn>;
+	disconnect: ReturnType<typeof vi.fn>;
+	constructor(_cb: IOCallback) {
+		this.observe = vi.fn();
+		this.disconnect = vi.fn();
+		lastIOObserve = this.observe;
+		lastIODisconnect = this.disconnect;
+	}
+}
 
 import { getDeviceTier } from "../../../lib/device-capabilities";
 import { sunHourToX } from "../../../lib/time-of-day";
@@ -126,10 +157,17 @@ function setReducedMotion(reduced: boolean) {
 beforeEach(() => {
 	setReducedMotion(false);
 	vi.mocked(getDeviceTier).mockReturnValue("high");
+	mockRequestActivation.mockClear();
+	mockRequestActivation.mockReturnValue(true);
+	mockReleaseActivation.mockClear();
+	lastIODisconnect = null;
+	lastIOObserve = null;
+	vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);
 });
 
 afterEach(() => {
 	vi.clearAllMocks();
+	vi.unstubAllGlobals();
 });
 
 // ── sunHourToX math ───────────────────────────────────────────────────────────
@@ -169,6 +207,23 @@ describe("AtmosphereRibbon — Babylon path", () => {
 		const { unmount } = render(<AtmosphereRibbon />);
 		expect(() => unmount()).not.toThrow();
 	});
+
+	it("sets up IntersectionObserver on the canvas", () => {
+		render(<AtmosphereRibbon />);
+		expect(lastIOObserve).toHaveBeenCalled();
+	});
+
+	it("disconnects IntersectionObserver on unmount", () => {
+		const { unmount } = render(<AtmosphereRibbon />);
+		unmount();
+		expect(lastIODisconnect).toHaveBeenCalled();
+	});
+
+	it("releaseActivation is called on unmount", () => {
+		const { unmount } = render(<AtmosphereRibbon />);
+		unmount();
+		expect(mockReleaseActivation).toHaveBeenCalledWith("atmosphere-ribbon");
+	});
 });
 
 // ── BabylonGate fallback ──────────────────────────────────────────────────────
@@ -185,14 +240,9 @@ describe("AtmosphereRibbon — CSS fallback on incapable device", () => {
 
 // ── visibility-hidden render-loop pause ───────────────────────────────────────
 describe("AtmosphereRibbon — visibility pause", () => {
-	it("does NOT start render loop when prefers-reduced-motion is set", () => {
-		setReducedMotion(true);
-		const { container, unmount } = render(<AtmosphereRibbon />);
-		expect(container.querySelector("canvas")).toBeInTheDocument();
-		const g = globalThis as unknown as {
-			__ribbonEng: { runRenderLoop: ReturnType<typeof vi.fn> };
-		};
-		expect(g.__ribbonEng.runRenderLoop).not.toHaveBeenCalled();
-		unmount();
+	it("does NOT request budget activation before IntersectionObserver fires", () => {
+		// Wave 66: engine is created lazily; IO never fires in jsdom
+		render(<AtmosphereRibbon />);
+		expect(mockRequestActivation).not.toHaveBeenCalled();
 	});
 });
