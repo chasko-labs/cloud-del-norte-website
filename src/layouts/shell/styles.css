@@ -1997,6 +1997,7 @@ nav[class*="awsui_navigation_"]:not(
    Visible circle: 32×32. Transparent padding extends tap zone to 44×44.
    display:flex centers the SVG icon within the visible circle. */
 button[class*="awsui_navigation-toggle"],
+button[class*="awsui_navigation-close"],
 [class*="awsui_tools-toggle_"] button,
 button[class*="awsui_tools-toggle"] {
 	width: 32px !important;

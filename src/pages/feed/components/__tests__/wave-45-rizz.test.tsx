@@ -9,7 +9,7 @@
 //   5. RSC two-sentence excerpt split logic
 
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import { FeedAndmore, FeedAwsml, type FeedPost } from "../feed-section";
 
@@ -39,9 +39,7 @@ const SAMPLE_POSTS: FeedPost[] = [
 // ---------------------------------------------------------------------------
 
 function capExcerpt(excerpt: string): string {
-	return excerpt.length > 140
-		? `${excerpt.slice(0, 140).trimEnd()}…`
-		: excerpt;
+	return excerpt.length > 140 ? `${excerpt.slice(0, 140).trimEnd()}…` : excerpt;
 }
 
 describe("PostCarousel excerpt cap logic (task 1.4)", () => {
@@ -78,8 +76,7 @@ describe("PostCarousel excerpt cap logic (task 1.4)", () => {
 function twoSentences(excerpt: string): string {
 	if (!excerpt) return "";
 	const chunks = excerpt.split(/\.\s+/);
-	const joined =
-		chunks.length >= 2 ? `${chunks[0]}. ${chunks[1]}.` : chunks[0];
+	const joined = chunks.length >= 2 ? `${chunks[0]}. ${chunks[1]}.` : chunks[0];
 	return joined.length > 140 ? `${joined.slice(0, 140).trimEnd()}…` : joined;
 }
 
@@ -240,9 +237,7 @@ describe("SpeakerProposalCta bounce @keyframes (task 5)", () => {
 	it("cdn-cta-bounce keyframe + motion safety guards are in the stylesheet", async () => {
 		const { readFileSync } = await import("node:fs");
 		const { resolve } = await import("node:path");
-		const cssPath = resolve(
-			"src/components/speaker-proposal-cta/styles.css",
-		);
+		const cssPath = resolve("src/components/speaker-proposal-cta/styles.css");
 		const css = readFileSync(cssPath, "utf-8");
 
 		expect(css).toContain("@keyframes cdn-cta-bounce");
