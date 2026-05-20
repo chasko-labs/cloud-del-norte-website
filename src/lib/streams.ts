@@ -737,12 +737,14 @@ export const STREAMS: StreamDef[] = [
 	{
 		// AWS Podcast RSS at d3gih7jbfe3jlq.cloudfront.net does not emit
 		// Access-Control-Allow-Origin headers → browser fetch() is CORS-blocked.
-		// Episode title will not surface in the player UI; the hardcoded Episode 754
-		// mp3 will play until go-aws.com DNS resolves and rssAudioUrl updates.
+		// corsBlocked: true skips the runtime RSS fetch; build-time fetch-feeds.mjs
+		// pre-fetches the feed server-side and writes to podcast-episodes.json,
+		// which is consumed instead (wave 67 fix for Bryan's reported CORS error).
 		// curated: Bryan's canonical AWS podcast (not the aws_developers_podcast which
 		// is hidden/broken). This is the production weekly AWS news show.
 		key: "aws_podcast",
 		curated: true, // Bryan's known-good list: canonical weekly AWS podcast, CloudFront audio CDN
+		corsBlocked: true, // d3gih7jbfe3jlq.cloudfront.net emits no ACAO header — browser fetch blocked
 		type: "podcast",
 		url: "https://d1le29qyzha1u4.cloudfront.net/AWS_Podcast_Episode_754.mp3",
 		rssFeedUrl: "https://d3gih7jbfe3jlq.cloudfront.net/aws-podcast.rss",

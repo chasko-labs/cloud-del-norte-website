@@ -94,6 +94,19 @@ describe("STREAMS — Wave 22 fixes", () => {
 	});
 });
 
+describe("STREAMS — Wave 67 CORS bypass", () => {
+	it("aws_podcast has corsBlocked: true (CloudFront CDN emits no ACAO header)", () => {
+		const s = STREAMS.find((s) => s.key === "aws_podcast");
+		expect(s).toBeDefined();
+		expect(s?.corsBlocked).toBe(true);
+	});
+
+	it("rust_in_production retains corsBlocked: true (letscast.fm no ACAO)", () => {
+		const s = STREAMS.find((s) => s.key === "rust_in_production");
+		expect(s?.corsBlocked).toBe(true);
+	});
+});
+
 describe("STREAMS — Wave 23 additions", () => {
 	it("radio_unam_961 exists with correct location", () => {
 		const unam = STREAMS.find((s) => s.key === "radio_unam_961");
