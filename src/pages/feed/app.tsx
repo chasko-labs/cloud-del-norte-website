@@ -60,6 +60,7 @@ type SectionKey =
 	| "vbrownbag"
 	| "theZacsShow"
 	| "featuredVideo"
+	| "howToPlayBuildercards"
 	| "youtubeShorts";
 
 // priority order for live hero — first live item wins the top slot
@@ -84,6 +85,7 @@ const SECTION_KEYS: SectionKey[] = [
 	"vbrownbag",
 	"theZacsShow",
 	"featuredVideo",
+	"howToPlayBuildercards",
 	"youtubeShorts",
 ];
 
@@ -214,6 +216,15 @@ function AppContent({
 					author="Shubham gour"
 					authorUrl="https://www.youtube.com/@Shubhamgourtech"
 					thumbnailUrl="https://i.ytimg.com/vi/0PedFnnH_Ic/hqdefault.jpg"
+				/>
+			),
+			howToPlayBuildercards: (
+				<FeaturedVideoCard
+					videoId="Pn6w8-abgis"
+					title={t("feedPage.howToPlayBuildercardsTitle")}
+					author={t("feedPage.howToPlayBuildercardsAuthor")}
+					authorUrl="https://www.youtube.com/@AWSGameTech"
+					palette="gold"
 				/>
 			),
 			youtubeShorts: <YouTubeShortsCarousel />,

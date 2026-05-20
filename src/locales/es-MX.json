@@ -65,6 +65,12 @@
 		"andresMediumAllPosts": "todas las publicaciones",
 		"builderCenterHeader": "AWS Builder Center",
 		"builderCenterOpen": "abrir AWS Builder Center",
+		"builderCenterWatchIntro": "Ver intro de BuilderCards",
+		"builderCenterVideoTitle": "Building AWS Architectures with BuilderCards",
+		"builderCenterVideoAuthor": "Ajolotes en la Nube",
+		"builderCenterModalAriaLabel": "reproductor del video de introducción a BuilderCards",
+		"howToPlayBuildercardsTitle": "Cómo jugar AWS BuilderCards (2023)",
+		"howToPlayBuildercardsAuthor": "AWS for Games",
 		"builderBadge": {
 			"employee": "empleado de aws",
 			"communityBuilder": "aws community builder",

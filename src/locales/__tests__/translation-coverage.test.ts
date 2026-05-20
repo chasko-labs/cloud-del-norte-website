@@ -135,6 +135,10 @@ describe("translation coverage", () => {
 			"meetings.rsvpButton", // "RSVP" - universal abbreviation
 			"meetings.tableHeaders.rsvp", // "RSVP" - universal abbreviation
 			"speakerForm.fields.format.virtual", // "virtual" - same in Spanish
+			// wave 56 proper nouns / channel names
+			"feedPage.builderCenterVideoAuthor", // "Ajolotes en la Nube" - channel proper noun
+			"feedPage.builderCenterVideoTitle", // "Building AWS Architectures with BuilderCards" - proper noun project name
+			"feedPage.howToPlayBuildercardsAuthor", // "AWS for Games" - channel proper noun
 		]);
 
 		// Helper to get value by dot-notation key
