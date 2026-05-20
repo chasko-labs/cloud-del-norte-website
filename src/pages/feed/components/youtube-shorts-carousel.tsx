@@ -21,6 +21,7 @@ import SegmentedControl from "@cloudscape-design/components/segmented-control";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import "./youtube-shorts-carousel.css";
+import { YouTubeSpinPlaceholder } from "./youtube-spin-placeholder";
 
 export interface YouTubeShort {
 	videoId: string;
@@ -158,6 +159,11 @@ export default function YouTubeShortsCarousel({
 			: t("feedPage.shortsEmpty")
 		: "";
 
+	// Wave 52 — newest/oldest for the spin placeholder.
+	// posts[0] = newest (RSS order), posts[posts.length-1] = oldest.
+	const newestShort = shorts.length > 0 ? shorts[0] : null;
+	const oldestShort = shorts.length > 1 ? shorts[shorts.length - 1] : null;
+
 	return (
 		<Container
 			header={
@@ -188,16 +194,51 @@ export default function YouTubeShortsCarousel({
 				</div>
 			}
 		>
-			{orderedShorts.length === 0 ? (
-				<Box
-					color="text-status-inactive"
-					fontSize="body-s"
-					data-testid="shorts-empty-state"
-				>
-					{t("feedPage.shortsEmpty")}
-				</Box>
+			{/* Wave 52 — spin placeholder shown while loading or when data is empty */}
+			{!ready ? (
+				<YouTubeSpinPlaceholder
+					newest={null}
+					oldest={null}
+					spinLabel={t("feedPage.spinBtnLabel")}
+					ariaLabel={t("feedPage.spinPlaceholderAriaLabel")}
+					i18n={{
+						newestBadge: t("feedPage.spinNewestBadge"),
+						oldestBadge: t("feedPage.spinOldestBadge"),
+					}}
+				/>
+			) : orderedShorts.length === 0 ? (
+				<>
+					<YouTubeSpinPlaceholder
+						newest={null}
+						oldest={null}
+						spinLabel={t("feedPage.spinBtnLabel")}
+						ariaLabel={t("feedPage.spinPlaceholderAriaLabel")}
+						i18n={{
+							newestBadge: t("feedPage.spinNewestBadge"),
+							oldestBadge: t("feedPage.spinOldestBadge"),
+						}}
+					/>
+					<Box
+						color="text-status-inactive"
+						fontSize="body-s"
+						data-testid="shorts-empty-state"
+					>
+						{t("feedPage.shortsEmpty")}
+					</Box>
+				</>
 			) : (
 				<>
+					<YouTubeSpinPlaceholder
+						newest={newestShort}
+						oldest={oldestShort}
+						spinLabel={t("feedPage.spinBtnLabel")}
+						ariaLabel={t("feedPage.spinPlaceholderAriaLabel")}
+						onSelect={(id) => setModalShortId(id)}
+						i18n={{
+							newestBadge: t("feedPage.spinNewestBadge"),
+							oldestBadge: t("feedPage.spinOldestBadge"),
+						}}
+					/>
 					<div className="feed-shorts-carousel__sort" data-testid="shorts-sort">
 						<Box
 							fontSize="body-s"
