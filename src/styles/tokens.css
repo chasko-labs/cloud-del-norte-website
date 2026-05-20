@@ -957,3 +957,15 @@ body.cdn-theme-transitioning *:not(.no-theme-transition) {
 		transition: none;
 	}
 }
+
+/* Wave 46 — chrome icons stay stable during theme-transition window.
+   The blanket *:not(.no-theme-transition) rule above animates stroke +
+   fill on every descendant; nav-toggle / nav-close / tools-toggle SVG
+   <path>s briefly flash through interpolated colors during the 200ms
+   transition. Force them to instant-swap. */
+body.cdn-theme-transitioning button[class*="awsui_navigation-toggle"] *,
+body.cdn-theme-transitioning button[class*="awsui_navigation-close"] *,
+body.cdn-theme-transitioning [class*="awsui_tools-toggle_"] button *,
+body.cdn-theme-transitioning button[class*="awsui_tools-toggle"] * {
+	transition: none !important;
+}
