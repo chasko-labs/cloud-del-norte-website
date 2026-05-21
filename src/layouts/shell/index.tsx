@@ -387,14 +387,21 @@ function ShellContent({
 	// cdn-scrolled body class — drives the fixed-position mobile toggle pair.
 	// Threshold 80px gives one clear scroll gesture before the class fires;
 	// removes cleanly when back near top so the toggles return to normal flow.
+	// Wave 72: rAF-throttled to avoid per-event class toggle (layout thrash).
 	useEffect(() => {
 		if (typeof window === "undefined") return;
+		let rafId: number | null = null;
 		const onScroll = () => {
-			document.body.classList.toggle("cdn-scrolled", window.scrollY > 80);
+			if (rafId !== null) return;
+			rafId = requestAnimationFrame(() => {
+				rafId = null;
+				document.body.classList.toggle("cdn-scrolled", window.scrollY > 80);
+			});
 		};
 		window.addEventListener("scroll", onScroll, { passive: true });
 		return () => {
 			window.removeEventListener("scroll", onScroll);
+			if (rafId !== null) cancelAnimationFrame(rafId);
 			document.body.classList.remove("cdn-scrolled");
 		};
 	}, []);
@@ -406,6 +413,7 @@ function ShellContent({
 	// shift it via CSS custom property so the pill horizontally lines up
 	// with the active page name in the breadcrumb above. ResizeObserver
 	// catches viewport reflow + nav-drawer open/close.
+	// Wave 72: observe the breadcrumb container (not body) to avoid firing on scroll.
 	useEffect(() => {
 		if (typeof document === "undefined") return;
 
@@ -436,8 +444,16 @@ function ShellContent({
 		// initial pass after Cloudscape paint settles
 		const initialId = window.setTimeout(computeShift, 80);
 
+		// Wave 72: observe the breadcrumb container instead of body.
+		// Body's scrollHeight changes on scroll → fires RO on every frame.
+		// Breadcrumb container only resizes on viewport/nav-drawer changes.
+		const breadcrumbEl = document.querySelector<HTMLElement>(
+			'[class*="awsui_breadcrumbs_"]',
+		);
 		const ro = new ResizeObserver(computeShift);
-		ro.observe(document.body);
+		if (breadcrumbEl) {
+			ro.observe(breadcrumbEl);
+		}
 
 		window.addEventListener("resize", computeShift);
 
