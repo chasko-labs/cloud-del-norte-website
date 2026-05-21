@@ -108,8 +108,9 @@
 	/* Wave 48b: reduced from 148px (wave 45) → 128px now that brand star +
 	   co-organizer no longer occupy a second marquee row, reclaiming ~20px
 	   of vertical space. 2-line title ~40px + body-m excerpt ~2 lines ~48px +
-	   date ~20px + gaps ≈ 128px. */
-	height: 128px;
+	   date ~20px + gaps ≈ 128px.
+	   Wave 70b: bumped to 140px to accommodate longer Spanish text. */
+	height: 140px;
 	overflow: hidden;
 }
 
@@ -404,8 +405,10 @@
 
 /* Narrow-viewport fallback — drop the nowrap row and let the entry wrap
    to a maximum of 2 lines via line-clamp so phones don't render the
-   title as 3 ellipsed characters. */
-@media (max-width: 520px) {
+   title as 3 ellipsed characters.
+   Wave 70b — bumped from 520px to 600px so Spanish text doesn't cut off
+   at tablet widths where the feed grid is 2-col. */
+@media (max-width: 600px) {
 	.feed-rsc__entry {
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
@@ -571,7 +574,7 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	flex-wrap: nowrap;
+	flex-wrap: wrap;
 	min-width: 0;
 }
 
@@ -637,12 +640,12 @@
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	overflow: hidden;
-	-webkit-line-clamp: 4; /* allows flow at desktop; clamps at narrow */
+	-webkit-line-clamp: 5; /* wave 70b: bumped from 4 to 5 for Spanish text */
 }
 
-@media (max-width: 520px) {
+@media (max-width: 600px) {
 	.feed-rsc__entry-excerpt {
-		-webkit-line-clamp: 2;
+		-webkit-line-clamp: 3;
 	}
 }
 
@@ -3294,6 +3297,66 @@
 	.feed-upcoming-virtual-event__layout
 		.feed-upcoming-virtual-event__featured-talk {
 		min-width: 0;
+	}
+}
+
+/* ---------- Wave 70b — virtual event card tightened spacing ----------
+   Bryan: 'this section remains fugly and wasteful with its space espec on
+   tablet / desktop'. Tighten vertical spacing, 2-col layout for
+   description + featured-talk at tablet+, compact button row.
+   Image stays full-width (wave 69 preserved). */
+
+/* Tablet: tighten spacing between elements */
+@container cdn-feed-upcoming-virtual-event (min-width: 520px) {
+	.feed-upcoming-virtual-event__image-link {
+		margin-block-end: var(--cdn-space-12, 12px);
+	}
+
+	.feed-upcoming-virtual-event__title {
+		margin-block-end: var(--cdn-space-sm, 8px);
+	}
+
+	.feed-upcoming-virtual-event__description {
+		margin-block-end: var(--cdn-space-md, 16px);
+	}
+
+	.feed-upcoming-virtual-event__layout
+		.feed-upcoming-virtual-event__featured-talk {
+		margin-block-end: var(--cdn-space-md, 16px);
+	}
+}
+
+/* Desktop: 2-column layout for description + featured-talk below image */
+@container cdn-feed-upcoming-virtual-event (min-width: 768px) {
+	.feed-upcoming-virtual-event__layout {
+		grid-template-areas:
+			"badge badge"
+			"image image"
+			"title title"
+			"date date"
+			"location location"
+			"description featured-talk"
+			"buttons buttons";
+		grid-template-columns: 1fr 1fr;
+		column-gap: var(--cdn-space-md, 16px);
+	}
+
+	.feed-upcoming-virtual-event__layout .cdn-brand-btn-stack {
+		/* Compact horizontal row instead of stacked */
+		display: flex;
+		flex-direction: row;
+		gap: var(--cdn-space-12, 12px);
+		flex-wrap: wrap;
+	}
+
+	/* Shrink the featured-talk brand-mark + bio block */
+	.feed-upcoming-virtual-event__featured-talk {
+		padding: 10px 12px;
+	}
+
+	.feed-upcoming-virtual-event__brand-mark-img {
+		width: 32px;
+		height: 32px;
 	}
 }
 

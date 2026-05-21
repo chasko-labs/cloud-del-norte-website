@@ -4,12 +4,10 @@
 // Babylon scene gated at tier='medium'; CSS-only gradient visible at all tiers.
 //
 // Wave 66 — added IntersectionObserver gate + babylon-budget integration.
+// Wave 70b — fade-in: ribbon starts opacity:0, fades in once loaded.
 
 import { useEffect, useRef, useState } from "react";
-import {
-	releaseActivation,
-	requestActivation,
-} from "../../lib/babylon-budget";
+import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
 import {
 	elPasoHour,
 	getTOD,
@@ -23,7 +21,7 @@ import "./atmosphere-ribbon.css";
 
 // ── CSS-only fallback ─────────────────────────────────────────────────────────
 
-function RibbonFallback() {
+function RibbonFallback({ onReady }: { onReady: () => void }) {
 	const ref = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -33,9 +31,11 @@ function RibbonFallback() {
 			ref.current?.style.setProperty("background", todGradient(tod));
 		};
 		apply();
+		// Signal loaded after first paint
+		onReady();
 		const id = setInterval(apply, 60_000);
 		return () => clearInterval(id);
-	}, []);
+	}, [onReady]);
 
 	return (
 		<div
@@ -50,7 +50,7 @@ function RibbonFallback() {
 
 const SCENE_ID = "atmosphere-ribbon";
 
-function RibbonScene({ hour }: { hour: number }) {
+function RibbonScene({ hour, onReady }: { hour: number; onReady: () => void }) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
 	const engRef = useRef<any>(null);
@@ -185,6 +185,9 @@ function RibbonScene({ hour }: { hour: number }) {
 			} else {
 				eng.runRenderLoop(render);
 			}
+
+			// Wave 70b — signal loaded after first render loop starts
+			onReady();
 		}
 
 		// IntersectionObserver: only run when ribbon is on-screen
@@ -209,7 +212,7 @@ function RibbonScene({ hour }: { hour: number }) {
 		};
 		// hour-driven palette changes on mount only — ribbon re-reads hour each minute via parent
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [hour]);
+	}, [hour, onReady]);
 
 	return (
 		// biome-ignore lint/a11y/noAriaHiddenOnFocusable: decorative, non-interactive
@@ -230,6 +233,7 @@ function RibbonScene({ hour }: { hour: number }) {
 
 export default function AtmosphereRibbon() {
 	const [hour, setHour] = useState(() => elPasoHour());
+	const ribbonRef = useRef<HTMLDivElement>(null);
 
 	// Refresh hour once per minute so the gradient + disc position track real time
 	useEffect(() => {
@@ -237,14 +241,22 @@ export default function AtmosphereRibbon() {
 		return () => clearInterval(id);
 	}, []);
 
+	const handleReady = useRef(() => {
+		ribbonRef.current?.classList.add("is-loaded");
+	}).current;
+
 	return (
 		<div
+			ref={ribbonRef}
 			className="cdn-atmosphere-ribbon"
 			aria-hidden="true"
 			data-testid="atmosphere-ribbon"
 		>
-			<BabylonGate tier="medium" fallback={<RibbonFallback />}>
-				<RibbonScene hour={hour} />
+			<BabylonGate
+				tier="medium"
+				fallback={<RibbonFallback onReady={handleReady} />}
+			>
+				<RibbonScene hour={hour} onReady={handleReady} />
 			</BabylonGate>
 		</div>
 	);

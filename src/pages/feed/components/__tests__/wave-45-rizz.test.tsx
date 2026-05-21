@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 // Wave 45 — card rizz batch tests.
-//   1. Excerpt cap logic (140 chars + ellipsis)
+//   1. Excerpt cap logic (160 chars + ellipsis, wave 70b bumped from 140)
 //   2. Brand star img renders in FeedAndmore + onError hides broken img
 //   3. FeedAndmore renders the co-organizer sub-header
 //   4. Speaker CTA bounce @keyframes defined in stylesheet
@@ -39,16 +39,16 @@ const SAMPLE_POSTS: FeedPost[] = [
 // ---------------------------------------------------------------------------
 
 function capExcerpt(excerpt: string): string {
-	return excerpt.length > 140 ? `${excerpt.slice(0, 140).trimEnd()}…` : excerpt;
+	return excerpt.length > 160 ? `${excerpt.slice(0, 160).trimEnd()}…` : excerpt;
 }
 
 describe("PostCarousel excerpt cap logic (task 1.4)", () => {
 	const LONG =
-		"This is a very long excerpt that exceeds one hundred and forty characters in total length and should be truncated with an ellipsis character at the end.";
+		"This is a very long excerpt that exceeds one hundred and sixty characters in total length and should be truncated with an ellipsis character at the end of the string here.";
 
-	it("truncates excerpts longer than 140 chars with ellipsis", () => {
+	it("truncates excerpts longer than 160 chars with ellipsis", () => {
 		const result = capExcerpt(LONG);
-		expect(result.length).toBeLessThanOrEqual(141); // 140 chars + ellipsis
+		expect(result.length).toBeLessThanOrEqual(161); // 160 chars + ellipsis
 		expect(result).toContain("…");
 		expect(result).not.toBe(LONG);
 	});
@@ -59,13 +59,13 @@ describe("PostCarousel excerpt cap logic (task 1.4)", () => {
 		expect(capExcerpt(short)).not.toContain("…");
 	});
 
-	it("caps at exactly 140 visible chars before adding ellipsis", () => {
-		const exactly140 = "x".repeat(140);
-		const over = "x".repeat(141);
-		expect(capExcerpt(exactly140)).toBe(exactly140); // no truncation
+	it("caps at exactly 160 visible chars before adding ellipsis", () => {
+		const exactly160 = "x".repeat(160);
+		const over = "x".repeat(161);
+		expect(capExcerpt(exactly160)).toBe(exactly160); // no truncation
 		const capped = capExcerpt(over);
 		expect(capped).toContain("…");
-		expect(capped.replace("…", "").length).toBe(140);
+		expect(capped.replace("…", "").length).toBe(160);
 	});
 });
 
@@ -77,7 +77,7 @@ function twoSentences(excerpt: string): string {
 	if (!excerpt) return "";
 	const chunks = excerpt.split(/\.\s+/);
 	const joined = chunks.length >= 2 ? `${chunks[0]}. ${chunks[1]}.` : chunks[0];
-	return joined.length > 140 ? `${joined.slice(0, 140).trimEnd()}…` : joined;
+	return joined.length > 160 ? `${joined.slice(0, 160).trimEnd()}…` : joined;
 }
 
 describe("ReadySetCloud 2-sentence excerpt logic (task 3)", () => {
@@ -93,13 +93,13 @@ describe("ReadySetCloud 2-sentence excerpt logic (task 3)", () => {
 		expect(twoSentences(excerpt)).toBe("Only one sentence");
 	});
 
-	it("caps at 140 chars after joining two sentences", () => {
-		const s1 = "A".repeat(80);
-		const s2 = "B".repeat(80);
+	it("caps at 160 chars after joining two sentences", () => {
+		const s1 = "A".repeat(90);
+		const s2 = "B".repeat(90);
 		const excerpt = `${s1}. ${s2}. Extra.`;
 		const result = twoSentences(excerpt);
 		expect(result).toContain("…");
-		expect(result.replace("…", "").length).toBeLessThanOrEqual(140);
+		expect(result.replace("…", "").length).toBeLessThanOrEqual(160);
 	});
 
 	it("returns empty string for empty excerpt", () => {

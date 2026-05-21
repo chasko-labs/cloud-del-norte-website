@@ -5,10 +5,7 @@
 // Wave 66 — added IntersectionObserver gate + babylon-budget integration.
 // Engine is disposed when the carousel scrolls off-screen and re-created on re-entry.
 import { useEffect, useRef } from "react";
-import {
-	releaseActivation,
-	requestActivation,
-} from "../../lib/babylon-budget";
+import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
 
 const SCENE_ID = "babylon-spin-demo";
 

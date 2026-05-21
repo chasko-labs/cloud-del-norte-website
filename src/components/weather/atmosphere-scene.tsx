@@ -16,10 +16,7 @@
 // and a single 12-s ease arc for thunderstorm.
 
 import { useEffect, useRef } from "react";
-import {
-	releaseActivation,
-	requestActivation,
-} from "../../lib/babylon-budget";
+import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
 import { getTOD, isNight, skyColor } from "../../lib/time-of-day";
 
 export interface AtmosphereSceneProps {

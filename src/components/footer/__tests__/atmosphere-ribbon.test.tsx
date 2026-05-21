@@ -1,5 +1,6 @@
 // Wave 60 — AtmosphereRibbon tests
 // Wave 66 — extended: IntersectionObserver gate, budget integration, dispose-on-unmount.
+// Wave 70b — extended: fade-in (is-loaded class) tests.
 import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -223,6 +224,22 @@ describe("AtmosphereRibbon — Babylon path", () => {
 		const { unmount } = render(<AtmosphereRibbon />);
 		unmount();
 		expect(mockReleaseActivation).toHaveBeenCalledWith("atmosphere-ribbon");
+	});
+});
+
+// ── Wave 70b — fade-in ────────────────────────────────────────────────────────
+describe("AtmosphereRibbon — fade-in (wave 70b)", () => {
+	it("ribbon starts without is-loaded class", () => {
+		render(<AtmosphereRibbon />);
+		const ribbon = screen.getByTestId("atmosphere-ribbon");
+		expect(ribbon.classList.contains("is-loaded")).toBe(false);
+	});
+
+	it("fallback path adds is-loaded class on mount", () => {
+		vi.mocked(getDeviceTier).mockReturnValue("low");
+		render(<AtmosphereRibbon />);
+		const ribbon = screen.getByTestId("atmosphere-ribbon");
+		expect(ribbon.classList.contains("is-loaded")).toBe(true);
 	});
 });
 

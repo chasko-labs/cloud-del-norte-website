@@ -56,15 +56,15 @@
 	/* Default tokens — overridden by the per-palette modifier classes
 	   below. Listed here so a card that forgets the palette modifier
 	   still renders something legible (graceful degradation). */
-	--fcs-bg-from: #f5f5f5;
-	--fcs-bg-to: #e5e5e5;
-	--fcs-rim: #888;
-	--fcs-rim-highlight: rgba(255, 255, 255, 0.6);
-	--fcs-shadow: rgba(0, 0, 0, 0.18);
-	--fcs-text: #1a1a1a;
-	--fcs-text-glow: rgba(255, 255, 255, 0.5);
-	--fcs-stage-rim: rgba(255, 255, 255, 0.08);
-	--fcs-ambient-bloom: rgba(0, 0, 0, 0.1);
+	--fcs-bg-from: #fef8ee;
+	--fcs-bg-to: #f5edd8;
+	--fcs-rim: #8b5a2b;
+	--fcs-rim-highlight: rgba(255, 250, 235, 0.7);
+	--fcs-shadow: rgba(120, 53, 15, 0.2);
+	--fcs-text: #2c1a0e;
+	--fcs-text-glow: rgba(255, 250, 235, 0.55);
+	--fcs-stage-rim: rgba(139, 90, 43, 0.12);
+	--fcs-ambient-bloom: rgba(120, 53, 15, 0.12);
 
 	position: relative;
 	isolation: isolate;
@@ -102,9 +102,11 @@
 	   visible "stage edge" line under varied page backgrounds without
 	   requiring the inner Cloudscape Container to opt in. The inset is
 	   palette-tinted via the --fcs-stage-rim variable so dark-mode
-	   variants get a brighter rim against deeper backplates. */
+	   variants get a brighter rim against deeper backplates.
+	   Wave 70b — 5-layer shadow stack for stronger light-mode depth. */
 	box-shadow:
 		0 1px 2px var(--fcs-shadow),
+		0 4px 8px -2px var(--fcs-shadow),
 		0 8px 24px -10px var(--fcs-ambient-bloom),
 		0 18px 44px -16px var(--fcs-ambient-bloom),
 		inset 0 0 0 1px var(--fcs-stage-rim);
@@ -223,15 +225,15 @@
 
 /* ── amber — warm dev/casual (feed-section andmore) ───────────────────── */
 .feed-card-shell--amber {
-	--fcs-bg-from: #fef3c7;
-	--fcs-bg-to: #fcd34d;
-	--fcs-rim: #d97706;
-	--fcs-rim-highlight: rgba(255, 251, 235, 0.7);
-	--fcs-shadow: rgba(120, 53, 15, 0.22);
+	--fcs-bg-from: #faf7f0;
+	--fcs-bg-to: #f5edd8;
+	--fcs-rim: #b45309;
+	--fcs-rim-highlight: rgba(255, 250, 235, 0.75);
+	--fcs-shadow: rgba(120, 53, 15, 0.2);
 	--fcs-text: #78350f;
 	--fcs-text-glow: rgba(254, 240, 138, 0.55);
-	--fcs-stage-rim: rgba(217, 119, 6, 0.18);
-	--fcs-ambient-bloom: rgba(120, 53, 15, 0.16);
+	--fcs-stage-rim: rgba(217, 119, 6, 0.14);
+	--fcs-ambient-bloom: rgba(120, 53, 15, 0.14);
 }
 
 .awsui-dark-mode .feed-card-shell--amber {
@@ -248,15 +250,15 @@
 
 /* ── teal — cool ML/technical (feed-section awsml) ────────────────────── */
 .feed-card-shell--teal {
-	--fcs-bg-from: #ccfbf1;
-	--fcs-bg-to: #5eead4;
+	--fcs-bg-from: #f0fdf9;
+	--fcs-bg-to: #e0f7f1;
 	--fcs-rim: #0e7490;
-	--fcs-rim-highlight: rgba(236, 254, 255, 0.7);
-	--fcs-shadow: rgba(15, 76, 87, 0.22);
+	--fcs-rim-highlight: rgba(236, 254, 255, 0.75);
+	--fcs-shadow: rgba(15, 76, 87, 0.2);
 	--fcs-text: #0e3a4a;
 	--fcs-text-glow: rgba(165, 243, 252, 0.55);
-	--fcs-stage-rim: rgba(14, 116, 144, 0.18);
-	--fcs-ambient-bloom: rgba(15, 76, 87, 0.16);
+	--fcs-stage-rim: rgba(14, 116, 144, 0.14);
+	--fcs-ambient-bloom: rgba(15, 76, 87, 0.14);
 }
 
 .awsui-dark-mode .feed-card-shell--teal {
@@ -354,15 +356,15 @@
    them visually paired as the "deep-read" cards in the feed without
    demanding a 9th palette. */
 .feed-card-shell--navy {
-	--fcs-bg-from: #dbeafe;
-	--fcs-bg-to: #93c5fd;
+	--fcs-bg-from: #f0f4ff;
+	--fcs-bg-to: #e0e8f8;
 	--fcs-rim: #1e40af;
-	--fcs-rim-highlight: rgba(239, 246, 255, 0.7);
-	--fcs-shadow: rgba(30, 58, 138, 0.22);
+	--fcs-rim-highlight: rgba(239, 246, 255, 0.75);
+	--fcs-shadow: rgba(30, 58, 138, 0.2);
 	--fcs-text: #1e293b;
 	--fcs-text-glow: rgba(219, 234, 254, 0.55);
-	--fcs-stage-rim: rgba(30, 64, 175, 0.18);
-	--fcs-ambient-bloom: rgba(30, 58, 138, 0.16);
+	--fcs-stage-rim: rgba(30, 64, 175, 0.14);
+	--fcs-ambient-bloom: rgba(30, 58, 138, 0.14);
 }
 
 .awsui-dark-mode .feed-card-shell--navy {
@@ -379,15 +381,15 @@
 
 /* ── gold — AWS Builder Center ───────────────────────────────────────── */
 .feed-card-shell--gold {
-	--fcs-bg-from: #fef3c7;
-	--fcs-bg-to: #fbbf24;
-	--fcs-rim: #b45309;
-	--fcs-rim-highlight: rgba(255, 251, 235, 0.7);
-	--fcs-shadow: rgba(120, 53, 15, 0.24);
-	--fcs-text: #78350f;
-	--fcs-text-glow: rgba(254, 243, 199, 0.55);
-	--fcs-stage-rim: rgba(180, 83, 9, 0.2);
-	--fcs-ambient-bloom: rgba(120, 53, 15, 0.16);
+	--fcs-bg-from: #faf7f0;
+	--fcs-bg-to: #f5edd8;
+	--fcs-rim: #8b5a2b;
+	--fcs-rim-highlight: rgba(255, 250, 235, 0.75);
+	--fcs-shadow: rgba(120, 53, 15, 0.22);
+	--fcs-text: #2c1a0e;
+	--fcs-text-glow: rgba(254, 243, 199, 0.6);
+	--fcs-stage-rim: rgba(139, 90, 43, 0.14);
+	--fcs-ambient-bloom: rgba(120, 53, 15, 0.14);
 }
 
 .awsui-dark-mode .feed-card-shell--gold {
