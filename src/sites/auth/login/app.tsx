@@ -190,13 +190,10 @@ function LoginForm() {
 		}
 	}
 
-	// Auto-trigger passkey if user has one registered
-	if (!passkeyAutoRef.current && localStorage.getItem("cdn.passkey_email")) {
-		passkeyAutoRef.current = true;
-		setTimeout(() => {
-			void handlePasskeyLogin();
-		}, 600);
-	}
+	// Auto-trigger passkey disabled — Cognito user pool WebAuthn configuration
+	// is incomplete (CredentialRequestOptions missing from challenge response).
+	// Users can still click "Sign in with passkey" manually if they want to try.
+	// Re-enable once Cognito WebAuthn is properly configured.
 
 	async function handleCredentialsSubmit(e: React.FormEvent) {
 		e.preventDefault();
