@@ -3,7 +3,7 @@
 
 import ContentLayout from "@cloudscape-design/components/content-layout";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import Shell from "../../../layouts/shell";
 import {
@@ -18,7 +18,9 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../../utils/theme";
+import "./auth-atmosphere.css";
 import "./styles.css";
+import { mountAuthAtmosphere, unmountAuthAtmosphere } from "./auth-atmosphere";
 
 /**
  * AuthLayout — host shell for login / signup / verify / forgot-password.
@@ -81,6 +83,12 @@ export default function AuthLayout({
 	const [theme, setTheme] = useState<Theme>(() => initializeTheme());
 	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
+	const bgRef = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+		if (bgRef.current) mountAuthAtmosphere(bgRef.current);
+		return unmountAuthAtmosphere;
+	}, []);
+
 	useEffect(() => {
 		document.body.classList.add("cdn-auth-subdomain");
 		return () => {
@@ -108,6 +116,7 @@ export default function AuthLayout({
 			contentType="form"
 			identityHref="https://clouddelnorte.org/feed/index.html"
 		>
+			<div ref={bgRef} className="cdn-auth-bg" aria-hidden="true" />
 			<ContentLayout>
 				<div className="cdn-auth-page-header">
 					<Wordmark />
