@@ -48,7 +48,9 @@ describe("Wave 71 — Bug 1: no transition:all on cdn-viz-active", () => {
 		let inBlockComment = false;
 		for (const line of lines) {
 			const trimmed = line.trim();
-			if (trimmed.startsWith("/*")) { inBlockComment = true; }
+			if (trimmed.startsWith("/*")) {
+				inBlockComment = true;
+			}
 			if (inBlockComment) {
 				if (trimmed.includes("*/")) inBlockComment = false;
 				continue;

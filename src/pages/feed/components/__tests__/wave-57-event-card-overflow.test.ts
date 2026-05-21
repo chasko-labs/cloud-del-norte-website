@@ -29,7 +29,7 @@ function extractContainerBlock(name: string, minWidth: string): string {
 	const match = feedCss.match(pattern);
 	if (!match?.index) return "";
 	let depth = 0;
-	let start = match.index + match[0].length;
+	const start = match.index + match[0].length;
 	for (let i = start; i < feedCss.length; i++) {
 		if (feedCss[i] === "{") depth++;
 		if (feedCss[i] === "}") {

@@ -35,56 +35,61 @@ export function mountAuthAtmosphere(container: HTMLElement): void {
 
 	let disposed = false;
 
-	void import("@babylonjs/core").then(({ Engine, Scene, Color4, HemisphericLight, Vector3, Color3 }) => {
-		if (disposed) return;
+	void import("@babylonjs/core").then(
+		({ Engine, Scene, Color4, HemisphericLight, Vector3, Color3 }) => {
+			if (disposed) return;
 
-		const engine = new Engine(canvas, true, {
-			adaptToDeviceRatio: false,
-			preserveDrawingBuffer: false,
-		});
+			const engine = new Engine(canvas, true, {
+				adaptToDeviceRatio: false,
+				preserveDrawingBuffer: false,
+			});
 
-		const scene = new Scene(engine);
-		scene.clearColor = new Color4(0, 0, 0, 0);
+			const scene = new Scene(engine);
+			scene.clearColor = new Color4(0, 0, 0, 0);
 
-		// Ambient light only — no meshes, no shadows
-		const light = new HemisphericLight("sky", new Vector3(0, 1, 0), scene);
-		light.diffuse = new Color3(0.85, 0.8, 1.0);
-		light.intensity = 0.6;
+			// Ambient light only — no meshes, no shadows
+			const light = new HemisphericLight("sky", new Vector3(0, 1, 0), scene);
+			light.diffuse = new Color3(0.85, 0.8, 1.0);
+			light.intensity = 0.6;
 
-		// Perf gate: if median frame time > 20ms after 3s warmup, dispose
-		const frameTimes: number[] = [];
-		const warmupMs = 3000;
-		const warmupStart = performance.now();
-		let gateChecked = false;
+			// Perf gate: if median frame time > 20ms after 3s warmup, dispose
+			const frameTimes: number[] = [];
+			const warmupMs = 3000;
+			const warmupStart = performance.now();
+			let gateChecked = false;
 
-		engine.runRenderLoop(() => {
-			const now = performance.now();
-			if (!gateChecked && now - warmupStart > warmupMs) {
-				const median = frameTimes.sort((a, b) => a - b)[Math.floor(frameTimes.length / 2)] ?? 0;
-				if (median > 20) {
-					cleanup();
-					return;
+			engine.runRenderLoop(() => {
+				const now = performance.now();
+				if (!gateChecked && now - warmupStart > warmupMs) {
+					const median =
+						frameTimes.sort((a, b) => a - b)[
+							Math.floor(frameTimes.length / 2)
+						] ?? 0;
+					if (median > 20) {
+						cleanup();
+						return;
+					}
+					gateChecked = true;
 				}
-				gateChecked = true;
+				if (frameTimes.length < 60) frameTimes.push(engine.getDeltaTime());
+				scene.render();
+			});
+
+			const handleResize = () => engine.resize();
+			window.addEventListener("resize", handleResize);
+
+			function cleanup() {
+				disposed = true;
+				engine.stopRenderLoop();
+				scene.dispose();
+				engine.dispose();
+				window.removeEventListener("resize", handleResize);
+				canvas.remove();
 			}
-			if (frameTimes.length < 60) frameTimes.push(engine.getDeltaTime());
-			scene.render();
-		});
 
-		const handleResize = () => engine.resize();
-		window.addEventListener("resize", handleResize);
-
-		function cleanup() {
-			disposed = true;
-			engine.stopRenderLoop();
-			scene.dispose();
-			engine.dispose();
-			window.removeEventListener("resize", handleResize);
-			canvas.remove();
-		}
-
-		disposeAtmosphere = cleanup;
-	});
+			disposeAtmosphere = cleanup;
+		},
+	);
 }
 
 export function unmountAuthAtmosphere(): void {
