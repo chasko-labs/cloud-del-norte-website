@@ -10,6 +10,15 @@ class ResizeObserverMock {
 globalThis.ResizeObserver =
 	ResizeObserverMock as unknown as typeof ResizeObserver;
 
+// Mock IntersectionObserver for jsdom (atmosphere-ribbon uses it)
+if (typeof IntersectionObserver === "undefined") {
+	global.IntersectionObserver = class MockIntersectionObserver {
+		observe() {}
+		unobserve() {}
+		disconnect() {}
+	} as unknown as typeof IntersectionObserver;
+}
+
 // Cloudscape also reads window.matchMedia
 Object.defineProperty(window, "matchMedia", {
 	writable: true,

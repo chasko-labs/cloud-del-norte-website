@@ -126,7 +126,7 @@ describe("Wave 37a — mobile ghosting fix regression contract", () => {
 		expect(desktopBlock).toContain(".feed-featured-event");
 		expect(desktopBlock).toContain(".feed-next-meetup");
 		expect(desktopBlock).toContain(".feed-upcoming-virtual-event");
-		expect(desktopBlock).toMatch(/will-change:\s*transform/);
+		// will-change removed in wave 74 (perf regression on static content)
 		expect(desktopBlock).toMatch(/transform:\s*translate3d\(0,\s*0,\s*0\)/);
 		expect(desktopBlock).toMatch(/perspective:\s*1200px/);
 		expect(desktopBlock).toMatch(/transform-style:\s*preserve-3d/);

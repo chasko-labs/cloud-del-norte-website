@@ -178,7 +178,7 @@ describe("Wave 48b.2 — AndresYoutubeLive fanfare", () => {
 		expect(css).toContain("animation-play-state: paused");
 		// GPU gate: desktop only
 		expect(css).toContain("min-width: 768px");
-		expect(css).toContain("will-change: transform");
+		// will-change removed in wave 74 (perf regression on static content)
 	});
 });
 
