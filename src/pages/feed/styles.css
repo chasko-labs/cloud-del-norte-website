@@ -474,6 +474,8 @@
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	content-visibility: auto;
+	contain-intrinsic-size: 0 400px; /* estimated card height, prevents scroll-bar jump */
 }
 
 /* design-system baseline — cream surface for feed cards (light mode).
@@ -657,6 +659,8 @@
 	   (~100-130px of whitespace per card). Bryan validated in DevTools.
 	   Standard-tier cards keep their floor since they cycle content. */
 	min-height: 0;
+	content-visibility: auto;
+	contain-intrinsic-size: 0 400px; /* estimated card height, prevents scroll-bar jump */
 }
 
 /* wave 25b — extra breathing room between stacked event cards (featured,
