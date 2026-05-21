@@ -13,6 +13,7 @@ import Table from "@cloudscape-design/components/table";
 import Tabs from "@cloudscape-design/components/tabs";
 import { useCallback, useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
+import { spotsRemaining } from "../../../lib/rsvp";
 import AwsugLayout from "../_layout";
 import {
 	type AdminUser,
@@ -266,6 +267,34 @@ function UserTable({
 	);
 }
 
+function RsvpsTab() {
+	const [remaining, setRemaining] = useState<number | null>(null);
+	useEffect(() => {
+		spotsRemaining("happy-hour-2026-06-03").then((n) => setRemaining(n));
+	}, []);
+	return (
+		<SpaceBetween size="m">
+			<Box>
+				<strong>June 3 Happy Hour</strong> — spots remaining:{" "}
+				{remaining === null ? (
+					<Spinner />
+				) : Number.isNaN(remaining) ? (
+					"unknown"
+				) : (
+					remaining
+				)}
+			</Box>
+			<Button
+				href="/rsvp/index.html?event=happy-hour-2026-06-03"
+				iconName="external"
+				target="_blank"
+			>
+				View RSVP flow
+			</Button>
+		</SpaceBetween>
+	);
+}
+
 function AdminPanel() {
 	const { t } = useTranslation();
 	const [activeTab, setActiveTab] = useState("pending");
@@ -314,6 +343,11 @@ function AdminPanel() {
 						id: "meetings",
 						label: "Meetings",
 						content: <MeetingsTable />,
+					},
+					{
+						id: "rsvps",
+						label: "RSVPs",
+						content: <RsvpsTab />,
 					},
 				]}
 			/>

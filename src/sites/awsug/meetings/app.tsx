@@ -65,7 +65,9 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 				header="Cloud Del Norte — live call"
 				closeAriaLabel="leave meeting"
 			>
-				<JitsiEmbed roomName={ROOM_NAME} onClose={() => setInCall(false)} />
+				{inCall && (
+					<JitsiEmbed roomName={ROOM_NAME} onClose={() => setInCall(false)} />
+				)}
 			</Modal>
 		</SpaceBetween>
 	);

@@ -14,6 +14,7 @@ import Spinner from "@cloudscape-design/components/spinner";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 import { loadPlayerState } from "../../lib/player-persist";
+import { listMyRsvps, type RsvpRecord } from "../../lib/rsvp";
 import { STREAMS } from "../../lib/streams";
 import AwsugLayout from "./_layout";
 import {
@@ -68,8 +69,13 @@ function MemberHome({ auth }: { auth: AuthState }) {
 	const [meetup, setMeetup] = useState<NextMeetup | null | "loading">(
 		"loading",
 	);
+	const [june3Rsvp, setJune3Rsvp] = useState<RsvpRecord | null | "loading">(
+		"loading",
+	);
 	const player = loadPlayerState();
 	const visibleStreams = STREAMS.filter((s) => !s.hidden);
+	const JUNE3_EVENT = "happy-hour-2026-06-03";
+	const JUNE3_FUTURE = new Date() < new Date("2026-06-03T23:59:59-06:00");
 
 	useEffect(() => {
 		fetch("/data/next-meetup.json")
@@ -77,6 +83,18 @@ function MemberHome({ auth }: { auth: AuthState }) {
 			.then((d) => setMeetup(d as NextMeetup | null))
 			.catch(() => setMeetup(null));
 	}, []);
+
+	useEffect(() => {
+		if (!JUNE3_FUTURE) {
+			setJune3Rsvp(null);
+			return;
+		}
+		listMyRsvps()
+			.then((list) =>
+				setJune3Rsvp(list.find((r) => r.eventId === JUNE3_EVENT) ?? null),
+			)
+			.catch(() => setJune3Rsvp(null));
+	}, [JUNE3_FUTURE]);
 
 	const name = auth.name?.split(" ")[0] || firstName(auth.email);
 	const isMod = auth.groups.includes("moderators");
@@ -101,6 +119,27 @@ function MemberHome({ auth }: { auth: AuthState }) {
 					)}
 				</SpaceBetween>
 			</Container>
+
+			{/* June 3 Happy Hour RSVP status */}
+			{JUNE3_FUTURE && june3Rsvp !== "loading" && (
+				<Container header={<Header variant="h2">June 3 Happy Hour</Header>}>
+					{june3Rsvp ? (
+						<Alert type="success">
+							You&apos;re registered!{" "}
+							<Link href="/rsvp/index.html?event=happy-hour-2026-06-03">
+								View your ticket
+							</Link>
+						</Alert>
+					) : (
+						<Button
+							href="/rsvp/index.html?event=happy-hour-2026-06-03"
+							variant="primary"
+						>
+							RSVP for June 3 Happy Hour
+						</Button>
+					)}
+				</Container>
+			)}
 
 			{/* Next meetup + now playing */}
 			<ColumnLayout columns={2}>
