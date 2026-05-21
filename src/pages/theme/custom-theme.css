@@ -108,7 +108,6 @@
 @media (prefers-reduced-motion: no-preference) {
 	.theme-demo-shimmer-bar::after {
 		animation: cdn-shimmer 24s ease-in-out infinite;
-		will-change: background-position;
 	}
 }
 

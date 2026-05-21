@@ -33,52 +33,28 @@
 @supports (backdrop-filter: blur(0)) {
 	/* Light mode */
 	:root:not(.awsui-dark-mode) .cdn-atmospheric-panel {
-		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(237, 229, 212, 0.96);
 	}
 
 	:root:not(.awsui-dark-mode) .cdn-atmospheric-header {
-		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-header));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(237, 229, 212, 0.95);
 	}
 
 	:root:not(.awsui-dark-mode) .cdn-atmospheric-content {
-		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-content));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(237, 229, 212, 0.94);
 	}
 
 	/* Dark mode */
 	.awsui-dark-mode .cdn-atmospheric-panel {
-		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-panel));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(10, 12, 20, 0.96);
 	}
 
 	.awsui-dark-mode .cdn-atmospheric-header {
-		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-header));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(10, 12, 20, 0.95);
 	}
 
 	.awsui-dark-mode .cdn-atmospheric-content {
-		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-content));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(10, 12, 20, 0.94);
 	}
 }
 
@@ -130,11 +106,7 @@
 	),
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
-		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-panel));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(237, 229, 212, 0.96);
 	}
 
 	/* Dark mode */
@@ -144,11 +116,7 @@
 	),
 	.cdn-viz-active.awsui-dark-mode
 		[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(#\9) {
-		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-panel));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-panel))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(10, 12, 20, 0.96);
 	}
 
 	/* ── ContentLayout header strip — header tier ─────────────────────────── */
@@ -161,11 +129,7 @@
 		> [class*="awsui_background"]:not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode)
 		[class*="awsui_header-background"]:not(#\9) {
-		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-header));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(237, 229, 212, 0.95);
 	}
 
 	/* Dark mode */
@@ -175,11 +139,7 @@
 		[class*="awsui_content-layout"]
 		> [class*="awsui_background"]:not(#\9),
 	.cdn-viz-active.awsui-dark-mode [class*="awsui_header-background"]:not(#\9) {
-		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-header));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-header))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(10, 12, 20, 0.95);
 	}
 
 	/* ── Main content area — content tier ────────────────────────────────── */
@@ -187,21 +147,13 @@
 	/* Light mode */
 	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"]:not(#\9) {
-		background-color: rgba(237, 229, 212, var(--cdn-wallpaper-alpha-content));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(237, 229, 212, 0.94);
 	}
 
 	/* Dark mode */
 	.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"]:not(#\9),
 	.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"]:not(#\9) {
-		background-color: rgba(10, 12, 20, var(--cdn-wallpaper-alpha-content));
-		backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate));
-		-webkit-backdrop-filter: blur(var(--cdn-wallpaper-blur-content))
-			saturate(var(--cdn-wallpaper-saturate));
+		background-color: rgba(10, 12, 20, 0.94);
 	}
 }
 

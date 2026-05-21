@@ -83,12 +83,12 @@
 	   Card-tier alphas (plate-bg / -strong) for small text-bearing surfaces.
 	   Surface-tier alphas (panel / header / content / breadcrumbs / scroll)
 	   for big chrome backings — much lower alpha so dunes still bleed through. */
-	--cdn-glass-bg: rgba(237, 229, 212, 0.55);
-	--cdn-glass-bg-strong: rgba(237, 229, 212, 0.7);
-	--cdn-glass-bg-breadcrumbs: rgba(237, 229, 212, 0.18);
-	--cdn-glass-bg-scroll: rgba(237, 229, 212, 0.28);
-	--cdn-glass-bg-ctl-header: rgba(237, 229, 212, 0.42);
-	--cdn-glass-bg-content: rgba(237, 229, 212, 0.25);
+	--cdn-glass-bg: rgba(237, 229, 212, 0.92);
+	--cdn-glass-bg-strong: rgba(237, 229, 212, 0.95);
+	--cdn-glass-bg-breadcrumbs: rgba(237, 229, 212, 0.92);
+	--cdn-glass-bg-scroll: rgba(237, 229, 212, 0.93);
+	--cdn-glass-bg-ctl-header: rgba(237, 229, 212, 0.94);
+	--cdn-glass-bg-content: rgba(237, 229, 212, 0.92);
 	--cdn-glass-border: rgba(139, 90, 43, 0.28);
 	--cdn-glass-shadow:
 		0 4px 24px rgba(139, 90, 43, 0.18), 0 1px 3px rgba(0, 0, 0, 0.08),
@@ -110,12 +110,12 @@
    Card-tier alphas slightly higher than light mode (text-on-dark needs more
    surface contrast), surface-tier alphas low so starfield bleeds through. */
 .awsui-dark-mode {
-	--cdn-glass-bg: rgba(28, 34, 48, 0.55);
-	--cdn-glass-bg-strong: rgba(28, 34, 48, 0.72);
-	--cdn-glass-bg-breadcrumbs: rgba(10, 12, 32, 0.22);
-	--cdn-glass-bg-scroll: rgba(10, 12, 32, 0.32);
-	--cdn-glass-bg-ctl-header: rgba(10, 12, 32, 0.5);
-	--cdn-glass-bg-content: rgba(10, 12, 32, 0.28);
+	--cdn-glass-bg: rgba(28, 34, 48, 0.93);
+	--cdn-glass-bg-strong: rgba(28, 34, 48, 0.95);
+	--cdn-glass-bg-breadcrumbs: rgba(10, 12, 32, 0.92);
+	--cdn-glass-bg-scroll: rgba(10, 12, 32, 0.93);
+	--cdn-glass-bg-ctl-header: rgba(10, 12, 32, 0.94);
+	--cdn-glass-bg-content: rgba(10, 12, 32, 0.92);
 	--cdn-glass-border: rgba(144, 96, 240, 0.32);
 	--cdn-glass-shadow:
 		0 4px 24px rgba(144, 96, 240, 0.32), 0 1px 4px rgba(0, 0, 0, 0.5),
@@ -139,8 +139,6 @@
 	border: 1.5px solid var(--cdn-glass-border);
 	border-radius: var(--cdn-radius-md);
 	box-shadow: var(--cdn-glass-shadow);
-	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	transition: var(--cdn-transition-smooth);
 	overflow: hidden;
 	isolation: isolate;
@@ -403,8 +401,6 @@
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-breadcrumbs);
-	-webkit-backdrop-filter: blur(4px) saturate(1.05);
-	backdrop-filter: blur(4px) saturate(1.05);
 	box-shadow: none;
 }
 
@@ -510,14 +506,10 @@
 :root:not(.awsui-dark-mode)
 	[class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-scroll);
-	-webkit-backdrop-filter: blur(4px) saturate(1.05);
-	backdrop-filter: blur(4px) saturate(1.05);
 }
 
 .awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-scroll);
-	-webkit-backdrop-filter: blur(4px) saturate(1.05);
-	backdrop-filter: blur(4px) saturate(1.05);
 }
 
 /* ContentLayout hero strip — wraps the page title ("Feed", "Meetings", etc.).
@@ -532,8 +524,6 @@
 :root:not(.awsui-dark-mode)
 	[class*="awsui_header-background"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-ctl-header);
-	-webkit-backdrop-filter: blur(4px) saturate(1.05);
-	backdrop-filter: blur(4px) saturate(1.05);
 }
 
 .awsui-dark-mode
@@ -544,8 +534,6 @@
 	> [class*="awsui_background"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_header-background"]:not(#\9):not(#\10) {
 	background-color: var(--cdn-glass-bg-ctl-header);
-	-webkit-backdrop-filter: blur(4px) saturate(1.05);
-	backdrop-filter: blur(4px) saturate(1.05);
 }
 
 /* main content area — backing behind the feed cards.
@@ -677,8 +665,6 @@
 	border: 1.5px solid var(--cdn-glass-border);
 	background-color: var(--cdn-glass-bg-strong);
 	box-shadow: var(--cdn-glass-shadow);
-	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	overflow: hidden;
 	isolation: isolate;
 }
@@ -1172,9 +1158,7 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 
 /* Light mode — translucent glass + amber border */
 :root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.7));
-	backdrop-filter: blur(4px) saturate(1.1);
-	-webkit-backdrop-filter: blur(4px) saturate(1.1);
+	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.94));
 	border: 1.5px solid rgba(139, 90, 43, 0.3);
 	color: rgba(90, 58, 20, 0.85);
 	box-shadow:
@@ -1229,9 +1213,7 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 
 /* Dark mode — translucent glass + violet border */
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.55));
-	backdrop-filter: blur(4px) saturate(1.1);
-	-webkit-backdrop-filter: blur(4px) saturate(1.1);
+	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.95));
 	border: 1.5px solid rgba(144, 96, 240, 0.3);
 	color: rgba(215, 199, 238, 0.9);
 	box-shadow:
@@ -1328,9 +1310,7 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
    ========================================================================== */
 :root:not(.awsui-dark-mode)
 	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.7));
-	backdrop-filter: blur(4px) saturate(1.1);
-	-webkit-backdrop-filter: blur(4px) saturate(1.1);
+	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.94));
 	border: 1.5px solid rgba(139, 90, 43, 0.3);
 	color: rgba(90, 58, 20, 0.85);
 	box-shadow:
@@ -1343,9 +1323,7 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 }
 
 .awsui-dark-mode [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.55));
-	backdrop-filter: blur(4px) saturate(1.1);
-	-webkit-backdrop-filter: blur(4px) saturate(1.1);
+	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.95));
 	border: 1.5px solid rgba(144, 96, 240, 0.3);
 	color: rgba(215, 199, 238, 0.9);
 	box-shadow:
@@ -1394,9 +1372,7 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
    the close button bare-gray + undersized. */
 :root:not(.awsui-dark-mode)
 	[class*="awsui_navigation-close"]:not(#\9):not(#\10) {
-	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.7));
-	backdrop-filter: blur(4px) saturate(1.1);
-	-webkit-backdrop-filter: blur(4px) saturate(1.1);
+	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.94));
 	border: 1.5px solid rgba(139, 90, 43, 0.3);
 	color: rgba(90, 58, 20, 0.85);
 	box-shadow:
@@ -1405,9 +1381,7 @@ body.cdn-tools-open [class*="awsui_header-wrapper_"]
 }
 
 .awsui-dark-mode [class*="awsui_navigation-close"]:not(#\9):not(#\10) {
-	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.55));
-	backdrop-filter: blur(4px) saturate(1.1);
-	-webkit-backdrop-filter: blur(4px) saturate(1.1);
+	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.95));
 	border: 1.5px solid rgba(144, 96, 240, 0.3);
 	color: rgba(215, 199, 238, 0.9);
 	box-shadow:

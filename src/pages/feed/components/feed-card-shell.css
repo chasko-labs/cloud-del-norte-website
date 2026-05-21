@@ -97,7 +97,6 @@
 	   whole feed page scrolls with the same stability. */
 	contain: layout paint style;
 	transform: translate3d(0, 0, 0);
-	will-change: transform;
 	/* Layered ambient bloom + 1px stage-rim inset — gives the card a
 	   visible "stage edge" line under varied page backgrounds without
 	   requiring the inner Cloudscape Container to opt in. The inset is
