@@ -206,7 +206,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9) {
 /* ── Postcard treatment — deckled edge, stamp corner, parchment texture ── */
 .cdn-auth-card {
 	max-width: 520px;
-	--cdn-glass-blur: 22px;
+	--cdn-glass-blur: 4px;
 	--cdn-glass-bg: rgba(245, 238, 225, 0.98);
 	border: 1.5px solid rgba(139, 90, 43, 0.28);
 	border-radius: 2px;
