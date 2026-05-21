@@ -73,8 +73,7 @@ class IntersectionObserverMock {
 let mountCount = 0;
 
 vi.mock("./atmosphere-scene", async (importOriginal) => {
-	const mod =
-		await importOriginal<typeof import("../atmosphere-scene")>();
+	const mod = await importOriginal<typeof import("../atmosphere-scene")>();
 	return {
 		...mod,
 		default: (props: import("../atmosphere-scene").AtmosphereSceneProps) => {

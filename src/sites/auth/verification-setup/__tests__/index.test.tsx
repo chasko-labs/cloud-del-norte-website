@@ -151,8 +151,9 @@ describe("verification-setup page", () => {
 		fireEvent.click(screen.getByRole("button", { name: /skip for now/i }));
 
 		await waitFor(() => {
-			const url = (window.location.assign as ReturnType<typeof vi.fn>).mock
-				.calls.at(-1)?.[0] as string;
+			const url = (
+				window.location.assign as ReturnType<typeof vi.fn>
+			).mock.calls.at(-1)?.[0] as string;
 			expect(url).toContain(
 				`return_to=${encodeURIComponent("/rsvp/?event=happy-hour")}`,
 			);
@@ -180,8 +181,9 @@ describe("verification-setup page", () => {
 		fireEvent.click(screen.getByRole("button", { name: /skip for now/i }));
 
 		await waitFor(() => {
-			const url = (window.location.assign as ReturnType<typeof vi.fn>).mock
-				.calls.at(-1)?.[0] as string;
+			const url = (
+				window.location.assign as ReturnType<typeof vi.fn>
+			).mock.calls.at(-1)?.[0] as string;
 			expect(url).toContain(
 				`return_to=${encodeURIComponent("/rsvp/?event=happy-hour")}`,
 			);
@@ -199,8 +201,9 @@ describe("verification-setup page", () => {
 		fireEvent.click(screen.getByRole("button", { name: /skip for now/i }));
 
 		await waitFor(() => {
-			const url = (window.location.assign as ReturnType<typeof vi.fn>).mock
-				.calls.at(-1)?.[0] as string;
+			const url = (
+				window.location.assign as ReturnType<typeof vi.fn>
+			).mock.calls.at(-1)?.[0] as string;
 			expect(url).toContain("return_to=");
 			// The value after return_to= should be empty (encoded empty string)
 			const fragIdx = url.indexOf("#");

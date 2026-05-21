@@ -1,8 +1,8 @@
 // Wave 66 — babylon-budget.ts unit tests
 import { afterEach, describe, expect, it } from "vitest";
 import {
-	MAX_ACTIVE_SCENES,
 	activeScenes,
+	MAX_ACTIVE_SCENES,
 	releaseActivation,
 	requestActivation,
 } from "../babylon-budget";

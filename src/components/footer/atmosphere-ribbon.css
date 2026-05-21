@@ -1,13 +1,19 @@
 /* Wave 60 — AtmosphereRibbon container styles */
+/* Wave 70b — fade-in: starts hidden, fades in once loaded */
 
 .cdn-atmosphere-ribbon {
 	width: 100%;
 	height: 40px; /* desktop default */
 	overflow: hidden;
 	flex-shrink: 0;
-	/* Ensure the ribbon sits above footer z-stack but below top-nav */
 	position: relative;
 	z-index: 0;
+	opacity: 0;
+	transition: opacity 600ms ease-in;
+}
+
+.cdn-atmosphere-ribbon.is-loaded {
+	opacity: 1;
 }
 
 @media (max-width: 688px) {

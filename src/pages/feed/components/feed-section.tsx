@@ -86,10 +86,10 @@ function PostCarousel({ posts, ready }: { posts: FeedPost[]; ready: boolean }) {
 	// Single panel for the carousel — tabs all reference it; content swaps inside.
 	const panelId = `${panelIdBase}-panel`;
 
-	// Task 1.4 / Task 2: cap excerpt to ~140 chars, bump to body-m for legibility.
+	// Task 1.4 / Task 2: cap excerpt to ~160 chars (wave 70b: bumped from 140 for Spanish).
 	const excerpt =
-		post.excerpt && post.excerpt.length > 140
-			? `${post.excerpt.slice(0, 140).trimEnd()}…`
+		post.excerpt && post.excerpt.length > 160
+			? `${post.excerpt.slice(0, 160).trimEnd()}…`
 			: post.excerpt;
 
 	function focusTab(next: number) {
@@ -363,13 +363,13 @@ function RscEntry({
 	date: string;
 	excerpt?: string;
 }) {
-	// Task 3: split on `. `, take first 2 sentences, cap at 140 chars.
+	// Task 3: split on `. `, take first 2 sentences, cap at 160 chars (wave 70b: bumped from 140).
 	const twoSentences = (() => {
 		if (!excerpt) return "";
 		const chunks = excerpt.split(/\.\s+/);
 		const joined =
 			chunks.length >= 2 ? `${chunks[0]}. ${chunks[1]}.` : chunks[0];
-		return joined.length > 140 ? `${joined.slice(0, 140).trimEnd()}…` : joined;
+		return joined.length > 160 ? `${joined.slice(0, 160).trimEnd()}…` : joined;
 	})();
 
 	return (
