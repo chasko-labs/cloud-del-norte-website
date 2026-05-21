@@ -7,17 +7,19 @@
 	z-index: 0;
 	pointer-events: none;
 	background: radial-gradient(
-		ellipse at 50% 60%,
-		rgba(215, 199, 238, 0.55) 0%,
-		rgba(237, 229, 212, 0.92) 60%,
+		ellipse at 50% 40%,
+		rgba(180, 140, 240, 0.28) 0%,
+		rgba(215, 199, 238, 0.45) 30%,
+		rgba(237, 229, 212, 0.85) 65%,
 		rgba(237, 229, 212, 1) 100%
 	);
 }
 
 .awsui-dark-mode .cdn-auth-bg {
 	background: radial-gradient(
-		ellipse at 50% 60%,
-		rgba(60, 20, 100, 0.6) 0%,
+		ellipse at 50% 40%,
+		rgba(80, 30, 140, 0.7) 0%,
+		rgba(40, 15, 80, 0.9) 40%,
 		rgba(14, 18, 32, 1) 100%
 	);
 }

@@ -29,3 +29,7 @@
 	background: linear-gradient(90deg, #87ceeb 0%, #d0eeff 50%, #87ceeb 100%);
 	transition: background 2s ease;
 }
+
+body.cdn-auth-subdomain .cdn-atmosphere-ribbon {
+	display: none;
+}
