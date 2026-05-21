@@ -131,15 +131,17 @@
 .hp-leader {
 	border-radius: var(--cdn-radius-md);
 	border: 1.5px solid var(--cdn-glass-border);
-	background-color: var(--cdn-glass-bg-strong);
+	background-color: rgba(237, 229, 212, 0.92);
 	padding: var(--cdn-space-md) var(--cdn-space-md) var(--cdn-space-md);
 	position: relative;
 	overflow: hidden;
 	box-shadow: var(--cdn-glass-shadow);
-	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	transition: var(--cdn-transition-smooth);
 	isolation: isolate;
+}
+
+.awsui-dark-mode .hp-leader {
+	background-color: rgba(28, 34, 48, 0.92);
 }
 
 /* amber top accent line — same streak token as the cdn-glass family */
@@ -381,15 +383,17 @@ a:focus-visible > .hp-social-pill--brand {
 	position: relative;
 	border-radius: var(--cdn-radius-sm);
 	border: 1px solid var(--cdn-glass-border);
-	background-color: var(--cdn-glass-bg);
+	background-color: rgba(237, 229, 212, 0.92);
 	padding: var(--cdn-space-sm) var(--cdn-space-md) var(--cdn-space-sm)
 		calc(var(--cdn-space-md) + 4px);
 	box-shadow: var(--cdn-glass-shadow);
-	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 	transition: var(--cdn-transition-smooth);
 	overflow: hidden;
 	isolation: isolate;
+}
+
+.awsui-dark-mode .hp-role-card {
+	background-color: rgba(28, 34, 48, 0.92);
 }
 
 /* Left-edge accent strip — vertical streak (was: top horizontal streak).

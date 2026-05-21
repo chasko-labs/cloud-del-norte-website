@@ -241,6 +241,11 @@ html:not(.awsui-dark-mode) body {
 	--color-background-button-normal-disabled-hl039l: #faf7f0 !important;
 	--color-background-segment-default-b0r494: #faf7f0 !important;
 	--color-background-table-header-hdjxos: #ede8db !important;
+
+	/* Wave 71 — WCAG AA contrast: violet text on cream needs darker value */
+	--cdn-violet-text: rgb(100, 60, 180);
+	/* Wave 71 — WCAG AA contrast: AWS orange text on cream needs darker value */
+	--cdn-aws-orange-text: rgb(140, 75, 0);
 }
 
 /* --------------------------------------------------------------------------
@@ -329,6 +334,10 @@ html:not(.awsui-dark-mode) body {
 		232,
 		0.85
 	); /* lavender highlight, text-clip */
+
+	/* Wave 71 — WCAG AA: Cloudscape's default text-body-secondary rgb(101,104,113)
+	   fails contrast on #0a0a2e. Override to rgb(145,148,157) = 4.58:1. */
+	--color-text-body-secondary-1yjmcz: rgb(145, 148, 157) !important;
 }
 
 /* ==========================================================================
@@ -370,8 +379,8 @@ html:not(.awsui-dark-mode) body {
 	border: 2px solid rgba(139, 90, 43, 0.32);
 	/* Light mode: warm cream gradient — not stark white */
 	background: linear-gradient(135deg, #faf7f0 0%, #f5f0e4 40%, #faf7f0 100%);
-	backdrop-filter: blur(8px);
-	-webkit-backdrop-filter: blur(8px);
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
 	box-shadow: var(--cdn-shadow-card-light);
 	transition: var(--cdn-transition-smooth);
 	overflow: hidden;

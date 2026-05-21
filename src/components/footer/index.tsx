@@ -17,7 +17,7 @@ export default function Footer() {
 					<div className="cdn-footer-weather">
 						<Weather />
 					</div>
-					<span className="cdn-version">0.0.0143</span>
+					<span className="cdn-version">0.0.0147</span>
 				</div>
 			</footer>
 		</>

@@ -272,6 +272,16 @@ main[class*="awsui_layout"] {
 	}
 }
 
+/* Wave 71 — narrow transition on cdn-viz-active. Cloudscape's awsui_root
+   injects `transition: all 0.18s` which causes the browser to transition
+   EVERY computed property on scroll-triggered class changes. Override with
+   only the properties needed for theme switching. */
+.cdn-viz-active {
+	transition:
+		background-color 0.3s ease,
+		color 0.3s ease;
+}
+
 /* When background-viz canvas is mounted, make the dark layout transparent
    so the nebula/star canvas at z-index:-1 shows through.
    cdn-viz-active is added to <html> by canvas.ts, parallel to awsui-dark-mode. */
@@ -375,8 +385,8 @@ main[class*="awsui_layout"] {
 .cdn-viz-active:not(.awsui-dark-mode) [class*="navigation__drawer"],
 .cdn-viz-active:not(.awsui-dark-mode) nav[class*="awsui_navigation"] {
 	background: rgba(237, 229, 212, 0.72);
-	backdrop-filter: blur(14px);
-	-webkit-backdrop-filter: blur(14px);
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
 }
 
 .cdn-viz-active.awsui-dark-mode [class*="navigation-container"],
@@ -384,14 +394,14 @@ main[class*="awsui_layout"] {
 .cdn-viz-active.awsui-dark-mode [class*="navigation__drawer"],
 .cdn-viz-active.awsui-dark-mode nav[class*="awsui_navigation"] {
 	background: rgba(10, 12, 20, 0.72);
-	backdrop-filter: blur(14px);
-	-webkit-backdrop-filter: blur(14px);
+	backdrop-filter: blur(4px);
+	-webkit-backdrop-filter: blur(4px);
 }
 
 /* Top navigation blur reinforcement */
 .cdn-viz-active #top-nav [class*="top-navigation"] {
-	backdrop-filter: blur(20px) saturate(1.3);
-	-webkit-backdrop-filter: blur(20px) saturate(1.3);
+	backdrop-filter: blur(4px) saturate(1.3);
+	-webkit-backdrop-filter: blur(4px) saturate(1.3);
 }
 
 /* ── cdn-card glassmorphism — shared utility class ──────────────────
@@ -1746,8 +1756,8 @@ nav[class*="awsui_navigation_"]:not(
 
 .cdn-ugtag-aws {
 	font-size: clamp(15px, 1.8vw, 20px);
-	/* Slight transparency tones the orange down without dulling the brand */
-	color: rgba(255, 153, 0, 0.88);
+	/* Wave 71 — darkened from rgba(255,153,0,0.88) to rgb(140,75,0) for WCAG AA on cream */
+	color: rgb(140, 75, 0);
 	/* Right + bottom asymmetric drop-shadow (no left/top) reads as a soft
 	   3D shadow rather than a full outline. v0.0.0069: tightened the inner
 	   glow blur (8px → 3px) so it doesn't bleed into the A's interior
