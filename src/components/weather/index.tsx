@@ -140,24 +140,38 @@ export default function Weather() {
 		}
 		setData(null);
 		let cancelled = false;
-		void Promise.allSettled([
-			fetch(forecastUrl(city)).then((r) =>
-				r.ok ? (r.json() as Promise<Forecast>) : null,
-			),
-			fetch(aqiUrl(city)).then((r) =>
-				r.ok ? (r.json() as Promise<AirQuality>) : null,
-			),
-		]).then((results) => {
-			if (cancelled) return;
-			const forecast =
-				results[0].status === "fulfilled" ? results[0].value : null;
-			const air = results[1].status === "fulfilled" ? results[1].value : null;
-			const fresh: CachedWeather = { ts: Date.now(), forecast, air };
-			saveCache(city, fresh);
-			setData(fresh);
-		});
+		const doFetch = () => {
+			void Promise.allSettled([
+				fetch(forecastUrl(city)).then((r) =>
+					r.ok ? (r.json() as Promise<Forecast>) : null,
+				),
+				fetch(aqiUrl(city)).then((r) =>
+					r.ok ? (r.json() as Promise<AirQuality>) : null,
+				),
+			]).then((results) => {
+				if (cancelled) return;
+				const forecast =
+					results[0].status === "fulfilled" ? results[0].value : null;
+				const air = results[1].status === "fulfilled" ? results[1].value : null;
+				const fresh: CachedWeather = { ts: Date.now(), forecast, air };
+				saveCache(city, fresh);
+				setData(fresh);
+			});
+		};
+		// useEffect only runs in the browser — window is always defined here
+		let timerId: number | undefined;
+		let idleCbId: number | undefined;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const win = window as any;
+		if ("requestIdleCallback" in window) {
+			idleCbId = requestIdleCallback(doFetch, { timeout: 2000 });
+		} else {
+			timerId = win.setTimeout(doFetch, 1500);
+		}
 		return () => {
 			cancelled = true;
+			if (idleCbId !== undefined) cancelIdleCallback(idleCbId);
+			if (timerId !== undefined) win.clearTimeout(timerId);
 		};
 	}, [city]);
 

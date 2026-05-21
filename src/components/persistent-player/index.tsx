@@ -138,7 +138,9 @@ function PersistentPlayerBar({
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const [blocked, setBlocked] = useState(false);
 	const [playing, setPlaying] = useState(false);
+	const playingRef = useRef(false);
 	const [connecting, setConnecting] = useState(false);
+	const [readyToLoad, setReadyToLoad] = useState(autoplay);
 	const [nowPlaying, setNowPlaying] = useState<string | null>(null);
 	const [rssAudioUrl, setRssAudioUrl] = useState<string | null>(null);
 	const [streamHealth, setStreamHealth] = useState<StreamHealth>("ok");
@@ -319,6 +321,8 @@ function PersistentPlayerBar({
 		setConnecting(false);
 		retryCountRef.current = 0;
 		hasConnectedRef.current = false;
+		// gate audio src: preserve when playing (station skip mid-play), reset when idle
+		if (!playingRef.current) setReadyToLoad(false);
 		// wave 28c: reset podcast-specific retry budget + clear pending backoff timer
 		podcastRetryHistoryRef.current = [];
 		if (podcastRetryTimerRef.current !== null) {
@@ -347,6 +351,7 @@ function PersistentPlayerBar({
 			if (!detail?.url) return;
 			setRssAudioUrl(detail.url);
 			if (detail.title) setNowPlaying(detail.title);
+			setReadyToLoad(true);
 			// best-effort autoplay — same pattern as the play() callback below.
 			// failure (e.g. browser blocks autoplay) sets the blocked state via
 			// the existing audio.play() catch chain.
@@ -578,6 +583,7 @@ function PersistentPlayerBar({
 			document.body.classList.add("cdn-stream-playing");
 			if (isPodcast) document.body.classList.add("cdn-podcast-playing");
 			setPlaying(true);
+			playingRef.current = true;
 			setConnecting(false);
 			onPlayStateChangeRef.current?.(true);
 		};
@@ -585,6 +591,7 @@ function PersistentPlayerBar({
 			document.body.classList.remove("cdn-stream-playing");
 			document.body.classList.remove("cdn-podcast-playing");
 			setPlaying(false);
+			playingRef.current = false;
 			onPlayStateChangeRef.current?.(false);
 		};
 		audio.addEventListener("playing", onPlay);
@@ -801,6 +808,7 @@ function PersistentPlayerBar({
 	const play = useCallback(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
+		setReadyToLoad(true);
 		setConnecting(true);
 		audio.play().catch(() => {
 			setConnecting(false);
@@ -971,7 +979,7 @@ function PersistentPlayerBar({
 			<audio
 				key={isPodcast ? "podcast" : "radio"}
 				ref={audioRef}
-				src={rssAudioUrl ?? state.stationUrl}
+				src={readyToLoad ? (rssAudioUrl ?? state.stationUrl) : undefined}
 				preload="none"
 				crossOrigin={isPodcast ? undefined : "anonymous"}
 				onPlay={handlePlay}
