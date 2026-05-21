@@ -277,6 +277,9 @@ export interface ShellProps {
 	/** Hide the "sign in" button in the top-nav utilities. Used on the auth subdomain
 	 *  itself so the button isn't recursive (clicking it from /login goes to /login). */
 	hideSignInUtility?: boolean;
+	/** Suppress the persistent radio player slot. Used on subdomains where the player
+	 *  bar is irrelevant (e.g. awsug). */
+	hidePlayer?: boolean;
 }
 
 function ShellContent({
@@ -297,6 +300,7 @@ function ShellContent({
 	navigationHide,
 	toolsHide,
 	hideSignInUtility,
+	hidePlayer,
 }: ShellProps) {
 	const { t } = useTranslation();
 	const auth = useAuth();
@@ -687,7 +691,7 @@ function ShellContent({
 							role="region"
 							aria-label="radio player"
 						>
-							<PersistentPlayer />
+							{!hidePlayer && <PersistentPlayer />}
 						</div>
 						{children}
 					</>

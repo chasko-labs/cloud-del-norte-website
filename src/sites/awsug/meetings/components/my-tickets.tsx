@@ -71,7 +71,9 @@ export default function MyTickets({ auth }: { auth: AuthState }) {
 					<Spinner />
 				</Box>
 			) : errorKey ? (
-				<Alert type="error">{t(errorKey)}</Alert>
+				<Alert type={errorKey === "rsvp.error.unauthorized" ? "info" : "error"}>
+					{t(errorKey)}
+				</Alert>
 			) : tickets.length === 0 ? (
 				<Box color="text-status-inactive">{t("meetings.myTicketsEmpty")}</Box>
 			) : (
