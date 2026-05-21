@@ -1,9 +1,48 @@
 # cloud del norte — handoff plan
 
-**date:** 2026-05-19/20  
+**date:** 2026-05-21  
 **branch:** main  
-**last commit:** 09b80182 fix(auth): wave 55 — preserve return_to query on signup↔login cross-links (P1 from wave 54 nova act)  
-**deploy:** all 4 subdomains current as of 2026-05-20 ~19:30 UTC.
+**last commit:** 0b07dd3c fix(feed): wave 80 — featured event date-plate allow wrap  
+**deploy:** all 4 subdomains current as of 2026-05-21 ~14:00 UTC.  
+**tests:** 979 passing (109 test files)
+
+## session 2026-05-21 — waves 75-80 quality pass + auth atmosphere
+
+Bryan: "you have a giant backlog get back to it" + prior session left "AWS USER GROUP" dirty.
+
+| wave | commit | what |
+|---|---|---|
+| tagline fix | b333d08c | AWS orange #ff9900 restored on cdn-ugtag (wave 71 WCAG brown reverted) |
+| 75a | 43141aa6 | babylon-budget test assertions 2→3; drop stale volunteer-btn will-change test |
+| 75b | 8f7b5a35 | content-visibility:auto on feed grid cells (main-thread scroll jank) |
+| 76 | 3c2c94e3 | IntersectionObserver mock in vitest setup; drop stale featured-event will-change assertion |
+| 77-77b | 746a7ef6-94673dfd | next-meetup date-plate max-width:100% + overflow:hidden on wrapper |
+| 78 | 35e4c42a | next-meetup date white-space:normal + clamp(0.8rem,2.4cqw,1.2rem) — CONFIRMED |
+| 79 | 172f4e03 | auth page atmosphere: CSS radial-gradient fallback + lazy Babylon sky |
+| 79b | 3a9b9dbc | stronger gradient opacity + suppress atmosphere ribbon on cdn-auth-subdomain |
+| 80 | 0b07dd3c | featured event date-plate white-space:normal (same fix as wave 78) — CONFIRMED |
+
+### verified live
+- AWS USER GROUP: bright orange confirmed via Playwright computed style rgb(255,153,0)
+- RSVP CTA links to /rsvp/index.html?event=... (wave 65 fix confirmed)
+- Featured event date: "Wednesday, June 3, 2026 at 6:00 PM MDT" fully visible
+- Next meetup date: "Wednesday, May 27, 2026 at 2:30 PM UTC" fully visible
+- Auth login: lavender radial-gradient background, atmosphere ribbon suppressed
+- 979 vitest tests, 0 failures
+- Babylon budget: MAX_ACTIVE_SCENES=3, canvas=1 in prod
+- content-visibility:auto on 30 feed cards, layout correct
+
+### remaining backlog
+- Nova Act new-user script: profile config fixed (jitsi-video-hosting + us-west-2). Flow blocked at application-level admin approval gate — not a code bug, expected behavior
+- Login form Babylon sky scene actually mounts on capable devices (lazy chunk, wave 79 ships it)
+- Geospatial camera (playground 810IFC) — deferred
+- Product-page 3D-ism — deferred
+- "Apply to join" button corner clips the auth card border — low priority cosmetic
+
+### next session first actions
+1. `git fetch && git log --oneline -5` — confirm state
+2. Run `npm test` — confirm 979 still green
+3. Check for new Bryan feedback and triage
 
 ---
 
