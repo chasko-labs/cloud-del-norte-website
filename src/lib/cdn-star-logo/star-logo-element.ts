@@ -11,6 +11,7 @@
 //
 // The component sizes itself to its host element via CSS (default 100% / 100%).
 
+import { releaseActivation, requestActivation } from "../babylon-budget.js";
 import { detectRenderCapability } from "../render-capability.js";
 import { StarScene } from "./StarScene.js";
 
@@ -52,6 +53,8 @@ export class CdnStarLogoElement extends HTMLElement {
 			return;
 		}
 
+		if (!requestActivation("cdn-star-logo")) return;
+
 		this.scene = new StarScene(this.canvas, {
 			transparentBackground: this.hasAttribute("transparent"),
 			autoRotate: !this.hasAttribute("no-rotate"),
@@ -67,6 +70,7 @@ export class CdnStarLogoElement extends HTMLElement {
 		this.scene?.dispose();
 		this.scene = null;
 		this.canvas = null;
+		releaseActivation("cdn-star-logo");
 	}
 }
 

@@ -3,9 +3,17 @@
 // Each Babylon-mounting component calls requestActivation before creating an
 // Engine and releaseActivation in its cleanup path.
 
-export const MAX_ACTIVE_SCENES = 2;
+export const MAX_ACTIVE_SCENES = 3;
 
 export const activeScenes: Set<string> = new Set();
+
+// Insertion-order tracks LRU — oldest entry is first in iteration order.
+// Persistent scenes (listed here) are never evicted by forceReleaseLRU.
+const PERSISTENT_SCENES = new Set<string>([
+	"atmosphere-scene",
+	"atmosphere-ribbon",
+	"babylon-spin-demo",
+]);
 
 /**
  * Request activation for a scene slot.
@@ -25,4 +33,18 @@ export function requestActivation(sceneId: string): boolean {
  */
 export function releaseActivation(sceneId: string): void {
 	activeScenes.delete(sceneId);
+}
+
+/**
+ * Evict the oldest non-persistent scene to make room for a persistent one.
+ * Returns true if a slot was freed; false if no evictable scene exists.
+ */
+export function forceReleaseLRU(): boolean {
+	for (const id of activeScenes) {
+		if (!PERSISTENT_SCENES.has(id)) {
+			activeScenes.delete(id);
+			return true;
+		}
+	}
+	return false;
 }

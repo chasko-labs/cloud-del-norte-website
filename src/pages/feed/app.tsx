@@ -113,6 +113,11 @@ function shuffled<T>(arr: T[]): T[] {
 	return copy;
 }
 
+// Set to true once a non-oembed live detection method is available.
+// When false, vBrownBag and theZacsShow channels are treated as offline,
+// which eliminates the youtube.com/oembed 404s that flood the console.
+const LIVE_DETECTION_ENABLED = false;
+
 function AppContent({
 	theme,
 	onThemeChange,
@@ -156,12 +161,17 @@ function AppContent({
 	}, []);
 
 	const { live: andresLive, videoId: andresVideoId } = useAndresLive();
-	const { live: vbrownbagLive, videoId: vbrownbagVideoId } = useChannelLive(
+	const { live: _vbrownbagLive, videoId: _vbrownbagVideoId } = useChannelLive(
 		"https://www.youtube.com/@vBrownBag/live",
 	);
-	const { live: zacsLive, videoId: zacsVideoId } = useChannelLive(
+	const { live: _zacsLive, videoId: _zacsVideoId } = useChannelLive(
 		"https://www.youtube.com/@thezacsshowtalkingaws/live",
 	);
+	// Gate: suppress live detection until a non-oembed method is available.
+	const vbrownbagLive = LIVE_DETECTION_ENABLED && _vbrownbagLive;
+	const vbrownbagVideoId = LIVE_DETECTION_ENABLED ? _vbrownbagVideoId : null;
+	const zacsLive = LIVE_DETECTION_ENABLED && _zacsLive;
+	const zacsVideoId = LIVE_DETECTION_ENABLED ? _zacsVideoId : null;
 
 	// sections wired with live callbacks — stable because markLive is stable
 	useEffect(() => {

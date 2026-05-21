@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
 import { useTranslation } from "../../hooks/useTranslation";
 import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
 import BabylonGate from "../babylon-gate";
@@ -137,6 +138,10 @@ export default function FionaFrame() {
 					mountFionaPanel: (base: string) => Promise<void>;
 				};
 				if (cancelled) return;
+				if (!requestActivation("fiona-embed")) {
+					canvasEl?.removeAttribute("data-fiona-mounted");
+					return;
+				}
 				await mod.mountFionaPanel(base);
 			} catch (err) {
 				console.warn("[fiona-frame] mount failed:", err);
@@ -178,6 +183,7 @@ export default function FionaFrame() {
 		return () => {
 			cancelled = true;
 			observer?.disconnect();
+			releaseActivation("fiona-embed");
 		};
 	}, []);
 
