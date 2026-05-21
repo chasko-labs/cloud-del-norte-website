@@ -1755,18 +1755,12 @@ nav[class*="awsui_navigation_"]:not(
 
 .cdn-ugtag-aws {
 	font-size: clamp(15px, 1.8vw, 20px);
-	/* Wave 71 — darkened from rgba(255,153,0,0.88) to rgb(140,75,0) for WCAG AA on cream */
-	color: rgb(140, 75, 0);
-	/* Right + bottom asymmetric drop-shadow (no left/top) reads as a soft
-	   3D shadow rather than a full outline. v0.0.0069: tightened the inner
-	   glow blur (8px → 3px) so it doesn't bleed into the A's interior
-	   triangle. Outer halo (18px) preserved for the lit-sign glow. */
+	/* Bright AWS orange — wave 71 WCAG brown reverted (brown made it look dirty in both modes) */
+	color: #ff9900;
 	text-shadow:
-		1px 1px 0 rgba(44, 18, 6, 0.85),
-		1px 0 0 rgba(44, 18, 6, 0.6),
-		0 1px 0 rgba(44, 18, 6, 0.6),
-		0 0 3px rgba(255, 153, 0, 0.45),
-		0 0 18px rgba(255, 153, 0, 0.18);
+		0 0 4px rgba(255, 153, 0, 0.7),
+		0 0 18px rgba(255, 153, 0, 0.35),
+		1px 1px 0 rgba(0, 0, 0, 0.4);
 	animation: cdn-ugtag-pulse 6s ease-in-out infinite;
 }
 
