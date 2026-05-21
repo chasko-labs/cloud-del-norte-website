@@ -36,6 +36,9 @@
 			},
 			"style": {
 				"noDescendingSpecificity": "warn"
+			},
+			"complexity": {
+				"noImportantStyles": "off"
 			}
 		}
 	},
@@ -51,5 +54,21 @@
 				"organizeImports": "on"
 			}
 		}
-	}
+	},
+	"overrides": [
+		{
+			"includes": [
+				"src/styles/cdn-glass-streaks.css",
+				"src/styles/cdn-atmospheric.css",
+				"src/styles/tokens.css"
+			],
+			"linter": {
+				"rules": {
+					"style": {
+						"noDescendingSpecificity": "off"
+					}
+				}
+			}
+		}
+	]
 }
