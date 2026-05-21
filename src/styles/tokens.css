@@ -399,6 +399,9 @@ html:not(.awsui-dark-mode) body {
 		0 2px 4px rgba(0, 0, 0, 0.3),
 		0 8px 24px -6px rgba(0, 0, 0, 0.35),
 		0 0 24px -8px rgba(144, 96, 240, 0.15);
+	/* wave 82 — fix purple link contrast (WCAG AA ≥ 4.5:1 on dark navy) */
+	--color-text-link-default-hude44: var(--cdn-lavender);
+	--color-text-link-secondary-default-4p0gj8: var(--cdn-lavender);
 }
 
 /* ==========================================================================

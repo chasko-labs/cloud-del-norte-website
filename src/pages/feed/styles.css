@@ -841,6 +841,7 @@
 	background-image: var(--cdn-card-gradient-light);
 	border-color: rgba(144, 96, 240, 0.22);
 	box-shadow: var(--cdn-card-rim-light);
+	color: var(--cdn-lavender);
 }
 
 /* per-card accent: left-edge color stripe — palette cycles every 4 cards
