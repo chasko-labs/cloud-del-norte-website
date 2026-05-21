@@ -84,7 +84,7 @@ describe("login → redirectWithTokens: needsVerificationSetup stash", () => {
 		sessionStorage.removeItem("cdn.needsVerificationSetup");
 		if (returnTo) sessionStorage.setItem("cdn.returnTo", returnTo);
 		window.location.assign(
-			"/verification-setup/index.html" + window.location.search,
+			`/verification-setup/index.html${window.location.search}`,
 		);
 
 		expect(sessionStorage.getItem("cdn.returnTo")).toBe(
