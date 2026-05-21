@@ -6,7 +6,7 @@
 //   B.2 — AndresYoutubeLive fanfare (brand star, sigil, ayl-header-row)
 //   C   — FeaturedVideoCard desktop right-column alignment (align-items: start in CSS)
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import AndresYoutubeLive from "../andres-youtube-live";
@@ -43,14 +43,14 @@ const SAMPLE_POSTS: FeedPost[] = [
 
 // IntersectionObserver stub for lazy-embed tests
 type IOCallback = (entries: IntersectionObserverEntry[]) => void;
-let lastIOCb: IOCallback | null = null;
+let _lastIOCb: IOCallback | null = null;
 
 beforeEach(() => {
-	lastIOCb = null;
+	_lastIOCb = null;
 	class IOMock {
 		disconnect = vi.fn();
 		constructor(cb: IOCallback) {
-			lastIOCb = cb;
+			_lastIOCb = cb;
 		}
 		observe() {}
 	}

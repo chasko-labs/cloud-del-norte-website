@@ -59,7 +59,7 @@ function LoginForm() {
 	const [email, setEmail] = useState(
 		() => localStorage.getItem("cdn.passkey_email") ?? "",
 	);
-	const passkeyAutoRef = useRef(false);
+	const _passkeyAutoRef = useRef(false);
 	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [emailError, setEmailError] = useState("");
