@@ -2,11 +2,11 @@
 
 **date:** 2026-05-21  
 **branch:** main  
-**last commit:** ddcab135 fix(awsug): wave 81 — fix logged-in experience  
-**deploy:** all 4 subdomains current as of 2026-05-21 ~14:46 UTC.  
+**last commit:** b06f1b08 perf(auth): wave 83 — code-split _layout chunk via manualChunks  
+**deploy:** all 4 subdomains current as of 2026-05-21 ~19:00 UTC.  
 **tests:** 979 passing (109 test files)
 
-## session 2026-05-21 — waves 75-82 quality pass + auth atmosphere + logged-in fixes
+## session 2026-05-21 — waves 75-83 quality pass + auth atmosphere + logged-in fixes + auth code-split + woodpecker investigation
 
 Bryan: "you have a giant backlog get back to it" + prior session left "AWS USER GROUP" dirty.
 
@@ -24,6 +24,8 @@ Bryan: "you have a giant backlog get back to it" + prior session left "AWS USER 
 | 81 | ddcab135 | fix(awsug): logged-in experience — mic prompt, tickets error, player visibility on awsug, June 3 RSVP visibility (PR #324) |
 | 82b | PR #326 | Nova Act new-user signup password-fill + wizard nav fix |
 | 82c | PR #325 | dark-mode featured talk text contrast + sidebar background seam (CSS) |
+| 83a | b06f1b08 | perf(auth): code-split _layout chunk via manualChunks — mirror wave 11 strategy (877KB→~140KB, -84%). PR #328 |
+| 83b/c | issue #329 | Woodpecker auto-deploy webhook investigation — root cause: auto-cancel killed deploy pipeline when non-matching HANDOFF push arrived 16s later. Fix: disable auto-cancel on main. No trivial fix applied. |
 
 ### verified live
 - AWS USER GROUP: bright orange confirmed via Playwright computed style rgb(255,153,0)
@@ -36,19 +38,23 @@ Bryan: "you have a giant backlog get back to it" + prior session left "AWS USER 
 - content-visibility:auto on 30 feed cards, layout correct
 - Wave 81: all 4 surfaces HTTP 200 — clouddelnorte.org last-modified 2026-05-21T14:46:42Z, awsug 14:44:41Z, auth 14:19:58Z, dev 14:21:00Z
 - Wave 82: PRs #325 (dark-mode CSS) + #326 (Nova Act password-fill) open, no conflicts, pre-commit gate passing
+- Wave 83a: auth.clouddelnorte.org HTTP 200, last-modified 2026-05-21T19:00:13Z (code-split deployed via manual deploy)
+- Wave 83b/c: Woodpecker containers healthy, webhook delivery confirmed from GitHub — auto-cancel policy is root cause (issue #329)
 
 ### remaining backlog
 - "Apply to join" button corner clips the auth card border — low priority cosmetic
 - heraldstack Cognito password recovery — secret missing from both aerospaceug-admin and bryanchasko-kiro AWS profiles
+- Woodpecker auto-cancel on main kills deploy pipelines — disable auto-cancel on main branch ([#329](https://github.com/chasko-labs/cloud-del-norte-website/issues/329))
 - Geospatial camera (playground 810IFC) — deferred
 - Product-page 3D-ism — deferred
 
 ### next session first actions
 1. `git fetch && git log --oneline -5` — confirm state
-2. Merge PRs #325 + #326 if not auto-merged; verify Woodpecker deploy fires
-3. Post-merge: re-verify last-modified timestamps updated on all 4 surfaces
-4. Run `npm test` — confirm 979 still green
-5. Check for new Bryan feedback and triage
+2. Disable Woodpecker auto-cancel on main branch (fix for issue #329)
+3. Merge PRs #325 + #326 if not auto-merged; verify Woodpecker deploy fires after auto-cancel fix
+4. Post-merge: re-verify last-modified timestamps updated on all 4 surfaces
+5. Run `npm test` — confirm 979 still green
+6. Check for new Bryan feedback and triage
 
 ---
 
