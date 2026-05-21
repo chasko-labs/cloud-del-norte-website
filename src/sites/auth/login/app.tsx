@@ -432,7 +432,12 @@ function LoginForm() {
 
 	return (
 		<div className="cdn-auth-form-inner">
-			<Box variant="small" textAlign="right" margin={{ bottom: "s" }}>
+			<Box
+				variant="small"
+				textAlign="right"
+				margin={{ bottom: "s" }}
+				padding={{ right: "xl" }}
+			>
 				{t("auth.login.noAccount")}{" "}
 				<Link
 					href={`/signup/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
