@@ -1,1 +1,7 @@
+#!/usr/bin/env sh
+set -e
+# 1. auto-fix staged files (lint-staged + biome check --write)
 npx lint-staged
+# 2. full-tree verify matches .woodpecker/deploy.yml gate
+#    (catches violations in unstaged files that would fail deploy)
+npx biome ci --diagnostic-level=error src/
