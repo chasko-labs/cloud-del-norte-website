@@ -395,6 +395,7 @@ main[class*="awsui_layout"] {
 	background: rgba(10, 12, 20, 0.72);
 	backdrop-filter: blur(4px);
 	-webkit-backdrop-filter: blur(4px);
+	border-right-color: transparent;
 }
 
 /* Top navigation blur reinforcement */
