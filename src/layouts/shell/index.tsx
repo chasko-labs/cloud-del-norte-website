@@ -375,6 +375,15 @@ function ShellContent({
 		};
 	}, [toolsOpen]);
 
+	// Wave 70c: nav-panel open/close → body class so footer can inset its left edge.
+	useEffect(() => {
+		if (typeof document === "undefined") return;
+		document.body.classList.toggle("cdn-nav-open", navOpen);
+		return () => {
+			document.body.classList.remove("cdn-nav-open");
+		};
+	}, [navOpen]);
+
 	// cdn-scrolled body class — drives the fixed-position mobile toggle pair.
 	// Threshold 80px gives one clear scroll gesture before the class fires;
 	// removes cleanly when back near top so the toggles return to normal flow.
