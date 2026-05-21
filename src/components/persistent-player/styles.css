@@ -61,11 +61,9 @@
 		to right,
 		transparent 0%,
 		transparent 42%,
-		rgba(237, 229, 212, 0.55) 58%,
-		rgba(237, 229, 212, 0.78) 100%
+		rgba(237, 229, 212, 0.92) 58%,
+		rgba(237, 229, 212, 0.97) 100%
 	);
-	backdrop-filter: blur(4px);
-	-webkit-backdrop-filter: blur(4px);
 	/* mask: reveal from 12% so skip/next button is clearly visible */
 	-webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%);
 	mask-image: linear-gradient(to right, transparent 0%, black 12%);
@@ -119,11 +117,9 @@ body.cdn-stream-playing .cdn-player-slot::before {
 		to right,
 		transparent 0%,
 		transparent 42%,
-		rgba(10, 12, 20, 0.55) 58%,
-		rgba(10, 12, 20, 0.82) 100%
+		rgba(10, 12, 20, 0.92) 58%,
+		rgba(10, 12, 20, 0.97) 100%
 	);
-	backdrop-filter: blur(4px);
-	-webkit-backdrop-filter: blur(4px);
 	-webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%);
 	mask-image: linear-gradient(to right, transparent 0%, black 12%);
 	border-bottom: none;

@@ -96,7 +96,6 @@
 @media (prefers-reduced-motion: no-preference) {
 	#top-nav::after {
 		animation: cdn-shimmer 24s ease-in-out infinite;
-		will-change: background-position;
 	}
 }
 

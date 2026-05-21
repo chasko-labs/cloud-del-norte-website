@@ -39,8 +39,6 @@
 	background-color: var(--cdn-glass-bg-strong);
 	border: 1px solid var(--cdn-glass-border);
 	box-shadow: var(--cdn-glass-shadow);
-	-webkit-backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
-	backdrop-filter: blur(var(--cdn-glass-blur)) saturate(1.05);
 }
 
 .cdn-roadmap-legend-item {
@@ -274,8 +272,6 @@
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	-webkit-backdrop-filter: blur(4px) saturate(1.05);
-	backdrop-filter: blur(4px) saturate(1.05);
 	isolation: isolate;
 }
 
