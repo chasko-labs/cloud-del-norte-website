@@ -57,12 +57,15 @@ export default defineConfig({
 				),
 			},
 			output: {
-				// split BabylonJS + Cloudscape into long-lived named chunks so
+				// split React, BabylonJS + Cloudscape into long-lived named chunks so
 				// (a) the browser caches them across deploys when only app code
 				// changes, and (b) no single chunk exceeds the warning limit.
 				// Order matters: most specific match wins — Meshes / Materials
 				// must come before the catch-all "babylon-core".
 				manualChunks(id: string) {
+					// vendor-react: mirrors awsug/auth pattern — long-cached across deploys
+					if (id.includes("node_modules/react-dom")) return "vendor-react";
+					if (id.includes("node_modules/react/")) return "vendor-react";
 					if (id.includes("node_modules/@babylonjs/core/Meshes"))
 						return "babylon-meshes";
 					if (
@@ -137,6 +140,8 @@ export default defineConfig({
 						return "cloudscape-layout";
 					if (id.includes("node_modules/@cloudscape-design"))
 						return "cloudscape-core";
+					if (id.includes("/src/locales/es-MX.json")) return "locale-mx";
+					if (id.includes("/src/locales/en-US.json")) return "locale-en";
 				},
 			},
 		},
