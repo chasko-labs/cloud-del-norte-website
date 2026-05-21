@@ -1,0 +1,33 @@
+/* Auth subdomain background atmosphere — CSS-only fallback (always rendered).
+   Babylon sky canvas layers on top when device is capable.
+   aria-hidden div .cdn-auth-bg hosts both layers. */
+.cdn-auth-bg {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	pointer-events: none;
+	background: radial-gradient(
+		ellipse at 50% 60%,
+		rgba(215, 199, 238, 0.55) 0%,
+		rgba(237, 229, 212, 0.92) 60%,
+		rgba(237, 229, 212, 1) 100%
+	);
+}
+
+.awsui-dark-mode .cdn-auth-bg {
+	background: radial-gradient(
+		ellipse at 50% 60%,
+		rgba(60, 20, 100, 0.6) 0%,
+		rgba(14, 18, 32, 1) 100%
+	);
+}
+
+.cdn-auth-bg canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0.55;
+	border: none;
+	outline: none;
+}
