@@ -2,11 +2,11 @@
 
 **date:** 2026-05-21  
 **branch:** main  
-**last commit:** 0b07dd3c fix(feed): wave 80 — featured event date-plate allow wrap  
-**deploy:** all 4 subdomains current as of 2026-05-21 ~14:00 UTC.  
+**last commit:** ddcab135 fix(awsug): wave 81 — fix logged-in experience  
+**deploy:** all 4 subdomains current as of 2026-05-21 ~14:46 UTC.  
 **tests:** 979 passing (109 test files)
 
-## session 2026-05-21 — waves 75-80 quality pass + auth atmosphere
+## session 2026-05-21 — waves 75-82 quality pass + auth atmosphere + logged-in fixes
 
 Bryan: "you have a giant backlog get back to it" + prior session left "AWS USER GROUP" dirty.
 
@@ -21,6 +21,9 @@ Bryan: "you have a giant backlog get back to it" + prior session left "AWS USER 
 | 79 | 172f4e03 | auth page atmosphere: CSS radial-gradient fallback + lazy Babylon sky |
 | 79b | 3a9b9dbc | stronger gradient opacity + suppress atmosphere ribbon on cdn-auth-subdomain |
 | 80 | 0b07dd3c | featured event date-plate white-space:normal (same fix as wave 78) — CONFIRMED |
+| 81 | ddcab135 | fix(awsug): logged-in experience — mic prompt, tickets error, player visibility on awsug, June 3 RSVP visibility (PR #324) |
+| 82b | PR #326 | Nova Act new-user signup password-fill + wizard nav fix |
+| 82c | PR #325 | dark-mode featured talk text contrast + sidebar background seam (CSS) |
 
 ### verified live
 - AWS USER GROUP: bright orange confirmed via Playwright computed style rgb(255,153,0)
@@ -31,18 +34,21 @@ Bryan: "you have a giant backlog get back to it" + prior session left "AWS USER 
 - 979 vitest tests, 0 failures
 - Babylon budget: MAX_ACTIVE_SCENES=3, canvas=1 in prod
 - content-visibility:auto on 30 feed cards, layout correct
+- Wave 81: all 4 surfaces HTTP 200 — clouddelnorte.org last-modified 2026-05-21T14:46:42Z, awsug 14:44:41Z, auth 14:19:58Z, dev 14:21:00Z
+- Wave 82: PRs #325 (dark-mode CSS) + #326 (Nova Act password-fill) open, no conflicts, pre-commit gate passing
 
 ### remaining backlog
-- Nova Act new-user script: profile config fixed (jitsi-video-hosting + us-west-2). Flow blocked at application-level admin approval gate — not a code bug, expected behavior
-- Login form Babylon sky scene actually mounts on capable devices (lazy chunk, wave 79 ships it)
+- "Apply to join" button corner clips the auth card border — low priority cosmetic
+- heraldstack Cognito password recovery — secret missing from both aerospaceug-admin and bryanchasko-kiro AWS profiles
 - Geospatial camera (playground 810IFC) — deferred
 - Product-page 3D-ism — deferred
-- "Apply to join" button corner clips the auth card border — low priority cosmetic
 
 ### next session first actions
 1. `git fetch && git log --oneline -5` — confirm state
-2. Run `npm test` — confirm 979 still green
-3. Check for new Bryan feedback and triage
+2. Merge PRs #325 + #326 if not auto-merged; verify Woodpecker deploy fires
+3. Post-merge: re-verify last-modified timestamps updated on all 4 surfaces
+4. Run `npm test` — confirm 979 still green
+5. Check for new Bryan feedback and triage
 
 ---
 
