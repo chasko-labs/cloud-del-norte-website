@@ -13,8 +13,8 @@ afterEach(() => {
 });
 
 describe("babylon-budget", () => {
-	it("MAX_ACTIVE_SCENES is 2", () => {
-		expect(MAX_ACTIVE_SCENES).toBe(2);
+	it("MAX_ACTIVE_SCENES is 3", () => {
+		expect(MAX_ACTIVE_SCENES).toBe(3);
 	});
 
 	it("requestActivation under budget returns true", () => {
@@ -31,33 +31,36 @@ describe("babylon-budget", () => {
 	it("requestActivation over budget returns false", () => {
 		requestActivation("scene-a");
 		requestActivation("scene-b");
-		// Third scene exceeds budget
-		expect(requestActivation("scene-c")).toBe(false);
-		expect(activeScenes.has("scene-c")).toBe(false);
-		expect(activeScenes.size).toBe(2);
+		requestActivation("scene-c");
+		// Fourth scene exceeds budget
+		expect(requestActivation("scene-d")).toBe(false);
+		expect(activeScenes.has("scene-d")).toBe(false);
+		expect(activeScenes.size).toBe(3);
 	});
 
 	it("requestActivation is idempotent for already-active sceneId", () => {
 		requestActivation("scene-a");
 		requestActivation("scene-b");
+		requestActivation("scene-c");
 		// Already active — returns true without incrementing size
 		expect(requestActivation("scene-a")).toBe(true);
-		expect(activeScenes.size).toBe(2);
+		expect(activeScenes.size).toBe(3);
 	});
 
 	it("releaseActivation frees a slot so a new scene can activate", () => {
 		requestActivation("scene-a");
 		requestActivation("scene-b");
-		// Budget full — third fails
-		expect(requestActivation("scene-c")).toBe(false);
+		requestActivation("scene-c");
+		// Budget full — fourth fails
+		expect(requestActivation("scene-d")).toBe(false);
 
 		// Release one slot
 		releaseActivation("scene-a");
 		expect(activeScenes.has("scene-a")).toBe(false);
 
-		// Now third can activate
-		expect(requestActivation("scene-c")).toBe(true);
-		expect(activeScenes.has("scene-c")).toBe(true);
+		// Now fourth can activate
+		expect(requestActivation("scene-d")).toBe(true);
+		expect(activeScenes.has("scene-d")).toBe(true);
 	});
 
 	it("releaseActivation on unknown sceneId is a no-op", () => {

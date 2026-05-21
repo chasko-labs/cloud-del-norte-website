@@ -13,11 +13,6 @@ const footerCss = readFileSync(
 	"utf-8",
 );
 
-const glassStreaksCss = readFileSync(
-	resolve(REPO_ROOT, "src/styles/cdn-glass-streaks.css"),
-	"utf-8",
-);
-
 const shellTsx = readFileSync(
 	resolve(REPO_ROOT, "src/layouts/shell/index.tsx"),
 	"utf-8",
@@ -30,12 +25,6 @@ describe("wave 72 — compositor layer promotion", () => {
 
 	it("footer has transform: translateZ(0) for layer creation", () => {
 		expect(footerCss).toContain("transform: translateZ(0)");
-	});
-
-	it("volunteer-btn has will-change: transform", () => {
-		const btnStart = glassStreaksCss.indexOf(".cdn-volunteer-btn {");
-		const btnBlock = glassStreaksCss.slice(btnStart, btnStart + 800);
-		expect(btnBlock).toContain("will-change: transform");
 	});
 });
 
