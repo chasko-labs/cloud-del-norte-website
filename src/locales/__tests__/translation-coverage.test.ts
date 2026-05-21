@@ -86,7 +86,7 @@ describe("translation coverage", () => {
 			"navigation.cacheable", // "Cacheable" - technical term used in Spanish
 			"apiGuide.api", // "API" - acronym
 			"meetingDetail.rsvp", // "RSVP" - universal abbreviation
-			"createMeeting.url", // "URL" - universal abbreviation
+
 			"createMeeting.api", // "API" - acronym
 			"createMeeting.details.no", // "No" - same in Spanish
 			"createMeeting.meetingDetails.errorIconAriaLabel", // "Error" - common tech term
@@ -119,8 +119,7 @@ describe("translation coverage", () => {
 			"feedPage.builderCenterHeader", // "AWS Builder Center" - AWS program proper noun
 			"helpPanel.arrowheadPark", // "Arrowhead Research Park" - proper noun
 			"helpPanel.communityFoundedSuffix", // ", NMSU." - punctuation + acronym
-			"rsvp.breadcrumb", // "RSVP" - universal abbreviation
-			"rsvp.pageTitle", // "RSVP — Cloud Del Norte" - proper noun + universal abbreviation
+			// rsvp.breadcrumb and rsvp.pageTitle removed — wave 70a translated RSVP → Apúntate
 			"feedPage.pastMeetupSpeaker1Name", // proper name
 			"feedPage.pastMeetupSpeaker2Name", // proper name
 			"feedPage.pastMeetupSpeaker3Name", // proper name
@@ -132,8 +131,7 @@ describe("translation coverage", () => {
 			"feedPage.theZacsShowHeader", // "The Zacs' Show" - proper name
 			"feedPage.vbrownbagHeader", // "vBrownBag" - proper noun / brand name
 			"feedbackForm.fileUpload.errorIconAriaLabel", // "Error" - universal tech term
-			"meetings.rsvpButton", // "RSVP" - universal abbreviation
-			"meetings.tableHeaders.rsvp", // "RSVP" - universal abbreviation
+			// meetings.rsvpButton and meetings.tableHeaders.rsvp removed — wave 70a translated RSVP → Apúntate/Registro
 			"speakerForm.fields.format.virtual", // "virtual" - same in Spanish
 			// wave 56 proper nouns / channel names
 			"feedPage.howToPlayBuildercardsAuthor", // "AWS for Games" - channel proper noun
