@@ -4,6 +4,7 @@
 import SideNavigation, {
 	type SideNavigationProps,
 } from "@cloudscape-design/components/side-navigation";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { usePanelOpen } from "../../hooks/usePanelOpen";
 import { useTranslation } from "../../hooks/useTranslation";
@@ -39,6 +40,41 @@ export default function Navigation() {
 	// navigation drawer is open. Saves a context on every page where the panel
 	// is closed (the default on mobile and narrow viewports).
 	const panelOpen = usePanelOpen();
+
+	// Wave 70c: collision detection — unmount Fiona when the nav menu is tall
+	// enough to collide with her slot. Uses ResizeObserver on the nav container.
+	const navRef = useRef<HTMLDivElement>(null);
+	const [fionaFits, setFionaFits] = useState(true);
+
+	useEffect(() => {
+		const el = navRef.current;
+		if (!el) return;
+		const check = () => {
+			const navEl =
+				el.querySelector<HTMLElement>('[class*="side-navigation"]') ??
+				el.firstElementChild;
+			if (!navEl) {
+				setFionaFits(true);
+				return;
+			}
+			const navHeight = navEl.scrollHeight;
+			const containerHeight = el.clientHeight;
+			// If container has no measurable height (SSR/jsdom), assume fits
+			if (containerHeight === 0) {
+				setFionaFits(true);
+				return;
+			}
+			// Fiona frame needs ~320px minimum. If remaining space < 280px, hide her.
+			const remaining = containerHeight - navHeight;
+			setFionaFits(remaining >= 280);
+		};
+		check();
+		const ro = new ResizeObserver(check);
+		ro.observe(el);
+		return () => ro.disconnect();
+	}, []);
+
+	const showFiona = panelOpen && fionaFits;
 
 	const currentPath = location.pathname;
 	const isOnPlans =
@@ -161,7 +197,7 @@ export default function Navigation() {
 	];
 
 	return (
-		<>
+		<div ref={navRef} className="cdn-nav-dock">
 			<SideNavigation
 				activeHref={location.pathname + location.hash}
 				items={items}
@@ -174,7 +210,7 @@ export default function Navigation() {
 					}
 				}}
 			/>
-			{panelOpen && <FionaFrame />}
-		</>
+			{showFiona && <FionaFrame />}
+		</div>
 	);
 }
