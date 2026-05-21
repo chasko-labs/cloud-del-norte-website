@@ -1,3 +1,11 @@
+/* Wave 70c: nav dock container — fills the panel height so collision
+   detection can measure remaining space for Fiona */
+.cdn-nav-dock {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
 /* wave 61 — CSS-shader neon-sign typography on sidepanel menu labels
    Bryan: 'think adding shaders to 2d to make 3d, thats our approach'
    Inspiration: babylon playground 8BQJH7 area-light signs

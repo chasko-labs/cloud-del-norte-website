@@ -12,26 +12,58 @@
    Footer container — gradient background + gradient accent top-border
    -------------------------------------------------------------------------- */
 /* --------------------------------------------------------------------------
-   Footer dock — sticky bottom, glass treatment mirroring top-nav
+   Footer dock — fixed bottom, glass treatment mirroring top-nav
    z-index 200: below tools-toggle (~900) but above page content.
 
-   Panel-state limitation: Cloudscape AppLayout does not expose a CSS
-   class or data attribute when the tools/nav drawer opens that we can use
-   to shrink the footer's width. The footer therefore full-bleeds under
-   open side panels. Follow-up: track Cloudscape AppLayout grid state API
-   (similar to wave 14 A3 finding) to address footer/drawer overlap.
+   Wave 70c: footer uses position:fixed with panel-aware left/right insets.
+   body.cdn-nav-open insets left edge (280px nav panel width).
+   body.cdn-tools-open insets right edge (290px tools panel width).
+   Resolves wave 51 known limitation where footer overlapped side panels.
    -------------------------------------------------------------------------- */
 .cdn-footer {
-	position: sticky;
+	position: fixed;
 	bottom: 0;
+	left: 0;
+	right: 0;
 	z-index: 200;
-	padding: var(--cdn-space-s) var(--cdn-space-lg);
+	padding: var(--cdn-space-s, 8px) var(--cdn-space-lg, 24px);
 	/* Glass treatment matching top-nav universal-toolbar */
 	background-color: rgba(237, 229, 212, 0.88);
 	-webkit-backdrop-filter: blur(8px) saturate(1.1);
 	backdrop-filter: blur(8px) saturate(1.1);
 	/* 1px top border — brand-amber light mode */
 	border-top: 1px solid var(--cdn-amber, #8b5a2b);
+	/* Wave 70c: panel-aware insets via CSS transitions */
+	transition:
+		left 0.3s ease,
+		right 0.3s ease;
+}
+
+/* Wave 70c: spacer reserves vertical space so page content isn't hidden behind fixed footer */
+.cdn-footer-spacer {
+	height: 72px;
+}
+
+@media (max-width: 600px) {
+	.cdn-footer-spacer {
+		height: 100px;
+	}
+}
+
+/* Wave 70c — inset footer when left nav panel is open */
+body.cdn-nav-open .cdn-footer {
+	left: 280px;
+}
+
+/* Wave 70c — inset footer when right tools panel is open */
+body.cdn-tools-open .cdn-footer {
+	right: 290px;
+}
+
+/* Both panels open simultaneously */
+body.cdn-nav-open.cdn-tools-open .cdn-footer {
+	left: 280px;
+	right: 290px;
 }
 
 /* Reduced vertical padding on compact viewports */
@@ -453,6 +485,9 @@
    Reduced motion — disable all animations and transitions
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
+	.cdn-footer {
+		transition: none;
+	}
 	.cdn-footer-social [role="listitem"] {
 		transition: none;
 	}
@@ -504,6 +539,7 @@
 
 /* --------------------------------------------------------------------------
    Footer bar — lean docked layout: clock | countdown | weather | version
+   Wave 70c: responsive stacked rows when constrained by side panels
    -------------------------------------------------------------------------- */
 .cdn-footer-bar {
 	display: flex;
@@ -547,10 +583,55 @@
 	max-width: 280px;
 	max-height: 56px;
 	overflow: hidden;
-	flex-shrink: 1;
+	flex: 1 1 auto;
+	min-width: 140px;
 }
 
 /* Version pushed to end */
 .cdn-footer-bar .cdn-version {
 	margin-left: auto;
+}
+
+/* Wave 70c: when both panels open, stack footer rows vertically */
+body.cdn-nav-open.cdn-tools-open .cdn-footer-bar {
+	flex-direction: column;
+	align-items: stretch;
+	gap: var(--cdn-space-xs, 4px);
+}
+
+body.cdn-nav-open.cdn-tools-open .cdn-footer-left {
+	justify-content: center;
+}
+
+body.cdn-nav-open.cdn-tools-open .cdn-footer-weather {
+	max-width: none;
+	max-height: 48px;
+}
+
+body.cdn-nav-open.cdn-tools-open .cdn-footer-bar .cdn-version {
+	margin-left: 0;
+	text-align: center;
+}
+
+/* Mobile: stack rows */
+@media (max-width: 600px) {
+	.cdn-footer-bar {
+		flex-direction: column;
+		align-items: stretch;
+		gap: var(--cdn-space-xs, 4px);
+	}
+
+	.cdn-footer-left {
+		justify-content: center;
+	}
+
+	.cdn-footer-weather {
+		max-width: none;
+		max-height: 48px;
+	}
+
+	.cdn-footer-bar .cdn-version {
+		margin-left: 0;
+		text-align: center;
+	}
 }
