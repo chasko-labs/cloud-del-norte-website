@@ -744,6 +744,18 @@ html:not(.awsui-dark-mode) body {
 	box-shadow: var(--cdn-card-rim-light);
 }
 
+/* wave 86a fix (#208) — suppress awsui_root chrome inside .cdn-card to prevent
+   ghost-shell double-rendering. Specificity (0,3,0) beats both the global rule
+   above and Cloudscape's own scoped module selectors. */
+.cdn-card [class*="awsui_root_"][class*="awsui_variant-default_"],
+.cdn-card [class*="awsui_root_"][class*="awsui_variant-stacked_"] {
+	background: transparent;
+	background-image: none;
+	border: none;
+	border-radius: 0;
+	box-shadow: none;
+}
+
 /* Per-surface application of --cdn-card-gradient-light + --cdn-card-rim-light
    for non-Cloudscape card surfaces (e.g. .feed-mini-card__link) is colocated
    with each surface's own rule — see src/pages/feed/styles.css. */
