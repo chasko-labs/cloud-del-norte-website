@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
 import { useTranslation } from "../../hooks/useTranslation";
+import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
 import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
 import BabylonGate from "../babylon-gate";
 import "../navigation/fiona.css";
