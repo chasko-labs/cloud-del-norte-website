@@ -33,6 +33,7 @@ import { Scene } from "@babylonjs/core/scene";
 // time so the gate is in place BEFORE any `new Engine(...)` call below.
 Logger.LogLevels = Logger.WarningLogLevel | Logger.ErrorLogLevel;
 
+import { releaseActivation, requestActivation } from "../lib/babylon-budget.js";
 import { detectRenderCapability } from "../lib/render-capability.js";
 import {
 	AnimationController,
@@ -129,6 +130,28 @@ export function mountDuneSceneOnCanvas(
 		}
 		canvas.style.display = "none";
 		// Return a no-op handle — callers (mountDuneScene, dune-test page) must tolerate this.
+		return {
+			engine: null as unknown as Engine,
+			scene: null as unknown as Scene,
+			resize() {},
+			dispose() {},
+			getPerfMedian() {
+				return 0;
+			},
+			getLastFrameMs() {
+				return 0;
+			},
+			isPerfDegraded() {
+				return false;
+			},
+			refreshStationTint() {},
+			pause() {},
+			resume() {},
+		};
+	}
+
+	if (!requestActivation("dune-wallpaper")) {
+		// Budget full — return no-op handle; caller shows static fallback.
 		return {
 			engine: null as unknown as Engine,
 			scene: null as unknown as Scene,
@@ -298,6 +321,7 @@ export function mountDuneSceneOnCanvas(
 			atmosphere.dispose();
 			scene.dispose();
 			engine.dispose();
+			releaseActivation("dune-wallpaper");
 		},
 		getPerfMedian() {
 			return currentMedian;
