@@ -33,6 +33,7 @@ vi.mock("@babylonjs/core", () => {
 	class ArcRotateCamera {
 		inputs = { clear: vi.fn() };
 		animations: unknown[] = [];
+		constructor() {}
 	}
 	// biome-ignore lint/complexity/noStaticOnlyClass: same
 	class HemisphericLight {
@@ -94,8 +95,11 @@ vi.mock("@babylonjs/core", () => {
 		HemisphericLight,
 		DirectionalLight,
 		Animation,
-		Color4: class Color4 {},
+		Color4: class Color4 {
+			constructor() {}
+		},
 		Color3: class Color3 {
+			constructor() {}
 			static White() {
 				return {};
 			}
@@ -104,6 +108,7 @@ vi.mock("@babylonjs/core", () => {
 			static Zero() {
 				return {};
 			}
+			constructor() {}
 		},
 		MeshBuilder: {
 			CreateSphere: vi.fn((name: string) => mockMesh(name)),

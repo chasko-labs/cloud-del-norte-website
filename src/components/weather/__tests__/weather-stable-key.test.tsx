@@ -1,3 +1,8 @@
+// Wave 66 — Weather component stable-key test.
+// AtmosphereScene must NOT remount when city cycles — only receive new props.
+// If the key changes on city, a new canvas would be created destroying/re-creating
+// the WebGL context on every city advance.
+import { render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // ── Babylon stub ─────────────────────────────────────────────────────────────
@@ -58,27 +63,28 @@ vi.mock("../../lib/babylon-budget", () => ({
 class IntersectionObserverMock {
 	observe = vi.fn();
 	disconnect = vi.fn();
+	constructor(_cb: unknown) {}
 }
 
 // ── Spy on AtmosphereScene to track mount count ───────────────────────────────
 // We directly test the key stability by tracking how many canvas elements
 // are created across prop changes. A stable-key component reuses the same
 // canvas node; an unstable-key component creates a new one.
-let _mountCount = 0;
+let mountCount = 0;
 
 vi.mock("./atmosphere-scene", async (importOriginal) => {
 	const mod = await importOriginal<typeof import("../atmosphere-scene")>();
 	return {
 		...mod,
 		default: (props: import("../atmosphere-scene").AtmosphereSceneProps) => {
-			_mountCount++;
+			mountCount++;
 			return mod.default(props);
 		},
 	};
 });
 
 beforeEach(() => {
-	_mountCount = 0;
+	mountCount = 0;
 	vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);
 });
 

@@ -5,6 +5,7 @@ import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
 import { lazy, useEffect, useState } from "react";
 import BabylonGate from "../../../components/babylon-gate";
+import { SkeletonFrame } from "../../../components/skeleton";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { YouTubeSpinPlaceholder } from "./youtube-spin-placeholder";
 
