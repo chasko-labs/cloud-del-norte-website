@@ -2079,14 +2079,26 @@ button[class*="awsui_tools-toggle"] {
 	}
 }
 
-/* A4 fix — breadcrumb fades away on scroll so only buttons remain visible */
-body.cdn-scrolled [class*="awsui_breadcrumbs"] {
+/* A4 fix — breadcrumb fades away on scroll so only buttons remain visible.
+   Narrowed: exclude navigation-toggle so the hamburger stays visible when scrolled.
+   Root cause: [class*="awsui_breadcrumbs"] matched the breadcrumb container that
+   on mobile also wraps the navigation-toggle, hiding the hamburger on scroll. */
+body.cdn-scrolled [class*="awsui_breadcrumbs"]:not([class*="awsui_navigation-toggle"]) {
 	opacity: 0;
 	transform: translateY(-8px);
 	pointer-events: none;
 	transition:
 		opacity 0.2s ease,
 		transform 0.2s ease;
+}
+/* Ensure the navigation-toggle (hamburger) and its wrappers remain fully visible
+   when cdn-scrolled is active — the breadcrumb fade must NOT affect it. */
+body.cdn-scrolled [class*="awsui_navigation-toggle"],
+body.cdn-scrolled [class*="awsui_breadcrumbs"] [class*="awsui_navigation-toggle"] {
+	opacity: 1 !important;
+	transform: none !important;
+	pointer-events: auto !important;
+	visibility: visible !important;
 }
 [class*="awsui_breadcrumbs"] {
 	transition:

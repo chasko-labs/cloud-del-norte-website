@@ -117,8 +117,8 @@
 .awsui-dark-mode .cdn-weather {
 	background: linear-gradient(
 		178deg,
-		rgba(28, 34, 48, 0.55) 0%,
-		rgba(20, 16, 48, 0.5) 100%
+		rgba(28, 34, 48, 0.85) 0%,
+		rgba(20, 16, 48, 0.82) 100%
 	);
 	backdrop-filter: blur(14px) saturate(1.2);
 	-webkit-backdrop-filter: blur(14px) saturate(1.2);
@@ -129,6 +129,18 @@
 		0 1px 3px rgba(0, 0, 0, 0.35),
 		inset 0 1px 0 rgba(215, 199, 238, 0.22),
 		inset 0 -1px 0 rgba(144, 96, 240, 0.22);
+	color: var(--cdn-lavender, #d7c7ee);
+}
+
+/* Dark mode: explicit text colors on all metric/label elements so they never
+   rely solely on opacity inheritance over an ambiguous background. */
+.awsui-dark-mode .cdn-weather__metric dt,
+.awsui-dark-mode .cdn-weather__tomorrow-label {
+	color: rgba(215, 199, 238, 0.65);
+}
+
+.awsui-dark-mode .cdn-weather__metric dd,
+.awsui-dark-mode .cdn-weather__temp-c {
 	color: var(--cdn-lavender, #d7c7ee);
 }
 

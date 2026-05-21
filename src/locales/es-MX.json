@@ -150,24 +150,24 @@
 		"featuredEventTitle": "Hora Feliz Comunitaria y Noche de Networking",
 		"featuredEventLocation": "Centro de El Paso, TX",
 		"featuredEventDescription": "Cáele en el trolley, píllate un Lyft, en bici, o tráete tu nave para finger-foods, bebidas (incluyendo opciones sin alcohol), y platícale casual sobre carreras, nube, tecnología e inteligencia artificial. AWS Builder Center Cards van a estar disponibles para cualquiera que esté game",
-		"featuredEventRsvp": "Registrarse en Meetup",
+		"featuredEventRsvp": "Apúntate en Meetup",
 		"featuredEventImageAlt": "Foto del evento comunitario AWS Cloud del Norte UG",
 		"upcomingVirtualEventHeader": "Eventos Virtuales Libres y Abiertos de la Comunidad AWS",
 		"upcomingVirtualEventTitle": "[En línea] Reunión Global de la Comunidad AWS #19",
 		"upcomingVirtualEventLocation": "Evento en línea — únete desde cualquier lugar",
 		"upcomingVirtualEventDescription": "Reunión virtual global de la comunidad AWS. Abierta a todos. Únete al stream y conecta con builders de todo el mundo.",
-		"upcomingVirtualEventRsvp": "Registrarse en Meetup",
+		"upcomingVirtualEventRsvp": "Apúntate en Meetup",
 		"upcomingVirtualEventImageAlt": "Banner del evento virtual Reunión Global de la Comunidad AWS",
 		"upcomingVirtualEventFeaturedTalkBadge": "PRESENTACIÓN DESTACADA",
 		"upcomingVirtualEventFeaturedTalkSpeaker": "El co-organizador de AWSUG Cloud Del Norte, Bryan Chasko",
 		"upcomingVirtualEventFeaturedTalkTitle": "Una historia de migración: después de 240 meses consecutivos, evité un cargo de Microsoft",
 		"upcomingVirtualEventUgMarkLabel": "Marca AWS User Group",
 		"featuredEventInPersonLabel": "Junio 2026 presencial: centro de El Paso, Texas",
-		"featuredEventSpotsRemaining": "Cupo limitado — RSVP ya",
-		"featuredEventRsvpPrimary": "RSVP en CloudDelNorte.org",
-		"featuredEventRsvpMeetup": "RSVP en Meetup",
-		"featuredEventImageLinkLabel": "RSVP para la Hora Feliz Comunitaria y Noche de Networking",
-		"upcomingVirtualEventImageLinkLabel": "RSVP en Meetup para AWS Global Community Gatherings",
+		"featuredEventSpotsRemaining": "Cupo limitado — Apúntate ya",
+		"featuredEventRsvpPrimary": "Apúntate en CloudDelNorte.org",
+		"featuredEventRsvpMeetup": "Apúntate en Meetup",
+		"featuredEventImageLinkLabel": "Apúntate a la Hora Feliz Comunitaria y Noche de Networking",
+		"upcomingVirtualEventImageLinkLabel": "Apúntate en Meetup para AWS Global Community Gatherings",
 		"episodeScroller": {
 			"headerSuffix": " — episodios",
 			"sortNewest": "Reciente primero",
@@ -254,9 +254,9 @@
 			"happened": "¿Pasó?",
 			"onDemand": "On-Demand",
 			"eventPage": "Página del Evento",
-			"rsvp": "RSVP"
+			"rsvp": "Registro"
 		},
-		"rsvpButton": "RSVP",
+		"rsvpButton": "Apúntate",
 		"empty": {
 			"noMatches": "Sin resultados",
 			"noMatchesSubtitle": "No encontramos nada, compa.",
@@ -286,7 +286,7 @@
 			"history": "Juntas Anteriores"
 		},
 		"noPastMeetings": "No hay juntas anteriores registradas.",
-		"rsvpOnMeetup": "RSVP en Meetup",
+		"rsvpOnMeetup": "Apúntate en Meetup",
 		"editModal": {
 			"title": "Editar Junta",
 			"meetupLink": "Enlace de Meetup",
@@ -295,12 +295,12 @@
 			"scheduledDate": "Fecha programada",
 			"scheduledTime": "Hora programada",
 			"speakerBioUrl": "URL de bio del orador",
-			"meetupRsvpUrl": "URL de RSVP en Meetup",
+			"meetupRsvpUrl": "URL para apuntarse en Meetup",
 			"save": "Guardar",
 			"cancel": "Cancelar"
 		},
 		"myTicketsHeader": "Tus boletos",
-		"myTicketsEmpty": "Todavía no has hecho RSVP a ningún evento presencial de Cloud Del Norte.",
+		"myTicketsEmpty": "Todavía no te has apuntado a ningún evento presencial de Cloud Del Norte.",
 		"myTicketsShowAtDoor": "Muestra este código en la puerta"
 	},
 	"createMeeting": {
@@ -353,7 +353,7 @@
 		}
 	},
 	"helpPanel": {
-		"rsvpHeader": "RSVP para Eventos en Vivo",
+		"rsvpHeader": "Apúntate a Eventos en Vivo",
 		"cloudDelNorteMeetups": "Meetups de Nube of the North",
 		"blenderMeetups": "Blender & Diseño Gráfico:NE3D",
 		"userGroupTitle": "se buscan voluntarios",
@@ -1005,13 +1005,13 @@
 		"kexpNowPlayingFallback": "sonando en KEXP"
 	},
 	"rsvp": {
-		"breadcrumb": "RSVP",
-		"pageTitle": "RSVP — Cloud Del Norte",
-		"header": "RSVP para evento presencial",
+		"breadcrumb": "Apúntate",
+		"pageTitle": "Apúntate — Cloud Del Norte",
+		"header": "Apúntate al evento presencial",
 		"subheader": "Solo las primeras 50 personas. Guarda tu código QR — muéstralo en la puerta.",
 		"checkingAuth": "Verificando tu sesión...",
 		"eventNotFound": "No encontramos el evento",
-		"eventNotFoundDesc": "Esta página de RSVP ya no está activa. Checa los próximos eventos en la página de reuniones.",
+		"eventNotFoundDesc": "Esta página ya no está activa. Checa los próximos eventos en la página de reuniones.",
 		"soldOutHeader": "Este evento está lleno",
 		"soldOutBody": "Ya se llenaron los 50 cupos presenciales. Checa el feed para el próximo evento presencial, o únete a la reunión global virtual de abajo.",
 		"ticketHeader": "Estás en la lista",
@@ -1022,14 +1022,14 @@
 		"ticketHolder": "Titular",
 		"ticketCode": "Código del boleto",
 		"viewMyTickets": "Ver mis boletos",
-		"rsvpButton": "Confirmar mi RSVP",
+		"rsvpButton": "Confirmar mi lugar",
 		"rsvpingNow": "Reservando tu lugar...",
-		"fallbackMeetupCta": "Mejor házlo por Meetup",
+		"fallbackMeetupCta": "Mejor apúntate por Meetup",
 		"error": {
 			"capacityFull": "Disculpa — este evento ya se llenó. Checa el feed para el próximo.",
 			"network": "Falla de red — intenta de nuevo en un momento.",
-			"unauthorized": "Inicia sesión para hacer RSVP.",
-			"generic": "Algo salió mal — lo registramos. Intenta de nuevo o haz RSVP en Meetup."
+			"unauthorized": "Inicia sesión para apuntarte.",
+			"generic": "Algo salió mal — lo registramos. Intenta de nuevo o apúntate en Meetup."
 		}
 	}
 }
