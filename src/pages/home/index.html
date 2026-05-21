@@ -20,9 +20,9 @@
         var t;
         try {
           t = localStorage.getItem('awsaerospace-theme');
-        } catch (e) { /* localStorage unavailable; safe fall-through */ }
+        } catch (_e) { /* localStorage unavailable; safe fall-through */ }
         if (t !== 'dark' && t !== 'light') {
-          t = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          t = window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
         if (t === 'dark') {
           document.documentElement.classList.add('awsui-dark-mode');
