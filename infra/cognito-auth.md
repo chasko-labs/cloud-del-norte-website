@@ -176,3 +176,18 @@ user authentication for cloud del norte via amazon cognito user pools.
 - status: CONFIRMED, email_verified=true, MFA configured
 - sub: a8718320-a041-7051-8dbc-cb405600c1c5
 - created: 2026-05-07
+
+## change log
+
+### 2026-05-22 — wave 89: software token MFA set to OPTIONAL (stratia)
+
+As part of Wave 89 TOTP enrollment UI work, software token MFA was explicitly enabled on pool `us-west-2_cyPQF4F3r` with `MfaConfiguration=OPTIONAL`. Pre-state showed `MfaConfiguration: OPTIONAL` already (pool was not in a fully broken state), but `SoftwareTokenMfaConfiguration.Enabled` was re-asserted to ensure the TOTP enrollment flow functions correctly for the new UI. Existing users are not forced into MFA mid-session. Pre/post JSON evidence captured at `/tmp/wave89-cognito-pre.json` and `/tmp/wave89-cognito-post.json`.
+
+```
+aws cognito-idp set-user-pool-mfa-config \
+  --user-pool-id us-west-2_cyPQF4F3r \
+  --software-token-mfa-configuration Enabled=true \
+  --mfa-configuration OPTIONAL \
+  --profile jitsi-video-hosting-170473530355 \
+  --region us-west-2
+```
