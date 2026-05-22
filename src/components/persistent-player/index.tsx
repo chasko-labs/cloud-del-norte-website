@@ -810,9 +810,15 @@ function PersistentPlayerBar({
 		if (!audio) return;
 		setReadyToLoad(true);
 		setConnecting(true);
-		audio.play().catch(() => {
-			setConnecting(false);
-			setBlocked(true);
+		// Defer to next frame so React can flush the src attribute before play()
+		requestAnimationFrame(() => {
+			const a = audioRef.current;
+			if (!a) return;
+			a.load();
+			a.play().catch(() => {
+				setConnecting(false);
+				setBlocked(true);
+			});
 		});
 	}, []);
 
