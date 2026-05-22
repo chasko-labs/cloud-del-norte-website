@@ -151,6 +151,18 @@ function PersistentPlayerBar({
 	// this state only holds the artwork URL + a refs-tracked "current track"
 	// signature used to skip stale-data re-renders.
 	const [kexpArt, setKexpArt] = useState<KexpNowPlaying | null>(null);
+	// wave 93 — hide the album art entirely when the image fails to load
+	// (cover-art-archive returns a 404 / network error / blocked URL). Without
+	// this gate, Chromium / Firefox render the broken-image placeholder icon
+	// instead of falling back to no-image. Reset on each new track URL.
+	const [kexpArtError, setKexpArtError] = useState(false);
+	// Reset the kexpArtError flag whenever the album-art URL changes so each
+	// new track gets a fresh load attempt. Without this, a single 404 would
+	// hide the thumbnail for the rest of the listening session.
+	// biome-ignore lint/correctness/useExhaustiveDependencies: only the URL drives the reset
+	useEffect(() => {
+		setKexpArtError(false);
+	}, [kexpArt?.albumArtUrl]);
 	// stable signature of the last KEXP track we accepted — lets the polling
 	// effect short-circuit re-renders when KEXP returns the same row twice
 	// (DJ on a long airbreak after one song, slow rotations). Stored as ref so
@@ -1016,7 +1028,7 @@ function PersistentPlayerBar({
 			    The aria-live wrapper announces track changes for screen
 			    readers; alt text on the inner <img> carries the
 			    "song — artist" line for sighted users. */}
-			{state.stationKey === "kexp" && kexpArt?.albumArtUrl ? (
+			{state.stationKey === "kexp" && kexpArt?.albumArtUrl && !kexpArtError ? (
 				<span className="cdn-pp__kexp-art-wrap" aria-live="polite">
 					<img
 						className="cdn-pp__kexp-art"
@@ -1030,6 +1042,7 @@ function PersistentPlayerBar({
 						decoding="async"
 						width={40}
 						height={40}
+						onError={() => setKexpArtError(true)}
 					/>
 				</span>
 			) : null}

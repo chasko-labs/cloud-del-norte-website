@@ -31,6 +31,18 @@ function shouldRenderKexpArt(stationKey: string, art: KexpArt | null): boolean {
 	return stationKey === "kexp" && Boolean(art?.albumArtUrl);
 }
 
+// wave 93 — album-art also gates on whether the <img> errored on the current
+// URL. When the cover-art-archive returns a 404 / the network fails / the
+// resource is blocked, we hide the thumbnail entirely so the broken-image
+// placeholder icon never shows.
+function shouldRenderKexpArtWithErrorGate(
+	stationKey: string,
+	art: KexpArt | null,
+	kexpArtError: boolean,
+): boolean {
+	return shouldRenderKexpArt(stationKey, art) && !kexpArtError;
+}
+
 describe("KEXP album-art KEXP-only render guard", () => {
 	const sampleArt: KexpArt = {
 		song: "I Can't Wait",
@@ -65,6 +77,35 @@ describe("KEXP album-art KEXP-only render guard", () => {
 	it("does NOT render when station is empty / podcast", () => {
 		expect(shouldRenderKexpArt("", sampleArt)).toBe(false);
 		expect(shouldRenderKexpArt("rust_in_production", sampleArt)).toBe(false);
+	});
+});
+
+describe("KEXP album-art image-error fallback (Wave 93)", () => {
+	const sampleArt: KexpArt = {
+		song: "Strings Of Steel",
+		artist: "Cibo Matto",
+		albumArtUrl: "https://archive.example/cover.jpg",
+	};
+
+	it("renders when image has not errored", () => {
+		expect(shouldRenderKexpArtWithErrorGate("kexp", sampleArt, false)).toBe(
+			true,
+		);
+	});
+
+	it("does NOT render when image has errored on current URL", () => {
+		expect(shouldRenderKexpArtWithErrorGate("kexp", sampleArt, true)).toBe(
+			false,
+		);
+	});
+
+	it("still does NOT render when station != kexp regardless of error flag", () => {
+		expect(shouldRenderKexpArtWithErrorGate("krux", sampleArt, false)).toBe(
+			false,
+		);
+		expect(shouldRenderKexpArtWithErrorGate("krux", sampleArt, true)).toBe(
+			false,
+		);
 	});
 });
 
