@@ -847,6 +847,10 @@
 			"signUpLink": "Solicita unirte",
 			"invalidCredentials": "Correo o contraseña incorrectos",
 			"genericError": "Algo salió mal. Intenta de nuevo.",
+			"magicLinkHeader": "¿Olvidaste tu contraseña?",
+			"magicLinkDescription": "Te mandamos un código de un solo uso pa' que reinicies la contraseña y entres.",
+			"magicLinkCta": "Mándame liga pa' entrar",
+			"magicLinkEmailRequired": "Escribe tu correo arriba primero, luego pica el botón.",
 			"mfaSetup": {
 				"alertHeader": "Consigue una app autenticadora",
 				"hostageHeader": "No cierres esta pestaña",
@@ -923,6 +927,8 @@
 			"newPasswordHint": "12+ caracteres — mayúsculas, minúsculas, número",
 			"resetButton": "Restablecer",
 			"backToSignIn": "Volver al inicio de sesión",
+			"codeSentHeader": "Revisa tu correo",
+			"codeSentBody": "Te mandamos un código de 6 dígitos a {email}. Escíbelo aquí con tu nueva contraseña.",
 			"genericError": "Algo salió mal. Intenta de nuevo."
 		},
 		"verificationSetup": {

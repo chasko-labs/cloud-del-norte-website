@@ -21,6 +21,7 @@ import {
 	associateSoftwareToken,
 	base64urlToBuffer,
 	completePasskeyAuth,
+	forgotPassword,
 	initiatePasskeyAuth,
 	respondToMfaChallenge,
 	signInWithPassword,
@@ -73,6 +74,8 @@ function LoginForm() {
 	const [totpSecret, setTotpSecret] = useState("");
 	const [challengeName, setChallengeName] = useState("");
 	const [cancelModalVisible, setCancelModalVisible] = useState(false);
+	const [magicLinkLoading, setMagicLinkLoading] = useState(false);
+	const [magicLinkError, setMagicLinkError] = useState("");
 
 	document.title = `${t("auth.login.title")} — ${t("auth.siteTitle")}`;
 
@@ -200,6 +203,7 @@ function LoginForm() {
 		if (!validate()) return;
 		setLoading(true);
 		setFormError("");
+		setMagicLinkError("");
 		try {
 			sessionStorage.setItem("cdn.mfaUsername", email);
 			const result = await signInWithPassword(email, password);
@@ -220,6 +224,34 @@ function LoginForm() {
 				setFormError(t("auth.login.genericError"));
 			}
 			setLoading(false);
+		}
+	}
+
+	async function handleSendMagicLink() {
+		setMagicLinkError("");
+		if (!email.trim()) {
+			setMagicLinkError(t("auth.login.magicLinkEmailRequired"));
+			return;
+		}
+		setMagicLinkLoading(true);
+		try {
+			// Always advance to the reset page even if Cognito errors —
+			// matches forgot-password's existing pattern of not revealing
+			// whether the email exists.
+			try {
+				await forgotPassword(email.trim());
+			} catch {
+				// swallow; advance regardless
+			}
+			const params = new URLSearchParams({
+				email: email.trim(),
+				sent: "1",
+			});
+			window.location.assign(
+				`/forgot-password/index.html?${params.toString()}`,
+			);
+		} finally {
+			setMagicLinkLoading(false);
 		}
 	}
 
@@ -494,6 +526,35 @@ function LoginForm() {
 					</SpaceBetween>
 				</Form>
 			</form>
+			{formError === t("auth.login.invalidCredentials") && (
+				<Box margin={{ top: "m" }}>
+					<Alert
+						type="info"
+						header={t("auth.login.magicLinkHeader")}
+						action={
+							<Button
+								variant="primary"
+								loading={magicLinkLoading}
+								onClick={() => {
+									void handleSendMagicLink();
+								}}
+								data-testid="magic-link-cta"
+							>
+								{t("auth.login.magicLinkCta")}
+							</Button>
+						}
+					>
+						<SpaceBetween size="xs">
+							<Box variant="p">{t("auth.login.magicLinkDescription")}</Box>
+							{magicLinkError && (
+								<Box variant="small" color="text-status-error">
+									{magicLinkError}
+								</Box>
+							)}
+						</SpaceBetween>
+					</Alert>
+				</Box>
+			)}
 			<Box margin={{ top: "m" }} textAlign="center">
 				<SpaceBetween size="xs">
 					<Link href="/forgot-password/index.html">
