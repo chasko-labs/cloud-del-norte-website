@@ -67,6 +67,10 @@ export default function MeetingDetails({ onChange }: Props) {
 				const speakersError =
 					isEmptyString(speakers) &&
 					t("createMeeting.meetingDetails.presenterRequired");
+				const meetupRsvpUrlError =
+					meetupRsvpUrl.length > 0 &&
+					!/^https:\/\/(www\.)?meetup\.com\//.test(meetupRsvpUrl) &&
+					t("createMeeting.meetingDetails.meetupRsvpUrlError");
 
 				return (
 					<Container
@@ -201,12 +205,14 @@ export default function MeetingDetails({ onChange }: Props) {
 							{/* Meetup RSVP URL */}
 							<FormField
 								label={
-									<>
-										Meetup RSVP URL
-										<i>{t("createMeeting.meetingDetails.optional")}</i>
-									</>
+									<>{t("createMeeting.meetingDetails.meetupRsvpUrlLabel")}</>
 								}
-								description="Takes precedence over the general event link for the RSVP button"
+								errorText={isFormSubmitted && meetupRsvpUrlError}
+								i18nStrings={{
+									errorIconAriaLabel: t(
+										"createMeeting.meetingDetails.errorIconAriaLabel",
+									),
+								}}
 								stretch={true}
 							>
 								<Input
@@ -216,7 +222,13 @@ export default function MeetingDetails({ onChange }: Props) {
 										setMeetupRsvpUrl(detail.value);
 										notify({ meetupRsvpUrl: detail.value });
 									}}
-									placeholder="https://www.meetup.com/cloud-del-norte/events/..."
+									placeholder="https://www.meetup.com/..."
+									ref={(ref) => {
+										addErrorField("meetupRsvpUrl", {
+											isValid: !meetupRsvpUrlError,
+											ref,
+										});
+									}}
 								/>
 							</FormField>
 
