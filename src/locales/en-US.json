@@ -327,6 +327,8 @@
 			"meetupLinkLabel": "Meetup Link",
 			"speakerNamesLabel": "Speaker Names",
 			"speakerBioUrlLabel": "Speaker Bio URL",
+			"meetupRsvpUrlLabel": "Meetup.com RSVP link (optional)",
+			"meetupRsvpUrlError": "Must be a valid meetup.com URL (https://meetup.com/... or https://www.meetup.com/...).",
 			"additionalNotesLabel": "Additional notes",
 			"optional": " - optional",
 			"linkRequired": "Link is required.",

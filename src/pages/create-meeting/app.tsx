@@ -111,6 +111,11 @@ function FormContent() {
 							const vals = detailsRef.current;
 							// Basic required-field guard (mirrors marketing.tsx validation)
 							if (!vals.meetupLink || !vals.speakers) return;
+							if (
+								vals.meetupRsvpUrl &&
+								!/^https:\/\/(www\.)?meetup\.com\//.test(vals.meetupRsvpUrl)
+							)
+								return;
 
 							const body: CreateMeetingRequest = {
 								meetupLink: vals.meetupLink || undefined,

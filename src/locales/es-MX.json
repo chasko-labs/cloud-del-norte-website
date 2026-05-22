@@ -327,6 +327,8 @@
 			"meetupLinkLabel": "Link del Meetup",
 			"speakerNamesLabel": "Nombres de los Speakers",
 			"speakerBioUrlLabel": "URL de Bio del Speaker",
+			"meetupRsvpUrlLabel": "Liga pa' apuntarte en meetup.com (opcional)",
+			"meetupRsvpUrlError": "Tiene que ser una URL válida de meetup.com (https://meetup.com/... o https://www.meetup.com/...).",
 			"additionalNotesLabel": "Notas adicionales",
 			"optional": " - opcional",
 			"linkRequired": "El link es necesario, morro.",
