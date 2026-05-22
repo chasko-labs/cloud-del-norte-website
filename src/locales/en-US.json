@@ -847,6 +847,10 @@
 			"signUpLink": "Apply to join",
 			"invalidCredentials": "Email or password is incorrect",
 			"genericError": "Something went wrong. Try again.",
+			"magicLinkHeader": "Forgot your password?",
+			"magicLinkDescription": "We'll email you a one-time code so you can reset your password and get in.",
+			"magicLinkCta": "Email me a sign-in link",
+			"magicLinkEmailRequired": "Type your email above first, then click this button.",
 			"mfaSetup": {
 				"alertHeader": "Get an authenticator app",
 				"hostageHeader": "Do not close this tab",
@@ -923,6 +927,8 @@
 			"newPasswordHint": "12+ characters — upper, lower, digit",
 			"resetButton": "Reset password",
 			"backToSignIn": "Back to sign in",
+			"codeSentHeader": "Check your email",
+			"codeSentBody": "We sent a 6-digit code to {email}. Enter it below along with your new password.",
 			"genericError": "Something went wrong. Try again."
 		},
 		"verificationSetup": {

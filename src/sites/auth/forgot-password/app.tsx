@@ -26,8 +26,20 @@ function ForgotPasswordForm() {
 	const { t } = useTranslation();
 	document.title = `${t("auth.forgotPassword.title")} — ${t("auth.siteTitle")}`;
 
-	const [phase, setPhase] = useState<Phase>("request");
-	const [email, setEmail] = useState("");
+	// Read email + sent flags from URL — supports the wave 92 1-tap path:
+	// login page sends ForgotPassword, then redirects here with ?email=X&sent=1
+	// to skip the request phase entirely.
+	const initialParams =
+		typeof window !== "undefined"
+			? new URLSearchParams(window.location.search)
+			: new URLSearchParams();
+	const initialEmail = initialParams.get("email")?.trim() ?? "";
+	const arrivedFromOneTap = initialParams.get("sent") === "1";
+
+	const [phase, setPhase] = useState<Phase>(
+		initialEmail && arrivedFromOneTap ? "reset" : "request",
+	);
+	const [email, setEmail] = useState(initialEmail);
 	const [code, setCode] = useState("");
 	const [newPassword, setNewPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
@@ -163,7 +175,19 @@ function ForgotPasswordForm() {
 						errorText={formError || undefined}
 					>
 						<SpaceBetween size="m">
-							<Box>We sent a reset code to {email}</Box>
+							{arrivedFromOneTap ? (
+								<Alert
+									type="success"
+									header={t("auth.forgotPassword.codeSentHeader")}
+								>
+									{t("auth.forgotPassword.codeSentBody").replace(
+										"{email}",
+										email,
+									)}
+								</Alert>
+							) : (
+								<Box>We sent a reset code to {email}</Box>
+							)}
 							<FormField
 								label={t("auth.forgotPassword.codeLabel")}
 								errorText={codeError || undefined}
