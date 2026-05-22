@@ -139,6 +139,74 @@ describe("verification-setup page", () => {
 		});
 	});
 
+	it("verifySoftwareTokenWithAccessToken success redirects to feed", async () => {
+		vi.mocked(cognito.associateSoftwareTokenWithAccessToken).mockResolvedValue({
+			secretCode: "JBSWY3DPEHPK3PXP",
+		} as never);
+		vi.mocked(cognito.verifySoftwareTokenWithAccessToken).mockResolvedValue(
+			undefined as never,
+		);
+		setAuthSession();
+		render(<App />);
+
+		// navigate to QR step
+		await waitFor(() => screen.getByText(/authenticator app \(TOTP\)/i));
+		fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+		await waitFor(() => screen.getByTestId("qr-code"));
+
+		// enter 6-digit code and submit
+		const input = screen.getByRole("textbox");
+		fireEvent.change(input, { target: { value: "123456" } });
+		fireEvent.click(screen.getByRole("button", { name: /verify & continue/i }));
+
+		await waitFor(() => {
+			expect(cognito.verifySoftwareTokenWithAccessToken).toHaveBeenCalledWith(
+				"123456",
+			);
+			expect(window.location.assign).toHaveBeenCalledWith(
+				expect.stringContaining("awsug.clouddelnorte.org/auth/redeem"),
+			);
+		});
+	});
+
+	it("verifySoftwareTokenWithAccessToken failure shows inline error, stays on totp step", async () => {
+		vi.mocked(cognito.associateSoftwareTokenWithAccessToken).mockResolvedValue({
+			secretCode: "JBSWY3DPEHPK3PXP",
+		} as never);
+		vi.mocked(cognito.verifySoftwareTokenWithAccessToken).mockRejectedValue(
+			new cognito.AuthError("Code mismatch"),
+		);
+		setAuthSession();
+		render(<App />);
+
+		// navigate to QR step
+		await waitFor(() => screen.getByText(/authenticator app \(TOTP\)/i));
+		fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+		await waitFor(() => screen.getByTestId("qr-code"));
+
+		// enter 6-digit code and submit
+		const input = screen.getByRole("textbox");
+		fireEvent.change(input, { target: { value: "999999" } });
+
+		const verifyBtn = screen.getByRole("button", {
+			name: /verify & continue/i,
+		});
+		fireEvent.click(verifyBtn);
+
+		await waitFor(() =>
+			expect(cognito.verifySoftwareTokenWithAccessToken).toHaveBeenCalled(),
+		);
+		// error shown — stays on totp step
+		await waitFor(() =>
+			expect(
+				screen.getAllByText(/code mismatch|something went wrong/i).length,
+			).toBeGreaterThan(0),
+		);
+		expect(
+			screen.getByRole("button", { name: /verify & continue/i }),
+		).toBeInTheDocument();
+	});
+
 	it("redirectToFeed includes return_to from sessionStorage when search is empty", async () => {
 		setAuthSession();
 		sessionStorage.setItem("cdn.returnTo", "/rsvp/?event=happy-hour");
