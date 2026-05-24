@@ -18,11 +18,10 @@ import { useTranslation } from "../../../hooks/useTranslation";
 import EventBulbsOverlay from "./event-bulbs-overlay";
 import GlobalGlobe from "./global-globe";
 
-const RSVP_URL =
-	"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/";
-const EVENT_IMAGE_LIGHT = "/events/global-community-gatherings-light.webp";
-const EVENT_IMAGE_DARK = "/events/global-community-gatherings-dark.webp";
-const EVENT_DATE = "2026-05-22T22:00:00+09:00";
+const RSVP_URL = "https://www.meetup.com/bostonblender/events/314929344";
+const EVENT_IMAGE_LIGHT = "/events/boston-blender-petoi.webp";
+const EVENT_IMAGE_DARK = "/events/boston-blender-petoi.webp";
+const EVENT_DATE = "2026-06-27T07:00:00-06:00";
 /**
  * Wave 38c — anchor inside the description string after which the inline
  * GlobalGlobe SVG renders. "global" sits in the second word of the en-US

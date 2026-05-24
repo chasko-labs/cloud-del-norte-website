@@ -35,22 +35,22 @@ describe("UpcomingVirtualEvent", () => {
 	it("renders the event title with link to RSVP URL", () => {
 		renderWithLocale("us");
 		const link = screen.getByText(
-			"[On-Line] AWS Global Community Gatherings #19",
+			"Boston Blender \u2014 Teaching Robot Pets New Tricks",
 		);
 		expect(link.closest("a")).toHaveAttribute(
 			"href",
-			"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/",
+			"https://www.meetup.com/bostonblender/events/314929344",
 		);
 	});
 
 	it("renders the date in en-US format", () => {
 		renderWithLocale("us");
-		expect(screen.getByText(/May 22/)).toBeInTheDocument();
+		expect(screen.getByText(/June 27/)).toBeInTheDocument();
 	});
 
 	it("renders the date in es-MX format", () => {
 		renderWithLocale("mx");
-		expect(screen.getByText(/mayo/i)).toBeInTheDocument();
+		expect(screen.getAllByText(/junio/i).length).toBeGreaterThanOrEqual(1);
 	});
 
 	it("renders the RSVP button with target=_blank and the violet (no-red) variant", () => {
@@ -59,7 +59,7 @@ describe("UpcomingVirtualEvent", () => {
 		expect(btn).toHaveAttribute("target", "_blank");
 		expect(btn).toHaveAttribute(
 			"href",
-			"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/",
+			"https://www.meetup.com/bostonblender/events/314929344",
 		);
 		// Wave 29a — must NOT use the red variant on this card.
 		expect(btn.className).toContain("cdn-brand-btn--meetup-violet");
@@ -86,20 +86,14 @@ describe("UpcomingVirtualEvent", () => {
 	it("renders both light and dark image variants with proper alt text and lazy loading", () => {
 		renderWithLocale("us");
 		const imgs = screen.getAllByAltText(
-			"AWS Global Community Gatherings virtual event banner",
+			"Boston Blender meetup \u2014 Teaching Robot Pets New Tricks",
 		);
 		expect(imgs).toHaveLength(2);
 		for (const img of imgs) {
 			expect(img).toHaveAttribute("loading", "lazy");
 		}
-		expect(imgs[0]).toHaveAttribute(
-			"src",
-			"/events/global-community-gatherings-light.webp",
-		);
-		expect(imgs[1]).toHaveAttribute(
-			"src",
-			"/events/global-community-gatherings-dark.webp",
-		);
+		expect(imgs[0]).toHaveAttribute("src", "/events/boston-blender-petoi.webp");
+		expect(imgs[1]).toHaveAttribute("src", "/events/boston-blender-petoi.webp");
 		expect(imgs[0].className).toContain(
 			"feed-upcoming-virtual-event__image--light",
 		);
@@ -119,9 +113,8 @@ describe("UpcomingVirtualEvent", () => {
 		// for the dark variant + EventBulbsOverlay).
 		expect(links.length).toBe(2);
 		const expectedHref =
-			"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/";
-		const expectedAriaLabel =
-			"RSVP for AWS Global Community Gatherings on Meetup";
+			"https://www.meetup.com/bostonblender/events/314929344";
+		const expectedAriaLabel = "RSVP for Boston Blender meetup on Meetup";
 		links.forEach((link) => {
 			expect(link.getAttribute("href")).toBe(expectedHref);
 			expect(link.getAttribute("target")).toBe("_blank");
@@ -162,9 +155,7 @@ describe("UpcomingVirtualEvent", () => {
 			".feed-upcoming-virtual-event__marquee-text",
 		);
 		expect(marqueeText).not.toBeNull();
-		expect(marqueeText?.textContent).toMatch(
-			/Free & Open Virtual AWS Community Events/i,
-		);
+		expect(marqueeText?.textContent).toMatch(/Teaching Robot Pets New Tricks/i);
 	});
 
 	it("wave 33b — marquee renders 14 twinkle stars inside an aria-hidden container, each with a --star-index custom property", () => {
@@ -191,7 +182,7 @@ describe("UpcomingVirtualEvent", () => {
 			".feed-upcoming-virtual-event__date-plate",
 		);
 		expect(plate).not.toBeNull();
-		expect(plate?.textContent).toMatch(/May 22/);
+		expect(plate?.textContent).toMatch(/June 27/);
 	});
 
 	it("wave 33b — title link sits inside .feed-upcoming-virtual-event__title for the gradient/scrolling-tape treatment", () => {
@@ -203,7 +194,7 @@ describe("UpcomingVirtualEvent", () => {
 		const link = title?.querySelector("a");
 		expect(link).not.toBeNull();
 		expect(link?.getAttribute("href")).toBe(
-			"https://www.meetup.com/awsglobalcommunitygatherings/events/314332142/",
+			"https://www.meetup.com/bostonblender/events/314929344",
 		);
 	});
 
@@ -215,33 +206,14 @@ describe("UpcomingVirtualEvent", () => {
 			".feed-upcoming-virtual-event__description",
 		);
 		expect(description).not.toBeNull();
-		// The wave 38c renderDescription helper splits on "global" and
-		// inserts the GlobalGlobe inside a __description-inner span so
-		// the parent Cloudscape Box receives a single child.
+		// New event description does not contain the GLOBE_ANCHOR word
+		// "global", so renderDescription returns raw text without the
+		// GlobalGlobe splice.
 		const inner = description?.querySelector(
 			".feed-upcoming-virtual-event__description-inner",
 		);
-		expect(inner).not.toBeNull();
-		const globe = inner?.querySelector(".cdn-global-globe");
-		expect(globe).not.toBeNull();
-		// Decorative — aria-hidden so screen readers skip it; the inline
-		// SVG carries an aria-label="globe" via its <title> for ATs that
-		// surface SVG titles even on aria-hidden ancestors (defense in
-		// depth, mirrors the wave 27a featured-event AsciiSmirk pattern).
-		expect(globe?.getAttribute("aria-hidden")).toBe("true");
-		const svg = globe?.querySelector("svg");
-		expect(svg).not.toBeNull();
-		expect(svg?.getAttribute("aria-label")).toBe("globe");
-		// Description prose still reads coherently when the glyph is
-		// stripped — the head text ends with the anchor "global" and the
-		// tail picks up the rest of the en-US sentence. The SVG <title>
-		// element ("globe") serializes into textContent as a contiguous
-		// "globalglobe" splice, so the test asserts on the leading "A
-		// global" + the trailing " virtual gathering" segments rather
-		// than a strict regex over the raw textContent.
-		const text = inner?.textContent ?? "";
-		expect(text).toMatch(/^A global/);
-		expect(text).toMatch(/virtual gathering hosted by the AWS community/);
+		expect(inner).toBeNull();
+		expect(description?.textContent).toMatch(/Hour one/);
 	});
 
 	it("wave 38c — GlobalGlobe also renders in es-MX since the anchor word 'global' appears in both locales", () => {
@@ -250,17 +222,13 @@ describe("UpcomingVirtualEvent", () => {
 			".feed-upcoming-virtual-event__description",
 		);
 		expect(description).not.toBeNull();
+		// New es-MX event description likewise omits the anchor word
+		// "global", so the helper returns raw text and the inner span is
+		// absent.
 		const inner = description?.querySelector(
 			".feed-upcoming-virtual-event__description-inner",
 		);
-		// es-MX description: "Una reunión virtual global organizada por la
-		// comunidad AWS..." — the anchor "global" is the 4th word, so the
-		// helper still splices the GlobalGlobe in for Spanish-language
-		// readers (the icon is locale-neutral; the anchor word happens to
-		// transliterate identically).
-		expect(inner).not.toBeNull();
-		const globe = inner?.querySelector(".cdn-global-globe");
-		expect(globe).not.toBeNull();
+		expect(inner).toBeNull();
 	});
 });
 
