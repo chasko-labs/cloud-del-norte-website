@@ -33,34 +33,96 @@
   ],
   "awsml": [
     {
-      "title": "Improve bot accuracy with Amazon Lex Assisted NLU",
-      "link": "https://aws.amazon.com/blogs/machine-learning/improve-bot-accuracy-with-amazon-lex-assisted-nlu/",
-      "pubDate": "2026-05-14",
-      "excerpt": "In this post, you will learn how to implement Assisted NLU effectively. You will learn how to improve your bot design with effective intent and slot descriptions, validate your implementation using Te"
+      "title": "Amazon Nova Act is now HIPAA eligible",
+      "link": "https://aws.amazon.com/blogs/machine-learning/amazon-nova-act-is-now-hipaa-eligible/",
+      "pubDate": "2026-05-21",
+      "excerpt": "In this post, you will learn what Nova Act offers, how HIPAA eligibility applies to agentic AI, and how to get started."
     },
     {
-      "title": "Real-time voice agents with Stream Vision Agents and Amazon Nova 2 Sonic",
-      "link": "https://aws.amazon.com/blogs/machine-learning/real-time-voice-agents-with-stream-vision-agents-and-amazon-nova-2-sonic/",
-      "pubDate": "2026-05-14",
-      "excerpt": "In this post, you learn how to combine Stream's Vision Agents open-source framework with Amazon Bedrock and Amazon Nova 2 Sonic to build real-time voice agents that can be production-ready in minutes."
+      "title": "Intelligent radiology workflow optimization with AI agents",
+      "link": "https://aws.amazon.com/blogs/machine-learning/intelligent-radiology-workflow-optimization-with-ai-agents-2/",
+      "pubDate": "2026-05-21",
+      "excerpt": "Many healthcare organizations report that traditional worklist systems rely on rigid rules that ignore critical context, radiologist specialization, current workload, fatigue levels, and case complexi"
     },
     {
-      "title": "From siloed data to unified insights: Cross-account Athena Access for Amazon Quick",
-      "link": "https://aws.amazon.com/blogs/machine-learning/from-siloed-data-to-unified-insights-cross-account-athena-access-for-amazon-quick/",
-      "pubDate": "2026-05-14",
-      "excerpt": "Today, we're announcing cross-account Athena access for Amazon Quick. With this feature, customers can query Athena data in other AWS accounts using AWS Identity and Access Management (IAM) role chain"
+      "title": "Integrating AWS API MCP Server with Amazon Quick using Amazon Bedrock AgentCore Runtime",
+      "link": "https://aws.amazon.com/blogs/machine-learning/integrating-aws-api-mcp-server-with-amazon-quick-suite-using-amazon-bedrock-agentcore-runtime/",
+      "pubDate": "2026-05-21",
+      "excerpt": "This post shows you how to use Amazon Bedrock AgentCore Runtime with Model Context Protocol (MCP) support to connect Amazon Quick with AWS services through the AWS API MCP Server, creating a conversat"
     },
     {
-      "title": "Control where your AI agents can browse with Chrome enterprise policies on Amazon Bedrock AgentCore",
-      "link": "https://aws.amazon.com/blogs/machine-learning/control-where-your-ai-agents-can-browse-with-chrome-enterprise-policies-on-amazon-bedrock-agentcore/",
-      "pubDate": "2026-05-14",
-      "excerpt": "In this post, you will configure Chrome enterprise policies to restrict a browser agent to a specific website, observe the policy enforcement through session recording, and demonstrate custom root CA "
+      "title": "Building multi-tenant agents with Amazon Bedrock AgentCore",
+      "link": "https://aws.amazon.com/blogs/machine-learning/building-multi-tenant-agents-with-amazon-bedrock-agentcore/",
+      "pubDate": "2026-05-21",
+      "excerpt": "This post explores&nbsp;design considerations for architecting multi-tenant agentic applications and the framework needed to address SaaS architecture challenges with Amazon Bedrock AgentCore."
     },
     {
-      "title": "Build financial document processing with Pulse AI and Amazon Bedrock",
-      "link": "https://aws.amazon.com/blogs/machine-learning/build-financial-document-processing-with-pulse-ai-and-amazon-bedrock/",
-      "pubDate": "2026-05-13",
-      "excerpt": "This post demonstrates how to build a documentation extraction and model fine-tuning pipeline that addresses challenges when processing the complex financial documents. By combining Pulse AI's advance"
+      "title": "Break the context window barrier with Amazon Bedrock AgentCore",
+      "link": "https://aws.amazon.com/blogs/machine-learning/break-the-context-window-barrier-with-amazon-bedrock-agentcore/",
+      "pubDate": "2026-05-21",
+      "excerpt": "In this post, you will learn how to implement Recursive Language Models (RLM) using Amazon Bedrock AgentCore Code Interpreter and the Strands Agents SDK. By the end, you will know how to process docum"
+    }
+  ],
+  "readysetcloud": [
+    {
+      "title": "Think again about running agents locally",
+      "link": "https://www.readysetcloud.io/newsletter/216/",
+      "pubDate": "2026-05-18",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Ines Montani , co-founder and CEO of Explosion, the Berlin-based company behind spaCy and a Fellow of the Python Software Foundation. She is"
+    },
+    {
+      "title": "Local agents scare me",
+      "link": "https://www.readysetcloud.io/blog/allen.helton/local-agents-scare-me/",
+      "pubDate": "2026-05-14",
+      "excerpt": "I recently wrote about an AI agent I was really proud of. This agent acts as basically my on-call support for a website I built."
+    },
+    {
+      "title": "Using AI to Create Music",
+      "link": "https://www.readysetcloud.io/newsletter/215/",
+      "pubDate": "2026-05-11",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Sonali Srivastava , senior developer advocate at Improving and co-chair of KubeCon India 2026. Sonali came back to tech through an Outreachy"
+    },
+    {
+      "title": "Goodbye, Amazon Q Developer",
+      "link": "https://www.readysetcloud.io/newsletter/214/",
+      "pubDate": "2026-05-04",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Damien Jones , AWS Consultant at Steamhaus, AWS Community Builder, AND User Group Leader. Damien is a legend in the community and has been c"
+    },
+    {
+      "title": "The Modern Architecture Trinity",
+      "link": "https://www.readysetcloud.io/newsletter/213/",
+      "pubDate": "2026-04-27",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Sooter Saalu , technical writer at Draft.dev. Sooter has written extensively for the Bacalhau project and gives wonderful conference talks o"
+    },
+    {
+      "title": "Lessons from 500K Agent Deployments",
+      "link": "https://www.readysetcloud.io/newsletter/212/",
+      "pubDate": "2026-04-20",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Kesha Williams , Managing Partner at Keysoft and AWS AI Hero. Kesha has spent 25+ years building cloud-native systems and is one of the clea"
+    },
+    {
+      "title": "S3 as a filesystem!?",
+      "link": "https://www.readysetcloud.io/newsletter/211/",
+      "pubDate": "2026-04-13",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Ola Hungerford , Principal Engineer at Nordstrom and maintainer/community lead for the Model Context Protocol. Ola is one of the engineers m"
+    },
+    {
+      "title": "Build your own AI film crew",
+      "link": "https://www.readysetcloud.io/newsletter/210/",
+      "pubDate": "2026-04-06",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Ruth Ikegah , open source program manager, GitHub Star, and Community Lead for CHAOSS Africa . Ruth started her career as a microbiology gra"
+    },
+    {
+      "title": "Let's get serious about AI agents",
+      "link": "https://www.readysetcloud.io/newsletter/209/",
+      "pubDate": "2026-03-30",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Allie Joy Tsahey , founder of Baddies in Tech . Allie created Baddies in Tech to build a space where women in tech can connect, grow, and fe"
+    },
+    {
+      "title": "Your AI agents are a security nightmare",
+      "link": "https://www.readysetcloud.io/blog/allen.helton/your-ai-agents-are-a-security-nightmare/",
+      "pubDate": "2026-03-26",
+      "excerpt": "I&rsquo;ve noticed something about the tech industry over the past couple of months. Through the use of agentic code editors, developers are building small, custom solutions to problems they&rsquo;re "
     }
   ]
 }
