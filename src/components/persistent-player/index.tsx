@@ -1169,7 +1169,11 @@ function PersistentPlayerBar({
 			{playing && streamDef?.type === "podcast" && <PodcastIcon />}
 			{/* type icon — 💃🏾 radio / 🗣️ podcast — sits left of play button */}
 			<span className="cdn-pp__icon" aria-hidden="true">
-				{streamDef?.type === "podcast" ? "🗣️" : "💃🏾"}
+				{streamDef?.type === "podcast" ? (
+					<PodcastIcon />
+				) : (
+					<RadioTowerIcon active={playing} />
+				)}
 			</span>
 			{showFailedUI && (
 				<button
