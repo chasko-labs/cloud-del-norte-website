@@ -3041,10 +3041,10 @@
 .awsui-dark-mode .feed-upcoming-virtual-event__featured-talk {
 	background: linear-gradient(
 		135deg,
-		rgba(144, 96, 240, 0.14) 0%,
-		rgba(215, 199, 238, 0.06) 100%
+		rgba(144, 96, 240, 0.22) 0%,
+		rgba(215, 199, 238, 0.1) 100%
 	);
-	border-color: rgba(144, 96, 240, 0.4);
+	border-color: rgba(144, 96, 240, 0.5);
 }
 
 .feed-upcoming-virtual-event__brand-mark {
@@ -3148,7 +3148,7 @@
 }
 
 .awsui-dark-mode .feed-upcoming-virtual-event__featured-talk-title {
-	color: var(--cdn-lavender, #d7c7ee);
+	color: #efe6ff;
 }
 
 /* ---------- Wave 38c — block-stack layout + spacing hierarchy ----------
