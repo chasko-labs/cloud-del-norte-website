@@ -2808,22 +2808,6 @@
 	border-left: 4px solid var(--cdn-aws-orange, #ff9900);
 }
 
-.feed-upcoming-virtual-event__badge {
-	display: inline-block;
-	/* wave 38c — tokenize raw 4px / 12px badge padding onto the 8pt grid.
-	   Pill border-radius (999px) is the sentinel value, kept as-is (no
-	   token). justify-self handled by the parent __layout rule below so
-	   the pill sits tight to its natural width inside the block stack. */
-	padding: var(--cdn-space-xs, 4px) var(--cdn-space-12, 12px);
-	border-radius: 999px;
-	background-color: var(--cdn-aws-orange, #ff9900);
-	color: #1a1a1a;
-	font-size: var(--cdn-text-sm, 0.75rem);
-	font-weight: 700;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-}
-
 .feed-upcoming-virtual-event__image {
 	display: block;
 	width: 100%;
@@ -3202,11 +3186,6 @@
    8pt grid. Each rule sets the distance FROM that element TO the next
    one in the block stack. Justified on every element so the rhythm is
    explicit at the call site rather than buried in a single declaration. */
-.feed-upcoming-virtual-event__badge {
-	/* badge → image: 12px */
-	grid-area: badge;
-	margin-block-end: var(--cdn-space-12, 12px);
-}
 
 .feed-upcoming-virtual-event__image-link {
 	/* image-link → next sibling: 16px (image → title). The first image-
