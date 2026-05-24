@@ -1,0 +1,28 @@
+.cdn-radio-tower-icon {
+	color: var(--cdn-aws-orange, #ff9900);
+}
+
+.cdn-radio-tower-icon--active .cdn-radio-tower-icon__wave {
+	animation: cdn-tower-broadcast 2s ease-in-out infinite;
+}
+
+.cdn-radio-tower-icon--active .cdn-radio-tower-icon__wave:nth-child(2),
+.cdn-radio-tower-icon--active .cdn-radio-tower-icon__wave:nth-child(4) {
+	animation-delay: 0.4s;
+}
+
+@keyframes cdn-tower-broadcast {
+	0%,
+	100% {
+		opacity: 0.4;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-radio-tower-icon--active .cdn-radio-tower-icon__wave {
+		animation: none;
+	}
+}

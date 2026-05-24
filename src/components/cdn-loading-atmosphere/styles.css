@@ -1,0 +1,68 @@
+.cdn-loading-atmosphere {
+	position: relative;
+	isolation: isolate;
+	border-radius: var(--cdn-radius-md, 8px);
+}
+
+.cdn-loading-atmosphere::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: linear-gradient(135deg, #ede5d4, #8b5a2b40, #9060f020, #ede5d4);
+	background-size: 300% 300%;
+	animation: cdn-gradient-drift 8s ease-in-out infinite;
+	opacity: 0.6;
+	transition: opacity 1.2s ease;
+	pointer-events: none;
+	z-index: 1;
+}
+
+.cdn-loading-atmosphere::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: radial-gradient(ellipse at center, #9060f010, transparent);
+	opacity: calc(var(--cdn-bass, 0) * 0.4);
+	pointer-events: none;
+	z-index: 2;
+	transition: opacity 0.15s ease;
+}
+
+.cdn-loading-atmosphere[data-loaded="true"]::before {
+	opacity: 0;
+}
+
+@keyframes cdn-gradient-drift {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.cdn-loading-atmosphere::before {
+		background: linear-gradient(135deg, #0a0c14, #9060f030, #c9a23f20, #0a0c14);
+	}
+
+	.cdn-loading-atmosphere::after {
+		background: radial-gradient(ellipse at center, #c9a23f10, transparent);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-loading-atmosphere::before {
+		animation: none;
+		opacity: 0.3;
+	}
+
+	.cdn-loading-atmosphere[data-loaded="true"]::before {
+		opacity: 0;
+	}
+}

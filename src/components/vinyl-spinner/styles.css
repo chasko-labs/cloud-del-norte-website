@@ -1,0 +1,90 @@
+.cdn-vinyl {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	aspect-ratio: 1;
+	max-width: 120px;
+	border-radius: 50%;
+	background: conic-gradient(
+		from 0deg,
+		#1a1a1a,
+		#222,
+		#1a1a1a,
+		#222,
+		#1a1a1a,
+		#222,
+		#1a1a1a,
+		#222
+	);
+	overflow: hidden;
+}
+
+.cdn-vinyl__grooves {
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	background: repeating-radial-gradient(
+		circle at center,
+		transparent 0px,
+		transparent 3px,
+		rgba(0, 0, 0, 0.15) 3px,
+		rgba(0, 0, 0, 0.15) 4px
+	);
+}
+
+.cdn-vinyl__label {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 33%;
+	height: 33%;
+	transform: translate(-50%, -50%);
+	border-radius: 50%;
+	background: var(--cdn-gold, #c9a23f);
+}
+
+.cdn-vinyl__highlight {
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	background: linear-gradient(
+		135deg,
+		rgba(255, 255, 255, 0.12) 0%,
+		transparent 50%
+	);
+}
+
+.cdn-vinyl--spinning {
+	animation: cdn-vinyl-spin 3s linear infinite;
+}
+
+.cdn-vinyl--audio-reactive {
+	animation: cdn-vinyl-spin calc(3s - var(--cdn-bass, 0) * 1.5s) linear infinite;
+}
+
+@keyframes cdn-vinyl-spin {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-vinyl--spinning,
+	.cdn-vinyl--audio-reactive {
+		animation: none;
+	}
+}
+
+.awsui-dark-mode .cdn-vinyl__grooves {
+	background: repeating-radial-gradient(
+		circle at center,
+		transparent 0px,
+		transparent 3px,
+		rgba(144, 96, 240, 0.08) 3px,
+		rgba(144, 96, 240, 0.08) 4px
+	);
+}
+
+.awsui-dark-mode .cdn-vinyl__label {
+	background: var(--cdn-violet, #9060f0);
+}

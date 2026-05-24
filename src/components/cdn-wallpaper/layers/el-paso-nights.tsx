@@ -31,6 +31,18 @@ export function ElPasoNightsLayer(): ReactElement {
 		let cleanup: (() => void) | null = null;
 		let cancelled = false;
 
+		// wave 94 — synchronous capability check before scheduling any async work.
+		// If the environment cannot produce a 2D canvas context (jsdom in unit
+		// tests, restricted iframes, canvas-blocking extensions), bail entirely.
+		// Skipping here prevents the dynamic background-viz import (and its
+		// transitive babylon dune-scene chain) from starting at all, which is
+		// what causes "Cannot load X after the environment was torn down"
+		// rejections during vitest runs.
+		const probe = document.createElement("canvas");
+		if (!probe.getContext("2d")) {
+			return;
+		}
+
 		const idleTask = () => {
 			if (cancelled) return;
 			void import("../../../lib/background-viz/index").then((mod) => {

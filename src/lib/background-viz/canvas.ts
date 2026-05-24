@@ -86,7 +86,7 @@ let ctx: CanvasRenderingContext2D;
 function createCanvas(): {
 	canvas: HTMLCanvasElement;
 	ctx: CanvasRenderingContext2D;
-} {
+} | null {
 	const el = document.createElement("canvas");
 	// z-index: -2 — sits BEHIND the dune canvas (z:-1) so dune always wins the
 	// stacking battle. Previously this was -1 and the dune was -2; even with
@@ -99,7 +99,16 @@ function createCanvas(): {
 	document.documentElement.classList.add("cdn-viz-active");
 
 	const context = el.getContext("2d");
-	if (!context) throw new Error("canvas 2d context unavailable");
+	if (!context) {
+		// Canvas 2D context unavailable. Happens in jsdom (test env), certain
+		// restricted iframes, browsers/extensions that block canvas, and old
+		// devices with no 2D rendering surface. Silently bail — wallpaper just
+		// won't render. Same UX rule as the wave 93 KEXP image-error fallback:
+		// if it can't load, render nothing rather than break the page.
+		el.remove();
+		document.documentElement.classList.remove("cdn-viz-active");
+		return null;
+	}
 
 	return { canvas: el, ctx: context };
 }
@@ -214,8 +223,9 @@ export function initCanvas(): {
 	startLoop: () => void;
 	stopLoop: () => void;
 	resize: () => void;
-} {
+} | null {
 	const created = createCanvas();
+	if (!created) return null;
 	canvas = created.canvas;
 	ctx = created.ctx;
 

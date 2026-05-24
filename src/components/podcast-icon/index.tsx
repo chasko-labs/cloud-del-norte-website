@@ -1,6 +1,6 @@
 import "./styles.css";
 
-/** k4 — headphones-over-microphone composite icon for podcast mode indicator */
+/** Redesigned headphones-over-microphone composite icon for podcast mode indicator */
 export function PodcastIcon() {
 	return (
 		<svg
@@ -15,20 +15,31 @@ export function PodcastIcon() {
 			className="cdn-podcast-icon"
 			aria-hidden="true"
 		>
-			{/* mic body — classic capsule, lower-center, partially behind headphone band */}
-			<rect x="9.5" y="10" width="5" height="7" rx="2.5" />
-			{/* mic stand stem */}
-			<line x1="12" y1="17" x2="12" y2="21" />
-			{/* mic stand base */}
-			<line x1="9" y1="21" x2="15" y2="21" />
-			{/* headphone band — U-arc over the top, crossing in front of mic */}
-			<path d="M4 14V11a8 8 0 0 1 16 0v3" />
-			{/* left ear cup */}
-			<rect x="2" y="13" width="4" height="5" rx="1.5" />
-			{/* right ear cup */}
-			<rect x="18" y="13" width="4" height="5" rx="1.5" />
-			{/* accent: small dynamic line on mic capsule body */}
-			<line x1="11" y1="13" x2="13" y2="13" />
+			{/* broadcast dot — top of headphone band */}
+			<circle
+				cx="12"
+				cy="3"
+				r="1.5"
+				fill="currentColor"
+				stroke="none"
+				className="cdn-podcast-icon__dot"
+			/>
+			{/* headphone band — smooth arc */}
+			<path d="M4.5 13.5A7.5 7.5 0 0 1 12 4.5a7.5 7.5 0 0 1 7.5 9" />
+			{/* left ear cup — rounded ellipse */}
+			<ellipse cx="3.5" cy="15" rx="1.5" ry="2.5" />
+			{/* right ear cup — rounded ellipse */}
+			<ellipse cx="20.5" cy="15" rx="1.5" ry="2.5" />
+			{/* mic capsule — slender rounded rect */}
+			<rect x="10" y="11" width="4" height="6" rx="2" />
+			{/* mic stem */}
+			<line x1="12" y1="17" x2="12" y2="20" />
+			{/* mic base */}
+			<line x1="10" y1="20" x2="14" y2="20" />
+			{/* sound wave — inner arc */}
+			<path d="M8.5 14.5a3.5 3.5 0 0 0 0 3" />
+			{/* sound wave — outer arc */}
+			<path d="M7 13a5.5 5.5 0 0 0 0 6" />
 		</svg>
 	);
 }

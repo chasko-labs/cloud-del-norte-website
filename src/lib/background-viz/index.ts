@@ -57,7 +57,18 @@ export function mount(): () => void {
 	if (mounted) return () => {};
 	mounted = true;
 
-	const { canvas, ctx, startLoop, stopLoop, resize } = initCanvas();
+	const initialized = initCanvas();
+	if (!initialized) {
+		// Canvas 2D context unavailable (test env / restricted browser /
+		// canvas-blocking extension). Skip the wallpaper entirely; the page
+		// keeps the CSS background fallback. Reset the mounted gate so a
+		// later remount attempt (e.g. after the user grants canvas access)
+		// can still succeed.
+		mounted = false;
+		return () => {};
+	}
+
+	const { canvas, ctx, startLoop, stopLoop, resize } = initialized;
 	const { initAudio, destroyAudio } = createAudioBridge(ctx);
 
 	// preload logo bitmap; rebuild static layers (with watermark) once ready

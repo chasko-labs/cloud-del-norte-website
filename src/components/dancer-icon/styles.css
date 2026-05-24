@@ -16,3 +16,31 @@
 		transform: rotate(3deg);
 	}
 }
+
+.cdn-dancer-icon__trail {
+	stroke-dasharray: 2 3;
+	opacity: 0.3;
+}
+
+.cdn-dancer-icon--sway .cdn-dancer-icon__trail {
+	animation: cdn-dancer-trail 3s ease-in-out infinite;
+}
+
+@keyframes cdn-dancer-trail {
+	0%,
+	100% {
+		opacity: 0.2;
+	}
+	50% {
+		opacity: 0.5;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-dancer-icon--sway {
+		animation: none;
+	}
+	.cdn-dancer-icon--sway .cdn-dancer-icon__trail {
+		animation: none;
+	}
+}
