@@ -7,10 +7,14 @@ import AppLayout, {
 import TopNavigation, {
 	type TopNavigationProps,
 } from "@cloudscape-design/components/top-navigation";
-import { useCallback, useEffect, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useState } from "react";
 import { CdnWallpaper } from "../../components/cdn-wallpaper";
 import Footer from "../../components/footer";
-import AtmosphereRibbon from "../../components/footer/atmosphere-ribbon";
+
+const AtmosphereRibbon = lazy(
+	() => import("../../components/footer/atmosphere-ribbon"),
+);
+
 import LogoSvg from "../../components/logo-svg";
 import PersistentPlayer from "../../components/persistent-player";
 import { AuthProvider } from "../../contexts/auth-context";
@@ -711,7 +715,9 @@ function ShellContent({
 			    page title) is repurposed as the Volunteer link via CSS — see
 			    cdn-glass-streaks.css. No floating React button: Bryan eyes-on
 			    v0.0.0046 found the floating pill landed in "no-mansland". */}
-			<AtmosphereRibbon />
+			<Suspense fallback={null}>
+				<AtmosphereRibbon />
+			</Suspense>
 			<Footer />
 		</>
 	);
