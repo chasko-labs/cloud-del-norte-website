@@ -1,14 +1,5 @@
 # woodpecker ci — device farm browser testing
-# TODO: device-farm-test currently expects CI_OIDC_TOKEN + CI_OIDC_ROLE_ARN
-# from a web-identity auth model that's never been wired in this Woodpecker
-# install. The rest of the pipelines use rolesanywhere with /workload.crt +
-# /workload.key. To re-enable as a blocking step, either:
-#   1. Convert this step to the rolesanywhere pattern (see deploy.yml deploy
-#      step for reference), with a role that has SSM read on the
-#      /device-farm/test-users/* parameter tree; or
-#   2. Wire CI_OIDC_TOKEN + CI_OIDC_ROLE_ARN as Woodpecker secrets and grant
-#      that role the same SSM permissions.
-# Until then, failure: ignore keeps deploys unblocked.
+# auth: IAM Roles Anywhere (same workload cert as deploy steps)
 depends_on:
   - ci
 
@@ -22,31 +13,27 @@ steps:
     failure: ignore
     environment:
       AWS_REGION: us-west-2
+      AWS_PROFILE: ci-deploy
       TEST_URL: https://awsug.clouddelnorte.org
       TEST_AUTH_URL: https://auth.clouddelnorte.org
       TEST_API_URL: https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com
     commands:
-      # awscli v2 binary install — pip install awscli is broken
-      # (botocore version skew). Pin to a known-good v2 release matching
-      # the public.ecr.aws/aws-cli/aws-cli:2.27.50 image used elsewhere
-      # in this pipeline.
-      - apt-get update -qq && apt-get install -y --no-install-recommends curl unzip
-      - curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip" -o /tmp/awscli.zip
-      - unzip -q /tmp/awscli.zip -d /tmp
-      - /tmp/aws/install
-      - aws --version
-      - pip install -r tests/device-farm/requirements.txt
+      - apt-get update -qq && apt-get install -y -qq unzip curl > /dev/null
+      - curl -sSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip -o /tmp/awscli.zip
+      - unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install && rm -rf /tmp/awscli.zip /tmp/aws
+      - curl -sL https://rolesanywhere.amazonaws.com/releases/1.7.0/X86_64/Linux/aws_signing_helper -o /usr/local/bin/aws_signing_helper && chmod +x /usr/local/bin/aws_signing_helper
+      - pip install -r tests/device-farm/requirements.txt -q
 
-      # Assume OIDC role
+      # Configure IAM Roles Anywhere (same pattern as deploy steps)
+      - mkdir -p /root/.aws
       - |
-        CREDS=$(aws sts assume-role-with-web-identity \
-          --role-arn "$CI_OIDC_ROLE_ARN" \
-          --role-session-name "device-farm-ci" \
-          --web-identity-token "$CI_OIDC_TOKEN" \
-          --query 'Credentials' --output json)
-        export AWS_ACCESS_KEY_ID=$(echo "$CREDS" | python -c "import sys,json;print(json.load(sys.stdin)['AccessKeyId'])")
-        export AWS_SECRET_ACCESS_KEY=$(echo "$CREDS" | python -c "import sys,json;print(json.load(sys.stdin)['SecretAccessKey'])")
-        export AWS_SESSION_TOKEN=$(echo "$CREDS" | python -c "import sys,json;print(json.load(sys.stdin)['SessionToken'])")
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - test -f /workload.crt && test -f /workload.key
+      - aws sts get-caller-identity
 
       # Fetch test credentials from SSM Parameter Store
       - |

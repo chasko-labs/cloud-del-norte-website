@@ -13,6 +13,9 @@ when:
 steps:
   - name: capture-dev
     image: mcr.microsoft.com/playwright:v1.55.1-noble
+    mem_limit: 4294967296
+    memswap_limit: 4294967296
+    init: true
     failure: ignore
     when:
       - event: [push, manual]
@@ -29,8 +32,7 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       # install awscli if not present (playwright image is debian-based; pip is faster than apt)
-      # awscli v2 binary install — playwright:noble has python3 but no pip
-      - which aws || (curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip" -o /tmp/awscli.zip && apt-get update -qq && apt-get install -y --no-install-recommends unzip > /dev/null && unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install)
+      - which aws || (curl -sSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip -o /tmp/awscli.zip && unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install && rm -rf /tmp/awscli.zip /tmp/aws)
       # install aws_signing_helper if not present — amd64 linux
       - which aws_signing_helper || (curl -sL https://rolesanywhere.amazonaws.com/releases/1.7.0/X86_64/Linux/aws_signing_helper -o /usr/local/bin/aws_signing_helper && chmod +x /usr/local/bin/aws_signing_helper)
       # confirm workload cert is mounted — fast fail with diagnostic if not
@@ -53,6 +55,8 @@ steps:
 
   - name: capture-prod
     image: mcr.microsoft.com/playwright:v1.55.1-noble
+    mem_limit: 4294967296
+    memswap_limit: 4294967296
     failure: ignore
     when:
       - event: [push, manual]
@@ -69,8 +73,7 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       # install awscli if not present
-      # awscli v2 binary install — playwright:noble has python3 but no pip
-      - which aws || (curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip" -o /tmp/awscli.zip && apt-get update -qq && apt-get install -y --no-install-recommends unzip > /dev/null && unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install)
+      - which aws || (curl -sSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip -o /tmp/awscli.zip && unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install && rm -rf /tmp/awscli.zip /tmp/aws)
       # install aws_signing_helper if not present — amd64 linux
       - which aws_signing_helper || (curl -sL https://rolesanywhere.amazonaws.com/releases/1.7.0/X86_64/Linux/aws_signing_helper -o /usr/local/bin/aws_signing_helper && chmod +x /usr/local/bin/aws_signing_helper)
       # confirm workload cert is mounted — fast fail with diagnostic if not
@@ -84,9 +87,9 @@ steps:
       - node scripts/ci-screenshot.mjs https://clouddelnorte.org /tmp/shots > /tmp/capture.log 2>&1 || true
       - cat /tmp/capture.log
       # upload screenshots (|| true — failure is informative but not fatal here)
-      - aws s3 sync /tmp/shots s3://awsaerospace.org/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable" || true
-      - aws s3 sync /tmp/shots s3://awsaerospace.org/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete || true
+      - aws s3 sync /tmp/shots s3://clouddelnorte.org/_ci/screenshots/$CI_COMMIT_SHA/ --content-type image/png --cache-control "max-age=31536000, immutable" || true
+      - aws s3 sync /tmp/shots s3://clouddelnorte.org/_ci/screenshots/latest/ --content-type image/png --cache-control "no-cache" --delete || true
       # upload log unconditionally — no || true; a failure here indicates auth problem
-      - aws s3 cp /tmp/capture.log s3://awsaerospace.org/_ci/screenshots/$CI_COMMIT_SHA/capture.log --content-type "text/plain; charset=utf-8" --cache-control "no-cache"
-      - aws s3 cp /tmp/capture.log s3://awsaerospace.org/_ci/screenshots/latest/capture.log --content-type "text/plain; charset=utf-8" --cache-control "no-cache"
+      - aws s3 cp /tmp/capture.log s3://clouddelnorte.org/_ci/screenshots/$CI_COMMIT_SHA/capture.log --content-type "text/plain; charset=utf-8" --cache-control "no-cache"
+      - aws s3 cp /tmp/capture.log s3://clouddelnorte.org/_ci/screenshots/latest/capture.log --content-type "text/plain; charset=utf-8" --cache-control "no-cache"
       - aws cloudfront create-invalidation --distribution-id ECC3LP1BL2CZS --paths "/_ci/screenshots/latest/*"

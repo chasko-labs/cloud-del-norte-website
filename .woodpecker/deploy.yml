@@ -63,7 +63,7 @@ steps:
   # or is missing required endpoints. Prevents FP-017-class failures.
 
   - name: verify-csp
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [build]
     failure: ignore
     environment:
@@ -84,7 +84,7 @@ steps:
   # ─── production deploys (main branch) ───────────────────────────────────────
 
   - name: deploy
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [build]
     when:
       - event: [push, manual]
@@ -109,12 +109,12 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib/ s3://$S3_BUCKET_MAIN/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"  # legacy S3 path names (host is fiona)
+      - aws s3 sync lib/ s3://$S3_BUCKET_MAIN/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache" # legacy S3 path names (host is fiona)
       - aws s3 sync lib/assets/ s3://$S3_BUCKET_MAIN/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
       - aws cloudfront create-invalidation --distribution-id $CF_DIST_MAIN --paths "/*"
 
   - name: deploy-auth
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [build]
     when:
       - event: [push, manual]
@@ -144,7 +144,7 @@ steps:
       - aws cloudfront create-invalidation --distribution-id $CF_DIST_AUTH --paths "/*"
 
   - name: deploy-awsug
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [build]
     when:
       - event: [push, manual]
@@ -178,7 +178,7 @@ steps:
   # ─── dev preview deploys (non-main branches) ────────────────────────────────
 
   - name: deploy-dev
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [build]
     when:
       - event: [push, manual]
@@ -204,14 +204,14 @@ steps:
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
       - aws sts get-caller-identity
-      - aws s3 sync lib/ s3://$S3_BUCKET_DEV/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"  # legacy S3 path names (host is fiona)
+      - aws s3 sync lib/ s3://$S3_BUCKET_DEV/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache" # legacy S3 path names (host is fiona)
       - aws s3 sync lib/assets/ s3://$S3_BUCKET_DEV/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
-      - aws s3 sync s3://$S3_BUCKET_MAIN/fiona-embed/ s3://$S3_BUCKET_DEV/fiona-embed/ --exact-timestamps  # legacy S3 path names (host is fiona)
-      - aws s3 sync s3://$S3_BUCKET_MAIN/fiona/ s3://$S3_BUCKET_DEV/fiona/ --exact-timestamps  # legacy S3 path names (host is fiona)
+      - aws s3 sync s3://$S3_BUCKET_MAIN/fiona-embed/ s3://$S3_BUCKET_DEV/fiona-embed/ --exact-timestamps # legacy S3 path names (host is fiona)
+      - aws s3 sync s3://$S3_BUCKET_MAIN/fiona/ s3://$S3_BUCKET_DEV/fiona/ --exact-timestamps # legacy S3 path names (host is fiona)
       - aws cloudfront create-invalidation --distribution-id $CF_DIST_DEV --paths "/*"
 
   - name: deploy-dev-auth
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [build]
     when:
       - event: [push, manual]
@@ -244,7 +244,7 @@ steps:
       - aws cloudfront create-invalidation --distribution-id $CF_DIST_DEV --paths "/auth-preview/*"
 
   - name: deploy-dev-awsug
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [build]
     when:
       - event: [push, manual]
@@ -293,7 +293,7 @@ steps:
       - node scripts/ci-screenshot.mjs https://dev.clouddelnorte.org screenshots
 
   - name: screenshot-upload-dev
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [screenshot-capture-dev]
     failure: ignore
     when:
@@ -334,7 +334,7 @@ steps:
       - node scripts/ci-screenshot.mjs https://clouddelnorte.org screenshots
 
   - name: screenshot-upload-prod
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [screenshot-capture-prod]
     failure: ignore
     when:
@@ -379,7 +379,7 @@ steps:
           https://ntfy.sh/cdn-deploy-74697e0f
 
   - name: notify-sns-dev
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [deploy-dev]
     failure: ignore
     when:
@@ -419,7 +419,7 @@ steps:
           https://ntfy.sh/cdn-deploy-74697e0f
 
   - name: notify-sns-prod
-    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
+    image: public.ecr.aws/aws-cli/aws-cli:latest
     depends_on: [deploy, deploy-auth, deploy-awsug]
     failure: ignore
     when:
@@ -439,3 +439,22 @@ steps:
       - |
         MSG=$$(printf '[CDN prod] %s\nlive: https://clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
         aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"
+
+  # ─── qdrant re-indexing (shared-knowledge) ──────────────────────────────────
+
+  - name: qdrant-reindex
+    image: python:3.12-alpine
+    failure: ignore
+    depends_on: [deploy, deploy-auth, deploy-awsug]
+    when:
+      - event: push
+        branch: main
+    environment:
+      QDRANT_URL: http://192.168.4.53:6333
+      OLLAMA_URL: http://192.168.4.53:11434
+      EMBED_MODEL: nomic-embed-text
+      COLLECTION: shared-knowledge
+    commands:
+      - apk add --no-cache git curl
+      - git clone --depth 1 https://github.com/BryanChasko/haunting-kiro-cli.git /tmp/haunting
+      - git diff HEAD~1 --name-only --diff-filter=ACMR | python3 /tmp/haunting/scripts/qdrant-index.py --repo "$CI_REPO_NAME" --commit "$CI_COMMIT_SHA"
