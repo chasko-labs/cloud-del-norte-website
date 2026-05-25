@@ -321,6 +321,10 @@ async function handleCreate(event, headers) {
 // ── handler ──────────────────────────────────────────────────────────────────
 // Event shape: AWS Lambda payload format v2 (API Gateway HTTP V2).
 export async function handler(event) {
+	// Pre-warm ping from EventBridge — return immediately to keep container hot
+	if (event.source === 'aws.events' || event['detail-type'] === 'Scheduled Event') {
+		return { statusCode: 200, body: 'warm' };
+	}
 	const requestId = event.requestContext?.requestId || "local";
 	const requestOrigin = event.headers?.origin || event.headers?.Origin || "";
 	const headers = corsHeaders(requestOrigin);

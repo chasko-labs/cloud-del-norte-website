@@ -1,0 +1,6 @@
+{
+	"Name": "cdn-rsvp-warmup",
+	"Description": "Keeps cdn-rsvp Lambda warm by invoking every 5 minutes to avoid cold starts",
+	"ScheduleExpression": "rate(5 minutes)",
+	"State": "ENABLED"
+}

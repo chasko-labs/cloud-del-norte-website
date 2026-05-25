@@ -160,12 +160,16 @@ function AppContent({
 		});
 	}, []);
 
-	const { live: andresLive, videoId: andresVideoId } = useAndresLive();
+	const { live: andresLive, videoId: andresVideoId } = useAndresLive(
+		LIVE_DETECTION_ENABLED,
+	);
 	const { live: _vbrownbagLive, videoId: _vbrownbagVideoId } = useChannelLive(
 		"https://www.youtube.com/@vBrownBag/live",
+		LIVE_DETECTION_ENABLED,
 	);
 	const { live: _zacsLive, videoId: _zacsVideoId } = useChannelLive(
 		"https://www.youtube.com/@thezacsshowtalkingaws/live",
+		LIVE_DETECTION_ENABLED,
 	);
 	// Gate: suppress live detection until a non-oembed method is available.
 	const vbrownbagLive = LIVE_DETECTION_ENABLED && _vbrownbagLive;

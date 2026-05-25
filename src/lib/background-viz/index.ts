@@ -1,12 +1,15 @@
 import { isSoftwareWebGL } from "../device-capabilities.js";
 import { createAudioBridge, resumeCtx } from "./audio.js";
 import { initCanvas, rebuildStatic } from "./canvas.js";
-import {
-	type DuneSceneHandle,
-	ensureDuneFallback,
-	mountDuneScene,
-} from "./dune-scene.js";
+import type { DuneSceneHandle } from "./dune-scene.js";
 import { preloadLogo } from "./static.js";
+
+// Lazy-load the BabylonJS dune-scene module. The static import pulled in
+// ~1.5MB compressed of @babylonjs/core on every page load even when the
+// scene was never mounted. Dynamic import() defers the cost until needed.
+async function loadDuneModule() {
+	return import("./dune-scene.js");
+}
 
 // Re-export for callers that previously imported from here.
 export { isSoftwareWebGL };
@@ -181,7 +184,7 @@ export function mount(): () => void {
 
 	function showDuneForLight(): void {
 		if (!duneHandle) {
-			tryMountDune();
+			void tryMountDune();
 			return;
 		}
 		duneHandle.setVisible(true);
@@ -190,7 +193,7 @@ export function mount(): () => void {
 		setStaticCanvasVisible(false);
 	}
 
-	function tryMountDune(): void {
+	async function tryMountDune(): Promise<void> {
 		if (duneHandle) return;
 		if (isDarkMode()) return;
 
@@ -200,6 +203,7 @@ export function mount(): () => void {
 		// the babylon scene mounts (software-render skip, reduced-motion skip,
 		// mount throw, perf-gate teardown). Idempotent.
 		if (!removeDuneFallback) {
+			const { ensureDuneFallback } = await loadDuneModule();
 			removeDuneFallback = ensureDuneFallback(document.body);
 		}
 
@@ -215,6 +219,7 @@ export function mount(): () => void {
 		}
 
 		try {
+			const { mountDuneScene } = await loadDuneModule();
 			duneHandle = mountDuneScene(document.body);
 		} catch (err) {
 			console.warn(
@@ -284,7 +289,7 @@ export function mount(): () => void {
 		);
 	}
 
-	tryMountDune();
+	void tryMountDune();
 	// Dark-mode wallpaper is the static FranklinOverlay SVG (rendered by the
 	// el-paso-nights React layer) — no imperative mount needed here.
 

@@ -18,10 +18,11 @@ const INITIAL: AndresLive = { live: false, videoId: null };
  * while still letting a hard reload pick up "channel went live since last
  * load". See lib/youtube-oembed-cache.ts for cache semantics.
  */
-export function useAndresLive(): AndresLive {
+export function useAndresLive(enabled = true): AndresLive {
 	const [value, setValue] = useState<AndresLive>(INITIAL);
 
 	useEffect(() => {
+		if (!enabled) return;
 		let cancelled = false;
 		probeOembed(CHANNEL_URL).then((result) => {
 			if (cancelled || !result) return;
@@ -30,7 +31,7 @@ export function useAndresLive(): AndresLive {
 		return () => {
 			cancelled = true;
 		};
-	}, []);
+	}, [enabled]);
 
 	return value;
 }
