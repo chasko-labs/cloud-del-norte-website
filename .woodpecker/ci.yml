@@ -4,6 +4,8 @@
 # runs on pull_request, push to main, and manual trigger
 # does NOT deploy — see deploy.yml for deploy pipeline
 
+cancel_previous: true
+
 when:
   - event: [pull_request, push, manual]
     branch: main

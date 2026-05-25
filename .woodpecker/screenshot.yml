@@ -6,6 +6,8 @@
 # debug log uploaded unconditionally; check <sha>/capture.log to distinguish
 # script failures from auth failures
 
+cancel_previous: true
+
 when:
   - event: [push, manual]
     branch: [dev, main]
