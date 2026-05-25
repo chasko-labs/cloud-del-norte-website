@@ -2657,7 +2657,9 @@
 
 .feed-upcoming-virtual-event__date-plate {
 	position: relative;
-	display: inline-block;
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
 	/* wave 38c — round padding from raw 6px / 14px to the 8pt grid:
 	   --cdn-space-sm (8px) vertical, --cdn-space-md (16px) horizontal.
 	   Border-radius pinned to --cdn-radius-md (8px) token. Mirrors the
@@ -2678,9 +2680,9 @@
 	   date string no longer wraps to two lines at narrow viewport /
 	   card widths. */
 	font-size: clamp(0.875rem, 2.8cqw, 1.35rem);
-	white-space: nowrap;
+	white-space: normal;
 	font-weight: 800;
-	line-height: 1.2;
+	line-height: 1.15;
 	letter-spacing: 0.01em;
 	font-variant-numeric: tabular-nums;
 	overflow: hidden;
