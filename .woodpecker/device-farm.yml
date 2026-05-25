@@ -1,5 +1,7 @@
 # woodpecker ci — device farm browser testing
 # auth: IAM Roles Anywhere (same workload cert as deploy steps)
+cancel_previous: true
+
 depends_on:
   - ci
 

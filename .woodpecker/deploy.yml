@@ -15,6 +15,8 @@
 # clouddelnorte.org rebrand. Renaming requires S3 bucket recreation + DNS/CF
 # origin update. Track in a separate issue.
 
+cancel_previous: true
+
 when:
   - event: [push, manual]
     branch: [main, dev, "feature/*", "fix/*", "feat/*"]
