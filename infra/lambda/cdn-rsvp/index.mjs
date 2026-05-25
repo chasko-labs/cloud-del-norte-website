@@ -9,12 +9,16 @@ import {
 	QueryCommand,
 	ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 // ── module-scope singletons ──────────────────────────────────────────────────
 const dynamo = DynamoDBDocumentClient.from(
 	new DynamoDBClient({ region: "us-west-2" }),
 );
 const cognito = new CognitoIdentityProviderClient({ region: "us-west-2" });
+const s3 = new S3Client({ region: "us-east-1" });
+const SNAPSHOT_BUCKET = "clouddelnorte.org";
+const SNAPSHOT_KEY = "data/rsvp-counts.json";
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const ALLOWED_ORIGINS = new Set([
@@ -152,6 +156,50 @@ async function countRsvpsForEvent(eventId) {
 		lastKey = out.LastEvaluatedKey;
 	} while (lastKey);
 	return total;
+}
+
+// Build a snapshot of {eventId: {capacity, taken, remaining}} for every event
+// in EVENT_CAPACITIES and write it to s3://clouddelnorte.org/data/rsvp-counts.json.
+// Used by:
+//   - the EventBridge scheduled handler (refresh every 5 minutes)
+//   - the POST /rsvp success path (immediate refresh after a confirmed RSVP)
+// Failures are logged but never throw — a snapshot write failure must never
+// break the user-facing RSVP flow.
+async function writeSnapshot() {
+	const capacities = getCapacities();
+	const eventIds = Object.keys(capacities);
+	const counts = {};
+	for (const eventId of eventIds) {
+		try {
+			const capacity = capacities[eventId];
+			const taken = await countRsvpsForEvent(eventId);
+			counts[eventId] = {
+				capacity,
+				taken,
+				remaining: Math.max(0, capacity - taken),
+			};
+		} catch (err) {
+			log("warn", "snapshot_event_count_failed", { eventId, err: err.message });
+		}
+	}
+	const body = JSON.stringify({
+		generatedAt: new Date().toISOString(),
+		counts,
+	});
+	try {
+		await s3.send(
+			new PutObjectCommand({
+				Bucket: SNAPSHOT_BUCKET,
+				Key: SNAPSHOT_KEY,
+				Body: body,
+				ContentType: "application/json",
+				CacheControl: "public, max-age=60",
+			}),
+		);
+		log("info", "snapshot_written", { events: eventIds.length });
+	} catch (err) {
+		log("error", "snapshot_write_failed", { err: err.message });
+	}
 }
 
 async function findExistingRsvp(userSub, eventId) {
@@ -304,6 +352,11 @@ async function handleCreate(event, headers) {
 		throw err;
 	}
 
+	// Refresh the static snapshot so the next page load reflects the new count.
+	// Fire-and-await: a few hundred ms of latency on the create response is
+	// acceptable; the user has already submitted and is waiting for confirmation.
+	await writeSnapshot();
+
 	log("info", "rsvp created", { userSub, eventId });
 	return respond(
 		201,
@@ -321,9 +374,12 @@ async function handleCreate(event, headers) {
 // ── handler ──────────────────────────────────────────────────────────────────
 // Event shape: AWS Lambda payload format v2 (API Gateway HTTP V2).
 export async function handler(event) {
-	// Pre-warm ping from EventBridge — return immediately to keep container hot
-	if (event.source === 'aws.events' || event['detail-type'] === 'Scheduled Event') {
-		return { statusCode: 200, body: 'warm' };
+	// EventBridge scheduled invocation — refresh the static rsvp-counts.json snapshot.
+	// No HTTP response is consumed; the rule's purpose is to keep the JSON fresh
+	// for static-served reads from /data/rsvp-counts.json.
+	if (event.source === "aws.events" || event["detail-type"] === "Scheduled Event") {
+		await writeSnapshot();
+		return { statusCode: 200, body: "snapshot_refreshed" };
 	}
 	const requestId = event.requestContext?.requestId || "local";
 	const requestOrigin = event.headers?.origin || event.headers?.Origin || "";

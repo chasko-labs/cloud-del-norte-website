@@ -19,6 +19,12 @@
 			"Resource": "arn:aws:cognito-idp:us-west-2:170473530355:userpool/us-west-2_cyPQF4F3r"
 		},
 		{
+			"Sid": "S3WriteSnapshot",
+			"Effect": "Allow",
+			"Action": ["s3:PutObject"],
+			"Resource": "arn:aws:s3:::clouddelnorte.org/data/rsvp-counts.json"
+		},
+		{
 			"Sid": "CloudWatchLogs",
 			"Effect": "Allow",
 			"Action": [

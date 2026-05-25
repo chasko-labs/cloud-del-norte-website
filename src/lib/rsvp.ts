@@ -265,23 +265,31 @@ export async function getRsvpForCurrentUser(
  * devtools visibility.
  */
 export async function spotsRemaining(eventId: string): Promise<number> {
+	// Read from the static snapshot at /data/rsvp-counts.json instead of
+	// hitting the cdn-rsvp Lambda on every page load. The snapshot is
+	// refreshed every 5 minutes by EventBridge and on every successful POST
+	// /rsvp — stale data window is bounded by the cache-control max-age=60
+	// header on the JSON object plus the 5-minute snapshot cadence.
 	let res: Response;
 	try {
-		res = await fetch(`${API_BASE}/rsvp/${encodeURIComponent(eventId)}/spots`);
+		res = await fetch("/data/rsvp-counts.json", { cache: "default" });
 	} catch (err) {
 		console.warn("[rsvp] spotsRemaining network error", err);
 		return Number.NaN;
 	}
 
 	if (!res.ok) {
-		console.warn(`[rsvp] spotsRemaining returned ${res.status} for ${eventId}`);
+		console.warn(`[rsvp] spotsRemaining snapshot returned ${res.status}`);
 		return Number.NaN;
 	}
 
 	try {
-		const body = (await res.json()) as { remaining?: number };
-		if (typeof body.remaining === "number") return body.remaining;
-		console.warn("[rsvp] spotsRemaining body missing remaining field", body);
+		const body = (await res.json()) as {
+			counts?: Record<string, { remaining?: number }>;
+		};
+		const entry = body.counts?.[eventId];
+		if (entry && typeof entry.remaining === "number") return entry.remaining;
+		console.warn("[rsvp] spotsRemaining snapshot missing event", eventId);
 		return Number.NaN;
 	} catch (err) {
 		console.warn("[rsvp] spotsRemaining body parse error", err);
