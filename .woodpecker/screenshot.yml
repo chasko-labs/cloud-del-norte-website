@@ -12,7 +12,7 @@ when:
 
 steps:
   - name: capture-dev
-    image: mcr.microsoft.com/playwright:v1.60.0-noble
+    image: mcr.microsoft.com/playwright:v1.55.1-noble
     failure: ignore
     when:
       - event: [push, manual]
@@ -51,7 +51,7 @@ steps:
       - aws cloudfront create-invalidation --distribution-id EEHVTUEQ97V0X --paths "/_ci/screenshots/latest/*"
 
   - name: capture-prod
-    image: mcr.microsoft.com/playwright:v1.49.0-jammy
+    image: mcr.microsoft.com/playwright:v1.55.1-noble
     failure: ignore
     when:
       - event: [push, manual]

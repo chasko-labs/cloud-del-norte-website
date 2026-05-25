@@ -15,7 +15,15 @@ steps:
       TEST_AUTH_URL: https://auth.clouddelnorte.org
       TEST_API_URL: https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com
     commands:
-      - pip install awscli -q
+      # awscli v2 binary install — pip install awscli is broken
+      # (botocore version skew). Pin to a known-good v2 release matching
+      # the public.ecr.aws/aws-cli/aws-cli:2.27.50 image used elsewhere
+      # in this pipeline.
+      - apt-get update -qq && apt-get install -y --no-install-recommends curl unzip
+      - curl -sL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip" -o /tmp/awscli.zip
+      - unzip -q /tmp/awscli.zip -d /tmp
+      - /tmp/aws/install
+      - aws --version
       - pip install -r tests/device-farm/requirements.txt
 
       # Assume OIDC role

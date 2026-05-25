@@ -57,7 +57,7 @@ steps:
   # infra/cloudfront-security-headers.json or is missing required endpoints.
   # Requires AWS read access; uses the same Roles-Anywhere cred bootstrap as deploy.yml.
   - name: verify-csp
-    image: public.ecr.aws/aws-cli/aws-cli:latest
+    image: public.ecr.aws/aws-cli/aws-cli:2.27.50
     depends_on: [install]
     failure: ignore
     environment:
