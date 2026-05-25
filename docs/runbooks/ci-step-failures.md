@@ -93,6 +93,47 @@ without warning when AWS publishes a new latest tag with a regression.
 **Maintenance rule**: Bump the version intentionally when needed; don't
 track `:latest`.
 
+### 5. `capture-prod` / `capture-dev` — pip not found in playwright:noble
+
+**Symptom**: `/bin/sh: 33: pip: not found` when the step runs
+`which aws || pip install --quiet awscli`.
+
+**Root cause**: The `mcr.microsoft.com/playwright:v1.55.1-noble` image has
+`python3` but no `pip` (and no `pip3`). The previous `playwright:jammy` tag
+had pip; the noble tag does not.
+
+**Fix**: Replaced `pip install --quiet awscli` with the same awscli v2
+binary install used in device-farm.yml. Pulls the official AWS-published
+zip pinned to 2.27.50 and runs the bundled installer. No pip dependency.
+
+### 6. `device-farm-test` — OIDC auth model never configured
+
+**Symptom**: `Invalid length for parameter WebIdentityToken, value: 0`
+from the `aws sts assume-role-with-web-identity` call.
+
+**Root cause**: The step references `$CI_OIDC_TOKEN` and `$CI_OIDC_ROLE_ARN`
+but neither variable is set in the Woodpecker environment. The rest of the
+pipelines use the rolesanywhere + workload cert pattern, not OIDC web
+identity. The two auth models have never been reconciled.
+
+**Current state**: Marked `failure: ignore` so it doesn't block deploys.
+The step still runs and produces a clear error indicating which auth model
+needs to be wired.
+
+**To re-enable as a blocking step**, choose one path:
+
+1. **Convert to rolesanywhere** (recommended, matches the rest of the
+   pipeline). Mirror the deploy.yml deploy step's auth block: write
+   /root/.aws/config with a `credential_process =
+   /usr/local/bin/aws_signing_helper credential-process ...` entry
+   pointing at `/workload.crt` + `/workload.key`. Use a role that has SSM
+   read on `/device-farm/test-users/*` plus the existing role permissions.
+
+2. **Wire OIDC secrets** (if there's a reason to keep this step on a
+   different auth boundary). Define `CI_OIDC_TOKEN` and `CI_OIDC_ROLE_ARN`
+   as Woodpecker secrets and grant the assumed role SSM read on the same
+   parameter tree.
+
 ## Failure mode markers
 
 Steps in this pipeline are tagged with `failure: ignore` or `failure: fail`.
