@@ -21,6 +21,7 @@ import { STREAMS } from "../../lib/streams-order";
 import { checkReachability } from "../../lib/streams-reachability";
 import { DancerIcon } from "../dancer-icon";
 import { PodcastIcon } from "../podcast-icon";
+import { RadioTowerIcon } from "../radio-tower-icon";
 import {
 	NextEpisodeIcon,
 	PodcastPauseIcon,
