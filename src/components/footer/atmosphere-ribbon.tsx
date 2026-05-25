@@ -8,6 +8,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
+import { loadBabylonCommon } from "../../lib/babylon-loader";
 import {
 	elPasoHour,
 	getTOD,
@@ -96,7 +97,7 @@ function RibbonScene({ hour, onReady }: { hour: number; onReady: () => void }) {
 			if (disposed || !canvas) return;
 			if (!requestActivation(SCENE_ID)) return;
 
-			const B = await import("@babylonjs/core");
+			const B = await loadBabylonCommon();
 			if (disposed) {
 				releaseActivation(SCENE_ID);
 				return;

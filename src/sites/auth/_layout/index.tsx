@@ -20,7 +20,6 @@ import {
 } from "../../../utils/theme";
 import "./auth-atmosphere.css";
 import "./styles.css";
-import { mountAuthAtmosphere, unmountAuthAtmosphere } from "./auth-atmosphere";
 
 /**
  * AuthLayout — host shell for login / signup / verify / forgot-password.
@@ -84,10 +83,6 @@ export default function AuthLayout({
 	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
 	const bgRef = useRef<HTMLDivElement>(null);
-	useEffect(() => {
-		if (bgRef.current) mountAuthAtmosphere(bgRef.current);
-		return unmountAuthAtmosphere;
-	}, []);
 
 	useEffect(() => {
 		document.body.classList.add("cdn-auth-subdomain");

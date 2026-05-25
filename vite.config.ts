@@ -87,12 +87,6 @@ export default defineConfig({
 						return "babylon-lights";
 					if (id.includes("node_modules/@babylonjs/core/Layers"))
 						return "babylon-layers";
-					if (id.includes("node_modules/@babylonjs/core/Particles"))
-						return "babylon-particles";
-					if (id.includes("node_modules/@babylonjs/core/PostProcesses"))
-						return "babylon-postprocess";
-					if (id.includes("node_modules/@babylonjs/core/Misc"))
-						return "babylon-misc";
 					if (id.includes("node_modules/@babylonjs/core"))
 						return "babylon-core";
 					// Cloudscape — split by component family. Components often grow

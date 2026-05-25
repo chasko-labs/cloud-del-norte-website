@@ -13,6 +13,7 @@ const PERSISTENT_SCENES = new Set<string>([
 	"atmosphere-scene",
 	"atmosphere-ribbon",
 	"babylon-spin-demo",
+	"cdn-star-logo",
 ]);
 
 /**

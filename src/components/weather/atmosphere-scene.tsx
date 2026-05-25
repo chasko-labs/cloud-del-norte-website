@@ -17,6 +17,7 @@
 
 import { useEffect, useRef } from "react";
 import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
+import { loadBabylonCommon } from "../../lib/babylon-loader";
 import { getTOD, isNight, skyColor } from "../../lib/time-of-day";
 
 export interface AtmosphereSceneProps {
@@ -116,7 +117,7 @@ export default function AtmosphereScene({
 			if (disposed || !canvas) return;
 			if (!requestActivation(SCENE_ID)) return;
 
-			const B = await import("@babylonjs/core");
+			const B = await loadBabylonCommon();
 			if (disposed) {
 				releaseActivation(SCENE_ID);
 				return;

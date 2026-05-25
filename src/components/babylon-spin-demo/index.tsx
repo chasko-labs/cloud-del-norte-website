@@ -6,6 +6,7 @@
 // Engine is disposed when the carousel scrolls off-screen and re-created on re-entry.
 import { useEffect, useRef } from "react";
 import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
+import { loadBabylonCommon } from "../../lib/babylon-loader";
 
 const SCENE_ID = "babylon-spin-demo";
 
@@ -42,7 +43,7 @@ export default function BabylonSpinDemo({
 			if (disposed || !canvas) return;
 			if (!requestActivation(SCENE_ID)) return;
 
-			const B = await import("@babylonjs/core");
+			const B = await loadBabylonCommon();
 			if (disposed) {
 				releaseActivation(SCENE_ID);
 				return;
