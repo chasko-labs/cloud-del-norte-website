@@ -172,18 +172,15 @@ test.describe("cross-subdomain session — pre-deploy smoke (no credentials requ
 		expect(response?.status()).toBeLessThan(500);
 	});
 
-	test("CSP on main subdomain does not contain unsafe-eval in script-src", async ({
+	test("CSP on main subdomain contains unsafe-eval and blob: in script-src (required for BabylonJS persistent player and Fiona)", async ({
 		page,
 	}) => {
 		const response = await page.goto("https://clouddelnorte.org/");
 		const csp = response?.headers()["content-security-policy"] ?? "";
-		if (csp) {
-			const scriptSrcMatch = csp.match(/script-src\s+([^;]+)/);
-			if (scriptSrcMatch) {
-				expect(scriptSrcMatch[1]).not.toContain("'unsafe-eval'");
-				expect(scriptSrcMatch[1]).not.toContain("blob:");
-			}
-		}
+		const scriptSrcMatch = csp.match(/script-src\s+([^;]+)/);
+		expect(scriptSrcMatch).not.toBeNull();
+		expect(scriptSrcMatch![1]).toContain("'unsafe-eval'");
+		expect(scriptSrcMatch![1]).toContain("blob:");
 	});
 
 	test("silent reauth: unauthenticated visit to awsug /auth/callback/ with login_required redirects to login", async ({

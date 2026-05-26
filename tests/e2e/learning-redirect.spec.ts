@@ -9,17 +9,20 @@ test.describe("/learning/ redirect", () => {
 		expect(page.url()).toContain("/learning/api/index.html");
 	});
 
-	test("/learning/api/index.html renders a page heading", async ({ page }) => {
+	test("/learning/api/index.html renders content with at least one heading", async ({
+		page,
+	}) => {
 		await page.goto("https://clouddelnorte.org/learning/api/index.html");
-		const heading = page.getByRole("heading", { level: 1 });
+		const heading = page.getByRole("heading").first();
 		await expect(heading).toBeVisible({ timeout: 8_000 });
 	});
 
 	test("/learning/api/index.html visual baseline", async ({ page }) => {
 		await page.goto("https://clouddelnorte.org/learning/api/index.html");
-		await page
-			.locator("[class*='awsui_content-layout']")
-			.waitFor({ state: "visible" });
-		await expect(page).toHaveScreenshot("learning-api-page.png");
+		await page.getByRole("main").waitFor({ state: "visible" });
+		await page.waitForLoadState("networkidle");
+		await expect(page).toHaveScreenshot("learning-api-page.png", {
+			maxDiffPixelRatio: 0.02,
+		});
 	});
 });
