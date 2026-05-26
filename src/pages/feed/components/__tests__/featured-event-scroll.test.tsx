@@ -72,10 +72,9 @@ describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
 		fetchMock = vi.fn().mockResolvedValue(
 			new Response(
 				JSON.stringify({
-					eventId: "happy-hour-2026-06-03",
-					capacity: 50,
-					taken: 0,
-					remaining: 50,
+					counts: {
+						"happy-hour-2026-06-03": { remaining: 50, capacity: 50, taken: 0 },
+					},
 				}),
 				{ status: 200, headers: { "Content-Type": "application/json" } },
 			),
