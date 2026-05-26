@@ -147,13 +147,13 @@
 	/* Light mode */
 	.cdn-viz-active:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9),
 	.cdn-viz-active:not(.awsui-dark-mode) main[class*="awsui_layout"]:not(#\9) {
-		background-color: rgba(237, 229, 212, 0.94);
+		background-color: rgba(237, 229, 212, 0.55);
 	}
 
 	/* Dark mode */
 	.cdn-viz-active.awsui-dark-mode [class*="awsui_layout-main"]:not(#\9),
 	.cdn-viz-active.awsui-dark-mode main[class*="awsui_layout"]:not(#\9) {
-		background-color: rgba(10, 12, 20, 0.94);
+		background-color: rgba(10, 12, 20, 0.55);
 	}
 }
 
