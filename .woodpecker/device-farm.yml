@@ -26,13 +26,13 @@ steps:
       - curl -sL https://rolesanywhere.amazonaws.com/releases/1.7.0/X86_64/Linux/aws_signing_helper -o /usr/local/bin/aws_signing_helper && chmod +x /usr/local/bin/aws_signing_helper
       - pip install -r tests/device-farm/requirements.txt -q
 
-      # Configure IAM Roles Anywhere (same pattern as deploy steps)
+      # Configure IAM Roles Anywhere (kiro account — Device Farm + SSM)
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
         [profile ci-deploy]
         region = us-west-2
-        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:946179428633:trust-anchor/41cd58ba-3e23-42bf-a3da-728363c249bd --profile-arn arn:aws:rolesanywhere:us-west-2:946179428633:profile/2ff4503a-b937-4b30-baec-9cf51b4dc6ab --role-arn arn:aws:iam::946179428633:role/device-farm-ci --certificate /workload.crt --private-key /workload.key
         EOF
       - test -f /workload.crt && test -f /workload.key
       - aws sts get-caller-identity
