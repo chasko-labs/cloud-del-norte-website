@@ -585,10 +585,33 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer {
 /* Weather in footer — constrained so it doesn't dominate */
 .cdn-footer-weather {
 	max-width: 280px;
-	max-height: 56px;
 	overflow: hidden;
 	flex: 1 1 auto;
 	min-width: 140px;
+}
+
+/* Compact single-row layout when weather card is inside footer */
+.cdn-footer-weather .cdn-weather {
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	padding: 4px 12px;
+	max-width: none;
+}
+.cdn-footer-weather .cdn-weather__now {
+	flex-direction: row;
+	align-items: center;
+	gap: 8px;
+}
+.cdn-footer-weather .cdn-weather__tomorrow,
+.cdn-footer-weather .cdn-weather__dots,
+.cdn-footer-weather .cdn-weather__metrics {
+	display: none;
+}
+.cdn-footer-weather .cdn-weather__temp {
+	flex-direction: row;
+	gap: 6px;
 }
 
 /* Version pushed to end */

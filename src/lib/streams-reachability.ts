@@ -19,8 +19,6 @@ export async function checkReachability(
 ): Promise<ReachResult> {
 	// Curated stations are trusted — no probe needed
 	if (stream.curated) return "skip-curated";
-	// CORS-blocked feeds will always fail a browser fetch — mark dead immediately
-	if (stream.corsBlocked) return "fail";
 
 	const cached = cache.get(stream.key);
 	if (cached && Date.now() - cached.ts < CACHE_TTL_MS) return cached.result;

@@ -549,13 +549,12 @@ export const STREAMS: StreamDef[] = [
 	},
 	{
 		key: "radio_udg_lagos",
-		// hidden: true — Zeno mount 8hage4z92hhvv returns HTTP 401 (mount expired/revoked).
-		// Wave 22 probe: alternate Zeno mounts (UNAM 0xrt7ehm9k8uv, OPUS ydtzts4h4kuuv)
-		// also return 401. No working replacement found within 5 probe attempts.
-		// ibero_909 + concepto_radial remain as the active Mexican stations.
-		// fallbackUrls preserves the dead mount so if Zeno re-issues the key
-		// the station auto-recovers when hidden is removed.
-		hidden: true,
+		// Zeno mount 8hage4z92hhvv re-verified working 2026-05-26 — curl returned
+		// 302 → 200 audio/mpeg, mount is alive again after the prior 401 outage.
+		// Wave 22 had probed alternate Zeno mounts (UNAM 0xrt7ehm9k8uv, OPUS
+		// ydtzts4h4kuuv) which also returned 401 at the time; this canonical
+		// mount has since recovered. fallbackUrls preserves the same URL so the
+		// player retries it as a fallback if a future hiccup occurs.
 		// Zeno.fm CDN — base URL auto-redirects with JWT token per connection
 		url: "https://stream.zeno.fm/8hage4z92hhvv",
 		label: "radio udg lagos 104.7", // "lagos" disambiguates from main Guadalajara station
@@ -771,10 +770,10 @@ export const STREAMS: StreamDef[] = [
 		// aws-podcast.s3.amazonaws.com; S3 bucket policy may restrict direct access
 		// but browser fetch() with Origin header may succeed. Episode audio
 		// resolves from the RSS enclosure once the RSS fetch succeeds.
-		// Note: go-aws.com DNS was SERVFAIL as of 2026-05-03 — episode audio
-		// will fail until that resolves. hidden: true removes from shuffle until fixed.
+		// Note: go-aws.com DNS previously SERVFAIL (2026-05-03) — re-verified
+		// resolved 2026-05-26, curl returns 200 audio/mpeg via the redirect
+		// chain. Un-hidden as the audio path is alive again.
 		key: "aws_developers_podcast",
-		hidden: true,
 		type: "podcast",
 		url: "https://op3.dev/e/dts.podtrac.com/redirect.mp3/developers.podcast.go-aws.com/media/176.mp3",
 		rssFeedUrl:
@@ -846,9 +845,11 @@ export const STREAMS: StreamDef[] = [
 	},
 	{
 		key: "rust_in_production",
+		curated: true, // Bryan's known-good list: letscast.fm audio CDN reliable
 		// letscast.fm feed emits no Access-Control-Allow-Origin header — CORS-blocked
 		// in the browser. Build-time fetch-feeds.mjs populates podcast-episodes.json
 		// server-side (no CORS restriction). Runtime parseMeta is skipped.
+		// corsBlocked only affects RSS title refresh; the audio URL plays fine.
 		corsBlocked: true,
 		type: "podcast",
 		url: "https://letscast.fm/media/public/938e6879-4aff-480d-8772-d0e0967725c5.mp3",
