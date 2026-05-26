@@ -63,6 +63,13 @@ steps:
   # ─── CSP drift gate (runs before any deploy) ────────────────────────────────
   # Fails the pipeline if live CloudFront CSP drifts from infra/cloudfront-security-headers.json
   # or is missing required endpoints. Prevents FP-017-class failures.
+  #
+  # KNOWN GAP (failure: ignore protects the pipeline):
+  # The heraldstack-ci-deploy role lacks `cloudfront:GetResponseHeadersPolicy`,
+  # so verify-csp.sh cannot read the live awsug response-headers-policy and
+  # reports a cascading set of FAILs. The role is uncodified (see
+  # heraldstack/secure-access/cfn/secrets-store/ci-bryanchasko-role.yaml note),
+  # so the permission cannot be added from this repo. Tracked in #372.
 
   - name: verify-csp
     image: public.ecr.aws/aws-cli/aws-cli:latest
@@ -104,6 +111,8 @@ steps:
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
@@ -136,6 +145,8 @@ steps:
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
@@ -168,6 +179,8 @@ steps:
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
@@ -205,6 +218,8 @@ steps:
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
@@ -240,6 +255,8 @@ steps:
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
@@ -275,6 +292,8 @@ steps:
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
@@ -321,6 +340,8 @@ steps:
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
@@ -363,6 +384,8 @@ steps:
       CF_DIST_MAIN: ECC3LP1BL2CZS
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
@@ -409,6 +432,8 @@ steps:
       AWS_PROFILE: ci-deploy
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
@@ -450,6 +475,8 @@ steps:
       AWS_PROFILE: ci-deploy
     commands:
       - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
+      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
       - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
