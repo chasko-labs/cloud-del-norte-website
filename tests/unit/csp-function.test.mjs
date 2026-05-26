@@ -5,8 +5,7 @@
 import { readFileSync } from "node:fs";
 import { resolve, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, it } from "node:test";
-import assert from "node:assert/strict";
+import { describe, it, expect } from "vitest";
 import vm from "node:vm";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -39,15 +38,15 @@ describe("csp-main.js CloudFront Function", () => {
 	it("sets content-security-policy header on response", () => {
 		const event = { response: { headers: {}, statusCode: 200 } };
 		const result = handler(event);
-		assert.ok(result.headers["content-security-policy"]);
-		assert.ok(result.headers["content-security-policy"].value.length > 0);
+		expect(result.headers["content-security-policy"]).toBeTruthy();
+		expect(result.headers["content-security-policy"].value.length).toBeGreaterThan(0);
 	});
 
 	it("includes default-src 'self'", () => {
 		const event = { response: { headers: {} } };
 		const result = handler(event);
 		const csp = result.headers["content-security-policy"].value;
-		assert.ok(csp.startsWith("default-src 'self'"));
+		expect(csp.startsWith("default-src 'self'")).toBe(true);
 	});
 
 	it("includes all CSP directives", () => {
@@ -57,7 +56,7 @@ describe("csp-main.js CloudFront Function", () => {
 		for (const d of ["script-src", "script-src-elem", "style-src", "connect-src",
 			"font-src", "img-src", "object-src", "frame-ancestors", "frame-src",
 			"media-src", "worker-src"]) {
-			assert.ok(csp.includes(d), `missing directive: ${d}`);
+			expect(csp).toContain(d);
 		}
 	});
 
@@ -67,21 +66,21 @@ describe("csp-main.js CloudFront Function", () => {
 		const csp = result.headers["content-security-policy"].value;
 		const allowlist = JSON.parse(allowlistJson);
 		for (const origin of allowlist["connect-src"]) {
-			assert.ok(csp.includes(origin), `connect-src missing: ${origin}`);
+			expect(csp).toContain(origin);
 		}
 	});
 
 	it("preserves existing response headers", () => {
 		const event = { response: { headers: { "x-custom": { value: "test" } } } };
 		const result = handler(event);
-		assert.equal(result.headers["x-custom"].value, "test");
-		assert.ok(result.headers["content-security-policy"]);
+		expect(result.headers["x-custom"].value).toBe("test");
+		expect(result.headers["content-security-policy"]).toBeTruthy();
 	});
 
 	it("includes worker-src with blob: and babylonjs", () => {
 		const event = { response: { headers: {} } };
 		const result = handler(event);
 		const csp = result.headers["content-security-policy"].value;
-		assert.ok(csp.includes("worker-src 'self' blob: https://cdn.babylonjs.com"));
+		expect(csp).toContain("worker-src 'self' blob: https://cdn.babylonjs.com");
 	});
 });

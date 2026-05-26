@@ -221,16 +221,17 @@ describe("spotsRemaining", () => {
 	it("returns the remaining count on a 200 response", async () => {
 		fetchMock.mockResolvedValueOnce(
 			jsonResponse(200, {
-				eventId: EVENT_ID,
-				capacity: 50,
-				taken: 0,
-				remaining: 50,
+				counts: { [EVENT_ID]: { remaining: 50, capacity: 50, taken: 0 } },
 			}),
 		);
 		await expect(spotsRemaining(EVENT_ID)).resolves.toBe(50);
 		// public endpoint — no Authorization header should have been sent.
-		const [, init] = fetchMock.mock.calls[0] as [string, RequestInit];
-		expect(init).toBeUndefined();
+		const [url, init] = fetchMock.mock.calls[0] as [
+			string,
+			RequestInit | undefined,
+		];
+		expect(url).toBe("/data/rsvp-counts.json");
+		expect(init?.headers).toBeUndefined();
 	});
 
 	it("returns NaN on a 404 (unknown event)", async () => {
@@ -256,10 +257,7 @@ describe("spotsRemaining", () => {
 		sessionStorage.removeItem("cdn.idToken");
 		fetchMock.mockResolvedValueOnce(
 			jsonResponse(200, {
-				eventId: EVENT_ID,
-				capacity: 50,
-				taken: 5,
-				remaining: 45,
+				counts: { [EVENT_ID]: { remaining: 45, capacity: 50, taken: 5 } },
 			}),
 		);
 		await expect(spotsRemaining(EVENT_ID)).resolves.toBe(45);
