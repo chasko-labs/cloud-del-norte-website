@@ -103,8 +103,8 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -135,8 +135,8 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -167,8 +167,8 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -204,8 +204,8 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -239,8 +239,8 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -274,8 +274,8 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -320,8 +320,8 @@ steps:
       S3_BUCKET_DEV: dev.clouddelnorte.org
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -362,8 +362,8 @@ steps:
       S3_BUCKET_MAIN: clouddelnorte.org
       CF_DIST_MAIN: ECC3LP1BL2CZS
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -408,8 +408,8 @@ steps:
       AWS_DEFAULT_REGION: us-west-2
       AWS_PROFILE: ci-deploy
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -449,8 +449,8 @@ steps:
       AWS_DEFAULT_REGION: us-west-2
       AWS_PROFILE: ci-deploy
     commands:
-      - ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)
-      - openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)
+      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
+      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
