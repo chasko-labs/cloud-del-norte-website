@@ -126,6 +126,14 @@
 	--cdn-glass-streak: var(--cdn-streak-h-dark);
 }
 
+/* When 3D canvas is active, reduce content area opacity so canvas shows through */
+.cdn-viz-active:not(.awsui-dark-mode) {
+	--cdn-glass-bg-content: rgba(237, 229, 212, 0.55);
+}
+.cdn-viz-active.awsui-dark-mode {
+	--cdn-glass-bg-content: rgba(10, 12, 32, 0.55);
+}
+
 /* ==========================================================================
    .cdn-glass — primary plate primitive
 
