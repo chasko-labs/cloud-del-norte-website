@@ -1,3 +1,4 @@
+---
 # woodpecker ci — device farm browser testing
 # auth chain:
 #   1. Roles Anywhere → kiro (946179428633) device-farm-ci role → Device Farm API
@@ -9,7 +10,7 @@ depends_on:
   - ci
 
 when:
-  - event: [push, pull_request]
+  - event: [push, pull_request, manual]
     branch: main
 
 steps:
