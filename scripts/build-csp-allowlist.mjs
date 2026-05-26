@@ -43,6 +43,7 @@ for (const urlStr of allUrls) {
 
 // Known redirect targets and CDN hosts that audio URLs resolve through
 const knownRedirects = [
+	"https://content.production.cdn.art19.com",
 	"https://18243.live.streamtheworld.com",
 	"https://kexp-podcast.streamguys1.com",
 	"https://dcs-cached.megaphone.fm",
