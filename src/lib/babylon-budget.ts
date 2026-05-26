@@ -3,7 +3,7 @@
 // Each Babylon-mounting component calls requestActivation before creating an
 // Engine and releaseActivation in its cleanup path.
 
-export const MAX_ACTIVE_SCENES = 3;
+export const MAX_ACTIVE_SCENES = 2;
 
 export const activeScenes: Set<string> = new Set();
 
