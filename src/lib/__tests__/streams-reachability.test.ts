@@ -29,11 +29,16 @@ describe("checkReachability", () => {
 		expect(fetch).not.toHaveBeenCalled();
 	});
 
-	it("returns fail for corsBlocked streams without fetching", async () => {
-		const stream = { ...BASE, corsBlocked: true } as StreamDef;
+	it("does not fast-fail corsBlocked streams — probes the audio URL anyway", async () => {
+		// corsBlocked only means the RSS feed is CORS-blocked; the audio URL is
+		// still reachable. The reachability probe must test the audio URL
+		// regardless. The persistent-player handles corsBlocked at runtime by
+		// skipping the RSS fetch.
+		vi.mocked(fetch).mockResolvedValueOnce({ type: "opaque" } as Response);
+		const stream = { ...BASE, key: "reach-cors", corsBlocked: true } as StreamDef;
 		const result = await checkReachability(stream);
-		expect(result).toBe("fail");
-		expect(fetch).not.toHaveBeenCalled();
+		expect(result).toBe("ok");
+		expect(fetch).toHaveBeenCalledTimes(1);
 	});
 
 	it("returns ok when fetch resolves with type !== error", async () => {

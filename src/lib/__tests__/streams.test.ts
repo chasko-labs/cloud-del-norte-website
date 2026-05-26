@@ -62,10 +62,10 @@ describe("STREAMS — Wave 22 fixes", () => {
 		expect(onda?.curated).toBe(true);
 	});
 
-	it("radio_udg_lagos is hidden (dead Zeno mount)", () => {
+	it("radio_udg_lagos is no longer hidden (Zeno mount re-verified 2026-05-26)", () => {
 		const lagos = STREAMS.find((s) => s.key === "radio_udg_lagos");
 		expect(lagos).toBeDefined();
-		expect(lagos?.hidden).toBe(true);
+		expect(lagos?.hidden).toBeUndefined();
 	});
 
 	it("radio_udg_lagos has fallbackUrls for auto-recovery", () => {
@@ -74,18 +74,18 @@ describe("STREAMS — Wave 22 fixes", () => {
 		expect(lagos?.fallbackUrls?.length ?? 0).toBeGreaterThan(0);
 	});
 
-	it("visible Mexican stations are ibero_909, concepto_radial, and radio_unam_961", () => {
+	it("visible Mexican stations include ibero_909, concepto_radial, radio_unam_961, radio_udg_lagos, and onda_aws", () => {
 		const visibleMx = STREAMS.filter(
 			(s) => s.location.country === "México" && !s.hidden,
 		);
-		// radio_udg_lagos is hidden; onda_aws is distributed/global with México country
-		// ibero_909, concepto_radial, radio_unam_961, onda_aws (all visible)
+		// All five MX-tagged streams are visible after the 2026-05-26 audit
+		// (radio_udg_lagos un-hidden, Zeno mount alive again)
 		const keys = visibleMx.map((s) => s.key).sort();
 		expect(keys).toContain("ibero_909");
 		expect(keys).toContain("concepto_radial");
 		expect(keys).toContain("radio_unam_961");
+		expect(keys).toContain("radio_udg_lagos");
 		expect(keys).toContain("onda_aws");
-		expect(keys).not.toContain("radio_udg_lagos");
 	});
 
 	it("ibero_909 and concepto_radial remain (not removed)", () => {
