@@ -27,6 +27,6 @@ steps:
       # The original step provisioned awscli, aws_signing_helper, pytest deps,
       # then ran `AWS_PROFILE=device-farm pytest tests/device-farm/`. See git
       # history for the full command sequence.
-      - echo "device-farm-test SKIPPED pending IAM fix in jitsi account (170473530355)"
-      - echo "Tracking issue:  https://github.com/chasko-labs/cloud-del-norte-website/issues/377"
-      - echo "Required change: add sts:SetSourceIdentity to device-farm-ssm-reader trust policy"
+      - 'echo "device-farm-test SKIPPED pending IAM fix in jitsi account (170473530355)"'
+      - 'echo "Tracking issue: https://github.com/chasko-labs/cloud-del-norte-website/issues/377"'
+      - 'echo "Required change: add sts:SetSourceIdentity to device-farm-ssm-reader trust policy"'
