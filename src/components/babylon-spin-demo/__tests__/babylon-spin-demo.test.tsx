@@ -37,19 +37,37 @@ vi.mock("@babylonjs/core", () => ({
 	},
 }));
 
-// ── babylon-budget stub ───────────────────────────────────────────────────────
-const mockRequestActivation = vi.fn(() => true);
-const mockReleaseActivation = vi.fn();
+// ── babylon-shared-engine stub ─────────────────────────────────────────────────
+const mockSharedEngine = {
+	resize: vi.fn(),
+	dispose: vi.fn(),
+	runRenderLoop: vi.fn(),
+	stopRenderLoop: vi.fn(),
+	registerView: vi.fn(),
+	unRegisterView: vi.fn(),
+};
+const mockGetOrCreate = vi.fn(() => mockSharedEngine);
+const mockRegister = vi.fn();
+const mockUnregister = vi.fn();
+const mockPause = vi.fn();
+const mockResume = vi.fn();
 
-vi.mock("../../../lib/babylon-budget", () => ({
-	get requestActivation() {
-		return mockRequestActivation;
+vi.mock("../../../lib/babylon-shared-engine", () => ({
+	get getOrCreateSharedEngine() {
+		return mockGetOrCreate;
 	},
-	get releaseActivation() {
-		return mockReleaseActivation;
+	get registerSceneView() {
+		return mockRegister;
 	},
-	activeScenes: new Set(),
-	MAX_ACTIVE_SCENES: 2,
+	get unregisterSceneView() {
+		return mockUnregister;
+	},
+	get pauseSceneView() {
+		return mockPause;
+	},
+	get resumeSceneView() {
+		return mockResume;
+	},
 }));
 
 // ── IntersectionObserver stub ─────────────────────────────────────────────────
@@ -69,9 +87,9 @@ class IntersectionObserverMock {
 }
 
 beforeEach(() => {
-	mockRequestActivation.mockClear();
-	mockRequestActivation.mockReturnValue(true);
-	mockReleaseActivation.mockClear();
+	mockGetOrCreate.mockClear();
+	mockRegister.mockClear();
+	mockUnregister.mockClear();
 	lastIODisconnect = null;
 	lastIOObserve = null;
 	vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);
@@ -125,11 +143,11 @@ describe("BabylonSpinDemo", () => {
 		expect(lastIODisconnect).toHaveBeenCalled();
 	});
 
-	it("releaseActivation is called on unmount", () => {
+	it("unregisterSceneView is called on unmount", () => {
 		const { unmount } = render(
 			<BabylonSpinDemo thumbnailUrl="https://i.ytimg.com/vi/abc/hqdefault.jpg" />,
 		);
 		unmount();
-		expect(mockReleaseActivation).toHaveBeenCalledWith("babylon-spin-demo");
+		expect(mockUnregister).toHaveBeenCalled();
 	});
 });

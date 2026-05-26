@@ -23,7 +23,7 @@ import "@babylonjs/core/Animations/animatable.js";
 import { Animation } from "@babylonjs/core/Animations/animation";
 import { EasingFunction, SineEase } from "@babylonjs/core/Animations/easing";
 import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
-import { Engine } from "@babylonjs/core/Engines/engine";
+import type { Engine } from "@babylonjs/core/Engines/engine";
 import { GlowLayer } from "@babylonjs/core/Layers/glowLayer";
 import { HemisphericLight } from "@babylonjs/core/Lights/hemisphericLight";
 import { PointLight } from "@babylonjs/core/Lights/pointLight";
@@ -34,6 +34,11 @@ import { Mesh } from "@babylonjs/core/Meshes/mesh";
 import { VertexData } from "@babylonjs/core/Meshes/mesh.vertexData";
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder";
 import { Scene } from "@babylonjs/core/scene";
+import {
+	getOrCreateSharedEngine,
+	registerSceneView,
+	unregisterSceneView,
+} from "../babylon-shared-engine.js";
 
 // ── Brand palette (nav-surface — always dark) ─────────────────────────────────
 
@@ -78,13 +83,13 @@ const PHASE_OFFSETS: Record<BulbCategory, number[]> = {
 
 export class StarScene {
 	readonly engine: Engine;
+	private readonly canvas: HTMLCanvasElement;
 	readonly scene: Scene;
 	readonly camera: ArcRotateCamera;
 	readonly star: Mesh;
 	readonly bulbs: Mesh[];
 	private readonly opts: Required<StarSceneOptions>;
 	private glow!: GlowLayer;
-	private readonly handleVisibility: () => void;
 
 	constructor(canvas: HTMLCanvasElement, options: StarSceneOptions = {}) {
 		this.opts = {
@@ -92,11 +97,8 @@ export class StarScene {
 			transparentBackground: options.transparentBackground ?? false,
 		};
 
-		this.engine = new Engine(canvas, true, {
-			preserveDrawingBuffer: true,
-			stencil: true,
-			alpha: this.opts.transparentBackground,
-		});
+		this.canvas = canvas;
+		this.engine = getOrCreateSharedEngine();
 
 		this.scene = new Scene(this.engine);
 		this.scene.clearColor = this.opts.transparentBackground
@@ -111,24 +113,12 @@ export class StarScene {
 		this.attachGlowLayer();
 		this.attachAnimations();
 
-		this.engine.runRenderLoop(() => this.scene.render());
-
-		// Page Visibility — pause render loop when tab is hidden.
-		this.handleVisibility = () => {
-			if (document.hidden) {
-				this.engine.stopRenderLoop();
-			} else {
-				this.engine.runRenderLoop(() => this.scene.render());
-			}
-		};
-		document.addEventListener("visibilitychange", this.handleVisibility);
+		registerSceneView(canvas, this.camera, () => this.scene.render());
 	}
 
 	dispose(): void {
-		document.removeEventListener("visibilitychange", this.handleVisibility);
-		this.engine.stopRenderLoop();
 		this.scene.dispose();
-		this.engine.dispose();
+		unregisterSceneView(this.canvas);
 	}
 
 	resize(): void {

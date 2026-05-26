@@ -16,8 +16,12 @@
 // and a single 12-s ease arc for thunderstorm.
 
 import { useEffect, useRef } from "react";
-import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
 import { loadBabylonCommon } from "../../lib/babylon-loader";
+import {
+	getOrCreateSharedEngine,
+	registerSceneView,
+	unregisterSceneView,
+} from "../../lib/babylon-shared-engine";
 import { getTOD, isNight, skyColor } from "../../lib/time-of-day";
 
 export interface AtmosphereSceneProps {
@@ -66,8 +70,6 @@ function sunPosition(hour: number): [number, number, number] {
 	return [Math.cos(t), Math.sin(t) * 0.8 + 0.2, 0.3];
 }
 
-const SCENE_ID = "atmosphere-scene";
-
 export default function AtmosphereScene({
 	weatherCode,
 	timezone: _timezone,
@@ -95,33 +97,28 @@ export default function AtmosphereScene({
 			"(prefers-reduced-motion: reduce)",
 		).matches;
 
+		let currentScene: any = null; // biome-ignore lint/suspicious/noExplicitAny: dynamic babylon scene
+
 		function teardown() {
-			if (eng) {
-				eng.stopRenderLoop();
-				document.removeEventListener("visibilitychange", eng.__onVis);
-				document.body.removeEventListener(
-					"cdn-scroll-start",
-					eng.__scrollStart,
-				);
-				document.body.removeEventListener("cdn-scroll-end", eng.__scrollEnd);
-				ro?.disconnect();
-				ro = null;
-				eng.dispose();
-				eng = null;
-				engRef.current = null;
+			ro?.disconnect();
+			ro = null;
+			if (currentScene) {
+				currentScene.dispose();
+				currentScene = null;
 			}
-			releaseActivation(SCENE_ID);
+			if (canvas) {
+				unregisterSceneView(canvas);
+			}
+			eng = null;
+			engRef.current = null;
 		}
 
 		async function startEngine() {
 			if (disposed || !canvas) return;
-			if (!requestActivation(SCENE_ID)) return;
+			if (currentScene) return; // already started
 
 			const B = await loadBabylonCommon();
-			if (disposed) {
-				releaseActivation(SCENE_ID);
-				return;
-			}
+			if (disposed) return;
 
 			// Read current props at engine-creation time
 			const { weatherCode: wc, hour: h } = propsRef.current;
@@ -131,9 +128,10 @@ export default function AtmosphereScene({
 			const [sr, sg, sb, sa] = skyColor(tod);
 			const [lx, ly, lz] = sunPosition(h);
 
-			eng = new B.Engine(canvas, true, { preserveDrawingBuffer: false });
+			eng = getOrCreateSharedEngine();
 			engRef.current = eng;
 			const scene = new B.Scene(eng);
+			currentScene = scene;
 			scene.clearColor = new B.Color4(sr, sg, sb, sa);
 
 			// Camera — slow auto-orbit, no user input
@@ -317,31 +315,17 @@ export default function AtmosphereScene({
 
 			const render = () => scene.render();
 
-			// Visibility pause — wave 21 pattern
-			const onVis = () =>
-				document.hidden ? eng.stopRenderLoop() : eng.runRenderLoop(render);
-			document.addEventListener("visibilitychange", onVis);
-			eng.__onVis = onVis;
-
-			// cdn-scrolling fast-scroll pause
-			const onScrollStart = () => eng.stopRenderLoop();
-			const onScrollEnd = () => eng.runRenderLoop(render);
-			document.body.addEventListener("cdn-scroll-start", onScrollStart);
-			document.body.addEventListener("cdn-scroll-end", onScrollEnd);
-			eng.__scrollStart = onScrollStart;
-			eng.__scrollEnd = onScrollEnd;
-
 			// ResizeObserver
 			ro = new ResizeObserver(() => {
 				eng.resize();
 			});
 			ro.observe(canvas);
-			eng.__ro = ro;
 
 			if (reduced) {
+				registerSceneView(canvas, scene.activeCamera!, render);
 				scene.render();
 			} else {
-				eng.runRenderLoop(render);
+				registerSceneView(canvas, scene.activeCamera!, render);
 			}
 		}
 

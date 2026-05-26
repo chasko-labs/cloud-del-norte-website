@@ -20,20 +20,18 @@
 import "@babylonjs/core/Animations/animatable.js";
 
 import { ArcRotateCamera } from "@babylonjs/core/Cameras/arcRotateCamera";
-import { Engine } from "@babylonjs/core/Engines/engine";
+import type { Engine } from "@babylonjs/core/Engines/engine";
 import { Color4 } from "@babylonjs/core/Maths/math.color";
 import { Vector3 } from "@babylonjs/core/Maths/math.vector";
-import { Logger } from "@babylonjs/core/Misc/logger";
 import { Scene } from "@babylonjs/core/scene";
 
-// Silence Babylon's INFO-level banner ("BJS - [hh:mm:ss]: Babylon.js v9.x.x -
-// WebGL2 - Parallel shader compilation") + capability prints. We keep
-// warnings + errors so real engine problems still surface in the console.
-// Bit field: WarningLogLevel (2) | ErrorLogLevel (4) = 6. Set at module load
-// time so the gate is in place BEFORE any `new Engine(...)` call below.
-Logger.LogLevels = Logger.WarningLogLevel | Logger.ErrorLogLevel;
-
-import { releaseActivation, requestActivation } from "../lib/babylon-budget.js";
+import {
+	getOrCreateSharedEngine,
+	pauseSceneView,
+	registerSceneView,
+	resumeSceneView,
+	unregisterSceneView,
+} from "../lib/babylon-shared-engine.js";
 import { detectRenderCapability } from "../lib/render-capability.js";
 import {
 	AnimationController,
@@ -150,33 +148,7 @@ export function mountDuneSceneOnCanvas(
 		};
 	}
 
-	if (!requestActivation("dune-wallpaper")) {
-		// Budget full — return no-op handle; caller shows static fallback.
-		return {
-			engine: null as unknown as Engine,
-			scene: null as unknown as Scene,
-			resize() {},
-			dispose() {},
-			getPerfMedian() {
-				return 0;
-			},
-			getLastFrameMs() {
-				return 0;
-			},
-			isPerfDegraded() {
-				return false;
-			},
-			refreshStationTint() {},
-			pause() {},
-			resume() {},
-		};
-	}
-
-	const engine = new Engine(canvas, true, {
-		preserveDrawingBuffer: true,
-		stencil: true,
-		alpha: true,
-	});
+	const engine = getOrCreateSharedEngine();
 	const scene = new Scene(engine);
 	scene.clearColor = new Color4(0.929, 0.898, 0.831, 1.0); // #ede5d4
 
@@ -289,22 +261,7 @@ export function mountDuneSceneOnCanvas(
 			canvas.classList.add("dune-perf-degraded");
 		}
 	};
-	engine.runRenderLoop(renderTick);
-
-	// Page Visibility API — pause render loop when tab is hidden to prevent
-	// CPU/GPU burn on background tabs (especially critical on SwiftShader paths
-	// that reach here via forced hardware detection override).
-	function handleVisibility() {
-		if (document.hidden) {
-			engine.stopRenderLoop();
-			paused = true;
-		} else {
-			paused = false;
-			lastFrameMs = performance.now();
-			engine.runRenderLoop(renderTick);
-		}
-	}
-	document.addEventListener("visibilitychange", handleVisibility);
+	registerSceneView(canvas, camera, renderTick);
 
 	return {
 		engine,
@@ -313,15 +270,12 @@ export function mountDuneSceneOnCanvas(
 			engine.resize();
 		},
 		dispose() {
-			document.removeEventListener("visibilitychange", handleVisibility);
-			engine.stopRenderLoop();
 			haze.dispose();
 			ground.dispose();
 			skybox.dispose();
 			atmosphere.dispose();
 			scene.dispose();
-			engine.dispose();
-			releaseActivation("dune-wallpaper");
+			unregisterSceneView(canvas);
 		},
 		getPerfMedian() {
 			return currentMedian;
@@ -344,16 +298,13 @@ export function mountDuneSceneOnCanvas(
 		pause() {
 			if (paused) return;
 			paused = true;
-			engine.stopRenderLoop();
+			pauseSceneView(canvas);
 		},
 		resume() {
 			if (!paused) return;
 			paused = false;
 			lastFrameMs = performance.now();
-			// Re-arm the render loop with the same closure used at construction.
-			// Babylon allows multiple loops; we registered exactly one above
-			// and need to re-register the identical pump after stopRenderLoop.
-			engine.runRenderLoop(renderTick);
+			resumeSceneView(canvas);
 		},
 	};
 }

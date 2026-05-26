@@ -97,19 +97,37 @@ vi.mock("@babylonjs/core", () => {
 	};
 });
 
-// ── babylon-budget stub ───────────────────────────────────────────────────────
-const mockRequestActivation = vi.fn(() => true);
-const mockReleaseActivation = vi.fn();
+// ── babylon-shared-engine stub ─────────────────────────────────────────────────
+const mockSharedEngine = {
+	resize: vi.fn(),
+	dispose: vi.fn(),
+	runRenderLoop: vi.fn(),
+	stopRenderLoop: vi.fn(),
+	registerView: vi.fn(),
+	unRegisterView: vi.fn(),
+};
+const mockGetOrCreate = vi.fn(() => mockSharedEngine);
+const mockRegister = vi.fn();
+const mockUnregister = vi.fn();
+const mockPause = vi.fn();
+const mockResume = vi.fn();
 
-vi.mock("../../../lib/babylon-budget", () => ({
-	get requestActivation() {
-		return mockRequestActivation;
+vi.mock("../../../lib/babylon-shared-engine", () => ({
+	get getOrCreateSharedEngine() {
+		return mockGetOrCreate;
 	},
-	get releaseActivation() {
-		return mockReleaseActivation;
+	get registerSceneView() {
+		return mockRegister;
 	},
-	activeScenes: new Set(),
-	MAX_ACTIVE_SCENES: 2,
+	get unregisterSceneView() {
+		return mockUnregister;
+	},
+	get pauseSceneView() {
+		return mockPause;
+	},
+	get resumeSceneView() {
+		return mockResume;
+	},
 }));
 
 // ── device-capabilities stub ─────────────────────────────────────────────────
@@ -158,9 +176,9 @@ function setReducedMotion(reduced: boolean) {
 beforeEach(() => {
 	setReducedMotion(false);
 	vi.mocked(getDeviceTier).mockReturnValue("high");
-	mockRequestActivation.mockClear();
-	mockRequestActivation.mockReturnValue(true);
-	mockReleaseActivation.mockClear();
+	mockGetOrCreate.mockClear();
+	mockRegister.mockClear();
+	mockUnregister.mockClear();
 	lastIODisconnect = null;
 	lastIOObserve = null;
 	vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);
@@ -220,10 +238,10 @@ describe("AtmosphereRibbon — Babylon path", () => {
 		expect(lastIODisconnect).toHaveBeenCalled();
 	});
 
-	it("releaseActivation is called on unmount", () => {
+	it("unregisterSceneView is called on unmount", () => {
 		const { unmount } = render(<AtmosphereRibbon />);
 		unmount();
-		expect(mockReleaseActivation).toHaveBeenCalledWith("atmosphere-ribbon");
+		expect(mockUnregister).toHaveBeenCalled();
 	});
 });
 
@@ -257,9 +275,9 @@ describe("AtmosphereRibbon — CSS fallback on incapable device", () => {
 
 // ── visibility-hidden render-loop pause ───────────────────────────────────────
 describe("AtmosphereRibbon — visibility pause", () => {
-	it("does NOT request budget activation before IntersectionObserver fires", () => {
+	it("does NOT call registerSceneView before IntersectionObserver fires", () => {
 		// Wave 66: engine is created lazily; IO never fires in jsdom
 		render(<AtmosphereRibbon />);
-		expect(mockRequestActivation).not.toHaveBeenCalled();
+		expect(mockRegister).not.toHaveBeenCalled();
 	});
 });

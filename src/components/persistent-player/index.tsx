@@ -1043,7 +1043,9 @@ function PersistentPlayerBar({
 						decoding="async"
 						width={40}
 						height={40}
-						onLoad={(e) => { (e.target as HTMLElement).dataset.loaded = '1'; }}
+						onLoad={(e) => {
+							(e.target as HTMLElement).dataset.loaded = "1";
+						}}
 						onError={() => setKexpArtError(true)}
 					/>
 				</span>

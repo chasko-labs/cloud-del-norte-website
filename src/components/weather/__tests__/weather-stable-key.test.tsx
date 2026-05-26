@@ -46,12 +46,20 @@ vi.mock("@babylonjs/core", () => ({
 	},
 }));
 
-// ── babylon-budget stub ───────────────────────────────────────────────────────
-vi.mock("../../lib/babylon-budget", () => ({
-	requestActivation: vi.fn(() => true),
-	releaseActivation: vi.fn(),
-	activeScenes: new Set(),
-	MAX_ACTIVE_SCENES: 2,
+// ── babylon-shared-engine stub ─────────────────────────────────────────────────
+vi.mock("../../lib/babylon-shared-engine", () => ({
+	getOrCreateSharedEngine: vi.fn(() => ({
+		resize: vi.fn(),
+		dispose: vi.fn(),
+		runRenderLoop: vi.fn(),
+		stopRenderLoop: vi.fn(),
+		registerView: vi.fn(),
+		unRegisterView: vi.fn(),
+	})),
+	registerSceneView: vi.fn(),
+	unregisterSceneView: vi.fn(),
+	pauseSceneView: vi.fn(),
+	resumeSceneView: vi.fn(),
 }));
 
 // ── IntersectionObserver stub ─────────────────────────────────────────────────

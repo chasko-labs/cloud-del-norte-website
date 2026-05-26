@@ -35,7 +35,11 @@ describe("checkReachability", () => {
 		// regardless. The persistent-player handles corsBlocked at runtime by
 		// skipping the RSS fetch.
 		vi.mocked(fetch).mockResolvedValueOnce({ type: "opaque" } as Response);
-		const stream = { ...BASE, key: "reach-cors", corsBlocked: true } as StreamDef;
+		const stream = {
+			...BASE,
+			key: "reach-cors",
+			corsBlocked: true,
+		} as StreamDef;
 		const result = await checkReachability(stream);
 		expect(result).toBe("ok");
 		expect(fetch).toHaveBeenCalledTimes(1);

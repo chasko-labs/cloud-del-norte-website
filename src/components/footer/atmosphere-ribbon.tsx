@@ -7,8 +7,14 @@
 // Wave 70b — fade-in: ribbon starts opacity:0, fades in once loaded.
 
 import { useEffect, useRef, useState } from "react";
-import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
 import { loadBabylonCommon } from "../../lib/babylon-loader";
+import {
+	getOrCreateSharedEngine,
+	pauseSceneView,
+	registerSceneView,
+	resumeSceneView,
+	unregisterSceneView,
+} from "../../lib/babylon-shared-engine";
 import {
 	elPasoHour,
 	getTOD,
@@ -49,8 +55,6 @@ function RibbonFallback({ onReady }: { onReady: () => void }) {
 
 // ── Babylon scene ─────────────────────────────────────────────────────────────
 
-const SCENE_ID = "atmosphere-ribbon";
-
 function RibbonScene({ hour, onReady }: { hour: number; onReady: () => void }) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
 	// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
@@ -61,8 +65,6 @@ function RibbonScene({ hour, onReady }: { hour: number; onReady: () => void }) {
 		if (!canvas) return;
 
 		let disposed = false;
-		// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
-		let eng: any = null;
 		let ro: ResizeObserver | null = null;
 		let io: IntersectionObserver | null = null;
 
@@ -75,37 +77,45 @@ function RibbonScene({ hour, onReady }: { hour: number; onReady: () => void }) {
 		const [sr, sg, sb, sa] = skyColor(tod);
 		const xNorm = sunHourToX(hour); // 0=left, 1=right
 
+		let currentScene: any = null; // biome-ignore lint/suspicious/noExplicitAny: dynamic babylon scene
+		let scrollStartHandler: (() => void) | null = null;
+		let scrollEndHandler: (() => void) | null = null;
+
 		function teardown() {
-			if (eng) {
-				eng.stopRenderLoop();
-				document.removeEventListener("visibilitychange", eng.__onVis);
+			if (scrollStartHandler) {
 				document.body.removeEventListener(
 					"cdn-scroll-start",
-					eng.__scrollStart,
+					scrollStartHandler,
 				);
-				document.body.removeEventListener("cdn-scroll-end", eng.__scrollEnd);
-				ro?.disconnect();
-				ro = null;
-				eng.dispose();
-				eng = null;
-				engRef.current = null;
+				scrollStartHandler = null;
 			}
-			releaseActivation(SCENE_ID);
+			if (scrollEndHandler) {
+				document.body.removeEventListener("cdn-scroll-end", scrollEndHandler);
+				scrollEndHandler = null;
+			}
+			ro?.disconnect();
+			ro = null;
+			if (currentScene) {
+				currentScene.dispose();
+				currentScene = null;
+			}
+			if (canvas) {
+				unregisterSceneView(canvas);
+			}
+			engRef.current = null;
 		}
 
 		async function startEngine() {
 			if (disposed || !canvas) return;
-			if (!requestActivation(SCENE_ID)) return;
+			if (currentScene) return; // already started
 
 			const B = await loadBabylonCommon();
-			if (disposed) {
-				releaseActivation(SCENE_ID);
-				return;
-			}
+			if (disposed) return;
 
-			eng = new B.Engine(canvas, true, { preserveDrawingBuffer: false });
-			engRef.current = eng;
-			const scene = new B.Scene(eng);
+			const sharedEngine = getOrCreateSharedEngine();
+			engRef.current = sharedEngine;
+			const scene = new B.Scene(sharedEngine);
+			currentScene = scene;
 			scene.clearColor = new B.Color4(sr, sg, sb, sa);
 
 			// Orthographic camera — no user input, fills the ribbon exactly
@@ -165,26 +175,20 @@ function RibbonScene({ hour, onReady }: { hour: number; onReady: () => void }) {
 
 			const render = () => scene.render();
 
-			const onVis = () =>
-				document.hidden ? eng.stopRenderLoop() : eng.runRenderLoop(render);
-			document.addEventListener("visibilitychange", onVis);
-			eng.__onVis = onVis;
+			scrollStartHandler = () => pauseSceneView(canvas);
+			scrollEndHandler = () => resumeSceneView(canvas);
+			document.body.addEventListener("cdn-scroll-start", scrollStartHandler);
+			document.body.addEventListener("cdn-scroll-end", scrollEndHandler);
 
-			const onScrollStart = () => eng.stopRenderLoop();
-			const onScrollEnd = () => eng.runRenderLoop(render);
-			document.body.addEventListener("cdn-scroll-start", onScrollStart);
-			document.body.addEventListener("cdn-scroll-end", onScrollEnd);
-			eng.__scrollStart = onScrollStart;
-			eng.__scrollEnd = onScrollEnd;
-
-			ro = new ResizeObserver(() => eng.resize());
+			ro = new ResizeObserver(() => sharedEngine.resize());
 			ro.observe(canvas);
-			eng.__ro = ro;
 
 			if (reduced) {
+				registerSceneView(canvas, cam, render);
 				scene.render();
+				pauseSceneView(canvas); // single render, then freeze
 			} else {
-				eng.runRenderLoop(render);
+				registerSceneView(canvas, cam, render);
 			}
 
 			// Wave 70b — signal loaded after first render loop starts
