@@ -117,9 +117,14 @@ export default function FionaFrame() {
 		async function mount() {
 			if (cancelled) return;
 			const canvasEl = document.getElementById("fiona-canvas");
-			if (canvasEl) canvasEl.style.opacity = "0";
-			if (canvasEl?.dataset.fionaMounted === "1") return;
-			canvasEl?.setAttribute("data-fiona-mounted", "1");
+			// BabylonGate (tier="medium") renders null on low-tier devices (software WebGL,
+			// prefers-reduced-motion, low-mem+low-core). When that happens, the canvas is
+			// never in the DOM — leave the #fiona-shimmer "modem connecting" placeholder
+			// visible instead of mounting fiona-embed (which would silently hide it).
+			if (!canvasEl) return;
+			canvasEl.style.opacity = "0";
+			if (canvasEl.dataset.fionaMounted === "1") return;
+			canvasEl.setAttribute("data-fiona-mounted", "1");
 			try {
 				const origin = window.location.origin;
 				const envSrc = import.meta.env.VITE_FIONA_SCRIPT_URL as
@@ -154,7 +159,9 @@ export default function FionaFrame() {
 			const canvas = document.getElementById(
 				"fiona-canvas",
 			) as HTMLCanvasElement | null;
-			if (canvas && canvas.clientWidth === 0) {
+			// Canvas absent => BabylonGate gated it out. Keep shimmer visible; don't try to mount.
+			if (!canvas) return;
+			if (canvas.clientWidth === 0) {
 				observer = new ResizeObserver(() => {
 					if (cancelled) {
 						observer?.disconnect();
