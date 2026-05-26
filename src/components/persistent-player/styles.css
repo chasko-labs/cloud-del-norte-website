@@ -786,6 +786,12 @@ body.cdn-podcast-playing .cdn-pp__btn--resume {
 	   cream parchment palette; full saturation in dark mode where the navy
 	   bg can carry vivid cover art */
 	filter: saturate(0.95);
+	opacity: 0;
+	transition: opacity 0.15s;
+}
+
+.cdn-pp__kexp-art[data-loaded] {
+	opacity: 1;
 }
 
 .awsui-dark-mode .cdn-pp__kexp-art {
