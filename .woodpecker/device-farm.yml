@@ -1,5 +1,8 @@
 # woodpecker ci — device farm browser testing
-# auth: IAM Roles Anywhere (same workload cert as deploy steps)
+# auth chain:
+#   1. Roles Anywhere → kiro (946179428633) device-farm-ci role → Device Farm API
+#   2. device-farm-ci → sts:AssumeRole → jitsi (170473530355) device-farm-ssm-reader → SSM reads
+# workload cert: /workload.crt + /workload.key (mounted via agent volumes)
 cancel_previous: true
 
 depends_on:
@@ -15,41 +18,48 @@ steps:
     failure: ignore
     environment:
       AWS_REGION: us-west-2
-      AWS_PROFILE: ci-deploy
+      AWS_DEFAULT_REGION: us-west-2
       TEST_URL: https://awsug.clouddelnorte.org
       TEST_AUTH_URL: https://auth.clouddelnorte.org
       TEST_API_URL: https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com
+      TESTGRID_PROJECT_ARN: "arn:aws:devicefarm:us-west-2:946179428633:testgrid-project:0f1bfe22-0371-40c8-bcac-f96709363893"
     commands:
-      - apt-get update -qq && apt-get install -y -qq unzip curl > /dev/null
+      - apt-get update -qq && apt-get install -y -qq unzip curl jq > /dev/null
       - curl -sSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip -o /tmp/awscli.zip
       - unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install && rm -rf /tmp/awscli.zip /tmp/aws
       - curl -sL https://rolesanywhere.amazonaws.com/releases/1.7.0/X86_64/Linux/aws_signing_helper -o /usr/local/bin/aws_signing_helper && chmod +x /usr/local/bin/aws_signing_helper
       - pip install -r tests/device-farm/requirements.txt -q
 
-      # Configure IAM Roles Anywhere (kiro account — Device Farm + SSM)
+      # Profile 1: kiro account (Device Farm API + cross-account assume)
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
-        [profile ci-deploy]
+        [profile device-farm]
         region = us-west-2
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:946179428633:trust-anchor/41cd58ba-3e23-42bf-a3da-728363c249bd --profile-arn arn:aws:rolesanywhere:us-west-2:946179428633:profile/2ff4503a-b937-4b30-baec-9cf51b4dc6ab --role-arn arn:aws:iam::946179428633:role/device-farm-ci --certificate /workload.crt --private-key /workload.key
+
+        [profile ssm-reader]
+        region = us-west-2
+        role_arn = arn:aws:iam::170473530355:role/device-farm-ssm-reader
+        source_profile = device-farm
         EOF
       - test -f /workload.crt && test -f /workload.key
-      - aws sts get-caller-identity
+      - aws sts get-caller-identity --profile device-farm
 
-      # Fetch test credentials from SSM Parameter Store
+      # Fetch test credentials from SSM (jitsi account via cross-account assume)
       - |
-        export DEVICE_FARM_GRID_URL=$(aws ssm get-parameter --name '/device-farm/test-users/grid-url' --region us-west-2 --query 'Parameter.Value' --output text 2>/dev/null || echo "$DEVICE_FARM_GRID_URL")
-        export TEST_USER_MEMBER_EMAIL=$(aws ssm get-parameter --name '/device-farm/test-users/member-email' --region us-west-2 --query 'Parameter.Value' --output text)
-        export TEST_USER_MEMBER_PASSWORD=$(aws ssm get-parameter --name '/device-farm/test-users/member-password' --region us-west-2 --with-decryption --query 'Parameter.Value' --output text)
-        export TEST_USER_ADMIN_EMAIL=$(aws ssm get-parameter --name '/device-farm/test-users/admin-email' --region us-west-2 --query 'Parameter.Value' --output text)
-        export TEST_USER_ADMIN_PASSWORD=$(aws ssm get-parameter --name '/device-farm/test-users/admin-password' --region us-west-2 --with-decryption --query 'Parameter.Value' --output text)
-        export TEST_USER_PENDING_EMAIL=$(aws ssm get-parameter --name '/device-farm/test-users/pending-email' --region us-west-2 --query 'Parameter.Value' --output text)
-        export TEST_USER_PENDING_PASSWORD=$(aws ssm get-parameter --name '/device-farm/test-users/pending-password' --region us-west-2 --with-decryption --query 'Parameter.Value' --output text)
-        export TEST_USER_BANNED_EMAIL=$(aws ssm get-parameter --name '/device-farm/test-users/banned-email' --region us-west-2 --query 'Parameter.Value' --output text)
-        export TEST_USER_BANNED_PASSWORD=$(aws ssm get-parameter --name '/device-farm/test-users/banned-password' --region us-west-2 --with-decryption --query 'Parameter.Value' --output text)
-        export COGNITO_USER_POOL_ID=$(aws ssm get-parameter --name '/device-farm/test-users/cognito-user-pool-id' --region us-west-2 --query 'Parameter.Value' --output text)
-        export COGNITO_CLIENT_ID=$(aws ssm get-parameter --name '/device-farm/test-users/cognito-client-id' --region us-west-2 --query 'Parameter.Value' --output text)
+        export DEVICE_FARM_GRID_URL=$(aws ssm get-parameter --name '/cloud-del-norte/test/grid-url' --profile ssm-reader --query 'Parameter.Value' --output text)
+        export TEST_USER_MEMBER_EMAIL=$(aws ssm get-parameter --name '/cloud-del-norte/test/member-only-user-email' --profile ssm-reader --query 'Parameter.Value' --output text)
+        export TEST_USER_MEMBER_PASSWORD=$(aws ssm get-parameter --name '/cloud-del-norte/test/member-only-user-password' --profile ssm-reader --with-decryption --query 'Parameter.Value' --output text)
+        export TEST_USER_ADMIN_EMAIL=$(aws ssm get-parameter --name '/cloud-del-norte/test/admin-user-email' --profile ssm-reader --query 'Parameter.Value' --output text)
+        export TEST_USER_ADMIN_PASSWORD=$(aws ssm get-parameter --name '/cloud-del-norte/test/admin-user-password' --profile ssm-reader --with-decryption --query 'Parameter.Value' --output text)
+        export TEST_USER_PENDING_EMAIL=$(aws ssm get-parameter --name '/cloud-del-norte/test/pending-user-email' --profile ssm-reader --query 'Parameter.Value' --output text)
+        export TEST_USER_PENDING_PASSWORD=$(aws ssm get-parameter --name '/cloud-del-norte/test/pending-user-password' --profile ssm-reader --with-decryption --query 'Parameter.Value' --output text)
+        export TEST_USER_BANNED_EMAIL=$(aws ssm get-parameter --name '/cloud-del-norte/test/banned-user-email' --profile ssm-reader --query 'Parameter.Value' --output text)
+        export TEST_USER_BANNED_PASSWORD=$(aws ssm get-parameter --name '/cloud-del-norte/test/banned-user-password' --profile ssm-reader --with-decryption --query 'Parameter.Value' --output text)
+        export COGNITO_USER_POOL_ID=$(aws ssm get-parameter --name '/cloud-del-norte/test/cognito-user-pool-id' --profile ssm-reader --query 'Parameter.Value' --output text)
+        export COGNITO_CLIENT_ID=$(aws ssm get-parameter --name '/cloud-del-norte/test/cognito-client-id' --profile ssm-reader --query 'Parameter.Value' --output text)
 
-      - pytest tests/device-farm/ --junitxml=results.xml -v
+      # Run Device Farm tests
+      - AWS_PROFILE=device-farm pytest tests/device-farm/ --junitxml=results.xml -v
       - echo "Results saved to results.xml"
