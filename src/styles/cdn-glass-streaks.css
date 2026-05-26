@@ -26,112 +26,112 @@
    ========================================================================== */
 
 :root {
-  /* ── streak gradients — light mode (amber → aws-orange) ─────────────────── */
-  --cdn-streak-h-light: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(139, 90, 43, 0.55) 25%,
-    rgba(255, 153, 0, 0.7) 50%,
-    rgba(139, 90, 43, 0.55) 75%,
-    transparent 100%
-  );
-  --cdn-streak-v-light: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(139, 90, 43, 0.45) 25%,
-    rgba(255, 153, 0, 0.6) 50%,
-    rgba(139, 90, 43, 0.45) 75%,
-    transparent 100%
-  );
-  --cdn-streak-band-light: linear-gradient(
-    90deg,
-    rgba(237, 229, 212, 0.5) 0%,
-    rgba(255, 153, 0, 0.85) 30%,
-    rgba(139, 90, 43, 0.95) 50%,
-    rgba(255, 153, 0, 0.85) 70%,
-    rgba(237, 229, 212, 0.5) 100%
-  );
+	/* ── streak gradients — light mode (amber → aws-orange) ─────────────────── */
+	--cdn-streak-h-light: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(139, 90, 43, 0.55) 25%,
+		rgba(255, 153, 0, 0.7) 50%,
+		rgba(139, 90, 43, 0.55) 75%,
+		transparent 100%
+	);
+	--cdn-streak-v-light: linear-gradient(
+		180deg,
+		transparent 0%,
+		rgba(139, 90, 43, 0.45) 25%,
+		rgba(255, 153, 0, 0.6) 50%,
+		rgba(139, 90, 43, 0.45) 75%,
+		transparent 100%
+	);
+	--cdn-streak-band-light: linear-gradient(
+		90deg,
+		rgba(237, 229, 212, 0.5) 0%,
+		rgba(255, 153, 0, 0.85) 30%,
+		rgba(139, 90, 43, 0.95) 50%,
+		rgba(255, 153, 0, 0.85) 70%,
+		rgba(237, 229, 212, 0.5) 100%
+	);
 
-  /* ── streak gradients — dark mode (violet → cyan) ───────────────────────── */
-  --cdn-streak-h-dark: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(144, 96, 240, 0.55) 25%,
-    rgba(0, 212, 255, 0.7) 50%,
-    rgba(144, 96, 240, 0.55) 75%,
-    transparent 100%
-  );
-  --cdn-streak-v-dark: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(144, 96, 240, 0.45) 25%,
-    rgba(0, 212, 255, 0.6) 50%,
-    rgba(144, 96, 240, 0.45) 75%,
-    transparent 100%
-  );
-  --cdn-streak-band-dark: linear-gradient(
-    90deg,
-    rgba(10, 12, 32, 0.6) 0%,
-    rgba(48, 0, 106, 0.92) 30%,
-    rgba(144, 96, 240, 0.95) 50%,
-    rgba(48, 0, 106, 0.92) 70%,
-    rgba(10, 12, 32, 0.6) 100%
-  );
+	/* ── streak gradients — dark mode (violet → cyan) ───────────────────────── */
+	--cdn-streak-h-dark: linear-gradient(
+		90deg,
+		transparent 0%,
+		rgba(144, 96, 240, 0.55) 25%,
+		rgba(0, 212, 255, 0.7) 50%,
+		rgba(144, 96, 240, 0.55) 75%,
+		transparent 100%
+	);
+	--cdn-streak-v-dark: linear-gradient(
+		180deg,
+		transparent 0%,
+		rgba(144, 96, 240, 0.45) 25%,
+		rgba(0, 212, 255, 0.6) 50%,
+		rgba(144, 96, 240, 0.45) 75%,
+		transparent 100%
+	);
+	--cdn-streak-band-dark: linear-gradient(
+		90deg,
+		rgba(10, 12, 32, 0.6) 0%,
+		rgba(48, 0, 106, 0.92) 30%,
+		rgba(144, 96, 240, 0.95) 50%,
+		rgba(48, 0, 106, 0.92) 70%,
+		rgba(10, 12, 32, 0.6) 100%
+	);
 
-  /* ── glass plate tokens — light mode defaults ─────────────────────────────
+	/* ── glass plate tokens — light mode defaults ─────────────────────────────
 	   rgb(237, 229, 212) = #ede5d4 (cream sandstone) — matches --cdn-color-bg.
 	   Card-tier alphas (plate-bg / -strong) for small text-bearing surfaces.
 	   Surface-tier alphas (panel / header / content / breadcrumbs / scroll)
 	   for big chrome backings — much lower alpha so dunes still bleed through. */
-  --cdn-glass-bg: rgba(237, 229, 212, 0.92);
-  --cdn-glass-bg-strong: rgba(237, 229, 212, 0.95);
-  --cdn-glass-bg-breadcrumbs: rgba(237, 229, 212, 0.92);
-  --cdn-glass-bg-scroll: rgba(237, 229, 212, 0.93);
-  --cdn-glass-bg-ctl-header: rgba(237, 229, 212, 0.94);
-  --cdn-glass-bg-content: rgba(237, 229, 212, 0.92);
-  --cdn-glass-border: rgba(139, 90, 43, 0.28);
-  --cdn-glass-shadow:
-    0 4px 24px rgba(139, 90, 43, 0.18), 0 1px 3px rgba(0, 0, 0, 0.08),
-    0 0 1px rgba(139, 90, 43, 0.12);
-  --cdn-glass-shadow-hover:
-    0 8px 32px rgba(139, 90, 43, 0.28), 0 2px 6px rgba(0, 0, 0, 0.1),
-    0 0 2px rgba(139, 90, 43, 0.18);
-  --cdn-glass-blur: 4px;
-  --cdn-glass-streak: var(--cdn-streak-h-light);
+	--cdn-glass-bg: rgba(237, 229, 212, 0.92);
+	--cdn-glass-bg-strong: rgba(237, 229, 212, 0.95);
+	--cdn-glass-bg-breadcrumbs: rgba(237, 229, 212, 0.92);
+	--cdn-glass-bg-scroll: rgba(237, 229, 212, 0.93);
+	--cdn-glass-bg-ctl-header: rgba(237, 229, 212, 0.94);
+	--cdn-glass-bg-content: rgba(237, 229, 212, 0.92);
+	--cdn-glass-border: rgba(139, 90, 43, 0.28);
+	--cdn-glass-shadow:
+		0 4px 24px rgba(139, 90, 43, 0.18), 0 1px 3px rgba(0, 0, 0, 0.08),
+		0 0 1px rgba(139, 90, 43, 0.12);
+	--cdn-glass-shadow-hover:
+		0 8px 32px rgba(139, 90, 43, 0.28), 0 2px 6px rgba(0, 0, 0, 0.1),
+		0 0 2px rgba(139, 90, 43, 0.18);
+	--cdn-glass-blur: 4px;
+	--cdn-glass-streak: var(--cdn-streak-h-light);
 
-  /* ── text-shadow tokens ─────────────────────────────────────────────────── */
-  --cdn-text-shadow-light:
-    0 1px 2px rgba(74, 40, 24, 0.18), 0 0 6px rgba(237, 229, 212, 0.7);
-  --cdn-text-shadow-dark:
-    0 1px 2px rgba(0, 0, 0, 0.65), 0 0 8px rgba(0, 0, 0, 0.45);
+	/* ── text-shadow tokens ─────────────────────────────────────────────────── */
+	--cdn-text-shadow-light:
+		0 1px 2px rgba(74, 40, 24, 0.18), 0 0 6px rgba(237, 229, 212, 0.7);
+	--cdn-text-shadow-dark:
+		0 1px 2px rgba(0, 0, 0, 0.65), 0 0 8px rgba(0, 0, 0, 0.45);
 }
 
 /* dark-mode overrides for tokens that switch palette.
    Card-tier alphas slightly higher than light mode (text-on-dark needs more
    surface contrast), surface-tier alphas low so starfield bleeds through. */
 .awsui-dark-mode {
-  --cdn-glass-bg: rgba(28, 34, 48, 0.93);
-  --cdn-glass-bg-strong: rgba(28, 34, 48, 0.95);
-  --cdn-glass-bg-breadcrumbs: rgba(10, 12, 32, 0.92);
-  --cdn-glass-bg-scroll: rgba(10, 12, 32, 0.93);
-  --cdn-glass-bg-ctl-header: rgba(10, 12, 32, 0.94);
-  --cdn-glass-bg-content: rgba(10, 12, 32, 0.92);
-  --cdn-glass-border: rgba(144, 96, 240, 0.32);
-  --cdn-glass-shadow:
-    0 4px 24px rgba(144, 96, 240, 0.32), 0 1px 4px rgba(0, 0, 0, 0.5),
-    0 0 1px rgba(144, 96, 240, 0.18);
-  --cdn-glass-shadow-hover:
-    0 8px 32px rgba(144, 96, 240, 0.5), 0 2px 8px rgba(0, 0, 0, 0.55),
-    0 0 2px rgba(144, 96, 240, 0.28);
-  --cdn-glass-streak: var(--cdn-streak-h-dark);
+	--cdn-glass-bg: rgba(28, 34, 48, 0.93);
+	--cdn-glass-bg-strong: rgba(28, 34, 48, 0.95);
+	--cdn-glass-bg-breadcrumbs: rgba(10, 12, 32, 0.92);
+	--cdn-glass-bg-scroll: rgba(10, 12, 32, 0.93);
+	--cdn-glass-bg-ctl-header: rgba(10, 12, 32, 0.94);
+	--cdn-glass-bg-content: rgba(10, 12, 32, 0.92);
+	--cdn-glass-border: rgba(144, 96, 240, 0.32);
+	--cdn-glass-shadow:
+		0 4px 24px rgba(144, 96, 240, 0.32), 0 1px 4px rgba(0, 0, 0, 0.5),
+		0 0 1px rgba(144, 96, 240, 0.18);
+	--cdn-glass-shadow-hover:
+		0 8px 32px rgba(144, 96, 240, 0.5), 0 2px 8px rgba(0, 0, 0, 0.55),
+		0 0 2px rgba(144, 96, 240, 0.28);
+	--cdn-glass-streak: var(--cdn-streak-h-dark);
 }
 
 /* When 3D canvas is active, reduce content area opacity so canvas shows through */
 .cdn-viz-active:not(.awsui-dark-mode) {
-  --cdn-glass-bg-content: rgba(237, 229, 212, 0.35);
+	--cdn-glass-bg-content: rgba(237, 229, 212, 0.35);
 }
 .cdn-viz-active.awsui-dark-mode {
-  --cdn-glass-bg-content: rgba(10, 12, 32, 0.35);
+	--cdn-glass-bg-content: rgba(10, 12, 32, 0.35);
 }
 
 /* ==========================================================================
@@ -142,39 +142,39 @@
    physical presence over the dunes / starfield without obscuring them.
    ========================================================================== */
 .cdn-glass {
-  position: relative;
-  background-color: var(--cdn-glass-bg);
-  border: 1.5px solid var(--cdn-glass-border);
-  border-radius: var(--cdn-radius-md);
-  box-shadow: var(--cdn-glass-shadow);
-  transition: var(--cdn-transition-smooth);
-  overflow: hidden;
-  isolation: isolate;
+	position: relative;
+	background-color: var(--cdn-glass-bg);
+	border: 1.5px solid var(--cdn-glass-border);
+	border-radius: var(--cdn-radius-md);
+	box-shadow: var(--cdn-glass-shadow);
+	transition: var(--cdn-transition-smooth);
+	overflow: hidden;
+	isolation: isolate;
 }
 
 .cdn-glass::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: var(--cdn-glass-streak);
-  opacity: 0.85;
-  pointer-events: none;
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 2px;
+	background: var(--cdn-glass-streak);
+	opacity: 0.85;
+	pointer-events: none;
 }
 
 .cdn-glass:hover {
-  box-shadow: var(--cdn-glass-shadow-hover);
-  border-color: rgba(139, 90, 43, 0.42);
+	box-shadow: var(--cdn-glass-shadow-hover);
+	border-color: rgba(139, 90, 43, 0.42);
 }
 
 .awsui-dark-mode .cdn-glass:hover {
-  border-color: rgba(144, 96, 240, 0.5);
+	border-color: rgba(144, 96, 240, 0.5);
 }
 
 .cdn-glass--strong {
-  background-color: var(--cdn-glass-bg-strong);
+	background-color: var(--cdn-glass-bg-strong);
 }
 
 /* ==========================================================================
@@ -184,39 +184,39 @@
    apply to a 2-3px element. The vertical variant is for panel right-edges.
    ========================================================================== */
 :root:not(.awsui-dark-mode) .cdn-streak-h {
-  height: 2px;
-  border: none;
-  background: var(--cdn-streak-h-light);
-  border-radius: 1px;
-  margin: 0;
+	height: 2px;
+	border: none;
+	background: var(--cdn-streak-h-light);
+	border-radius: 1px;
+	margin: 0;
 }
 
 .awsui-dark-mode .cdn-streak-h {
-  height: 2px;
-  border: none;
-  background: var(--cdn-streak-h-dark);
-  border-radius: 1px;
-  margin: 0;
+	height: 2px;
+	border: none;
+	background: var(--cdn-streak-h-dark);
+	border-radius: 1px;
+	margin: 0;
 }
 
 :root:not(.awsui-dark-mode) .cdn-streak-v {
-  width: 2px;
-  background: var(--cdn-streak-v-light);
-  border-radius: 1px;
+	width: 2px;
+	background: var(--cdn-streak-v-light);
+	border-radius: 1px;
 }
 
 .awsui-dark-mode .cdn-streak-v {
-  width: 2px;
-  background: var(--cdn-streak-v-dark);
-  border-radius: 1px;
+	width: 2px;
+	background: var(--cdn-streak-v-dark);
+	border-radius: 1px;
 }
 
 :root:not(.awsui-dark-mode) .cdn-streak-band-h {
-  background: var(--cdn-streak-band-light);
+	background: var(--cdn-streak-band-light);
 }
 
 .awsui-dark-mode .cdn-streak-band-h {
-  background: var(--cdn-streak-band-dark);
+	background: var(--cdn-streak-band-dark);
 }
 
 /* ==========================================================================
@@ -226,11 +226,11 @@
    where text sits directly against the dunes / starfield.
    ========================================================================== */
 :root:not(.awsui-dark-mode) .cdn-text-shadow {
-  text-shadow: var(--cdn-text-shadow-light);
+	text-shadow: var(--cdn-text-shadow-light);
 }
 
 .awsui-dark-mode .cdn-text-shadow {
-  text-shadow: var(--cdn-text-shadow-dark);
+	text-shadow: var(--cdn-text-shadow-dark);
 }
 
 /* ==========================================================================
@@ -244,102 +244,102 @@
 /* Right-edge vertical streak — fades into the canvas. Sits on the inner
    nav drawer, not the outer container, so the streak hugs the panel edge. */
 :root:not(.awsui-dark-mode)
-  nav[class*="awsui_navigation_"]:not(
-    [class*="awsui_navigation-toggle_"]
-  )::after,
+	nav[class*="awsui_navigation_"]:not(
+		[class*="awsui_navigation-toggle_"]
+	)::after,
 .awsui-dark-mode
-  nav[class*="awsui_navigation_"]:not(
-    [class*="awsui_navigation-toggle_"]
-  )::after {
-  content: "";
-  position: absolute;
-  top: 8%;
-  bottom: 8%;
-  right: 0;
-  width: 2px;
-  pointer-events: none;
-  border-radius: 1px;
+	nav[class*="awsui_navigation_"]:not(
+		[class*="awsui_navigation-toggle_"]
+	)::after {
+	content: "";
+	position: absolute;
+	top: 8%;
+	bottom: 8%;
+	right: 0;
+	width: 2px;
+	pointer-events: none;
+	border-radius: 1px;
 }
 
 :root:not(.awsui-dark-mode)
-  nav[class*="awsui_navigation_"]:not(
-    [class*="awsui_navigation-toggle_"]
-  )::after {
-  background: var(--cdn-streak-v-light);
+	nav[class*="awsui_navigation_"]:not(
+		[class*="awsui_navigation-toggle_"]
+	)::after {
+	background: var(--cdn-streak-v-light);
 }
 
 .awsui-dark-mode
-  nav[class*="awsui_navigation_"]:not(
-    [class*="awsui_navigation-toggle_"]
-  )::after {
-  background: var(--cdn-streak-v-dark);
+	nav[class*="awsui_navigation_"]:not(
+		[class*="awsui_navigation-toggle_"]
+	)::after {
+	background: var(--cdn-streak-v-dark);
 }
 
 /* Anchor text-shadow — legibility against the dune / star bleed-through */
 :root:not(.awsui-dark-mode) [class*="side-navigation"] a {
-  text-shadow: var(--cdn-text-shadow-light);
+	text-shadow: var(--cdn-text-shadow-light);
 }
 
 .awsui-dark-mode [class*="side-navigation"] a {
-  text-shadow: var(--cdn-text-shadow-dark);
+	text-shadow: var(--cdn-text-shadow-dark);
 }
 
 /* Section header (e.g. "plans", "references") — bigger streak underline.
    Cloudscape uses awsui_section_ container with an awsui_section-header_ child;
    target the header element and add a gradient strip below it. */
 :root:not(.awsui-dark-mode)
-  [class*="side-navigation"]
-  [class*="section-header"],
+	[class*="side-navigation"]
+	[class*="section-header"],
 .awsui-dark-mode [class*="side-navigation"] [class*="section-header"] {
-  position: relative;
+	position: relative;
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="side-navigation"]
-  [class*="section-header"]::after,
+	[class*="side-navigation"]
+	[class*="section-header"]::after,
 .awsui-dark-mode [class*="side-navigation"] [class*="section-header"]::after {
-  content: "";
-  position: absolute;
-  left: var(--cdn-space-md, 16px);
-  right: var(--cdn-space-md, 16px);
-  bottom: 0;
-  height: 2px;
-  border-radius: 1px;
-  pointer-events: none;
-  opacity: 0.7;
+	content: "";
+	position: absolute;
+	left: var(--cdn-space-md, 16px);
+	right: var(--cdn-space-md, 16px);
+	bottom: 0;
+	height: 2px;
+	border-radius: 1px;
+	pointer-events: none;
+	opacity: 0.7;
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="side-navigation"]
-  [class*="section-header"]::after {
-  background: var(--cdn-streak-h-light);
+	[class*="side-navigation"]
+	[class*="section-header"]::after {
+	background: var(--cdn-streak-h-light);
 }
 
 .awsui-dark-mode [class*="side-navigation"] [class*="section-header"]::after {
-  background: var(--cdn-streak-h-dark);
+	background: var(--cdn-streak-h-dark);
 }
 
 /* Cloudscape Divider rendered between sections — replace bare hairline with
    a full-saturation streak. */
 :root:not(.awsui-dark-mode)
-  [class*="side-navigation"]
-  [class*="divider"]:not(#\9),
+	[class*="side-navigation"]
+	[class*="divider"]:not(#\9),
 .awsui-dark-mode [class*="side-navigation"] [class*="divider"]:not(#\9) {
-  border: none;
-  height: 2px;
-  border-radius: 1px;
-  margin-block: var(--cdn-space-sm, 8px);
-  opacity: 0.6;
+	border: none;
+	height: 2px;
+	border-radius: 1px;
+	margin-block: var(--cdn-space-sm, 8px);
+	opacity: 0.6;
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="side-navigation"]
-  [class*="divider"]:not(#\9) {
-  background: var(--cdn-streak-h-light);
+	[class*="side-navigation"]
+	[class*="divider"]:not(#\9) {
+	background: var(--cdn-streak-h-light);
 }
 
 .awsui-dark-mode [class*="side-navigation"] [class*="divider"]:not(#\9) {
-  background: var(--cdn-streak-h-dark);
+	background: var(--cdn-streak-h-dark);
 }
 
 /* v0.0.0072 — mobile side-nav menu polish. Bryan eyes-on (mobile screenshots):
@@ -348,46 +348,46 @@
    headers adopt Cinzel for brand cohesion with the breadcrumb wordmark,
    and the active item gets a soft amber/violet wash. */
 @media (max-width: 768px) {
-  [class*="side-navigation"] [class*="section-header"],
-  [class*="side-navigation"] [class*="section-link"],
-  [class*="side-navigation"] [class*="link-text"] {
-    font-family: Cinzel, "Cinzel Decorative", "Times New Roman", Georgia, serif;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-  }
+	[class*="side-navigation"] [class*="section-header"],
+	[class*="side-navigation"] [class*="section-link"],
+	[class*="side-navigation"] [class*="link-text"] {
+		font-family: Cinzel, "Cinzel Decorative", "Times New Roman", Georgia, serif;
+		font-weight: 600;
+		letter-spacing: 0.04em;
+	}
 
-  [class*="side-navigation"] li {
-    margin-block: 4px;
-  }
+	[class*="side-navigation"] li {
+		margin-block: 4px;
+	}
 
-  [class*="side-navigation"] a {
-    padding-block: 10px;
-    font-size: 15px;
-  }
+	[class*="side-navigation"] a {
+		padding-block: 10px;
+		font-size: 15px;
+	}
 
-  :root:not(.awsui-dark-mode) [class*="side-navigation"] a[aria-current="page"],
-  :root:not(.awsui-dark-mode)
-    [class*="side-navigation"]
-    [class*="link-active"] {
-    background: linear-gradient(
-      90deg,
-      rgba(255, 153, 0, 0.16) 0%,
-      rgba(255, 153, 0, 0.04) 100%
-    );
-    border-left: 3px solid var(--cdn-aws-orange, #ff9900);
-    padding-left: calc(var(--cdn-space-md, 16px) - 3px);
-  }
+	:root:not(.awsui-dark-mode) [class*="side-navigation"] a[aria-current="page"],
+	:root:not(.awsui-dark-mode)
+		[class*="side-navigation"]
+		[class*="link-active"] {
+		background: linear-gradient(
+			90deg,
+			rgba(255, 153, 0, 0.16) 0%,
+			rgba(255, 153, 0, 0.04) 100%
+		);
+		border-left: 3px solid var(--cdn-aws-orange, #ff9900);
+		padding-left: calc(var(--cdn-space-md, 16px) - 3px);
+	}
 
-  .awsui-dark-mode [class*="side-navigation"] a[aria-current="page"],
-  .awsui-dark-mode [class*="side-navigation"] [class*="link-active"] {
-    background: linear-gradient(
-      90deg,
-      rgba(144, 96, 240, 0.22) 0%,
-      rgba(144, 96, 240, 0.05) 100%
-    );
-    border-left: 3px solid var(--cdn-violet, #9060f0);
-    padding-left: calc(var(--cdn-space-md, 16px) - 3px);
-  }
+	.awsui-dark-mode [class*="side-navigation"] a[aria-current="page"],
+	.awsui-dark-mode [class*="side-navigation"] [class*="link-active"] {
+		background: linear-gradient(
+			90deg,
+			rgba(144, 96, 240, 0.22) 0%,
+			rgba(144, 96, 240, 0.05) 100%
+		);
+		border-left: 3px solid var(--cdn-violet, #9060f0);
+		padding-left: calc(var(--cdn-space-md, 16px) - 3px);
+	}
 }
 
 /* ==========================================================================
@@ -408,8 +408,8 @@
    the low-alpha bg + faint blur, no decoration. */
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
-  background-color: var(--cdn-glass-bg-breadcrumbs);
-  box-shadow: none;
+	background-color: var(--cdn-glass-bg-breadcrumbs);
+	box-shadow: none;
 }
 
 /* Force all breadcrumb items visible — never collapse behind a ▼ dropdown.
@@ -421,12 +421,12 @@
    Stack vertically below 600px so they fit. */
 [class*="awsui_breadcrumbs_"] ol[class*="awsui_breadcrumbs"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"]
-  [class*="awsui_breadcrumb-group_"]:not(#\9):not(#\10) {
-  flex-wrap: wrap;
+	[class*="awsui_breadcrumb-group_"]:not(#\9):not(#\10) {
+	flex-wrap: wrap;
 }
 
 [class*="awsui_breadcrumbs_"] li:not(#\9):not(#\10) {
-  display: list-item;
+	display: list-item;
 }
 
 /* Breadcrumb `>` separator vertical alignment — binary-search:
@@ -438,21 +438,21 @@
    shift overshoots — Bryan v0.0.0070: "very slightly too low on mobile,
    perfect on desktop". 0.15em centers it for the smaller cap height. */
 [class*="awsui_breadcrumbs_"] li [class*="awsui_icon_"]:not(#\9):not(#\10) {
-  vertical-align: middle;
-  transform: translateY(0.25em);
+	vertical-align: middle;
+	transform: translateY(0.25em);
 }
 
 @media (max-width: 600px) {
-  [class*="awsui_breadcrumbs_"] li [class*="awsui_icon_"]:not(#\9):not(#\10) {
-    transform: translateY(0.15em);
-  }
+	[class*="awsui_breadcrumbs_"] li [class*="awsui_icon_"]:not(#\9):not(#\10) {
+		transform: translateY(0.15em);
+	}
 }
 
 /* Wave 71 — WCAG AA: Cloudscape icons render near-white on warm bg (1.07-1.19:1).
    Force a darker fill in light mode so icons are visible on cream surfaces. */
 :root:not(.awsui-dark-mode) [class*="awsui_icon_"] svg:not(#\9) {
-  color: #5a3a1e;
-  fill: #5a3a1e;
+	color: #5a3a1e;
+	fill: #5a3a1e;
 }
 
 /* Hide the ellipsis "..." dropdown trigger + ghost-measurement items
@@ -468,10 +468,10 @@
 [class*="awsui_breadcrumbs_"] [class*="awsui_ellipsis_"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"] [class*="awsui_ghost-item_"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"]
-  [class*="awsui_ghost-breadcrumb_"]:not(#\9):not(#\10),
+	[class*="awsui_ghost-breadcrumb_"]:not(#\9):not(#\10),
 [class*="awsui_breadcrumbs_"]
-  [class*="awsui_breadcrumb-ellipsis_"]:not(#\9):not(#\10) {
-  display: none;
+	[class*="awsui_breadcrumb-ellipsis_"]:not(#\9):not(#\10) {
+	display: none;
 }
 
 /* Cloudscape Container backing — Bryan eyes-on roadmap v0.0.0053 saw
@@ -481,17 +481,17 @@
    use for .cdn-card so any page using Cloudscape Container gets a
    readable plate over the wallpaper. Card-tier alpha 0.85+0.92 strong. */
 [class*="awsui_container_"]:not([class*="awsui_container-trigger_"]):not(
-    [class*="awsui_split-panel"]
-  ):not(#\9):not(#\10) {
-  background-color: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.92));
+		[class*="awsui_split-panel"]
+	):not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.92));
 }
 
 /* On narrow viewports stack the home (CLOUD DEL NORTE) + page-name on
    separate lines so the Cinzel display heading still reads at full size. */
 @media (max-width: 600px) {
-  [class*="awsui_breadcrumbs_"] li:not(#\9):not(#\10) {
-    width: 100%;
-  }
+	[class*="awsui_breadcrumbs_"] li:not(#\9):not(#\10) {
+		width: 100%;
+	}
 }
 
 /* ==========================================================================
@@ -512,36 +512,36 @@
    breadcrumbs strip + ContentLayout header. Cloudscape paints this so it
    visually wraps the page header sandwich. */
 :root:not(.awsui-dark-mode)
-  [class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
-  background-color: var(--cdn-glass-bg-scroll);
+	[class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-scroll);
 }
 
 .awsui-dark-mode [class*="awsui_scrolling-background_"]:not(#\9):not(#\10) {
-  background-color: var(--cdn-glass-bg-scroll);
+	background-color: var(--cdn-glass-bg-scroll);
 }
 
 /* ContentLayout hero strip — wraps the page title ("Feed", "Meetings", etc.).
    Most visible of the surface tiers; serves as a structural shoulder under
    the page header. */
 :root:not(.awsui-dark-mode)
-  [class*="awsui_has-header_"]
-  > [class*="awsui_background_"]:not(#\9):not(#\10),
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10),
 :root:not(.awsui-dark-mode)
-  [class*="awsui_content-layout"]
-  > [class*="awsui_background"]:not(#\9):not(#\10),
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"]:not(#\9):not(#\10),
 :root:not(.awsui-dark-mode)
-  [class*="awsui_header-background"]:not(#\9):not(#\10) {
-  background-color: var(--cdn-glass-bg-ctl-header);
+	[class*="awsui_header-background"]:not(#\9):not(#\10) {
+	background-color: var(--cdn-glass-bg-ctl-header);
 }
 
 .awsui-dark-mode
-  [class*="awsui_has-header_"]
-  > [class*="awsui_background_"]:not(#\9):not(#\10),
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10),
 .awsui-dark-mode
-  [class*="awsui_content-layout"]
-  > [class*="awsui_background"]:not(#\9):not(#\10),
+	[class*="awsui_content-layout"]
+	> [class*="awsui_background"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_header-background"]:not(#\9):not(#\10) {
-  background-color: var(--cdn-glass-bg-ctl-header);
+	background-color: var(--cdn-glass-bg-ctl-header);
 }
 
 /* main content area — backing behind the feed cards.
@@ -557,46 +557,46 @@
    viewport rather than scrolling with content. */
 :root:not(.awsui-dark-mode) main[class*="awsui_layout_"]:not(#\9):not(#\10),
 :root:not(.awsui-dark-mode) [class*="awsui_layout-main"]:not(#\9):not(#\10) {
-  background-color: var(--cdn-glass-bg-content);
-  background-image:
-    radial-gradient(
-      60% 45% at 25% 15%,
-      rgba(201, 162, 63, 0.06) 0%,
-      rgba(201, 162, 63, 0) 70%
-    ),
-    radial-gradient(
-      50% 40% at 80% 85%,
-      rgba(144, 96, 240, 0.05) 0%,
-      rgba(144, 96, 240, 0) 65%
-    ),
-    repeating-linear-gradient(
-      135deg,
-      rgba(139, 90, 43, 0.022) 0 2px,
-      transparent 2px 8px
-    );
-  background-attachment: fixed, fixed, fixed;
+	background-color: var(--cdn-glass-bg-content);
+	background-image:
+		radial-gradient(
+			60% 45% at 25% 15%,
+			rgba(201, 162, 63, 0.06) 0%,
+			rgba(201, 162, 63, 0) 70%
+		),
+		radial-gradient(
+			50% 40% at 80% 85%,
+			rgba(144, 96, 240, 0.05) 0%,
+			rgba(144, 96, 240, 0) 65%
+		),
+		repeating-linear-gradient(
+			135deg,
+			rgba(139, 90, 43, 0.022) 0 2px,
+			transparent 2px 8px
+		);
+	background-attachment: fixed, fixed, fixed;
 }
 
 .awsui-dark-mode main[class*="awsui_layout_"]:not(#\9):not(#\10),
 .awsui-dark-mode [class*="awsui_layout-main"]:not(#\9):not(#\10) {
-  background-color: var(--cdn-glass-bg-content);
-  background-image:
-    radial-gradient(
-      60% 45% at 25% 15%,
-      rgba(144, 96, 240, 0.18) 0%,
-      rgba(144, 96, 240, 0) 70%
-    ),
-    radial-gradient(
-      50% 40% at 80% 85%,
-      rgba(48, 0, 106, 0.28) 0%,
-      rgba(48, 0, 106, 0) 65%
-    ),
-    repeating-linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.014) 0 2px,
-      transparent 2px 5px
-    );
-  background-attachment: fixed, fixed, fixed;
+	background-color: var(--cdn-glass-bg-content);
+	background-image:
+		radial-gradient(
+			60% 45% at 25% 15%,
+			rgba(144, 96, 240, 0.18) 0%,
+			rgba(144, 96, 240, 0) 70%
+		),
+		radial-gradient(
+			50% 40% at 80% 85%,
+			rgba(48, 0, 106, 0.28) 0%,
+			rgba(48, 0, 106, 0) 65%
+		),
+		repeating-linear-gradient(
+			135deg,
+			rgba(255, 255, 255, 0.014) 0 2px,
+			transparent 2px 5px
+		);
+	background-attachment: fixed, fixed, fixed;
 }
 
 /* ContentLayout header strip — horizon streak via border-image.
@@ -613,52 +613,52 @@
      2. position: relative + z-index: 1 on the header-wrapper sibling —
         forces the title text + Info button above the backdrop-filter layer. */
 :root:not(.awsui-dark-mode)
-  [class*="awsui_has-header_"]
-  > [class*="awsui_background_"]:not(#\9):not(#\10) {
-  border-bottom: 2px solid transparent;
-  border-image-source: var(--cdn-streak-h-light);
-  border-image-slice: 0 0 1 0;
-  border-image-width: 0 0 2px 0;
-  border-image-repeat: stretch;
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10) {
+	border-bottom: 2px solid transparent;
+	border-image-source: var(--cdn-streak-h-light);
+	border-image-slice: 0 0 1 0;
+	border-image-width: 0 0 2px 0;
+	border-image-repeat: stretch;
 }
 
 .awsui-dark-mode
-  [class*="awsui_has-header_"]
-  > [class*="awsui_background_"]:not(#\9):not(#\10) {
-  border-bottom: 2px solid transparent;
-  border-image-source: var(--cdn-streak-h-dark);
-  border-image-slice: 0 0 1 0;
-  border-image-width: 0 0 2px 0;
-  border-image-repeat: stretch;
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10) {
+	border-bottom: 2px solid transparent;
+	border-image-source: var(--cdn-streak-h-dark);
+	border-image-slice: 0 0 1 0;
+	border-image-width: 0 0 2px 0;
+	border-image-repeat: stretch;
 }
 
 /* Lift the page-title sibling above the bg's backdrop-filter stacking context */
 [class*="awsui_has-header_"]
-  > [class*="awsui_header-wrapper_"]:not(#\9):not(#\10) {
-  position: relative;
-  z-index: 1;
+	> [class*="awsui_header-wrapper_"]:not(#\9):not(#\10) {
+	position: relative;
+	z-index: 1;
 }
 
 /* Bottom streak — sits beneath the breadcrumbs strip as a horizon line */
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]::after,
 .awsui-dark-mode [class*="awsui_breadcrumbs_"]::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  border-radius: 1px;
-  pointer-events: none;
-  opacity: 0.65;
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2px;
+	border-radius: 1px;
+	pointer-events: none;
+	opacity: 0.65;
 }
 
 :root:not(.awsui-dark-mode) [class*="awsui_breadcrumbs_"]::after {
-  background: var(--cdn-streak-h-light);
+	background: var(--cdn-streak-h-light);
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"]::after {
-  background: var(--cdn-streak-h-dark);
+	background: var(--cdn-streak-h-dark);
 }
 
 /* ==========================================================================
@@ -668,34 +668,34 @@
    so it stands out from the wallpaper exactly as in the live screenshot.
    ========================================================================== */
 .feed-next-meetup {
-  position: relative;
-  border-radius: var(--cdn-radius-md);
-  border: 1.5px solid var(--cdn-glass-border);
-  background-color: var(--cdn-glass-bg-strong);
-  box-shadow: var(--cdn-glass-shadow);
-  overflow: hidden;
-  isolation: isolate;
+	position: relative;
+	border-radius: var(--cdn-radius-md);
+	border: 1.5px solid var(--cdn-glass-border);
+	background-color: var(--cdn-glass-bg-strong);
+	box-shadow: var(--cdn-glass-shadow);
+	overflow: hidden;
+	isolation: isolate;
 }
 
 .feed-next-meetup::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: var(--cdn-glass-streak);
-  opacity: 0.85;
-  pointer-events: none;
+	content: "";
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 3px;
+	background: var(--cdn-glass-streak);
+	opacity: 0.85;
+	pointer-events: none;
 }
 
 /* feed-section-divider — replace hairline with streak gradient */
 .feed-section-divider {
-  border: none;
-  height: 2px;
-  background: var(--cdn-glass-streak);
-  border-radius: 1px;
-  opacity: 0.6;
+	border: none;
+	height: 2px;
+	background: var(--cdn-glass-streak);
+	border-radius: 1px;
+	opacity: 0.6;
 }
 
 /* ==========================================================================
@@ -721,80 +721,80 @@
    ========================================================================== */
 
 [class*="awsui_breadcrumbs_"] li:first-child a {
-  font-family: "Cinzel", Georgia, serif;
-  font-weight: 700;
-  /* Lower clamp floor so "CLOUD DEL NORTE" fits the narrow phone column
+	font-family: "Cinzel", Georgia, serif;
+	font-weight: 700;
+	/* Lower clamp floor so "CLOUD DEL NORTE" fits the narrow phone column
 	   without truncation. At 360px viewport the previous 1.75rem floor +
 	   0.06em tracking + 6px padding overflowed the breadcrumb strip → the
 	   text rendered "Cloud Del No..." (Bryan v0.0.0058 mobile screenshot).
 	   1.05rem floor clears 360px with a slight margin. */
-  font-size: clamp(1.05rem, 5.2vw, 2.15rem);
-  letter-spacing: 0.06em;
-  line-height: 1.1;
-  text-decoration: none;
-  /* Dedicated edge-to-edge gradient for text-fill — solid endpoints so
+	font-size: clamp(1.05rem, 5.2vw, 2.15rem);
+	letter-spacing: 0.06em;
+	line-height: 1.1;
+	text-decoration: none;
+	/* Dedicated edge-to-edge gradient for text-fill — solid endpoints so
 	   "CLOUD" and "NORTE" don't fade into the page bg. */
-  background-image: linear-gradient(
-    90deg,
-    #8b5a2b 0%,
-    #ff9900 50%,
-    #8b5a2b 100%
-  );
-  background-size: 200% 100%;
-  background-position: 0% 50%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  display: inline-block;
-  padding: 0 6px;
-  /* Outside-only contrasting outline + ambient halo. drop-shadow filter
+	background-image: linear-gradient(
+		90deg,
+		#8b5a2b 0%,
+		#ff9900 50%,
+		#8b5a2b 100%
+	);
+	background-size: 200% 100%;
+	background-position: 0% 50%;
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	color: transparent;
+	display: inline-block;
+	padding: 0 6px;
+	/* Outside-only contrasting outline + ambient halo. drop-shadow filter
 	   composes around the gradient-filled text shape — using 8 sharp
 	   1-2px offsets builds an outline outside the letters (NOT a
 	   -webkit-text-stroke that paints half-inside the edge). Light mode:
 	   deep mahogany outline + warm amber halo. */
-  /* Asymmetric stroke — right + bottom edges only (single drop-shadow
+	/* Asymmetric stroke — right + bottom edges only (single drop-shadow
 	   offset) reads as a soft drop-shadow rather than a full outline. */
-  filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
-    drop-shadow(1px 0 0 rgba(44, 18, 6, 0.22))
-    drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22))
-    drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
-    drop-shadow(0 0 18px rgba(139, 90, 43, 0.22));
-  transition:
-    transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.3s ease;
-  animation: cdn-breadcrumb-shimmer 12s ease-in-out infinite;
-  vertical-align: middle;
+	filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
+		drop-shadow(1px 0 0 rgba(44, 18, 6, 0.22))
+		drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22))
+		drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
+		drop-shadow(0 0 18px rgba(139, 90, 43, 0.22));
+	transition:
+		transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.3s ease;
+	animation: cdn-breadcrumb-shimmer 12s ease-in-out infinite;
+	vertical-align: middle;
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
-  filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.3))
-    drop-shadow(1px 0 0 rgba(0, 0, 0, 0.22))
-    drop-shadow(0 1px 0 rgba(0, 0, 0, 0.22))
-    drop-shadow(0 0 8px rgba(144, 96, 240, 0.55))
-    drop-shadow(0 0 22px rgba(144, 96, 240, 0.28));
+	filter: drop-shadow(1px 1px 0 rgba(0, 0, 0, 0.3))
+		drop-shadow(1px 0 0 rgba(0, 0, 0, 0.22))
+		drop-shadow(0 1px 0 rgba(0, 0, 0, 0.22))
+		drop-shadow(0 0 8px rgba(144, 96, 240, 0.55))
+		drop-shadow(0 0 22px rgba(144, 96, 240, 0.28));
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
-    drop-shadow(0 0 8px rgba(144, 96, 240, 0.5))
-    drop-shadow(0 0 22px rgba(144, 96, 240, 0.25));
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
+		drop-shadow(0 0 8px rgba(144, 96, 240, 0.5))
+		drop-shadow(0 0 22px rgba(144, 96, 240, 0.25));
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a {
-  background-image: linear-gradient(
-    90deg,
-    #9060f0 0%,
-    #d7c7ee 50%,
-    #9060f0 100%
-  );
+	background-image: linear-gradient(
+		90deg,
+		#9060f0 0%,
+		#d7c7ee 50%,
+		#9060f0 100%
+	);
 }
 
 [class*="awsui_breadcrumbs_"] li:first-child a:hover,
 [class*="awsui_breadcrumbs_"] li:first-child a:focus-visible {
-  transform: scale(1.04);
-  filter: drop-shadow(0 0 8px rgba(255, 153, 0, 0.45));
-  text-decoration: none;
+	transform: scale(1.04);
+	filter: drop-shadow(0 0 8px rgba(255, 153, 0, 0.45));
+	text-decoration: none;
 }
 
 /* Spanish locale fit — "Nube of the North > Novedades" is ~23% wider than
@@ -804,40 +804,40 @@
    share the row at ≤600px. lang attr set on documentElement by
    initializeLocale() in src/utils/locale.ts → "es" or "en". */
 @media (max-width: 600px) {
-  html[lang="es"] [class*="awsui_breadcrumbs_"] li:first-child a {
-    font-size: clamp(0.95rem, 4.7vw, 1.95rem);
-    letter-spacing: 0.04em;
-  }
-  html[lang="es"] [class*="awsui_breadcrumbs_"] li:not(:first-child) {
-    font-size: 0.92em;
-  }
+	html[lang="es"] [class*="awsui_breadcrumbs_"] li:first-child a {
+		font-size: clamp(0.95rem, 4.7vw, 1.95rem);
+		letter-spacing: 0.04em;
+	}
+	html[lang="es"] [class*="awsui_breadcrumbs_"] li:not(:first-child) {
+		font-size: 0.92em;
+	}
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a:hover,
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] li:first-child a:focus-visible {
-  filter: drop-shadow(0 0 12px rgba(144, 96, 240, 0.55));
+	filter: drop-shadow(0 0 12px rgba(144, 96, 240, 0.55));
 }
 
 @keyframes cdn-breadcrumb-shimmer {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
+	0%,
+	100% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [class*="awsui_breadcrumbs_"] li:first-child a {
-    animation: none;
-    background-position: 0% 50%;
-  }
+	[class*="awsui_breadcrumbs_"] li:first-child a {
+		animation: none;
+		background-position: 0% 50%;
+	}
 }
 
 /* Allow breadcrumbs strip to grow vertically for the bigger first item */
 [class*="awsui_breadcrumbs_"]:not(#\9):not(#\10) {
-  min-height: auto;
+	min-height: auto;
 }
 
 /* ==========================================================================
@@ -858,19 +858,19 @@
    selector + display:revert.
    ========================================================================== */
 [class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
-  [class*="awsui_header-wrapper_"]
-  h1:not(#\9):not(#\10),
+	[class*="awsui_header-wrapper_"]
+	h1:not(#\9):not(#\10),
 [class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_main-main_"]
-  > [class*="awsui_title_"]:not(#\9):not(#\10) {
-  visibility: hidden;
-  height: 0;
-  max-height: 0;
-  overflow: hidden;
-  margin: 0;
-  padding: 0;
-  pointer-events: none;
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_main-main_"]
+	> [class*="awsui_title_"]:not(#\9):not(#\10) {
+	visibility: hidden;
+	height: 0;
+	max-height: 0;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	pointer-events: none;
 }
 
 /* ==========================================================================
@@ -894,164 +894,159 @@
    of scope for a CSS-only fix. */
 
 [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10) {
-  font-size: 0;
-  color: transparent;
-  text-decoration: none;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  border-radius: 999px;
-  font-family:
-    "Amazon Ember",
-    -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
-  letter-spacing: 0.06em;
-  cursor: pointer;
-  user-select: none;
-  /* s6 — runtime-measured horizontal shift so the pill lines up under the
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10) {
+	font-size: 0;
+	color: transparent;
+	text-decoration: none;
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 16px;
+	border-radius: 999px;
+	font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont, sans-serif;
+	letter-spacing: 0.06em;
+	cursor: pointer;
+	user-select: none;
+	/* s6 — runtime-measured horizontal shift so the pill lines up under the
 	   breadcrumb's last item ("Feed" / "Roadmap" / etc.). shell/index.tsx
 	   computes the delta between the breadcrumb's last <li> left edge and
 	   this pill's natural left edge each resize/layout cycle. Falls back to
 	   0px (natural inline position) when JS hasn't run yet. */
-  transform: translateX(var(--cdn-volunteer-shift-x, 0px));
-  transition:
-    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+	transform: translateX(var(--cdn-volunteer-shift-x, 0px));
+	transition:
+		transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
 }
 
 [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10)::after {
-  content: "♥ VOLUNTEER";
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10)::after {
+	content: "♥ VOLUNTEER";
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10) {
-  background: linear-gradient(
-    135deg,
-    rgba(250, 247, 240, 0.92) 0%,
-    rgba(245, 235, 215, 0.88) 100%
-  );
-  border: 1.5px solid rgba(255, 153, 0, 0.55);
-  box-shadow:
-    0 2px 8px rgba(139, 90, 43, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10) {
+	background: linear-gradient(
+		135deg,
+		rgba(250, 247, 240, 0.92) 0%,
+		rgba(245, 235, 215, 0.88) 100%
+	);
+	border: 1.5px solid rgba(255, 153, 0, 0.55);
+	box-shadow:
+		0 2px 8px rgba(139, 90, 43, 0.2),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10)::after {
-  color: var(--cdn-amber, #8b5a2b);
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10)::after {
+	color: var(--cdn-amber, #8b5a2b);
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10):hover {
-  transform: scale(1.05);
-  border-color: var(--cdn-aws-orange, #ff9900);
-  box-shadow:
-    0 4px 14px rgba(139, 90, 43, 0.3),
-    0 0 14px rgba(255, 153, 0, 0.32),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10):hover {
+	transform: scale(1.05);
+	border-color: var(--cdn-aws-orange, #ff9900);
+	box-shadow:
+		0 4px 14px rgba(139, 90, 43, 0.3),
+		0 0 14px rgba(255, 153, 0, 0.32),
+		inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10):hover::after {
-  color: var(--cdn-aws-orange, #ff9900);
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10):hover::after {
+	color: var(--cdn-aws-orange, #ff9900);
 }
 
 .awsui-dark-mode
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10) {
-  background: linear-gradient(
-    135deg,
-    rgba(28, 34, 48, 0.92) 0%,
-    rgba(20, 16, 48, 0.88) 100%
-  );
-  border: 1.5px solid rgba(144, 96, 240, 0.6);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(144, 96, 240, 0.3);
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10) {
+	background: linear-gradient(
+		135deg,
+		rgba(28, 34, 48, 0.92) 0%,
+		rgba(20, 16, 48, 0.88) 100%
+	);
+	border: 1.5px solid rgba(144, 96, 240, 0.6);
+	box-shadow:
+		0 2px 8px rgba(0, 0, 0, 0.45),
+		inset 0 1px 0 rgba(144, 96, 240, 0.3);
 }
 
 .awsui-dark-mode
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10)::after {
-  color: var(--cdn-lavender, #d7c7ee);
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10)::after {
+	color: var(--cdn-lavender, #d7c7ee);
 }
 
 .awsui-dark-mode
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10):hover {
-  transform: scale(1.05);
-  border-color: var(--cdn-violet, #9060f0);
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.55),
-    0 0 14px rgba(144, 96, 240, 0.45),
-    inset 0 1px 0 rgba(144, 96, 240, 0.45);
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10):hover {
+	transform: scale(1.05);
+	border-color: var(--cdn-violet, #9060f0);
+	box-shadow:
+		0 4px 14px rgba(0, 0, 0, 0.55),
+		0 0 14px rgba(144, 96, 240, 0.45),
+		inset 0 1px 0 rgba(144, 96, 240, 0.45);
 }
 
 .awsui-dark-mode
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]
-  [class*="awsui_link"]:not(#\9):not(#\10):hover::after {
-  color: var(--cdn-violet, #9060f0);
+	[class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]
+	[class*="awsui_link"]:not(#\9):not(#\10):hover::after {
+	color: var(--cdn-violet, #9060f0);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [class*="awsui_header-wrapper_"]
-    [class*="awsui_info_"]
-    [class*="awsui_link"]:not(#\9):not(#\10) {
-    transition: none;
-  }
+	[class*="awsui_header-wrapper_"]
+		[class*="awsui_info_"]
+		[class*="awsui_link"]:not(#\9):not(#\10) {
+		transition: none;
+	}
 }
 
 /* Volunteer pill fades out when the tools (help) panel is open — Bryan
    v0.0.0056: clicking the pill opens the panel; let the pill recede so it
    doesn't compete for attention with the open drawer. Fade back in when
    the drawer closes (handled by body class toggling in shell/index.tsx). */
-body.cdn-tools-open
-  [class*="awsui_header-wrapper_"]
-  [class*="awsui_info_"]:not(#\9):not(#\10) {
-  opacity: 0;
-  pointer-events: none;
-  transform: scale(0.96);
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+body.cdn-tools-open [class*="awsui_header-wrapper_"]
+	[class*="awsui_info_"]:not(#\9):not(#\10) {
+	opacity: 0;
+	pointer-events: none;
+	transform: scale(0.96);
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 [class*="awsui_header-wrapper_"] [class*="awsui_info_"]:not(#\9):not(#\10) {
-  transition:
-    opacity 0.3s ease,
-    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+	transition:
+		opacity 0.3s ease,
+		transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Mobile: hide the Volunteer pill entirely so it doesn't crowd the music
    player on narrow viewports. The right tools-toggle (i) icon stays
    accessible at the right edge as the help-panel entry point on mobile. */
 @media (max-width: 600px) {
-  [class*="awsui_header-wrapper_"] [class*="awsui_info_"]:not(#\9):not(#\10) {
-    display: none;
-  }
+	[class*="awsui_header-wrapper_"] [class*="awsui_info_"]:not(#\9):not(#\10) {
+		display: none;
+	}
 }
 
 /* Tablet collision zone (601px–1024px) — fade Volunteer out before it
@@ -1061,11 +1056,11 @@ body.cdn-tools-open
    to fade away before that happens". opacity:0 + pointer-events:none
    keeps the slot in flow so the awsui_title_ layout stays calm. */
 @media (min-width: 601px) and (max-width: 1024px) {
-  [class*="awsui_header-wrapper_"] [class*="awsui_info_"]:not(#\9):not(#\10) {
-    opacity: 0;
-    pointer-events: none;
-    transform: scale(0.96);
-  }
+	[class*="awsui_header-wrapper_"] [class*="awsui_info_"]:not(#\9):not(#\10) {
+		opacity: 0;
+		pointer-events: none;
+		transform: scale(0.96);
+	}
 }
 
 /* ContentLayout hero-strip background — collapse on pages with breadcrumbs.
@@ -1077,14 +1072,14 @@ body.cdn-tools-open
    Collapse the band: zero out bg/blur/border-image. The actions area
    (music player on feed) lives in a SIBLING grid row and renders fine. */
 [class*="awsui_layout_"]:has([class*="awsui_breadcrumbs_"])
-  [class*="awsui_has-header_"]
-  > [class*="awsui_background_"]:not(#\9):not(#\10) {
-  background-color: transparent;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-  border-bottom: none;
-  border-image: none;
-  box-shadow: none;
+	[class*="awsui_has-header_"]
+	> [class*="awsui_background_"]:not(#\9):not(#\10) {
+	background-color: transparent;
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+	border-bottom: none;
+	border-image: none;
+	box-shadow: none;
 }
 
 /* ==========================================================================
@@ -1102,50 +1097,50 @@ body.cdn-tools-open
    desktop layout is untouched. Shared rules across modes.
    ========================================================================== */
 @media (max-width: 1080px) {
-  nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
-      #\9
-    ),
-  [class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(
-      [class*="awsui_tools-container_"]
-    ):not(#\9) {
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    max-height: 100vh;
-    /* leave room at the bottom so the last section isn't cropped by the
+	nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]):not(
+			#\9
+		),
+	[class*="awsui_tools_"]:not([class*="awsui_tools-toggle_"]):not(
+			[class*="awsui_tools-container_"]
+		):not(#\9) {
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+		max-height: 100vh;
+		/* leave room at the bottom so the last section isn't cropped by the
 		   browser chrome (mobile address bar) when scrolled to end */
-    padding-bottom: 96px;
-  }
+		padding-bottom: 96px;
+	}
 
-  /* Thin branded scrollbar — light + dark mode tints */
-  nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar,
-  [class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar {
-    width: 6px;
-  }
-  :root:not(.awsui-dark-mode)
-    nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar-thumb,
-  :root:not(.awsui-dark-mode)
-    [class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
-    background: rgba(139, 90, 43, 0.4);
-    border-radius: 3px;
-  }
-  .awsui-dark-mode
-    nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar-thumb,
-  .awsui-dark-mode [class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
-    background: rgba(144, 96, 240, 0.4);
-    border-radius: 3px;
-  }
-  nav[class*="awsui_navigation_"]:not(#\9),
-  [class*="awsui_tools_"]:not(#\9) {
-    scrollbar-width: thin;
-  }
-  :root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"]:not(#\9),
-  :root:not(.awsui-dark-mode) [class*="awsui_tools_"]:not(#\9) {
-    scrollbar-color: rgba(139, 90, 43, 0.4) transparent;
-  }
-  .awsui-dark-mode nav[class*="awsui_navigation_"]:not(#\9),
-  .awsui-dark-mode [class*="awsui_tools_"]:not(#\9) {
-    scrollbar-color: rgba(144, 96, 240, 0.4) transparent;
-  }
+	/* Thin branded scrollbar — light + dark mode tints */
+	nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar,
+	[class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar {
+		width: 6px;
+	}
+	:root:not(.awsui-dark-mode)
+		nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar-thumb,
+	:root:not(.awsui-dark-mode)
+		[class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
+		background: rgba(139, 90, 43, 0.4);
+		border-radius: 3px;
+	}
+	.awsui-dark-mode
+		nav[class*="awsui_navigation_"]:not(#\9)::-webkit-scrollbar-thumb,
+	.awsui-dark-mode [class*="awsui_tools_"]:not(#\9)::-webkit-scrollbar-thumb {
+		background: rgba(144, 96, 240, 0.4);
+		border-radius: 3px;
+	}
+	nav[class*="awsui_navigation_"]:not(#\9),
+	[class*="awsui_tools_"]:not(#\9) {
+		scrollbar-width: thin;
+	}
+	:root:not(.awsui-dark-mode) nav[class*="awsui_navigation_"]:not(#\9),
+	:root:not(.awsui-dark-mode) [class*="awsui_tools_"]:not(#\9) {
+		scrollbar-color: rgba(139, 90, 43, 0.4) transparent;
+	}
+	.awsui-dark-mode nav[class*="awsui_navigation_"]:not(#\9),
+	.awsui-dark-mode [class*="awsui_tools_"]:not(#\9) {
+		scrollbar-color: rgba(144, 96, 240, 0.4) transparent;
+	}
 }
 
 /* ==========================================================================
@@ -1171,146 +1166,146 @@ body.cdn-tools-open
 
 /* Light mode — translucent glass + amber border */
 :root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-  background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.94));
-  border: 1.5px solid rgba(139, 90, 43, 0.3);
-  color: rgba(90, 58, 20, 0.85);
-  box-shadow:
-    0 1px 6px rgba(44, 18, 6, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  transition:
-    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: cdn-tools-toggle-breathe 6s ease-in-out infinite;
+	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.94));
+	border: 1.5px solid rgba(139, 90, 43, 0.3);
+	color: rgba(90, 58, 20, 0.85);
+	box-shadow:
+		0 1px 6px rgba(44, 18, 6, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	transition:
+		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	animation: cdn-tools-toggle-breathe 6s ease-in-out infinite;
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
-  border-color: rgba(139, 90, 43, 0.5);
-  transform: scale(1.06);
-  box-shadow:
-    0 2px 12px rgba(44, 18, 6, 0.18),
-    0 0 8px rgba(255, 153, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  filter: none;
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
+	border-color: rgba(139, 90, 43, 0.5);
+	transform: scale(1.06);
+	box-shadow:
+		0 2px 12px rgba(44, 18, 6, 0.18),
+		0 0 8px rgba(255, 153, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	filter: none;
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):active {
-  transform: scale(0.96);
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.15),
-    0 1px 2px rgba(44, 18, 6, 0.1);
-  filter: none;
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10):active {
+	transform: scale(0.96);
+	box-shadow:
+		inset 0 1px 3px rgba(0, 0, 0, 0.15),
+		0 1px 2px rgba(44, 18, 6, 0.1);
+	filter: none;
 }
 
 /* Light mode — dark icon on glass background */
 :root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-  color: rgba(90, 58, 20, 0.85);
+	color: rgba(90, 58, 20, 0.85);
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="awsui_tools-toggle_"]:not(#\9):not(#\10)
-  svg
-  circle,
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)
+	svg
+	circle,
 :root:not(.awsui-dark-mode)
-  [class*="awsui_tools-toggle_"]:not(#\9):not(#\10)
-  svg
-  path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)
+	svg
+	path {
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.5;
+	stroke-linecap: round;
 }
 
 /* Dark mode — translucent glass + violet border */
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-  background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.95));
-  border: 1.5px solid rgba(144, 96, 240, 0.3);
-  color: rgba(215, 199, 238, 0.9);
-  box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(144, 96, 240, 0.15);
-  transition:
-    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    filter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  animation: cdn-tools-toggle-breathe-dark 6s ease-in-out infinite;
+	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.95));
+	border: 1.5px solid rgba(144, 96, 240, 0.3);
+	color: rgba(215, 199, 238, 0.9);
+	box-shadow:
+		0 1px 6px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(144, 96, 240, 0.15);
+	transition:
+		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		filter 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+	animation: cdn-tools-toggle-breathe-dark 6s ease-in-out infinite;
 }
 
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
-  border-color: rgba(144, 96, 240, 0.55);
-  transform: scale(1.06);
-  box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.3),
-    0 0 8px rgba(144, 96, 240, 0.25),
-    inset 0 1px 0 rgba(144, 96, 240, 0.25);
-  filter: none;
+	border-color: rgba(144, 96, 240, 0.55);
+	transform: scale(1.06);
+	box-shadow:
+		0 2px 12px rgba(0, 0, 0, 0.3),
+		0 0 8px rgba(144, 96, 240, 0.25),
+		inset 0 1px 0 rgba(144, 96, 240, 0.25);
+	filter: none;
 }
 
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):active {
-  transform: scale(0.96);
-  box-shadow:
-    inset 0 1px 3px rgba(0, 0, 0, 0.3),
-    0 1px 2px rgba(0, 0, 0, 0.2);
-  filter: none;
+	transform: scale(0.96);
+	box-shadow:
+		inset 0 1px 3px rgba(0, 0, 0, 0.3),
+		0 1px 2px rgba(0, 0, 0, 0.2);
+	filter: none;
 }
 
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg circle,
 .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) svg path {
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
+	fill: none;
+	stroke: currentColor;
+	stroke-width: 1.5;
+	stroke-linecap: round;
 }
 
 /* Ambient breathe — slow pulsing glow ring, 6s cycle. Light mode amber halo;
    dark mode violet halo. Box-shadow only (no transform) so it never fights
    the hover scale or layout. */
 @keyframes cdn-tools-toggle-breathe {
-  0%,
-  100% {
-    box-shadow:
-      0 1px 6px rgba(44, 18, 6, 0.12),
-      inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  }
-  50% {
-    box-shadow:
-      0 2px 10px rgba(44, 18, 6, 0.16),
-      0 0 6px rgba(255, 153, 0, 0.1),
-      inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  }
+	0%,
+	100% {
+		box-shadow:
+			0 1px 6px rgba(44, 18, 6, 0.12),
+			inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	}
+	50% {
+		box-shadow:
+			0 2px 10px rgba(44, 18, 6, 0.16),
+			0 0 6px rgba(255, 153, 0, 0.1),
+			inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	}
 }
 
 @keyframes cdn-tools-toggle-breathe-dark {
-  0%,
-  100% {
-    box-shadow:
-      0 1px 6px rgba(0, 0, 0, 0.25),
-      inset 0 1px 0 rgba(144, 96, 240, 0.15);
-  }
-  50% {
-    box-shadow:
-      0 2px 10px rgba(0, 0, 0, 0.3),
-      0 0 6px rgba(144, 96, 240, 0.18),
-      inset 0 1px 0 rgba(144, 96, 240, 0.25);
-  }
+	0%,
+	100% {
+		box-shadow:
+			0 1px 6px rgba(0, 0, 0, 0.25),
+			inset 0 1px 0 rgba(144, 96, 240, 0.15);
+	}
+	50% {
+		box-shadow:
+			0 2px 10px rgba(0, 0, 0, 0.3),
+			0 0 6px rgba(144, 96, 240, 0.18),
+			inset 0 1px 0 rgba(144, 96, 240, 0.25);
+	}
 }
 
 /* Pause breathe + drop transitions when motion-reduced */
 @media (prefers-reduced-motion: reduce) {
-  :root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10),
-  .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-    animation: none;
-    transition: none;
-  }
-  :root:not(.awsui-dark-mode)
-    [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover,
-  .awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
-    transform: none;
-  }
+	:root:not(.awsui-dark-mode) [class*="awsui_tools-toggle_"]:not(#\9):not(#\10),
+	.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+		animation: none;
+		transition: none;
+	}
+	:root:not(.awsui-dark-mode)
+		[class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover,
+	.awsui-dark-mode [class*="awsui_tools-toggle_"]:not(#\9):not(#\10):hover {
+		transform: none;
+	}
 }
 
 /* ==========================================================================
@@ -1322,60 +1317,60 @@ body.cdn-tools-open
    match. Subtle — this is a utility control, not the show stealer.
    ========================================================================== */
 :root:not(.awsui-dark-mode)
-  [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-  background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.94));
-  border: 1.5px solid rgba(139, 90, 43, 0.3);
-  color: rgba(90, 58, 20, 0.85);
-  box-shadow:
-    0 1px 6px rgba(44, 18, 6, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-  transition:
-    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
+	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.94));
+	border: 1.5px solid rgba(139, 90, 43, 0.3);
+	color: rgba(90, 58, 20, 0.85);
+	box-shadow:
+		0 1px 6px rgba(44, 18, 6, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	transition:
+		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
 }
 
 .awsui-dark-mode [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-  background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.95));
-  border: 1.5px solid rgba(144, 96, 240, 0.3);
-  color: rgba(215, 199, 238, 0.9);
-  box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(144, 96, 240, 0.15);
-  transition:
-    transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
+	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.95));
+	border: 1.5px solid rgba(144, 96, 240, 0.3);
+	color: rgba(215, 199, 238, 0.9);
+	box-shadow:
+		0 1px 6px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(144, 96, 240, 0.15);
+	transition:
+		transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
 }
 
 [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
-  transform: scale(1.06);
+	transform: scale(1.06);
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
-  border-color: rgba(139, 90, 43, 0.5);
-  box-shadow:
-    0 2px 12px rgba(44, 18, 6, 0.18),
-    0 0 8px rgba(255, 153, 0, 0.15),
-    inset 0 1px 0 rgba(255, 255, 255, 0.5);
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
+	border-color: rgba(139, 90, 43, 0.5);
+	box-shadow:
+		0 2px 12px rgba(44, 18, 6, 0.18),
+		0 0 8px rgba(255, 153, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 .awsui-dark-mode [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
-  border-color: rgba(144, 96, 240, 0.55);
-  box-shadow:
-    0 2px 12px rgba(0, 0, 0, 0.3),
-    0 0 8px rgba(144, 96, 240, 0.25),
-    inset 0 1px 0 rgba(144, 96, 240, 0.25);
+	border-color: rgba(144, 96, 240, 0.55);
+	box-shadow:
+		0 2px 12px rgba(0, 0, 0, 0.3),
+		0 0 8px rgba(144, 96, 240, 0.25),
+		inset 0 1px 0 rgba(144, 96, 240, 0.25);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-    transition: none;
-  }
-  [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
-    transform: none;
-  }
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
+		transition: none;
+	}
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10):hover {
+		transform: none;
+	}
 }
 
 /* Wave 46 — close/collapse nav button. Match the hamburger glass treatment
@@ -1384,22 +1379,22 @@ body.cdn-tools-open
    classes; the wave 9 / wave 13 glass rule only matched the toggle, leaving
    the close button bare-gray + undersized. */
 :root:not(.awsui-dark-mode)
-  [class*="awsui_navigation-close"]:not(#\9):not(#\10) {
-  background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.94));
-  border: 1.5px solid rgba(139, 90, 43, 0.3);
-  color: rgba(90, 58, 20, 0.85);
-  box-shadow:
-    0 1px 6px rgba(44, 18, 6, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+	[class*="awsui_navigation-close"]:not(#\9):not(#\10) {
+	background: var(--cdn-glass-bg-strong, rgba(237, 229, 212, 0.94));
+	border: 1.5px solid rgba(139, 90, 43, 0.3);
+	color: rgba(90, 58, 20, 0.85);
+	box-shadow:
+		0 1px 6px rgba(44, 18, 6, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .awsui-dark-mode [class*="awsui_navigation-close"]:not(#\9):not(#\10) {
-  background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.95));
-  border: 1.5px solid rgba(144, 96, 240, 0.3);
-  color: rgba(215, 199, 238, 0.9);
-  box-shadow:
-    0 1px 6px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(144, 96, 240, 0.15);
+	background: var(--cdn-glass-bg, rgba(28, 34, 48, 0.95));
+	border: 1.5px solid rgba(144, 96, 240, 0.3);
+	color: rgba(215, 199, 238, 0.9);
+	box-shadow:
+		0 1px 6px rgba(0, 0, 0, 0.25),
+		inset 0 1px 0 rgba(144, 96, 240, 0.15);
 }
 
 /* ==========================================================================
@@ -1417,67 +1412,67 @@ body.cdn-tools-open
    Falls back to existing brand chrome when body lacks .cdn-stream-playing.
    ========================================================================== */
 body.cdn-stream-playing .cdn-volunteer-btn {
-  --cdn-band: var(--cdn-mid, 0);
+	--cdn-band: var(--cdn-mid, 0);
 }
 body.cdn-stream-playing [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-  --cdn-band: var(--cdn-bass, 0);
-  animation: none;
+	--cdn-band: var(--cdn-bass, 0);
+	animation: none;
 }
 body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-  --cdn-band: var(--cdn-treble, 0);
-  /* freeze the ambient breathe — band amplitude is now the sole signal */
-  animation: none;
+	--cdn-band: var(--cdn-treble, 0);
+	/* freeze the ambient breathe — band amplitude is now the sole signal */
+	animation: none;
 }
 
 /* Light-mode ring — station-primary fallbacks to aws-orange when no
    --station-primary-rgb is set (no station active). */
 :root:not(.awsui-dark-mode) body.cdn-stream-playing .cdn-volunteer-btn,
 :root:not(.awsui-dark-mode)
-  body.cdn-stream-playing
-  [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
+	body.cdn-stream-playing
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
 :root:not(.awsui-dark-mode)
-  body.cdn-stream-playing
-  [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-  border-color: rgba(
-    var(--station-primary-rgb, 255, 153, 0),
-    calc(0.45 + var(--cdn-band, 0) * 0.4)
-  );
-  box-shadow:
-    0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
-      rgba(var(--station-primary-rgb, 255, 153, 0), 0.22),
-    0 0 calc(6px + var(--cdn-band, 0) * 10px)
-      rgba(var(--station-primary-rgb, 255, 153, 0), 0.32),
-    inset 0 1px 0 rgba(255, 153, 0, 0.18);
+	body.cdn-stream-playing
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	border-color: rgba(
+		var(--station-primary-rgb, 255, 153, 0),
+		calc(0.45 + var(--cdn-band, 0) * 0.4)
+	);
+	box-shadow:
+		0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.22),
+		0 0 calc(6px + var(--cdn-band, 0) * 10px)
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.32),
+		inset 0 1px 0 rgba(255, 153, 0, 0.18);
 }
 
 /* Dark-mode ring — same pattern, secondary tint as fallback. The dark-mode
    class is set on <html> so :root.awsui-dark-mode wins. */
 :root.awsui-dark-mode body.cdn-stream-playing .cdn-volunteer-btn,
 :root.awsui-dark-mode
-  body.cdn-stream-playing
-  [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
+	body.cdn-stream-playing
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
 :root.awsui-dark-mode
-  body.cdn-stream-playing
-  [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-  border-color: rgba(
-    var(--station-primary-rgb, 144, 96, 240),
-    calc(0.5 + var(--cdn-band, 0) * 0.4)
-  );
-  box-shadow:
-    0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
-      rgba(var(--station-primary-rgb, 144, 96, 240), 0.28),
-    0 0 calc(6px + var(--cdn-band, 0) * 10px)
-      rgba(var(--station-primary-rgb, 144, 96, 240), 0.4),
-    inset 0 1px 0 rgba(144, 96, 240, 0.32);
+	body.cdn-stream-playing
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+	border-color: rgba(
+		var(--station-primary-rgb, 144, 96, 240),
+		calc(0.5 + var(--cdn-band, 0) * 0.4)
+	);
+	box-shadow:
+		0 0 0 calc(2px + var(--cdn-band, 0) * 4px)
+		rgba(var(--station-primary-rgb, 144, 96, 240), 0.28),
+		0 0 calc(6px + var(--cdn-band, 0) * 10px)
+		rgba(var(--station-primary-rgb, 144, 96, 240), 0.4),
+		inset 0 1px 0 rgba(144, 96, 240, 0.32);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body.cdn-stream-playing .cdn-volunteer-btn,
-  body.cdn-stream-playing
-    [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
-  body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-    --cdn-band: 0;
-  }
+	body.cdn-stream-playing .cdn-volunteer-btn,
+	body.cdn-stream-playing
+		[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
+	body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+		--cdn-band: 0;
+	}
 }
 
 /* ==========================================================================
@@ -1493,88 +1488,88 @@ body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
       silent → invisible, loud → club-spot intensity.
    ========================================================================== */
 @keyframes cdn-ravy-ring-bass {
-  0% {
-    border-color: rgba(
-      var(--station-primary-rgb, 255, 153, 0),
-      calc(0.55 + var(--cdn-band, 0) * 0.4)
-    );
-  }
-  25% {
-    border-color: rgba(
-      var(--station-secondary-rgb, 144, 96, 240),
-      calc(0.55 + var(--cdn-band, 0) * 0.4)
-    );
-  }
-  50% {
-    border-color: rgba(144, 96, 240, calc(0.6 + var(--cdn-band, 0) * 0.4));
-  }
-  75% {
-    border-color: rgba(215, 199, 238, calc(0.6 + var(--cdn-band, 0) * 0.4));
-  }
-  100% {
-    border-color: rgba(
-      var(--station-primary-rgb, 255, 153, 0),
-      calc(0.55 + var(--cdn-band, 0) * 0.4)
-    );
-  }
+	0% {
+		border-color: rgba(
+			var(--station-primary-rgb, 255, 153, 0),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+	25% {
+		border-color: rgba(
+			var(--station-secondary-rgb, 144, 96, 240),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+	50% {
+		border-color: rgba(144, 96, 240, calc(0.6 + var(--cdn-band, 0) * 0.4));
+	}
+	75% {
+		border-color: rgba(215, 199, 238, calc(0.6 + var(--cdn-band, 0) * 0.4));
+	}
+	100% {
+		border-color: rgba(
+			var(--station-primary-rgb, 255, 153, 0),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
 }
 @keyframes cdn-ravy-ring-mid {
-  0% {
-    border-color: rgba(
-      var(--station-primary-rgb, 255, 153, 0),
-      calc(0.55 + var(--cdn-band, 0) * 0.4)
-    );
-  }
-  33% {
-    border-color: rgba(144, 96, 240, calc(0.65 + var(--cdn-band, 0) * 0.35));
-  }
-  66% {
-    border-color: rgba(215, 199, 238, calc(0.65 + var(--cdn-band, 0) * 0.35));
-  }
-  100% {
-    border-color: rgba(
-      var(--station-primary-rgb, 255, 153, 0),
-      calc(0.55 + var(--cdn-band, 0) * 0.4)
-    );
-  }
+	0% {
+		border-color: rgba(
+			var(--station-primary-rgb, 255, 153, 0),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+	33% {
+		border-color: rgba(144, 96, 240, calc(0.65 + var(--cdn-band, 0) * 0.35));
+	}
+	66% {
+		border-color: rgba(215, 199, 238, calc(0.65 + var(--cdn-band, 0) * 0.35));
+	}
+	100% {
+		border-color: rgba(
+			var(--station-primary-rgb, 255, 153, 0),
+			calc(0.55 + var(--cdn-band, 0) * 0.4)
+		);
+	}
 }
 @keyframes cdn-ravy-ring-treble {
-  0% {
-    border-color: rgba(
-      var(--station-secondary-rgb, 144, 96, 240),
-      calc(0.6 + var(--cdn-band, 0) * 0.4)
-    );
-  }
-  50% {
-    border-color: rgba(255, 153, 0, calc(0.65 + var(--cdn-band, 0) * 0.35));
-  }
-  100% {
-    border-color: rgba(
-      var(--station-secondary-rgb, 144, 96, 240),
-      calc(0.6 + var(--cdn-band, 0) * 0.4)
-    );
-  }
+	0% {
+		border-color: rgba(
+			var(--station-secondary-rgb, 144, 96, 240),
+			calc(0.6 + var(--cdn-band, 0) * 0.4)
+		);
+	}
+	50% {
+		border-color: rgba(255, 153, 0, calc(0.65 + var(--cdn-band, 0) * 0.35));
+	}
+	100% {
+		border-color: rgba(
+			var(--station-secondary-rgb, 144, 96, 240),
+			calc(0.6 + var(--cdn-band, 0) * 0.4)
+		);
+	}
 }
 
 @keyframes cdn-ravy-spotlight-spin {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg);
-  }
+	0% {
+		transform: translate(-50%, -50%) rotate(0deg);
+	}
+	100% {
+		transform: translate(-50%, -50%) rotate(360deg);
+	}
 }
 
 /* Apply the ring cycle. The band-tempo selectors override the static
    stream-playing border-color rule above thanks to later cascade order. */
 body.cdn-stream-playing .cdn-volunteer-btn {
-  animation: 1.6s linear infinite cdn-ravy-ring-mid;
+	animation: 1.6s linear infinite cdn-ravy-ring-mid;
 }
 body.cdn-stream-playing [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10) {
-  animation: 3.2s linear infinite cdn-ravy-ring-bass;
+	animation: 3.2s linear infinite cdn-ravy-ring-bass;
 }
 body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-  animation: 0.7s linear infinite cdn-ravy-ring-treble;
+	animation: 0.7s linear infinite cdn-ravy-ring-treble;
 }
 
 /* Conic-gradient spotlight overlay — uses ::before so we don't trample
@@ -1586,66 +1581,66 @@ body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
 body.cdn-stream-playing .cdn-volunteer-btn,
 body.cdn-stream-playing [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
 body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-  position: relative;
-  overflow: hidden;
+	position: relative;
+	overflow: hidden;
 }
 
 body.cdn-stream-playing .cdn-volunteer-btn::after,
 body.cdn-stream-playing
-  [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
 body.cdn-stream-playing
-  [class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 220%;
-  height: 220%;
-  border-radius: 50%;
-  background: conic-gradient(
-    from 0deg,
-    transparent 0deg,
-    rgba(var(--station-primary-rgb, 255, 153, 0), 0.55) 35deg,
-    rgba(255, 255, 255, 0.7) 50deg,
-    rgba(var(--station-secondary-rgb, 144, 96, 240), 0.55) 65deg,
-    transparent 100deg,
-    transparent 180deg,
-    rgba(var(--station-primary-rgb, 255, 153, 0), 0.4) 215deg,
-    rgba(255, 255, 255, 0.5) 230deg,
-    rgba(var(--station-secondary-rgb, 144, 96, 240), 0.4) 245deg,
-    transparent 280deg,
-    transparent 360deg
-  );
-  mix-blend-mode: screen;
-  opacity: calc(0.25 + var(--cdn-band, 0) * 0.65);
-  filter: blur(2px);
-  z-index: 0;
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
+	content: "";
+	pointer-events: none;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 220%;
+	height: 220%;
+	border-radius: 50%;
+	background: conic-gradient(
+		from 0deg,
+		transparent 0deg,
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.55) 35deg,
+		rgba(255, 255, 255, 0.7) 50deg,
+		rgba(var(--station-secondary-rgb, 144, 96, 240), 0.55) 65deg,
+		transparent 100deg,
+		transparent 180deg,
+		rgba(var(--station-primary-rgb, 255, 153, 0), 0.4) 215deg,
+		rgba(255, 255, 255, 0.5) 230deg,
+		rgba(var(--station-secondary-rgb, 144, 96, 240), 0.4) 245deg,
+		transparent 280deg,
+		transparent 360deg
+	);
+	mix-blend-mode: screen;
+	opacity: calc(0.25 + var(--cdn-band, 0) * 0.65);
+	filter: blur(2px);
+	z-index: 0;
 }
 
 /* Tempos differ per button so each spotlight wheels at its own pace */
 body.cdn-stream-playing .cdn-volunteer-btn::after {
-  animation: 3.6s linear infinite cdn-ravy-spotlight-spin;
+	animation: 3.6s linear infinite cdn-ravy-spotlight-spin;
 }
 body.cdn-stream-playing
-  [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after {
-  animation: 5.2s linear infinite cdn-ravy-spotlight-spin;
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after {
+	animation: 5.2s linear infinite cdn-ravy-spotlight-spin;
 }
 body.cdn-stream-playing
-  [class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
-  animation: 2.4s linear infinite cdn-ravy-spotlight-spin;
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
+	animation: 2.4s linear infinite cdn-ravy-spotlight-spin;
 }
 
 /* Light-mode tweak — overlay blend reads better on the cream pill */
 :root:not(.awsui-dark-mode) body.cdn-stream-playing .cdn-volunteer-btn::after,
 :root:not(.awsui-dark-mode)
-  body.cdn-stream-playing
-  [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
+	body.cdn-stream-playing
+	[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
 :root:not(.awsui-dark-mode)
-  body.cdn-stream-playing
-  [class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
-  mix-blend-mode: overlay;
-  opacity: calc(0.35 + var(--cdn-band, 0) * 0.55);
+	body.cdn-stream-playing
+	[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
+	mix-blend-mode: overlay;
+	opacity: calc(0.35 + var(--cdn-band, 0) * 0.55);
 }
 
 /* Reduced-motion gate — kill ALL ravy cycling + spinning on chrome.
@@ -1653,19 +1648,19 @@ body.cdn-stream-playing
    border + glow so the audio-reactive UI signal doesn't disappear, but
    the moving parts are gone. */
 @media (prefers-reduced-motion: reduce) {
-  body.cdn-stream-playing .cdn-volunteer-btn,
-  body.cdn-stream-playing
-    [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
-  body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
-    animation: none;
-  }
-  body.cdn-stream-playing .cdn-volunteer-btn::after,
-  body.cdn-stream-playing
-    [class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
-  body.cdn-stream-playing
-    [class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
-    display: none;
-  }
+	body.cdn-stream-playing .cdn-volunteer-btn,
+	body.cdn-stream-playing
+		[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10),
+	body.cdn-stream-playing [class*="awsui_tools-toggle_"]:not(#\9):not(#\10) {
+		animation: none;
+	}
+	body.cdn-stream-playing .cdn-volunteer-btn::after,
+	body.cdn-stream-playing
+		[class*="awsui_navigation-toggle_"]:not(#\9):not(#\10)::after,
+	body.cdn-stream-playing
+		[class*="awsui_tools-toggle_"]:not(#\9):not(#\10)::after {
+		display: none;
+	}
 }
 
 /* ==========================================================================
@@ -1678,42 +1673,42 @@ body.cdn-stream-playing
      above it but smaller + softer so the eye still leads to the title.
    ========================================================================== */
 :root:not(.awsui-dark-mode)
-  [class*="awsui_breadcrumbs_"]
-  [class*="awsui_separator_"] {
-  color: rgba(139, 90, 43, 0.65);
-  opacity: 0.75;
+	[class*="awsui_breadcrumbs_"]
+	[class*="awsui_separator_"] {
+	color: rgba(139, 90, 43, 0.65);
+	opacity: 0.75;
 }
 
 .awsui-dark-mode [class*="awsui_breadcrumbs_"] [class*="awsui_separator_"] {
-  color: rgba(144, 96, 240, 0.72);
-  opacity: 0.8;
+	color: rgba(144, 96, 240, 0.72);
+	opacity: 0.8;
 }
 
 /* Active (non-first) breadcrumb item */
 :root:not(.awsui-dark-mode)
-  [class*="awsui_breadcrumbs_"]
-  li:not(:first-child)
-  [class*="awsui_text_"],
+	[class*="awsui_breadcrumbs_"]
+	li:not(:first-child)
+	[class*="awsui_text_"],
 :root:not(.awsui-dark-mode)
-  [class*="awsui_breadcrumbs_"]
-  li:not(:first-child)
-  span:last-child {
-  color: rgba(74, 40, 24, 0.85);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+	[class*="awsui_breadcrumbs_"]
+	li:not(:first-child)
+	span:last-child {
+	color: rgba(74, 40, 24, 0.85);
+	font-weight: 600;
+	letter-spacing: 0.02em;
 }
 
 .awsui-dark-mode
-  [class*="awsui_breadcrumbs_"]
-  li:not(:first-child)
-  [class*="awsui_text_"],
+	[class*="awsui_breadcrumbs_"]
+	li:not(:first-child)
+	[class*="awsui_text_"],
 .awsui-dark-mode
-  [class*="awsui_breadcrumbs_"]
-  li:not(:first-child)
-  span:last-child {
-  color: rgba(215, 199, 238, 0.88);
-  font-weight: 600;
-  letter-spacing: 0.02em;
+	[class*="awsui_breadcrumbs_"]
+	li:not(:first-child)
+	span:last-child {
+	color: rgba(215, 199, 238, 0.88);
+	font-weight: 600;
+	letter-spacing: 0.02em;
 }
 
 /* ==========================================================================
@@ -1726,29 +1721,29 @@ body.cdn-stream-playing
    its own variant-primary treatment.
    ========================================================================== */
 :root:not(.awsui-dark-mode)
-  [class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9),
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9),
 :root:not(.awsui-dark-mode)
-  [class*="awsui_text_"]
-  [class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9) {
-  color: var(--cdn-status-info, #6330c8);
+	[class*="awsui_text_"]
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9) {
+	color: var(--cdn-status-info, #6330c8);
 }
 
 :root:not(.awsui-dark-mode)
-  [class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9):hover {
-  color: #4a1f9c;
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9):hover {
+	color: #4a1f9c;
 }
 
 .awsui-dark-mode
-  [class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9),
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9),
 .awsui-dark-mode
-  [class*="awsui_text_"]
-  [class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9) {
-  color: var(--cdn-lavender, #d7c7ee);
+	[class*="awsui_text_"]
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9) {
+	color: var(--cdn-lavender, #d7c7ee);
 }
 
 .awsui-dark-mode
-  [class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9):hover {
-  color: var(--cdn-violet, #9060f0);
+	[class*="awsui_link_"]:not([class*="variant-top-navigation"]):not(#\9):hover {
+	color: var(--cdn-violet, #9060f0);
 }
 
 /* ==========================================================================
@@ -1761,22 +1756,22 @@ body.cdn-stream-playing
    but doesn't bloom into a stray bulb.
    ========================================================================== */
 @media (max-width: 600px) {
-  .awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
-    filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
-      drop-shadow(0 0 4px rgba(144, 96, 240, 0.32))
-      drop-shadow(0 0 10px rgba(144, 96, 240, 0.14));
-  }
-  :root:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img {
-    filter: drop-shadow(0 0 2px rgba(139, 90, 43, 0.5))
-      drop-shadow(0 0 5px rgba(201, 162, 63, 0.28))
-      drop-shadow(0 0 12px rgba(201, 162, 63, 0.12));
-  }
-  /* Tame the breathe keyframe peaks too so the animation stays in budget */
-  @media (prefers-reduced-motion: no-preference) {
-    .awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
-      animation: none;
-    }
-  }
+	.awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
+		filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
+			drop-shadow(0 0 4px rgba(144, 96, 240, 0.32))
+			drop-shadow(0 0 10px rgba(144, 96, 240, 0.14));
+	}
+	:root:not(.awsui-dark-mode) .cdn-logo-hero .cdn-logo-img {
+		filter: drop-shadow(0 0 2px rgba(139, 90, 43, 0.5))
+			drop-shadow(0 0 5px rgba(201, 162, 63, 0.28))
+			drop-shadow(0 0 12px rgba(201, 162, 63, 0.12));
+	}
+	/* Tame the breathe keyframe peaks too so the animation stays in budget */
+	@media (prefers-reduced-motion: no-preference) {
+		.awsui-dark-mode .cdn-logo-hero .cdn-logo-img {
+			animation: none;
+		}
+	}
 }
 
 /* ≤480px — kill the most-saturated violet bulb that was bleeding upper-left
@@ -1784,10 +1779,10 @@ body.cdn-stream-playing
    to amber/gold-only at this size — single warm halo, no blue/violet bloom
    that reads as a "stray bulb". */
 @media (max-width: 480px) {
-  .cdn-logo-hero .cdn-logo-img {
-    filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
-      drop-shadow(0 0 6px rgba(201, 162, 63, 0.18));
-  }
+	.cdn-logo-hero .cdn-logo-img {
+		filter: drop-shadow(0 0 2px rgba(201, 162, 63, 0.55))
+			drop-shadow(0 0 6px rgba(201, 162, 63, 0.18));
+	}
 }
 
 /* ==========================================================================
@@ -1810,125 +1805,121 @@ body.cdn-stream-playing
    its own styling rules below. */
 
 .cdn-volunteer-btn {
-  position: fixed;
-  /* Inline with the page-title row — sits where Cloudscape Header's
+	position: fixed;
+	/* Inline with the page-title row — sits where Cloudscape Header's
 	   `[Info]` popover used to render, after the (hidden) "Feed" h1.
 	   left:300 ≈ nav drawer width (280px) + ~20px gutter. Mobile drops
 	   below to a flex-friendly position via the @media block below. */
-  top: 116px;
-  left: 300px;
-  z-index: 850;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 16px;
-  border-radius: 999px;
-  font-family:
-    "Amazon Ember",
-    -apple-system,
-    BlinkMacSystemFont,
-    sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition:
-    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.2s ease,
-    border-color 0.2s ease;
-  user-select: none;
-  /* Wave 72: dedicated GPU layer — fixed element shouldn't re-rasterize on scroll */
-  will-change: transform;
+	top: 116px;
+	left: 300px;
+	z-index: 850;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 16px;
+	border-radius: 999px;
+	font-family: "Amazon Ember", -apple-system, BlinkMacSystemFont, sans-serif;
+	font-weight: 700;
+	font-size: 12px;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	cursor: pointer;
+	transition:
+		transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
+		box-shadow 0.2s ease,
+		border-color 0.2s ease;
+	user-select: none;
+	/* Wave 72: dedicated GPU layer — fixed element shouldn't re-rasterize on scroll */
+	will-change: transform;
 }
 
 .cdn-volunteer-btn::before {
-  content: "♥";
-  font-size: 14px;
-  display: inline-block;
+	content: "♥";
+	font-size: 14px;
+	display: inline-block;
 }
 
 :root:not(.awsui-dark-mode) .cdn-volunteer-btn {
-  background: linear-gradient(
-    135deg,
-    rgba(250, 247, 240, 0.9) 0%,
-    rgba(245, 235, 215, 0.85) 100%
-  );
-  border: 1.5px solid rgba(255, 153, 0, 0.5);
-  color: var(--cdn-amber, #8b5a2b);
-  box-shadow:
-    0 2px 8px rgba(139, 90, 43, 0.18),
-    0 0 0 1px rgba(255, 153, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55);
+	background: linear-gradient(
+		135deg,
+		rgba(250, 247, 240, 0.9) 0%,
+		rgba(245, 235, 215, 0.85) 100%
+	);
+	border: 1.5px solid rgba(255, 153, 0, 0.5);
+	color: var(--cdn-amber, #8b5a2b);
+	box-shadow:
+		0 2px 8px rgba(139, 90, 43, 0.18),
+		0 0 0 1px rgba(255, 153, 0, 0.12),
+		inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 :root:not(.awsui-dark-mode) .cdn-volunteer-btn:hover {
-  transform: scale(1.05);
-  border-color: var(--cdn-aws-orange, #ff9900);
-  color: var(--cdn-aws-orange, #ff9900);
-  box-shadow:
-    0 4px 14px rgba(139, 90, 43, 0.28),
-    0 0 14px rgba(255, 153, 0, 0.32),
-    0 0 0 2px rgba(255, 153, 0, 0.22),
-    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+	transform: scale(1.05);
+	border-color: var(--cdn-aws-orange, #ff9900);
+	color: var(--cdn-aws-orange, #ff9900);
+	box-shadow:
+		0 4px 14px rgba(139, 90, 43, 0.28),
+		0 0 14px rgba(255, 153, 0, 0.32),
+		0 0 0 2px rgba(255, 153, 0, 0.22),
+		inset 0 1px 0 rgba(255, 255, 255, 0.7);
 }
 
 .awsui-dark-mode .cdn-volunteer-btn {
-  background: linear-gradient(
-    135deg,
-    rgba(28, 34, 48, 0.92) 0%,
-    rgba(20, 16, 48, 0.88) 100%
-  );
-  border: 1.5px solid rgba(144, 96, 240, 0.55);
-  color: var(--cdn-lavender, #d7c7ee);
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.45),
-    0 0 0 1px rgba(144, 96, 240, 0.18),
-    inset 0 1px 0 rgba(144, 96, 240, 0.28);
+	background: linear-gradient(
+		135deg,
+		rgba(28, 34, 48, 0.92) 0%,
+		rgba(20, 16, 48, 0.88) 100%
+	);
+	border: 1.5px solid rgba(144, 96, 240, 0.55);
+	color: var(--cdn-lavender, #d7c7ee);
+	box-shadow:
+		0 2px 8px rgba(0, 0, 0, 0.45),
+		0 0 0 1px rgba(144, 96, 240, 0.18),
+		inset 0 1px 0 rgba(144, 96, 240, 0.28);
 }
 
 .awsui-dark-mode .cdn-volunteer-btn:hover {
-  transform: scale(1.05);
-  border-color: var(--cdn-violet, #9060f0);
-  color: var(--cdn-violet, #9060f0);
-  box-shadow:
-    0 4px 14px rgba(0, 0, 0, 0.55),
-    0 0 14px rgba(144, 96, 240, 0.45),
-    0 0 0 2px rgba(144, 96, 240, 0.32),
-    inset 0 1px 0 rgba(144, 96, 240, 0.42);
+	transform: scale(1.05);
+	border-color: var(--cdn-violet, #9060f0);
+	color: var(--cdn-violet, #9060f0);
+	box-shadow:
+		0 4px 14px rgba(0, 0, 0, 0.55),
+		0 0 14px rgba(144, 96, 240, 0.45),
+		0 0 0 2px rgba(144, 96, 240, 0.32),
+		inset 0 1px 0 rgba(144, 96, 240, 0.42);
 }
 
 .cdn-volunteer-btn:focus-visible {
-  outline: 2px solid var(--cdn-aws-orange, #ff9900);
-  outline-offset: 2px;
+	outline: 2px solid var(--cdn-aws-orange, #ff9900);
+	outline-offset: 2px;
 }
 
 .awsui-dark-mode .cdn-volunteer-btn:focus-visible {
-  outline-color: var(--cdn-violet, #9060f0);
+	outline-color: var(--cdn-violet, #9060f0);
 }
 
 @media (max-width: 1080px) {
-  .cdn-volunteer-btn {
-    left: 16px;
-  }
+	.cdn-volunteer-btn {
+		left: 16px;
+	}
 }
 
 @media (max-width: 600px) {
-  .cdn-volunteer-btn {
-    top: 110px;
-    left: 16px;
-    padding: 5px 12px;
-    font-size: 10px;
-  }
+	.cdn-volunteer-btn {
+		top: 110px;
+		left: 16px;
+		padding: 5px 12px;
+		font-size: 10px;
+	}
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cdn-volunteer-btn {
-    transition: none;
-  }
-  .cdn-volunteer-btn:hover {
-    transform: none;
-  }
+	.cdn-volunteer-btn {
+		transition: none;
+	}
+	.cdn-volunteer-btn:hover {
+		transform: none;
+	}
 }
 
 /* ==========================================================================
@@ -1940,46 +1931,46 @@ body.cdn-stream-playing
    --cdn-flux is a 0..1 beat-onset signal (peaks on kick/snare transients).
    ========================================================================== */
 body.cdn-stream-playing [class*="awsui_breadcrumbs_"] li:first-child a {
-  filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
-    drop-shadow(1px 0 0 rgba(44, 18, 6, 0.22))
-    drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22))
-    drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
-    drop-shadow(0 0 18px rgba(139, 90, 43, 0.22))
-    brightness(calc(1 + var(--cdn-flux, 0) * 0.28));
+	filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
+		drop-shadow(1px 0 0 rgba(44, 18, 6, 0.22))
+		drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22))
+		drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
+		drop-shadow(0 0 18px rgba(139, 90, 43, 0.22))
+		brightness(calc(1 + var(--cdn-flux, 0) * 0.28));
 }
 
 .awsui-dark-mode
-  body.cdn-stream-playing
-  [class*="awsui_breadcrumbs_"]
-  li:first-child
-  a {
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
-    drop-shadow(0 0 8px rgba(144, 96, 240, 0.5))
-    drop-shadow(0 0 22px rgba(144, 96, 240, 0.25))
-    brightness(calc(1 + var(--cdn-flux, 0) * 0.28));
+	body.cdn-stream-playing
+	[class*="awsui_breadcrumbs_"]
+	li:first-child
+	a {
+	filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
+		drop-shadow(0 0 8px rgba(144, 96, 240, 0.5))
+		drop-shadow(0 0 22px rgba(144, 96, 240, 0.25))
+		brightness(calc(1 + var(--cdn-flux, 0) * 0.28));
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body.cdn-stream-playing [class*="awsui_breadcrumbs_"] li:first-child a,
-  .awsui-dark-mode
-    body.cdn-stream-playing
-    [class*="awsui_breadcrumbs_"]
-    li:first-child
-    a {
-    /* preserve existing static drop-shadow, drop the brightness() pulse */
-    filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
-      drop-shadow(1px 0 0 rgba(44, 18, 6, 0.22))
-      drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22))
-      drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
-      drop-shadow(0 0 18px rgba(139, 90, 43, 0.22));
-  }
-  .awsui-dark-mode
-    body.cdn-stream-playing
-    [class*="awsui_breadcrumbs_"]
-    li:first-child
-    a {
-    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
-      drop-shadow(0 0 8px rgba(144, 96, 240, 0.5))
-      drop-shadow(0 0 22px rgba(144, 96, 240, 0.25));
-  }
+	body.cdn-stream-playing [class*="awsui_breadcrumbs_"] li:first-child a,
+	.awsui-dark-mode
+		body.cdn-stream-playing
+		[class*="awsui_breadcrumbs_"]
+		li:first-child
+		a {
+		/* preserve existing static drop-shadow, drop the brightness() pulse */
+		filter: drop-shadow(1px 1px 0 rgba(44, 18, 6, 0.3))
+			drop-shadow(1px 0 0 rgba(44, 18, 6, 0.22))
+			drop-shadow(0 1px 0 rgba(44, 18, 6, 0.22))
+			drop-shadow(0 0 6px rgba(255, 153, 0, 0.36))
+			drop-shadow(0 0 18px rgba(139, 90, 43, 0.22));
+	}
+	.awsui-dark-mode
+		body.cdn-stream-playing
+		[class*="awsui_breadcrumbs_"]
+		li:first-child
+		a {
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6))
+			drop-shadow(0 0 8px rgba(144, 96, 240, 0.5))
+			drop-shadow(0 0 22px rgba(144, 96, 240, 0.25));
+	}
 }

@@ -5,10 +5,12 @@
 // Wave 66 — added IntersectionObserver gate + babylon-budget integration.
 // Engine is disposed when the carousel scrolls off-screen and re-created on re-entry.
 import { useEffect, useRef } from "react";
-import { releaseActivation, requestActivation } from "../../lib/babylon-budget";
 import { loadBabylonCommon } from "../../lib/babylon-loader";
-
-const SCENE_ID = "babylon-spin-demo";
+import {
+	getOrCreateSharedEngine,
+	registerSceneView,
+	unregisterSceneView,
+} from "../../lib/babylon-shared-engine";
 
 export default function BabylonSpinDemo({
 	thumbnailUrl,
@@ -27,30 +29,32 @@ export default function BabylonSpinDemo({
 		let ro: ResizeObserver | null = null;
 		let io: IntersectionObserver | null = null;
 
+		let currentScene: any = null; // biome-ignore lint/suspicious/noExplicitAny: dynamic babylon scene
+
 		function teardown() {
-			if (eng) {
-				eng.stopRenderLoop();
-				document.removeEventListener("visibilitychange", eng.__onVis);
-				ro?.disconnect();
-				ro = null;
-				eng.dispose();
-				eng = null;
+			ro?.disconnect();
+			ro = null;
+			if (currentScene) {
+				currentScene.dispose();
+				currentScene = null;
 			}
-			releaseActivation(SCENE_ID);
+			if (canvas) {
+				unregisterSceneView(canvas);
+			}
+			eng = null;
 		}
 
 		async function startEngine() {
 			if (disposed || !canvas) return;
-			if (!requestActivation(SCENE_ID)) return;
+			if (currentScene) return; // already started
 
 			const B = await loadBabylonCommon();
-			if (disposed) {
-				releaseActivation(SCENE_ID);
-				return;
-			}
+			if (disposed) return;
 
-			eng = new B.Engine(canvas, true, { preserveDrawingBuffer: false });
-			const scene = new B.Scene(eng);
+			const sharedEngine = getOrCreateSharedEngine();
+			eng = sharedEngine;
+			const scene = new B.Scene(sharedEngine);
+			currentScene = scene;
 			scene.clearColor = new B.Color4(0, 0, 0, 0);
 			new B.ArcRotateCamera(
 				"cam",
@@ -79,15 +83,13 @@ export default function BabylonSpinDemo({
 				);
 			});
 			const render = () => scene.render();
-			const onVis = () =>
-				document.hidden ? eng.stopRenderLoop() : eng.runRenderLoop(render);
-			document.addEventListener("visibilitychange", onVis);
-			eng.__onVis = onVis;
 
-			ro = new ResizeObserver(() => eng.resize());
+			ro = new ResizeObserver(() => sharedEngine.resize());
 			ro.observe(canvas);
 
-			eng.runRenderLoop(render);
+			// scene needs an active camera before view registration; the
+			// ArcRotateCamera created above is implicitly the activeCamera.
+			registerSceneView(canvas, scene.activeCamera!, render);
 		}
 
 		// IntersectionObserver: only run when carousel is on-screen
