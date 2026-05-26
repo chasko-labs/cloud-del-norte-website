@@ -53,6 +53,7 @@
 //     (matches existing pattern in SceneBootstrap).
 
 import "@babylonjs/core/Animations/animatable.js";
+import "@babylonjs/core/Engines/AbstractEngine/abstractEngine.views.js";
 
 import type { Camera } from "@babylonjs/core/Cameras/camera";
 import { Engine } from "@babylonjs/core/Engines/engine";
