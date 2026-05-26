@@ -6,9 +6,6 @@
 # workload cert: /workload.crt + /workload.key (mounted via agent volumes)
 cancel_previous: true
 
-depends_on:
-  - ci
-
 when:
   - event: [push, pull_request, manual]
     branch: main
