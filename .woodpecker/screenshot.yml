@@ -33,6 +33,8 @@ steps:
         region = us-west-2
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
+      # mcr.microsoft.com/playwright:noble is debian-based but ships without unzip.
+      - which unzip || (apt-get update -qq && apt-get install -y -qq unzip > /dev/null)
       # install awscli if not present (playwright image is debian-based; pip is faster than apt)
       - which aws || (curl -sSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip -o /tmp/awscli.zip && unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install && rm -rf /tmp/awscli.zip /tmp/aws)
       # install aws_signing_helper if not present — amd64 linux
@@ -74,6 +76,8 @@ steps:
         region = us-west-2
         credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
         EOF
+      # mcr.microsoft.com/playwright:noble is debian-based but ships without unzip.
+      - which unzip || (apt-get update -qq && apt-get install -y -qq unzip > /dev/null)
       # install awscli if not present
       - which aws || (curl -sSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip -o /tmp/awscli.zip && unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install && rm -rf /tmp/awscli.zip /tmp/aws)
       # install aws_signing_helper if not present — amd64 linux
