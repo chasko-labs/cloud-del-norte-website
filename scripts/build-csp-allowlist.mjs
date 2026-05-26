@@ -82,8 +82,9 @@ for (const w of wildcardMediaSrc) mediaSrc.add(w);
 
 // Static origins needed by the site (not in streams.ts)
 const staticConnectSrc = [
-	"https://ipinfo.io",
+	"https://cdn.babylonjs.com",
 	"https://cognito-idp.us-west-2.amazonaws.com",
+	"https://ipinfo.io",
 ];
 for (const u of staticConnectSrc) connectSrc.add(u);
 
