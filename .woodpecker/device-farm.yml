@@ -1,9 +1,17 @@
 ---
 # woodpecker ci — device farm browser testing
-# auth chain:
+# auth chain (when restored):
 #   1. Roles Anywhere → kiro (946179428633) device-farm-ci role → Device Farm API
 #   2. device-farm-ci → sts:AssumeRole → jitsi (170473530355) device-farm-ssm-reader → SSM reads
 # workload cert: /workload.crt + /workload.key (mounted via agent volumes)
+#
+# CURRENTLY STUBBED (see #377):
+# Step 2 above fails because device-farm-ci lacks sts:SetSourceIdentity on
+# device-farm-ssm-reader. The trust policy lives in account 170473530355
+# (jitsi), not in this repo. Without SSM lookups, all 11 env vars are empty
+# and every test ERRORs at fixture setup. The real commands are preserved
+# in git history (commit before this stub) and should be restored once the
+# trust policy is fixed.
 cancel_previous: true
 
 when:
@@ -12,52 +20,13 @@ when:
 
 steps:
   - name: device-farm-test
-    image: python:3.12-slim
+    image: alpine:3.21
     failure: ignore
-    environment:
-      AWS_REGION: us-west-2
-      AWS_DEFAULT_REGION: us-west-2
-      TEST_URL: https://awsug.clouddelnorte.org
-      TEST_AUTH_URL: https://auth.clouddelnorte.org
-      TEST_API_URL: https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com
-      TESTGRID_PROJECT_ARN: "arn:aws:devicefarm:us-west-2:946179428633:testgrid-project:0f1bfe22-0371-40c8-bcac-f96709363893"
     commands:
-      - apt-get update -qq && apt-get install -y -qq unzip curl jq > /dev/null
-      - curl -sSL https://awscli.amazonaws.com/awscli-exe-linux-x86_64-2.27.50.zip -o /tmp/awscli.zip
-      - unzip -q /tmp/awscli.zip -d /tmp && /tmp/aws/install && rm -rf /tmp/awscli.zip /tmp/aws
-      - curl -sL https://rolesanywhere.amazonaws.com/releases/1.7.0/X86_64/Linux/aws_signing_helper -o /usr/local/bin/aws_signing_helper && chmod +x /usr/local/bin/aws_signing_helper
-      - pip install -r tests/device-farm/requirements.txt -q
-
-      # Profile 1: kiro account (Device Farm API + cross-account assume)
-      - mkdir -p /root/.aws
-      - |
-        cat > /root/.aws/config <<EOF
-        [profile device-farm]
-        region = us-west-2
-        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:946179428633:trust-anchor/41cd58ba-3e23-42bf-a3da-728363c249bd --profile-arn arn:aws:rolesanywhere:us-west-2:946179428633:profile/2ff4503a-b937-4b30-baec-9cf51b4dc6ab --role-arn arn:aws:iam::946179428633:role/device-farm-ci --certificate /workload.crt --private-key /workload.key
-
-        [profile ssm-reader]
-        region = us-west-2
-        role_arn = arn:aws:iam::170473530355:role/device-farm-ssm-reader
-        source_profile = device-farm
-        EOF
-      - test -f /workload.crt && test -f /workload.key
-      - aws sts get-caller-identity --profile device-farm
-
-      # Fetch test credentials from SSM (jitsi account via cross-account assume)
-      - |
-        export DEVICE_FARM_GRID_URL=$(aws ssm get-parameter --name '/cloud-del-norte/test/grid-url' --profile ssm-reader --query 'Parameter.Value' --output text)
-        export TEST_USER_MEMBER_EMAIL=$(aws ssm get-parameter --name '/cloud-del-norte/test/member-only-user-email' --profile ssm-reader --query 'Parameter.Value' --output text)
-        export TEST_USER_MEMBER_PASSWORD=$(aws ssm get-parameter --name '/cloud-del-norte/test/member-only-user-password' --profile ssm-reader --with-decryption --query 'Parameter.Value' --output text)
-        export TEST_USER_ADMIN_EMAIL=$(aws ssm get-parameter --name '/cloud-del-norte/test/admin-user-email' --profile ssm-reader --query 'Parameter.Value' --output text)
-        export TEST_USER_ADMIN_PASSWORD=$(aws ssm get-parameter --name '/cloud-del-norte/test/admin-user-password' --profile ssm-reader --with-decryption --query 'Parameter.Value' --output text)
-        export TEST_USER_PENDING_EMAIL=$(aws ssm get-parameter --name '/cloud-del-norte/test/pending-user-email' --profile ssm-reader --query 'Parameter.Value' --output text)
-        export TEST_USER_PENDING_PASSWORD=$(aws ssm get-parameter --name '/cloud-del-norte/test/pending-user-password' --profile ssm-reader --with-decryption --query 'Parameter.Value' --output text)
-        export TEST_USER_BANNED_EMAIL=$(aws ssm get-parameter --name '/cloud-del-norte/test/banned-user-email' --profile ssm-reader --query 'Parameter.Value' --output text)
-        export TEST_USER_BANNED_PASSWORD=$(aws ssm get-parameter --name '/cloud-del-norte/test/banned-user-password' --profile ssm-reader --with-decryption --query 'Parameter.Value' --output text)
-        export COGNITO_USER_POOL_ID=$(aws ssm get-parameter --name '/cloud-del-norte/test/cognito-user-pool-id' --profile ssm-reader --query 'Parameter.Value' --output text)
-        export COGNITO_CLIENT_ID=$(aws ssm get-parameter --name '/cloud-del-norte/test/cognito-client-id' --profile ssm-reader --query 'Parameter.Value' --output text)
-
-      # Run Device Farm tests
-      - AWS_PROFILE=device-farm pytest tests/device-farm/ --junitxml=results.xml -v
-      - echo "Results saved to results.xml"
+      # TODO(#377): restore the real test runner once cross-account IAM is fixed.
+      # The original step provisioned awscli, aws_signing_helper, pytest deps,
+      # then ran `AWS_PROFILE=device-farm pytest tests/device-farm/`. See git
+      # history for the full command sequence.
+      - echo "device-farm-test SKIPPED pending IAM fix in jitsi account (170473530355)"
+      - echo "Tracking issue:  https://github.com/chasko-labs/cloud-del-norte-website/issues/377"
+      - echo "Required change: add sts:SetSourceIdentity to device-farm-ssm-reader trust policy"
