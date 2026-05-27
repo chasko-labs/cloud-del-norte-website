@@ -419,33 +419,6 @@ steps:
           -d "$${CI_COMMIT_MESSAGE}" \
           https://ntfy.sh/cdn-deploy-74697e0f
 
-  - name: notify-sns-dev
-    image: public.ecr.aws/aws-cli/aws-cli:latest
-    depends_on: [deploy-dev]
-    failure: ignore
-    when:
-      - event: [push, manual]
-        branch:
-          exclude: main
-    environment:
-      AWS_DEFAULT_REGION: us-west-2
-      AWS_PROFILE: ci-deploy
-    commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
-      - mkdir -p /root/.aws
-      - |
-        cat > /root/.aws/config <<EOF
-        [profile ci-deploy]
-        region = us-west-2
-        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
-        EOF
-      - |
-        MSG=$$(printf '[CDN dev] %s\nlive: https://dev.clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
-        aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"
-
   - name: notify-prod
     image: alpine:3.20
     depends_on: [deploy, deploy-auth, deploy-awsug]
@@ -462,32 +435,6 @@ steps:
           -H "Click: https://clouddelnorte.org/" \
           -d "$${CI_COMMIT_MESSAGE}" \
           https://ntfy.sh/cdn-deploy-74697e0f
-
-  - name: notify-sns-prod
-    image: public.ecr.aws/aws-cli/aws-cli:latest
-    depends_on: [deploy, deploy-auth, deploy-awsug]
-    failure: ignore
-    when:
-      - event: [push, manual]
-        branch: main
-    environment:
-      AWS_DEFAULT_REGION: us-west-2
-      AWS_PROFILE: ci-deploy
-    commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
-      - mkdir -p /root/.aws
-      - |
-        cat > /root/.aws/config <<EOF
-        [profile ci-deploy]
-        region = us-west-2
-        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
-        EOF
-      - |
-        MSG=$$(printf '[CDN prod] %s\nlive: https://clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
-        aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"
 
   # ─── qdrant re-indexing (REMOVED — see #376) ───────────────────────────────
   # The qdrant-reindex step previously cloned BryanChasko/haunting-kiro-cli (PRIVATE)
