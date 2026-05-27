@@ -240,6 +240,7 @@ describe("getDeviceDiagnostics", () => {
 			lowMemory: false,
 			fewCores: false,
 			renderer: "NVIDIA GeForce RTX 4080/PCIe/SSE2",
+			webglAvailable: true,
 			deviceMemory: 16,
 			hardwareConcurrency: 12,
 			override: null,
