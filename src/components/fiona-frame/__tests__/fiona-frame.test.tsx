@@ -10,6 +10,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 // Mock device-capabilities so we control the gate decision per test.
 vi.mock("../../../lib/device-capabilities", () => ({
 	getDeviceTier: vi.fn(() => "high"),
+	prefersReducedMotion: vi.fn(() => false),
 	getDeviceDiagnostics: vi.fn(() => ({
 		tier: "high",
 		reducedMotion: false,
@@ -51,6 +52,7 @@ vi.mock("../../babylon-gate", () => ({
 import {
 	getDeviceDiagnostics,
 	getDeviceTier,
+	prefersReducedMotion,
 } from "../../../lib/device-capabilities";
 import FionaFrame from "../index";
 
@@ -131,5 +133,17 @@ describe("FionaFrame — gate timeout + static fallback (#382)", () => {
 		expect(screen.queryByRole("img")).not.toBeInTheDocument();
 		expect(screen.getByText(/modem connecting/i)).toBeInTheDocument();
 		expect(logSpy).not.toHaveBeenCalled();
+	});
+
+	it("swaps to static fallback IMMEDIATELY (no 4s wait) when gated AND prefers-reduced-motion is on", () => {
+		vi.mocked(getDeviceTier).mockReturnValue("low");
+		vi.mocked(prefersReducedMotion).mockReturnValue(true);
+		render(<FionaFrame />);
+		// No timer advance needed — reduce-motion path skips the 4s wait.
+		const img = screen.getByRole("img", {
+			name: /Fiona avatar - 3D view unavailable on this device/i,
+		});
+		expect(img).toBeInTheDocument();
+		expect(screen.queryByText(/modem connecting/i)).not.toBeInTheDocument();
 	});
 });

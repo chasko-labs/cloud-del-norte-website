@@ -1767,6 +1767,20 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .fiona-led,
 		animation: none;
 		clip-path: none;
 	}
+	/* Issue #382 — the shimmer placeholder used to keep its background drift
+	   and label pulse looping under reduced-motion. The whole point of
+	   prefers-reduced-motion is no looping animation. Kill all three. */
+	.fiona-placeholder {
+		animation: none;
+	}
+	.fiona-placeholder-label {
+		animation: none;
+		letter-spacing: 0.18em;
+		opacity: 1;
+	}
+	.fiona-panel-wrap {
+		animation: none;
+	}
 }
 
 .fiona-credits-scroll-window {
