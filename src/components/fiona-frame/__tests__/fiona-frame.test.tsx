@@ -19,6 +19,7 @@ vi.mock("../../../lib/device-capabilities", () => ({
 		renderer: "NVIDIA GeForce RTX 4080",
 		deviceMemory: 16,
 		hardwareConcurrency: 12,
+		override: null,
 	})),
 }));
 
@@ -104,6 +105,7 @@ describe("FionaFrame — gate timeout + static fallback (#382)", () => {
 			renderer: "NVIDIA GeForce RTX 4080",
 			deviceMemory: 16,
 			hardwareConcurrency: 12,
+			override: null,
 		});
 		render(<FionaFrame />);
 		expect(logSpy).toHaveBeenCalledTimes(1);
