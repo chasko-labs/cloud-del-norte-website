@@ -106,20 +106,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
 	const refresh = useCallback(() => {
-		setState((prev) => {
-			const next = readState();
-			if (
-				prev.isAuthenticated === next.isAuthenticated &&
-				prev.sub === next.sub &&
-				prev.email === next.email &&
-				prev.name === next.name &&
-				prev.isModerator === next.isModerator &&
-				prev.groups.length === next.groups.length &&
-				prev.groups.every((g, i) => g === next.groups[i])
-			)
-				return prev;
-			return next;
-		});
+		setState(readState());
 	}, []);
 
 	useEffect(() => {
