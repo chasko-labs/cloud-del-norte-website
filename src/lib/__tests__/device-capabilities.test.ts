@@ -1,12 +1,14 @@
 // Wave 53 — unit tests for device-capabilities.ts
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
+	getDeviceDiagnostics,
 	getDeviceTier,
 	hasFewCores,
 	hasLowMemory,
 	isCapableForBabylon,
 	isSoftwareWebGL,
 	prefersReducedMotion,
+	readTierOverride,
 } from "../device-capabilities";
 
 function mockCanvas(renderer: string | null) {
@@ -47,8 +49,21 @@ function mockMotion(matches: boolean) {
 	} as unknown as MediaQueryList);
 }
 
+/** Issue #382 — set window.location.search via history.replaceState (jsdom). */
+function mockUrl(search: string) {
+	window.history.replaceState({}, "", search === "" ? "/" : `/${search}`);
+}
+
 afterEach(() => {
 	vi.restoreAllMocks();
+	// Issue #382 — reset URL + session override state between tests so the
+	// override mechanism doesn't leak across cases.
+	window.history.replaceState({}, "", "/");
+	try {
+		window.sessionStorage.clear();
+	} catch {
+		/* ignore */
+	}
 });
 
 // ---------------------------------------------------------------------------
@@ -212,10 +227,8 @@ describe("getDeviceTier", () => {
 // ---------------------------------------------------------------------------
 // getDeviceDiagnostics  (issue #382)
 // ---------------------------------------------------------------------------
-import { getDeviceDiagnostics } from "../device-capabilities";
-
 describe("getDeviceDiagnostics", () => {
-	it("returns the full diagnostic shape with all six signal keys", () => {
+	it("returns the full diagnostic shape with all signal keys", () => {
 		mockMotion(false);
 		mockCanvas("NVIDIA GeForce RTX 4080/PCIe/SSE2");
 		mockNav({ deviceMemory: 16, hardwareConcurrency: 12 });
@@ -229,6 +242,7 @@ describe("getDeviceDiagnostics", () => {
 			renderer: "NVIDIA GeForce RTX 4080/PCIe/SSE2",
 			deviceMemory: 16,
 			hardwareConcurrency: 12,
+			override: null,
 		});
 	});
 
@@ -261,5 +275,114 @@ describe("getDeviceDiagnostics", () => {
 		expect(d.lowMemory).toBe(false);
 		expect(d.deviceMemory).toBeUndefined();
 		expect(d.tier).toBe("high");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// readTierOverride / ?babylon-tier URL override (issue #382)
+// ---------------------------------------------------------------------------
+describe("readTierOverride / ?babylon-tier URL override", () => {
+	beforeEach(() => {
+		window.history.replaceState({}, "", "/");
+		try {
+			window.sessionStorage.clear();
+		} catch {
+			/* ignore */
+		}
+	});
+
+	it("returns null when no URL param and no sessionStorage", () => {
+		expect(readTierOverride()).toBeNull();
+	});
+
+	it("returns 'high' when ?babylon-tier=high is in URL", () => {
+		mockUrl("?babylon-tier=high");
+		expect(readTierOverride()).toBe("high");
+	});
+
+	it("returns 'low' when ?babylon-tier=low is in URL", () => {
+		mockUrl("?babylon-tier=low");
+		expect(readTierOverride()).toBe("low");
+	});
+
+	it("returns 'medium' when ?babylon-tier=medium is in URL", () => {
+		mockUrl("?babylon-tier=medium");
+		expect(readTierOverride()).toBe("medium");
+	});
+
+	it("persists URL value to sessionStorage so subsequent calls without URL param honour it", () => {
+		mockUrl("?babylon-tier=high");
+		expect(readTierOverride()).toBe("high");
+		mockUrl(""); // navigate away from the param
+		expect(readTierOverride()).toBe("high");
+	});
+
+	it("?babylon-tier=reset clears sessionStorage and returns null", () => {
+		mockUrl("?babylon-tier=low");
+		expect(readTierOverride()).toBe("low");
+		mockUrl("?babylon-tier=reset");
+		expect(readTierOverride()).toBeNull();
+		mockUrl("");
+		expect(readTierOverride()).toBeNull();
+		expect(
+			window.sessionStorage.getItem("cdn-babylon-tier-override"),
+		).toBeNull();
+	});
+
+	it("ignores unrecognised values (?babylon-tier=garbage → null)", () => {
+		mockUrl("?babylon-tier=garbage");
+		expect(readTierOverride()).toBeNull();
+	});
+
+	it("URL value wins over a different sessionStorage value", () => {
+		window.sessionStorage.setItem("cdn-babylon-tier-override", "low");
+		mockUrl("?babylon-tier=high");
+		expect(readTierOverride()).toBe("high");
+		// URL also wrote-through the new value to sessionStorage
+		expect(window.sessionStorage.getItem("cdn-babylon-tier-override")).toBe(
+			"high",
+		);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// getDeviceTier + override (integration of getDeviceTier with readTierOverride)
+// ---------------------------------------------------------------------------
+describe("getDeviceTier honours ?babylon-tier override", () => {
+	beforeEach(() => {
+		window.history.replaceState({}, "", "/");
+		try {
+			window.sessionStorage.clear();
+		} catch {
+			/* ignore */
+		}
+	});
+
+	it("forces 'high' even when SwiftShader probe would gate to low", () => {
+		mockMotion(false);
+		mockCanvas("SwiftShader");
+		mockNav({ deviceMemory: 2, hardwareConcurrency: 2 });
+		mockUrl("?babylon-tier=high");
+		expect(getDeviceTier()).toBe("high");
+	});
+
+	it("forces 'low' even on a Pixel-10-class device", () => {
+		mockMotion(false);
+		mockCanvas("Adreno 750");
+		mockNav({ deviceMemory: 12, hardwareConcurrency: 9 });
+		mockUrl("?babylon-tier=low");
+		expect(getDeviceTier()).toBe("low");
+	});
+
+	it("getDeviceDiagnostics surfaces the override field", () => {
+		mockMotion(false);
+		mockCanvas("SwiftShader");
+		mockNav({ deviceMemory: 16, hardwareConcurrency: 8 });
+		mockUrl("?babylon-tier=high");
+		const d = getDeviceDiagnostics();
+		expect(d.tier).toBe("high");
+		expect(d.override).toBe("high");
+		// Real probe results are still reported — only `tier` reflects the override.
+		expect(d.softwareWebGL).toBe(true);
 	});
 });
