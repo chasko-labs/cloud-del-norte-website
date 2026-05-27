@@ -33,37 +33,43 @@
   ],
   "awsml": [
     {
-      "title": "Amazon Nova Act is now HIPAA eligible",
-      "link": "https://aws.amazon.com/blogs/machine-learning/amazon-nova-act-is-now-hipaa-eligible/",
-      "pubDate": "2026-05-21",
-      "excerpt": "In this post, you will learn what Nova Act offers, how HIPAA eligibility applies to agentic AI, and how to get started."
+      "title": "Technical deep dive: AgentCore payments and innovation in agentic commerce",
+      "link": "https://aws.amazon.com/blogs/machine-learning/technical-deep-dive-agentcore-payments-and-innovation-in-agentic-commerce/",
+      "pubDate": "2026-05-26",
+      "excerpt": "Amazon Bedrock AgentCore payments is now available in preview, it provides instant payments to paid external services with no manual billing setup per provider, stablecoin support for cost-effective m"
     },
     {
-      "title": "Intelligent radiology workflow optimization with AI agents",
-      "link": "https://aws.amazon.com/blogs/machine-learning/intelligent-radiology-workflow-optimization-with-ai-agents-2/",
-      "pubDate": "2026-05-21",
-      "excerpt": "Many healthcare organizations report that traditional worklist systems rely on rigid rules that ignore critical context, radiologist specialization, current workload, fatigue levels, and case complexi"
+      "title": "Build highly scalable serverless LangGraph multi-agent systems in AWS with Amazon Bedrock AgentCore",
+      "link": "https://aws.amazon.com/blogs/machine-learning/build-highly-scalable-serverless-langgraph-multi-agent-systems-in-aws-with-amazon-bedrock-agentcore/",
+      "pubDate": "2026-05-26",
+      "excerpt": "In this post, we provide a solution to build highly scalable, serverless multi-agent generative AI systems on AWS using LangGraph Agents as orchestrators integrated with Amazon Bedrock AgentCore Memor"
     },
     {
-      "title": "Integrating AWS API MCP Server with Amazon Quick using Amazon Bedrock AgentCore Runtime",
-      "link": "https://aws.amazon.com/blogs/machine-learning/integrating-aws-api-mcp-server-with-amazon-quick-suite-using-amazon-bedrock-agentcore-runtime/",
-      "pubDate": "2026-05-21",
-      "excerpt": "This post shows you how to use Amazon Bedrock AgentCore Runtime with Model Context Protocol (MCP) support to connect Amazon Quick with AWS services through the AWS API MCP Server, creating a conversat"
+      "title": "Build high-performance generative AI systems with Strands Agents, NVIDIA NIM, and Amazon Bedrock AgentCore",
+      "link": "https://aws.amazon.com/blogs/machine-learning/build-high-performance-generative-ai-systems-with-strands-agents-nvidia-nim-and-amazon-bedrock-agentcore/",
+      "pubDate": "2026-05-26",
+      "excerpt": "In this post you'll learn how to build a multi-agent campaign review system that demonstrates parallel reasoning, context persistence, and traceable execution paths using an integrated architecture th"
     },
     {
-      "title": "Building multi-tenant agents with Amazon Bedrock AgentCore",
-      "link": "https://aws.amazon.com/blogs/machine-learning/building-multi-tenant-agents-with-amazon-bedrock-agentcore/",
-      "pubDate": "2026-05-21",
-      "excerpt": "This post explores&nbsp;design considerations for architecting multi-tenant agentic applications and the framework needed to address SaaS architecture challenges with Amazon Bedrock AgentCore."
+      "title": "AgentWatch: Proactive AWS monitoring with ambient agents",
+      "link": "https://aws.amazon.com/blogs/machine-learning/agentwatch-proactive-aws-monitoring-with-ambient-agents/",
+      "pubDate": "2026-05-26",
+      "excerpt": "In this post, we demonstrate the capabilities of AgentWatch through practical implementation. You will see how the solution performs infrastructure checks every 15 minutes, summarizing CloudWatch metr"
     },
     {
-      "title": "Break the context window barrier with Amazon Bedrock AgentCore",
-      "link": "https://aws.amazon.com/blogs/machine-learning/break-the-context-window-barrier-with-amazon-bedrock-agentcore/",
-      "pubDate": "2026-05-21",
-      "excerpt": "In this post, you will learn how to implement Recursive Language Models (RLM) using Amazon Bedrock AgentCore Code Interpreter and the Strands Agents SDK. By the end, you will know how to process docum"
+      "title": "From idea to AI app: Creating intelligent research assistants with Strands",
+      "link": "https://aws.amazon.com/blogs/machine-learning/from-idea-to-ai-app-creating-intelligent-research-assistants-with-strands/",
+      "pubDate": "2026-05-26",
+      "excerpt": "Building an AI app shouldn’t require a PhD in machine learning (ML) or months of wrestling with complex architectures. Yet that’s exactly what happens when you try to orchestrate multiple API calls, m"
     }
   ],
   "readysetcloud": [
+    {
+      "title": "Agent development has changed... again.",
+      "link": "https://www.readysetcloud.io/newsletter/217/",
+      "pubDate": "2026-05-25",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Maximilian Roos , creator of worktrunk , a CLI for Git worktree management so you can run agents in parallel. It&rsquo;s a great idea that h"
+    },
     {
       "title": "Think again about running agents locally",
       "link": "https://www.readysetcloud.io/newsletter/216/",
@@ -117,12 +123,6 @@
       "link": "https://www.readysetcloud.io/newsletter/209/",
       "pubDate": "2026-03-30",
       "excerpt": "🦸 Community Superhero Our community superhero this week is Allie Joy Tsahey , founder of Baddies in Tech . Allie created Baddies in Tech to build a space where women in tech can connect, grow, and fe"
-    },
-    {
-      "title": "Your AI agents are a security nightmare",
-      "link": "https://www.readysetcloud.io/blog/allen.helton/your-ai-agents-are-a-security-nightmare/",
-      "pubDate": "2026-03-26",
-      "excerpt": "I&rsquo;ve noticed something about the tech industry over the past couple of months. Through the use of agentic code editors, developers are building small, custom solutions to problems they&rsquo;re "
     }
   ]
 }
