@@ -1,8 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
+import {
+	type DeviceTier,
+	getDeviceDiagnostics,
+	getDeviceTier,
+} from "../../lib/device-capabilities";
 import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
 import BabylonGate from "../babylon-gate";
 import "../navigation/fiona.css";
+
+// Wave 53/86 — minimum tier required for the fiona end-credit canvas.
+// Mirrors the BabylonGate `tier` prop below; declared once so the timeout
+// branch and the gate stay in lockstep.
+const FIONA_REQUIRED_TIER: DeviceTier = "medium";
+
+// Issue #382 — when the device tier is below the required tier the canvas
+// never mounts and `#fiona-shimmer` runs its CRT animations forever. After
+// this many milliseconds, replace the shimmer with a static avatar poster so
+// the placeholder stops claiming "still loading" forever.
+const GATE_FALLBACK_DELAY_MS = 4000;
+const TIER_RANK: Record<DeviceTier, number> = { high: 2, medium: 1, low: 0 };
 
 function withFallback(value: string, key: string, fallback: string): string {
 	return value === key ? fallback : value;
@@ -85,6 +102,16 @@ export default function FionaFrame() {
 	const [sticky2Zoomed, setSticky2Zoomed] = useState(false);
 	const [visitor, setVisitor] = useState<VisitorInfo | null>(null);
 
+	// Wave 86 / issue #382 — capture the gate decision in component state so we
+	// can drive the timeout + static-fallback UX from the same render path that
+	// BabylonGate uses to decide canvas insertion.
+	const gatedOut = useMemo(
+		() => TIER_RANK[getDeviceTier()] < TIER_RANK[FIONA_REQUIRED_TIER],
+		[],
+	);
+	const [gatedFallback, setGatedFallback] = useState(false);
+	const diagnosticLoggedRef = useRef(false);
+
 	const countryCode = visitor?.country ?? "";
 	const greetingPrefix =
 		locale === "mx"
@@ -110,6 +137,35 @@ export default function FionaFrame() {
 		};
 	}, []);
 
+	// Issue #382 — gated-out devices: log diagnostic ONCE, then after
+	// GATE_FALLBACK_DELAY_MS swap the shimmer for a static avatar poster.
+	useEffect(() => {
+		if (!gatedOut) return;
+		if (!diagnosticLoggedRef.current) {
+			diagnosticLoggedRef.current = true;
+			try {
+				const d = getDeviceDiagnostics();
+				console.log("[fiona-gate] tier=low", {
+					reducedMotion: d.reducedMotion,
+					softwareWebGL: d.softwareWebGL,
+					lowMemory: d.lowMemory,
+					fewCores: d.fewCores,
+					renderer: d.renderer,
+					deviceMemory: d.deviceMemory,
+					hardwareConcurrency: d.hardwareConcurrency,
+				});
+			} catch {
+				/* never let diagnostics break rendering */
+			}
+		}
+		const timer = window.setTimeout(() => {
+			setGatedFallback(true);
+		}, GATE_FALLBACK_DELAY_MS);
+		return () => {
+			window.clearTimeout(timer);
+		};
+	}, [gatedOut]);
+
 	useEffect(() => {
 		let cancelled = false;
 		let observer: ResizeObserver | null = null;
@@ -120,7 +176,8 @@ export default function FionaFrame() {
 			// BabylonGate (tier="medium") renders null on low-tier devices (software WebGL,
 			// prefers-reduced-motion, low-mem+low-core). When that happens, the canvas is
 			// never in the DOM — leave the #fiona-shimmer "modem connecting" placeholder
-			// visible instead of mounting fiona-embed (which would silently hide it).
+			// visible (it will be swapped to a static poster after GATE_FALLBACK_DELAY_MS
+			// by the gated-fallback effect above) instead of mounting fiona-embed.
 			if (!canvasEl) return;
 			canvasEl.style.opacity = "0";
 			if (canvasEl.dataset.fionaMounted === "1") return;
@@ -197,22 +254,44 @@ export default function FionaFrame() {
 		<div className="fiona-frame">
 			<div className="fiona-bezel">
 				<div className="fiona-panel-wrap">
+					{/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: role+aria-label are co-conditional on gatedFallback */}
 					<div
 						id="fiona-shimmer"
-						className="fiona-placeholder"
-						aria-hidden="true"
+						className={`fiona-placeholder${gatedFallback ? " fiona-placeholder--static" : ""}`}
+						aria-hidden={gatedFallback ? undefined : true}
+						role={gatedFallback ? "img" : undefined}
+						aria-label={
+							gatedFallback
+								? "Fiona avatar - 3D view unavailable on this device"
+								: undefined
+						}
 					>
-						<span className="fiona-placeholder-label">
-							modem connecting
-							<span className="fiona-block-stream">
-								<span className="fiona-block">▓</span>
-								<span className="fiona-block">▓</span>
-								<span className="fiona-block">▓</span>
+						{gatedFallback ? (
+							<img
+								src="/assets/fiona-poster.webp"
+								alt=""
+								className="fiona-poster"
+								draggable={false}
+								onError={(e) => {
+									// Asset 404? Hide the broken image — the green-phosphor
+									// background of .fiona-placeholder--static still reads as
+									// 'CRT off' and the aria-label still labels the region.
+									(e.currentTarget as HTMLImageElement).style.display = "none";
+								}}
+							/>
+						) : (
+							<span className="fiona-placeholder-label">
+								modem connecting
+								<span className="fiona-block-stream">
+									<span className="fiona-block">▓</span>
+									<span className="fiona-block">▓</span>
+									<span className="fiona-block">▓</span>
+								</span>
 							</span>
-						</span>
+						)}
 					</div>
 					{/* Wave 53: gate the Babylon end-credit canvas behind device tier ≥ medium */}
-					<BabylonGate tier="medium" fallback={null}>
+					<BabylonGate tier={FIONA_REQUIRED_TIER} fallback={null}>
 						<canvas
 							id="fiona-canvas"
 							className="fiona-canvas"

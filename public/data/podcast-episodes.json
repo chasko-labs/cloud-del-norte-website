@@ -358,11 +358,18 @@
     ]
   },
   "syntax_fm": {
-    "title": "1006: Can AI Make Good Design?",
-    "subtitle": "Wes and Scott talk about whether AI can actually create good design, or if it just remixes the same patterns over and ov",
-    "display": "1006: Can AI Make Good Design? — Wes and Scott talk about whether AI can actually create good design, or if it just remixes",
-    "enclosureUrl": "https://traffic.megaphone.fm/FSI8719347240.mp3",
+    "title": "1007: 8 Tech Choices to Lock In Before Agentmaxxing",
+    "subtitle": "Wes and Scott talk about the foundational decisions that make AI-assisted coding actually work—database schemas, validat",
+    "display": "1007: 8 Tech Choices to Lock In Before Agentmaxxing — Wes and Scott talk about the foundational decisions that make AI-assisted coding actually ",
+    "enclosureUrl": "https://traffic.megaphone.fm/FSI8645958362.mp3",
     "episodes": [
+      {
+        "guid": "d4b1a3be-5466-11f1-acd2-f3380effaa91",
+        "title": "1007: 8 Tech Choices to Lock In Before Agentmaxxing",
+        "pubDate": "2026-05-25T11:00:00.000Z",
+        "duration": 1021,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI8645958362.mp3"
+      },
       {
         "guid": "9d56a000-4e2f-11f1-943d-e7ea21e65dc1",
         "title": "1006: Can AI Make Good Design?",
@@ -705,22 +712,23 @@
         "pubDate": "2025-11-26T12:00:00.000Z",
         "duration": 3929,
         "enclosureUrl": "https://traffic.megaphone.fm/FSI1409561011.mp3"
-      },
-      {
-        "guid": "372cd5a8-c3c2-11f0-8a5c-279efbd039be",
-        "title": "957: CSS: Advanced and Obscure",
-        "pubDate": "2025-11-24T12:00:00.000Z",
-        "duration": 2270,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI8931380710.mp3"
       }
     ]
   },
   "talk_python": {
-    "title": "#548: Event Sourcing Design Pattern",
-    "subtitle": "What if your database worked more like Git? Every change captured as an immutable event you can replay, instead of a sin",
-    "display": "#548: Event Sourcing Design Pattern — What if your database worked more like Git? Every change captured as an immutable event yo",
-    "enclosureUrl": "https://talkpython.fm/episodes/download/548/event-sourcing-design-pattern.mp3",
+    "title": "#549: Great Docs",
+    "subtitle": "Your documentation has two audiences now - humans reading the rendered HTML, and AI agents trying to make sense of your ",
+    "display": "#549: Great Docs — Your documentation has two audiences now - humans reading the rendered HTML, and AI agents",
+    "enclosureUrl": "https://talkpython.fm/episodes/download/549/great-docs.mp3",
     "episodes": [
+      {
+        "guid": "1552cdec-fbb2-4786-ba9d-e80f4ecb2401",
+        "title": "#549: Great Docs",
+        "pubDate": "2026-05-25T22:11:29.000Z",
+        "duration": 4020,
+        "enclosureUrl": "https://talkpython.fm/episodes/download/549/great-docs.mp3",
+        "transcriptUrl": "https://talkpython.fm/episodes/show/549/great-docs.vtt"
+      },
       {
         "guid": "44e7259d-959f-4a48-a6fb-6cb730097336",
         "title": "#548: Event Sourcing Design Pattern",
@@ -1112,14 +1120,6 @@
         "duration": 3454,
         "enclosureUrl": "https://talkpython.fm/episodes/download/500/django-simple-deploy-and-other-devops-things.mp3",
         "transcriptUrl": "https://talkpython.fm/episodes/show/500/django-simple-deploy-and-other-devops-things.vtt"
-      },
-      {
-        "guid": "c3799794-ee9a-4c57-935e-f1890163f3d5",
-        "title": "#499: BeeWare and the State of Python on Mobile",
-        "pubDate": "2025-03-31T07:00:00.000Z",
-        "duration": 4067,
-        "enclosureUrl": "https://talkpython.fm/episodes/download/499/beeware-and-the-state-of-python-on-mobile.mp3",
-        "transcriptUrl": "https://talkpython.fm/episodes/show/499/beeware-and-the-state-of-python-on-mobile.vtt"
       }
     ]
   },
@@ -2215,11 +2215,18 @@
     ]
   },
   "onda_aws": {
-    "title": "EP335: Acelerando la ingeniería de datos con agentes de IA para AWS Analytics",
-    "subtitle": "En este episodio Aridai Solis y Francisco Ariza exploran cómo los agentes de inteligencia artificial están transformando",
-    "display": "EP335: Acelerando la ingeniería de datos con agentes de IA para AWS Analytics — En este episodio Aridai Solis y Francisco Ariza exploran cómo los agentes de inteligencia ",
-    "enclosureUrl": "https://rss.art19.com/episodes/79b7c857-038d-4c5f-9765-c2c258290ebe.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d",
+    "title": "EP336 - AWS Cloud WAN",
+    "subtitle": "En este episodio exploraremos AWS Cloud WAN, un servicio de AWS que te permite crear redes de area amplia, disponibles s",
+    "display": "EP336 - AWS Cloud WAN — En este episodio exploraremos AWS Cloud WAN, un servicio de AWS que te permite crear redes",
+    "enclosureUrl": "https://rss.art19.com/episodes/b302039e-7f98-42eb-b989-20b9398558ab.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d",
     "episodes": [
+      {
+        "guid": "gid://art19-episode-locator/V0/PNPvy9RDllcIpL82ncyqoVFco7cKuTa2AV0E2Hdvkg4",
+        "title": "EP336 - AWS Cloud WAN",
+        "pubDate": "2026-05-26T23:28:00.000Z",
+        "duration": 2440,
+        "enclosureUrl": "https://rss.art19.com/episodes/b302039e-7f98-42eb-b989-20b9398558ab.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
+      },
       {
         "guid": "gid://art19-episode-locator/V0/4dj5wsWA0PAGG6vergFDpzNfIcd2ETJ4_sLwnnUkJNI",
         "title": "EP335: Acelerando la ingeniería de datos con agentes de IA para AWS Analytics",
@@ -2562,13 +2569,6 @@
         "pubDate": "2025-08-22T02:00:00.000Z",
         "duration": 1723,
         "enclosureUrl": "https://rss.art19.com/episodes/5ade2405-3ad9-4896-b36d-8bc5382a256c.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
-      },
-      {
-        "guid": "gid://art19-episode-locator/V0/K-Lfwo-bXMAyOQrL7oYy1i7PpTwGvUcm0o_0Sja35hI",
-        "title": "EP285: Framework de Resiliencia en AWS",
-        "pubDate": "2025-08-19T20:30:00.000Z",
-        "duration": 953,
-        "enclosureUrl": "https://rss.art19.com/episodes/883a27fb-4400-4ecf-9324-ba3c5b374920.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
       }
     ]
   },
@@ -2889,11 +2889,18 @@
     ]
   },
   "el_sonido_kexp": {
-    "title": "Cypress Hill | El Sonido: Cancioneros — Rap latino, identidad y Dios Bendiga",
+    "title": "Margaritas Podridas | El Sonido: Cancioneros — Metales Pesados, distorsión, y el nuevo rock latinoamericano",
     "subtitle": null,
-    "display": "Cypress Hill | El Sonido: Cancioneros — Rap latino, identidad y Dios Bendiga",
-    "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/509ca84e-787b-4abc-9e28-b44a00009667/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950",
+    "display": "Margaritas Podridas | El Sonido: Cancioneros — Metales Pesados, distorsión, y el nuevo rock latinoamericano",
+    "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/6dfa938c-7324-44d8-be5b-b45101869a85/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950",
     "episodes": [
+      {
+        "guid": "6dfa938c-7324-44d8-be5b-b45101869a85",
+        "title": "Margaritas Podridas | El Sonido: Cancioneros — Metales Pesados, distorsión, y el nuevo rock latinoamericano",
+        "pubDate": "2026-05-25T07:00:00.000Z",
+        "duration": 1166,
+        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/6dfa938c-7324-44d8-be5b-b45101869a85/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
+      },
       {
         "guid": "509ca84e-787b-4abc-9e28-b44a00009667",
         "title": "Cypress Hill | El Sonido: Cancioneros — Rap latino, identidad y Dios Bendiga",
@@ -3236,13 +3243,6 @@
         "pubDate": "2023-12-08T08:00:00.000Z",
         "duration": 1133,
         "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/560dc0d0-df85-4b2b-8180-b0d10139b469/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
-      },
-      {
-        "guid": "cb6525e7-759f-42b7-b950-b09f01864209",
-        "title": "Explore KEXP Podcasts!",
-        "pubDate": "2023-10-19T07:00:00.000Z",
-        "duration": 551,
-        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/cb6525e7-759f-42b7-b950-b09f01864209/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
       }
     ]
   },

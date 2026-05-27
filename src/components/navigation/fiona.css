@@ -3163,3 +3163,26 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .fiona-led,
 		inset 2px 0 rgba(255, 245, 215, 0.4),
 		inset -2px 0 rgba(80, 55, 25, 0.3);
 }
+
+/* Issue #382 — static avatar fallback when BabylonGate gates the canvas out.
+   After GATE_FALLBACK_DELAY_MS the shimmer placeholder swaps to <img
+   src="/assets/fiona-poster.webp"> inside the same #fiona-shimmer host.
+   Kill the looping background drift + label pulse so the visual stops
+   claiming "still loading". Keep the dark phosphor backdrop so the bezel
+   still reads as a powered CRT (just one displaying a static frame). */
+.fiona-placeholder--static {
+	background: #050805;
+	animation: none;
+}
+
+.fiona-poster {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	pointer-events: none;
+	-webkit-user-select: none;
+	user-select: none;
+	filter: drop-shadow(0 0 4px #22c55e4d);
+	opacity: 0.92;
+}

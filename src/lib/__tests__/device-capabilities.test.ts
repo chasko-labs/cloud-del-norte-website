@@ -208,3 +208,58 @@ describe("getDeviceTier", () => {
 		expect(getDeviceTier()).toBe("low");
 	});
 });
+
+// ---------------------------------------------------------------------------
+// getDeviceDiagnostics  (issue #382)
+// ---------------------------------------------------------------------------
+import { getDeviceDiagnostics } from "../device-capabilities";
+
+describe("getDeviceDiagnostics", () => {
+	it("returns the full diagnostic shape with all six signal keys", () => {
+		mockMotion(false);
+		mockCanvas("NVIDIA GeForce RTX 4080/PCIe/SSE2");
+		mockNav({ deviceMemory: 16, hardwareConcurrency: 12 });
+		const d = getDeviceDiagnostics();
+		expect(d).toEqual({
+			tier: "high",
+			reducedMotion: false,
+			softwareWebGL: false,
+			lowMemory: false,
+			fewCores: false,
+			renderer: "NVIDIA GeForce RTX 4080/PCIe/SSE2",
+			deviceMemory: 16,
+			hardwareConcurrency: 12,
+		});
+	});
+
+	it("reports tier=low + softwareWebGL=true on SwiftShader", () => {
+		mockMotion(false);
+		mockCanvas("ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)))");
+		mockNav({ deviceMemory: 16, hardwareConcurrency: 8 });
+		const d = getDeviceDiagnostics();
+		expect(d.tier).toBe("low");
+		expect(d.softwareWebGL).toBe(true);
+		expect(d.reducedMotion).toBe(false);
+		expect(d.renderer).toMatch(/SwiftShader/);
+	});
+
+	it("reports tier=low + reducedMotion=true on Reduce Motion", () => {
+		mockMotion(true);
+		mockCanvas("NVIDIA GeForce RTX 4080");
+		mockNav({ deviceMemory: 16, hardwareConcurrency: 12 });
+		const d = getDeviceDiagnostics();
+		expect(d.tier).toBe("low");
+		expect(d.reducedMotion).toBe(true);
+		expect(d.softwareWebGL).toBe(false);
+	});
+
+	it("reports lowMemory=false when deviceMemory is undefined (Firefox/Safari)", () => {
+		mockMotion(false);
+		mockCanvas("Apple M2");
+		mockNav({ deviceMemory: undefined, hardwareConcurrency: 8 });
+		const d = getDeviceDiagnostics();
+		expect(d.lowMemory).toBe(false);
+		expect(d.deviceMemory).toBeUndefined();
+		expect(d.tier).toBe("high");
+	});
+});
