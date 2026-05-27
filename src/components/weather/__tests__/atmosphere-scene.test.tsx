@@ -149,7 +149,7 @@ vi.mock("../../../lib/babylon-shared-engine", () => ({
 
 // ── IntersectionObserver stub ─────────────────────────────────────────────────
 type IOCallback = (entries: { isIntersecting: boolean }[]) => void;
-let lastIOCallback: IOCallback | null = null;
+let _lastIOCallback: IOCallback | null = null;
 let lastIOObserve: ReturnType<typeof vi.fn> | null = null;
 let lastIODisconnect: ReturnType<typeof vi.fn> | null = null;
 
@@ -157,7 +157,7 @@ class IntersectionObserverMock {
 	observe: ReturnType<typeof vi.fn>;
 	disconnect: ReturnType<typeof vi.fn>;
 	constructor(cb: IOCallback) {
-		lastIOCallback = cb;
+		_lastIOCallback = cb;
 		this.observe = vi.fn();
 		this.disconnect = vi.fn();
 		lastIOObserve = this.observe;
@@ -186,7 +186,7 @@ beforeEach(() => {
 	mockUnregister.mockClear();
 	const g = globalThis as unknown as { __babylonMeshes: { name: string }[] };
 	if (g.__babylonMeshes) g.__babylonMeshes.length = 0;
-	lastIOCallback = null;
+	_lastIOCallback = null;
 	lastIOObserve = null;
 	lastIODisconnect = null;
 	vi.stubGlobal("IntersectionObserver", IntersectionObserverMock);

@@ -25,7 +25,7 @@ export default function BabylonSpinDemo({
 
 		let disposed = false;
 		// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
-		let eng: any = null;
+		let _eng: any = null;
 		let ro: ResizeObserver | null = null;
 		let io: IntersectionObserver | null = null;
 
@@ -41,7 +41,7 @@ export default function BabylonSpinDemo({
 			if (canvas) {
 				unregisterSceneView(canvas);
 			}
-			eng = null;
+			_eng = null;
 		}
 
 		async function startEngine() {
@@ -52,7 +52,7 @@ export default function BabylonSpinDemo({
 			if (disposed) return;
 
 			const sharedEngine = getOrCreateSharedEngine();
-			eng = sharedEngine;
+			_eng = sharedEngine;
 			const scene = new B.Scene(sharedEngine);
 			currentScene = scene;
 			scene.clearColor = new B.Color4(0, 0, 0, 0);
