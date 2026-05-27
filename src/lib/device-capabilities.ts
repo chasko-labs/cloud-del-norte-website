@@ -15,6 +15,10 @@ export function isSoftwareWebGL(): boolean {
 		const renderer = ext
 			? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL))
 			: "";
+		// Explicitly release the probe's WebGL context so Chrome reclaims it
+		// immediately rather than waiting for GC. The probe is called early
+		// in page load and can otherwise occupy a context slot for seconds.
+		gl.getExtension("WEBGL_lose_context")?.loseContext?.();
 		return /SwiftShader|llvmpipe|Software|Microsoft Basic Render/i.test(
 			renderer,
 		);
