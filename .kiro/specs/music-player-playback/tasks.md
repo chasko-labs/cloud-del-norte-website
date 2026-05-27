@@ -225,6 +225,22 @@ If the class distribution matches the hypothesis: confirmed. If not: revise hypo
 
 Dispatched to: cdn-PO direct (no ghost — read-only Device Farm runs).
 
+### 3.1 Evidence (DONE)
+
+**Captured:** 2026-05-27T22:17:51Z (run 1: kexp × awsug.clouddelnorte.org + clouddelnorte.org) and 2026-05-27T22:19:45Z (run 2: kexp × dev.clouddelnorte.org/awsug-preview/).
+
+**Path:** `tests/device-farm/captures/iter3-step3.1-20260527T221751Z/` (run1-awsug-and-root, run2-dev-preview subdirs).
+
+**Body-class observations confirm the LOCKED hypothesis:**
+
+| Site                                          | `cdn-auth-subdomain`? | `property2Pass` | Outcome                                                                  |
+|-----------------------------------------------|-----------------------|-----------------|--------------------------------------------------------------------------|
+| `awsug.clouddelnorte.org`                     | YES                   | false           | `TimeoutException`, click never fired, player UNMOUNTED post-click       |
+| `clouddelnorte.org`                           | NO                    | true            | `finalReadyState=4`, `cdn-stream-playing` added post-click               |
+| `dev.clouddelnorte.org/awsug-preview/`        | NO                    | true            | `finalReadyState=4`, `cdn-stream-playing` added post-click               |
+
+The hostname-keyed auth-classification logic correctly excludes the path-based dev preview but incorrectly includes `awsug.*`. Proceeding to sub-task 3.2 code-mapper sweep.
+
 ### 3.2 Code-mapper sweep — read-only
 
 Identify every file that adds or removes `cdn-auth-subdomain` to/from `document.body`. Targets:
