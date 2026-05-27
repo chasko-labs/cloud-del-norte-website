@@ -74,30 +74,36 @@ export function readTierOverride(): DeviceTier | null {
 }
 
 /**
- * One-shot WebGL probe. Returns the UNMASKED_RENDERER_WEBGL string (or "") and
- * disposes the probe context immediately so Chrome reclaims the slot rather
+ * One-shot WebGL probe. Returns whether a WebGL context could be obtained and
+ * the UNMASKED_RENDERER_WEBGL string (empty when the extension is blocked).
+ * Disposes the probe context immediately so Chrome reclaims the slot rather
  * than waiting for GC.
+ *
+ * The `available` flag distinguishes "no WebGL at all" (e.g. Tor browser,
+ * disabled in flags) from "WebGL works but the renderer string is masked".
+ * Callers that previously inferred a missing context from an empty renderer
+ * string can now check `available` directly.
  */
-function probeRenderer(): string {
+function probeWebGL(): { available: boolean; renderer: string } {
 	try {
 		const probe = document.createElement("canvas");
 		const gl = (probe.getContext("webgl2") ||
 			probe.getContext("webgl")) as WebGLRenderingContext | null;
-		if (!gl) return "";
+		if (!gl) return { available: false, renderer: "" };
 		const ext = gl.getExtension("WEBGL_debug_renderer_info");
 		const renderer = ext
 			? String(gl.getParameter(ext.UNMASKED_RENDERER_WEBGL))
 			: "";
 		gl.getExtension("WEBGL_lose_context")?.loseContext?.();
-		return renderer;
+		return { available: true, renderer };
 	} catch {
-		return "";
+		return { available: false, renderer: "" };
 	}
 }
 
 /** Detect software-rendered WebGL (SwiftShader / llvmpipe / Mesa / MSBRD). */
 export function isSoftwareWebGL(): boolean {
-	return SOFTWARE_RENDERER_RE.test(probeRenderer());
+	return SOFTWARE_RENDERER_RE.test(probeWebGL().renderer);
 }
 
 /**
@@ -165,8 +171,10 @@ export interface DeviceDiagnostics {
 	softwareWebGL: boolean;
 	lowMemory: boolean;
 	fewCores: boolean;
-	/** UNMASKED_RENDERER_WEBGL string — empty when WebGL unavailable / extension blocked. */
+	/** UNMASKED_RENDERER_WEBGL string — empty when extension blocked OR WebGL unavailable. */
 	renderer: string;
+	/** True when a WebGL (or WebGL2) context could be obtained. False on Tor / disabled-WebGL. */
+	webglAvailable: boolean;
 	/** navigator.deviceMemory in GB; undefined on Firefox/Safari. */
 	deviceMemory: number | undefined;
 	/** navigator.hardwareConcurrency. */
@@ -183,7 +191,7 @@ export interface DeviceDiagnostics {
  */
 export function getDeviceDiagnostics(): DeviceDiagnostics {
 	const override = readTierOverride();
-	const renderer = probeRenderer();
+	const { available: webglAvailable, renderer } = probeWebGL();
 	const softwareWebGL = SOFTWARE_RENDERER_RE.test(renderer);
 	const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 	const deviceMemory = (navigator as Navigator & { deviceMemory?: number })
@@ -210,6 +218,7 @@ export function getDeviceDiagnostics(): DeviceDiagnostics {
 		lowMemory,
 		fewCores,
 		renderer,
+		webglAvailable,
 		deviceMemory,
 		hardwareConcurrency,
 		override,
