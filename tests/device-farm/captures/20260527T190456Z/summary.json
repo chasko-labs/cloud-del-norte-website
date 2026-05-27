@@ -1,0 +1,15 @@
+[
+	{
+		"subdomain": "dev.clouddelnorte.org/awsug-preview",
+		"station": "kexp",
+		"property2Pass": true,
+		"fatal": null,
+		"playerMounted": true,
+		"clicked": true,
+		"finalReadyState": 4,
+		"finalPaused": false,
+		"finalErrorCode": null,
+		"blockedButtonPresent": false,
+		"outPath": "tests/device-farm/captures/20260527T190456Z/dev.clouddelnorte.org/awsug-preview/kexp.json"
+	}
+]
