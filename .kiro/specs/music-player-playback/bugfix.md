@@ -84,7 +84,7 @@ This bugfix is DONE when ALL of the following are true on production:
 - No CSP widening. CSP is not in the suspect set for this fix family.
 - No `streams-reachability.ts` changes — frozen.
 - Do not touch `persistent-player` internals (audio element, play/pause/next handlers). The fix lives in the awsug page tree (ancestors of `<PersistentPlayer />`), not in the player itself.
-- Do not push the branch until Iteration 1 DoD passes.
+- Do not MERGE until Iteration 1 DoD passes; push to branch is part of the verification chain (preview deploy is the test target). The "do not push" form of this rule was retired on 2026-05-27 once the structural reality became clear: the Device Farm harness only tests deployed sites, and the branch-push preview deploy (`dev.clouddelnorte.org/awsug-preview/`) exists for exactly this verification. Push to a non-`main` branch is reversible; the gate that matters is auditor → orin → main → `deploy.sh`.
 
 ## Out of Scope (Backlog Hygiene)
 

@@ -66,15 +66,20 @@ Iterations, not phases. Each iteration ships value or learning. Each ends with a
 
 ### Iteration 1d — Verify
 
-- [ ] **1d.1 Device Farm smoke test (KEXP × awsug only)**
- - Re-run `tests/devicefarm/music-player-diagnostic.py` against `awsug.clouddelnorte.org` only, KEXP only.
+- [ ] **1d.0 Adapt harness, push branch, wait for preview deploy**
+ - Add a `--base-url` flag to `tests/device-farm/music-player-diagnostic.py` so the harness can target a non-production URL. Default keeps the current production URL list so existing callers don't break.
+ - Commit on the same `spec/music-player-playback` branch as the fix.
+ - Push `spec/music-player-playback` to trigger Woodpecker `deploy-dev-awsug` job. The preview lands at `https://dev.clouddelnorte.org/awsug-preview/`.
+ - Poll Woodpecker pipeline status (DUTIES.md curl-with-token pattern) until the preview deploy completes.
+
+- [ ] **1d.1 Device Farm smoke test (KEXP × awsug-preview only)**
+ - Run `python3 tests/device-farm/music-player-diagnostic.py --base-url https://dev.clouddelnorte.org/awsug-preview/ --stations kexp --subdomains https://dev.clouddelnorte.org/awsug-preview/`
  - DoD checks (all must pass):
-   - [ ] `audio.readyState >= 2` AND `audio.paused == false` within 5s of click on awsug.
+   - [ ] `audio.readyState >= 2` AND `audio.paused == false` within 5s of click on the preview.
    - [ ] No new console errors introduced.
    - [ ] No StaleElementReferenceException on play button.
-   - [ ] `clouddelnorte.org` regression probe still PASSES (Property 3).
    - [ ] `git diff src/components/persistent-player/` is empty (Property 6).
- - If any DoD check fails: STOP. Update `bugfix.md` with new findings. Do not push branch.
+ - If any DoD check fails: STOP. Update `bugfix.md` with new findings. Do not open PR.
 
 - [ ] **1d.2 Iteration 1 retrospective (forward-looking)**
  - Append to this file: which component was the actual re-render trigger, what guard was applied, why the smaller alternatives were ruled out, what feeds back into the streams architecture.

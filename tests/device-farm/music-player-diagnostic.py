@@ -361,13 +361,21 @@ def main() -> None:
                         help="Comma-delimited station keys to test (default: all)")
     parser.add_argument("--subdomains", type=str, default=None,
                         help="Comma-delimited subdomain URLs to test (default: all)")
+    parser.add_argument("--base-url", type=str, default=None,
+                        help="Single base URL to test against (e.g. branch preview). "
+                             "Replaces SUBDOMAINS list. Mutually exclusive with --subdomains.")
     args = parser.parse_args()
+
+    if args.base_url and args.subdomains:
+        parser.error("--base-url and --subdomains are mutually exclusive")
 
     global CURATED_STATIONS, SUBDOMAINS
     if args.stations:
         keys = {k.strip() for k in args.stations.split(",")}
         CURATED_STATIONS = [s for s in CURATED_STATIONS if s["key"] in keys]
-    if args.subdomains:
+    if args.base_url:
+        SUBDOMAINS = [args.base_url.rstrip("/")]
+    elif args.subdomains:
         urls = {u.strip() for u in args.subdomains.split(",")}
         SUBDOMAINS = [s for s in SUBDOMAINS if s in urls]
 
