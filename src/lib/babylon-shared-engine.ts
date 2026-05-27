@@ -79,7 +79,7 @@ let _docVisHandlerInstalled = false;
 
 function _masterTick(): void {
 	const engine = _engine;
-	if (!engine || !engine.activeView) return;
+	if (!engine?.activeView) return;
 	const target = engine.activeView.target as HTMLCanvasElement;
 	const view = _views.get(target);
 	if (!view || view.paused) return;
