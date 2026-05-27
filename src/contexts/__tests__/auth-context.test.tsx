@@ -130,4 +130,83 @@ describe("AuthProvider + useAuth", () => {
 			expect.stringContaining("AuthProvider"),
 		);
 	});
+
+	it("does not re-render children when storage event fires with same claims", async () => {
+		seedSession({
+			sub: "u1",
+			email: "a@example.test",
+			name: "A",
+			"cognito:groups": ["members"],
+		});
+		const { AuthProvider } = await import("../auth-context");
+		const { useAuth } = await import("../../hooks/useAuth");
+		const renderCount = vi.fn();
+		function Counter() {
+			useAuth();
+			renderCount();
+			return null;
+		}
+		render(
+			<AuthProvider>
+				<Counter />
+			</AuthProvider>,
+		);
+		expect(renderCount).toHaveBeenCalledTimes(1);
+
+		// Simulate a token refresh that writes a new JWT with identical claims
+		const newJwt = seedSession({
+			sub: "u1",
+			email: "a@example.test",
+			name: "A",
+			"cognito:groups": ["members"],
+		});
+		// Fire a storage event (simulates cross-tab or same-window quirk)
+		window.dispatchEvent(
+			new StorageEvent("storage", {
+				storageArea: sessionStorage,
+				key: "cdn.idToken",
+				newValue: newJwt,
+			}),
+		);
+		await vi.advanceTimersByTimeAsync(0);
+		expect(renderCount).toHaveBeenCalledTimes(1);
+	});
+
+	it("re-renders children when storage event fires with different claims", async () => {
+		seedSession({
+			sub: "u1",
+			email: "a@example.test",
+			"cognito:groups": [],
+		});
+		const { AuthProvider } = await import("../auth-context");
+		const { useAuth } = await import("../../hooks/useAuth");
+		const renderCount = vi.fn();
+		function Counter() {
+			useAuth();
+			renderCount();
+			return null;
+		}
+		render(
+			<AuthProvider>
+				<Counter />
+			</AuthProvider>,
+		);
+		expect(renderCount).toHaveBeenCalledTimes(1);
+
+		// Simulate a token refresh that adds group membership
+		const newJwt = seedSession({
+			sub: "u1",
+			email: "a@example.test",
+			"cognito:groups": ["members"],
+		});
+		window.dispatchEvent(
+			new StorageEvent("storage", {
+				storageArea: sessionStorage,
+				key: "cdn.idToken",
+				newValue: newJwt,
+			}),
+		);
+		await vi.advanceTimersByTimeAsync(0);
+		expect(renderCount).toHaveBeenCalledTimes(2);
+	});
 });
