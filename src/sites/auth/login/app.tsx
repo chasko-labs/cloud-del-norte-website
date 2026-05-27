@@ -103,62 +103,24 @@ function LoginForm() {
 		setFormError("");
 		setEmailError("");
 		try {
-			// Step 1: Try to get a passkey from the browser without specifying allowCredentials
-			// This shows ALL available passkeys for clouddelnorte.org (discoverable credentials)
-			let passkeyEmail =
+			const passkeyEmail =
 				email.trim() || localStorage.getItem("cdn.passkey_email") || "";
 
-			console.log(
-				"[passkey] handlePasskeyLogin start, email:",
-				passkeyEmail ? "(set)" : "(empty)",
-			);
-
 			if (!passkeyEmail) {
-				// No email known — try discoverable credential flow
-				// Ask browser to show available passkeys without server round-trip
-				const discoverResult = (await navigator.credentials.get({
-					publicKey: {
-						challenge: crypto.getRandomValues(new Uint8Array(32)),
-						rpId: "clouddelnorte.org",
-						userVerification: "preferred",
-					},
-				})) as PublicKeyCredential | null;
-
-				if (!discoverResult) throw new AuthError("passkey cancelled");
-
-				// Extract email from userHandle (Cognito stores the sub there)
-				const response =
-					discoverResult.response as AuthenticatorAssertionResponse;
-				if (response.userHandle) {
-					// userHandle is the Cognito user sub — we need to look up the email
-					// For now, decode it as UTF-8 in case it's the email directly
-					const decoded = new TextDecoder().decode(response.userHandle);
-					console.log(
-						"[passkey] discoverable userHandle decoded:",
-						decoded.includes("@") ? "email" : "UUID/other",
-						decoded.length,
-						"chars",
-					);
-					// If it looks like an email, use it; otherwise it's a sub UUID
-					if (decoded.includes("@")) {
-						passkeyEmail = decoded;
-					} else {
-						// It's a sub — we can't use InitiateAuth without email
-						// Fall back to asking for email
-						setEmailError(
-							"please enter your email to complete passkey sign-in",
-						);
-						setLoading(false);
-						return;
-					}
-				} else {
-					setEmailError("please enter your email to complete passkey sign-in");
-					setLoading(false);
-					return;
-				}
+				// Cognito InitiateAuth requires a USERNAME — we cannot start the
+				// WebAuthn ceremony without knowing which user to authenticate.
+				// The email field has autoComplete="username webauthn" so the
+				// browser will offer a saved passkey via conditional UI in the
+				// autofill dropdown, which then fills the email AND submits.
+				// If the user clicks the button without typing, point them at the
+				// email field rather than triggering a wasted biometric prompt.
+				setEmailError(
+					"enter your email first — your passkey will be offered automatically",
+				);
+				setLoading(false);
+				return;
 			}
 
-			// Step 2: Now we have the email — do the Cognito flow
 			console.log("[passkey] calling initiatePasskeyAuth for:", passkeyEmail);
 			const { session, credentials } = await initiatePasskeyAuth(passkeyEmail);
 			console.log(
@@ -179,6 +141,8 @@ function LoginForm() {
 			if (!assertion) throw new AuthError("passkey cancelled");
 			console.log("[passkey] got assertion, calling completePasskeyAuth");
 			await completePasskeyAuth(session, assertion);
+			// Persist email so the next sign-in pre-fills the field.
+			localStorage.setItem("cdn.passkey_email", passkeyEmail);
 			redirectWithTokens();
 		} catch (err) {
 			console.error("[passkey] error:", err);

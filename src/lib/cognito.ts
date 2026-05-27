@@ -389,14 +389,27 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 	session: string;
 	credentials: Record<string, unknown>;
 }> {
-	const result = await cognitoPost("InitiateAuth", {
-		AuthFlow: "USER_AUTH",
-		ClientId: CLIENT_ID,
-		AuthParameters: {
-			USERNAME: sanitize(email, "email"),
-			PREFERRED_CHALLENGE: "WEB_AUTHN",
-		},
-	});
+	let result: Record<string, unknown>;
+	try {
+		result = await cognitoPost("InitiateAuth", {
+			AuthFlow: "USER_AUTH",
+			ClientId: CLIENT_ID,
+			AuthParameters: {
+				USERNAME: sanitize(email, "email"),
+				PREFERRED_CHALLENGE: "WEB_AUTHN",
+			},
+		});
+	} catch (err) {
+		if (err instanceof AuthError && err.code === "InvalidParameterException") {
+			throw new AuthError(
+				"passkey sign-in is not enabled on the user pool yet. " +
+					"Please sign in with your password and TOTP code instead. " +
+					"(Admin: enable USER_AUTH explicit auth flow on the app client.)",
+				"PasskeyAuthFlowNotEnabled",
+			);
+		}
+		throw err;
+	}
 	console.log("[passkey] InitiateAuth response:", {
 		ChallengeName: result.ChallengeName,
 		ChallengeParameters: result.ChallengeParameters,
