@@ -67,6 +67,7 @@ const wildcardConnectSrc = [
 	"https://*.podbean.com",         // mcdn.podbean.com redirects to s*.podbean.com
 	"https://*.cloudfront.net",      // multiple CDN distributions for podcast audio
 	"https://*.token.awswaf.com",    // WAF token endpoint
+	"https://*.zeno.fm",             // stream.zeno.fm + stream-NNN.zeno.fm load-balanced subdomains
 ];
 for (const w of wildcardConnectSrc) connectSrc.add(w);
 
@@ -77,6 +78,7 @@ const wildcardMediaSrc = [
 	"https://*.streamtheworld.com",
 	"https://*.streamguys1.com",
 	"https://*.podbean.com",
+	"https://*.zeno.fm",
 ];
 for (const w of wildcardMediaSrc) mediaSrc.add(w);
 
