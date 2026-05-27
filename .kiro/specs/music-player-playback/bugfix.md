@@ -78,3 +78,46 @@ These belong in separate specs:
 - Architectural overhaul of dual BabylonJS instance problem.
 - Woodpecker deploy silent-failure (file as ops issue if not already filed).
 - qrcode.react type error requiring `npm ci` first.
+
+## Iteration 1 Findings — Corrected Probe (2026-05-27)
+
+1. **Probe defect resolved.** The `return ` prepend on AUDIO_STATE_JS makes execute_script propagate the IIFE return value. Iteration 0 captures' `preClickAudio: {}` / `samples: [{}, ...]` artifacts were the result of `None or {}` Python coercion, not real audio-state measurements. The Iteration 0 `30/30 fail — autoplay policy / hydration race` classification was therefore not evidence-grounded.
+
+2. **Iteration 1 baseline (KEXP × clouddelnorte.org), corrected probe:**
+
+| Q# | Question | Result |
+|----|----------|--------|
+| Q1 | clicked == true? | **Yes** |
+| Q2 | final readyState (0–4)? | **4** |
+| Q3 | final paused (true/false)? | **false** |
+| Q4 | final audio.error? | **null** |
+| Q5 | 'cdn-stream-playing' in bodyClasses? | **Yes** (from sample 2 onward) |
+| Q6 | blockedButtonPresent? | **No** |
+| Q7 | preClickAudio.src empty/populated? | **empty** (src loaded on click) |
+| Q8 | console mentions autoplay/NotAllowedError? | **No** |
+| Q9 | kexp.streamguys1.com/kexp160.aac status 200? | **Yes** |
+
+Verdict: **PASS**. KEXP plays successfully on current production code (commit at tip of `fix/awsug-rsvp-mount-wave-64`).
+
+3. **(B) Hypothesis — side-effect fix.** The PO audited git log for player-touching commits between bug-report date and the Iteration 1 probe run. Five commits land in the window. PR #361 (reachability probe fix — corrected the corsBlocked→fail bug in streams-reachability.ts and unhid recovered streams) is the leading candidate to have side-effect-fixed clouddelnorte.org. The bug as originally described ("persistent music player does not transition to playing state on click for several curated stations on production") cannot reproduce on Device Farm Chrome 148 against current main on clouddelnorte.org.
+
+4. **awsug.clouddelnorte.org / auth.clouddelnorte.org — corrected probe results:**
+
+| Q# | awsug.clouddelnorte.org | auth.clouddelnorte.org |
+|----|-------------------------|------------------------|
+| Q1 | **false** (StaleElementReferenceException) | **false** (StaleElementReferenceException) |
+| Q2 | 0 | 0 |
+| Q3 | true | true |
+| Q4 | null | null |
+| Q5 | No | No |
+| Q6 | No | No |
+| Q7 | empty | empty |
+| Q8 | No (CORS error on weather API only) | No |
+| Q9 | No | No |
+
+Per-cell verdicts: **awsug: FAIL — StaleElementReferenceException on play button (DOM/lifecycle)**. **auth: FAIL — StaleElementReferenceException on play button (DOM/lifecycle)**.
+
+5. **Decision matrix:**
+   - Both awsug + auth FAIL: Iteration 2 narrows to the failing subdomain(s). The failure category (StaleElementReferenceException) determines the new fix family: **DOM/lifecycle** — the play button element is located but goes stale before click, consistent with a component re-render during or after hydration on these subdomains. Iteration 0's `autoplay policy / hydration race` family is **RETIRED** — not the same root cause (the "hydration race" part was coincidentally directionally correct for awsug/auth, but the "autoplay policy" part was a broken-probe artifact).
+
+6. **What does NOT change regardless of awsug/auth result:** the probe correctness fix is a standalone correctness improvement (committed as f6d95b7b). The Iteration 0 captures should be treated as data of unknown integrity for audio state, but the click-attempt outcomes (TimeoutException / StaleElementReferenceException on awsug/auth) ARE real Selenium-level signals not affected by the probe defect.

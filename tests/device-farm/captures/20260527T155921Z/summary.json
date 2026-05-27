@@ -1,0 +1,28 @@
+[
+	{
+		"subdomain": "awsug.clouddelnorte.org",
+		"station": "kexp",
+		"property2Pass": false,
+		"fatal": "StaleElementReferenceException: play button not clickable: Message: stale element reference: stale element not found in the current frame\n  (Session info: chrome=148.0.7778.97); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#staleelementreferenceexception\nStacktrace:\n\tchromedriver!GetHandleVerifier [0x7ff73b43d6d5+14ef5]\n\tchromedriver!GetHandleVerifier [0x7ff73b43d740+14f60]\n\tchromedriver!(No symbol) [0x7ff73b18d59d]\n\tchromedriver!(No symbol) [0x7ff73b195511]\n\tchromedriver!(No symbol) [0x7ff73b19896f]\n\tchromedriver!(No symbol) [0x7ff73b2358cd]\n\tchromedriver!(No symbol) [0x7ff73b20f76a]\n\tchromedriver!(No symbol) [0x7ff73b2344ff]\n\tchromedriver!(No symbol) [0x7ff73b1d9608]\n\tchromedriver!(No symbol) [0x7ff73b1da4f3]\n\tchromedriver!GetHandleVerifier [0x7ff73b73b779+312f99]\n\tchromedriver!GetHandleVerifier [0x7ff73b735c8b+30d4ab]\n\tchromedriver!GetHandleVerifier [0x7ff73b759012+330832]\n\tchromedriver!GetHandleVerifier [0x7ff73b45a485+31ca5]\n\tchromedriver!GetHandleVerifier [0x7ff73b462e7c+3a69c]\n\tchromedriver!GetHandleVerifier [0x7ff73b446a74+1e294]\n\tchromedriver!GetHandleVerifier [0x7ff73b446c04+1e424]\n\tchromedriver!GetHandleVerifier [0x7ff73b42b327+2b47]\n\tKERNEL32!BaseThreadInitThunk [0x7ff80d337ac4+14]\n\tntdll!RtlUserThreadStart [0x7ff80e2aa8c1+21]\n",
+		"playerMounted": true,
+		"clicked": false,
+		"finalReadyState": 0,
+		"finalPaused": true,
+		"finalErrorCode": null,
+		"blockedButtonPresent": false,
+		"outPath": "tests/device-farm/captures/20260527T155921Z/awsug.clouddelnorte.org/kexp.json"
+	},
+	{
+		"subdomain": "auth.clouddelnorte.org",
+		"station": "kexp",
+		"property2Pass": false,
+		"fatal": "StaleElementReferenceException: play button not clickable: Message: stale element reference: stale element not found in the current frame\n  (Session info: chrome=148.0.7778.97); For documentation on this error, please visit: https://www.selenium.dev/documentation/webdriver/troubleshooting/errors#staleelementreferenceexception\nStacktrace:\n\tchromedriver!GetHandleVerifier [0x7ff75d89d6d5+14ef5]\n\tchromedriver!GetHandleVerifier [0x7ff75d89d740+14f60]\n\tchromedriver!(No symbol) [0x7ff75d5ed59d]\n\tchromedriver!(No symbol) [0x7ff75d5f5511]\n\tchromedriver!(No symbol) [0x7ff75d5f896f]\n\tchromedriver!(No symbol) [0x7ff75d6958cd]\n\tchromedriver!(No symbol) [0x7ff75d66f76a]\n\tchromedriver!(No symbol) [0x7ff75d6944ff]\n\tchromedriver!(No symbol) [0x7ff75d639608]\n\tchromedriver!(No symbol) [0x7ff75d63a4f3]\n\tchromedriver!GetHandleVerifier [0x7ff75db9b779+312f99]\n\tchromedriver!GetHandleVerifier [0x7ff75db95c8b+30d4ab]\n\tchromedriver!GetHandleVerifier [0x7ff75dbb9012+330832]\n\tchromedriver!GetHandleVerifier [0x7ff75d8ba485+31ca5]\n\tchromedriver!GetHandleVerifier [0x7ff75d8c2e7c+3a69c]\n\tchromedriver!GetHandleVerifier [0x7ff75d8a6a74+1e294]\n\tchromedriver!GetHandleVerifier [0x7ff75d8a6c04+1e424]\n\tchromedriver!GetHandleVerifier [0x7ff75d88b327+2b47]\n\tKERNEL32!BaseThreadInitThunk [0x7ffa90f77ac4+14]\n\tntdll!RtlUserThreadStart [0x7ffa9149a8c1+21]\n",
+		"playerMounted": true,
+		"clicked": false,
+		"finalReadyState": 0,
+		"finalPaused": true,
+		"finalErrorCode": null,
+		"blockedButtonPresent": false,
+		"outPath": "tests/device-farm/captures/20260527T155921Z/auth.clouddelnorte.org/kexp.json"
+	}
+]

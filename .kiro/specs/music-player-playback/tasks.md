@@ -102,3 +102,19 @@ Iterations, not phases. Each iteration ships value or learning. Each ends with a
 - **Feedback loop**: every iteration ends with a retrospective task that updates the spec. No skipping.
 - **Stop conditions**: any iteration that fails its DoD returns to the previous iteration with new evidence — no marching forward on a broken assumption.
 - **Backlog hygiene**: items surfaced but out of scope go to separate issues immediately, not into this spec.
+
+## Iteration 1 Retrospective
+
+**What we predicted:** Walking skeleton would apply a hydration guard to src/components/persistent-player/index.tsx, fixing KEXP × clouddelnorte.org and unblocking Iteration 2 broadening.
+
+**What we found:**
+1. The Iteration 0 probe was defective — missing `return ` made execute_script's wrapper propagate `undefined` and the Python fallback coerced to `{}`. All Iteration 0 audio-state evidence (preClickAudio / samples / postClickAudio) was vacuous.
+2. With the corrected probe, KEXP × clouddelnorte.org PASSES Property 2 on current main without any source change.
+3. Most likely cause of bug-report → today resolution: side-effect fix from PR #361 (reachability probe fix) and four other player-touching commits in the window.
+4. awsug/auth corrected-probe results: both FAIL — StaleElementReferenceException on play button (DOM/lifecycle category).
+
+**Decision:** Pivot Iteration 2 to the failing subdomain(s) awsug + auth with new fix family: DOM/lifecycle (play button goes stale between locate and click due to component re-render during hydration on auth-subdomain pages).
+
+**Probe correctness fix shipped:** commit f6d95b7b.
+
+**No source-component change in Iteration 1.** Walking-skeleton TSX guard never applied because the bug did not reproduce on the walking-skeleton target.
