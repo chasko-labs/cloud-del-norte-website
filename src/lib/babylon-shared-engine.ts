@@ -71,6 +71,10 @@ interface RegisteredView {
 let _engine: Engine | null = null;
 let _workingCanvas: HTMLCanvasElement | null = null;
 const _views = new Map<HTMLCanvasElement, RegisteredView>();
+// Pending registrations keyed by canvas while we wait for it to gain layout.
+// Registering a zero-size canvas causes the engine to render into a 0×0
+// framebuffer, producing a flood of GL_INVALID_FRAMEBUFFER_OPERATION errors.
+const _deferredObservers = new Map<HTMLCanvasElement, ResizeObserver>();
 let _docVisHandlerInstalled = false;
 
 function _masterTick(): void {
@@ -145,6 +149,28 @@ export function registerSceneView(
 	customRender: () => void,
 ): void {
 	const engine = _ensureEngine();
+
+	// Defer registration when the canvas has zero dimensions. Common when a
+	// parent drawer/panel hasn't opened yet (mobile nav, gated card, etc.).
+	// Registering a zero-size view spams GL_INVALID_FRAMEBUFFER_OPERATION on
+	// every render-loop tick. Wait for the canvas to gain layout, then
+	// register normally. Idempotent: if already deferred or already
+	// registered, the second call is a no-op.
+	if (_views.has(canvas) || _deferredObservers.has(canvas)) return;
+	if (canvas.clientWidth === 0 || canvas.clientHeight === 0) {
+		const obs = new ResizeObserver(() => {
+			if (canvas.clientWidth > 0 && canvas.clientHeight > 0) {
+				obs.disconnect();
+				_deferredObservers.delete(canvas);
+				engine.registerView(canvas, camera);
+				_views.set(canvas, { customRender, paused: false });
+			}
+		});
+		obs.observe(canvas);
+		_deferredObservers.set(canvas, obs);
+		return;
+	}
+
 	engine.registerView(canvas, camera);
 	_views.set(canvas, { customRender, paused: false });
 }
@@ -156,12 +182,29 @@ export function registerSceneView(
  * working canvas are fully disposed.
  */
 export function unregisterSceneView(canvas: HTMLCanvasElement): void {
+	// Cancel any pending deferred registration for this canvas. Safe to call
+	// even when the canvas was never deferred — .get/.delete are no-ops.
+	const pendingObs = _deferredObservers.get(canvas);
+	if (pendingObs) {
+		pendingObs.disconnect();
+		_deferredObservers.delete(canvas);
+	}
+
 	if (!_engine) return;
 	_engine.unRegisterView(canvas);
 	_views.delete(canvas);
 
 	if (_views.size === 0) {
 		_engine.stopRenderLoop();
+		// Explicitly release the WebGL context so Chrome reclaims it
+		// immediately rather than waiting for GC. Prevents context-limit
+		// pressure across mount/unmount cycles when fiona-embed (separate
+		// engine) also wants a context.
+		if (_workingCanvas) {
+			const gl = (_workingCanvas.getContext("webgl2") ||
+				_workingCanvas.getContext("webgl")) as WebGLRenderingContext | null;
+			gl?.getExtension("WEBGL_lose_context")?.loseContext?.();
+		}
 		_engine.dispose();
 		_engine = null;
 		if (_workingCanvas) {

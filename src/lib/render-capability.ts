@@ -31,6 +31,10 @@ export function detectRenderCapability(): RenderCapability {
 				!/SwiftShader|llvmpipe|software|Microsoft Basic Render Driver/i.test(
 					rendererString,
 				);
+			// Explicitly release the probe's WebGL context so Chrome reclaims it
+			// immediately rather than waiting for GC. The probe is called early
+			// in page load and can otherwise occupy a context slot for seconds.
+			gl.getExtension("WEBGL_lose_context")?.loseContext?.();
 		} else {
 			rendererString = "no-webgl";
 		}
