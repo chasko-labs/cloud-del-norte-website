@@ -4,6 +4,7 @@ import {
 	type DeviceTier,
 	getDeviceDiagnostics,
 	getDeviceTier,
+	prefersReducedMotion,
 } from "../../lib/device-capabilities";
 import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
 import BabylonGate from "../babylon-gate";
@@ -137,10 +138,18 @@ export default function FionaFrame() {
 		};
 	}, []);
 
-	// Issue #382 — gated-out devices: log diagnostic ONCE, then after
-	// GATE_FALLBACK_DELAY_MS swap the shimmer for a static avatar poster.
+	// Issue #382 — gated-out devices: log diagnostic ONCE. Then either swap
+	// the shimmer immediately (reduce-motion users explicitly asked for no
+	// animation — the shimmer's background drift + label pulse violate that)
+	// or after GATE_FALLBACK_DELAY_MS for everyone else.
 	useEffect(() => {
 		if (!gatedOut) return;
+		let reducedMotion = false;
+		try {
+			reducedMotion = prefersReducedMotion();
+		} catch {
+			/* matchMedia unavailable — default to non-reduced */
+		}
 		if (!diagnosticLoggedRef.current) {
 			diagnosticLoggedRef.current = true;
 			try {
@@ -157,6 +166,10 @@ export default function FionaFrame() {
 			} catch {
 				/* never let diagnostics break rendering */
 			}
+		}
+		if (reducedMotion) {
+			setGatedFallback(true);
+			return;
 		}
 		const timer = window.setTimeout(() => {
 			setGatedFallback(true);
