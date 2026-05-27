@@ -143,7 +143,7 @@ LOCALSTORAGE_KEY = "cdn:player:v1"
 
 # JS to read audio element state from section.cdn-pp
 AUDIO_STATE_JS = """
-(function() {
+return (function() {
     var section = document.querySelector('section.cdn-pp');
     if (!section) return {audioPresent: false, playerMounted: false};
     var audio = section.querySelector('audio');
@@ -355,6 +355,22 @@ def capture_station(
 
 
 def main() -> None:
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--stations", type=str, default=None,
+                        help="Comma-delimited station keys to test (default: all)")
+    parser.add_argument("--subdomains", type=str, default=None,
+                        help="Comma-delimited subdomain URLs to test (default: all)")
+    args = parser.parse_args()
+
+    global CURATED_STATIONS, SUBDOMAINS
+    if args.stations:
+        keys = {k.strip() for k in args.stations.split(",")}
+        CURATED_STATIONS = [s for s in CURATED_STATIONS if s["key"] in keys]
+    if args.subdomains:
+        urls = {u.strip() for u in args.subdomains.split(",")}
+        SUBDOMAINS = [s for s in SUBDOMAINS if s in urls]
+
     # Timestamp for captures directory
     ts = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     repo_root = Path(__file__).resolve().parent.parent.parent
