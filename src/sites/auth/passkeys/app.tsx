@@ -11,6 +11,7 @@ import {
 	AuthError,
 	base64urlToBuffer,
 	completeWebAuthnRegistration,
+	decodeToken,
 	deleteWebAuthnCredential,
 	getAccessToken,
 	listWebAuthnCredentials,
@@ -107,9 +108,10 @@ function PasskeyManager() {
 			try {
 				const idToken = sessionStorage.getItem("cdn.idToken");
 				if (idToken) {
-					const payload = JSON.parse(atob(idToken.split(".")[1]));
-					if (payload.email)
-						localStorage.setItem("cdn.passkey_email", payload.email);
+					const payload = decodeToken(idToken);
+					const email =
+						typeof payload.email === "string" ? payload.email : null;
+					if (email) localStorage.setItem("cdn.passkey_email", email);
 				}
 			} catch {
 				/* non-fatal */
@@ -181,9 +183,10 @@ function PasskeyManager() {
 			try {
 				const idToken = sessionStorage.getItem("cdn.idToken");
 				if (idToken) {
-					const payload = JSON.parse(atob(idToken.split(".")[1]));
-					if (payload.email)
-						localStorage.setItem("cdn.passkey_email", payload.email);
+					const payload = decodeToken(idToken);
+					const email =
+						typeof payload.email === "string" ? payload.email : null;
+					if (email) localStorage.setItem("cdn.passkey_email", email);
 				}
 			} catch {
 				/* non-fatal */
