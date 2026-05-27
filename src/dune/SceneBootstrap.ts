@@ -120,8 +120,11 @@ function detectReducedMotion(): boolean {
 export function mountDuneSceneOnCanvas(
 	canvas: HTMLCanvasElement,
 ): DuneSceneCanvasHandle {
+	const duneDebug =
+		typeof window !== "undefined" &&
+		window.location.search.includes("duneDebug=1");
 	const capability = detectRenderCapability();
-	console.log("[dune] render capability:", capability);
+	if (duneDebug) console.log("[dune] render capability:", capability);
 	if (!capability.shouldRenderRichScene) {
 		// Software renderer or reduced-motion: mount static fallback, skip Babylon.
 		const parent = canvas.parentElement;
@@ -271,7 +274,8 @@ export function mountDuneSceneOnCanvas(
 		}
 
 		if (end - lastLogMs >= 1000 && currentMedian > 0) {
-			console.info("[dune] median frame: %sms", currentMedian.toFixed(2));
+			if (duneDebug)
+				console.info("[dune] median frame: %sms", currentMedian.toFixed(2));
 			lastLogMs = end;
 		}
 
