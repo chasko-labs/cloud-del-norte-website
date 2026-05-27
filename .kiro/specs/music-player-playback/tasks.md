@@ -199,3 +199,95 @@ PR #398 (`fix/awsug-rerender-race` → `main`): OPEN, awaiting auditor review. I
 **Probe correctness fix shipped:** commit `f6d95b7b`.
 
 **No source-component change shipped in this iteration.**
+
+## Iteration 3 — Production subdomain classification (LOCKED hypothesis)
+
+**Hypothesis:** `awsug.clouddelnorte.org` is misclassified at runtime as an auth subdomain. The `cdn-auth-subdomain` body class is applied (likely via a hostname check in the auth context provider or shell layout), which triggers `display: none` on `.cdn-player-slot` via the auth-subdomain CSS rule. The player mounts visible briefly, then is hidden once the classification resolves. Selenium clicks land on a hidden element and time out.
+
+**Evidence backing this hypothesis** (capture `tests/device-farm/captures/20260527T193124Z/` from iteration 2 prod parity check, preserved as untracked artifact on operator filesystem):
+
+- `preClickAudio.bodyClasses == ["cdn-nav-open", "cdn-auth-subdomain"]` on `awsug.clouddelnorte.org`.
+- `preClickAudio.playerMounted == true` (player mounts visible).
+- `postClickAudio.audioPresent == false, playerMounted == false` (player vanished by post-click capture).
+- `fatal: TimeoutException: play button not clickable` (Selenium's wait failed `is_displayed() && is_enabled()`).
+- `finalReadyState: 0` (audio never loaded; click never fired).
+- Preview at `dev.clouddelnorte.org/awsug-preview/` does NOT reproduce because hostname-keyed auth detection never fires on a path-based subroute.
+
+### 3.1 Re-confirm hypothesis with a fresh prod capture (no fix on main yet)
+
+Run the harness against three targets, compare body classes:
+
+- `awsug.clouddelnorte.org` — `cdn-auth-subdomain` expected PRESENT.
+- `clouddelnorte.org` — `cdn-auth-subdomain` expected ABSENT.
+- `dev.clouddelnorte.org/awsug-preview/` — `cdn-auth-subdomain` expected ABSENT (path-based subroute, no hostname trigger).
+
+If the class distribution matches the hypothesis: confirmed. If not: revise hypothesis before proceeding.
+
+Dispatched to: cdn-PO direct (no ghost — read-only Device Farm runs).
+
+### 3.2 Code-mapper sweep — read-only
+
+Identify every file that adds or removes `cdn-auth-subdomain` to/from `document.body`. Targets:
+
+- `src/contexts/`
+- `src/layouts/shell/`
+- `src/sites/auth/`
+- Any hostname-detection utility (likely `src/lib/` or `src/utils/`).
+
+Report: file path, line number, exact code, conditional logic that drives the class application.
+
+Dispatched to: ghost-stratia-code-mapper.
+
+### 3.3 Fix the classification
+
+`awsug.*` should NOT receive `cdn-auth-subdomain`. Likely a one-line check that needs to whitelist `awsug.*` alongside `clouddelnorte.org` (or, equivalently, narrow the auth-detection match to `auth.*` only).
+
+Dispatched to: ghost-tarn-cdn-react-coder.
+
+### 3.4 Verify on preview
+
+Run the Device Farm harness against `dev.clouddelnorte.org/awsug-preview/` using the `--base-url` flag (restored to main in #400):
+
+```
+AWS_PROFILE=bryanchasko-kiro python3 tests/device-farm/music-player-diagnostic.py   --stations kexp --base-url https://dev.clouddelnorte.org/awsug-preview/
+```
+
+DoD per `bugfix.md`: `readyState >= 2`, `paused == false` within 5s, no `StaleElementReferenceException`, no new SEVERE console messages.
+
+### 3.5 Open PR — standard chain
+
+Auditor (ghost-stratia-haunting-auditor) → orin (ghost-orin-ci-cd) merge → deploy.sh from haunting source.
+
+### 3.6 Production parity check
+
+Run the harness against `awsug.clouddelnorte.org` (no `--base-url`, default subdomain list filtered to awsug):
+
+```
+AWS_PROFILE=bryanchasko-kiro python3 tests/device-farm/music-player-diagnostic.py   --stations kexp --subdomains https://awsug.clouddelnorte.org
+```
+
+If prod parity passes: iteration 3 closes successfully.
+If prod parity fails: stop, classify, surface to cdn-anchor. Do not march forward.
+
+### 3.7 Iteration 3 retrospective + close #399
+
+Append retrospective entry to this file under `## Iteration 3 Retrospective`. Close `chasko-labs/cloud-del-norte-website#399` with the iter-3 fix commit referenced.
+
+### Out of scope for Iteration 3
+
+The original AuthContext re-render race fix from `bbc95540` is **NOT** included in this iteration. That fix was correct for the iter-1-observed defect (StaleElementReferenceException on a re-rendering button), but the iter-1 prod baseline was misread — at the time, the play button WAS visible enough to locate, then the re-render race added staleness on top of an already-broken visibility regime.
+
+Whether the AuthContext fix should re-land at all depends on what Iteration 3 finds:
+
+- If the subdomain-classification fix alone makes prod pass: the AuthContext idempotent-setState change is a separate cleanup PR with its own review. Do NOT auto-include it in Iteration 3.
+- If the subdomain-classification fix does not fully resolve prod: re-evaluate whether the AuthContext fix is still needed, in a follow-up iteration with its own evidence base.
+
+### Constraints (carried forward)
+
+- Code authorship is ghost-only (PreToolHook blocks PO writes).
+- Frozen paths (must not be modified): `src/components/persistent-player/**`, `src/lib/streams*.ts`, `infra/cloudfront-security-headers.*.json`, Fiona/BabylonJS/WebGL/footer/weather components, `streams-reachability.ts`.
+- Iteration 3 IS permitted to touch `src/contexts/`, `src/layouts/shell/`, `src/sites/auth/`, and hostname-detection utilities (frozen list does not cover these).
+- No CSP widening.
+- `auth.clouddelnorte.org` remains out of scope (intentionally hidden via display:none, as designed).
+- `--base-url` flag is on main from PR #400; no harness restoration needed during iter-3.
+- Spec-discipline addendum filed at `BryanChasko/haunting-kiro-cli#1158`; iter-3 references both that issue and `chasko-labs/cloud-del-norte-website#399`.
