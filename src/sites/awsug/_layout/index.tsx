@@ -104,7 +104,6 @@ export default function AwsugLayout({
 
 	return (
 		<Shell
-			hidePlayer
 			theme={theme}
 			onThemeChange={(t) => {
 				setTheme(t);
