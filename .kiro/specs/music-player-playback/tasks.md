@@ -343,6 +343,45 @@ Authenticated prod parity verification on `https://awsug.clouddelnorte.org` requ
 
 If 3.6 surfaces a finding outside this directive (e.g., dev preview's bypass mechanism is a security gap, not just a divergence), stop and surface to cdn-anchor.
 
+### 3.6 Notes (post-investigation)
+
+**(a) Auth keys used by `requireAuth()` and `AuthContext`.** Five sessionStorage keys, no localStorage anywhere in the auth flow:
+
+- `cdn.idToken` — Cognito ID token (JWT with `email`, `name`, `sub`, `cognito:groups` claims).
+- `cdn.accessToken` — Cognito access token.
+- `cdn.refreshToken` — Cognito refresh token.
+- `cdn.expiresAt` — JS millisecond expiry; `getIdToken()` returns null when `Date.now() >= expiresAt`.
+- `cdn.loginState` — PKCE in-flight verifier + returnTo (only present during a redirect-in-progress).
+
+The same five keys are referenced by four auth implementations: `src/lib/auth.ts`, `src/lib/cognito.ts`, `src/lib/rsvp.ts`, and `src/sites/awsug/_shared/auth.ts`. All point at the same Cognito user pool and app client (`57eikmt418ea6vti2f6h0pl74r`). `AuthContext` (`src/contexts/auth-context.tsx`) imports `getIdToken` from `src/lib/auth.ts`; it does NOT redirect on missing token, it returns `emptyState()`. The redirect to `auth.clouddelnorte.org/login/` is fired by `requireAuth()` in `src/sites/awsug/_shared/auth.ts:234` and `src/lib/auth.ts`'s equivalent. All auth state is sessionStorage-scoped (origin-bound). The only `localStorage` reference in `auth-context.tsx` is a code comment about deferred BroadcastChannel/localStorage logout broadcast (RC-6 limitation).
+
+**(b) Why `dev.clouddelnorte.org/awsug-preview/` does not enforce `requireAuth`.** It does not serve the awsug build at all. It serves the homepage feed (`src/pages/feed/`) via CloudFront SPA fallback to `/index.html`.
+
+Verified mechanism:
+
+- `.woodpecker/deploy.yml:199-235` (`deploy-dev` step) runs on push to non-main branches and syncs `lib/` (the homepage clouddelnorte.org build) to `S3_BUCKET_DEV`. There is no `deploy-dev-awsug` step. `lib-awsug/` is never synced to `dev.clouddelnorte.org`.
+- Live HTML compare:
+  - `dev.clouddelnorte.org/awsug-preview/` → entrypoint `feed-DZtPxxnG.js`, title `AWS UG Cloud Del Norte`, streams preconnect, FionaSection scaffold. This is `src/pages/feed/index.html`.
+  - `awsug.clouddelnorte.org/` → entrypoint `index-CBoImrQ2.js`, title `Cloud Del Norte — Members`, vendor-cloudscape-shell + `_layout` + `rsvp` chunks. This is `src/sites/awsug/index.html`.
+- The path `/awsug-preview/` does not exist on the dev S3 bucket. CloudFront's SPA fallback rule (configured for `dev.clouddelnorte.org`) returns the bucket's `index.html` for unknown paths, which is `src/pages/feed/index.html`.
+- The homepage feed (`src/pages/feed/app.tsx`) does NOT call `requireAuth`, mounts `<Shell ...>` without `hidePlayer`, and renders the persistent player normally.
+
+**Implication.** The iter-1 preview verify that "passed" against `dev.clouddelnorte.org/awsug-preview/` was exercising the homepage feed, not the awsug build. The same is true for the iter-3.4 preview verify just now. Both produced a green signal for code that was never actually run. The fix (`hidePlayer` deletion in `AwsugLayout`) is on prod main and deployed to the awsug S3 bucket via the `deploy-awsug` step, but the dev path-based subroute is structurally incapable of verifying it. Sub-task 3.7.b issue (ii) tracks this divergence formally.
+
+**(c) Harness-auth lift estimate — TRIVIAL.** Cognito hosted-UI uses standard OAuth 2.0 Authorization Code + PKCE (see `src/sites/awsug/_shared/auth.ts:165-227`). The hosted-UI endpoint is `https://cloud-del-norte.auth.us-west-2.amazoncognito.com`. The token-refresh endpoint (`/oauth2/token` with `grant_type=refresh_token`) returns fresh `id_token` + `access_token` + `expires_in` without any browser interaction. The Cognito app client `57eikmt418ea6vti2f6h0pl74r` is a public client (no secret) that supports the refresh-token grant.
+
+Implementation plan:
+
+1. Add `--refresh-token-file <path>` flag to `tests/device-farm/music-player-diagnostic.py`.
+2. On harness start, read the file, POST to Cognito's `/oauth2/token` with `grant_type=refresh_token` + `client_id` + `refresh_token`. Parse the response: `id_token`, `access_token`, `expires_in`.
+3. Decode the `id_token` JWT to read `exp` (or compute `Date.now() + expires_in*1000`).
+4. Before navigating to the auth-gated target, navigate to a lightweight same-origin path on the target host, run `driver.execute_script` to inject the four sessionStorage keys, then navigate to the real target. `requireAuth()` finds the tokens, returns `AuthState`, no redirect.
+5. Awsug app mounts. Player slot is visible (post-fix). Harness clicks. Same DoD gates as preview verify.
+
+Estimated lift: ~50-80 lines of Python additions to `music-player-diagnostic.py`. No frozen-path edits, no AuthContext touch, no Cognito app-client-secret rotation. Refresh tokens have a long TTL (Cognito default 30 days), so Bryan provides the refresh_token once and rotates only when it expires.
+
+**Decision: TRIVIAL. Dispatching `ghost-hcom-python-coder` for the harness-auth flag implementation, then running prod parity against `awsug.clouddelnorte.org` with the new flag.**
+
 ### 3.7 Iteration 3 retrospective + close #399
 
 Append a retrospective entry to this file under `## Iteration 3 Retrospective` capturing:
