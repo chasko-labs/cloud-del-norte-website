@@ -420,3 +420,51 @@ Whether the AuthContext fix should re-land at all depends on what Iteration 3 fi
 - The AuthContext idempotent-setState change from `bbc95540` is OUT of scope for iteration 3.
 - `--base-url` flag is on main from PR #400; no harness restoration needed during iter-3.
 - Spec-discipline addendum filed at `BryanChasko/haunting-kiro-cli#1158`; iter-3 references both that issue and `chasko-labs/cloud-del-norte-website#399`.
+
+
+---
+
+## Iteration 3 Retrospective
+
+Iteration 3 closed on Path B: ship the fix on its merits, defer the automated prod parity run to a tracked follow-up.
+
+### Corrected diagnosis
+
+The original LOCKED hypothesis ("hostname misclassification on awsug.clouddelnorte.org causes the persistent player's hostname check to misfire") was disproved at sub-task 3.2. The real regression was a `hidePlayer` prop on `AwsugLayout` (`src/sites/awsug/_layout/index.tsx`), suppressing the player slot in the shell wrapper. The hostname-classifier code path does not exist anywhere in the deployed bundles; the only reference to `cdn-auth-subdomain` is a `classList.contains()` READ inside the persistent player component, and that READ never sees the class because no WRITE site exists outside `AuthLayout` (which only mounts when an unauthenticated user is redirected to `auth.clouddelnorte.org/login/`).
+
+Reference: `.kiro/specs/music-player-playback/iter3-3.2-codemap.md`.
+
+### Fix-path summary
+
+Single-prop deletion: removed `hidePlayer` prop from the `<Shell ...>` invocation in `src/sites/awsug/_layout/index.tsx`. Implemented in PR #401 (`fix(awsug): restore persistent player — remove hidePlayer`), merged to `main` at `c990cdb7` on 2026-05-28T02:14:55Z. No frozen-path edits, no CSP changes, no AuthContext touch.
+
+### Important caveat — preview gate has been a structural false signal
+
+Sub-task 3.4's preview-PASS against `dev.clouddelnorte.org/awsug-preview/` was structurally a non-test. The dev preview URL serves the homepage feed bundle (`src/pages/feed/`, entry `feed-DZtPxxnG.js`) via CloudFront SPA fallback to `/index.html`, NOT the awsug build (`src/sites/awsug/`, entry `index-CBoImrQ2.js`). The deploy.yml's `deploy-dev` step syncs only `lib/` (homepage) to the dev S3 bucket; `lib-awsug/` is never synced to dev. The `/awsug-preview/` path does not exist on dev S3 — CloudFront returns the bucket's `index.html`.
+
+Iterations 1, 2, and 3 of this spec all ran a preview-verify against this URL and called it PASS. None of those runs exercised the awsug build. The `hidePlayer` fix in PR #401 was merged on the strength of a green preview signal that came from a different bundle entirely. The fix happens to be correct (verifiable by any logged-in member visiting `awsug.clouddelnorte.org/`), but the preview gate played no role in catching the regression OR validating the fix.
+
+The dev preview gate has been a false signal for three iterations of this spec. Tracked formally in `chasko-labs/cloud-del-norte-website#404`.
+
+### Parity status
+
+**Deferred.** The fix is shipped on prod awsug as of `c990cdb7`. Manual verification by any logged-in member visiting `awsug.clouddelnorte.org/` is observable but not yet performed. The automated path landed in PR #402 (`harness(awsug): add --refresh-token-file for authenticated prod parity`, merged at `cab18639` on 2026-05-28T03:39:26Z), which implements Cognito refresh-token grant + sessionStorage injection. The deferred automated run is tracked in `chasko-labs/cloud-del-norte-website#405`.
+
+### Operational note — Roles Anywhere profile
+
+Mid-iteration, the Roles Anywhere profile `kiro-device-farm` (cert under `~/.config/hs-secret/heraldstack-cdn.rocm-aibox.heraldstack.local.{crt,key}`, role `arn:aws:iam::946179428633:role/heraldstack-cdn-device-farm`) was verified working. Future Device Farm runs from `rocm-aibox` use `AWS_PROFILE=kiro-device-farm` instead of `bryanchasko-kiro`. This bypasses the boto3 single-sign-on token-refresh failure mode that bit this iteration twice.
+
+### Follow-up issues filed (sub-task 3.7.b)
+
+- `chasko-labs/cloud-del-norte-website#403` — `harness: device-farm capture subdomain field reflects input URL, not post-redirect final URL`. Silent-corruption defect that masked the redirect-to-auth path during iterations 1 and 2 and led to two iterations of misdiagnosis.
+- `chasko-labs/cloud-del-norte-website#404` — `test-infra: dev.clouddelnorte.org/awsug-preview/ serves feed bundle via CloudFront SPA fallback — preview verify gate has been a false signal for three iterations`. Reframed from a benign auth-bypass note to the structural finding it actually is.
+- `chasko-labs/cloud-del-norte-website#405` — `harness: deferred automated parity run for awsug.clouddelnorte.org via --refresh-token-file`. Tracks the Path A run that Path B defers. References PR #402 as the implementation.
+
+### Cross-references
+
+- `chasko-labs/cloud-del-norte-website#399` — original parity defect filing; closed at iter-3.7 with the inverted-parity reframe.
+- `chasko-labs/cloud-del-norte-website#400` — `--base-url` flag harness restoration (merged on main earlier in iter-3).
+- `chasko-labs/cloud-del-norte-website#401` — iter-3 fix PR, squash-merged at `c990cdb7`.
+- `chasko-labs/cloud-del-norte-website#402` — harness `--refresh-token-file` flag, squash-merged at `cab18639`.
+- `BryanChasko/haunting-kiro-cli#1158` — spec-discipline addendum.
+- `.kiro/specs/music-player-playback/iter3-3.2-codemap.md` — disproof of the original LOCKED hypothesis + corrected hostname-classifier audit.
