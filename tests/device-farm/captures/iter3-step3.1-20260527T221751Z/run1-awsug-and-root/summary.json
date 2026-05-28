@@ -1,0 +1,28 @@
+[
+	{
+		"subdomain": "clouddelnorte.org",
+		"station": "kexp",
+		"property2Pass": true,
+		"fatal": null,
+		"playerMounted": true,
+		"clicked": true,
+		"finalReadyState": 4,
+		"finalPaused": false,
+		"finalErrorCode": null,
+		"blockedButtonPresent": false,
+		"outPath": "tests/device-farm/captures/20260527T221751Z/clouddelnorte.org/kexp.json"
+	},
+	{
+		"subdomain": "awsug.clouddelnorte.org",
+		"station": "kexp",
+		"property2Pass": false,
+		"fatal": "TimeoutException: play button not clickable: Message: \nStacktrace:\n\tchromedriver!GetHandleVerifier [0x7ff711afd6d5+14ef5]\n\tchromedriver!GetHandleVerifier [0x7ff711afd740+14f60]\n\tchromedriver!(No symbol) [0x7ff71184d59d]\n\tchromedriver!(No symbol) [0x7ff7118a6f42]\n\tchromedriver!(No symbol) [0x7ff7118a724c]\n\tchromedriver!(No symbol) [0x7ff7118f7967]\n\tchromedriver!(No symbol) [0x7ff7118f44ff]\n\tchromedriver!(No symbol) [0x7ff711899608]\n\tchromedriver!(No symbol) [0x7ff71189a4f3]\n\tchromedriver!GetHandleVerifier [0x7ff711dfb779+312f99]\n\tchromedriver!GetHandleVerifier [0x7ff711df5c8b+30d4ab]\n\tchromedriver!GetHandleVerifier [0x7ff711e19012+330832]\n\tchromedriver!GetHandleVerifier [0x7ff711b1a485+31ca5]\n\tchromedriver!GetHandleVerifier [0x7ff711b22e7c+3a69c]\n\tchromedriver!GetHandleVerifier [0x7ff711b06a74+1e294]\n\tchromedriver!GetHandleVerifier [0x7ff711b06c04+1e424]\n\tchromedriver!GetHandleVerifier [0x7ff711aeb327+2b47]\n\tKERNEL32!BaseThreadInitThunk [0x7ffc36847ac4+14]\n\tntdll!RtlUserThreadStart [0x7ffc391ca8c1+21]\n",
+		"playerMounted": true,
+		"clicked": false,
+		"finalReadyState": 0,
+		"finalPaused": true,
+		"finalErrorCode": null,
+		"blockedButtonPresent": false,
+		"outPath": "tests/device-farm/captures/20260527T221751Z/awsug.clouddelnorte.org/kexp.json"
+	}
+]
