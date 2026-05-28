@@ -200,18 +200,32 @@ PR #398 (`fix/awsug-rerender-race` → `main`): OPEN, awaiting auditor review. I
 
 **No source-component change shipped in this iteration.**
 
-## Iteration 3 — Production subdomain classification (LOCKED hypothesis)
+## Iteration 3 — Production subdomain classification (LOCKED hypothesis — SUPERSEDED, see Corrected Hypothesis)
 
-**Hypothesis:** `awsug.clouddelnorte.org` is misclassified at runtime as an auth subdomain. The `cdn-auth-subdomain` body class is applied (likely via a hostname check in the auth context provider or shell layout), which triggers `display: none` on `.cdn-player-slot` via the auth-subdomain CSS rule. The player mounts visible briefly, then is hidden once the classification resolves. Selenium clicks land on a hidden element and time out.
+> **Original LOCKED hypothesis (struck through; preserved for retrospective integrity):**
+>
+> ~~`awsug.clouddelnorte.org` is misclassified at runtime as an auth subdomain. The `cdn-auth-subdomain` body class is applied (likely via a hostname check in the auth context provider or shell layout), which triggers `display: none` on `.cdn-player-slot` via the auth-subdomain CSS rule. The player mounts visible briefly, then is hidden once the classification resolves. Selenium clicks land on a hidden element and time out.~~
+>
+> ~~**Evidence:**~~
+>
+> - ~~`preClickAudio.bodyClasses == ["cdn-nav-open", "cdn-auth-subdomain"]` on `awsug.clouddelnorte.org`.~~
+> - ~~`preClickAudio.playerMounted == true` (player mounts visible).~~
+> - ~~`postClickAudio.audioPresent == false, playerMounted == false` (player vanished by post-click capture).~~
+> - ~~`fatal: TimeoutException: play button not clickable`.~~
+> - ~~`finalReadyState: 0`.~~
+> - ~~Preview at `dev.clouddelnorte.org/awsug-preview/` does NOT reproduce because hostname-keyed auth detection never fires on a path-based subroute.~~
+>
+> **Why struck:** Sub-task 3.2 code-mapper sweep (read-only filesystem + live-bundle inspection) disproved the hostname-keyed-classifier premise. There is no hostname classifier for `cdn-auth-subdomain` anywhere in the codebase. The class is applied unconditionally by `AuthLayout`'s `useEffect` at `src/sites/auth/_layout/index.tsx:88`, which is reached on `awsug.*` only because awsug's `requireAuth()` (`src/sites/awsug/_shared/auth.ts:234`) redirects unauthenticated visitors to `auth.clouddelnorte.org/login/`. The harness's body-class observation is on the auth page after redirect, not on awsug. The capture's `subdomain` field reflects the harness *input*, not the post-redirect URL — a silent corruption that hid the redirect from iteration 2 analysis.
+>
+> **Disproof:** `.kiro/specs/music-player-playback/iter3-3.2-codemap.md`.
 
-**Evidence backing this hypothesis** (capture `tests/device-farm/captures/20260527T193124Z/` from iteration 2 prod parity check, preserved as untracked artifact on operator filesystem):
+### Corrected hypothesis (post sub-task 3.2)
 
-- `preClickAudio.bodyClasses == ["cdn-nav-open", "cdn-auth-subdomain"]` on `awsug.clouddelnorte.org`.
-- `preClickAudio.playerMounted == true` (player mounts visible).
-- `postClickAudio.audioPresent == false, playerMounted == false` (player vanished by post-click capture).
-- `fatal: TimeoutException: play button not clickable` (Selenium's wait failed `is_displayed() && is_enabled()`).
-- `finalReadyState: 0` (audio never loaded; click never fired).
-- Preview at `dev.clouddelnorte.org/awsug-preview/` does NOT reproduce because hostname-keyed auth detection never fires on a path-based subroute.
+`AwsugLayout` (`src/sites/awsug/_layout/index.tsx:108`) renders `<Shell hidePlayer ...>`, which suppresses the persistent player on `awsug.clouddelnorte.org` for **every** visitor — including authenticated ones. Bryan confirmed product intent: the music player should play on `awsug.clouddelnorte.org` for authenticated users. The `hidePlayer` prop is the regression. Removing it from `AwsugLayout` restores the player on awsug for authenticated users.
+
+The original Device Farm parity defect (`#399`) was real but inverted: the parity gap was not "preview wrong, prod right" or "prod wrong, preview right" symmetrically — it was that `hidePlayer` was suppressing the player on awsug while preview happened to be path-based and rendered without that suppression chain. The fix converges preview and prod on the player being visible and functional for logged-in users.
+
+**Authenticated prod parity verification on `awsug.clouddelnorte.org`** is gated on harness authentication. Sub-task 3.6 investigates trivial-vs-non-trivial implementation lift before deciding whether to ship parity verification this iteration or defer it to a follow-up.
 
 ### 3.1 Re-confirm hypothesis with a fresh prod capture (no fix on main yet)
 
@@ -241,53 +255,112 @@ Dispatched to: cdn-PO direct (no ghost — read-only Device Farm runs).
 
 The hostname-keyed auth-classification logic correctly excludes the path-based dev preview but incorrectly includes `awsug.*`. Proceeding to sub-task 3.2 code-mapper sweep.
 
-### 3.2 Code-mapper sweep — read-only
+### 3.2 Code-mapper sweep — read-only (DONE)
 
-Identify every file that adds or removes `cdn-auth-subdomain` to/from `document.body`. Targets:
+Identify every file that adds or removes `cdn-auth-subdomain` to/from `document.body`. Targets included:
 
 - `src/contexts/`
 - `src/layouts/shell/`
 - `src/sites/auth/`
-- Any hostname-detection utility (likely `src/lib/` or `src/utils/`).
+- Any hostname-detection utility.
 
-Report: file path, line number, exact code, conditional logic that drives the class application.
+Sub-task 3.2 was attempted twice via `ghost-stratia-code-mapper` (both runs failed: tool-selection loop on `introspect`, then cancelled). cdn-PO completed the read-only sweep directly. Result is the codemap doc at `.kiro/specs/music-player-playback/iter3-3.2-codemap.md`.
 
-Dispatched to: ghost-stratia-code-mapper.
+**Findings (summary; full table in the codemap):**
 
-### 3.3 Fix the classification
+- Six files reference `cdn-auth-subdomain`. Single WRITE site is `src/sites/auth/_layout/index.tsx:88`, an unconditional `useEffect` on `AuthLayout` mount. No hostname classifier exists.
+- `AuthLayout` is imported only by files under `src/sites/auth/`. No `src/sites/awsug/` file imports it.
+- Across all 14 chunks preloaded by `awsug.clouddelnorte.org/index.html`, only one chunk (`_layout-Cz7GLcax.js`) contains the string `cdn-auth-subdomain`, and only as a `classList.contains(...)` READ from persistent-player. Zero WRITE occurrences in any deployed awsug chunk.
+- Awsug's `requireAuth()` at `src/sites/awsug/_shared/auth.ts:234` redirects unauthenticated visitors to `https://auth.clouddelnorte.org/login/index.html?return_to=...`. The harness has no Cognito tokens, so it is redirected. The harness's `bodyClasses` observation occurs on the auth page after redirect.
+- Independent intent confirmation: `AwsugLayout` (`src/sites/awsug/_layout/index.tsx:108`) renders `<Shell hidePlayer ...>`, which suppresses the persistent player on awsug for every visitor. Bryan confirmed this is a regression — the player should play on awsug for authenticated users.
 
-`awsug.*` should NOT receive `cdn-auth-subdomain`. Likely a one-line check that needs to whitelist `awsug.*` alongside `clouddelnorte.org` (or, equivalently, narrow the auth-detection match to `auth.*` only).
+### 3.3 Fix — restore the player on awsug
 
-Dispatched to: ghost-tarn-cdn-react-coder.
+Remove the `hidePlayer` prop from the `<Shell hidePlayer ...>` render at `src/sites/awsug/_layout/index.tsx:108`. Single-prop deletion. No other change in this fix.
+
+**Branch:** `fix/awsug-restore-player` (any `fix/*` name works; required for the `deploy.yml` branch whitelist that triggers the dev pipeline).
+
+**Verification (local, ghost-side):** if a vitest test exists for `src/sites/awsug/_layout/`, run it; it must still pass. Otherwise the gate is the preview verify at sub-task 3.4.
+
+**Out-of-scope for this fix:** any AuthContext idempotent-setState change from `bbc95540`; any frozen-path edit; any CSP widening. `AwsugLayout` itself is permitted (not in the frozen list).
+
+Dispatched to: `ghost-tarn-cdn-react-coder`.
 
 ### 3.4 Verify on preview
 
-Run the Device Farm harness against `dev.clouddelnorte.org/awsug-preview/` using the `--base-url` flag (restored to main in #400):
+Pushing `fix/awsug-restore-player` triggers the dev pipeline. After dev deploy completes, run the harness against `https://dev.clouddelnorte.org/awsug-preview/` with the kexp station, single capture:
 
 ```
-AWS_PROFILE=bryanchasko-kiro python3 tests/device-farm/music-player-diagnostic.py   --stations kexp --base-url https://dev.clouddelnorte.org/awsug-preview/
+AWS_PROFILE=bryanchasko-kiro python3 tests/device-farm/music-player-diagnostic.py \
+  --stations kexp --base-url https://dev.clouddelnorte.org/awsug-preview/
 ```
 
-DoD per `bugfix.md`: `readyState >= 2`, `paused == false` within 5s, no `StaleElementReferenceException`, no new SEVERE console messages.
+**Definition of done** (same gates as iteration 1 preview verify):
 
-### 3.5 Open PR — standard chain
+- `property2Pass == true`
+- `finalReadyState >= 2`
+- `finalPaused == false`
+- No `StaleElementReferenceException`
+- Zero new SEVERE console messages relative to iteration 1d's preview baseline
 
-Auditor (ghost-stratia-haunting-auditor) → orin (ghost-orin-ci-cd) merge → deploy.sh from haunting source.
+Dispatched to: cdn-PO direct.
 
-### 3.6 Production parity check
+### 3.5 Open PR — standard merge chain
 
-Run the harness against `awsug.clouddelnorte.org` (no `--base-url`, default subdomain list filtered to awsug):
+Open PR from `fix/awsug-restore-player` to `main`.
 
-```
-AWS_PROFILE=bryanchasko-kiro python3 tests/device-farm/music-player-diagnostic.py   --stations kexp --subdomains https://awsug.clouddelnorte.org
-```
+- **Auditor:** `ghost-stratia-haunting-auditor` reviews against the corrected spec triple (this `tasks.md`, `bugfix.md`, `iter3-3.2-codemap.md`).
+- **On APPROVE:** `ghost-orin-ci-cd` squash-merges to `main`, deletes the branch, then runs `deploy.sh` from haunting source.
 
-If prod parity passes: iteration 3 closes successfully.
-If prod parity fails: stop, classify, surface to cdn-anchor. Do not march forward.
+The `spec/music-player-playback` branch stays open through 3.7 (retrospective lands on the spec branch, not on `main`).
+
+### 3.6 Production parity check (investigation first, then branch)
+
+Authenticated prod parity verification on `https://awsug.clouddelnorte.org` requires the harness to pass `requireAuth()`. Investigation pass first, read-only, by cdn-PO directly:
+
+**(a) Identify auth state.** Read `src/sites/awsug/_shared/auth.ts` and `src/contexts/auth-context.tsx`. Document which `sessionStorage` and `localStorage` keys `requireAuth()` and `AuthContext` check (the iter3-3.2-codemap.md sweep already shows the awsug `_shared/auth.ts` keys: `cdn.idToken`, `cdn.accessToken`, `cdn.refreshToken`, `cdn.expiresAt`, `cdn.loginState` — verify against `auth-context.tsx`).
+
+**(b) Determine the dev-preview bypass.** Why does `dev.clouddelnorte.org/awsug-preview/` not enforce `requireAuth()` in sub-task 3.1? Possible mechanisms: path-based subroute serves a different bundle that lacks `requireAuth()`; dev-only flag short-circuits the check; cached token from a prior session persists in storage; redirect target on dev points somewhere that does not mount `AuthLayout`. Document the actual mechanism in 3.6 notes appended to this section.
+
+**(c) Estimate harness-auth lift.**
+
+- **Trivial:** inject a pre-issued session token into `sessionStorage` (and any `localStorage` keys identified in (a)) before the harness drives Selenium to the URL.
+- **Non-trivial:** full Cognito Secure Remote Password (SRP) flow, browser-based login automation, app-client-secret rotation, or anything that requires the harness to perform the OIDC code exchange.
+
+**Branch:**
+
+- **If trivial:** dispatch `ghost-hcom-python-coder` to add an authenticated-session path to `tests/device-farm/music-player-diagnostic.py` as a new flag (e.g. `--session-token` or `--session-token-file`). Run prod parity:
+
+  ```
+  AWS_PROFILE=bryanchasko-kiro python3 tests/device-farm/music-player-diagnostic.py \
+    --stations kexp --subdomains https://awsug.clouddelnorte.org \
+    --session-token-file <path>
+  ```
+
+  Same definition of done as the preview verify (3.4 gates).
+
+- **If non-trivial:** defer authenticated prod parity to a follow-up. File a tracking issue on `chasko-labs/cloud-del-norte-website` titled `harness: device-farm music-player-diagnostic.py needs authenticated-session support for awsug.* prod parity` with a one-paragraph gap statement and the `iter3-3.2-codemap.md` reference. Document the deferral in 3.7. The fix still ships; prod parity becomes a known gap with an explicit follow-up issue.
+
+If 3.6 surfaces a finding outside this directive (e.g., dev preview's bypass mechanism is a security gap, not just a divergence), stop and surface to cdn-anchor.
 
 ### 3.7 Iteration 3 retrospective + close #399
 
-Append retrospective entry to this file under `## Iteration 3 Retrospective`. Close `chasko-labs/cloud-del-norte-website#399` with the iter-3 fix commit referenced.
+Append a retrospective entry to this file under `## Iteration 3 Retrospective` capturing:
+
+- Corrected diagnosis (`hidePlayer` regression; not hostname misclassification).
+- Reference to `iter3-3.2-codemap.md` as the disproof of the original LOCKED hypothesis.
+- Fix-path summary (single-prop deletion in `AwsugLayout`).
+- Prod-parity outcome — verified with authenticated harness (3.6 trivial path), or deferred with the follow-up issue number from 3.6 non-trivial path.
+- The two independent follow-up issues filed in 3.7.b.
+
+Close `chasko-labs/cloud-del-norte-website#399` with the **inverted-parity reframe**: the parity gap was real but inverted. The bug was not "preview wrong, prod right" or "prod wrong, preview right" symmetrically — it was that `hidePlayer` was suppressing the player on awsug while preview happened to be path-based and rendered without that suppression chain. The fix converges preview and prod on the player being visible and functional for logged-in users. Cross-reference `iter3-3.2-codemap.md` from the close comment.
+
+### 3.7.b Independent follow-up issues — file regardless of 3.6 outcome
+
+Filed on `chasko-labs/cloud-del-norte-website` by `ghost-orin-ci-cd` as a single dispatch:
+
+- **(i)** `harness: device-farm capture subdomain field reflects input URL, not post-redirect final URL`. Cite this iteration's misdiagnosis as the cost of the silent corruption — the iter-2 prod capture's `subdomain == "awsug.clouddelnorte.org"` masked the redirect to `auth.clouddelnorte.org/login/`, leading to a hostname-classifier hypothesis that did not match reality. Reference `iter3-3.2-codemap.md`. Suggested fix: capture `driver.current_url` after page load and after click, store as `preClickUrl` and `postClickUrl` in the JSON.
+- **(ii)** `auth: dev awsug-preview path-based subroute bypasses requireAuth — divergence from prod`. Either harden dev to enforce `requireAuth()` on `awsug-preview/` paths, or document the divergence as intentional in a steering note. Cite the codemap finding and the prod-vs-preview capture comparison from sub-task 3.1.
 
 ### Out of scope for Iteration 3
 
@@ -300,10 +373,11 @@ Whether the AuthContext fix should re-land at all depends on what Iteration 3 fi
 
 ### Constraints (carried forward)
 
-- Code authorship is ghost-only (PreToolHook blocks PO writes).
+- Code authorship is ghost-only (PreToolHook blocks PO writes; spec doc authorship by cdn-PO is permitted by directive when explicitly authorized).
 - Frozen paths (must not be modified): `src/components/persistent-player/**`, `src/lib/streams*.ts`, `infra/cloudfront-security-headers.*.json`, Fiona/BabylonJS/WebGL/footer/weather components, `streams-reachability.ts`.
-- Iteration 3 IS permitted to touch `src/contexts/`, `src/layouts/shell/`, `src/sites/auth/`, and hostname-detection utilities (frozen list does not cover these).
+- Iteration 3 IS permitted to touch `src/sites/awsug/_layout/` (for the `hidePlayer` deletion), `src/contexts/`, `src/layouts/shell/`, `src/sites/auth/` (read-only this iteration), and hostname-detection utilities (frozen list does not cover these).
 - No CSP widening.
 - `auth.clouddelnorte.org` remains out of scope (intentionally hidden via display:none, as designed).
+- The AuthContext idempotent-setState change from `bbc95540` is OUT of scope for iteration 3.
 - `--base-url` flag is on main from PR #400; no harness restoration needed during iter-3.
 - Spec-discipline addendum filed at `BryanChasko/haunting-kiro-cli#1158`; iter-3 references both that issue and `chasko-labs/cloud-del-norte-website#399`.
