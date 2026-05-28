@@ -23,10 +23,14 @@ Exit: always 0. Failures are captured into per-station records, not raised.
 """
 from __future__ import annotations
 
+import base64
 import json
 import os
 import sys
 import time
+import urllib.request
+import urllib.parse
+import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -140,6 +144,80 @@ MEDIA_URL_PATTERNS = (
 )
 
 LOCALSTORAGE_KEY = "cdn:player:v1"
+
+# ── Cognito auth constants ───────────────────────────────────────────────────
+
+COGNITO_TOKEN_URL = "https://cloud-del-norte.auth.us-west-2.amazoncognito.com/oauth2/token"
+COGNITO_CLIENT_ID = "57eikmt418ea6vti2f6h0pl74r"
+
+
+def exchange_refresh_token(refresh_token: str) -> dict[str, Any]:
+    """Exchange a Cognito refresh token for id_token + access_token.
+
+    Returns dict with keys: id_token, access_token, refresh_token, expires_at_ms.
+    Exits non-zero on any failure (4xx, network error, malformed response).
+    """
+    body = urllib.parse.urlencode({
+        "grant_type": "refresh_token",
+        "client_id": COGNITO_CLIENT_ID,
+        "refresh_token": refresh_token,
+    }).encode()
+    req = urllib.request.Request(
+        COGNITO_TOKEN_URL,
+        data=body,
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read())
+    except urllib.error.HTTPError as e:
+        err_body = e.read().decode(errors="replace")
+        print(
+            f"FATAL: Cognito token refresh failed (HTTP {e.code}): {err_body}\n"
+            f"Token expired or client misconfigured. Exiting.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    except Exception as e:
+        print(f"FATAL: Cognito token refresh request failed: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    id_token = data.get("id_token")
+    access_token = data.get("access_token")
+    if not id_token or not access_token:
+        print("FATAL: Cognito response missing id_token or access_token.", file=sys.stderr)
+        sys.exit(1)
+
+    # Decode JWT payload to read exp claim
+    parts = id_token.split(".")
+    if len(parts) < 2:
+        print("FATAL: id_token is not a valid JWT.", file=sys.stderr)
+        sys.exit(1)
+    payload_b64 = parts[1].replace("-", "+").replace("_", "/")
+    pad = len(payload_b64) % 4
+    if pad:
+        payload_b64 += "=" * (4 - pad)
+    claims = json.loads(base64.b64decode(payload_b64))
+    exp = claims.get("exp")
+    if not exp:
+        print("FATAL: id_token JWT missing exp claim.", file=sys.stderr)
+        sys.exit(1)
+    expires_at_ms = int(exp) * 1000
+    now_ms = int(time.time() * 1000)
+    if expires_at_ms <= now_ms:
+        print(
+            f"FATAL: id_token already expired (exp={exp}, now={now_ms // 1000}).",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+
+    return {
+        "id_token": id_token,
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "expires_at_ms": expires_at_ms,
+    }
 
 # JS to read audio element state from section.cdn-pp
 AUDIO_STATE_JS = """
@@ -263,6 +341,7 @@ def capture_station(
     driver: webdriver.Remote,
     subdomain: str,
     station: dict[str, Any],
+    auth_tokens: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Run the full diagnostic for one station on one subdomain. Returns record."""
     record: dict[str, Any] = {
@@ -270,10 +349,28 @@ def capture_station(
         "stationKey": station["key"],
         "stationType": station.get("type", "radio"),
         "stationUrl": station["url"],
+        "authMode": "refresh-token" if auth_tokens else "unauthenticated",
+        "tokenExpiresAtMs": auth_tokens["expires_at_ms"] if auth_tokens else None,
         "fatal": None,
     }
 
     try:
+        # If authenticated, inject sessionStorage on same origin before real load
+        if auth_tokens:
+            driver.get(subdomain + "/favicon.ico")
+            driver.execute_script(
+                """
+                sessionStorage.setItem('cdn.idToken', arguments[0]);
+                sessionStorage.setItem('cdn.accessToken', arguments[1]);
+                sessionStorage.setItem('cdn.refreshToken', arguments[2]);
+                sessionStorage.setItem('cdn.expiresAt', arguments[3]);
+                """,
+                auth_tokens["id_token"],
+                auth_tokens["access_token"],
+                auth_tokens["refresh_token"],
+                str(auth_tokens["expires_at_ms"]),
+            )
+
         # Navigate and seed localStorage
         driver.get(subdomain)
         seed_localstorage(driver, station)
@@ -364,10 +461,33 @@ def main() -> None:
     parser.add_argument("--base-url", type=str, default=None,
                         help="Single base URL to test against (e.g. branch preview). "
                              "Replaces SUBDOMAINS list. Mutually exclusive with --subdomains.")
+    parser.add_argument("--refresh-token-file", type=str, default=None,
+                        help="Path to a file containing a Cognito refresh token (one line). "
+                             "Enables authenticated session injection so the harness can pass "
+                             "requireAuth() on awsug.clouddelnorte.org. The file should have "
+                             "mode 0600 and must never be committed to the repo. "
+                             "Tokens are never logged to captures or stdout.")
+    # Security model: --refresh-token-file is treated as a secret path. The refresh
+    # token is exchanged for short-lived id/access tokens via Cognito's /oauth2/token
+    # endpoint (public client, no client secret). Tokens are injected into
+    # sessionStorage but never written to capture JSON or stdout.
     args = parser.parse_args()
 
     if args.base_url and args.subdomains:
         parser.error("--base-url and --subdomains are mutually exclusive")
+
+    # ── Auth token exchange (before any Selenium activity) ────────────────────
+    auth_tokens: dict[str, Any] | None = None
+    if args.refresh_token_file:
+        token_path = Path(args.refresh_token_file)
+        if not token_path.is_file():
+            print(f"FATAL: --refresh-token-file not found: {token_path}", file=sys.stderr)
+            sys.exit(1)
+        refresh_token = token_path.read_text().strip()
+        if not refresh_token:
+            print("FATAL: --refresh-token-file is empty.", file=sys.stderr)
+            sys.exit(1)
+        auth_tokens = exchange_refresh_token(refresh_token)
 
     global CURATED_STATIONS, SUBDOMAINS
     if args.stations:
@@ -421,6 +541,8 @@ def main() -> None:
                     "property2Pass": False,
                     "playerMounted": False,
                     "clicked": False,
+                    "authMode": "refresh-token" if auth_tokens else "unauthenticated",
+                    "tokenExpiresAtMs": auth_tokens["expires_at_ms"] if auth_tokens else None,
                 }
                 out_path = subdomain_dir / f"{station['key']}.json"
                 out_path.write_text(json.dumps(err_record, indent=2))
@@ -441,7 +563,7 @@ def main() -> None:
 
         try:
             for station in CURATED_STATIONS:
-                record = capture_station(driver, subdomain, station)
+                record = capture_station(driver, subdomain, station, auth_tokens)
                 out_path = subdomain_dir / f"{station['key']}.json"
                 record["outPath"] = str(out_path.relative_to(repo_root))
                 out_path.write_text(json.dumps(record, indent=2))

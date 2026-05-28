@@ -68,6 +68,10 @@ pytest tests/device-farm/ -v --junitxml=results.xml
 
 The Woodpecker CI pipeline (`.woodpecker/device-farm.yml`) assumes the OIDC role, fetches all test credentials from SSM Parameter Store, then runs pytest against the Device Farm Selenium Grid.
 
+## Music Player Diagnostic — Authenticated Session (`--refresh-token-file`)
+
+The `music-player-diagnostic.py` harness supports an optional `--refresh-token-file <path>` flag for testing auth-gated subdomains (e.g. `awsug.clouddelnorte.org`). When provided, the harness exchanges the Cognito refresh token for short-lived id/access tokens and injects them into `sessionStorage` before each navigation, allowing the harness to pass `requireAuth()` without a browser-based login flow. The refresh token file should have mode `0600` and must never be committed to the repository. Tokens are never written to capture files or stdout.
+
 ## Adding Test Users to Cognito
 
 ```bash
