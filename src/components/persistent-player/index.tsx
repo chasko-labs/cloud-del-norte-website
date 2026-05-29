@@ -1367,11 +1367,5 @@ function PersistentPlayerInner() {
 }
 
 export default function PersistentPlayer() {
-	if (
-		typeof document !== "undefined" &&
-		document.body.classList.contains("cdn-auth-subdomain")
-	) {
-		return null;
-	}
 	return <PersistentPlayerInner />;
 }

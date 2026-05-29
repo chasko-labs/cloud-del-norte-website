@@ -937,11 +937,6 @@ body.cdn-stream-playing .cdn-pp__waveform {
 	}
 }
 
-/* Hide player on auth subdomain — no audio distraction during sign-up */
-.cdn-auth-subdomain .cdn-player-slot {
-	display: none;
-}
-
 /* ==========================================================================
    Audio-reactive sigil (l rethink — liora design)
 
