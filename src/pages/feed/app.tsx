@@ -38,8 +38,10 @@ import {
 	FeedReadysetcloud,
 } from "./components/feed-section";
 import NextMeetup from "./components/next-meetup";
+import TimeOfDayBar from "./components/time-of-day-bar";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
 import UpcomingVirtualEvent from "./components/upcoming-virtual-event";
+import WeatherCard from "./components/weather-card";
 import YoutubeCarousel from "./components/youtube-carousel";
 import YouTubeChannelCarousel from "./components/youtube-channel-carousel";
 import YouTubeShortsCarousel from "./components/youtube-shorts-carousel";
@@ -282,6 +284,7 @@ function AppContent({
 		<ContentLayout
 			header={<Header variant="h1">{t("feedPage.header")}</Header>}
 		>
+			<TimeOfDayBar />
 			{/* Stable hero slot — wrapper renders always so cards appearing /
 			    disappearing don't unmount a parent and reflow content below.
 			    Pair with sticky-poll on data sources gating `liveToShow` so
@@ -304,6 +307,9 @@ function AppContent({
 			</div>
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<FeaturedEvent />
+			</div>
+			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
+				<WeatherCard />
 			</div>
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<NextMeetup />

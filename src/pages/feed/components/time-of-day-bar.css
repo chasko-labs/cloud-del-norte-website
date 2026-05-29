@@ -1,0 +1,52 @@
+/* TimeOfDayBar — position-primary sundial. */
+.cdn-tod-bar {
+	width: 100%;
+	margin-bottom: var(--cdn-space-md, 16px);
+}
+
+.cdn-tod-bar__track {
+	position: relative;
+	height: 6px;
+	border-radius: 3px;
+	background: linear-gradient(
+		90deg,
+		#1a1a3a 0%,
+		#3a2a5a 12%,
+		#d4a060 25%,
+		#f0d080 40%,
+		#e8e0d0 50%,
+		#b0c8e0 60%,
+		#d4a060 75%,
+		#3a2a5a 88%,
+		#1a1a3a 100%
+	);
+}
+
+.awsui-dark-mode .cdn-tod-bar__track {
+	background: linear-gradient(
+		90deg,
+		#0a0a14 0%,
+		#1a1028 12%,
+		#6b4a20 25%,
+		#8a6830 40%,
+		#5a5040 50%,
+		#3a4858 60%,
+		#6b4a20 75%,
+		#1a1028 88%,
+		#0a0a14 100%
+	);
+}
+
+.cdn-tod-bar__glyph {
+	position: absolute;
+	top: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 18px;
+	line-height: 1;
+	filter: drop-shadow(0 0 3px rgba(255, 200, 60, 0.6));
+	transition: left 60s linear;
+}
+
+.awsui-dark-mode .cdn-tod-bar__glyph {
+	filter: drop-shadow(0 0 3px rgba(180, 180, 220, 0.5));
+}

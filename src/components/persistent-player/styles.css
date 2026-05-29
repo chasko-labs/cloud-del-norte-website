@@ -848,6 +848,8 @@ body.cdn-podcast-playing .cdn-pp__btn--resume {
 	.cdn-player-slot {
 		margin-bottom: 8px;
 		min-height: 44px;
+		overflow: hidden;
+		z-index: 100;
 	}
 	.cdn-pp {
 		gap: 8px;

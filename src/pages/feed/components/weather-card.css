@@ -1,0 +1,16 @@
+/* Feed-page weather card — glass surface, desaturated accent */
+.cdn-feed-weather-card {
+	padding: var(--cdn-space-md, 16px);
+	border-radius: var(--cdn-radius-md, 8px);
+	background: rgba(250, 247, 240, 0.45);
+	backdrop-filter: blur(20px) saturate(1.2);
+	-webkit-backdrop-filter: blur(20px) saturate(1.2);
+	border: 1px solid rgba(139, 90, 43, 0.12);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.awsui-dark-mode .cdn-feed-weather-card {
+	background: rgba(14, 14, 28, 0.5);
+	border-color: rgba(180, 170, 200, 0.12);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}

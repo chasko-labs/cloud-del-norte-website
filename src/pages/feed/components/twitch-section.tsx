@@ -149,8 +149,8 @@ function TwitchChannelCard({
 	onOfflineChange?: (isOffline: boolean) => void;
 }) {
 	const hostname = useHostname();
-	// upfront probe — null = unknown/transient (mount embed, rely on SDK event),
-	// true = live (mount), false = offline (skip mount entirely, signal up).
+	// upfront probe — null = pending (show skeleton), true = live (mount),
+	// false = offline (skip mount entirely, signal up).
 	const [probeLive, setProbeLive] = useState<boolean | null>(null);
 
 	useEffect(() => {
@@ -158,9 +158,11 @@ function TwitchChannelCard({
 		probeTwitchLive(channel.id).then((result) => {
 			if (cancelled) return;
 			if (result === null) {
-				// transient failure — leave probeLive null so embed mounts and
-				// SDK OFFLINE/ONLINE events take over
-				setProbeLive(null);
+				// transient failure — treat as offline to avoid mounting the
+				// embed SDK which generates ~50 console errors in headless/
+				// blocked environments when assets fail to load.
+				setProbeLive(false);
+				onOfflineChange?.(true);
 				return;
 			}
 			setProbeLive(result.live);
@@ -172,10 +174,9 @@ function TwitchChannelCard({
 		};
 	}, [channel.id, onLiveChange, onOfflineChange]);
 
-	// confirmed offline by upfront probe → render nothing (parent hides cell)
+	// probe not yet resolved OR confirmed offline → don't mount the embed
 	if (probeLive === false) return null;
-
-	if (!hostname) {
+	if (probeLive === null || !hostname) {
 		// SSR / pre-hydration — show skeleton until hostname resolves. The
 		// skeleton is intentionally rendered inside a bare Cloudscape Container
 		// (NOT FeedCardShell) so the loading state doesn't paint a marquee
