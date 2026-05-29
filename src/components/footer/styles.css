@@ -28,7 +28,7 @@
 	z-index: 200;
 	padding: var(--cdn-space-s, 8px) var(--cdn-space-lg, 24px);
 	/* Glass treatment matching top-nav universal-toolbar */
-	background-color: rgba(237, 229, 212, 0.88);
+	background-color: rgba(237, 229, 212, 0.72);
 	-webkit-backdrop-filter: blur(12px) saturate(1.2);
 	backdrop-filter: blur(12px) saturate(1.2);
 	/* 1px top border — brand-amber light mode */
@@ -37,8 +37,9 @@
 	transition:
 		left 0.3s ease,
 		right 0.3s ease;
-	/* Wave 72: promote to dedicated GPU layer — avoids re-rasterizing
-	   backdrop-filter on every scroll frame */
+	/* Wave cycle-2: isolation ensures backdrop-filter computes against
+	   content behind, not composited within the footer's own layer */
+	isolation: isolate;
 	will-change: transform;
 	transform: translateZ(0);
 }
@@ -100,7 +101,7 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer {
 
 /* Dark mode glass treatment — navy + 1px muted violet top border */
 .awsui-dark-mode .cdn-footer {
-	background-color: rgba(14, 18, 28, 0.88);
+	background-color: rgba(14, 18, 28, 0.75);
 	border-top-color: rgba(160, 140, 200, 0.6);
 }
 

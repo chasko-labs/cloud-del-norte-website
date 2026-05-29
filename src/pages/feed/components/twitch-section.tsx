@@ -158,9 +158,11 @@ function TwitchChannelCard({
 		probeTwitchLive(channel.id).then((result) => {
 			if (cancelled) return;
 			if (result === null) {
-				// transient failure — leave probeLive null so embed mounts and
-				// SDK OFFLINE/ONLINE events take over
-				setProbeLive(null);
+				// transient failure — treat as offline to avoid mounting the
+				// embed SDK which generates ~50 console errors in headless/
+				// blocked environments when assets fail to load.
+				setProbeLive(false);
+				onOfflineChange?.(true);
 				return;
 			}
 			setProbeLive(result.live);

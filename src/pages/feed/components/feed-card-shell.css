@@ -98,9 +98,9 @@
 	contain: layout paint style;
 	transform: translate3d(0, 0, 0);
 	/* Glassmorphism — card is a glass pane over the 3D scene */
-	backdrop-filter: blur(20px) saturate(1.1);
-	-webkit-backdrop-filter: blur(20px) saturate(1.1);
-	background: rgba(250, 247, 240, 0.48);
+	backdrop-filter: blur(14px) saturate(1.1);
+	-webkit-backdrop-filter: blur(14px) saturate(1.1);
+	background: rgba(250, 247, 240, 0.28);
 	box-shadow:
 		0 1px 2px var(--fcs-shadow),
 		0 4px 8px -2px var(--fcs-shadow),
@@ -181,7 +181,8 @@
 	color: var(--fcs-text);
 	text-shadow:
 		0 0 6px var(--fcs-text-glow),
-		0 1px 0 rgba(255, 255, 255, 0.35);
+		0 1px 0 rgba(255, 255, 255, 0.35),
+		0 0 2px rgba(255, 255, 255, 0.6);
 	line-height: 1.2;
 	text-align: center;
 }
