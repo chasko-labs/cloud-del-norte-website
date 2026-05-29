@@ -1,0 +1,15 @@
+[
+	{
+		"subdomain": "awsug.clouddelnorte.org",
+		"station": "kexp",
+		"property2Pass": false,
+		"fatal": "TimeoutException: play button not clickable: Message: \n",
+		"playerMounted": true,
+		"clicked": false,
+		"finalReadyState": 0,
+		"finalPaused": true,
+		"finalErrorCode": null,
+		"blockedButtonPresent": false,
+		"outPath": "tests/device-farm/captures/20260529T145625Z/awsug.clouddelnorte.org/kexp.json"
+	}
+]
