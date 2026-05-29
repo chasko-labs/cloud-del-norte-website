@@ -470,3 +470,52 @@ Mid-iteration, the Roles Anywhere profile `kiro-device-farm` (cert under `~/.con
 - `chasko-labs/cloud-del-norte-website#402` — harness `--refresh-token-file` flag, squash-merged at `cab18639`.
 - `BryanChasko/haunting-kiro-cli#1158` — spec-discipline addendum.
 - `.kiro/specs/music-player-playback/iter3-3.2-codemap.md` — disproof of the original LOCKED hypothesis + corrected hostname-classifier audit.
+
+## Iteration 4 — Re-anchor on falsifying evidence
+
+### iter-4.0 — Anon prod parity FAIL (evidence base)
+
+Dispatch 4 (anon prod parity verify on awsug.clouddelnorte.org) ran 2026-05-29 against main at 84624600. Capture at `tests/device-farm/captures/20260529T124228Z/awsug.clouddelnorte.org/kexp.json`.
+
+DoD gate values: `property2Pass=false`, `finalReadyState=0`, `finalPaused=true`, no `StaleElementReferenceException` (`TimeoutException` on play-button-not-clickable instead), zero new SEVERE console messages.
+
+Body class evidence: `preClickAudio.bodyClasses` includes `cdn-auth-subdomain` on anon awsug. `preClickAudio.playerMounted=true`, `postClickAudio.playerMounted=false`. Player mounts then is hidden before click target becomes interactable.
+
+Curl evidence: `GET https://awsug.clouddelnorte.org/` returns CloudFront-served HTML loading `auth-DScz2Hjp.js` and `auth-CIf_acyA.css` bundles on the awsug subdomain.
+
+Mechanism surfaced (five separate hiding paths):
+
+1. `src/sites/auth/_layout/index.tsx:88` — useEffect adds `cdn-auth-subdomain` to `document.body`
+2. `src/sites/auth/_layout/styles.css:35` — CSS rule on body class
+3. `src/sites/auth/_layout/styles.css:1032` — CSS rule with `!important` on body class
+4. `src/components/persistent-player/index.tsx:1372` — render guard returns null when body has the class
+5. `src/components/persistent-player/styles.css:941` — component-scoped CSS keyed off body class
+
+PR #401 deleted `hidePlayer={true}` from AwsugLayout — a sixth, separate mechanism. Removal was correct but insufficient.
+
+### iter-4.0 — Conclusion on iter-3 retrospective
+
+iter-3 retrospective on PR #406 declared the LOCKED hypothesis disproved based on the iter-3.2 codemap fastback fallback's conclusion that "no hostname classifier exists." The codemap searched for a literal hostname comparison and missed the AuthLayout class-add side-effect (which reads no hostname). The retrospective is not retracted — it captured iter-3-close-time evidence honestly. iter-4 picks up from the new evidence.
+
+This is a concrete instance of the code-mapper reliability gap tracked in BryanChasko/haunting-kiro-cli#1197 (case appended at comment 4575369806).
+
+### iter-4.1 — Trace body.cdn-auth-subdomain mounting path on awsug
+
+Question: how does the auth bundle (and therefore AuthLayout's class-add side-effect) load on awsug.clouddelnorte.org? Three legs to investigate:
+
+- (a1) build conflation in `vite.config.awsug.ts` vs `vite.config.auth.ts`
+- (a2) AuthLayout imported/mounted somewhere in the awsug component tree
+- (a3) CloudFront origin/path-routing serves the auth bundle for awsug paths
+
+Method: manual code review by `ghost-tarn-cdn-react-coder` (owns awsug + auth scope). NOT a code-mapper fastback. Read `vite.config.awsug.ts`, `vite.config.auth.ts`, `src/sites/awsug/main.tsx`, `src/sites/awsug/_layout/index.tsx` and any direct/transitive imports reaching `auth/_layout`. Inspect deployed CloudFront distribution config if accessible.
+
+iter-4.1 deliverable: root cause classification (a1 / a2 / a3), with file:line evidence. Investigation only — no source edits. Findings update `tasks.md` as iter-4.1 close.
+
+### iter-4.2 — fix (deferred, scope set by iter-4.1 findings)
+
+Fix scope depends on iter-4.1 root cause:
+- if a1: fix vite config to exclude auth assets from awsug bundle
+- if a2: remove the import path that mounts AuthLayout under awsug
+- if a3: fix CloudFront routing
+
+Locked at iter-4.2 open after iter-4.1 lands.
