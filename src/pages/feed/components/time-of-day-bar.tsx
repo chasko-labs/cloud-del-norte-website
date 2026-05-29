@@ -1,18 +1,21 @@
 import { useEffect, useState } from "react";
+import { elPasoHour } from "../../../lib/time-of-day";
 import "./time-of-day-bar.css";
 
 /** Position-primary time-of-day indicator. Sun/moon glyph at horizontal
- *  coordinate = (localHour + localMinute/60) / 24. */
+ *  coordinate = (elPasoHour + minute/60) / 24. */
 export default function TimeOfDayBar() {
-	const [now, setNow] = useState(() => new Date());
+	const [hour, setHour] = useState(() => elPasoHour());
+	const [minute, setMinute] = useState(() => new Date().getUTCMinutes());
 
 	useEffect(() => {
-		const id = setInterval(() => setNow(new Date()), 60_000);
+		const id = setInterval(() => {
+			setHour(elPasoHour());
+			setMinute(new Date().getUTCMinutes());
+		}, 60_000);
 		return () => clearInterval(id);
 	}, []);
 
-	const hour = now.getHours();
-	const minute = now.getMinutes();
 	const pct = ((hour + minute / 60) / 24) * 100;
 	const isDaytime = hour >= 6 && hour < 18;
 
@@ -20,7 +23,7 @@ export default function TimeOfDayBar() {
 		<div
 			className="cdn-tod-bar"
 			role="img"
-			aria-label={`Time of day: ${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")} local`}
+			aria-label={`Time of day: ${hour.toString().padStart(2, "0")}:${minute.toString().padStart(2, "0")} El Paso`}
 		>
 			<div className="cdn-tod-bar__track">
 				<span
