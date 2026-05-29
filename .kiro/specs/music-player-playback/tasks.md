@@ -519,3 +519,46 @@ Fix scope depends on iter-4.1 root cause:
 - if a3: fix CloudFront routing
 
 Locked at iter-4.2 open after iter-4.1 lands.
+
+## Iteration 4.2.A Retrospective — Partial Pass
+
+PR #409 (fix/music-player-playback-iter4.2-defenses) merged at 55f8ced1. Two source files changed: 11 deletions across `src/components/persistent-player/index.tsx` (render guard) and `src/components/persistent-player/styles.css` (display:none rule).
+
+Verify capture at `tests/device-farm/captures/20260529T145625Z/awsug.clouddelnorte.org/kexp.json`. Deploy artifact verification: ZERO `cdn-auth-subdomain` matches in any served awsug bundle (curl + grep across all `assets/*.{js,css}` preloaded by `https://awsug.clouddelnorte.org/`). Defense removal fully propagated.
+
+Signal change vs iter-4.0:
+
+| Gate | iter-4.0 | iter-4.2.A |
+|-------------------------------|----------|------------|
+| preClickAudio.playerMounted | true | true |
+| postClickAudio.playerMounted | FALSE | TRUE |
+| bodyClasses (cdn-auth-subdomain) | present | present (cosmetic now) |
+| clicked | false | false |
+| finalReadyState | 0 | 0 |
+| finalPaused | true | true |
+| property2Pass | false | false |
+
+Conclusion: the component-level defenses iter-4.1 enumerated were causing the unmount-on-click symptom. Removing them resolved that symptom. The play-button-not-clickable / `finalReadyState=0` / `clicked=false` fail mode was present in iter-4.0 too — masked by the component disappearing before the click target check completed. iter-4.2.A unmasked the deeper issue.
+
+iter-4.2.B (build-config audit, the `cdn-auth-subdomain` leak source) is now cosmetic — no served bundle reads the class. Deferred to backlog as a hygiene item, not a player-fix blocker.
+
+## Iteration 4.3 — Diagnose play-button-not-clickable (LOCKED hypothesis ranking)
+
+Symptom: `.cdn-pp__btn--play` exists in DOM (`playerMounted=true` end-to-end), but Selenium `element_to_be_clickable` times out. `blockedButtonPresent=false` (harness's known overlay detector finds nothing). `finalReadyState=0` (audio src never loaded).
+
+Hypothesis ranking:
+
+- **(b1) Audio src never set on awsug** — `readyState=0` implies no `<audio>.src` assignment happened. If the player JS gates src-setting on a condition that's false on awsug (auth-context, station-context, hostname, feature flag), the audio never loads, and the button may be disabled-until-loaded. **HIGH prior** given the `readyState=0` signal in BOTH runs.
+- **(b2) Auth-* chunks loaded on awsug** (`auth-DScz2Hjp.js`, `auth-CIf_acyA.css` from iter-4.0 evidence) mount a modal or overlay on root path that covers the play button click coordinates without registering as `blockedButtonPresent`. **MEDIUM prior**. Test by checking `document.elementFromPoint(buttonRect.x, buttonRect.y)` at the failed click moment.
+- **(b3) `cdn-nav-open` class on body** opens a nav drawer overlapping the play button area. `preClickAudio.bodyClasses` contains `cdn-nav-open` in BOTH runs. **LOW-MEDIUM prior**. Test by checking what `cdn-nav-open` does to layout/z-index in CSS.
+- **(b4) Button has `pointer-events:none`, `display:none`, `visibility:hidden`, or 0x0 dimensions** via a CSS rule we haven't surfaced. **LOW-MEDIUM prior**. Test by reading computed style at click time.
+
+### iter-4.3.1 — Manual investigation
+
+Method: `ghost-tarn-cdn-react-coder` reads the persistent-player source for the `audio.src` assignment path, traces what gates it, and checks for any auth/station/hostname conditional. Also reads any `auth-*` chunk that loads on awsug (`auth-DScz2Hjp.js` source mapping if available, otherwise the source it bundles from). NOT a code-mapper fastback (per BryanChasko/haunting-kiro-cli#1197).
+
+iter-4.3.1 deliverable: ranked hypothesis verdict with `file:line` evidence + suggested iter-4.3.2 fix scope. Investigation only, no source edits.
+
+### iter-4.3.2 — Fix (deferred, scope set by iter-4.3.1)
+
+Locked at iter-4.3.2 open after iter-4.3.1 lands.
