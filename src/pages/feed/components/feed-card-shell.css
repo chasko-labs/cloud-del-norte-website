@@ -97,18 +97,20 @@
 	   whole feed page scrolls with the same stability. */
 	contain: layout paint style;
 	transform: translate3d(0, 0, 0);
-	/* Layered ambient bloom + 1px stage-rim inset — gives the card a
-	   visible "stage edge" line under varied page backgrounds without
-	   requiring the inner Cloudscape Container to opt in. The inset is
-	   palette-tinted via the --fcs-stage-rim variable so dark-mode
-	   variants get a brighter rim against deeper backplates.
-	   Wave 70b — 5-layer shadow stack for stronger light-mode depth. */
+	/* Glassmorphism — card is a glass pane over the 3D scene */
+	backdrop-filter: blur(20px) saturate(1.1);
+	-webkit-backdrop-filter: blur(20px) saturate(1.1);
+	background: rgba(250, 247, 240, 0.48);
 	box-shadow:
 		0 1px 2px var(--fcs-shadow),
 		0 4px 8px -2px var(--fcs-shadow),
-		0 8px 24px -10px var(--fcs-ambient-bloom),
-		0 18px 44px -16px var(--fcs-ambient-bloom),
 		inset 0 0 0 1px var(--fcs-stage-rim);
+	border: 1px solid rgba(139, 90, 43, 0.12);
+}
+
+.awsui-dark-mode .feed-card-shell {
+	background: rgba(14, 14, 28, 0.52);
+	border-color: rgba(180, 170, 200, 0.12);
 }
 
 /* Marquee header — replaces Cloudscape's <Header variant="h2"> chrome.
@@ -127,8 +129,8 @@
 	border-radius: 10px;
 	background: linear-gradient(
 		180deg,
-		var(--fcs-bg-from) 0%,
-		var(--fcs-bg-to) 100%
+		color-mix(in srgb, var(--fcs-bg-from) 70%, transparent),
+		color-mix(in srgb, var(--fcs-bg-to) 70%, transparent)
 	);
 	border: 2px solid var(--fcs-rim);
 	box-shadow:
@@ -238,13 +240,13 @@
 .awsui-dark-mode .feed-card-shell--amber {
 	--fcs-bg-from: #2a1a08;
 	--fcs-bg-to: #1a0f04;
-	--fcs-rim: #f59e0b;
-	--fcs-rim-highlight: rgba(254, 215, 170, 0.32);
+	--fcs-rim: #b89860;
+	--fcs-rim-highlight: rgba(254, 215, 170, 0.22);
 	--fcs-shadow: rgba(0, 0, 0, 0.55);
-	--fcs-text: #fde68a;
-	--fcs-text-glow: rgba(253, 230, 138, 0.55);
-	--fcs-stage-rim: rgba(245, 158, 11, 0.22);
-	--fcs-ambient-bloom: rgba(120, 53, 15, 0.42);
+	--fcs-text: #e8d8a8;
+	--fcs-text-glow: rgba(232, 216, 168, 0.4);
+	--fcs-stage-rim: rgba(184, 152, 96, 0.18);
+	--fcs-ambient-bloom: rgba(120, 53, 15, 0.32);
 }
 
 /* ── teal — cool ML/technical (feed-section awsml) ────────────────────── */
@@ -263,13 +265,13 @@
 .awsui-dark-mode .feed-card-shell--teal {
 	--fcs-bg-from: #042f2e;
 	--fcs-bg-to: #021a1a;
-	--fcs-rim: #5eead4;
-	--fcs-rim-highlight: rgba(167, 243, 208, 0.32);
+	--fcs-rim: #7ab8a8;
+	--fcs-rim-highlight: rgba(167, 200, 190, 0.22);
 	--fcs-shadow: rgba(0, 0, 0, 0.55);
-	--fcs-text: #ccfbf1;
-	--fcs-text-glow: rgba(94, 234, 212, 0.55);
-	--fcs-stage-rim: rgba(94, 234, 212, 0.22);
-	--fcs-ambient-bloom: rgba(15, 76, 87, 0.42);
+	--fcs-text: #b8e8dc;
+	--fcs-text-glow: rgba(122, 184, 168, 0.4);
+	--fcs-stage-rim: rgba(122, 184, 168, 0.18);
+	--fcs-ambient-bloom: rgba(15, 76, 87, 0.32);
 }
 
 /* ── violet — twitch brand purple (twitch-section) ────────────────────── */
@@ -288,13 +290,13 @@
 .awsui-dark-mode .feed-card-shell--violet {
 	--fcs-bg-from: #1e1b4b;
 	--fcs-bg-to: #0f0a35;
-	--fcs-rim: #a78bfa;
-	--fcs-rim-highlight: rgba(196, 181, 253, 0.32);
+	--fcs-rim: #9088b8;
+	--fcs-rim-highlight: rgba(180, 170, 210, 0.22);
 	--fcs-shadow: rgba(0, 0, 0, 0.55);
-	--fcs-text: #ede9fe;
-	--fcs-text-glow: rgba(167, 139, 250, 0.55);
-	--fcs-stage-rim: rgba(167, 139, 250, 0.22);
-	--fcs-ambient-bloom: rgba(76, 29, 149, 0.42);
+	--fcs-text: #d8d4e8;
+	--fcs-text-glow: rgba(144, 136, 184, 0.4);
+	--fcs-stage-rim: rgba(144, 136, 184, 0.18);
+	--fcs-ambient-bloom: rgba(76, 29, 149, 0.32);
 }
 
 /* ── sage — research / academic green (arrowhead-news) ────────────────── */
@@ -313,13 +315,13 @@
 .awsui-dark-mode .feed-card-shell--sage {
 	--fcs-bg-from: #052e16;
 	--fcs-bg-to: #022c1a;
-	--fcs-rim: #86efac;
-	--fcs-rim-highlight: rgba(187, 247, 208, 0.32);
+	--fcs-rim: #7ab89a;
+	--fcs-rim-highlight: rgba(160, 200, 180, 0.22);
 	--fcs-shadow: rgba(0, 0, 0, 0.55);
-	--fcs-text: #dcfce7;
-	--fcs-text-glow: rgba(134, 239, 172, 0.55);
-	--fcs-stage-rim: rgba(134, 239, 172, 0.22);
-	--fcs-ambient-bloom: rgba(20, 83, 45, 0.42);
+	--fcs-text: #c8e8d8;
+	--fcs-text-glow: rgba(122, 184, 154, 0.4);
+	--fcs-stage-rim: rgba(122, 184, 154, 0.18);
+	--fcs-ambient-bloom: rgba(20, 83, 45, 0.32);
 }
 
 /* ── rose — warm presence (andres-youtube-live) ──────────────────────── */
@@ -338,13 +340,13 @@
 .awsui-dark-mode .feed-card-shell--rose {
 	--fcs-bg-from: #3f0a17;
 	--fcs-bg-to: #2a0510;
-	--fcs-rim: #fda4af;
-	--fcs-rim-highlight: rgba(254, 205, 211, 0.32);
+	--fcs-rim: #c89898;
+	--fcs-rim-highlight: rgba(200, 170, 170, 0.22);
 	--fcs-shadow: rgba(0, 0, 0, 0.55);
-	--fcs-text: #ffe4e6;
-	--fcs-text-glow: rgba(253, 164, 175, 0.55);
-	--fcs-stage-rim: rgba(253, 164, 175, 0.22);
-	--fcs-ambient-bloom: rgba(127, 29, 29, 0.42);
+	--fcs-text: #e8d0d4;
+	--fcs-text-glow: rgba(200, 152, 152, 0.4);
+	--fcs-stage-rim: rgba(200, 152, 152, 0.18);
+	--fcs-ambient-bloom: rgba(127, 29, 29, 0.32);
 }
 
 /* ── navy — long-form / serious publication ──────────────────────────────
@@ -369,13 +371,13 @@
 .awsui-dark-mode .feed-card-shell--navy {
 	--fcs-bg-from: #0f172a;
 	--fcs-bg-to: #020617;
-	--fcs-rim: #93c5fd;
-	--fcs-rim-highlight: rgba(219, 234, 254, 0.32);
+	--fcs-rim: #8aa8c8;
+	--fcs-rim-highlight: rgba(180, 200, 220, 0.22);
 	--fcs-shadow: rgba(0, 0, 0, 0.55);
-	--fcs-text: #dbeafe;
-	--fcs-text-glow: rgba(147, 197, 253, 0.55);
-	--fcs-stage-rim: rgba(147, 197, 253, 0.22);
-	--fcs-ambient-bloom: rgba(30, 58, 138, 0.42);
+	--fcs-text: #c8d8e8;
+	--fcs-text-glow: rgba(138, 168, 200, 0.4);
+	--fcs-stage-rim: rgba(138, 168, 200, 0.18);
+	--fcs-ambient-bloom: rgba(30, 58, 138, 0.32);
 }
 
 /* ── gold — AWS Builder Center ───────────────────────────────────────── */
@@ -394,13 +396,13 @@
 .awsui-dark-mode .feed-card-shell--gold {
 	--fcs-bg-from: #451a03;
 	--fcs-bg-to: #2c0a02;
-	--fcs-rim: #fbbf24;
-	--fcs-rim-highlight: rgba(254, 215, 170, 0.34);
+	--fcs-rim: #b8a060;
+	--fcs-rim-highlight: rgba(200, 180, 140, 0.24);
 	--fcs-shadow: rgba(0, 0, 0, 0.55);
-	--fcs-text: #fef3c7;
-	--fcs-text-glow: rgba(251, 191, 36, 0.55);
-	--fcs-stage-rim: rgba(251, 191, 36, 0.22);
-	--fcs-ambient-bloom: rgba(120, 53, 15, 0.42);
+	--fcs-text: #e0d4a8;
+	--fcs-text-glow: rgba(184, 160, 96, 0.4);
+	--fcs-stage-rim: rgba(184, 160, 96, 0.18);
+	--fcs-ambient-bloom: rgba(120, 53, 15, 0.32);
 }
 
 /* ── lavender — women in tech / featured (featured-video-card) ───────── */
@@ -419,13 +421,13 @@
 .awsui-dark-mode .feed-card-shell--lavender {
 	--fcs-bg-from: #2a1147;
 	--fcs-bg-to: #1a0a30;
-	--fcs-rim: #c4b5fd;
-	--fcs-rim-highlight: rgba(196, 181, 253, 0.32);
+	--fcs-rim: #a8a0c0;
+	--fcs-rim-highlight: rgba(180, 170, 200, 0.22);
 	--fcs-shadow: rgba(0, 0, 0, 0.55);
-	--fcs-text: #ede9fe;
-	--fcs-text-glow: rgba(196, 181, 253, 0.55);
-	--fcs-stage-rim: rgba(196, 181, 253, 0.22);
-	--fcs-ambient-bloom: rgba(76, 29, 149, 0.42);
+	--fcs-text: #d8d4e8;
+	--fcs-text-glow: rgba(168, 160, 192, 0.4);
+	--fcs-stage-rim: rgba(168, 160, 192, 0.18);
+	--fcs-ambient-bloom: rgba(76, 29, 149, 0.32);
 }
 
 /* ============================================================================
