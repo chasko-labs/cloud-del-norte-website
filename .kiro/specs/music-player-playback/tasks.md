@@ -7,19 +7,19 @@ Iterations, not phases. Each iteration ships value or learning. Each ends with a
 **Goal:** capture evidence sufficient to lock the fix family. No production code changes.
 
 - [ ] **0.1 Author Selenium diagnostic script**
- - File: `tests/devicefarm/music-player-diagnostic.py`
- - Read first: `scripts/probe-cta-button-classes.mjs` (Playwright probe pattern), any existing `tests/devicefarm/` examples.
+ - File: `tests/device-farm/music-player-diagnostic.py`
+ - Read first: `scripts/probe-cta-button-classes.mjs` (Playwright probe pattern), any existing `tests/device-farm/` examples.
  - Boto3 + Selenium, TestGrid project ARN `arn:aws:devicefarm:us-west-2:946179428633:testgrid-project:0f1bfe22-0371-40c8-bcac-f96709363893`.
  - Auth: `AWS_PROFILE=bryanchasko-kiro` (SSO active) or Roles Anywhere via `/workload.crt` if running in CI.
  - Per-station capture: console (all levels), network HAR, audio state via `driver.execute_script`, body class list, performance entries.
- - Output: `tests/devicefarm/captures/<timestamp>/<station>.{json,har}`.
+ - Output: `tests/device-farm/captures/<timestamp>/<station>.{json,har}`.
 
 - [ ] **0.2 Run against all three subdomains**
  - Run script against `clouddelnorte.org`, `awsug.clouddelnorte.org`, `auth.clouddelnorte.org`.
  - Captures committed (no secrets — Selenium runs unauthenticated).
 
 - [ ] **0.3 Findings classification**
- - File: `tests/devicefarm/captures/<timestamp>/findings.md`
+ - File: `tests/device-farm/captures/<timestamp>/findings.md`
  - Per station + subdomain: which hypothesis matches, or "other" with description.
  - Lock the fix family for Iteration 1 here. If multiple families surface, pick the one that unblocks the most stations.
 
@@ -79,7 +79,9 @@ Iterations, not phases. Each iteration ships value or learning. Each ends with a
    - [x] No new console errors introduced. **PASS — zero SEVERE messages.**
    - [x] No StaleElementReferenceException on play button. **PASS — clicked=true, fatal=null.**
    - [x] `git diff src/components/persistent-player/` is empty (Property 6). **PASS.**
- - Capture: `tests/device-farm/captures/20260527T190456Z/`.
+ - Capture: `tests/device-farm/captures/20260527T190456Z/`
+      (captured during the fix/awsug-rerender-race iteration, since
+      squash-merged to main separately; see git history).
 
 - [x] **1d.2 Iteration 1 retrospective (forward-looking)**
  - Append to this file: which component was the actual re-render trigger, what guard was applied, why the smaller alternatives were ruled out, what feeds back into the streams architecture.
@@ -130,7 +132,7 @@ Two new tests in `src/contexts/__tests__/auth-context.test.tsx` prove no-churn o
 
 Push to `fix/awsug-rerender-race` triggered (manually, via Woodpecker API — webhook auto-trigger was stuck) Woodpecker pipeline `#1785`, which deployed the build to `dev.clouddelnorte.org/awsug-preview/`. The harness was then run with `--base-url https://dev.clouddelnorte.org/awsug-preview/ --stations kexp`.
 
-Capture: `tests/device-farm/captures/20260527T190456Z/`. Result: `property2Pass: true`. Sample 1 (~500ms post-click) showed `readyState=4` and `paused=false`. No `StaleElementReferenceException`. No new SEVERE console messages. KEXP stream 200/audio-aac/ACAO=*.
+Capture: `tests/device-farm/captures/20260527T190456Z/` (captured during the fix/awsug-rerender-race iteration, since squash-merged to main separately; see git history). Result: `property2Pass: true`. Sample 1 (~500ms post-click) showed `readyState=4` and `paused=false`. No `StaleElementReferenceException`. No new SEVERE console messages. KEXP stream 200/audio-aac/ACAO=*.
 
 ### Constraint amendment (live)
 
@@ -167,7 +169,7 @@ PR #398 (`fix/awsug-rerender-race` → `main`): OPEN, awaiting auditor review. I
  - Auditor reviews → orin posts verdict → squash-merge → `deploy.sh` from haunting source. Bryan is not a step.
 
 - [ ] **2.3 Post-deploy verification on main**
- - Re-run `tests/devicefarm/music-player-diagnostic.py` against deployed main.
+ - Re-run `tests/device-farm/music-player-diagnostic.py` against deployed main.
  - KEXP × awsug PASS confirmed in production.
 
 - [ ] **2.4 Final retrospective**
