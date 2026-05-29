@@ -1,0 +1,15 @@
+[
+	{
+		"subdomain": "awsug.clouddelnorte.org",
+		"station": "kexp",
+		"property2Pass": false,
+		"fatal": "TimeoutException: play button not clickable: Message: \nStacktrace:\n\tchromedriver!GetHandleVerifier [0x7ff76caad6d5+14ef5]\n\tchromedriver!GetHandleVerifier [0x7ff76caad740+14f60]\n\tchromedriver!(No symbol) [0x7ff76c7fd59d]\n\tchromedriver!(No symbol) [0x7ff76c856f42]\n\tchromedriver!(No symbol) [0x7ff76c85724c]\n\tchromedriver!(No symbol) [0x7ff76c8a7967]\n\tchromedriver!(No symbol) [0x7ff76c8a44ff]\n\tchromedriver!(No symbol) [0x7ff76c849608]\n\tchromedriver!(No symbol) [0x7ff76c84a4f3]\n\tchromedriver!GetHandleVerifier [0x7ff76cdab779+312f99]\n\tchromedriver!GetHandleVerifier [0x7ff76cda5c8b+30d4ab]\n\tchromedriver!GetHandleVerifier [0x7ff76cdc9012+330832]\n\tchromedriver!GetHandleVerifier [0x7ff76caca485+31ca5]\n\tchromedriver!GetHandleVerifier [0x7ff76cad2e7c+3a69c]\n\tchromedriver!GetHandleVerifier [0x7ff76cab6a74+1e294]\n\tchromedriver!GetHandleVerifier [0x7ff76cab6c04+1e424]\n\tchromedriver!GetHandleVerifier [0x7ff76ca9b327+2b47]\n\tKERNEL32!BaseThreadInitThunk [0x7ffa780c7ac4+14]\n\tntdll!RtlUserThreadStart [0x7ffa7acaa8c1+21]\n",
+		"playerMounted": true,
+		"clicked": false,
+		"finalReadyState": 0,
+		"finalPaused": true,
+		"finalErrorCode": null,
+		"blockedButtonPresent": false,
+		"outPath": "tests/device-farm/captures/20260529T124228Z/awsug.clouddelnorte.org/kexp.json"
+	}
+]
