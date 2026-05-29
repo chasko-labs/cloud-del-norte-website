@@ -562,3 +562,80 @@ iter-4.3.1 deliverable: ranked hypothesis verdict with `file:line` evidence + su
 ### iter-4.3.2 — Fix (deferred, scope set by iter-4.3.1)
 
 Locked at iter-4.3.2 open after iter-4.3.1 lands.
+
+## Iteration 4.3.1 — Investigation Close (REFRAME)
+
+`ghost-tarn-cdn-react-coder` + cdn-PO bundle-inspection verdict: HIGH confidence reframe of the entire iter-4 evidence base.
+
+Mechanism (verified end-to-end via curl + grep on deployed awsug AND auth subdomain bundles, gzip-decompressed):
+
+1. Selenium navigates to `https://awsug.clouddelnorte.org/` (HTTP 200, 0 redirects, title `Cloud Del Norte — Members`).
+2. awsug page JS runs. `AwsugHomeWithLayout` calls `requireAuth()` at `src/sites/awsug/_shared/auth.ts`.
+3. `requireAuth()` finds no Cognito tokens (anon harness mode) and calls `window.location.assign("https://auth.clouddelnorte.org/login/?return_to=...")` — JS-level redirect, invisible to curl and to HTTP redirect detection.
+4. Browser navigates to `auth.clouddelnorte.org`. AuthLayout's useEffect adds `cdn-auth-subdomain` to body. AuthLayout's CSS applies `display: none !important` on `.cdn-player-slot`.
+5. Selenium's `element_to_be_clickable(.cdn-pp__btn--play)` times out — slot has `display:none` ancestor.
+6. Capture writes `subdomain: "https://awsug.clouddelnorte.org"` (the harness input string, not the post-redirect URL — issue #403 silent corruption).
+
+Bundle evidence (cdn-PO direct verification post-iter-4.2.A deploy):
+
+| Check | Result |
+|-------|--------|
+| awsug HTTP redirect | None |
+| awsug bundles contain `cdn-auth-subdomain` | ZERO |
+| awsug bundles contain `classList.add` for class | ZERO |
+| auth subdomain bundles contain class-add (`auth.clouddelnorte.org/assets/_layout-CpP_VP9J.js`) | YES |
+| auth subdomain CSS has `display:none !important` on `body.cdn-auth-subdomain .cdn-player-slot` (`auth.clouddelnorte.org/assets/_layout-6DVPX9d6.css`) | YES |
+| iter-4.2.A capture bodyClasses (was claimed to be "on awsug") | `cdn-auth-subdomain` (because post-redirect) |
+
+Implications for prior iterations:
+
+- iter-4.0 mechanism enumeration listed five hiding paths and implied all fire on awsug. Three (#1 `auth/_layout/index.tsx:88` class-add, #2 `styles.css:35` CSS rule, #3 `styles.css:1032` CSS rule) only fire after the JS redirect — they're auth-bundle rules. Two (#4 `persistent-player/index.tsx:1372` render guard, #5 `persistent-player/styles.css:941` CSS rule) were component-scoped and bundled into all sites. PR #409 removed #4 and #5.
+- iter-4.2.A retrospective signal-change table is correct in its values but reflects auth-subdomain behavior post-redirect, not awsug behavior. Retrospective stays as-is for integrity; this close section carries the correction.
+- iter-3.2 codemap "no hostname classifier" finding stands. The classifier is the JS redirect, not a hostname check.
+- iter-4.2.B "build-config audit" framing was based on misattribution. Auth-* chunks in `s3://awsug.clouddelnorte.org/assets/` are real but they're code-split static assets the awsug app's `index.html` preloads. The runtime body class only gets added after redirect to auth subdomain, by auth's `_layout` bundle. iter-4.2.B is REMOVED FROM BACKLOG (was based on wrong root cause).
+- PR #409 NOT reverted. persistent-player layout-agnostic principle stands. On the auth subdomain (login page), AuthLayout's preserved CSS rules (`auth/_layout/styles.css:35` + `:1032`) still hide the slot. Component now renders + runs useEffects on the login page where it didn't before — flagged as observation; product-design question whether the player should do work when its slot is hidden.
+
+This is the iter-3 "structural false-signal" pattern recurring, but pointing one layer deeper: not preview-vs-prod-bundle, but anon-no-redirect-vs-anon-redirected-to-auth. Same root infra gap (issue #403 silent capture corruption).
+
+### iter-4.3.2 — Authenticated awsug parity verify (LOCKED)
+
+Question: does the persistent player work on `awsug.clouddelnorte.org` for an authenticated member? Has never been measured.
+
+Method: run `music-player-diagnostic.py` with `--refresh-token-file` pointing at `/home/bryanchasko/.config/hs-secret/cdn-refresh-token.txt` (token sourced from a heraldstack member account `sessionStorage.cdn.refreshToken` value, mode 0600). PR #402's harness-auth implementation injects tokens before the awsug JS-redirect-on-no-tokens fires, keeping the harness on awsug.
+
+DoD same five gates. Interpretation rules NEW because of #403 silent corruption:
+
+- `bodyClasses` MUST NOT contain `cdn-auth-subdomain`. If present, the harness silently redirected to auth despite token — measurement is corrupt regardless of other gate values.
+- `finalReadyState` MUST be `>= 2`. Confirms audio loaded.
+- `clicked` MUST be `true`. Confirms button was actually clickable.
+
+On PASS (all five gates + bodyClasses negative): #399 closes. iter-4 lands as a fix-via-three-iterations arc. PR #401 + PR #409 are correct fixes; the iteration cost was paid to harness silent-corruption defects #403 + iter-3 retrospective error.
+
+On FAIL (any gate or bodyClasses positive): now we have FIRST evidence of an awsug-side player defect. iter-4.3.4 fix scope locks based on that evidence.
+
+Gating: token file presence at the path above. If absent at dispatch time, surface to cdn-anchor with token-grab procedure (sign in at `auth.clouddelnorte.org` as a member, copy `sessionStorage.cdn.refreshToken` in DevTools, write to file with `chmod 600`).
+
+Harness invocation:
+
+```
+AWS_PROFILE=kiro-device-farm python3 tests/device-farm/music-player-diagnostic.py \
+  --stations kexp \
+  --subdomains https://awsug.clouddelnorte.org \
+  --refresh-token-file /home/bryanchasko/.config/hs-secret/cdn-refresh-token.txt
+```
+
+### iter-4.3.3 — Implement issue #403 (LOCKED, parallel)
+
+Question: capture `currentUrl` / `preClickUrl` / `postClickUrl` / `finalUrl` in `tests/device-farm/music-player-diagnostic.py` captures so the silent-corruption class is detected at run time, not by post-hoc bundle inspection.
+
+Method: `ghost-hcom-python-coder` edits `tests/device-farm/music-player-diagnostic.py`. After each driver navigation + before/after click, read `driver.current_url` and write to capture JSON. Add an explicit gate: if `finalUrl.host != input subdomain.host`, mark capture corrupt with `corruptCapture = true` and reason.
+
+Files in scope: ONLY `tests/device-farm/music-player-diagnostic.py` (and its README if the new fields warrant doc). No source-code changes outside the harness.
+
+Test: dry-run against `awsug.clouddelnorte.org` (anon, current harness) — expect `corruptCapture = true` with reason `redirected_to_auth`. Confirm the gate fires.
+
+Lands as a separate small PR (parallel to iter-4.3.2 verify). Does NOT block iter-4.3.2 — verify can run with current harness; #403 makes future captures self-diagnosing.
+
+### iter-4.3.4 — Fix (deferred, scope set by iter-4.3.2 outcome)
+
+Locked at iter-4.3.4 open after iter-4.3.2 lands. If iter-4.3.2 passes, iter-4.3.4 is the close-and-retro of iter-4.
