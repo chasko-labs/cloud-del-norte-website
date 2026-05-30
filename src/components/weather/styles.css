@@ -128,18 +128,6 @@
 	color: var(--cdn-lavender, #d7c7ee);
 }
 
-/* Dark mode: explicit text colors on all metric/label elements so they never
-   rely solely on opacity inheritance over an ambiguous background. */
-.awsui-dark-mode .cdn-weather__metric dt,
-.awsui-dark-mode .cdn-weather__tomorrow-label {
-	color: rgba(215, 199, 238, 0.65);
-}
-
-.awsui-dark-mode .cdn-weather__metric dd,
-.awsui-dark-mode .cdn-weather__temp-c {
-	color: var(--cdn-lavender, #d7c7ee);
-}
-
 /* ── Header row — city + condition glyph ────────────────────────────────── */
 .cdn-weather__head {
 	display: flex;
@@ -410,6 +398,18 @@
 	opacity: 0.65;
 }
 
+/* Dark mode: explicit text colors on all metric/label elements so they never
+   rely solely on opacity inheritance over an ambiguous background. */
+.awsui-dark-mode .cdn-weather__metric dt,
+.awsui-dark-mode .cdn-weather__tomorrow-label {
+	color: rgba(215, 199, 238, 0.65);
+}
+
+.awsui-dark-mode .cdn-weather__metric dd,
+.awsui-dark-mode .cdn-weather__temp-c {
+	color: var(--cdn-lavender, #d7c7ee);
+}
+
 .cdn-weather__tomorrow-temps {
 	display: flex;
 	gap: 8px;
@@ -464,19 +464,18 @@
 		background-color 0.25s ease,
 		transform 0.25s ease;
 }
+.awsui-dark-mode .cdn-weather__dot {
+	background: rgba(144, 96, 240, 0.32);
+}
+.awsui-dark-mode .cdn-weather__dot--active {
+	background: var(--cdn-violet, #9060f0);
+	transform: scale(1.35);
+}
 
 :root:not(.awsui-dark-mode) .cdn-weather__dot {
 	background: rgba(139, 90, 43, 0.32);
 }
 :root:not(.awsui-dark-mode) .cdn-weather__dot--active {
 	background: var(--cdn-aws-orange, #ff9900);
-	transform: scale(1.35);
-}
-
-.awsui-dark-mode .cdn-weather__dot {
-	background: rgba(144, 96, 240, 0.32);
-}
-.awsui-dark-mode .cdn-weather__dot--active {
-	background: var(--cdn-violet, #9060f0);
 	transform: scale(1.35);
 }

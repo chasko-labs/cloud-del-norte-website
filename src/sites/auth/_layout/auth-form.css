@@ -189,13 +189,11 @@
 	transform: translateY(-1px);
 }
 
-/* ── primary button inner span — force white text over cloudscape color ── */
+.cdn-auth-form:not(#\9):not(#\9):not(#\9) button[class*="variant-primary"] span,
 .cdn-auth-form:not(#\9):not(#\9):not(
 		#\9
-	) [class*="awsui_button"][class*="variant-primary"]
-	span,
-.cdn-auth-form:not(#\9):not(#\9):not(#\9)
-	button[class*="variant-primary"]
+	)
+	[class*="awsui_button"][class*="variant-primary"]
 	span {
 	color: #fff;
 }

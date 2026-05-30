@@ -132,6 +132,53 @@
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='340'%3E%3Cpolyline points='310,30 318,48 305,52 322,70 308,88 328,110 310,140 295,170' stroke='%23ffaa00' stroke-width='4.5' fill='none' stroke-opacity='0.9'/%3E%3Cpolyline points='310,30 318,48 305,52 322,70 308,88 328,110 310,140 295,170' stroke='%23fffde0' stroke-width='1.5' fill='none' stroke-opacity='0.5'/%3E%3Cpolyline points='318,48 340,55 360,48 380,60' stroke='%23ffaa00' stroke-width='3' fill='none' stroke-opacity='0.7'/%3E%3Cpolyline points='322,70 345,80 370,95 395,105' stroke='%23ffaa00' stroke-width='3' fill='none' stroke-opacity='0.65'/%3E%3Cpolyline points='308,88 280,100 250,95 220,110' stroke='%23ffaa00' stroke-width='2.5' fill='none' stroke-opacity='0.6'/%3E%3Cpolyline points='328,110 355,130 385,140' stroke='%23ffaa00' stroke-width='2.5' fill='none' stroke-opacity='0.6'/%3E%3Ccircle cx='316' cy='46' r='10' fill='%23ffaa00' fill-opacity='0.45'/%3E%3Ccircle cx='316' cy='46' r='4' fill='%23fffde0' fill-opacity='0.95'/%3E%3Ccircle cx='322' cy='70' r='5' fill='%23ffaa00' fill-opacity='0.35'/%3E%3Ccircle cx='328' cy='110' r='5' fill='%23ffaa00' fill-opacity='0.3'/%3E%3Crect x='0' y='0' width='400' height='340' fill='%23080600' fill-opacity='0.82'/%3E%3C/svg%3E");
 }
 
+.fiona-canvas {
+	opacity: 0;
+	filter: grayscale(0.12) sepia(0.2) saturate(1.8) hue-rotate(68deg)
+		brightness(0.92) contrast(1.15);
+	width: 100%;
+	height: 100%;
+	transition:
+		opacity 0.8s,
+		filter 0.6s;
+	position: absolute;
+	inset: 0;
+	/* Audio-reactive head dance — LEFT tilt (bass) + vertical NOD (mid). Bryan
+	   v0.0.0066: previous ±2.5deg sway felt like she was nodding both ways;
+	   left-only at -2deg max read as "into the bass" but proved too subtle —
+	   v0.0.0102 raises lateral to -4deg and adds a vertical nod riding
+	   --cdn-mid (kick/snare band) so fiona visibly head-bobs to the beat.
+	   Silent → 0deg + 0px throughout. Loud bass → -4deg lean. Loud mid → -6px
+	   nod. transform-origin at bottom so rotation pivots from the neck.
+	   Two parallel animations on different periods (3.6s tilt → individual
+	   `rotate` property, 0.9s nod → individual `translate` property). Using
+	   the modern individual-transform-properties (rotate / translate) instead
+	   of the legacy `transform` shorthand is critical: shorthand collides
+	   when two @keyframes both write `transform` (last-applied wins, no
+	   compose). The individual props cascade independently so lateral lean
+	   and vertical bob layer into a natural dance.
+	   Both animations paused unless body has cdn-stream-playing AND canvas is
+	   --visible — head only "dances" while audio is actually playing.
+	   No conflict with babylon emoteQueue/gestureQueue: those deform the 3D
+	   mesh INSIDE the canvas pixel buffer; the CSS transform rotates the
+	   <canvas> element AFTER rasterization, so the two layers compose. */
+	transform-origin: center bottom;
+	animation:
+		fiona-head-tilt-left 3.6s ease-in-out infinite,
+		fiona-head-nod 0.9s ease-in-out infinite;
+	animation-play-state: paused, paused;
+	will-change: rotate, translate;
+}
+
+.fiona-canvas.fiona-canvas--visible {
+	opacity: 1;
+}
+
+/* head nods temporarily disabled for isolation — re-enable by restoring running, running */
+body.cdn-stream-playing .fiona-canvas.fiona-canvas--visible {
+	animation-play-state: paused, paused;
+}
+
 .fiona-bezel.crack-3 .fiona-canvas {
 	pointer-events: none;
 	opacity: 0;
@@ -371,6 +418,122 @@
    gives it the same zoomed placement + cool sapphire treatment that
    matches sticky 2's resting state. Right-side mirror of sticky 1's
    bottom-left zoomed slot — keeps both notes visually distinct. */
+/* === notes row: holds sticky note 1 (left) and sticky note 2 (right) side by side
+   so both are visible without adding vertical height below the bezel.
+   STATE-INDEPENDENCE FIX (Bryan 2026-05-02): each sticky is `position: absolute`
+   pinned to its own corner so any state change on one (zoom / fall / sway /
+   ripfall / fadein) cannot push or shift the sibling. The row reserves a
+   fixed min-height so the layout below it doesn't jump when both fly out. */
+.fiona-notes-row {
+	position: relative;
+	width: 100%;
+	min-height: 56px;
+	margin-top: 6px;
+}
+
+/* === sticky note 2: visitor greeting + IP ============================
+   second sticky placed in the right gutter below the bezel, mirroring
+   sticky note 1's position on the left. both notes live in .fiona-notes-row
+   (flex row) so they appear side by side without stacking vertically. */
+.fiona-stickynote-2 {
+	/* button reset — element promoted from div to <button> for keyboard
+	   activation; strip default button chrome so the sticky-note look stays
+	   identical (background gradient + handwritten text + tilt). */
+	appearance: none;
+	border: 0;
+	font: inherit;
+	text-align: inherit;
+
+	position: absolute;
+	top: 0;
+	right: 18px;
+	padding: 3px 6px 4px;
+	max-width: clamp(72px, 22cqi, 110px);
+	width: fit-content;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	background-image:
+		repeating-linear-gradient(0deg, #5a32100d 0 1px, #0000 1px 4px),
+		linear-gradient(135deg, #d9f0ffd1 0%, #c4e1f5c7 60%, #a8cceabd 100%);
+	background-size:
+		100% 4px,
+		100% 100%;
+	color: #1a1424;
+	font-family: Caveat, "Comic Sans MS", "Segoe Script", cursive;
+	font-size: clamp(7px, 2cqi, 10px);
+	line-height: 1.1;
+	letter-spacing: 0.02em;
+	transform: rotate(2.8deg);
+	transform-origin: 50% -8px;
+	box-shadow:
+		1px 2px 4px #00000047,
+		1px 1px 2px #0000002e,
+		inset 0 -2px 3px #1e6090b5;
+	pointer-events: auto;
+	cursor: pointer;
+	-webkit-user-select: none;
+	user-select: none;
+	animation: 0.6s 1.6s both fiona-stickynote-fadein;
+}
+
+.fiona-stickynote-2:before {
+	content: "";
+	pointer-events: none;
+	position: absolute;
+	top: -10px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 18px;
+	height: 9px;
+	background: repeating-linear-gradient(
+		90deg,
+		#b4b4b46b 0 1px,
+		#e4e4e499 1px 2.5px
+	);
+	border-radius: 1px;
+	opacity: 0.62;
+}
+
+.fiona-stickynote-2-line {
+	font-weight: 600;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 16px;
+}
+
+.fiona-stickynote-2-flag {
+	font-family:
+		"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+	position: absolute;
+	top: 50%;
+	right: 4px;
+	transform: translateY(-50%) rotate(-2.8deg);
+	margin: 0;
+	padding: 0;
+	font-size: 1.1em;
+	line-height: 1;
+	pointer-events: none;
+	filter: drop-shadow(0 1px 1px #00000040);
+}
+
+.fiona-stickynote-2-ip {
+	font-family: "JetBrains Mono", "Courier New", monospace;
+	font-size: 0.85em;
+	font-weight: var(--cdn-weight-semibold, 600);
+	letter-spacing: 0.02em;
+	opacity: 0.85;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	padding-right: 16px;
+	display: inline-block;
+	min-width: 13ch; /* pre-allocated slot for IPv4 — loading→"66.18.175.199" no longer changes sticky note width */
+	font-variant-numeric: tabular-nums; /* equal-width digits prevent sub-char drift between IPs */
+	text-align: left;
+}
+
 .fiona-stickynote-2.fiona-stickynote-2--zoomed {
 	transform-origin: 50% 100%;
 	z-index: 500;
@@ -686,53 +849,6 @@
 	to {
 		background-position: 0 0;
 	}
-}
-
-.fiona-canvas {
-	opacity: 0;
-	filter: grayscale(0.12) sepia(0.2) saturate(1.8) hue-rotate(68deg)
-		brightness(0.92) contrast(1.15);
-	width: 100%;
-	height: 100%;
-	transition:
-		opacity 0.8s,
-		filter 0.6s;
-	position: absolute;
-	inset: 0;
-	/* Audio-reactive head dance — LEFT tilt (bass) + vertical NOD (mid). Bryan
-	   v0.0.0066: previous ±2.5deg sway felt like she was nodding both ways;
-	   left-only at -2deg max read as "into the bass" but proved too subtle —
-	   v0.0.0102 raises lateral to -4deg and adds a vertical nod riding
-	   --cdn-mid (kick/snare band) so fiona visibly head-bobs to the beat.
-	   Silent → 0deg + 0px throughout. Loud bass → -4deg lean. Loud mid → -6px
-	   nod. transform-origin at bottom so rotation pivots from the neck.
-	   Two parallel animations on different periods (3.6s tilt → individual
-	   `rotate` property, 0.9s nod → individual `translate` property). Using
-	   the modern individual-transform-properties (rotate / translate) instead
-	   of the legacy `transform` shorthand is critical: shorthand collides
-	   when two @keyframes both write `transform` (last-applied wins, no
-	   compose). The individual props cascade independently so lateral lean
-	   and vertical bob layer into a natural dance.
-	   Both animations paused unless body has cdn-stream-playing AND canvas is
-	   --visible — head only "dances" while audio is actually playing.
-	   No conflict with babylon emoteQueue/gestureQueue: those deform the 3D
-	   mesh INSIDE the canvas pixel buffer; the CSS transform rotates the
-	   <canvas> element AFTER rasterization, so the two layers compose. */
-	transform-origin: center bottom;
-	animation:
-		fiona-head-tilt-left 3.6s ease-in-out infinite,
-		fiona-head-nod 0.9s ease-in-out infinite;
-	animation-play-state: paused, paused;
-	will-change: rotate, translate;
-}
-
-/* head nods temporarily disabled for isolation — re-enable by restoring running, running */
-body.cdn-stream-playing .fiona-canvas.fiona-canvas--visible {
-	animation-play-state: paused, paused;
-}
-
-.fiona-canvas.fiona-canvas--visible {
-	opacity: 1;
 }
 
 @keyframes fiona-head-tilt-left {
@@ -3029,122 +3145,6 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .fiona-led,
 	animation: none;
 	opacity: 0.18;
 	filter: brightness(0.4);
-}
-
-/* === notes row: holds sticky note 1 (left) and sticky note 2 (right) side by side
-   so both are visible without adding vertical height below the bezel.
-   STATE-INDEPENDENCE FIX (Bryan 2026-05-02): each sticky is `position: absolute`
-   pinned to its own corner so any state change on one (zoom / fall / sway /
-   ripfall / fadein) cannot push or shift the sibling. The row reserves a
-   fixed min-height so the layout below it doesn't jump when both fly out. */
-.fiona-notes-row {
-	position: relative;
-	width: 100%;
-	min-height: 56px;
-	margin-top: 6px;
-}
-
-/* === sticky note 2: visitor greeting + IP ============================
-   second sticky placed in the right gutter below the bezel, mirroring
-   sticky note 1's position on the left. both notes live in .fiona-notes-row
-   (flex row) so they appear side by side without stacking vertically. */
-.fiona-stickynote-2 {
-	/* button reset — element promoted from div to <button> for keyboard
-	   activation; strip default button chrome so the sticky-note look stays
-	   identical (background gradient + handwritten text + tilt). */
-	appearance: none;
-	border: 0;
-	font: inherit;
-	text-align: inherit;
-
-	position: absolute;
-	top: 0;
-	right: 18px;
-	padding: 3px 6px 4px;
-	max-width: clamp(72px, 22cqi, 110px);
-	width: fit-content;
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	background-image:
-		repeating-linear-gradient(0deg, #5a32100d 0 1px, #0000 1px 4px),
-		linear-gradient(135deg, #d9f0ffd1 0%, #c4e1f5c7 60%, #a8cceabd 100%);
-	background-size:
-		100% 4px,
-		100% 100%;
-	color: #1a1424;
-	font-family: Caveat, "Comic Sans MS", "Segoe Script", cursive;
-	font-size: clamp(7px, 2cqi, 10px);
-	line-height: 1.1;
-	letter-spacing: 0.02em;
-	transform: rotate(2.8deg);
-	transform-origin: 50% -8px;
-	box-shadow:
-		1px 2px 4px #00000047,
-		1px 1px 2px #0000002e,
-		inset 0 -2px 3px #1e6090b5;
-	pointer-events: auto;
-	cursor: pointer;
-	-webkit-user-select: none;
-	user-select: none;
-	animation: 0.6s 1.6s both fiona-stickynote-fadein;
-}
-
-.fiona-stickynote-2:before {
-	content: "";
-	pointer-events: none;
-	position: absolute;
-	top: -10px;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 18px;
-	height: 9px;
-	background: repeating-linear-gradient(
-		90deg,
-		#b4b4b46b 0 1px,
-		#e4e4e499 1px 2.5px
-	);
-	border-radius: 1px;
-	opacity: 0.62;
-}
-
-.fiona-stickynote-2-line {
-	font-weight: 600;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	padding-right: 16px;
-}
-
-.fiona-stickynote-2-flag {
-	font-family:
-		"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-	position: absolute;
-	top: 50%;
-	right: 4px;
-	transform: translateY(-50%) rotate(-2.8deg);
-	margin: 0;
-	padding: 0;
-	font-size: 1.1em;
-	line-height: 1;
-	pointer-events: none;
-	filter: drop-shadow(0 1px 1px #00000040);
-}
-
-.fiona-stickynote-2-ip {
-	font-family: "JetBrains Mono", "Courier New", monospace;
-	font-size: 0.85em;
-	font-weight: var(--cdn-weight-semibold, 600);
-	letter-spacing: 0.02em;
-	opacity: 0.85;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	padding-right: 16px;
-	display: inline-block;
-	min-width: 13ch; /* pre-allocated slot for IPv4 — loading→"66.18.175.199" no longer changes sticky note width */
-	font-variant-numeric: tabular-nums; /* equal-width digits prevent sub-char drift between IPs */
-	text-align: left;
 }
 
 /* ==========================================================================

@@ -161,16 +161,6 @@
 	}
 }
 
-/* Light-mode (default) — surface tint over the cream card background. */
-:root:not(.awsui-dark-mode) .feed-shorts-carousel__thumb {
-	background: rgba(255, 255, 255, 0.4);
-}
-
-:root:not(.awsui-dark-mode) .feed-shorts-carousel__thumb:hover,
-:root:not(.awsui-dark-mode) .feed-shorts-carousel__thumb:focus-visible {
-	background: rgba(255, 255, 255, 0.7);
-}
-
 /* Dark-mode parity — inverse tint, brighter title text, lighter borders. */
 .awsui-dark-mode .feed-shorts-carousel__thumb {
 	background: rgba(255, 255, 255, 0.04);
@@ -180,6 +170,16 @@
 .awsui-dark-mode .feed-shorts-carousel__thumb:hover,
 .awsui-dark-mode .feed-shorts-carousel__thumb:focus-visible {
 	background: rgba(255, 255, 255, 0.1);
+}
+
+/* Light-mode (default) — surface tint over the cream card background. */
+:root:not(.awsui-dark-mode) .feed-shorts-carousel__thumb {
+	background: rgba(255, 255, 255, 0.4);
+}
+
+:root:not(.awsui-dark-mode) .feed-shorts-carousel__thumb:hover,
+:root:not(.awsui-dark-mode) .feed-shorts-carousel__thumb:focus-visible {
+	background: rgba(255, 255, 255, 0.7);
 }
 
 .awsui-dark-mode .feed-shorts-carousel__title {
