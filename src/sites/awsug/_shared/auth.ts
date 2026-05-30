@@ -88,7 +88,9 @@ export function storeTokensFromFragment(
 
 export function clearTokens(): void {
 	[KEY_ID_TOKEN, KEY_ACCESS_TOKEN, KEY_REFRESH_TOKEN, KEY_EXPIRES_AT].forEach(
-		(k) => sessionStorage.removeItem(k),
+		(k) => {
+			sessionStorage.removeItem(k);
+		},
 	);
 }
 

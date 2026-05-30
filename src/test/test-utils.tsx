@@ -61,10 +61,8 @@ export function createNavigationMock(_importDepth: number) {
  * @param importDepth - Number of "../" needed to reach src/ from test file location
  */
 export function createBreadcrumbsMock(_importDepth: number) {
-	type AnyProps = Record<string, any>;
-
 	return {
-		default: ({ active }: AnyProps) =>
+		default: ({ active }: { active?: { text?: string } }) =>
 			React.createElement(
 				"nav",
 				{ "aria-label": "breadcrumbs" },

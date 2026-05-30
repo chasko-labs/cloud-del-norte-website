@@ -691,13 +691,9 @@ function ShellContent({
 						    player no longer overlaps the AWS UG header band. The slot
 						    is reserved on every page so layout doesn't shift between
 						    pages with/without an active stream. */}
-						<div
-							className="cdn-player-slot"
-							role="region"
-							aria-label="radio player"
-						>
+						<section className="cdn-player-slot" aria-label="radio player">
 							{!hidePlayer && <PersistentPlayer />}
-						</div>
+						</section>
 						{children}
 					</>
 				}

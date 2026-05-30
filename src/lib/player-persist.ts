@@ -44,8 +44,8 @@ export function clearPodcastPosition(): void {
 		const raw = localStorage.getItem(KEY);
 		if (!raw) return;
 		const state = JSON.parse(raw) as PersistedPlayerState;
-		delete state.podcastCurrentTime;
-		delete state.podcastEpisodeUrl;
+		state.podcastCurrentTime = undefined;
+		state.podcastEpisodeUrl = undefined;
 		localStorage.setItem(KEY, JSON.stringify(state));
 	} catch {
 		// non-fatal

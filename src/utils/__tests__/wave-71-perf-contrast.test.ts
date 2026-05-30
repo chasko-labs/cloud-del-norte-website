@@ -36,7 +36,8 @@ describe("Wave 71 — Bug 1: no transition:all on cdn-viz-active", () => {
 			/\.cdn-viz-active\s*\{[^}]*transition:[^}]*\}/,
 		);
 		expect(vizBlock).not.toBeNull();
-		const block = vizBlock![0];
+		if (!vizBlock) return;
+		const block = vizBlock[0];
 		expect(block).toMatch(/background-color/);
 		expect(block).toMatch(/color/);
 		expect(block).not.toMatch(/transition:\s*all/);
@@ -94,14 +95,16 @@ describe("Wave 71 — Bug 2: backdrop-filter capped at 4px", () => {
 		const css = readCss("pages/create-meeting/components/help-panel.css");
 		const roleCardBlock = css.match(/\.hp-role-card\s*\{[^}]*\}/);
 		expect(roleCardBlock).not.toBeNull();
-		expect(roleCardBlock![0]).not.toMatch(/backdrop-filter/);
+		if (!roleCardBlock) return;
+		expect(roleCardBlock[0]).not.toMatch(/backdrop-filter/);
 	});
 
 	it("hp-leader has no backdrop-filter", () => {
 		const css = readCss("pages/create-meeting/components/help-panel.css");
 		const leaderBlock = css.match(/\.hp-leader\s*\{[^}]*\}/);
 		expect(leaderBlock).not.toBeNull();
-		expect(leaderBlock![0]).not.toMatch(/backdrop-filter/);
+		if (!leaderBlock) return;
+		expect(leaderBlock[0]).not.toMatch(/backdrop-filter/);
 	});
 });
 
@@ -136,13 +139,15 @@ describe("Wave 71 — Bug 4: next-meetup spacing uses token grid", () => {
 	it("feed-mini-card__link uses var(--cdn-space-*) for padding", () => {
 		const block = feedCss.match(/\.feed-mini-card__link\s*\{[^}]*\}/s);
 		expect(block).not.toBeNull();
-		expect(block![0]).toMatch(/padding:.*var\(--cdn-space-/);
+		if (!block) return;
+		expect(block[0]).toMatch(/padding:.*var\(--cdn-space-/);
 	});
 
 	it("feed-mini-card__link uses var(--cdn-space-*) for gap", () => {
 		const block = feedCss.match(/\.feed-mini-card__link\s*\{[^}]*\}/s);
 		expect(block).not.toBeNull();
-		expect(block![0]).toMatch(/gap:.*var\(--cdn-space-/);
+		if (!block) return;
+		expect(block[0]).toMatch(/gap:.*var\(--cdn-space-/);
 	});
 });
 
@@ -154,7 +159,7 @@ describe("Wave 71 — Bonus: version bump", () => {
 		);
 		const versionMatch = footerTsx.match(/0\.0\.0(\d+)/);
 		expect(versionMatch).not.toBeNull();
-		const versionNum = Number.parseInt(versionMatch![1], 10);
+		const versionNum = Number.parseInt(versionMatch?.[1] ?? "0", 10);
 		expect(versionNum).toBeGreaterThanOrEqual(147);
 	});
 });

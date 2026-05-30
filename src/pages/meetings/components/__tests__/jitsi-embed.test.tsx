@@ -39,11 +39,14 @@ function installFakeExternalApi(): {
 		const api: FakeApi = {
 			listeners: {},
 			addListener(ev, fn) {
-				(api.listeners[ev] ??= []).push(fn);
+				api.listeners[ev] ??= [];
+				api.listeners[ev].push(fn);
 			},
 			dispose: vi.fn(),
 			__fire(ev) {
-				(api.listeners[ev] ?? []).forEach((fn) => fn());
+				(api.listeners[ev] ?? []).forEach((fn) => {
+					fn();
+				});
 			},
 		};
 		latest = api;
@@ -59,9 +62,9 @@ describe("JitsiEmbed", () => {
 	beforeEach(async () => {
 		vi.useFakeTimers({ shouldAdvanceTime: true });
 		// Remove any prior-loaded script tag between tests.
-		document
-			.querySelectorAll("script[data-cdn-jitsi]")
-			.forEach((el) => el.parentNode?.removeChild(el));
+		document.querySelectorAll("script[data-cdn-jitsi]").forEach((el) => {
+			el.parentNode?.removeChild(el);
+		});
 		// Reset the single shared fetchJitsiToken mock queue without tearing down
 		// the module (tearing down would desync the component's captured import).
 		const { fetchJitsiToken } = await import("../../../../lib/jitsi-token");
@@ -70,8 +73,9 @@ describe("JitsiEmbed", () => {
 
 	afterEach(() => {
 		vi.useRealTimers();
-		delete (window as unknown as { JitsiMeetExternalAPI?: unknown })
-			.JitsiMeetExternalAPI;
+		(
+			window as unknown as { JitsiMeetExternalAPI?: unknown }
+		).JitsiMeetExternalAPI = undefined;
 	});
 
 	it("happy path: fetches token, instantiates API with roomName+jwt, reaches live", async () => {
@@ -143,9 +147,10 @@ describe("JitsiEmbed", () => {
 		const { ctor, latest } = installFakeExternalApi();
 		const { unmount } = render(<JitsiEmbed roomName="room-z" />);
 		await waitFor(() => expect(ctor).toHaveBeenCalled());
-		const api = latest()!;
+		const api = latest();
+		expect(api).not.toBeNull();
 		unmount();
-		expect(api.dispose).toHaveBeenCalled();
+		expect(api?.dispose).toHaveBeenCalled();
 	});
 
 	it("readyToClose event → onClose callback fires", async () => {

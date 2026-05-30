@@ -162,13 +162,9 @@ export default function YouTubeShortsCarousel({
 	return (
 		<Container
 			header={
-				<div
-					className="feed-shorts__attribution-header"
-					role="heading"
-					aria-level={2}
-				>
+				<h2 className="feed-shorts__attribution-header">
 					{t("feedPage.shortsHostBlurb")}
-				</div>
+				</h2>
 			}
 		>
 			{!ready ? (
@@ -214,6 +210,7 @@ export default function YouTubeShortsCarousel({
 							}
 						/>
 					</div>
+					{/* biome-ignore lint/a11y/useSemanticElements: carousel group wrapper, not a form fieldset; group semantics provided via role */}
 					<div
 						className="feed-shorts-carousel"
 						role="group"

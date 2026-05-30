@@ -204,9 +204,7 @@ export default function MeetingDetails({ onChange }: Props) {
 
 							{/* Meetup RSVP URL */}
 							<FormField
-								label={
-									<>{t("createMeeting.meetingDetails.meetupRsvpUrlLabel")}</>
-								}
+								label={t("createMeeting.meetingDetails.meetupRsvpUrlLabel")}
 								errorText={isFormSubmitted && meetupRsvpUrlError}
 								i18nStrings={{
 									errorIconAriaLabel: t(

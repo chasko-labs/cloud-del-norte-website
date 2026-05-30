@@ -66,7 +66,9 @@ function loadTwitchSDK(onReady: () => void) {
 	script.async = true;
 	script.onload = () => {
 		twitchScriptLoading = false;
-		twitchReadyCallbacks.splice(0).forEach((cb) => cb());
+		twitchReadyCallbacks.splice(0).forEach((cb) => {
+			cb();
+		});
 	};
 	document.head.appendChild(script);
 }

@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AuthState } from "../../../../contexts/auth-context";
 import { AuthContext } from "../../../../contexts/auth-context";
 
-type AnyProps = Record<string, any>;
+type MockProps = { [key: string]: React.ReactNode };
 
 class ResizeObserverMock {
 	observe() {}
@@ -15,11 +15,11 @@ globalThis.ResizeObserver =
 	ResizeObserverMock as unknown as typeof ResizeObserver;
 
 vi.mock("@cloudscape-design/components/table", () => ({
-	default: ({ header }: AnyProps) =>
+	default: ({ header }: MockProps) =>
 		React.createElement("div", { "data-testid": "table" }, header),
 }));
 vi.mock("@cloudscape-design/components/header", () => ({
-	default: ({ children, actions }: AnyProps) =>
+	default: ({ children, actions }: MockProps) =>
 		React.createElement(
 			"div",
 			null,
@@ -28,18 +28,38 @@ vi.mock("@cloudscape-design/components/header", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/button", () => ({
-	default: ({ children, onClick, href }: AnyProps) =>
-		React.createElement("button", { onClick, "data-href": href }, children),
+	default: ({
+		children,
+		onClick,
+		href,
+	}: {
+		children?: React.ReactNode;
+		onClick?: () => void;
+		href?: string;
+	}) =>
+		React.createElement(
+			"button",
+			{ type: "button", onClick, "data-href": href },
+			children,
+		),
 }));
 vi.mock("@cloudscape-design/components/space-between", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/pagination", () => ({
 	default: () => React.createElement("div", { "data-testid": "pagination" }),
 }));
 vi.mock("@cloudscape-design/components/modal", () => ({
-	default: ({ children, visible, header }: AnyProps) =>
+	default: ({
+		children,
+		visible,
+		header,
+	}: {
+		children?: React.ReactNode;
+		visible?: boolean;
+		header?: React.ReactNode;
+	}) =>
 		visible
 			? React.createElement(
 					"div",
@@ -50,7 +70,7 @@ vi.mock("@cloudscape-design/components/modal", () => ({
 			: null,
 }));
 vi.mock("../jitsi-embed", () => ({
-	default: ({ roomName }: AnyProps) =>
+	default: ({ roomName }: { roomName?: string }) =>
 		React.createElement("div", {
 			"data-testid": "jitsi-embed-stub",
 			"data-room": roomName,
@@ -64,11 +84,11 @@ vi.mock("@cloudscape-design/components/collection-preferences", () => ({
 		React.createElement("div", { "data-testid": "collection-preferences" }),
 }));
 vi.mock("@cloudscape-design/components/box", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/collection-hooks", () => ({
-	useCollection: (_items: unknown[], _opts: AnyProps) => ({
+	useCollection: (_items: unknown[], _opts: Record<string, unknown>) => ({
 		items: [],
 		filterProps: { filteringText: "", onChange: vi.fn() },
 		actions: { setFiltering: vi.fn() },

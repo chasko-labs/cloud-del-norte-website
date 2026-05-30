@@ -6,11 +6,11 @@ import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../contexts/locale-context";
 
-type AnyProps = Record<string, any>;
+type MockProps = { [key: string]: React.ReactNode };
 
 // Mock Cloudscape components
 vi.mock("@cloudscape-design/components/content-layout", () => ({
-	default: ({ children, header }: AnyProps) =>
+	default: ({ children, header }: MockProps) =>
 		React.createElement(
 			"div",
 			{ "data-testid": "content-layout" },
@@ -19,32 +19,38 @@ vi.mock("@cloudscape-design/components/content-layout", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/header", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("h1", null, children),
 }));
 vi.mock("@cloudscape-design/components/button", () => ({
-	default: ({ children }: AnyProps) =>
-		React.createElement("button", null, children),
+	default: ({ children }: MockProps) =>
+		React.createElement("button", { type: "button" }, children),
 }));
 vi.mock("@cloudscape-design/components/form", () => ({
-	default: ({ children, actions }: AnyProps) =>
+	default: ({ children, actions }: MockProps) =>
 		React.createElement("div", { "data-testid": "form" }, actions, children),
 }));
 vi.mock("@cloudscape-design/components/space-between", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/help-panel", () => ({
-	default: ({ header }: AnyProps) =>
+	default: ({ header }: MockProps) =>
 		React.createElement("aside", { "data-testid": "help-panel" }, header),
 }));
 
 // Mock Shell and navigation — render breadcrumbs so we can assert breadcrumb text
 vi.mock("../../../layouts/shell", () => ({
-	default: ({ children, breadcrumbs }: AnyProps) =>
+	default: ({
+		children,
+		breadcrumbs,
+	}: {
+		children: React.ReactNode;
+		breadcrumbs?: React.ReactNode;
+	}) =>
 		React.createElement(
 			LocaleProvider,
-			{ locale: "us" } as any,
+			{ locale: "us" },
 			React.createElement(
 				"div",
 				{ "data-testid": "shell" },
@@ -57,7 +63,7 @@ vi.mock("../../../components/navigation", () => ({
 	default: () => React.createElement("nav", { "data-testid": "navigation" }),
 }));
 vi.mock("../../../components/breadcrumbs", () => ({
-	default: ({ active }: AnyProps) =>
+	default: ({ active }: { active?: { text?: string } }) =>
 		React.createElement(
 			"nav",
 			{ "aria-label": "breadcrumbs" },
@@ -75,7 +81,7 @@ vi.mock("../components/shape", () => ({
 
 // RequireAuth is exercised in its own unit tests; pass-through here so locale assertions can run.
 vi.mock("../../../components/require-auth", () => ({
-	RequireAuth: ({ children }: AnyProps) =>
+	RequireAuth: ({ children }: MockProps) =>
 		React.createElement(React.Fragment, null, children),
 }));
 
@@ -88,7 +94,7 @@ vi.mock("../validation/basic-validation", () => ({
 		focusFirstErrorField: vi.fn(),
 	}),
 	BasicValidationContext: {
-		Provider: ({ children }: AnyProps) =>
+		Provider: ({ children }: MockProps) =>
 			React.createElement("div", null, children),
 	},
 }));

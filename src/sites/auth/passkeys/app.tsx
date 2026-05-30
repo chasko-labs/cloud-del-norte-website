@@ -15,10 +15,21 @@ import {
 	deleteWebAuthnCredential,
 	getAccessToken,
 	listWebAuthnCredentials,
+	type RegistrationResponseJSON,
 	startWebAuthnRegistration,
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
 import "./styles.css";
+
+/** Cognito creation options shape — may arrive as string or nested object. */
+interface CreationOptionsPayload {
+	publicKey?: Record<string, unknown>;
+	challenge?: string;
+	user?: { id: string };
+	excludeCredentials?: Array<{ id: string; type: string }>;
+	authenticatorSelection?: Record<string, unknown>;
+	[key: string]: unknown;
+}
 
 function PasskeyManager() {
 	const [credentials, setCredentials] = useState<
@@ -54,37 +65,52 @@ function PasskeyManager() {
 		setSuccess("");
 		try {
 			const options = await startWebAuthnRegistration();
-			let creationOptions = (options.CredentialCreationOptions ??
-				(options as any).credentialCreationOptions) as any;
+			let creationOptions: CreationOptionsPayload | string | undefined =
+				(options.CredentialCreationOptions ??
+					(options as Record<string, unknown>).credentialCreationOptions) as
+					| CreationOptionsPayload
+					| string
+					| undefined;
 			if (!creationOptions)
 				throw new AuthError(
 					"WebAuthn registration not available — check pool configuration",
 				);
 			if (typeof creationOptions === "string")
-				creationOptions = JSON.parse(creationOptions);
+				creationOptions = JSON.parse(creationOptions) as CreationOptionsPayload;
 			// Cognito returns the publicKey options directly (no .publicKey wrapper)
-			const publicKey = creationOptions.publicKey ?? creationOptions;
-			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
-			publicKey.user.id = base64urlToBuffer(publicKey.user.id);
-			if (publicKey.excludeCredentials) {
-				publicKey.excludeCredentials = publicKey.excludeCredentials.map(
-					(c: any) => ({
-						...c,
-						id: base64urlToBuffer(c.id),
-					}),
-				);
+			const publicKey =
+				(creationOptions as CreationOptionsPayload).publicKey ??
+				(creationOptions as Record<string, unknown>);
+			(publicKey as Record<string, unknown>).challenge = base64urlToBuffer(
+				(publicKey as Record<string, unknown>).challenge as string,
+			);
+			(
+				publicKey as Record<string, unknown> & { user: { id: string } }
+			).user.id = base64urlToBuffer(
+				(publicKey as Record<string, unknown> & { user: { id: string } }).user
+					.id,
+			) as unknown as string;
+			if ((publicKey as Record<string, unknown>).excludeCredentials) {
+				(publicKey as Record<string, unknown>).excludeCredentials = (
+					(publicKey as Record<string, unknown>).excludeCredentials as Array<
+						Record<string, unknown>
+					>
+				).map((c) => ({
+					...c,
+					id: base64urlToBuffer(c.id as string),
+				}));
 			}
 			const credential = (await navigator.credentials.create({
-				publicKey,
-			})) as PublicKeyCredential;
+				publicKey: publicKey as unknown as PublicKeyCredentialCreationOptions,
+			})) as PublicKeyCredential | null;
 			if (!credential) throw new AuthError("registration cancelled");
 			const attestation =
 				credential.response as AuthenticatorAttestationResponse;
 
 			// Use toJSON() if available (WebAuthn L3) — Cognito expects this format
-			const credentialData =
-				typeof (credential as any).toJSON === "function"
-					? (credential as any).toJSON()
+			const credentialData: RegistrationResponseJSON =
+				"toJSON" in credential && typeof credential.toJSON === "function"
+					? (credential.toJSON() as unknown as RegistrationResponseJSON)
 					: {
 							id: credential.id,
 							rawId: bufferToBase64url(credential.rawId),
@@ -132,33 +158,49 @@ function PasskeyManager() {
 		setSuccess("");
 		try {
 			const options = await startWebAuthnRegistration();
-			let creationOptions = (options.CredentialCreationOptions ??
-				(options as any).credentialCreationOptions) as any;
+			let creationOptions: CreationOptionsPayload | string | undefined =
+				(options.CredentialCreationOptions ??
+					(options as Record<string, unknown>).credentialCreationOptions) as
+					| CreationOptionsPayload
+					| string
+					| undefined;
 			if (!creationOptions) throw new AuthError("WebAuthn not available");
 			if (typeof creationOptions === "string")
-				creationOptions = JSON.parse(creationOptions);
-			const publicKey = creationOptions.publicKey ?? creationOptions;
-			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
-			publicKey.user.id = base64urlToBuffer(publicKey.user.id);
-			if (publicKey.excludeCredentials) {
-				publicKey.excludeCredentials = publicKey.excludeCredentials.map(
-					(c: any) => ({ ...c, id: base64urlToBuffer(c.id) }),
-				);
+				creationOptions = JSON.parse(creationOptions) as CreationOptionsPayload;
+			const publicKey =
+				(creationOptions as CreationOptionsPayload).publicKey ??
+				(creationOptions as Record<string, unknown>);
+			(publicKey as Record<string, unknown>).challenge = base64urlToBuffer(
+				(publicKey as Record<string, unknown>).challenge as string,
+			);
+			(
+				publicKey as Record<string, unknown> & { user: { id: string } }
+			).user.id = base64urlToBuffer(
+				(publicKey as Record<string, unknown> & { user: { id: string } }).user
+					.id,
+			) as unknown as string;
+			if ((publicKey as Record<string, unknown>).excludeCredentials) {
+				(publicKey as Record<string, unknown>).excludeCredentials = (
+					(publicKey as Record<string, unknown>).excludeCredentials as Array<
+						Record<string, unknown>
+					>
+				).map((c) => ({ ...c, id: base64urlToBuffer(c.id as string) }));
 			}
 			// Force cross-platform — triggers QR code for phone/tablet
 			publicKey.authenticatorSelection = {
-				...publicKey.authenticatorSelection,
+				...((publicKey.authenticatorSelection as Record<string, unknown>) ??
+					{}),
 				authenticatorAttachment: "cross-platform",
 			};
 			const credential = (await navigator.credentials.create({
-				publicKey,
-			})) as PublicKeyCredential;
+				publicKey: publicKey as unknown as PublicKeyCredentialCreationOptions,
+			})) as PublicKeyCredential | null;
 			if (!credential) throw new AuthError("registration cancelled");
 			const attestation =
 				credential.response as AuthenticatorAttestationResponse;
-			const credentialData =
-				typeof (credential as any).toJSON === "function"
-					? (credential as any).toJSON()
+			const credentialData: RegistrationResponseJSON =
+				"toJSON" in credential && typeof credential.toJSON === "function"
+					? (credential.toJSON() as unknown as RegistrationResponseJSON)
 					: {
 							id: credential.id,
 							rawId: bufferToBase64url(credential.rawId),

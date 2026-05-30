@@ -34,7 +34,7 @@ export function RequireAuth({
 	}, [auth.isAuthenticated]);
 
 	if (!auth.isAuthenticated) {
-		if (fallback) return <>{fallback}</>;
+		if (fallback) return fallback;
 		return (
 			<Box padding="xxl" textAlign="center">
 				<SpaceBetween size="l" alignItems="center">

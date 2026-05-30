@@ -6,11 +6,11 @@ import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../contexts/locale-context";
 
-type AnyProps = Record<string, any>;
+type MockProps = { [key: string]: React.ReactNode };
 
 // Mock Cloudscape components
 vi.mock("@cloudscape-design/components/content-layout", () => ({
-	default: ({ children, header }: AnyProps) =>
+	default: ({ children, header }: MockProps) =>
 		React.createElement(
 			"div",
 			{ "data-testid": "content-layout" },
@@ -19,11 +19,11 @@ vi.mock("@cloudscape-design/components/content-layout", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/grid", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", { "data-testid": "grid" }, children),
 }));
 vi.mock("@cloudscape-design/components/header", () => ({
-	default: ({ children, info }: AnyProps) =>
+	default: ({ children, info }: MockProps) =>
 		React.createElement(
 			"div",
 			null,
@@ -32,7 +32,8 @@ vi.mock("@cloudscape-design/components/header", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/link", () => ({
-	default: ({ children }: AnyProps) => React.createElement("a", null, children),
+	default: ({ children }: MockProps) =>
+		React.createElement("a", null, children),
 }));
 
 // Mock Shell and dependencies
@@ -46,7 +47,7 @@ vi.mock("../../../layouts/shell", () => ({
 	}) =>
 		React.createElement(
 			LocaleProvider,
-			{ locale: "us" } as any,
+			{ locale: "us" },
 			React.createElement(
 				"div",
 				{ "data-testid": "shell" },

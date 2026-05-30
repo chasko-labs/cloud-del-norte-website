@@ -124,9 +124,8 @@ describe("auth module", () => {
 			const verifier: string = state.pkceVerifier;
 
 			const target = assign.mock.calls[0][0] as string;
-			const challenge = new URLSearchParams(target.split("?")[1]).get(
-				"code_challenge",
-			)!;
+			const challenge =
+				new URLSearchParams(target.split("?")[1]).get("code_challenge") ?? "";
 
 			const digest = await crypto.subtle.digest(
 				"SHA-256",

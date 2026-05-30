@@ -48,6 +48,7 @@ export default function LeaderCard({ leader }: LeaderCardProps) {
 				</Box>
 			)}
 
+			{/* biome-ignore lint/a11y/useSemanticElements: CSS pill styling targets [role="listitem"] selectors; converting to ul/li would break those selectors */}
 			<div
 				className="cdn-footer-social"
 				role="list"
@@ -67,6 +68,7 @@ function PlaceholderCTA({ meetupUrl }: { meetupUrl: string | null }) {
 	const { t } = useTranslation();
 	const url = meetupUrl ?? "https://www.meetup.com/awsugclouddelnorte/";
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: CSS pill styling targets [role="listitem"] selectors; converting to li would break those selectors
 		<span role="listitem">
 			<Link href={url} external variant="primary" fontSize="body-s">
 				{t("footer.joinUs")}
@@ -113,6 +115,7 @@ function SocialLinks({
 	return (
 		<>
 			{links.map(({ label, href }) => (
+				// biome-ignore lint/a11y/useSemanticElements: CSS pill styling targets [role="listitem"] selectors; converting to li would break those selectors
 				<span key={label} role="listitem">
 					<Link
 						href={href}

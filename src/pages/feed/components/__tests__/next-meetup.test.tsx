@@ -169,7 +169,8 @@ describe("NextMeetup — wave 33a uplift", () => {
 			await new Promise((r) => setTimeout(r, 25));
 		}
 		expect(img).not.toBeNull();
-		fireEvent.error(img!);
+		if (!img) return;
+		fireEvent.error(img);
 		// After onError, the img should be removed from DOM
 		expect(container.querySelector(".feed-next-meetup__image")).toBeNull();
 		// The wrapper slot still carries aria-label for AT

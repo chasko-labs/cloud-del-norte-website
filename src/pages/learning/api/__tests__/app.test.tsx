@@ -3,15 +3,19 @@ import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 
-type AnyProps = Record<string, any>;
-
 // Mock Shell — AppLayout uses ResizeObserver/timers that hang in jsdom.
 // Must render breadcrumbs prop to test locale-dependent breadcrumb text.
 vi.mock("../../../../layouts/shell", () => ({
-	default: ({ children, breadcrumbs }: AnyProps) =>
+	default: ({
+		children,
+		breadcrumbs,
+	}: {
+		children: React.ReactNode;
+		breadcrumbs?: React.ReactNode;
+	}) =>
 		React.createElement(
 			LocaleProvider,
-			{ locale: "us" } as any,
+			{ locale: "us" },
 			React.createElement(
 				"div",
 				{ "data-testid": "shell" },
@@ -26,7 +30,7 @@ vi.mock("../../../../components/navigation", () => ({
 }));
 
 vi.mock("../../../../components/breadcrumbs", () => ({
-	default: ({ active }: AnyProps) =>
+	default: ({ active }: { active?: { text?: string } }) =>
 		React.createElement(
 			"nav",
 			{ "aria-label": "breadcrumbs" },

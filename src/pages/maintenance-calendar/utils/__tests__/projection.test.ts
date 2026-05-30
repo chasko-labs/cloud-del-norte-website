@@ -32,13 +32,17 @@ describe("avgIntervalDays", () => {
 		const b = makeRelease("2025-01-01");
 		const avg = avgIntervalDays([a, b]);
 		expect(avg).not.toBeNull();
-		expect(Math.round(avg!)).toBe(366); // 2024 is a leap year
+		if (avg === null) return;
+		expect(Math.round(avg)).toBe(366); // 2024 is a leap year
 	});
 
 	it("handles unsorted input and still computes correct average", () => {
 		const unsorted = [REL_2024_10, REL_2024_01, REL_2024_07, REL_2024_04];
 		const sorted = [REL_2024_01, REL_2024_04, REL_2024_07, REL_2024_10];
-		expect(avgIntervalDays(unsorted)).toBeCloseTo(avgIntervalDays(sorted)!, 5);
+		const unsortedAvg = avgIntervalDays(unsorted);
+		const sortedAvg = avgIntervalDays(sorted);
+		if (unsortedAvg === null || sortedAvg === null) return;
+		expect(unsortedAvg).toBeCloseTo(sortedAvg, 5);
 	});
 
 	it("calculates correct average across 5 evenly-spaced releases", () => {
@@ -52,8 +56,9 @@ describe("avgIntervalDays", () => {
 		];
 		const avg = avgIntervalDays(releases);
 		expect(avg).not.toBeNull();
-		expect(avg!).toBeGreaterThan(85);
-		expect(avg!).toBeLessThan(100);
+		if (avg === null) return;
+		expect(avg).toBeGreaterThan(85);
+		expect(avg).toBeLessThan(100);
 	});
 });
 
@@ -121,7 +126,8 @@ describe("projectNextVersion", () => {
 		];
 		const result = projectNextVersion(releases);
 		expect(result).not.toBeNull();
-		expect(result!.projectedDate! > "2025-01-01").toBe(true);
+		if (!result?.projectedDate) return;
+		expect(result.projectedDate > "2025-01-01").toBe(true);
 	});
 
 	it('returns announced date with confidence "announced" when announcedDate is provided', () => {
@@ -177,6 +183,7 @@ describe("projectNextLTS", () => {
 		const releases = [REL_2024_01, REL_2024_07, REL_2025_01];
 		const result = projectNextLTS(releases);
 		expect(result).not.toBeNull();
-		expect(result!.projectedDate! > "2025-01-01").toBe(true);
+		if (!result?.projectedDate) return;
+		expect(result.projectedDate > "2025-01-01").toBe(true);
 	});
 });

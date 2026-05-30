@@ -121,7 +121,7 @@ export function createAudioBridge(_ctx: CanvasRenderingContext2D): {
 		if (!sourceRegistry.has(el)) {
 			const source = ctx.createMediaElementSource(el);
 			sourceRegistry.set(el, source);
-			source.connect(compressor!);
+			if (compressor) source.connect(compressor);
 		}
 
 		currentStationKey = stationKey;

@@ -237,13 +237,13 @@ function parseIcal(text: string): MeetupEvent | null {
 		future.sort(
 			(a, b) => new Date(a.dtstart).getTime() - new Date(b.dtstart).getTime(),
 		);
-		return { ...future[0]!, isPast: false };
+		return { ...future[0], isPast: false };
 	}
 	// most recent past
 	past.sort(
 		(a, b) => new Date(b.dtstart).getTime() - new Date(a.dtstart).getTime(),
 	);
-	return past.length > 0 ? { ...past[0]!, isPast: true } : null;
+	return past.length > 0 ? { ...past[0], isPast: true } : null;
 }
 
 type LoadState = "loading" | "loaded" | "fallback";
@@ -263,9 +263,10 @@ type LoadState = "loading" | "loaded" | "fallback";
  */
 function MarqueeHeader({ text }: { text: string }) {
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: marquee is visually styled; heading semantics provided via role="heading"+aria-level to avoid h2 default-style/layout conflict
 		<div className="feed-next-meetup__marquee" role="heading" aria-level={2}>
 			<span className="feed-next-meetup__marquee-text">{text}</span>
-			<span className="feed-next-meetup__marquee-tape" aria-hidden="true" />
+			<div className="feed-next-meetup__marquee-tape" aria-hidden="true" />
 		</div>
 	);
 }

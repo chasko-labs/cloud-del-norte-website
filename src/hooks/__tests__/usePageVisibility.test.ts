@@ -13,7 +13,6 @@ describe("usePageVisibility", () => {
 		if (originalHidden) {
 			Object.defineProperty(document, "hidden", originalHidden);
 		} else {
-			// biome-ignore lint/performance/noDelete: restore property in tests
 			delete (document as { hidden?: boolean }).hidden;
 		}
 	});

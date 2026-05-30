@@ -119,6 +119,7 @@ describe("AuthProvider + useAuth", () => {
 		const caught = vi.fn();
 		function Consumer() {
 			try {
+				// biome-ignore lint/correctness/useHookAtTopLevel: hook is intentionally called in try/catch to test that it throws outside provider
 				useAuth();
 			} catch (e) {
 				caught((e as Error).message);

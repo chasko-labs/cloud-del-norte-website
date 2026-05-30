@@ -133,6 +133,7 @@ function FeedCardShellMarquee({
 	headerActions?: ReactNode;
 }) {
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: marquee is visually styled; heading semantics provided via role="heading"+aria-level to avoid h2 default-style/layout conflict
 		<div className="feed-card-shell__marquee" role="heading" aria-level={2}>
 			<span className="feed-card-shell__marquee-text">{headerText}</span>
 			{headerActions && (

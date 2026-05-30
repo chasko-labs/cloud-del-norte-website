@@ -172,6 +172,7 @@ export default function BuilderCenterCard() {
 				</ol>
 
 				{canRotate && (
+					// biome-ignore lint/a11y/useSemanticElements: carousel navigation controls, not a form fieldset; group semantics provided via role
 					<div
 						className="feed-builder-deck__controls"
 						role="group"

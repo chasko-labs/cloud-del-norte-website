@@ -120,7 +120,7 @@ type StreamHealth = "ok" | "retrying" | "failed";
 function PersistentPlayerBar({
 	state,
 	autoplay,
-	onStop,
+	onStop: _onStop,
 	onSkipStation,
 	onPlayStateChange,
 }: {
@@ -485,7 +485,6 @@ function PersistentPlayerBar({
 	// resolves the error before the 5s threshold fires; if a fresh URL also
 	// fails the existing path still runs and contributes to the same
 	// failed-state transition.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: isPodcast forces re-registration when audio element is recreated via key prop
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio) return;
@@ -588,7 +587,6 @@ function PersistentPlayerBar({
 	// stops the stream. --cdn-bass / --cdn-mid / --cdn-treble naturally drop
 	// to silence on pause but the keyframes still tick; a body-class toggle
 	// flips animation-play-state to paused for a clean stop
-	// biome-ignore lint/correctness/useExhaustiveDependencies: isPodcast forces re-registration when audio element is recreated via key prop
 	useEffect(() => {
 		const audio = audioRef.current;
 		if (!audio) return;

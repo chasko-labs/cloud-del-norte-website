@@ -125,7 +125,8 @@ describe("checkStaleManual", () => {
 		const entry = { id: "python", lastManualUpdate: "2024-03-02" };
 		const result = checkStaleManual(entry, 90, fixedNow);
 		expect(result).not.toBeNull();
-		expect(result!).toBeGreaterThanOrEqual(90);
+		if (result === null) return;
+		expect(result).toBeGreaterThanOrEqual(90);
 	});
 
 	it("returns null when lastManualUpdate is 30 days ago (not stale)", () => {
@@ -153,7 +154,8 @@ describe("checkStaleManual", () => {
 			new Date("2023-04-15T00:00:00Z"),
 		);
 		expect(result).not.toBeNull();
-		expect(result!).toBeGreaterThan(90);
+		if (result === null) return;
+		expect(result).toBeGreaterThan(90);
 	});
 });
 

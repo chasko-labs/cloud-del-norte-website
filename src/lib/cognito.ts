@@ -108,7 +108,9 @@ export function getRefreshToken(): string | null {
 
 export function clearTokens(): void {
 	[KEY_ID_TOKEN, KEY_ACCESS_TOKEN, KEY_REFRESH_TOKEN, KEY_EXPIRES_AT].forEach(
-		(k) => sessionStorage.removeItem(k),
+		(k) => {
+			sessionStorage.removeItem(k);
+		},
 	);
 }
 
@@ -343,6 +345,19 @@ export async function refreshTokens(): Promise<void> {
 }
 // ---- Passkey / WebAuthn ----
 
+export interface RegistrationResponseJSON {
+	id: string;
+	rawId: string;
+	type: string;
+	response: {
+		clientDataJSON: string;
+		attestationObject: string;
+		transports?: string[];
+	};
+	authenticatorAttachment?: string | null;
+	clientExtensionResults: AuthenticationExtensionsClientOutputs;
+}
+
 export async function startWebAuthnRegistration(): Promise<
 	Record<string, unknown>
 > {
@@ -352,13 +367,13 @@ export async function startWebAuthnRegistration(): Promise<
 }
 
 export async function completeWebAuthnRegistration(
-	credential: Record<string, unknown>,
+	credential: RegistrationResponseJSON,
 ): Promise<void> {
 	const accessToken = getAccessToken();
 	if (!accessToken) throw new AuthError("not authenticated");
 	await cognitoPost("CompleteWebAuthnRegistration", {
 		AccessToken: accessToken,
-		Credential: credential,
+		Credential: credential as unknown as Record<string, unknown>,
 	});
 }
 

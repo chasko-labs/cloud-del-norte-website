@@ -14,7 +14,7 @@ export const LocaleContext = createContext<LocaleContextValue | null>(null);
 
 interface LocaleProviderProps {
 	locale: Locale;
-	children: ReactNode;
+	children?: ReactNode;
 }
 
 const translations = {
