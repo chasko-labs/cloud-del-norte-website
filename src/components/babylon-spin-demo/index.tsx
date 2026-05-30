@@ -4,6 +4,8 @@
 //
 // Wave 66 — added IntersectionObserver gate + babylon-budget integration.
 // Engine is disposed when the carousel scrolls off-screen and re-created on re-entry.
+import type { Engine } from "@babylonjs/core/Engines/engine";
+import type { Scene } from "@babylonjs/core/scene";
 import { useEffect, useRef } from "react";
 import { loadBabylonCommon } from "../../lib/babylon-loader";
 import {
@@ -24,12 +26,11 @@ export default function BabylonSpinDemo({
 		if (!canvas) return;
 
 		let disposed = false;
-		// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
-		let _eng: any = null;
+		let _eng: Engine | null = null;
 		let ro: ResizeObserver | null = null;
 		let io: IntersectionObserver | null = null;
 
-		let currentScene: any = null; // biome-ignore lint/suspicious/noExplicitAny: dynamic babylon scene
+		let currentScene: Scene | null = null;
 
 		function teardown() {
 			ro?.disconnect();
@@ -89,7 +90,10 @@ export default function BabylonSpinDemo({
 
 			// scene needs an active camera before view registration; the
 			// ArcRotateCamera created above is implicitly the activeCamera.
-			registerSceneView(canvas, scene.activeCamera!, render);
+			const cam = scene.activeCamera;
+			if (cam) {
+				registerSceneView(canvas, cam, render);
+			}
 		}
 
 		// IntersectionObserver: only run when carousel is on-screen

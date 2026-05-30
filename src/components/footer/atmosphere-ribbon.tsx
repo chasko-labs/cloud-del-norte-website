@@ -6,6 +6,8 @@
 // Wave 66 — added IntersectionObserver gate + babylon-budget integration.
 // Wave 70b — fade-in: ribbon starts opacity:0, fades in once loaded.
 
+import type { Engine } from "@babylonjs/core/Engines/engine";
+import type { Scene } from "@babylonjs/core/scene";
 import { useEffect, useRef, useState } from "react";
 import { loadBabylonCommon } from "../../lib/babylon-loader";
 import {
@@ -57,8 +59,7 @@ function RibbonFallback({ onReady }: { onReady: () => void }) {
 
 function RibbonScene({ hour, onReady }: { hour: number; onReady: () => void }) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
-	const engRef = useRef<any>(null);
+	const engRef = useRef<Engine | null>(null);
 
 	useEffect(() => {
 		const canvas = canvasRef.current;
@@ -77,7 +78,7 @@ function RibbonScene({ hour, onReady }: { hour: number; onReady: () => void }) {
 		const [sr, sg, sb, sa] = skyColor(tod);
 		const xNorm = sunHourToX(hour); // 0=left, 1=right
 
-		let currentScene: any = null; // biome-ignore lint/suspicious/noExplicitAny: dynamic babylon scene
+		let currentScene: Scene | null = null;
 		let scrollStartHandler: (() => void) | null = null;
 		let scrollEndHandler: (() => void) | null = null;
 

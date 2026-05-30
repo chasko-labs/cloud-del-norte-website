@@ -159,19 +159,17 @@ export default function Weather() {
 			});
 		};
 		// useEffect only runs in the browser — window is always defined here
-		let timerId: number | undefined;
+		let timerId: ReturnType<typeof setTimeout> | undefined;
 		let idleCbId: number | undefined;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		const win = window as any;
 		if ("requestIdleCallback" in window) {
 			idleCbId = requestIdleCallback(doFetch, { timeout: 2000 });
 		} else {
-			timerId = win.setTimeout(doFetch, 1500);
+			timerId = setTimeout(doFetch, 1500);
 		}
 		return () => {
 			cancelled = true;
 			if (idleCbId !== undefined) cancelIdleCallback(idleCbId);
-			if (timerId !== undefined) win.clearTimeout(timerId);
+			if (timerId !== undefined) clearTimeout(timerId);
 		};
 	}, [city]);
 

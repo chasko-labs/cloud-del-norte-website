@@ -15,6 +15,8 @@
 // Epilepsy rules: NO flicker, NO strobe. Only steady glows, slow animations,
 // and a single 12-s ease arc for thunderstorm.
 
+import type { Engine } from "@babylonjs/core/Engines/engine";
+import type { Scene } from "@babylonjs/core/scene";
 import { useEffect, useRef } from "react";
 import { loadBabylonCommon } from "../../lib/babylon-loader";
 import {
@@ -76,8 +78,7 @@ export default function AtmosphereScene({
 	hour,
 }: AtmosphereSceneProps) {
 	const canvasRef = useRef<HTMLCanvasElement>(null);
-	// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
-	const engRef = useRef<any>(null);
+	const engRef = useRef<Engine | null>(null);
 	// Stable ref so the IO callback always reads current props without re-running the effect
 	const propsRef = useRef({ weatherCode, hour });
 	propsRef.current = { weatherCode, hour };
@@ -88,8 +89,7 @@ export default function AtmosphereScene({
 		if (!canvas) return;
 
 		let disposed = false;
-		// biome-ignore lint/suspicious/noExplicitAny: dynamic babylon import
-		let eng: any = null;
+		let eng: Engine | null = null;
 		let ro: ResizeObserver | null = null;
 		let io: IntersectionObserver | null = null;
 
@@ -97,7 +97,7 @@ export default function AtmosphereScene({
 			"(prefers-reduced-motion: reduce)",
 		).matches;
 
-		let currentScene: any = null; // biome-ignore lint/suspicious/noExplicitAny: dynamic babylon scene
+		let currentScene: Scene | null = null;
 
 		function teardown() {
 			ro?.disconnect();
@@ -317,15 +317,16 @@ export default function AtmosphereScene({
 
 			// ResizeObserver
 			ro = new ResizeObserver(() => {
-				eng.resize();
+				if (eng) eng.resize();
 			});
 			ro.observe(canvas);
 
-			if (reduced) {
-				registerSceneView(canvas, scene.activeCamera!, render);
-				scene.render();
-			} else {
-				registerSceneView(canvas, scene.activeCamera!, render);
+			const activeCam = scene.activeCamera;
+			if (activeCam) {
+				registerSceneView(canvas, activeCam, render);
+				if (reduced) {
+					scene.render();
+				}
 			}
 		}
 
