@@ -26,7 +26,6 @@ const MEETUP_URL = "https://www.meetup.com/cloud-del-norte/";
 const ROOM_NAME = "cloud-del-norte-awsug";
 
 function MeetingsContent({ auth }: { auth: AuthState }) {
-	const { t } = useTranslation();
 	const [inCall, setInCall] = useState(false);
 
 	return (

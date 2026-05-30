@@ -3,7 +3,7 @@ import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../contexts/locale-context";
 
-type AnyProps = Record<string, any>;
+type MockProps = { [key: string]: React.ReactNode };
 
 class ResizeObserverMock {
 	observe() {}
@@ -15,7 +15,18 @@ globalThis.ResizeObserver =
 
 // Mock Cloudscape components
 vi.mock("@cloudscape-design/components/table", () => ({
-	default: ({ header, items, columnDefinitions }: AnyProps) =>
+	default: ({
+		header,
+		items,
+		columnDefinitions,
+	}: {
+		header?: React.ReactNode;
+		items?: Record<string, unknown>[];
+		columnDefinitions?: {
+			id?: string;
+			cell?: (item: unknown) => React.ReactNode;
+		}[];
+	}) =>
 		React.createElement(
 			"div",
 			{ "data-testid": "table" },
@@ -24,7 +35,7 @@ vi.mock("@cloudscape-design/components/table", () => ({
 				React.createElement(
 					"div",
 					{ key: i, "data-testid": "table-row" },
-					(columnDefinitions ?? []).map((col: AnyProps) =>
+					(columnDefinitions ?? []).map((col) =>
 						React.createElement(
 							"div",
 							{ key: col.id, "data-testid": `cell-${col.id}` },
@@ -36,7 +47,7 @@ vi.mock("@cloudscape-design/components/table", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/header", () => ({
-	default: ({ children, actions }: AnyProps) =>
+	default: ({ children, actions }: MockProps) =>
 		React.createElement(
 			"div",
 			null,
@@ -45,18 +56,29 @@ vi.mock("@cloudscape-design/components/header", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/button", () => ({
-	default: ({ children, onClick }: AnyProps) =>
-		React.createElement("button", { onClick }, children),
+	default: ({
+		children,
+		onClick,
+	}: {
+		children?: React.ReactNode;
+		onClick?: () => void;
+	}) => React.createElement("button", { type: "button", onClick }, children),
 }));
 vi.mock("@cloudscape-design/components/space-between", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/pagination", () => ({
 	default: () => React.createElement("div", { "data-testid": "pagination" }),
 }));
 vi.mock("@cloudscape-design/components/modal", () => ({
-	default: ({ children, visible }: AnyProps) =>
+	default: ({
+		children,
+		visible,
+	}: {
+		children?: React.ReactNode;
+		visible?: boolean;
+	}) =>
 		visible
 			? React.createElement("div", { "data-testid": "modal" }, children)
 			: null,
@@ -66,7 +88,7 @@ vi.mock("../components/jitsi-embed", () => ({
 		React.createElement("div", { "data-testid": "jitsi-embed-stub" }),
 }));
 vi.mock("@cloudscape-design/components/text-filter", () => ({
-	default: ({ filteringPlaceholder }: AnyProps) =>
+	default: ({ filteringPlaceholder }: { filteringPlaceholder?: string }) =>
 		React.createElement("input", { placeholder: filteringPlaceholder }),
 }));
 vi.mock("@cloudscape-design/components/collection-preferences", () => ({
@@ -74,11 +96,11 @@ vi.mock("@cloudscape-design/components/collection-preferences", () => ({
 		React.createElement("div", { "data-testid": "collection-preferences" }),
 }));
 vi.mock("@cloudscape-design/components/box", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/collection-hooks", () => ({
-	useCollection: (_items: unknown[], _opts: AnyProps) => ({
+	useCollection: (_items: unknown[], _opts: Record<string, unknown>) => ({
 		items: [],
 		filterProps: { filteringText: "", onChange: vi.fn() },
 		actions: { setFiltering: vi.fn() },
@@ -96,10 +118,16 @@ vi.mock("@cloudscape-design/collection-hooks", () => ({
 
 // Mock Shell — render breadcrumbs and children so breadcrumb text is testable
 vi.mock("../../../layouts/shell", () => ({
-	default: ({ children, breadcrumbs }: AnyProps) =>
+	default: ({
+		children,
+		breadcrumbs,
+	}: {
+		children: React.ReactNode;
+		breadcrumbs?: React.ReactNode;
+	}) =>
 		React.createElement(
 			LocaleProvider,
-			{ locale: "us" } as any,
+			{ locale: "us" },
 			React.createElement(
 				"div",
 				{ "data-testid": "shell" },
@@ -111,7 +139,7 @@ vi.mock("../../../layouts/shell", () => ({
 
 // Mock Breadcrumbs — render active.text so locale-dependent text is visible
 vi.mock("../../../components/breadcrumbs", () => ({
-	default: ({ active }: AnyProps) =>
+	default: ({ active }: { active?: { text?: string } }) =>
 		React.createElement(
 			"nav",
 			{ "aria-label": "breadcrumbs" },
@@ -134,7 +162,7 @@ vi.mock("../../create-meeting/components/help-panel-home", () => ({
 
 // RequireAuth is exercised in its own unit tests; pass-through here so locale assertions can run.
 vi.mock("../../../components/require-auth", () => ({
-	RequireAuth: ({ children }: AnyProps) =>
+	RequireAuth: ({ children }: MockProps) =>
 		React.createElement(React.Fragment, null, children),
 }));
 

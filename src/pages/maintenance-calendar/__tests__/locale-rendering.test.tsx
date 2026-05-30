@@ -2,24 +2,35 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-type AnyProps = Record<string, any>;
+type MockProps = { [key: string]: React.ReactNode };
 
 // Mock Cloudscape components
 vi.mock("@cloudscape-design/components/table", () => ({
-	default: ({ header, items, columnDefinitions }: AnyProps) =>
+	default: ({
+		header,
+		items,
+		columnDefinitions,
+	}: {
+		header?: React.ReactNode;
+		items?: Record<string, unknown>[];
+		columnDefinitions?: {
+			id?: string;
+			cell?: (item: unknown) => React.ReactNode;
+		}[];
+	}) =>
 		React.createElement(
 			"div",
 			{ "data-testid": "table" },
 			header,
-			items.map((_: unknown, i: number) =>
+			(items ?? []).map((_: unknown, i: number) =>
 				React.createElement(
 					"div",
 					{ key: i, "data-testid": "table-row" },
-					columnDefinitions.map((col: AnyProps) =>
+					(columnDefinitions ?? []).map((col) =>
 						React.createElement(
 							"div",
 							{ key: col.id, "data-testid": `cell-${col.id}` },
-							col.cell(items[i]),
+							col.cell?.((items ?? [])[i]),
 						),
 					),
 				),
@@ -27,11 +38,17 @@ vi.mock("@cloudscape-design/components/table", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/select", () => ({
-	default: ({ ariaLabel, options }: AnyProps) =>
+	default: ({
+		ariaLabel,
+		options,
+	}: {
+		ariaLabel?: string;
+		options?: { value?: string; label?: string }[];
+	}) =>
 		React.createElement(
 			"select",
 			{ "aria-label": ariaLabel },
-			options?.map((o: AnyProps) =>
+			options?.map((o) =>
 				React.createElement(
 					"option",
 					{ key: o.value, value: o.value },
@@ -41,11 +58,24 @@ vi.mock("@cloudscape-design/components/select", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/button", () => ({
-	default: ({ children, onClick }: AnyProps) =>
-		React.createElement("button", { onClick }, children),
+	default: ({
+		children,
+		onClick,
+	}: {
+		children?: React.ReactNode;
+		onClick?: () => void;
+	}) => React.createElement("button", { type: "button", onClick }, children),
 }));
 vi.mock("@cloudscape-design/components/header", () => ({
-	default: ({ children, actions, variant }: AnyProps) =>
+	default: ({
+		children,
+		actions,
+		variant,
+	}: {
+		children?: React.ReactNode;
+		actions?: React.ReactNode;
+		variant?: string;
+	}) =>
 		React.createElement(
 			"div",
 			null,
@@ -54,24 +84,29 @@ vi.mock("@cloudscape-design/components/header", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/content-layout", () => ({
-	default: ({ children, header }: AnyProps) =>
+	default: ({ children, header }: MockProps) =>
 		React.createElement("div", null, header, children),
 }));
 vi.mock("@cloudscape-design/components/space-between", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/badge", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("span", null, children),
 }));
 vi.mock("@cloudscape-design/components/box", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/link", () => ({
-	default: ({ children, href }: AnyProps) =>
-		React.createElement("a", { href }, children),
+	default: ({
+		children,
+		href,
+	}: {
+		children?: React.ReactNode;
+		href?: string;
+	}) => React.createElement("a", { href }, children),
 }));
 
 // Mock layout components

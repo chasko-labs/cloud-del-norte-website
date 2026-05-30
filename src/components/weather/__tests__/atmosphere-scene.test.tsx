@@ -17,36 +17,30 @@ vi.mock("@babylonjs/core", () => {
 	const eng = { runRenderLoop, stopRenderLoop, dispose, resize };
 	const scene = { clearColor: null, render: vi.fn(), beginAnimation };
 
-	// biome-ignore lint/complexity/noStaticOnlyClass: vitest requires class syntax for constructable mocks
 	class Engine {
 		constructor() {
 			Object.assign(this, eng);
 		}
 	}
-	// biome-ignore lint/complexity/noStaticOnlyClass: same
 	class Scene {
 		constructor() {
 			Object.assign(this, scene);
 		}
 	}
-	// biome-ignore lint/complexity/noStaticOnlyClass: vitest requires class syntax for constructable mocks
 	class ArcRotateCamera {
 		inputs = { clear: vi.fn() };
 		animations: unknown[] = [];
 	}
-	// biome-ignore lint/complexity/noStaticOnlyClass: same
 	class HemisphericLight {
 		constructor() {
 			Object.assign(this, { intensity: 1, diffuse: null });
 		}
 	}
-	// biome-ignore lint/complexity/noStaticOnlyClass: same
 	class DirectionalLight {
 		constructor() {
 			Object.assign(this, { intensity: 1, diffuse: null });
 		}
 	}
-	// biome-ignore lint/complexity/noStaticOnlyClass: same
 	class StandardMaterial {
 		constructor() {
 			Object.assign(this, {
@@ -56,7 +50,6 @@ vi.mock("@babylonjs/core", () => {
 			});
 		}
 	}
-	// biome-ignore lint/complexity/noStaticOnlyClass: same
 	class Animation {
 		constructor(public name: string) {}
 		setKeys = vi.fn();
@@ -95,11 +88,13 @@ vi.mock("@babylonjs/core", () => {
 		DirectionalLight,
 		Animation,
 		Color4: class Color4 {},
+		// biome-ignore lint/complexity/noStaticOnlyClass: mocking a class-based Babylon API that is instantiated with new
 		Color3: class Color3 {
 			static White() {
 				return {};
 			}
 		},
+		// biome-ignore lint/complexity/noStaticOnlyClass: mocking a class-based Babylon API that is instantiated with new
 		Vector3: class Vector3 {
 			static Zero() {
 				return {};

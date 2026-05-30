@@ -64,7 +64,11 @@ const TIME_OPTIONS: MultiselectOption[] = [
 	{ value: "evening", label: "evening" },
 ];
 
-export default function SpeakerProposalForm({ open, onClose, source }: Props) {
+export default function SpeakerProposalForm({
+	open,
+	onClose,
+	source: _source,
+}: Props) {
 	const { t } = useTranslation();
 	const claims = useRef(decodeTokenClaims());
 	const captchaContainerRef = useRef<HTMLDivElement>(null);

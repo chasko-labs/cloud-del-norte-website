@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AuthState } from "../../../contexts/auth-context";
 import { AuthContext } from "../../../contexts/auth-context";
 
-type AnyProps = Record<string, any>;
+type MockProps = { [key: string]: React.ReactNode };
 
 class ResizeObserverMock {
 	observe() {}
@@ -25,7 +25,7 @@ vi.mock("../../../lib/auth", () => ({
 }));
 
 vi.mock("../../../layouts/shell", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("../../../components/navigation", () => ({
@@ -47,7 +47,7 @@ vi.mock("../validation/basic-validation", () => ({
 		focusFirstErrorField: vi.fn(),
 	}),
 	BasicValidationContext: {
-		Provider: ({ children }: AnyProps) =>
+		Provider: ({ children }: MockProps) =>
 			React.createElement("div", null, children),
 	},
 }));

@@ -42,6 +42,17 @@ interface ApiAttempt {
 	data_count: number;
 }
 
+interface TournamentWinner {
+	player: string;
+	team: string;
+	championPlayed: string;
+	tournamentWins: number;
+	tournamentLosses: number;
+	winRate: number;
+	performanceScore: number;
+	event: string;
+}
+
 const RiftRewindDashboard: React.FC = () => {
 	const { t } = useTranslation();
 	const [matches, setMatches] = useState<MatchSummary[]>([]);
@@ -54,7 +65,15 @@ const RiftRewindDashboard: React.FC = () => {
 	const [championApiResponse, setChampionApiResponse] = useState<string>("");
 	const [endpointDetails, setEndpointDetails] = useState<string>("");
 	const [hasTriedLiveData, setHasTriedLiveData] = useState(false);
-	const [championsApiDetails, setChampionsApiDetails] = useState<any>(null);
+	const [championsApiDetails, setChampionsApiDetails] = useState<{
+		actual_status: string;
+		expected_url: string;
+		expected_response: string;
+		actual_response: string;
+		data_source: string;
+		authentication: string;
+		response_format: string;
+	} | null>(null);
 	const [contests, setContests] = useState<Contest[]>([]);
 	const [activeDemo, setActiveDemo] = useState<"contests" | "players" | null>(
 		null,
@@ -340,7 +359,7 @@ const RiftRewindDashboard: React.FC = () => {
 	];
 
 	const getTournamentWinners = (year: string) => {
-		const winnersData: Record<string, any[]> = {
+		const winnersData: Record<string, TournamentWinner[]> = {
 			"2024": [
 				{
 					player: "Faker",
@@ -872,7 +891,7 @@ const RiftRewindDashboard: React.FC = () => {
 							{
 								id: "player",
 								header: t("learning.api.player"),
-								cell: (item: any) => (
+								cell: (item: TournamentWinner) => (
 									<Box>
 										<Box variant="strong">{item.player}</Box>
 										<Box variant="small">{item.team}</Box>
@@ -882,12 +901,12 @@ const RiftRewindDashboard: React.FC = () => {
 							{
 								id: "champion",
 								header: t("learning.api.signatureChampionHeader"),
-								cell: (item: any) => item.championPlayed,
+								cell: (item: TournamentWinner) => item.championPlayed,
 							},
 							{
 								id: "tournamentRecord",
 								header: t("learning.api.tournamentRecordHeader"),
-								cell: (item: any) => (
+								cell: (item: TournamentWinner) => (
 									<Box>
 										<Box variant="strong" color="text-status-info">
 											{item.winRate}%
@@ -901,14 +920,14 @@ const RiftRewindDashboard: React.FC = () => {
 							{
 								id: "performance",
 								header: t("learning.api.performanceScoreHeader"),
-								cell: (item: any) => (
+								cell: (item: TournamentWinner) => (
 									<Box variant="strong">{item.performanceScore}/100</Box>
 								),
 							},
 							{
 								id: "achievement",
 								header: t("learning.api.achievement"),
-								cell: (item: any) => (
+								cell: (item: TournamentWinner) => (
 									<Box>
 										🏆{" "}
 										<Box variant="strong" display="inline">

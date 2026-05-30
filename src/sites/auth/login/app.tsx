@@ -127,16 +127,20 @@ function LoginForm() {
 				"[passkey] initiatePasskeyAuth succeeded, credentials keys:",
 				Object.keys(credentials),
 			);
-			const publicKey = (credentials as any).publicKey ?? credentials;
-			publicKey.challenge = base64urlToBuffer(publicKey.challenge);
+			const publicKey =
+				((credentials as Record<string, unknown>).publicKey as Record<
+					string,
+					unknown
+				>) ?? (credentials as Record<string, unknown>);
+			publicKey.challenge = base64urlToBuffer(publicKey.challenge as string);
 			if (publicKey.allowCredentials) {
-				publicKey.allowCredentials = publicKey.allowCredentials.map(
-					(c: any) => ({ ...c, id: base64urlToBuffer(c.id) }),
-				);
+				publicKey.allowCredentials = (
+					publicKey.allowCredentials as Array<Record<string, unknown>>
+				).map((c) => ({ ...c, id: base64urlToBuffer(c.id as string) }));
 			}
 			console.log("[passkey] calling navigator.credentials.get");
 			const assertion = (await navigator.credentials.get({
-				publicKey,
+				publicKey: publicKey as unknown as PublicKeyCredentialRequestOptions,
 			})) as PublicKeyCredential;
 			if (!assertion) throw new AuthError("passkey cancelled");
 			console.log("[passkey] got assertion, calling completePasskeyAuth");

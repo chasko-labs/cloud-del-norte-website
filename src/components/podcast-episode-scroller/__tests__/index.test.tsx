@@ -23,13 +23,10 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-type AnyProps = Record<string, unknown> & {
-	children?: React.ReactNode;
-	header?: React.ReactNode;
-};
+type MockProps = { [key: string]: React.ReactNode };
 
 vi.mock("@cloudscape-design/components/container", () => ({
-	default: ({ children, header }: AnyProps) =>
+	default: ({ children, header }: MockProps) =>
 		React.createElement(
 			"section",
 			{ "data-testid": "container" },
@@ -39,18 +36,24 @@ vi.mock("@cloudscape-design/components/container", () => ({
 }));
 
 vi.mock("@cloudscape-design/components/header", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("h3", { "data-testid": "scroller-header" }, children),
 }));
 
 vi.mock("@cloudscape-design/components/button", () => ({
-	default: ({ children, onClick }: AnyProps) =>
+	default: ({
+		children,
+		onClick,
+	}: {
+		children?: React.ReactNode;
+		onClick?: React.MouseEventHandler;
+	}) =>
 		React.createElement(
 			"button",
 			{
 				type: "button",
 				"data-testid": "load-more-button",
-				onClick: onClick as React.MouseEventHandler,
+				onClick,
 			},
 			children,
 		),

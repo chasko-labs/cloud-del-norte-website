@@ -15,8 +15,9 @@ export function mergePartials(
 ): TechCalendar[] {
 	const result = new Map(seed.map((t) => [t.id, { ...t }]));
 	for (const partial of partials) {
-		if (result.has(partial.id)) {
-			result.set(partial.id, { ...result.get(partial.id)!, ...partial });
+		const existing = result.get(partial.id);
+		if (existing) {
+			result.set(partial.id, { ...existing, ...partial });
 		}
 	}
 	return Array.from(result.values());
@@ -32,8 +33,9 @@ export function applyManualOverrides(
 ): TechCalendar[] {
 	const result = new Map(techs.map((t) => [t.id, { ...t }]));
 	for (const manual of manualEntries) {
-		if (result.has(manual.id)) {
-			result.set(manual.id, { ...result.get(manual.id)!, ...manual });
+		const existing = result.get(manual.id);
+		if (existing) {
+			result.set(manual.id, { ...existing, ...manual });
 		}
 	}
 	return Array.from(result.values());

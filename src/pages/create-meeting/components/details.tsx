@@ -19,7 +19,7 @@ const options = [...services, ...meeting_type].map((i) => ({
 	label: i,
 }));
 
-export default function details() {
+export default function Details() {
 	const { t } = useTranslation();
 	const [published, setPublished] = useState("yes");
 	const [selecteddetails, setSelecteddetails] = useState<

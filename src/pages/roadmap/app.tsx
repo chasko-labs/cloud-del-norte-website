@@ -59,8 +59,10 @@ function AppContent() {
 					</a>
 				))}
 			</nav>
+			{/* biome-ignore lint/a11y/useSemanticElements: CSS grid layout on .cdn-roadmap-board requires div; converting to ul would introduce default list-style/padding/margin breaking the kanban grid */}
 			<div className="cdn-roadmap-board" role="list">
 				{boardColumns.map((column) => (
+					// biome-ignore lint/a11y/useSemanticElements: CSS grid layout requires section for kanban columns; list semantics provided via role
 					<section
 						key={column.key}
 						id={`cdn-roadmap-col-${column.key}`}

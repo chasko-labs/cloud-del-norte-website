@@ -35,10 +35,10 @@ import {
 } from "./data";
 
 function AppContent({
-	theme,
-	onThemeChange,
-	locale,
-	onLocaleChange,
+	theme: _theme,
+	onThemeChange: _onThemeChange,
+	locale: _locale,
+	onLocaleChange: _onLocaleChange,
 }: {
 	theme: Theme;
 	onThemeChange: (t: Theme) => void;

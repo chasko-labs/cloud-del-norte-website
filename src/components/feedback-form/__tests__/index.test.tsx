@@ -2,10 +2,7 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-type AnyProps = Record<string, unknown> & {
-	children?: React.ReactNode;
-	footer?: React.ReactNode;
-};
+type MockProps = { [key: string]: React.ReactNode };
 
 // ── FileUpload mock — exposes a trigger function via data-testid ─────────────
 // The mock stores the onChange prop in a ref accessible to tests so they
@@ -13,19 +10,37 @@ type AnyProps = Record<string, unknown> & {
 let fileUploadOnChange: ((files: File[]) => void) | null = null;
 
 vi.mock("@cloudscape-design/components/file-upload", () => ({
-	default: ({ onChange, value }: AnyProps) => {
+	default: ({
+		onChange,
+		value,
+	}: {
+		onChange?: (evt: { detail: { value: File[] } }) => void;
+		value?: File[];
+	}) => {
 		fileUploadOnChange = (files: File[]) =>
-			(onChange as Function)?.({ detail: { value: files } });
+			onChange?.({
+				detail: { value: files },
+			});
 		return React.createElement("div", {
 			"data-testid": "file-upload",
-			"data-file-count": (value as File[])?.length ?? 0,
+			"data-file-count": value?.length ?? 0,
 		});
 	},
 }));
 
 // ── Other Cloudscape mocks ───────────────────────────────────────────────────
 vi.mock("@cloudscape-design/components/modal", () => ({
-	default: ({ children, footer, header, visible }: AnyProps) =>
+	default: ({
+		children,
+		footer,
+		header,
+		visible,
+	}: {
+		children?: React.ReactNode;
+		footer?: React.ReactNode;
+		header?: React.ReactNode;
+		visible?: boolean;
+	}) =>
 		visible
 			? React.createElement(
 					"div",
@@ -37,15 +52,22 @@ vi.mock("@cloudscape-design/components/modal", () => ({
 			: null,
 }));
 vi.mock("@cloudscape-design/components/button", () => ({
-	default: ({ children, onClick }: AnyProps) =>
-		React.createElement(
-			"button",
-			{ onClick: onClick as React.MouseEventHandler },
-			children,
-		),
+	default: ({
+		children,
+		onClick,
+	}: {
+		children?: React.ReactNode;
+		onClick?: React.MouseEventHandler;
+	}) => React.createElement("button", { type: "button", onClick }, children),
 }));
 vi.mock("@cloudscape-design/components/form", () => ({
-	default: ({ children, errorText }: AnyProps) =>
+	default: ({
+		children,
+		errorText,
+	}: {
+		children?: React.ReactNode;
+		errorText?: string;
+	}) =>
 		React.createElement(
 			"div",
 			{ "data-testid": "form", "data-error": errorText },
@@ -53,7 +75,15 @@ vi.mock("@cloudscape-design/components/form", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/form-field", () => ({
-	default: ({ children, errorText, label }: AnyProps) =>
+	default: ({
+		children,
+		errorText,
+		label,
+	}: {
+		children?: React.ReactNode;
+		errorText?: string;
+		label?: string;
+	}) =>
 		React.createElement(
 			"div",
 			{
@@ -64,42 +94,62 @@ vi.mock("@cloudscape-design/components/form-field", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/input", () => ({
-	default: ({ value, onChange, ariaLabel }: AnyProps) =>
+	default: ({
+		value,
+		onChange,
+		ariaLabel,
+	}: {
+		value?: string;
+		onChange?: (evt: { detail: { value: string } }) => void;
+		ariaLabel?: string;
+	}) =>
 		React.createElement("input", {
 			"aria-label": String(ariaLabel ?? ""),
 			value: value as string,
 			onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-				(onChange as Function)?.({ detail: { value: e.target.value } }),
+				onChange?.({
+					detail: { value: e.target.value },
+				}),
 		}),
 }));
 vi.mock("@cloudscape-design/components/textarea", () => ({
-	default: ({ value, onChange, ariaLabel }: AnyProps) =>
+	default: ({
+		value,
+		onChange,
+		ariaLabel,
+	}: {
+		value?: string;
+		onChange?: (evt: { detail: { value: string } }) => void;
+		ariaLabel?: string;
+	}) =>
 		React.createElement("textarea", {
 			"aria-label": String(ariaLabel ?? ""),
 			value: value as string,
 			onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-				(onChange as Function)?.({ detail: { value: e.target.value } }),
+				onChange?.({
+					detail: { value: e.target.value },
+				}),
 		}),
 }));
 vi.mock("@cloudscape-design/components/alert", () => ({
-	default: ({ children, action }: AnyProps) =>
-		React.createElement(
-			"div",
-			{ role: "alert" },
-			children,
-			(action ?? null) as React.ReactNode,
-		),
+	default: ({ children, action }: MockProps) =>
+		React.createElement("div", { role: "alert" }, children, action),
 }));
 vi.mock("@cloudscape-design/components/link", () => ({
-	default: ({ children, href }: AnyProps) =>
-		React.createElement("a", { href: String(href ?? "") }, children),
+	default: ({
+		children,
+		href,
+	}: {
+		children?: React.ReactNode;
+		href?: string;
+	}) => React.createElement("a", { href: String(href ?? "") }, children),
 }));
 vi.mock("@cloudscape-design/components/box", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/space-between", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 

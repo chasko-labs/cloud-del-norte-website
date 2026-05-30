@@ -2,7 +2,7 @@ import "./styles.css";
 
 export default function SpeakeasySign() {
 	return (
-		<div className="speakeasy-sign" role="region" aria-label="speakeasy">
+		<section className="speakeasy-sign" aria-label="speakeasy">
 			<svg
 				viewBox="0 0 120 24"
 				xmlns="http://www.w3.org/2000/svg"
@@ -46,6 +46,6 @@ export default function SpeakeasySign() {
 					speakeasy
 				</text>
 			</svg>
-		</div>
+		</section>
 	);
 }

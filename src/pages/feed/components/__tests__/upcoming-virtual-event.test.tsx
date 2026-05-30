@@ -293,7 +293,8 @@ describe("UpcomingVirtualEvent — wave 44 no-image fallback", () => {
 			".feed-upcoming-virtual-event__image--light",
 		);
 		expect(lightImg).not.toBeNull();
-		fireEvent.error(lightImg!);
+		if (!lightImg) return;
+		fireEvent.error(lightImg);
 		expect(
 			container.querySelector(".feed-upcoming-virtual-event__image--light"),
 		).toBeNull();

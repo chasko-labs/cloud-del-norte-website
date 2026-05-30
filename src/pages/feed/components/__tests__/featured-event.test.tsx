@@ -305,7 +305,8 @@ describe("FeaturedEvent — wave 44 no-image fallback", () => {
 			".feed-featured-event__image--light",
 		);
 		expect(lightImg).not.toBeNull();
-		fireEvent.error(lightImg!);
+		if (!lightImg) return;
+		fireEvent.error(lightImg);
 		// After onError, the light img should be removed from DOM
 		expect(
 			container.querySelector(".feed-featured-event__image--light"),

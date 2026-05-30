@@ -110,6 +110,7 @@ export default function CodeInput({
 	}
 
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: OTP code input row, not a form fieldset; group semantics provided via role
 		<div className="cdn-auth-code-row" role="group" aria-label={ariaLabel}>
 			{cells.map((ch, i) => (
 				<input

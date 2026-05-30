@@ -82,10 +82,10 @@ export function buildStaticLight(
 ): OffscreenCanvas | null {
 	if (typeof OffscreenCanvas === "undefined") return null;
 	let canvas: OffscreenCanvas;
-	let ctx: OffscreenCanvasRenderingContext2D;
+	let ctx: OffscreenCanvasRenderingContext2D | null;
 	try {
 		canvas = new OffscreenCanvas(w, h);
-		ctx = canvas.getContext("2d")!;
+		ctx = canvas.getContext("2d");
 		if (!ctx) return null;
 	} catch {
 		return null;
@@ -129,10 +129,10 @@ export function buildStaticDark(
 ): OffscreenCanvas | null {
 	if (typeof OffscreenCanvas === "undefined") return null;
 	let canvas: OffscreenCanvas;
-	let ctx: OffscreenCanvasRenderingContext2D;
+	let ctx: OffscreenCanvasRenderingContext2D | null;
 	try {
 		canvas = new OffscreenCanvas(w, h);
-		ctx = canvas.getContext("2d")!;
+		ctx = canvas.getContext("2d");
 		if (!ctx) return null;
 	} catch {
 		return null;

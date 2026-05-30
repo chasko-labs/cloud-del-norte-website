@@ -10,7 +10,9 @@ import "../../styles/cdn-skeleton.css";
 import App from "./app";
 import { initScrollJankMitigation } from "./scroll-jank-mitigation";
 
-const root = ReactDOM.createRoot(document.getElementById("root")!);
+const container = document.getElementById("root");
+if (!container) throw new Error("root element not found");
+const root = ReactDOM.createRoot(container);
 
 root.render(
 	<React.StrictMode>

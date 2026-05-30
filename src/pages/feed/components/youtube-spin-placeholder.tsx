@@ -69,9 +69,8 @@ export function YouTubeSpinPlaceholder({
 
 	return (
 		/* Wave 53 hook: data-spin-anchor — Babylon will mount here */
-		<div
+		<section
 			className="yt-carousel-placeholder"
-			role="region"
 			aria-label={ariaLabel}
 			data-spin-anchor="true"
 		>
@@ -142,6 +141,6 @@ export function YouTubeSpinPlaceholder({
 					))}
 				</div>
 			</div>
-		</div>
+		</section>
 	);
 }

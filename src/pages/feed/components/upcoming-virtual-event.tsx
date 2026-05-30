@@ -96,6 +96,7 @@ function markImageLoaded(event: SyntheticEvent<HTMLImageElement>) {
  */
 function MarqueeHeader({ text }: { text: string }) {
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: marquee is visually styled; heading semantics provided via role="heading"+aria-level to avoid h2 default-style/layout conflict
 		<div
 			className="feed-upcoming-virtual-event__marquee"
 			role="heading"

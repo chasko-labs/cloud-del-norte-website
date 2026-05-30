@@ -3,12 +3,12 @@ import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../contexts/locale-context";
 
-type AnyProps = Record<string, any>;
+type MockProps = { [key: string]: React.ReactNode };
 
 // --- Mock Cloudscape components (they hang in jsdom without mocking) ---
 
 vi.mock("@cloudscape-design/components/content-layout", () => ({
-	default: ({ children, header }: AnyProps) =>
+	default: ({ children, header }: MockProps) =>
 		React.createElement(
 			"div",
 			{ "data-testid": "content-layout" },
@@ -17,22 +17,23 @@ vi.mock("@cloudscape-design/components/content-layout", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/grid", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", { "data-testid": "grid" }, children),
 }));
 vi.mock("@cloudscape-design/components/header", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("h2", { "data-testid": "header" }, children),
 }));
 vi.mock("@cloudscape-design/components/link", () => ({
-	default: ({ children }: AnyProps) => React.createElement("a", null, children),
+	default: ({ children }: MockProps) =>
+		React.createElement("a", null, children),
 }));
 vi.mock("@cloudscape-design/components/box", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", { "data-testid": "box" }, children),
 }));
 vi.mock("@cloudscape-design/components/container", () => ({
-	default: ({ children, header }: AnyProps) =>
+	default: ({ children, header }: MockProps) =>
 		React.createElement(
 			"div",
 			{ "data-testid": "container" },
@@ -41,15 +42,25 @@ vi.mock("@cloudscape-design/components/container", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/column-layout", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", { "data-testid": "column-layout" }, children),
 }));
 vi.mock("@cloudscape-design/components/button", () => ({
-	default: ({ children }: AnyProps) =>
-		React.createElement("button", { "data-testid": "button" }, children),
+	default: ({ children }: MockProps) =>
+		React.createElement(
+			"button",
+			{ type: "button", "data-testid": "button" },
+			children,
+		),
 }));
 vi.mock("@cloudscape-design/components/modal", () => ({
-	default: ({ children, visible }: AnyProps) =>
+	default: ({
+		children,
+		visible,
+	}: {
+		children?: React.ReactNode;
+		visible?: boolean;
+	}) =>
 		visible
 			? React.createElement("div", { "data-testid": "modal" }, children)
 			: null,
@@ -62,7 +73,7 @@ vi.mock("@cloudscape-design/components/pie-chart", () => ({
 		React.createElement("div", { "data-testid": "pie-chart" }, "PieChart"),
 }));
 vi.mock("@cloudscape-design/components/status-indicator", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement(
 			"span",
 			{ "data-testid": "status-indicator" },
@@ -71,12 +82,12 @@ vi.mock("@cloudscape-design/components/status-indicator", () => ({
 }));
 // Barrel import (current code) — SpaceBetween is a named export
 vi.mock("@cloudscape-design/components", () => ({
-	SpaceBetween: ({ children }: AnyProps) =>
+	SpaceBetween: ({ children }: MockProps) =>
 		React.createElement("div", { "data-testid": "space-between" }, children),
 }));
 // Deep import (after Lyren's barrel-fix) — SpaceBetween is a default export
 vi.mock("@cloudscape-design/components/space-between", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", { "data-testid": "space-between" }, children),
 }));
 
@@ -92,7 +103,7 @@ vi.mock("../../../layouts/shell", () => ({
 	}) =>
 		React.createElement(
 			LocaleProvider,
-			{ locale: "us" } as any,
+			{ locale: "us" },
 			React.createElement(
 				"div",
 				{ "data-testid": "shell" },

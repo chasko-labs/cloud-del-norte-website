@@ -33,7 +33,7 @@ export interface VariationsProps {
 	items: TableProps["items"];
 }
 
-export default function meetings({ data, items }: VariationsProps) {
+export default function Meetings({ data, items: _items }: VariationsProps) {
 	const { t } = useTranslation();
 	const translatedData = data.map((item) => ({
 		...item,

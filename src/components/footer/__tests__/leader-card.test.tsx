@@ -2,20 +2,30 @@ import { render, screen } from "@testing-library/react";
 import React from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-type AnyProps = Record<string, unknown> & { children?: React.ReactNode };
+type MockProps = { [key: string]: React.ReactNode };
 
 // --- Cloudscape component mocks ---
 
 vi.mock("@cloudscape-design/components/box", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", { "data-testid": "box" }, children),
 }));
 vi.mock("@cloudscape-design/components/space-between", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/link", () => ({
-	default: ({ children, href, external, ariaLabel }: AnyProps) =>
+	default: ({
+		children,
+		href,
+		external,
+		ariaLabel,
+	}: {
+		children?: React.ReactNode;
+		href?: string;
+		external?: boolean;
+		ariaLabel?: string;
+	}) =>
 		React.createElement(
 			"a",
 			{
@@ -27,7 +37,13 @@ vi.mock("@cloudscape-design/components/link", () => ({
 		),
 }));
 vi.mock("@cloudscape-design/components/badge", () => ({
-	default: ({ children, color }: AnyProps) =>
+	default: ({
+		children,
+		color,
+	}: {
+		children?: React.ReactNode;
+		color?: string;
+	}) =>
 		React.createElement(
 			"span",
 			{ "data-testid": "badge", "data-color": color },

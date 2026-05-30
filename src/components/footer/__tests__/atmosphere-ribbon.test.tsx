@@ -21,14 +21,16 @@ vi.mock("@babylonjs/core", () => {
 	};
 
 	class Engine {
-		constructor() {
-			Object.assign(this, eng);
-		}
+		runRenderLoop = eng.runRenderLoop;
+		stopRenderLoop = eng.stopRenderLoop;
+		dispose = eng.dispose;
+		resize = eng.resize;
 	}
 	class Scene {
-		constructor() {
-			Object.assign(this, scene);
-		}
+		clearColor = scene.clearColor;
+		render = scene.render;
+		beginAnimation = scene.beginAnimation;
+		ambientColor = scene.ambientColor;
 	}
 	class ArcRotateCamera {
 		inputs = { clear: vi.fn() };
@@ -40,9 +42,8 @@ vi.mock("@babylonjs/core", () => {
 		orthoTop = 0;
 	}
 	class StandardMaterial {
-		constructor() {
-			Object.assign(this, { emissiveColor: null, disableLighting: false });
-		}
+		emissiveColor = null;
+		disableLighting = false;
 	}
 	class Animation {
 		constructor(public name: string) {}
@@ -79,8 +80,17 @@ vi.mock("@babylonjs/core", () => {
 		ArcRotateCamera,
 		StandardMaterial,
 		Animation,
-		Color4: class Color4 {},
-		Color3: class Color3 {},
+		Color4: class Color4 {
+			r = 0;
+			g = 0;
+			b = 0;
+			a = 0;
+		},
+		Color3: class Color3 {
+			r = 0;
+			g = 0;
+			b = 0;
+		},
 		Vector3: class Vector3 {
 			static Zero() {
 				return {};

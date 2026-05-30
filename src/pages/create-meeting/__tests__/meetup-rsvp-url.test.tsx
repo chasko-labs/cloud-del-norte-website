@@ -5,27 +5,27 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-type AnyProps = Record<string, unknown> & { children?: React.ReactNode };
+type MockProps = { [key: string]: React.ReactNode };
 
 // ── Cloudscape mocks ──────────────────────────────────────────────────────────
 vi.mock("@cloudscape-design/components/container", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/header", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/space-between", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/column-layout", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/box", () => ({
-	default: ({ children }: AnyProps) =>
+	default: ({ children }: MockProps) =>
 		React.createElement("div", null, children),
 }));
 vi.mock("@cloudscape-design/components/date-picker", () => ({
@@ -35,16 +35,32 @@ vi.mock("@cloudscape-design/components/time-input", () => ({
 	default: () => React.createElement("div", { "data-testid": "time-input" }),
 }));
 vi.mock("@cloudscape-design/components/textarea", () => ({
-	default: ({ value, onChange }: AnyProps) =>
+	default: ({
+		value,
+		onChange,
+	}: {
+		value?: string;
+		onChange?: (evt: { detail: { value: string } }) => void;
+	}) =>
 		React.createElement("textarea", {
 			"data-testid": "notes-input",
 			value: value as string,
 			onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) =>
-				(onChange as Function)?.({ detail: { value: e.target.value } }),
+				onChange?.({
+					detail: { value: e.target.value },
+				}),
 		}),
 }));
 vi.mock("@cloudscape-design/components/form-field", () => ({
-	default: ({ children, errorText, label }: AnyProps) =>
+	default: ({
+		children,
+		errorText,
+		label,
+	}: {
+		children?: React.ReactNode;
+		errorText?: string;
+		label?: React.ReactNode;
+	}) =>
 		React.createElement(
 			"div",
 			{
@@ -52,7 +68,7 @@ vi.mock("@cloudscape-design/components/form-field", () => ({
 				"data-label": String(label ?? ""),
 				"data-error": String(errorText ?? ""),
 			},
-			label as React.ReactNode,
+			label,
 			children,
 		),
 }));
@@ -66,10 +82,17 @@ vi.mock("@cloudscape-design/components/input", () => ({
 		onChange,
 		placeholder,
 		ref,
-	}: AnyProps & { ref?: (r: unknown) => void }) => {
+	}: {
+		value?: string;
+		onChange?: (evt: { detail: { value: string } }) => void;
+		placeholder?: string;
+		ref?: (r: unknown) => void;
+	}) => {
 		if (placeholder === "https://www.meetup.com/...") {
 			rsvpInputOnChange = (val: string) =>
-				(onChange as Function)?.({ detail: { value: val } });
+				onChange?.({
+					detail: { value: val },
+				});
 		}
 		// expose ref with a no-op focus so addErrorField doesn't throw
 		ref?.({ focus: () => {} });
@@ -80,7 +103,9 @@ vi.mock("@cloudscape-design/components/input", () => ({
 					: "other-input",
 			value: value as string,
 			onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
-				(onChange as Function)?.({ detail: { value: e.target.value } }),
+				onChange?.({
+					detail: { value: e.target.value },
+				}),
 		});
 	},
 }));

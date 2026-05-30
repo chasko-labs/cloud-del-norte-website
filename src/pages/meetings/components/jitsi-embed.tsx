@@ -15,8 +15,17 @@ export interface JitsiEmbedProps {
 // Window global exposed by external_api.js once loaded.
 declare global {
 	interface Window {
-		JitsiMeetExternalAPI?: any;
+		JitsiMeetExternalAPI?: new (
+			domain: string,
+			options: Record<string, unknown>,
+		) => JitsiApi;
 	}
+}
+
+interface JitsiApi {
+	addListener: (event: string, handler: () => void) => void;
+	executeCommand: (command: string, ...args: unknown[]) => void;
+	dispose?: () => void;
 }
 
 // Loads the jitsi external_api.js script once per page and resolves when ready.
@@ -95,7 +104,7 @@ export default function JitsiEmbed({
 	onClose,
 }: JitsiEmbedProps) {
 	const hostRef = useRef<HTMLDivElement | null>(null);
-	const apiRef = useRef<any>(null);
+	const apiRef = useRef<JitsiApi | null>(null);
 	const [status, setStatus] = useState<Status>("loading");
 	const [errorMsg, setErrorMsg] = useState<string>("");
 	const [retryKey, setRetryKey] = useState(0);
@@ -155,7 +164,7 @@ export default function JitsiEmbed({
 					if (!cancelled) setStatus("unreachable");
 				}, UNREACHABLE_MS);
 
-				const api: any = new window.JitsiMeetExternalAPI(domain, {
+				const api = new window.JitsiMeetExternalAPI(domain, {
 					roomName,
 					jwt: token,
 					password: roomPassword,

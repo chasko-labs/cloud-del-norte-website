@@ -113,4 +113,6 @@ function Preview() {
 
 import { createRoot } from "react-dom/client";
 
-createRoot(document.getElementById("app")!).render(<Preview />);
+const appContainer = document.getElementById("app");
+if (!appContainer) throw new Error("app element not found");
+createRoot(appContainer).render(<Preview />);

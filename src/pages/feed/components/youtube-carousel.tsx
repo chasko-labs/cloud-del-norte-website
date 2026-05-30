@@ -89,6 +89,7 @@ export default function YoutubeCarousel() {
 					</div>
 					<div className="feed-carousel__controls">
 						<button
+							type="button"
 							className="feed-carousel__btn"
 							onClick={prev}
 							aria-label={t("feedPage.youtubePrevVideo")}
@@ -99,6 +100,7 @@ export default function YoutubeCarousel() {
 							{current + 1} / {VIDEO_IDS.length}
 						</span>
 						<button
+							type="button"
 							className="feed-carousel__btn"
 							onClick={next}
 							aria-label={t("feedPage.youtubeNextVideo")}

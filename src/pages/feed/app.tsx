@@ -73,7 +73,6 @@ const LIVE_PRIORITY = [
 	"twitchAwsOnAir",
 	"twitchAws",
 ] as const;
-type LiveKey = (typeof LIVE_PRIORITY)[number];
 
 // stable shuffled order generated once per page load
 const SECTION_KEYS: SectionKey[] = [
@@ -121,11 +120,11 @@ function shuffled<T>(arr: T[]): T[] {
 const LIVE_DETECTION_ENABLED = false;
 
 function AppContent({
-	theme,
-	onThemeChange,
-	locale,
-	onLocaleChange,
-	onOpenTools,
+	theme: _theme,
+	onThemeChange: _onThemeChange,
+	locale: _locale,
+	onLocaleChange: _onLocaleChange,
+	onOpenTools: _onOpenTools,
 }: {
 	theme: Theme;
 	onThemeChange: (t: Theme) => void;
@@ -257,7 +256,6 @@ function AppContent({
 	);
 
 	// stable shuffle — recomputed only if sections reference changes (it won't)
-	// biome-ignore lint/correctness/useExhaustiveDependencies: SECTION_KEYS is module-level constant
 	const shuffledOrder = useMemo<SectionKey[]>(() => shuffled(SECTION_KEYS), []);
 
 	// union of twitch + andres live keys
