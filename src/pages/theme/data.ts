@@ -371,3 +371,51 @@ export const typographyScale: TypographyToken[] = [
 		usage: "themePage.typography.twoExtraLarge.usage",
 	},
 ];
+
+/* --------------------------------------------------------------------------
+   graphics-pipeline — image generation standards + reusable components
+   (Iteration 0). Plain-string content, matching the brand-logo section.
+   -------------------------------------------------------------------------- */
+
+export interface ResolutionTarget {
+	label: string;
+	size: string;
+	notes: string;
+}
+
+export const imageGenResolutions: ResolutionTarget[] = [
+	{ label: "Wallpaper QHD", size: "2560×1440", notes: "16:9 desktop standard" },
+	{ label: "Wallpaper 4K", size: "3840×2160", notes: "16:9 high-DPI" },
+	{
+		label: "Mobile",
+		size: "1290×2796",
+		notes: "portrait — keep mark within center 80% safe-area",
+	},
+];
+
+export const imageGenRules: string[] = [
+	"Palette-lock: backgrounds use only CDN palette hexes (navy #00002a → purple-deep #30006a → violet #9060f0 → lavender #d7c7ee → cream #faf7f0); espresso #2c1206 for warmth; AWS orange #ff9900 is CTA-only, never in atmospheres.",
+	"Texture: directional Ben-Day dot field + matte newspaper grain in the mid-tones; World's-Fair mid-century-futurist geometry.",
+	"Vignette + gradient: dark vignette at the edges, warm-cool cream-to-lavender gradient, halftone fade transitions, low-elevation glassmorphism.",
+	"Safe-area: on mobile (1290×2796) keep the logo and any focal content within the center 80% to clear notch, status bar, and home indicator.",
+];
+
+export const logoReproSteps: string[] = [
+	"Rasterize lib/brand/logo.svg (viewBox 1024×1024) at the target resolution with rsvg-convert so the cdn-bulb-glow + cdn-arm-glow filters bake in; center on a transparent canvas (run graphics-pipeline/render-logo.mjs).",
+	"Generate the BACKGROUND atmosphere only with SDXL (sd_xl_base_1.0), prompt-locked to the palette hexes — Ben-Day dots, grain, vignette, gradient. No star, no logo, no text.",
+	"Apply the glow in image space: gaussian-blur the logo raster and screen/add it onto the atmosphere (mirrors cdn-bulb-glow dual-blur bloom + cdn-arm-glow halo).",
+	"Composite the sharp, untouched logo over the atmosphere using its own alpha as the mask (ComfyUI: LoadImage → InvertMask → ImageCompositeMasked).",
+	"Export at wallpaper + mobile resolutions. Workflow: graphics-pipeline/cdn-composite.api.json (API) / .ui.json (editor).",
+];
+
+export const logoIntegrityDos: string[] = [
+	"Use logo.svg exactly as authored — 3 cdn-arm paths + 12 cdn-bulb paths.",
+	"Composite the mark; vary only the atmosphere + glow (KSampler seed).",
+	"Preserve the 1:1 aspect ratio; center within the safe-area.",
+];
+
+export const logoIntegrityDonts: string[] = [
+	"Never warp, skew, or apply perspective to the mark.",
+	"Never detach or recompose the arms or bulbs.",
+	"Never let SDXL generate the logo — diffusion cannot reproduce the geometry (no ControlNet/LoRA available).",
+];

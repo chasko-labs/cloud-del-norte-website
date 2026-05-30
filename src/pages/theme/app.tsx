@@ -28,6 +28,11 @@ import {
 } from "../../utils/theme";
 import {
 	elevationLevels,
+	imageGenResolutions,
+	imageGenRules,
+	logoIntegrityDonts,
+	logoIntegrityDos,
+	logoReproSteps,
 	paletteGroups,
 	radiusTokens,
 	shadowTokens,
@@ -569,6 +574,9 @@ function AppContent({
 		{ id: "elevation", label: "elevation" },
 		{ id: "shadows", label: "shadows" },
 		{ id: "card-example", label: "card example" },
+		{ id: "image-gen", label: "image generation standards" },
+		{ id: "reusable-components", label: "reusable components" },
+		{ id: "component-cdn-logo", label: "component: cdn logo" },
 	];
 
 	return (
@@ -1003,6 +1011,126 @@ function AppContent({
 									</Box>
 								</SpaceBetween>
 							</div>
+						</SpaceBetween>
+					</Container>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
+				</div>
+				{/* image generation standards */}
+				<div id="section-image-gen">
+					<Container
+						header={
+							<Header variant="h2">
+								image generation standards — wallpaper &amp; mobile
+							</Header>
+						}
+					>
+						<SpaceBetween size="m">
+							<Box variant="p" fontSize="body-s">
+								target resolutions for generated atmospheres. backgrounds are
+								palette-locked; the brand mark is composited, never generated.
+							</Box>
+							<ColumnLayout columns={3} variant="text-grid">
+								{imageGenResolutions.map((r) => (
+									<Box key={r.size} padding="s">
+										<SpaceBetween size="xxs">
+											<Box variant="strong">{r.label}</Box>
+											<Box variant="code" fontSize="body-s">
+												{r.size}
+											</Box>
+											<Box variant="small" color="text-body-secondary">
+												{r.notes}
+											</Box>
+										</SpaceBetween>
+									</Box>
+								))}
+							</ColumnLayout>
+							<SpaceBetween size="xs">
+								{imageGenRules.map((rule) => (
+									<Box key={rule} variant="p" fontSize="body-s">
+										{rule}
+									</Box>
+								))}
+							</SpaceBetween>
+						</SpaceBetween>
+					</Container>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
+				</div>
+
+				{/* reusable components */}
+				<div id="section-reusable-components">
+					<Container header={<Header variant="h2">reusable components</Header>}>
+						<Box variant="p" fontSize="body-s">
+							the component library is the catalog of reusable, brand-canonical
+							building blocks — each with its tokens, integrity rules, and a
+							from-scratch reproduction guide. the cdn logo below is the first
+							entry.
+						</Box>
+					</Container>
+					<a href="#toc" className="theme-toc-back">
+						^ top
+					</a>
+				</div>
+
+				{/* component: cdn logo */}
+				<div id="section-component-cdn-logo">
+					<Container header={<Header variant="h2">cdn logo</Header>}>
+						<SpaceBetween size="m">
+							<div className="theme-logo-showcase">
+								<img
+									src="/brand/logo.svg"
+									alt="Cloud Del Norte AWS User Group"
+									className="theme-logo-img"
+								/>
+								<div className="theme-logo-meta">
+									<p>
+										<strong>rendered raster:</strong>{" "}
+										<code>
+											graphics-pipeline/renders/cdn-logo-2560x1440.png
+										</code>{" "}
+										(also 3840×2160 + mobile 1290×2796)
+									</p>
+									<p>
+										<strong>workflow:</strong>{" "}
+										<code>graphics-pipeline/cdn-composite.api.json</code>
+									</p>
+								</div>
+							</div>
+							<Box variant="strong" fontSize="heading-s">
+								from-scratch ComfyUI reproduction (locked composite method)
+							</Box>
+							<SpaceBetween size="xs">
+								{logoReproSteps.map((step, i) => (
+									<Box key={step} variant="p" fontSize="body-s">
+										{i + 1}. {step}
+									</Box>
+								))}
+							</SpaceBetween>
+							<ColumnLayout columns={2} variant="text-grid">
+								<SpaceBetween size="xs">
+									<Box variant="strong" fontSize="body-m">
+										do
+									</Box>
+									{logoIntegrityDos.map((d) => (
+										<Box key={d} variant="p" fontSize="body-s">
+											{d}
+										</Box>
+									))}
+								</SpaceBetween>
+								<SpaceBetween size="xs">
+									<Box variant="strong" fontSize="body-m">
+										don't
+									</Box>
+									{logoIntegrityDonts.map((d) => (
+										<Box key={d} variant="p" fontSize="body-s">
+											{d}
+										</Box>
+									))}
+								</SpaceBetween>
+							</ColumnLayout>
 						</SpaceBetween>
 					</Container>
 					<a href="#toc" className="theme-toc-back">
