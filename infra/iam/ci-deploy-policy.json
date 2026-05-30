@@ -1,0 +1,123 @@
+{
+	"Version": "2012-10-17",
+	"Statement": [
+		{
+			"Sid": "S3SyncOriginBucket",
+			"Effect": "Allow",
+			"Action": [
+				"s3:ListBucket",
+				"s3:GetBucketLocation"
+			],
+			"Resource": "arn:aws:s3:::clouddelnorte.org"
+		},
+		{
+			"Sid": "S3WriteOriginBucket",
+			"Effect": "Allow",
+			"Action": [
+				"s3:PutObject",
+				"s3:GetObject",
+				"s3:DeleteObject",
+				"s3:PutObjectAcl"
+			],
+			"Resource": "arn:aws:s3:::clouddelnorte.org/*"
+		},
+		{
+			"Sid": "S3SyncDevBucket",
+			"Effect": "Allow",
+			"Action": [
+				"s3:ListBucket",
+				"s3:GetBucketLocation"
+			],
+			"Resource": "arn:aws:s3:::dev.clouddelnorte.org"
+		},
+		{
+			"Sid": "S3WriteDevBucket",
+			"Effect": "Allow",
+			"Action": [
+				"s3:PutObject",
+				"s3:GetObject",
+				"s3:DeleteObject",
+				"s3:PutObjectAcl"
+			],
+			"Resource": "arn:aws:s3:::dev.clouddelnorte.org/*"
+		},
+		{
+			"Sid": "S3SyncAuthBucket",
+			"Effect": "Allow",
+			"Action": [
+				"s3:ListBucket",
+				"s3:GetBucketLocation"
+			],
+			"Resource": "arn:aws:s3:::auth.clouddelnorte.org"
+		},
+		{
+			"Sid": "S3WriteAuthBucket",
+			"Effect": "Allow",
+			"Action": [
+				"s3:PutObject",
+				"s3:GetObject",
+				"s3:DeleteObject",
+				"s3:PutObjectAcl"
+			],
+			"Resource": "arn:aws:s3:::auth.clouddelnorte.org/*"
+		},
+		{
+			"Sid": "S3SyncAwsugBucket",
+			"Effect": "Allow",
+			"Action": [
+				"s3:ListBucket",
+				"s3:GetBucketLocation"
+			],
+			"Resource": "arn:aws:s3:::awsug.clouddelnorte.org"
+		},
+		{
+			"Sid": "S3WriteAwsugBucket",
+			"Effect": "Allow",
+			"Action": [
+				"s3:PutObject",
+				"s3:GetObject",
+				"s3:DeleteObject",
+				"s3:PutObjectAcl"
+			],
+			"Resource": "arn:aws:s3:::awsug.clouddelnorte.org/*"
+		},
+		{
+			"Sid": "CloudFrontInvalidate",
+			"Effect": "Allow",
+			"Action": [
+				"cloudfront:CreateInvalidation",
+				"cloudfront:GetInvalidation",
+				"cloudfront:ListInvalidations"
+			],
+			"Resource": [
+				"arn:aws:cloudfront::211125425201:distribution/ECC3LP1BL2CZS",
+				"arn:aws:cloudfront::211125425201:distribution/EEHVTUEQ97V0X",
+				"arn:aws:cloudfront::211125425201:distribution/ECQ44FO9MBTCY",
+				"arn:aws:cloudfront::211125425201:distribution/E2QLAWFVIT1AR8"
+			]
+		},
+		{
+			"Sid": "AssumeCdkRolesInJitsiAccount",
+			"Effect": "Allow",
+			"Action": [
+				"sts:AssumeRole",
+				"sts:TagSession",
+				"sts:SetSourceIdentity"
+			],
+			"Resource": [
+				"arn:aws:iam::170473530355:role/cdk-hnb659fds-deploy-role-170473530355-us-west-2",
+				"arn:aws:iam::170473530355:role/cdk-hnb659fds-file-publishing-role-170473530355-us-west-2",
+				"arn:aws:iam::170473530355:role/cdk-hnb659fds-lookup-role-170473530355-us-west-2",
+				"arn:aws:iam::170473530355:role/cdk-hnb659fds-image-publishing-role-170473530355-us-west-2"
+			]
+		},
+		{
+			"Sid": "CloudFrontReadResponseHeadersPolicy",
+			"Effect": "Allow",
+			"Action": [
+				"cloudfront:GetResponseHeadersPolicy"
+			],
+			"Resource": "*"
+		}
+	]
+}
