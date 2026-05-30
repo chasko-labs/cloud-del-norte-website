@@ -1,0 +1,147 @@
+{
+	"_comment": "CDN graphics-pipeline — LOCKED COMPOSITE workflow (API/prompt format). The brand mark is NEVER generated: SDXL only paints the background atmosphere constrained to the CDN palette; the canonical logo raster is loaded as a fixed overlay and composited on top. Determinism: fixed seed/steps/sampler/scheduler/cfg. 'Variate within guardrails' = change node 5 seed ONLY. Logo rasters must be uploaded to ComfyUI input via POST /upload/image first (render-logo.mjs produces them).",
+	"1": {
+		"class_type": "CheckpointLoaderSimple",
+		"inputs": { "ckpt_name": "sd_xl_base_1.0.safetensors" }
+	},
+	"2": {
+		"class_type": "CLIPTextEncode",
+		"inputs": {
+			"clip": ["1", 1],
+			"text": "abstract background atmosphere only, no subject, no logo, World's-Fair mid-century-futurist geometry, directional Ben-Day halftone dot field, matte newspaper grain in the mid-tones, dark vignette edges, smooth warm-to-cool gradient from cream #faf7f0 through lavender #d7c7ee into violet #9060f0, deep purple #30006a and navy #00002a grounds, espresso #2c1206 warmth, low-elevation glassmorphism, halftone fade, restrained palette"
+		}
+	},
+	"3": {
+		"class_type": "CLIPTextEncode",
+		"inputs": {
+			"clip": ["1", 1],
+			"text": "star, logo, mark, emblem, text, letters, watermark, people, faces, photorealistic, saturated rainbow colors, green, red, orange, harsh contrast, clutter, busy, banding"
+		}
+	},
+	"4": {
+		"class_type": "EmptyLatentImage",
+		"inputs": { "width": 1024, "height": 1024, "batch_size": 1 }
+	},
+	"5": {
+		"class_type": "KSampler",
+		"inputs": {
+			"model": ["1", 0],
+			"positive": ["2", 0],
+			"negative": ["3", 0],
+			"latent_image": ["4", 0],
+			"seed": 770477,
+			"steps": 30,
+			"cfg": 7.0,
+			"sampler_name": "dpmpp_2m",
+			"scheduler": "karras",
+			"denoise": 1.0
+		}
+	},
+	"6": {
+		"class_type": "VAEDecode",
+		"inputs": { "samples": ["5", 0], "vae": ["1", 2] }
+	},
+
+	"10": {
+		"class_type": "LoadImage",
+		"inputs": { "image": "cdn-logo-2560x1440.png" }
+	},
+	"11": {
+		"class_type": "ImageBlur",
+		"_comment": "image-space analogue of cdn-bulb-glow/cdn-arm-glow gaussian bloom",
+		"inputs": { "image": ["10", 0], "blur_radius": 18, "sigma": 6.0 }
+	},
+	"12": {
+		"class_type": "ImageScale",
+		"_comment": "wallpaper 16:9 — scale atmosphere to 2560x1440",
+		"inputs": {
+			"image": ["6", 0],
+			"upscale_method": "lanczos",
+			"width": 2560,
+			"height": 1440,
+			"crop": "center"
+		}
+	},
+	"13": {
+		"class_type": "ImageBlend",
+		"_comment": "screen the logo bloom onto the atmosphere (transparent regions are black -> screen no-op)",
+		"inputs": {
+			"image1": ["12", 0],
+			"image2": ["11", 0],
+			"blend_factor": 0.6,
+			"blend_mode": "screen"
+		}
+	},
+	"16": {
+		"class_type": "InvertMask",
+		"_comment": "LoadImage returns mask = 1 - alpha; invert so opaque logo region = 1",
+		"inputs": { "mask": ["10", 1] }
+	},
+	"14": {
+		"class_type": "ImageCompositeMasked",
+		"_comment": "lay the sharp, untouched logo over the atmosphere using its own alpha as mask",
+		"inputs": {
+			"destination": ["13", 0],
+			"source": ["10", 0],
+			"x": 0,
+			"y": 0,
+			"resize_source": false,
+			"mask": ["16", 0]
+		}
+	},
+	"15": {
+		"class_type": "SaveImage",
+		"inputs": {
+			"images": ["14", 0],
+			"filename_prefix": "cdn-wallpaper-2560x1440"
+		}
+	},
+
+	"20": {
+		"class_type": "LoadImage",
+		"inputs": { "image": "cdn-logo-1290x2796.png" }
+	},
+	"21": {
+		"class_type": "ImageBlur",
+		"inputs": { "image": ["20", 0], "blur_radius": 18, "sigma": 6.0 }
+	},
+	"22": {
+		"class_type": "ImageScale",
+		"_comment": "mobile portrait — scale same deterministic atmosphere to 1290x2796",
+		"inputs": {
+			"image": ["6", 0],
+			"upscale_method": "lanczos",
+			"width": 1290,
+			"height": 2796,
+			"crop": "center"
+		}
+	},
+	"23": {
+		"class_type": "ImageBlend",
+		"inputs": {
+			"image1": ["22", 0],
+			"image2": ["21", 0],
+			"blend_factor": 0.6,
+			"blend_mode": "screen"
+		}
+	},
+	"26": {
+		"class_type": "InvertMask",
+		"inputs": { "mask": ["20", 1] }
+	},
+	"24": {
+		"class_type": "ImageCompositeMasked",
+		"inputs": {
+			"destination": ["23", 0],
+			"source": ["20", 0],
+			"x": 0,
+			"y": 0,
+			"resize_source": false,
+			"mask": ["26", 0]
+		}
+	},
+	"25": {
+		"class_type": "SaveImage",
+		"inputs": { "images": ["24", 0], "filename_prefix": "cdn-mobile-1290x2796" }
+	}
+}
