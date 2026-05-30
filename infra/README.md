@@ -6,6 +6,8 @@ out-of-band infrastructure artifacts that the site deploy workflow does not mana
 
 the site's cloudfront distribution `ECC3LP1BL2CZS` lives in account `211125425201` (aerospaceug-admin). the github actions deploy role in this repo has permission to `s3:sync` to the bucket and `cloudfront:CreateInvalidation` — it does **not** have permission to manage response headers policies, so those must be applied out-of-band from a local shell with a profile that can
 
+the ci-deploy role's full inline policy is now captured as IaC at `infra/iam/ci-deploy-policy.json` (applied via `infra/iam/apply-ci-deploy-policy.sh`). it includes read-only `cloudfront:GetResponseHeadersPolicy` for the verify-csp CI step — still NOT create/update on response-headers policies, which remain out-of-band.
+
 ### files
 
 | file | purpose |
