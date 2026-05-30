@@ -135,6 +135,26 @@
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='340'%3E%3Cpolyline points='310,30 318,48 305,52 322,70 308,88 328,110 310,140 295,170' stroke='%23ffaa00' stroke-width='4.5' fill='none' stroke-opacity='0.9'/%3E%3Cpolyline points='310,30 318,48 305,52 322,70 308,88 328,110 310,140 295,170' stroke='%23fffde0' stroke-width='1.5' fill='none' stroke-opacity='0.5'/%3E%3Cpolyline points='318,48 340,55 360,48 380,60' stroke='%23ffaa00' stroke-width='3' fill='none' stroke-opacity='0.7'/%3E%3Cpolyline points='322,70 345,80 370,95 395,105' stroke='%23ffaa00' stroke-width='3' fill='none' stroke-opacity='0.65'/%3E%3Cpolyline points='308,88 280,100 250,95 220,110' stroke='%23ffaa00' stroke-width='2.5' fill='none' stroke-opacity='0.6'/%3E%3Cpolyline points='328,110 355,130 385,140' stroke='%23ffaa00' stroke-width='2.5' fill='none' stroke-opacity='0.6'/%3E%3Ccircle cx='316' cy='46' r='10' fill='%23ffaa00' fill-opacity='0.45'/%3E%3Ccircle cx='316' cy='46' r='4' fill='%23fffde0' fill-opacity='0.95'/%3E%3Ccircle cx='322' cy='70' r='5' fill='%23ffaa00' fill-opacity='0.35'/%3E%3Ccircle cx='328' cy='110' r='5' fill='%23ffaa00' fill-opacity='0.3'/%3E%3Crect x='0' y='0' width='400' height='340' fill='%23080600' fill-opacity='0.82'/%3E%3C/svg%3E");
 }
 
+/* phosphor filter — grayscale + sepia desaturate slightly; saturate(1.8) retains
+   luminance separation between skin/hair/clothing; hue-rotate(68deg) tilts toward
+   classic phosphor green without destroying tonal detail */
+.fiona-canvas {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	opacity: 0;
+	transition:
+		opacity 0.8s ease,
+		filter 0.6s ease;
+	filter: grayscale(0.12) sepia(0.2) saturate(1.8) hue-rotate(68deg)
+		brightness(0.92) contrast(1.15);
+}
+
+.fiona-canvas.fiona-canvas--visible {
+	opacity: 1;
+}
+
 /* hide canvas entirely when shattered */
 .fiona-bezel.crack-3 .fiona-canvas {
 	opacity: 0;
@@ -717,26 +737,6 @@
 	100% {
 		background-position: 0% 0%;
 	}
-}
-
-/* phosphor filter — grayscale + sepia desaturate slightly; saturate(1.8) retains
-   luminance separation between skin/hair/clothing; hue-rotate(68deg) tilts toward
-   classic phosphor green without destroying tonal detail */
-.fiona-canvas {
-	position: absolute;
-	inset: 0;
-	width: 100%;
-	height: 100%;
-	opacity: 0;
-	transition:
-		opacity 0.8s ease,
-		filter 0.6s ease;
-	filter: grayscale(0.12) sepia(0.2) saturate(1.8) hue-rotate(68deg)
-		brightness(0.92) contrast(1.15);
-}
-
-.fiona-canvas.fiona-canvas--visible {
-	opacity: 1;
 }
 
 /* scanlines + rolling phosphor sweep — classic CRT horizontal scroll */

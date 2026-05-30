@@ -679,6 +679,10 @@ a.cdn-pp__label--donate:focus-visible {
 	animation: none;
 }
 
+.cdn-pp__btn--stop:hover {
+	transform: scale(1.06);
+}
+
 :root:not(.awsui-dark-mode) .cdn-pp__btn--stop:hover {
 	background: rgba(var(--station-primary-mode-rgb, 217, 123, 0), 0.1);
 	transform: scale(1.06);
@@ -714,10 +718,6 @@ a.cdn-pp__label--donate:focus-visible {
 	filter: blur(2px);
 	z-index: 0;
 	animation: 3.2s linear infinite cdn-ravy-spotlight-spin;
-}
-
-.cdn-pp__btn--stop:hover {
-	transform: scale(1.06);
 }
 
 .cdn-pp__btn--stop:focus-visible {

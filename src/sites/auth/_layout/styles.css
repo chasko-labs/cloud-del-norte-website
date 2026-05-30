@@ -392,6 +392,89 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	background: var(--cdn-streak-h-dark);
 }
 
+/* Wrapper sits on the SpaceBetween button wrapper inside each Form; descend
+   into the rendered cloudscape button to paint the shimmer / shake / success.
+   !important needed to beat the existing variant-primary background override
+   that lives at the top of this file. */
+.cdn-auth-submit-state.verifying button[class*="variant-primary"],
+.cdn-auth-submit-state.verifying
+	[class*="awsui_button"][class*="variant-primary"] {
+	background: linear-gradient(
+		90deg,
+		var(--cdn-amber) 0%,
+		var(--cdn-aws-orange) 25%,
+		var(--cdn-violet) 50%,
+		var(--cdn-aws-orange) 75%,
+		var(--cdn-amber) 100%
+	);
+	background-size: 200% 100%;
+	border-color: transparent;
+	color: var(--cdn-white);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.cdn-auth-submit-state.verifying button[class*="variant-primary"],
+	.cdn-auth-submit-state.verifying
+		[class*="awsui_button"][class*="variant-primary"] {
+		animation: cdn-auth-verifying-shimmer 1.4s linear infinite;
+	}
+
+	.cdn-auth-submit-state.failed button[class*="variant-primary"],
+	.cdn-auth-submit-state.failed
+		[class*="awsui_button"][class*="variant-primary"] {
+		animation: cdn-auth-shake 350ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+	}
+
+	.cdn-auth-submit-state.success button[class*="variant-primary"],
+	.cdn-auth-submit-state.success
+		[class*="awsui_button"][class*="variant-primary"] {
+		animation: cdn-auth-success-flash 600ms ease-out both;
+	}
+}
+
+.cdn-auth-submit-state.success button[class*="variant-primary"],
+.cdn-auth-submit-state.success
+	[class*="awsui_button"][class*="variant-primary"] {
+	background: var(--cdn-violet);
+	border-color: var(--cdn-violet);
+	color: var(--cdn-white);
+}
+
+/* Tiny ✓ marker — rendered as a sibling span by app.tsx when state=success.
+   Sits absolutely beside the button via the wrapper's relative positioning. */
+.cdn-auth-submit-state {
+	position: relative;
+	display: inline-block;
+}
+
+.cdn-auth-success-check {
+	display: inline-block;
+	margin-left: 8px;
+	color: var(--cdn-violet);
+	font-weight: 700;
+	font-size: 1.1rem;
+	animation: cdn-auth-header-in 250ms ease-out both;
+}
+
+.awsui-dark-mode .cdn-auth-success-check {
+	color: var(--cdn-lavender);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-auth-submit-state.verifying button[class*="variant-primary"],
+	.cdn-auth-submit-state.verifying
+		[class*="awsui_button"][class*="variant-primary"],
+	.cdn-auth-submit-state.failed button[class*="variant-primary"],
+	.cdn-auth-submit-state.failed
+		[class*="awsui_button"][class*="variant-primary"],
+	.cdn-auth-submit-state.success button[class*="variant-primary"],
+	.cdn-auth-submit-state.success
+		[class*="awsui_button"][class*="variant-primary"],
+	.cdn-auth-success-check {
+		animation: none;
+	}
+}
+
 /* ── Entrance choreography — postcard landing ────────────────────────────────
    Header fades in with slight rotation settle; card drops in like a postcard
    landing on a desk. Both gated on prefers-reduced-motion. */
@@ -460,6 +543,24 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
    Dark mode: violet stays — it pops against navy and reads as the brand
    accent on dark backgrounds. */
 
+.awsui-dark-mode .cdn-auth-card button[class*="variant-primary"],
+.awsui-dark-mode
+	.cdn-auth-card
+	[class*="awsui_button"][class*="variant-primary"] {
+	background: var(--cdn-violet);
+	border-color: var(--cdn-violet);
+	color: var(--cdn-white);
+}
+
+.awsui-dark-mode .cdn-auth-card button[class*="variant-primary"]:hover,
+.awsui-dark-mode
+	.cdn-auth-card
+	[class*="awsui_button"][class*="variant-primary"]:hover {
+	background: var(--cdn-purple);
+	border-color: var(--cdn-purple);
+	box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.22);
+}
+
 :root:not(.awsui-dark-mode)
 	.cdn-auth-card
 	[class*="awsui_button"][class*="variant-primary"],
@@ -478,24 +579,6 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	background: color-mix(in srgb, var(--cdn-amber) 80%, black 20%);
 	border-color: color-mix(in srgb, var(--cdn-amber) 80%, black 20%);
 	box-shadow: 0 0 0 3px rgba(139, 90, 43, 0.22);
-}
-
-.awsui-dark-mode
-	.cdn-auth-card
-	[class*="awsui_button"][class*="variant-primary"],
-.awsui-dark-mode .cdn-auth-card button[class*="variant-primary"] {
-	background: var(--cdn-violet);
-	border-color: var(--cdn-violet);
-	color: var(--cdn-white);
-}
-
-.awsui-dark-mode
-	.cdn-auth-card
-	[class*="awsui_button"][class*="variant-primary"]:hover,
-.awsui-dark-mode .cdn-auth-card button[class*="variant-primary"]:hover {
-	background: var(--cdn-purple);
-	border-color: var(--cdn-purple);
-	box-shadow: 0 0 0 3px rgba(144, 96, 240, 0.22);
 }
 
 /* ── Secondary button (Cancel/Previous) — recede behind the primary ────────
@@ -654,89 +737,6 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	100% {
 		background-color: var(--cdn-violet);
 		filter: brightness(1);
-	}
-}
-
-/* Wrapper sits on the SpaceBetween button wrapper inside each Form; descend
-   into the rendered cloudscape button to paint the shimmer / shake / success.
-   !important needed to beat the existing variant-primary background override
-   that lives at the top of this file. */
-.cdn-auth-submit-state.verifying button[class*="variant-primary"],
-.cdn-auth-submit-state.verifying
-	[class*="awsui_button"][class*="variant-primary"] {
-	background: linear-gradient(
-		90deg,
-		var(--cdn-amber) 0%,
-		var(--cdn-aws-orange) 25%,
-		var(--cdn-violet) 50%,
-		var(--cdn-aws-orange) 75%,
-		var(--cdn-amber) 100%
-	);
-	background-size: 200% 100%;
-	border-color: transparent;
-	color: var(--cdn-white);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-	.cdn-auth-submit-state.verifying button[class*="variant-primary"],
-	.cdn-auth-submit-state.verifying
-		[class*="awsui_button"][class*="variant-primary"] {
-		animation: cdn-auth-verifying-shimmer 1.4s linear infinite;
-	}
-
-	.cdn-auth-submit-state.failed button[class*="variant-primary"],
-	.cdn-auth-submit-state.failed
-		[class*="awsui_button"][class*="variant-primary"] {
-		animation: cdn-auth-shake 350ms cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-	}
-
-	.cdn-auth-submit-state.success button[class*="variant-primary"],
-	.cdn-auth-submit-state.success
-		[class*="awsui_button"][class*="variant-primary"] {
-		animation: cdn-auth-success-flash 600ms ease-out both;
-	}
-}
-
-.cdn-auth-submit-state.success button[class*="variant-primary"],
-.cdn-auth-submit-state.success
-	[class*="awsui_button"][class*="variant-primary"] {
-	background: var(--cdn-violet);
-	border-color: var(--cdn-violet);
-	color: var(--cdn-white);
-}
-
-/* Tiny ✓ marker — rendered as a sibling span by app.tsx when state=success.
-   Sits absolutely beside the button via the wrapper's relative positioning. */
-.cdn-auth-submit-state {
-	position: relative;
-	display: inline-block;
-}
-
-.cdn-auth-success-check {
-	display: inline-block;
-	margin-left: 8px;
-	color: var(--cdn-violet);
-	font-weight: 700;
-	font-size: 1.1rem;
-	animation: cdn-auth-header-in 250ms ease-out both;
-}
-
-.awsui-dark-mode .cdn-auth-success-check {
-	color: var(--cdn-lavender);
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.cdn-auth-submit-state.verifying button[class*="variant-primary"],
-	.cdn-auth-submit-state.verifying
-		[class*="awsui_button"][class*="variant-primary"],
-	.cdn-auth-submit-state.failed button[class*="variant-primary"],
-	.cdn-auth-submit-state.failed
-		[class*="awsui_button"][class*="variant-primary"],
-	.cdn-auth-submit-state.success button[class*="variant-primary"],
-	.cdn-auth-submit-state.success
-		[class*="awsui_button"][class*="variant-primary"],
-	.cdn-auth-success-check {
-		animation: none;
 	}
 }
 
