@@ -1741,7 +1741,6 @@ nav[class*="awsui_navigation_"]:not(
    renders visibly even when AppLayout's cream background extends below content. */
 .cdn-footer {
 	isolation: isolate;
-	position: relative;
 	z-index: 1;
 }
 
