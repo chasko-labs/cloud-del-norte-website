@@ -40,10 +40,11 @@ afterEach(() => {
 });
 
 describe("FeaturedEvent", () => {
-	it("renders the v2 event title with link to auth.clouddelnorte.org signup with rsvp return_to", () => {
+	it("renders the v2 event title linking to the Meetup RSVP URL", () => {
 		renderWithLocale("us");
 		const link = screen.getByText("Community Happy Hour & Networking Night");
-		const expected = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/index.html?event=happy-hour-2026-06-03")}`;
+		const expected =
+			"https://www.meetup.com/awsugclouddelnorte/events/314839263/rsvp/";
 		expect(link.closest("a")).toHaveAttribute("href", expected);
 	});
 
@@ -98,13 +99,12 @@ describe("FeaturedEvent", () => {
 
 	// ---------- Wave 33c — clickable image RSVP link ----------
 
-	it("wave 33c — wraps the image-area in an anchor pointing at the speakeasy /signup?return_to=/rsvp/ flow with the new aria-label locale key", () => {
+	it("wave 33c — wraps the image-area in an anchor pointing at the Meetup RSVP URL with the aria-label locale key", () => {
 		const { container } = renderWithLocale("us");
 		const link = container.querySelector(".feed-featured-event__image-link");
 		expect(link).not.toBeNull();
-		// href matches the same speakeasy CTA URL the primary RSVP button
-		// uses (encoded /rsvp/index.html?event=happy-hour-2026-06-03 return path).
-		const expectedHref = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/index.html?event=happy-hour-2026-06-03")}`;
+		const expectedHref =
+			"https://www.meetup.com/awsugclouddelnorte/events/314839263/rsvp/";
 		expect(link?.getAttribute("href")).toBe(expectedHref);
 		// aria-label resolves through the new feedPage.featuredEventImageLinkLabel
 		// locale key — describes the link action; the inner <img> alt text
@@ -210,13 +210,11 @@ describe("FeaturedEvent", () => {
 		expect(actual).toEqual(expected);
 	});
 
-	it("renders the shortened primary speakeasy RSVP button label", () => {
+	it("no longer renders the on-site CloudDelNorte.org RSVP button (signup flow unproven)", () => {
 		renderWithLocale("us");
-		const primary = screen.getByRole("link", {
-			name: /RSVP on CloudDelNorte\.org/i,
-		});
-		const expected = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent("/rsvp/index.html?event=happy-hour-2026-06-03")}`;
-		expect(primary).toHaveAttribute("href", expected);
+		expect(
+			screen.queryByRole("link", { name: /RSVP on CloudDelNorte\.org/i }),
+		).toBeNull();
 	});
 
 	it("renders the limited-space CTA", async () => {

@@ -15,7 +15,6 @@ import {
 	useState,
 } from "react";
 import MeetupRsvpButton from "../../../components/brand-button/meetup-rsvp";
-import SpeakeasyRsvpButton from "../../../components/brand-button/speakeasy-rsvp";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { getEvent, spotsRemaining } from "../../../lib/rsvp";
 import AsciiSmirk from "./ascii-smirk";
@@ -23,8 +22,6 @@ import AsciiSmirk from "./ascii-smirk";
 const EVENT_ID = "happy-hour-2026-06-03";
 const EVENT_IMAGE_LIGHT = "/events/featured-2026-06-03.webp";
 const EVENT_IMAGE_DARK = "/events/featured-2026-06-03-dark.webp";
-const RSVP_RETURN_PATH = `/rsvp/index.html?event=${EVENT_ID}`;
-const RSVP_PAGE_URL = `https://auth.clouddelnorte.org/signup/index.html?return_to=${encodeURIComponent(RSVP_RETURN_PATH)}`;
 /** Anchor inside the description string after which the inline smirk renders. */
 const SMIRK_ANCHOR = "game";
 /** Wave 32a — bulb count traced around the marquee perimeter. 16 spaces evenly
@@ -185,7 +182,7 @@ function FeaturedEventInner() {
 					    aria-label describes the link action via a new locale
 					    key so screen readers announce both axes correctly. */}
 					<a
-						href={RSVP_PAGE_URL}
+						href={meetupUrl}
 						aria-label={t("feedPage.featuredEventImageLinkLabel")}
 						className="feed-featured-event__image-link"
 					>
@@ -225,7 +222,7 @@ function FeaturedEventInner() {
 						fontSize="heading-m"
 						className="feed-featured-event__title"
 					>
-						<Link href={RSVP_PAGE_URL}>{t("feedPage.featuredEventTitle")}</Link>
+						<Link href={meetupUrl}>{t("feedPage.featuredEventTitle")}</Link>
 					</Box>
 					{/* Date VFX — pure HTML/Intl output wrapped in a backplate that
 					    carries the tungsten/indigo gradient + shimmer pseudo-element.
@@ -274,10 +271,6 @@ function FeaturedEventInner() {
 						</Box>
 					)}
 					<div className="cdn-brand-btn-stack">
-						<SpeakeasyRsvpButton
-							href={RSVP_PAGE_URL}
-							label={t("feedPage.featuredEventRsvpPrimary")}
-						/>
 						<MeetupRsvpButton
 							href={meetupUrl}
 							label={t("feedPage.featuredEventRsvpMeetup")}
