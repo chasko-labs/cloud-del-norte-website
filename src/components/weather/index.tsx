@@ -1,28 +1,10 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { lazy, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getBandBass } from "../../lib/background-viz/audio";
-import BabylonGate from "../babylon-gate";
 import { CITIES, type City } from "./cities";
 import "./styles.css";
-
-const AtmosphereScene = lazy(() => import("./atmosphere-scene"));
-
-/** Extract the current local hour (0–23) in the given IANA timezone. */
-function localHour(timezone: string): number {
-	try {
-		const parts = new Intl.DateTimeFormat("en-US", {
-			timeZone: timezone,
-			hour: "numeric",
-			hour12: false,
-		}).formatToParts(new Date());
-		const h = parts.find((p) => p.type === "hour");
-		return h ? Number(h.value) % 24 : new Date().getHours();
-	} catch {
-		return new Date().getHours();
-	}
-}
 
 const CACHE_TTL_MS = 10 * 60 * 1000;
 const AUTO_ADVANCE_MS = 4000;
@@ -286,7 +268,6 @@ export default function Weather() {
 	const tomorrowLoF = Math.round(tomorrow.lo);
 	const tomorrowLoC = Math.round(fToC(tomorrow.lo));
 
-	const currentHour = localHour(city.timezone);
 	const weatherContent = (
 		<>
 			<header className="cdn-weather__head">
@@ -383,15 +364,7 @@ export default function Weather() {
 			onMouseEnter={onMouseEnter}
 			onMouseLeave={onMouseLeave}
 			onKeyDown={onKeyDown}
-			style={{ position: "relative", overflow: "hidden" }}
 		>
-			<BabylonGate tier="medium" fallback={null}>
-				<AtmosphereScene
-					weatherCode={cur.weather_code}
-					timezone={city.timezone}
-					hour={currentHour}
-				/>
-			</BabylonGate>
 			{weatherContent}
 		</button>
 	);
