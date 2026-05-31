@@ -417,9 +417,7 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 	} catch (err) {
 		if (err instanceof AuthError && err.code === "InvalidParameterException") {
 			throw new AuthError(
-				"passkey sign-in is not enabled on the user pool yet. " +
-					"Please sign in with your password and TOTP code instead. " +
-					"(Admin: enable USER_AUTH explicit auth flow on the app client.)",
+				"Passkey sign-in isn't available right now. Sign in with your password and authenticator code instead.",
 				"PasskeyAuthFlowNotEnabled",
 			);
 		}
@@ -435,8 +433,7 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 	const challengeName = result.ChallengeName as string;
 	if (challengeName !== "WEB_AUTHN") {
 		throw new AuthError(
-			`passkey not available — Cognito returned ${challengeName ?? "no challenge"} instead of WEB_AUTHN. ` +
-				`This account may not have a passkey registered, or the user pool is not configured for passkeys.`,
+			"No passkey is registered for this account. Sign in with your password instead, then add a passkey from your account settings.",
 			challengeName,
 		);
 	}
@@ -445,7 +442,7 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 	)?.CredentialRequestOptions;
 	if (!credentialRequestOptionsRaw) {
 		throw new AuthError(
-			"passkey challenge missing CredentialRequestOptions — check Cognito user pool WebAuthn configuration",
+			"Passkey sign-in is temporarily unavailable. Sign in with your password instead.",
 			"MissingCredentialRequestOptions",
 		);
 	}
@@ -500,7 +497,7 @@ export async function completePasskeyAuth(
 		);
 	}
 	throw new AuthError(
-		"passkey authentication completed but no tokens were returned — check Cognito configuration",
+		"Passkey sign-in could not be completed. Sign in with your password instead.",
 		"NoAuthResult",
 	);
 }
