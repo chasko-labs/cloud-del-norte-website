@@ -62,10 +62,18 @@ user authentication for cloud del norte via amazon cognito user pools.
 
 ## email verification
 
-- auto-verified attributes: email
+- auto-verified attributes: email (re-asserted 2026-05-31 after being found null)
 - verification method: CONFIRM_WITH_CODE (6-digit code)
-- email sender: COGNITO_DEFAULT (no-reply@verificationemail.com)
-- delivery: email sent on SignUp, user confirms via ConfirmSignUp API
+- email sender: SES DEVELOPER mode via verified domain identity clouddelnorte.org, From 'Cloud del Norte <no-reply@clouddelnorte.org>'
+- delivery: code sent on SignUp, confirmed via ConfirmSignUp API
+
+> **WARNING:** `update-user-pool` resets any omitted field — always use `infra/cognito-apply-email-config.sh`.
+
+**2026-05-31 fix note:** Two root causes were found and corrected:
+1. `AutoVerifiedAttributes` had been clobbered to null (likely by an earlier `update-user-pool` call that omitted the field), causing the UNCONFIRMED user backlog — no verification codes were sent.
+2. `EmailSendingAccount` was `COGNITO_DEFAULT` (generic no-reply@verificationemail.com) — switched to SES DEVELOPER mode for deliverability via the verified clouddelnorte.org domain.
+
+IaC apply path: `infra/cognito-apply-email-config.sh`.
 
 ## admin operations
 

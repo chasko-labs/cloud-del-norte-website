@@ -1,0 +1,20 @@
+{
+	"UserPoolId": "us-west-2_cyPQF4F3r",
+	"Region": "us-west-2",
+	"Account": "170473530355",
+	"EmailConfiguration": {
+		"SourceArn": "arn:aws:ses:us-west-2:170473530355:identity/clouddelnorte.org",
+		"EmailSendingAccount": "DEVELOPER",
+		"From": "Cloud del Norte <no-reply@clouddelnorte.org>"
+	},
+	"AutoVerifiedAttributes": [
+		"email"
+	],
+	"VerificationMessageTemplate": {
+		"DefaultEmailOption": "CONFIRM_WITH_CODE"
+	},
+	"UsernameAttributes": [
+		"email"
+	],
+	"MfaConfiguration": "OPTIONAL"
+}
