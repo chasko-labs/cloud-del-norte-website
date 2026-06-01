@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: '2010-09-09'
+AWSTemplateFormatVersion: "2010-09-09"
 Description: >
   cdn-deploy-alerts — SNS topic + SMS subscription for Cloud Del Norte deploy
   notifications. ci-deploy role gets sns:Publish on the topic so Woodpecker
@@ -7,7 +7,7 @@ Description: >
 Parameters:
   OperatorPhone:
     Type: String
-    Default: '+15756393994'
+    Default: "+15756393994"
     Description: >
       E.164 phone number for SMS subscription. AWS sends a one-time
       confirmation SMS; recipient must reply Y to activate.
@@ -16,7 +16,7 @@ Parameters:
       origination is approved; email is the active channel today.
   OperatorEmail:
     Type: String
-    Default: 'bryanj+clouddelnorte-version-alerts@abstractspacecraft.com'
+    Default: "bryanj+clouddelnorte-version-alerts@abstractspacecraft.com"
     Description: >
       Email subscription for deploy alerts. Plus-addressing lets the
       operator filter alerts in their email client. AWS sends a one-time
@@ -63,6 +63,9 @@ Resources:
   # ---------------------------------------------------------------------------
   # SMS subscription — operator phone in E.164 format
   # AWS sends a one-time confirmation SMS. Reply Y to activate.
+  # NOTE: To remove this subscription (cut SMS costs), use CLI:
+  #   aws sns unsubscribe --subscription-arn <arn>
+  # (CFN cannot delete subscriptions once confirmed; use scripts/remove-sms-subscription.sh)
   # ---------------------------------------------------------------------------
   DeployAlertsSmsSubscription:
     Type: AWS::SNS::Subscription
@@ -94,7 +97,7 @@ Resources:
       Roles:
         - !Ref CiDeployRoleName
       PolicyDocument:
-        Version: '2012-10-17'
+        Version: "2012-10-17"
         Statement:
           - Sid: SnsPublishDeployAlerts
             Effect: Allow
@@ -107,9 +110,9 @@ Outputs:
     Description: ARN of the cdn-deploy-alerts SNS topic — use in Woodpecker aws sns publish --topic-arn
     Value: !Ref DeployAlertsTopic
     Export:
-      Name: !Sub '${AWS::StackName}-TopicArn'
+      Name: !Sub "${AWS::StackName}-TopicArn"
   TopicName:
     Description: SNS topic name
     Value: cdn-deploy-alerts
     Export:
-      Name: !Sub '${AWS::StackName}-TopicName'
+      Name: !Sub "${AWS::StackName}-TopicName"

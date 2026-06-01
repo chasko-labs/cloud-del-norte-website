@@ -15,8 +15,6 @@
 # clouddelnorte.org rebrand. Renaming requires S3 bucket recreation + DNS/CF
 # origin update. Track in a separate issue.
 
-cancel_previous: true
-
 when:
   - event: [push, manual]
     branch: [main, dev, "feature/*", "fix/*", "feat/*"]
@@ -63,13 +61,6 @@ steps:
   # ─── CSP drift gate (runs before any deploy) ────────────────────────────────
   # Fails the pipeline if live CloudFront CSP drifts from infra/cloudfront-security-headers.json
   # or is missing required endpoints. Prevents FP-017-class failures.
-  #
-  # KNOWN GAP (failure: ignore protects the pipeline):
-  # The heraldstack-ci-deploy role lacks `cloudfront:GetResponseHeadersPolicy`,
-  # so verify-csp.sh cannot read the live awsug response-headers-policy and
-  # reports a cascading set of FAILs. The role is uncodified (see
-  # heraldstack/secure-access/cfn/secrets-store/ci-bryanchasko-role.yaml note),
-  # so the permission cannot be added from this repo. Tracked in #372.
 
   - name: verify-csp
     image: public.ecr.aws/aws-cli/aws-cli:latest
@@ -110,10 +101,6 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -144,10 +131,6 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -178,10 +161,6 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -217,10 +196,6 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -254,10 +229,6 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -291,10 +262,6 @@ steps:
       CF_DIST_AWSUG: E2QLAWFVIT1AR8
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -312,7 +279,7 @@ steps:
   # ─── screenshot pipeline (dev) ──────────────────────────────────────────────
 
   - name: screenshot-capture-dev
-    image: mcr.microsoft.com/playwright:v1.55.1-noble
+    image: mcr.microsoft.com/playwright:v1.49.0-jammy
     depends_on: [deploy-dev]
     failure: ignore
     when:
@@ -339,10 +306,6 @@ steps:
       S3_BUCKET_DEV: dev.clouddelnorte.org
       CF_DIST_DEV: EEHVTUEQ97V0X
     commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -358,7 +321,7 @@ steps:
   # ─── screenshot pipeline (prod) ─────────────────────────────────────────────
 
   - name: screenshot-capture-prod
-    image: mcr.microsoft.com/playwright:v1.55.1-noble
+    image: mcr.microsoft.com/playwright:v1.49.0-jammy
     depends_on: [deploy]
     failure: ignore
     when:
@@ -383,10 +346,6 @@ steps:
       S3_BUCKET_MAIN: clouddelnorte.org
       CF_DIST_MAIN: ECC3LP1BL2CZS
     commands:
-      - 'ls -la /workload.crt /workload.key || (echo "FATAL: /workload.crt or /workload.key not mounted. Check WOODPECKER_BACKEND_DOCKER_VOLUMES on the woodpecker-agent host."; exit 1)'
-      # openssl is not in public.ecr.aws/aws-cli/aws-cli (AL2023 base) — install on demand.
-      - yum install -y openssl 2>/dev/null || apk add --no-cache openssl 2>/dev/null || true
-      - 'openssl x509 -in /workload.crt -noout -dates || (echo "FATAL: /workload.crt is not a valid X509 cert."; exit 1)'
       - mkdir -p /root/.aws
       - |
         cat > /root/.aws/config <<EOF
@@ -400,24 +359,7 @@ steps:
       - aws cloudfront create-invalidation --distribution-id $CF_DIST_MAIN --paths "/_ci/screenshots/latest/*"
 
   # ─── notifications ──────────────────────────────────────────────────────────
-
-  - name: notify-dev
-    image: alpine:3.20
-    depends_on: [deploy-dev]
-    failure: ignore
-    when:
-      - event: [push, manual]
-        branch:
-          exclude: main
-    commands:
-      - apk add --no-cache curl
-      - |
-        curl -s \
-          -H "Title: [CDN dev] deploy: $${CI_COMMIT_SHA:0:7}" \
-          -H "Tags: rocket,green_heart" \
-          -H "Click: https://dev.clouddelnorte.org/" \
-          -d "$${CI_COMMIT_MESSAGE}" \
-          https://ntfy.sh/cdn-deploy-74697e0f
+  # prod-only: reduced from dev+prod to cut SNS costs
 
   - name: notify-prod
     image: alpine:3.20
@@ -436,8 +378,43 @@ steps:
           -d "$${CI_COMMIT_MESSAGE}" \
           https://ntfy.sh/cdn-deploy-74697e0f
 
-  # ─── qdrant re-indexing (REMOVED — see #376) ───────────────────────────────
-  # The qdrant-reindex step previously cloned BryanChasko/haunting-kiro-cli (PRIVATE)
-  # to run scripts/qdrant-index.py. Without a GITHUB_TOKEN secret wired in
-  # Woodpecker, the clone fails with "could not read Username for 'https://github.com'".
-  # Step removed to keep pipeline output clean. Restore once #376 wires credentials.
+  - name: notify-sns-prod
+    image: public.ecr.aws/aws-cli/aws-cli:latest
+    depends_on: [deploy, deploy-auth, deploy-awsug]
+    failure: ignore
+    when:
+      - event: [push, manual]
+        branch: main
+    environment:
+      AWS_DEFAULT_REGION: us-west-2
+      AWS_PROFILE: ci-deploy
+    commands:
+      - mkdir -p /root/.aws
+      - |
+        cat > /root/.aws/config <<EOF
+        [profile ci-deploy]
+        region = us-west-2
+        credential_process = /usr/local/bin/aws_signing_helper credential-process --trust-anchor-arn arn:aws:rolesanywhere:us-west-2:211125425201:trust-anchor/5e54afa4-d3d7-4e42-bae6-68f9d126c7d7 --profile-arn arn:aws:rolesanywhere:us-west-2:211125425201:profile/2177db77-a33c-4e5b-bcce-21b908659406 --role-arn arn:aws:iam::211125425201:role/heraldstack-ci-deploy --certificate /workload.crt --private-key /workload.key
+        EOF
+      - |
+        MSG=$$(printf '[CDN prod] %s\nlive: https://clouddelnorte.org/\ndiff: https://github.com/chasko-labs/cloud-del-norte-website/commit/%s' "$${CI_COMMIT_SHA:0:7}" "$$CI_COMMIT_SHA")
+        aws sns publish --topic-arn arn:aws:sns:us-west-2:211125425201:cdn-deploy-alerts --message "$$MSG"
+
+  # ─── qdrant re-indexing (shared-knowledge) ──────────────────────────────────
+
+  - name: qdrant-reindex
+    image: python:3.12-alpine
+    failure: ignore
+    depends_on: [deploy, deploy-auth, deploy-awsug]
+    when:
+      - event: push
+        branch: main
+    environment:
+      QDRANT_URL: http://192.168.4.53:6333
+      OLLAMA_URL: http://192.168.4.53:11434
+      EMBED_MODEL: nomic-embed-text
+      COLLECTION: shared-knowledge
+    commands:
+      - apk add --no-cache git curl
+      - git clone --depth 1 https://github.com/BryanChasko/haunting-kiro-cli.git /tmp/haunting
+      - git diff HEAD~1 --name-only --diff-filter=ACMR | python3 /tmp/haunting/scripts/qdrant-index.py --repo "$CI_REPO_NAME" --commit "$CI_COMMIT_SHA"
