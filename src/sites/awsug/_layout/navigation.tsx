@@ -37,6 +37,11 @@ export default function AwsugNavigation() {
 			type: "section",
 			text: "resources",
 			items: [
+				{
+					type: "link",
+					text: "favorites",
+					href: `${MAIN}/resources/index.html`,
+				},
 				{ type: "link", text: "plans", href: `${MAIN}/plans/index.html` },
 				{ type: "link", text: "roadmap", href: `${MAIN}/roadmap/index.html` },
 				{
