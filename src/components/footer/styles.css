@@ -456,8 +456,12 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer {
 
 .cdn-version {
 	font-size: 11px;
-	opacity: 0.5;
+	color: rgb(140, 75, 0);
 	margin-top: 4px;
+}
+
+.awsui-dark-mode .cdn-version {
+	color: rgb(199, 184, 232);
 }
 
 /* "Go Build" call-to-action — gradient text effect */
@@ -563,9 +567,10 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer {
 .cdn-footer-clock {
 	font-family: "Amazon Ember Mono", "Courier New", monospace;
 	font-size: var(--cdn-text-sm, 0.8125rem);
+	font-weight: 500;
 	font-variant-numeric: tabular-nums;
 	letter-spacing: 0.06em;
-	color: var(--cdn-amber, #8b5a2b);
+	color: var(--cdn-aws-orange-text, rgb(140, 75, 0));
 }
 
 .awsui-dark-mode .cdn-footer-clock {
@@ -594,16 +599,31 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer {
 /* Compact single-row layout when weather card is inside footer */
 .cdn-footer-weather .cdn-weather {
 	flex-direction: row;
-	align-items: center;
-	gap: 8px;
+	align-items: baseline;
+	gap: 10px;
 	margin: 0;
 	padding: 4px 12px;
 	max-width: none;
 }
+.cdn-footer-weather .cdn-weather__head {
+	gap: 6px;
+}
+.cdn-footer-weather .cdn-weather__city {
+	font-size: 14px;
+	letter-spacing: 0.04em;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	max-width: 160px;
+}
+.cdn-footer-weather .cdn-weather__glyph {
+	font-size: 18px;
+	align-self: center;
+}
 .cdn-footer-weather .cdn-weather__now {
 	flex-direction: row;
-	align-items: center;
-	gap: 8px;
+	align-items: baseline;
+	gap: 6px;
 }
 .cdn-footer-weather .cdn-weather__tomorrow,
 .cdn-footer-weather .cdn-weather__dots,
@@ -612,7 +632,17 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer {
 }
 .cdn-footer-weather .cdn-weather__temp {
 	flex-direction: row;
+	align-items: baseline;
 	gap: 6px;
+}
+.cdn-footer-weather .cdn-weather__temp-f {
+	font-size: 16px;
+}
+.cdn-footer-weather .cdn-weather__temp-c {
+	font-size: 12px;
+}
+.cdn-footer-weather .cdn-weather__temp-rule {
+	display: none;
 }
 
 /* Version pushed to end */
@@ -661,5 +691,21 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer-bar .cdn-version {
 	.cdn-footer-bar .cdn-version {
 		margin-left: 0;
 		text-align: center;
+	}
+}
+
+/* Tablet: keep row but tighten weather + gaps */
+@media (min-width: 601px) and (max-width: 900px) {
+	.cdn-footer-bar {
+		gap: var(--cdn-space-sm, 8px);
+	}
+
+	.cdn-footer-weather {
+		max-width: 220px;
+		min-width: 120px;
+	}
+
+	.cdn-footer-weather .cdn-weather__city {
+		max-width: 110px;
 	}
 }
