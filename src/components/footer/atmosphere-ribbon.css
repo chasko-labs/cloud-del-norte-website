@@ -10,19 +10,21 @@
 	z-index: 0;
 	opacity: 0;
 	transition: opacity 600ms ease-in;
+	/* Asymmetric mask: gentle fade-in at top, stronger fade-out at bottom
+	   so the ribbon melts into the footer's accent line without a hard seam */
 	-webkit-mask-image: linear-gradient(
 		to bottom,
 		transparent 0%,
-		#000 35%,
-		#000 65%,
-		transparent 100%
+		#000 25%,
+		#000 55%,
+		transparent 92%
 	);
 	mask-image: linear-gradient(
 		to bottom,
 		transparent 0%,
-		#000 35%,
-		#000 65%,
-		transparent 100%
+		#000 25%,
+		#000 55%,
+		transparent 92%
 	);
 }
 
@@ -36,10 +38,12 @@
 	inset: 0;
 	pointer-events: none;
 	z-index: 1;
+	/* Stronger bottom fade to blend seamlessly into footer glass */
 	background: linear-gradient(
 		to bottom,
 		rgba(237, 229, 212, 0) 0%,
-		rgba(237, 229, 212, 0.35) 100%
+		rgba(237, 229, 212, 0.15) 50%,
+		rgba(237, 229, 212, 0.6) 100%
 	);
 }
 
@@ -47,7 +51,8 @@
 	background: linear-gradient(
 		to bottom,
 		rgba(14, 18, 28, 0) 0%,
-		rgba(14, 18, 28, 0.55) 100%
+		rgba(14, 18, 28, 0.25) 50%,
+		rgba(14, 18, 28, 0.75) 100%
 	);
 }
 
@@ -57,24 +62,53 @@
 	}
 }
 
-/* CSS-only fallback strip — same dimensions, gradient applied via JS */
+/* Tablet: slightly reduce ribbon height */
+@media (min-width: 601px) and (max-width: 900px) {
+	.cdn-atmosphere-ribbon {
+		height: 34px;
+	}
+}
+
+/* CSS-only fallback strip — warm gradient that reads as intentional sky band */
 .cdn-footer-atmosphere-fallback {
 	width: 100%;
 	height: 100%;
-	background: linear-gradient(90deg, #87ceeb 0%, #d0eeff 50%, #87ceeb 100%);
+	background: linear-gradient(
+		90deg,
+		rgba(135, 206, 235, 0.4) 0%,
+		rgba(255, 220, 160, 0.35) 35%,
+		rgba(208, 238, 255, 0.4) 65%,
+		rgba(135, 206, 235, 0.4) 100%
+	);
 	transition:
 		background 2s ease,
 		filter 2s ease,
 		opacity 2s ease;
-	filter: saturate(0.55) brightness(0.95);
-	opacity: 0.5;
+	filter: saturate(0.6) brightness(0.95);
+	opacity: 0.6;
 }
 
 .awsui-dark-mode .cdn-footer-atmosphere-fallback {
-	opacity: 0.32;
-	filter: saturate(0.4) brightness(0.6);
+	background: linear-gradient(
+		90deg,
+		rgba(48, 0, 106, 0.3) 0%,
+		rgba(20, 30, 60, 0.35) 35%,
+		rgba(90, 60, 160, 0.25) 65%,
+		rgba(48, 0, 106, 0.3) 100%
+	);
+	opacity: 0.4;
+	filter: saturate(0.5) brightness(0.7);
 }
 
 body.cdn-auth-subdomain .cdn-atmosphere-ribbon {
 	display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-atmosphere-ribbon {
+		transition: none;
+	}
+	.cdn-footer-atmosphere-fallback {
+		transition: none;
+	}
 }

@@ -1753,8 +1753,8 @@ nav[class*="awsui_navigation_"]:not(
 	width: fit-content;
 	font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
 	font-size: 11px;
-	opacity: 0.65;
-	color: rgba(139, 90, 43, 0.6);
+	opacity: 1;
+	color: rgb(140, 75, 0);
 	pointer-events: none;
 	user-select: none;
 	background: rgba(255, 255, 255, 0.06);
@@ -1764,7 +1764,7 @@ nav[class*="awsui_navigation_"]:not(
 }
 
 .awsui-dark-mode .cdn-version {
-	color: rgba(215, 199, 238, 0.65);
+	color: rgb(199, 184, 232);
 	background: rgba(144, 96, 240, 0.08);
 }
 
@@ -1897,6 +1897,41 @@ nav[class*="awsui_navigation_"]:not(
 	overflow: visible;
 	text-overflow: clip;
 	min-width: max-content;
+}
+
+/* ── Mobile ≤400px: eliminate horizontal overflow at 375px ───────────────
+   The combined intrinsic width of padding-left (logo clearance) + utilities
+   row exceeds 375px. Fix: hide decorative tagline, shrink logo clearance,
+   tighten utility padding/gap. :not(#\9) boosts specificity to override
+   Cloudscape's scoped styles. */
+@media (max-width: 400px) {
+	.cdn-ugtag {
+		display: none;
+	}
+	#top-nav [class*="awsui_top-navigation"]:not(#\9) {
+		padding-left: 56px;
+		padding-right: 0 !important;
+	}
+	#top-nav [class*="awsui_utilities"]:not(#\9) {
+		padding-right: 2px !important;
+		gap: 4px !important;
+	}
+	#top-nav [class*="awsui_utility-wrapper"]:not(#\9) {
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+		margin-left: 0 !important;
+		margin-right: 0 !important;
+	}
+	#top-nav [class*="awsui_utility-button_"]:not(#\9) {
+		padding-left: 4px !important;
+		padding-right: 4px !important;
+	}
+	#top-nav
+		[class*="awsui_utility-button_"]:last-child:not(#\9)
+		[class*="awsui_utility-button-text_"],
+	#top-nav [class*="awsui_utility-button_"]:last-child:not(#\9) span {
+		min-width: 0;
+	}
 }
 
 /* ── Audio reactivity — Phase A ──────────────────────────────────────────
