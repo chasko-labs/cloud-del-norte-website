@@ -34,12 +34,12 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 			<Container header={<Header variant="h1">meetings</Header>}>
 				<SpaceBetween size="m">
 					<Box>
-						Join the active Cloud del Norte call or check meetup.com for
+						Open the Cloud del Norte meeting room, or check meetup.com for
 						upcoming events.
 					</Box>
 					<SpaceBetween direction="horizontal" size="s">
 						<Button variant="primary" onClick={() => setInCall(true)}>
-							join call
+							open call room
 						</Button>
 						<Button href={MEETUP_URL} target="_blank" iconName="external">
 							view on meetup.com
@@ -61,7 +61,7 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 				visible={inCall}
 				onDismiss={() => setInCall(false)}
 				size="max"
-				header="Cloud del Norte — live call"
+				header="Cloud del Norte — meeting room"
 				closeAriaLabel="leave meeting"
 			>
 				{inCall && (

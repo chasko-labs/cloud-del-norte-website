@@ -77,7 +77,7 @@ describe("meetings/app.tsx — create meeting button visibility", () => {
 
 		await waitFor(() =>
 			expect(
-				screen.getByRole("button", { name: /join call/i }),
+				screen.getByRole("button", { name: /open call room/i }),
 			).toBeInTheDocument(),
 		);
 		expect(

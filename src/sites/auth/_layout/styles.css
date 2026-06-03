@@ -1058,16 +1058,13 @@ body.cdn-auth-subdomain {
 }
 
 /* ==========================================================================
-   Logo hero containment — prevent star/SVG from filling viewport
+   Logo hero containment — overflow safety only
 
-   The .cdn-logo-hero is position:absolute inside #top-nav (sticky). On auth
-   pages, reinforce the size constraint and force cdn-star-logo hidden so a
-   container-query mismatch or specificity race cannot blow the logo to
-   full-viewport size.
+   Size now inherits from the shared .cdn-logo-hero rule in shell/styles.css
+   (no per-subdomain size override). overflow:hidden kept as auth-specific
+   containment safety so a specificity race cannot blow the logo out.
    ========================================================================== */
 body.cdn-auth-subdomain .cdn-logo-hero {
-	width: clamp(48px, 8vw, 80px);
-	height: clamp(48px, 8vw, 80px);
 	overflow: hidden;
 }
 
