@@ -27,7 +27,7 @@ function AppContent() {
 	const { t, locale } = useTranslation();
 
 	useEffect(() => {
-		document.title = `${t("roadmap.title")} — AWS UG Cloud Del Norte`;
+		document.title = `${t("roadmap.title")} — AWS UG Cloud del Norte`;
 	}, [t]);
 
 	const totalCards = boardColumns.reduce((sum, c) => sum + c.cards.length, 0);

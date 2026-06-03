@@ -80,14 +80,14 @@ describe("SpeakeasyRsvpButton", () => {
 		expect(a).not.toHaveAttribute("target");
 	});
 
-	it("renders the brand logo as an <img> with 'Cloud Del Norte' alt", () => {
+	it("renders the brand logo as an <img> with 'Cloud del Norte' alt", () => {
 		const { container } = render(
 			<SpeakeasyRsvpButton href="#" label="RSVP for Speakeasy" />,
 		);
 		const img = container.querySelector("img.cdn-brand-btn__mark");
 		expect(img).not.toBeNull();
 		expect(img?.getAttribute("src")).toBe("/brand/logo.svg");
-		expect(img?.getAttribute("alt")).toBe("Cloud Del Norte");
+		expect(img?.getAttribute("alt")).toBe("Cloud del Norte");
 	});
 
 	it("applies the speakeasy variant class for brand styling", () => {

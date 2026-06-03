@@ -226,7 +226,7 @@ function RsvpFlow({ auth }: { auth: AuthState }) {
 							marginSize={2}
 							fgColor="#5a1f8a"
 							bgColor="#ffffff"
-							title="Cloud Del Norte ticket QR code"
+							title="Cloud del Norte ticket QR code"
 						/>
 					</div>
 					<dl className="cdn-ticket__meta">

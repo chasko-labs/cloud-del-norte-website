@@ -185,13 +185,13 @@ export default function JitsiEmbed({
 					interfaceConfigOverwrite: {
 						SHOW_JITSI_WATERMARK: false,
 						SHOW_BRAND_WATERMARK: false,
-						APP_NAME: "Cloud Del Norte",
+						APP_NAME: "Cloud del Norte",
 						DEFAULT_LOGO_URL: "https://clouddelnorte.org/brand/logo.svg",
 						DEFAULT_WELCOME_PAGE_LOGO_URL:
 							"https://clouddelnorte.org/brand/logo.svg",
 						JITSI_WATERMARK_LINK: "https://clouddelnorte.org",
-						NATIVE_APP_NAME: "Cloud Del Norte",
-						PROVIDER_NAME: "Cloud Del Norte AWS User Group",
+						NATIVE_APP_NAME: "Cloud del Norte",
+						PROVIDER_NAME: "Cloud del Norte AWS User Group",
 						TOOLBAR_BUTTONS: [
 							"camera",
 							"chat",

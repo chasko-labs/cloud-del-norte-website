@@ -12,7 +12,7 @@ interface SpeakeasyRsvpButtonProps {
 
 /**
  * On-site RSVP CTA — the PRIMARY action on event cards. Renders a styled <a>
- * over a purple→violet gradient with the Cloud Del Norte brand logo (the
+ * over a purple→violet gradient with the Cloud del Norte brand logo (the
  * animated violet star + bulbs) inline as the leading mark. Internal link,
  * no new tab.
  *
@@ -53,7 +53,7 @@ export default function SpeakeasyRsvpButton({
 					aria-hidden="true"
 					focusable="false"
 				>
-					<title>Cloud Del Norte</title>
+					<title>Cloud del Norte</title>
 					<polygon
 						points="12,2 14.9,8.6 22,9.3 16.5,14.1 18.2,21 12,17.3 5.8,21 7.5,14.1 2,9.3 9.1,8.6"
 						fill="currentColor"
@@ -63,7 +63,7 @@ export default function SpeakeasyRsvpButton({
 				<img
 					className="cdn-brand-btn__mark cdn-brand-btn__mark--logo"
 					src="/brand/logo.svg"
-					alt="Cloud Del Norte"
+					alt="Cloud del Norte"
 					width={22}
 					height={22}
 					onError={() => setLogoBroken(true)}

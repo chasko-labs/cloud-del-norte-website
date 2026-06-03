@@ -662,6 +662,20 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	overflow: visible;
 }
 
+/* ── Inline LogoSvg theme vars ────────────────────────────────────────────── */
+:root {
+	--cdn-logo-primary: #9060f0;
+	--cdn-logo-arm: #d7c7ee;
+	--cdn-logo-bulb: #9060f0;
+	--cdn-logo-sparkle: #d7c7ee;
+}
+.awsui-dark-mode {
+	--cdn-logo-primary: #5a1f8a;
+	--cdn-logo-arm: #f3ede2;
+	--cdn-logo-bulb: #d7c7ee;
+	--cdn-logo-sparkle: #f3ede2;
+}
+
 .cdn-logo-hero {
 	position: absolute;
 	left: 14px;
@@ -1435,7 +1449,7 @@ button[class*="awsui_tools-toggle"] {
 
 /* ── Breadcrumb link color — palette override ──
    Cloudscape BreadcrumbGroup renders links with its own link blue token
-   (#0073bb / similar) that falls outside the Cloud Del Norte palette.
+   (#0073bb / similar) that falls outside the Cloud del Norte palette.
    Override with the canonical interactive color tokens for each mode.
    Selector pattern follows the existing [class*="awsui_..."] pattern used
    throughout this file. */

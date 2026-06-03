@@ -10,6 +10,7 @@ import Header from "@cloudscape-design/components/header";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useCallback, useEffect, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
+import LogoSvg from "../../components/logo-svg";
 import Navigation from "../../components/navigation";
 import { LocaleProvider } from "../../contexts/locale-context";
 import { useTranslation } from "../../hooks/useTranslation";
@@ -494,7 +495,7 @@ function TypographyExtrasDemo() {
 						className="theme-letter-spacing-row__sample"
 						style={{ letterSpacing: "0.005em" }}
 					>
-						Cloud Del Norte Meetup
+						Cloud del Norte Meetup
 					</span>
 				</div>
 				<div className="theme-letter-spacing-row__item">
@@ -505,7 +506,7 @@ function TypographyExtrasDemo() {
 						className="theme-letter-spacing-row__sample"
 						style={{ letterSpacing: "0.01em" }}
 					>
-						Cloud Del Norte Meetup
+						Cloud del Norte Meetup
 					</span>
 				</div>
 				<div className="theme-letter-spacing-row__item">
@@ -516,7 +517,7 @@ function TypographyExtrasDemo() {
 						className="theme-letter-spacing-row__sample"
 						style={{ letterSpacing: "0.04em" }}
 					>
-						Cloud Del Norte Meetup
+						Cloud del Norte Meetup
 					</span>
 				</div>
 				<div className="theme-letter-spacing-row__item">
@@ -532,7 +533,7 @@ function TypographyExtrasDemo() {
 							fontWeight: 600,
 						}}
 					>
-						Cloud Del Norte
+						Cloud del Norte
 					</span>
 				</div>
 			</div>
@@ -590,7 +591,7 @@ function AppContent({
 						<div className="theme-logo-showcase">
 							<img
 								src="/brand/logo.svg"
-								alt="Cloud Del Norte AWS User Group"
+								alt="Cloud del Norte AWS User Group"
 								className="theme-logo-img"
 							/>
 							<div className="theme-logo-meta">
@@ -613,6 +614,69 @@ function AppContent({
 								</p>
 							</div>
 						</div>
+					</Container>
+				</div>
+
+				{/* ── Brand marks ── */}
+				<div id="section-brand-marks">
+					<Container header={<Header variant="h2">brand marks</Header>}>
+						<ColumnLayout columns={3} variant="text-grid">
+							<div>
+								<Box variant="small" color="text-body-secondary">
+									star mark — dark
+								</Box>
+								<div
+									className="awsui-dark-mode"
+									style={{
+										background: "#0a0c14",
+										padding: 16,
+										borderRadius: 8,
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+									}}
+								>
+									<LogoSvg style={{ width: 140, height: 140 }} />
+								</div>
+							</div>
+							<div>
+								<Box variant="small" color="text-body-secondary">
+									star mark — light
+								</Box>
+								<div
+									style={{
+										background: "#ede5d4",
+										padding: 16,
+										borderRadius: 8,
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+									}}
+								>
+									<LogoSvg style={{ width: 140, height: 140 }} />
+								</div>
+							</div>
+							<div>
+								<Box variant="small" color="text-body-secondary">
+									franklin mountains lockup
+								</Box>
+								<div
+									style={{
+										padding: 16,
+										borderRadius: 8,
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+									}}
+								>
+									<img
+										src="/brand/franklin-mountains-wide.svg"
+										alt="Cloud del Norte — Franklin Mountains"
+										style={{ width: 160, height: "auto" }}
+									/>
+								</div>
+							</div>
+						</ColumnLayout>
 					</Container>
 				</div>
 
@@ -1082,7 +1146,7 @@ function AppContent({
 							<div className="theme-logo-showcase">
 								<img
 									src="/brand/logo.svg"
-									alt="Cloud Del Norte AWS User Group"
+									alt="Cloud del Norte AWS User Group"
 									className="theme-logo-img"
 								/>
 								<div className="theme-logo-meta">

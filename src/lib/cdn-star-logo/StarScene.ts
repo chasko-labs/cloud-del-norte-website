@@ -1,4 +1,4 @@
-// Procedural 3D Cloud Del Norte star scene.
+// Procedural 3D Cloud del Norte star scene.
 // 5-pointed extruded star + 6 bulbs: 5 tips + 1 steady center.
 // Arm and diagonal bulbs removed — they contributed to blob at nav thumbnail size.
 //

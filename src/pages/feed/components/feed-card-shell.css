@@ -155,7 +155,7 @@
    2) Switched display: inline-block → display: -webkit-box plus
       -webkit-line-clamp: 2 + -webkit-box-orient: vertical so longer
       header strings (e.g. the wave 42a Andres rename
-      "Andres Moreno, Cloud Del Norte Community Co-organizer") wrap to a
+      "Andres Moreno, Cloud del Norte Community Co-organizer") wrap to a
       maximum of 2 lines at every viewport without overflowing the
       marquee chrome. Short headers stay on a single line — the
       line-clamp only kicks in past the 2nd line.

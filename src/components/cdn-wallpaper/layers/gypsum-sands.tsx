@@ -1,4 +1,4 @@
-// gypsum-sands — light mode wallpaper layer for Cloud Del Norte.
+// gypsum-sands — light mode wallpaper layer for Cloud del Norte.
 //
 // Geographic convention: White Sands National Monument is a gypsum dune field
 // in Otero County, NM — about 80 miles north of El Paso. The blinding white

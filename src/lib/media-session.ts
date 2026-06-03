@@ -59,7 +59,7 @@ export function setMediaSession(input: MediaSessionInput): void {
 	ms.metadata = new MediaMetadata({
 		title: hasTrack ? (input.nowPlaying as string) : input.stationLabel,
 		artist: hasTrack ? input.stationLabel : "",
-		album: "AWS UG Cloud Del Norte",
+		album: "AWS UG Cloud del Norte",
 		artwork: [
 			// 512×512 first — Android picks the largest sufficient size for full-screen
 			// lockscreen art and notification shade thumb in one pass; iOS 16+ uses

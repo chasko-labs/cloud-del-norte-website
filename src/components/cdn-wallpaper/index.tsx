@@ -8,7 +8,7 @@
 //   el-paso-nights — dark mode. Music-viz + stars canvas (Canvas 2D).
 //
 // Future layers: chihuahuan-storm, tularosa-aurora, etc. All follow the
-// Cloud Del Norte geographic convention (NM / El Paso TX north-border region).
+// Cloud del Norte geographic convention (NM / El Paso TX north-border region).
 //
 // Lifecycle:
 //   - mounts on parent mount

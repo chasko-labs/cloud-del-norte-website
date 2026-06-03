@@ -34,7 +34,7 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 			<Container header={<Header variant="h1">meetings</Header>}>
 				<SpaceBetween size="m">
 					<Box>
-						Join the active Cloud Del Norte call or check meetup.com for
+						Join the active Cloud del Norte call or check meetup.com for
 						upcoming events.
 					</Box>
 					<SpaceBetween direction="horizontal" size="s">
@@ -61,7 +61,7 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 				visible={inCall}
 				onDismiss={() => setInCall(false)}
 				size="max"
-				header="Cloud Del Norte — live call"
+				header="Cloud del Norte — live call"
 				closeAriaLabel="leave meeting"
 			>
 				{inCall && (

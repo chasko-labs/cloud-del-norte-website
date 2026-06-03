@@ -1,6 +1,6 @@
 {
 	"shell": {
-		"siteTitle": "Cloud Del Norte",
+		"siteTitle": "Cloud del Norte",
 		"switchToMx": "Switch to Spanish",
 		"switchToUs": "Switch to English",
 		"switchToLightMode": "Switch to light mode",
@@ -42,12 +42,12 @@
 		"costs": "costs"
 	},
 	"breadcrumbs": {
-		"home": "Cloud Del Norte"
+		"home": "Cloud del Norte"
 	},
 	"footer": {
 		"ourLeaders": "AWS User Group Organizers",
 		"joinUs": "Join us on Meetup →",
-		"communityDescription": "AWS User Group Cloud Del Norte is part of AWS User Groups'",
+		"communityDescription": "AWS User Group Cloud del Norte is part of AWS User Groups'",
 		"globalCommunity": "Global AWS User Group Community",
 		"communityFullDescription": "We are run by volunteers local to New Mexico, West Texas & Chihuahua, Mexico. We believe projects, careers & issues can be accelerated using AWS, & wish to pass our knowledge, connections & experiences on to you & see what you build.",
 		"goBuild": "Go Build"
@@ -79,7 +79,7 @@
 		"andmoreDotDev": "andmore.dev by Andres Moreno",
 		"andmoreDevHeader": "andmore.dev",
 		"andmoreByAndres": "by Andres Moreno",
-		"andmoreCoOrganizer": "Cloud Del Norte UG co-organizer",
+		"andmoreCoOrganizer": "Cloud del Norte UG co-organizer",
 		"awsMlBlog": "AWS Machine Learning Blog",
 		"awsMlBlogAllPosts": "All posts",
 		"readysetcloudHeader": "Ready, Set, Cloud",
@@ -99,7 +99,7 @@
 		"youtubeNextVideo": "Next video",
 		"youtubeFeaturedVideo": "Featured video",
 		"andresYoutubeChannel": "channel",
-		"andresYoutubeLiveHeader": "Andres Moreno, Cloud Del Norte Community Co-organizer",
+		"andresYoutubeLiveHeader": "Andres Moreno, Cloud del Norte Community Co-organizer",
 		"andresYoutubeWatchLive": "watch live on youtube",
 		"andresYoutubeLiveTitle": "Andres Moreno live stream",
 		"nextMeetupHeader": "Next Meetup",
@@ -188,7 +188,7 @@
 		"groupNotesModal": "Group notes"
 	},
 	"userGroupHero": {
-		"header": "#AWS User Group Cloud Del Norte",
+		"header": "#AWS User Group Cloud del Norte",
 		"description": "Holding our first meetup on International Women's Day 03/08/21 & Started at Arrowhead Research Park to further the community learning, business awareness, student engagement, career opportunities, and general entrepreneurial-garage-hobbyist spirit. We aim to learn from, serve, educate, and entertain the diverse people of the Juarez MX/El Paso + Las Cruces, all of New Mexico, and surrounding rural areas."
 	},
 	"userGroupMetrics": {
@@ -300,7 +300,7 @@
 			"cancel": "Cancel"
 		},
 		"myTicketsHeader": "Your tickets",
-		"myTicketsEmpty": "You haven't RSVPed to any in-person Cloud Del Norte events yet.",
+		"myTicketsEmpty": "You haven't RSVPed to any in-person Cloud del Norte events yet.",
 		"myTicketsShowAtDoor": "Show this code at the door"
 	},
 	"createMeeting": {
@@ -356,10 +356,10 @@
 	},
 	"helpPanel": {
 		"rsvpHeader": "RSVP for Live Events",
-		"cloudDelNorteMeetups": "Cloud Del Norte Meetups",
+		"cloudDelNorteMeetups": "Cloud del Norte Meetups",
 		"blenderMeetups": "Blender & Graphic Design:NE3D",
 		"userGroupTitle": "volunteers wanted",
-		"communityDescription": "AWS UG Cloud Del Norte is a quest to network, experiment, and upskill together. We hold in-person, virtual, and hybrid meetups focusing on regional topics to rural New Mexico, West Texas, Northern Chihuahua, the Borderplex and beyond.",
+		"communityDescription": "AWS UG Cloud del Norte is a quest to network, experiment, and upskill together. We hold in-person, virtual, and hybrid meetups focusing on regional topics to rural New Mexico, West Texas, Northern Chihuahua, the Borderplex and beyond.",
 		"organizersWantedHeader": "Organizers Wanted",
 		"spanishSpeakers": "Spanish-Speakers Sought",
 		"studentsStepUp": "Students Step On Up",
@@ -375,7 +375,7 @@
 		"andresMoreno": "Andres Moreno",
 		"andresRole": "Principal Software Architect, Caylent — AWS Community Builder",
 		"andresWebsite": "andmore.dev",
-		"aboutPage": "About Cloud Del Norte",
+		"aboutPage": "About Cloud del Norte",
 		"communityLeaders": "Group Organizers",
 		"communityFounded": "In-person, virtual, and hybrid meetups across the Juárez MX / El Paso and Las Cruces corridor, all of New Mexico, and surrounding rural areas. Founded on International Women's Day — March 8, 2021 — at",
 		"arrowheadPark": "Arrowhead Research Park",
@@ -513,7 +513,7 @@
 			"dataSources": "📊 Data Sources",
 			"architectureStack": "🏧 Architecture Stack",
 			"championDataMapping": "🎯 Champion Data Mapping",
-			"title": "Cloud Del Norte - API Learning",
+			"title": "Cloud del Norte - API Learning",
 			"restDescription": "REST (REpresentational State Transfer) and API (Application Programming Interface - a way for programs to talk to each other) work together. The Riot Games API demonstrates all 6 REST constraints:",
 			"uniformInterfaceTitle": "1️⃣ Uniform Interface",
 			"uniformInterfaceDesc": "Standard HTTP GET method with consistent JSON responses across all resources:",
@@ -706,12 +706,12 @@
 		"source": "Source"
 	},
 	"themePage": {
-		"pageTitle": "Design System — Cloud Del Norte",
+		"pageTitle": "Design System — Cloud del Norte",
 		"breadcrumb": "Design System",
-		"header": "Cloud Del Norte Design System",
+		"header": "Cloud del Norte Design System",
 		"sections": {
 			"brandColors": "Brand Color Palette",
-			"brandColorsDescription": "Colors extracted from the Cloud Del Norte Meetup banner — dark nebula sky with star-on-mountain logo.",
+			"brandColorsDescription": "Colors extracted from the Cloud del Norte Meetup banner — dark nebula sky with star-on-mountain logo.",
 			"textEmphasis": "Text Emphasis Hierarchy",
 			"textEmphasisDescription": "Three-level hierarchy for readable content (light & dark mode).",
 			"elevation": "Dark Mode Elevation",
@@ -828,7 +828,7 @@
 		"info": "Info"
 	},
 	"auth": {
-		"siteTitle": "Cloud Del Norte",
+		"siteTitle": "Cloud del Norte",
 		"sessionExpired": {
 			"title": "Your session has expired",
 			"body": "Please log in again to continue.",
@@ -836,7 +836,7 @@
 		},
 		"login": {
 			"title": "Sign in",
-			"pageContext": "Sign in to Cloud Del Norte",
+			"pageContext": "Sign in to Cloud del Norte",
 			"emailLabel": "Email",
 			"emailPlaceholder": "you@example.com",
 			"passwordLabel": "Password",
@@ -883,7 +883,7 @@
 			"passwordPolicy": "At least 12 characters with uppercase, lowercase, and numbers.",
 			"confirmPasswordLabel": "Confirm password",
 			"passwordMismatch": "Passwords do not match",
-			"memberTypeLabel": "How do you connect with Cloud Del Norte? (optional)",
+			"memberTypeLabel": "How do you connect with Cloud del Norte? (optional)",
 			"memberTypePlaceholder": "e.g. first-time attendee, organizer, speaker, cloud hobbyist",
 			"locationLabel": "Where are you based? (optional)",
 			"locationPlaceholder": "city, state / ciudad, estado",
@@ -1014,7 +1014,7 @@
 	},
 	"rsvp": {
 		"breadcrumb": "RSVP",
-		"pageTitle": "RSVP — Cloud Del Norte",
+		"pageTitle": "RSVP — Cloud del Norte",
 		"header": "RSVP for in-person event",
 		"subheader": "Limited to the first 50 people. Save your QR ticket — show it at the door for entry.",
 		"checkingAuth": "Checking your sign-in...",
