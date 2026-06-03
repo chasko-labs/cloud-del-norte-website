@@ -111,7 +111,7 @@ function MemberHome({ auth }: { auth: AuthState }) {
 			>
 				<SpaceBetween direction="horizontal" size="s">
 					<Button href="/meetings/index.html" variant="primary">
-						join a call
+						open call room
 					</Button>
 					{isMod && <Button href="/admin/index.html">admin panel</Button>}
 					{isMod && (

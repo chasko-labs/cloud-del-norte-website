@@ -671,21 +671,47 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer-bar .cdn-version {
 	text-align: center;
 }
 
-/* Mobile: stack rows */
-@media (max-width: 600px) {
+/* Mobile: 2-col grid */
+@media (max-width: 480px) {
 	.cdn-footer-bar {
-		flex-direction: column;
-		align-items: stretch;
-		gap: var(--cdn-space-xs, 4px);
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			"clock countdown"
+			"weather weather"
+			"version version";
+		gap: 8px 12px;
+		align-items: center;
+		justify-items: center;
 	}
 
 	.cdn-footer-left {
-		justify-content: center;
+		display: contents;
+	}
+
+	.cdn-footer-clock {
+		grid-area: clock;
+		justify-self: end;
+	}
+
+	.cdn-footer-countdown {
+		grid-area: countdown;
+		justify-self: start;
 	}
 
 	.cdn-footer-weather {
+		grid-area: weather;
 		max-width: none;
-		max-height: 48px;
+		min-height: 44px;
+	}
+
+	.cdn-footer-weather .cdn-weather {
+		min-height: 44px;
+		padding: 8px 12px;
+	}
+
+	.cdn-version {
+		grid-area: version;
 	}
 
 	.cdn-footer-bar .cdn-version {
@@ -694,18 +720,85 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer-bar .cdn-version {
 	}
 }
 
-/* Tablet: keep row but tighten weather + gaps */
-@media (min-width: 601px) and (max-width: 900px) {
+/* Between 481-600: also use grid to avoid old flex-column fallback */
+@media (min-width: 481px) and (max-width: 600px) {
 	.cdn-footer-bar {
-		gap: var(--cdn-space-sm, 8px);
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		grid-template-areas: "left weather version";
+		gap: 12px;
+		align-items: center;
+	}
+
+	.cdn-footer-left {
+		grid-area: left;
 	}
 
 	.cdn-footer-weather {
-		max-width: 220px;
-		min-width: 120px;
+		grid-area: weather;
+		justify-self: center;
+		max-width: none;
+		min-height: 44px;
 	}
 
-	.cdn-footer-weather .cdn-weather__city {
-		max-width: 110px;
+	.cdn-footer-weather .cdn-weather {
+		min-height: 44px;
+		padding: 8px 12px;
+	}
+
+	.cdn-version {
+		grid-area: version;
+		justify-self: end;
+	}
+
+	.cdn-footer-bar .cdn-version {
+		margin-left: 0;
+	}
+}
+
+/* Tablet: 3-col grid */
+@media (min-width: 601px) and (max-width: 900px) {
+	.cdn-footer-bar {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		grid-template-areas: "left weather version";
+		gap: 12px;
+		align-items: center;
+	}
+
+	.cdn-footer-left {
+		grid-area: left;
+	}
+
+	.cdn-footer-weather {
+		grid-area: weather;
+		justify-self: center;
+		max-width: none;
+		min-width: 120px;
+		min-height: 44px;
+	}
+
+	.cdn-footer-weather .cdn-weather {
+		min-height: 44px;
+		padding: 8px 12px;
+	}
+
+	.cdn-version {
+		grid-area: version;
+		justify-self: end;
+	}
+
+	.cdn-footer-bar .cdn-version {
+		margin-left: 0;
+	}
+}
+
+/* Tablet with nav open: 2-col fallback */
+@media (min-width: 481px) and (max-width: 900px) {
+	body.cdn-nav-open .cdn-footer-bar {
+		grid-template-columns: 1fr 1fr;
+		grid-template-areas:
+			"left weather"
+			"version version";
 	}
 }
