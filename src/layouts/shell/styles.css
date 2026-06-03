@@ -691,9 +691,9 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	z-index: 1200;
 	display: block;
 	line-height: 0;
-	/* square wrapper — sized to fit inside 48px nav bar with ~6px breathing room */
-	width: clamp(34px, 6vw, 36px);
-	height: clamp(34px, 6vw, 36px);
+	/* square wrapper — sized to fit inside 60px nav bar with ~8px breathing room */
+	width: clamp(44px, 7vw, 50px);
+	height: clamp(44px, 7vw, 50px);
 	/* containment context for the 3D reveal container query below */
 	container-type: inline-size;
 }
