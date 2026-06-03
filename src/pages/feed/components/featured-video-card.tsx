@@ -3,6 +3,7 @@
 
 import Link from "@cloudscape-design/components/link";
 import { LazyEmbed } from "../../../components/lazy-embed";
+import { useTranslation } from "../../../hooks/useTranslation";
 import type { FeedCardShellPalette } from "./feed-card-shell";
 import FeedCardShell from "./feed-card-shell";
 
@@ -26,6 +27,7 @@ export default function FeaturedVideoCard({
 	thumbnailUrl = `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
 	palette = "lavender",
 }: FeaturedVideoCardProps) {
+	const { t } = useTranslation();
 	const headerActions = (
 		<Link
 			href={authorUrl}
@@ -68,7 +70,7 @@ export default function FeaturedVideoCard({
 						data-testid="featured-video-thumbnail"
 					/>
 					<Link href={`https://www.youtube.com/watch?v=${videoId}`} external>
-						Watch on YouTube
+						{t("feedPage.watchOnYoutube")}
 					</Link>
 				</div>
 			</div>

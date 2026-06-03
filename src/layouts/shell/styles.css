@@ -2125,6 +2125,9 @@ nav[class*="awsui_navigation_"]:not(
 [class*="awsui_universal-toolbar"] [class*="awsui_breadcrumbs"] {
 	display: flex;
 	align-items: center;
+	flex: 1;
+	min-width: 0;
+	overflow: visible;
 }
 
 /* 4. On scroll: buttons stay visible (sticky within toolbar).

@@ -94,6 +94,7 @@
 		"twitchLive": "LIVE",
 		"twitchRecentVideo": "recent video",
 		"twitchWatchOn": "Watch on Twitch",
+		"watchOnYoutube": "Watch on YouTube",
 		"youtubeHeader": "on YouTube",
 		"youtubePrevVideo": "Previous video",
 		"youtubeNextVideo": "Next video",
@@ -1010,7 +1011,9 @@
 		"connecting": "connecting",
 		"retrying": "retrying",
 		"connectingAria": "connecting to stream",
-		"kexpNowPlayingFallback": "now playing on KEXP"
+		"kexpNowPlayingFallback": "now playing on KEXP",
+		"playLabel": "play",
+		"pauseLabel": "pause"
 	},
 	"rsvp": {
 		"breadcrumb": "RSVP",
