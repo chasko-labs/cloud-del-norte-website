@@ -536,12 +536,14 @@ main[class*="awsui_layout"] > [class*="tools-container"] {
 		align-self: stretch;
 		min-block-size: 0 !important;
 	}
-	/* Left navigation-container parity: same root cause as drawers-container —
-	   sticky container height runs out on scroll. align-self:stretch keeps the
-	   navigation-toggle (hamburger) pinned for full page length. */
+	/* Left navigation-container: align-self:start + viewport height cap keeps
+	   the sticky nav-container shorter than the viewport so the left
+	   navigation-toggle stays pinned on scroll, mirroring the right
+	   tools-container. */
 	[class*="awsui_navigation-container"] {
-		align-self: stretch;
-		min-block-size: 0 !important;
+		align-self: start;
+		max-block-size: calc(100vh - 62px);
+		overflow-y: auto;
 	}
 }
 
