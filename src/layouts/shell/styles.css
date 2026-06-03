@@ -536,6 +536,15 @@ main[class*="awsui_layout"] > [class*="tools-container"] {
 		align-self: stretch;
 		min-block-size: 0 !important;
 	}
+	/* Left navigation-container: align-self:start + viewport height cap keeps
+	   the sticky nav-container shorter than the viewport so the left
+	   navigation-toggle stays pinned on scroll, mirroring the right
+	   tools-container. */
+	[class*="awsui_navigation-container"] {
+		align-self: start;
+		max-block-size: calc(100vh - 62px);
+		overflow-y: auto;
+	}
 }
 
 /* v0.0.0110 — left nav drawer parity with right tools panel
@@ -662,6 +671,20 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	overflow: visible;
 }
 
+/* ── Inline LogoSvg theme vars ────────────────────────────────────────────── */
+:root {
+	--cdn-logo-primary: #9060f0;
+	--cdn-logo-arm: #d7c7ee;
+	--cdn-logo-bulb: #9060f0;
+	--cdn-logo-sparkle: #d7c7ee;
+}
+.awsui-dark-mode {
+	--cdn-logo-primary: #5a1f8a;
+	--cdn-logo-arm: #f3ede2;
+	--cdn-logo-bulb: #d7c7ee;
+	--cdn-logo-sparkle: #f3ede2;
+}
+
 .cdn-logo-hero {
 	position: absolute;
 	left: 14px;
@@ -670,9 +693,9 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	z-index: 1200;
 	display: block;
 	line-height: 0;
-	/* square wrapper — gives the 3D canvas concrete dimensions and matches img aspect */
-	width: clamp(48px, 8vw, 80px);
-	height: clamp(48px, 8vw, 80px);
+	/* square wrapper — sized to fit inside 60px nav bar with ~8px breathing room */
+	width: clamp(44px, 7vw, 50px);
+	height: clamp(44px, 7vw, 50px);
 	/* containment context for the 3D reveal container query below */
 	container-type: inline-size;
 }
@@ -728,13 +751,12 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	transform: scale(1.08);
 }
 
-/* Nav bar breathing — minimal padding + 48px floor so star never shrinks below
-   hamburger size on narrow viewports (clamp min on logo is also 48px) */
+/* Nav bar breathing — minimal padding + 48px floor so star fits inside bar */
 #top-nav [class*="awsui_top-navigation"] {
 	padding-top: 1px;
 	padding-bottom: 1px;
 	min-height: 48px;
-	/* left padding clears the logo: 14px offset + max logo width (~80px) + 16px gap */
+	/* left padding clears the logo: 14px offset + logo box (~48px) + 8px gap */
 	padding-left: clamp(70px, 12vw, 110px);
 	box-sizing: border-box;
 }
@@ -1435,7 +1457,7 @@ button[class*="awsui_tools-toggle"] {
 
 /* ── Breadcrumb link color — palette override ──
    Cloudscape BreadcrumbGroup renders links with its own link blue token
-   (#0073bb / similar) that falls outside the Cloud Del Norte palette.
+   (#0073bb / similar) that falls outside the Cloud del Norte palette.
    Override with the canonical interactive color tokens for each mode.
    Selector pattern follows the existing [class*="awsui_..."] pattern used
    throughout this file. */
@@ -2103,6 +2125,9 @@ nav[class*="awsui_navigation_"]:not(
 [class*="awsui_universal-toolbar"] [class*="awsui_breadcrumbs"] {
 	display: flex;
 	align-items: center;
+	flex: 1;
+	min-width: 0;
+	overflow: visible;
 }
 
 /* 4. On scroll: buttons stay visible (sticky within toolbar).

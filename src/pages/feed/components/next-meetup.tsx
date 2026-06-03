@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT-0
 
 /**
- * NextMeetup — fetches the next upcoming AWS UG Cloud Del Norte event from
+ * NextMeetup — fetches the next upcoming AWS UG Cloud del Norte event from
  * the meetup.com iCal feed and renders it above the rotating sections grid.
  *
  * CORS note: meetup.com does not serve CORS headers for direct browser fetches.
@@ -213,7 +213,7 @@ function parseIcal(text: string): MeetupEvent | null {
 		const rawDesc = getField("DESCRIPTION");
 
 		events.push({
-			summary: rawSummary || "AWS UG Cloud Del Norte Meetup",
+			summary: rawSummary || "AWS UG Cloud del Norte Meetup",
 			dtstart: iso,
 			location: rawLocation || undefined,
 			url: rawUrl || MEETUP_GROUP_URL,

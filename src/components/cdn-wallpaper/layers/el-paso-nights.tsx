@@ -1,4 +1,4 @@
-// el-paso-nights — dark mode wallpaper layer for Cloud Del Norte.
+// el-paso-nights — dark mode wallpaper layer for Cloud del Norte.
 //
 // Geographic convention: El Paso TX sits at the northern edge of the Chihuahuan
 // desert, directly across from Ciudad Juárez. This layer renders the music-viz +

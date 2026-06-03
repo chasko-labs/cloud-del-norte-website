@@ -75,8 +75,8 @@ describe("translation coverage", () => {
 	it("es-MX translations differ from en-US (no untranslated values)", () => {
 		// Allowlist for keys that should be identical (proper nouns, technical terms, common tech terms)
 		const allowIdentical = new Set([
-			"shell.siteTitle", // "Cloud Del Norte" - proper noun
-			"breadcrumbs.home", // "Cloud Del Norte" - proper noun
+			"shell.siteTitle", // "Cloud del Norte" - proper noun
+			"breadcrumbs.home", // "Cloud del Norte" - proper noun
 			"home.infoLink", // "Info" - universal abbreviation
 			"home.metrics.est", // "Est." - abbreviation used in both locales
 			"home.topics.serverlessLens", // "Serverless Lens" - AWS technical term

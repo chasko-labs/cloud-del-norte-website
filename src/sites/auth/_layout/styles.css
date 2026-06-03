@@ -355,7 +355,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 }
 
 /* v0.0.0047: Cinzel italic + tighter tracking lifts the per-page context line
-   ("Sign in to Cloud Del Norte" / "Create your account") from a plain caption
+   ("Sign in to Cloud del Norte" / "Create your account") from a plain caption
    to a postcard message — the handwritten note below the addressee. */
 .cdn-auth-context {
 	font-family: "Cinzel", Georgia, serif;

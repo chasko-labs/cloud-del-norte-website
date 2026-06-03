@@ -182,11 +182,11 @@ describe("FeedAndmore co-organizer sub-header (task 1.1)", () => {
 		vi.unstubAllGlobals();
 	});
 
-	it("renders 'Cloud Del Norte UG co-organizer' in English", async () => {
+	it("renders 'Cloud del Norte UG co-organizer' in English", async () => {
 		renderWith(<FeedAndmore />, "us");
 		await waitFor(() => {
 			expect(
-				screen.getByText("Cloud Del Norte UG co-organizer"),
+				screen.getByText("Cloud del Norte UG co-organizer"),
 			).toBeInTheDocument();
 		});
 	});
@@ -195,7 +195,7 @@ describe("FeedAndmore co-organizer sub-header (task 1.1)", () => {
 		renderWith(<FeedAndmore />, "mx");
 		await waitFor(() => {
 			expect(
-				screen.getByText("co-organizador del UG Cloud Del Norte"),
+				screen.getByText("co-organizador del UG Cloud del Norte"),
 			).toBeInTheDocument();
 		});
 	});

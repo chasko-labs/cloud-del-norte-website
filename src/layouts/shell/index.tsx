@@ -553,7 +553,7 @@ function ShellContent({
 				<a
 					href={identityHref}
 					className="cdn-logo-hero"
-					aria-label="Cloud Del Norte — home"
+					aria-label="Cloud del Norte — home"
 				>
 					{/* @ts-ignore — custom element from /lib/cdn-star-logo */}
 					<cdn-star-logo transparent="" no-rotate=""></cdn-star-logo>

@@ -1233,7 +1233,7 @@ function PersistentPlayerBar({
 					type="button"
 					className="cdn-pp__btn cdn-pp__btn--play"
 					onClick={play}
-					aria-label="play"
+					aria-label={t("persistentPlayer.playLabel")}
 					aria-disabled={connecting ? "true" : undefined}
 				>
 					{isPodcast ? <PodcastPlayIcon /> : <>&#9654;</>}

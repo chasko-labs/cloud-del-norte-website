@@ -101,7 +101,7 @@ function CostsTab() {
 					<SpaceBetween size="m">
 						<TextContent>
 							<p>
-								Cloud Del Norte runs on AWS. This page shows exactly what we
+								Cloud del Norte runs on AWS. This page shows exactly what we
 								spend \u2014 updated daily, no rounding, no hiding. We\u2019re a
 								community user group, not a company. If you\u2019re curious what
 								it actually costs to keep a community platform online, here it
@@ -155,7 +155,7 @@ function CostsTab() {
 
 function CostsContent() {
 	useEffect(() => {
-		document.title = "Costs \u2014 Cloud Del Norte";
+		document.title = "Costs \u2014 Cloud del Norte";
 	}, []);
 
 	return (

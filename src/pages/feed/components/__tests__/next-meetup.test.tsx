@@ -361,7 +361,7 @@ describe("NextMeetup — wave 38b LivePulseDot inline microcue integration", () 
 			vi.fn().mockResolvedValue({
 				ok: true,
 				json: async () => ({
-					summary: "AWS UG Cloud Del Norte — Test Meetup",
+					summary: "AWS UG Cloud del Norte — Test Meetup",
 					dtstart: futureIso,
 					url: "https://www.meetup.com/awsugclouddelnorte/events/test/",
 					location: "Downtown El Paso",
@@ -425,9 +425,9 @@ describe("stripMarkdown — wave 43a markdown cleanup", () => {
 
 	it("drops the entire [text](https://www.google.com/search?...) span and keeps only the label text", () => {
 		const input =
-			"Explore the [Cloud Del Norte source code](https://www.google.com/search?q=https://github.com/clouddelnorte).";
+			"Explore the [Cloud del Norte source code](https://www.google.com/search?q=https://github.com/clouddelnorte).";
 		const result = stripMarkdown(input);
-		expect(result).toContain("Cloud Del Norte source code");
+		expect(result).toContain("Cloud del Norte source code");
 		expect(result).not.toContain("google.com/search");
 		expect(result).not.toMatch(/\[.*?\]\(https?:\/\/www\.google\.com/);
 	});

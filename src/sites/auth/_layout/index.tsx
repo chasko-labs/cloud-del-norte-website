@@ -25,13 +25,13 @@ import "./styles.css";
  * AuthLayout — host shell for login / signup / verify / forgot-password.
  *
  * pageContext: per-page one-line context string rendered under the brand
- * wordmark in the auth-page-header band ("Sign in to Cloud Del Norte",
- * "Create your account", etc.). Falls back to "Cloud Del Norte" if absent.
+ * wordmark in the auth-page-header band ("Sign in to Cloud del Norte",
+ * "Create your account", etc.). Falls back to "Cloud del Norte" if absent.
  *
  * pageContextKey: optional i18n key (e.g. "auth.login.pageContext"). When
  * provided it takes precedence over pageContext and is resolved against the
  * current locale via useTranslation — required because pageContext values
- * like "Sign in to Cloud Del Norte" contain the brand name which differs
+ * like "Sign in to Cloud del Norte" contain the brand name which differs
  * between locales ("Nube del Norte" in es-MX).
  *
  * Side effect: tags <body> with cdn-auth-subdomain so the dune wallpaper
@@ -62,7 +62,7 @@ function PageContextText({
 
 /**
  * Renders the brand wordmark via useTranslation so the heading localizes
- * ("Cloud Del Norte" / "Nube del Norte"). Must sit inside Shell for the
+ * ("Cloud del Norte" / "Nube del Norte"). Must sit inside Shell for the
  * same LocaleProvider reason as PageContextText.
  */
 function Wordmark() {

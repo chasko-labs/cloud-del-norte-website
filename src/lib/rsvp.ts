@@ -52,7 +52,7 @@ export interface RsvpRecord {
 export const CDN_EVENTS: CdnEvent[] = [
 	{
 		id: "happy-hour-2026-06-03",
-		title: "Cloud Del Norte UG — Community Happy Hour & Networking Night",
+		title: "Cloud del Norte UG — Community Happy Hour & Networking Night",
 		scheduledDate: "2026-06-03",
 		location: "Downtown El Paso, Texas",
 		capacity: 50,

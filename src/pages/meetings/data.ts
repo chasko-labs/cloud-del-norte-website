@@ -476,7 +476,7 @@ export const variationsData: meeting[] = [
 		scheduledTime: "08:30",
 	},
 	{
-		name: "🍻 Cloud Del Norte UG — Community Happy Hour & Networking Night",
+		name: "🍻 Cloud del Norte UG — Community Happy Hour & Networking Night",
 		presenters: "Bryan Chasko",
 		happened: "false",
 		ondemand: "no",

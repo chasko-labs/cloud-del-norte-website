@@ -699,10 +699,10 @@
 }
 
 /* ==========================================================================
-   Branded breadcrumb home link — "Cloud Del Norte" elevated to a display heading.
+   Branded breadcrumb home link — "Cloud del Norte" elevated to a display heading.
 
    Cloudscape renders BreadcrumbGroup as <ol class="awsui_breadcrumb-group_">
-   with each item as <li>; the first item's <a> holds "Cloud Del Norte" via
+   with each item as <li>; the first item's <a> holds "Cloud del Norte" via
    the t("breadcrumbs.home") translation in src/components/breadcrumbs/index.tsx.
 
    Treatment:
@@ -798,7 +798,7 @@
 }
 
 /* Spanish locale fit — "Nube of the North > Novedades" is ~23% wider than
-   the English "Cloud Del Norte > Feed" (Novedades=9 chars vs Feed=4).
+   the English "Cloud del Norte > Feed" (Novedades=9 chars vs Feed=4).
    On phones the page-name segment overflows the breadcrumb strip. Trim
    the Cinzel home wordmark floor + tighten tracking so both segments
    share the row at ≤600px. lang attr set on documentElement by
@@ -1925,7 +1925,7 @@ body.cdn-stream-playing
 /* ==========================================================================
    Phase B — breadcrumb flux beat-flash
 
-   The "Cloud Del Norte" home link already composites drop-shadow filters for
+   The "Cloud del Norte" home link already composites drop-shadow filters for
    its glow treatment. Layering brightness() via a body-class wrapper adds the
    flux beat on top without disturbing the existing drop-shadow chain.
    --cdn-flux is a 0..1 beat-onset signal (peaks on kick/snare transients).
