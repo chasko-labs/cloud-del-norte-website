@@ -15,8 +15,8 @@
 	"mcp_overlay_families": [
 		"mcp-devtools",
 		"mcp-aws",
-		"mcp-qdrant",
-		"mcp-observability"
+		"mcp-s3vectors",
+		"mcp-cloudwatch"
 	],
 	"governance_tier": "medium",
 	"agents_in_scope": [

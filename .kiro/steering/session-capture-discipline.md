@@ -1,6 +1,6 @@
 # Session Capture Discipline
 
-At session end, store a structured capture to `qdrant-agent-memory`.
+At session end, store a structured capture to agent memory (S3 Vectors via qdrantstore tool).
 
 ## Metadata
 
@@ -28,7 +28,7 @@ Minimum viable (low context budget): `commits_pushed` + `blockers_remaining` + `
 ## Retrieval
 
 ```
-qdrant-find 'cloud-del-norte-website session-end-capture'
+qdrantfind 'cloud-del-norte-website session-end-capture'
 ```
 
 ## Status
