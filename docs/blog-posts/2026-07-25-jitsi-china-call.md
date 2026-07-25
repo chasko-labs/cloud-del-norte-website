@@ -22,7 +22,7 @@ when they clicked join, the react frontend (cloudscape design system, vite MPA) 
 
 the browser sent `POST https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com/token/jitsi` with the cognito id token in the authorization header
 
-API gateway's JWT authorizer (id `9uzqka`) validated the cognito token against the user pool. once validated, the request hit `cloud-del-norte-token-exchange` — a node 20 arm64 lambda in account `170473530355`
+API gateway's JWT authorizer (id `9uzqka`) validated the cognito token against the user pool. once validated, the request hit `cloud-del-norte-token-exchange` — a node 22 arm64 lambda in account `170473530355`
 
 the lambda:
 
