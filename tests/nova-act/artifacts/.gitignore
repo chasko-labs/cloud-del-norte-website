@@ -1,0 +1,4 @@
+# Ignore run artifacts (screenshots, results) but keep the directory
+*
+!.gitkeep
+!.gitignore
