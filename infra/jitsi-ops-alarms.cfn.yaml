@@ -1,0 +1,422 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  jitsi-ops-alarms — CloudWatch alarms + SNS topic for Jitsi ECS operational
+  monitoring in account 170473530355 (us-west-2). Detects: zero running tasks,
+  unhealthy web target group, unhealthy JVB media target groups, and any
+  controller setting desiredCount to zero.
+
+  DELIVERY NOTE: SES in this account (170473530355) is sandboxed — production
+  access was DENIED (case 177826280100472). However, SNS email subscriptions
+  do NOT depend on SES. SNS sends confirmation and notification emails directly
+  via its own SMTP infrastructure, completely bypassing the SES sandbox. Email
+  subscriptions on this topic WILL work. Do not assume email is blocked.
+
+Parameters:
+  # ---------------------------------------------------------------------------
+  # ECS identifiers
+  # ---------------------------------------------------------------------------
+  ClusterName:
+    Type: String
+    Default: jitsi-cluster
+    Description: ECS cluster name where the jitsi service runs.
+
+  ServiceName:
+    Type: String
+    Default: jitsi-service
+    Description: ECS service name within the cluster.
+
+  # ---------------------------------------------------------------------------
+  # Target group full-names (not ARNs — CloudWatch dimensions use the
+  # targetgroup/... suffix format)
+  # ---------------------------------------------------------------------------
+  WebTargetGroupFullName:
+    Type: String
+    Description: >
+      Full name of the web ALB target group in the format
+      targetgroup/<name>/<hex>. Find via:
+      aws elbv2 describe-target-groups --names jitsi-video-platform-web-tg
+        --query 'TargetGroups[0].TargetGroupArn' --output text | sed 's|.*:||'
+
+  JvbTcpTargetGroupFullName:
+    Type: String
+    Description: >
+      Full name of the JVB TCP NLB target group in the format
+      targetgroup/<name>/<hex>. Find via:
+      aws elbv2 describe-target-groups --names jitsi-video-platform-jvb-tcp-tg
+        --query 'TargetGroups[0].TargetGroupArn' --output text | sed 's|.*:||'
+
+  JvbUdpTargetGroupFullName:
+    Type: String
+    Description: >
+      Full name of the JVB UDP NLB target group in the format
+      targetgroup/<name>/<hex>. Find via:
+      aws elbv2 describe-target-groups --names jitsi-video-platform-jvb-udp-tg
+        --query 'TargetGroups[0].TargetGroupArn' --output text | sed 's|.*:||'
+
+  # ---------------------------------------------------------------------------
+  # Load balancer full-names (required as dimensions for HealthyHostCount)
+  # ---------------------------------------------------------------------------
+  WebAlbFullName:
+    Type: String
+    Description: >
+      Full name of the web ALB in the format app/<name>/<hex>. Find via:
+      aws elbv2 describe-load-balancers --names jitsi-video-platform-web-alb
+        --query 'LoadBalancers[0].LoadBalancerArn' --output text | sed 's|.*:loadbalancer/||'
+
+  JvbNlbFullName:
+    Type: String
+    Description: >
+      Full name of the JVB NLB in the format net/<name>/<hex>. Find via:
+      aws elbv2 describe-load-balancers --names jitsi-video-platform-jvb-nlb
+        --query 'LoadBalancers[0].LoadBalancerArn' --output text | sed 's|.*:loadbalancer/||'
+
+  # ---------------------------------------------------------------------------
+  # Notification endpoints — never hardcode secrets, emails, or phone numbers
+  # ---------------------------------------------------------------------------
+  NotificationEmail:
+    Type: String
+    Default: ""
+    Description: >
+      Email address for alarm notifications. Leave empty to skip email
+      subscription. SNS sends a confirmation email; click the link to activate.
+      SNS email does NOT depend on SES — works even with SES sandbox.
+
+  NtfyEndpoint:
+    Type: String
+    Default: ""
+    Description: >
+      HTTPS endpoint for ntfy.sh push notifications (e.g.
+      https://ntfy.sh/cdn-jitsi-ops-<random8>). Leave empty to skip.
+
+  # ---------------------------------------------------------------------------
+  # Standard tags
+  # ---------------------------------------------------------------------------
+  Env:
+    Type: String
+    Default: prod
+    AllowedValues: [prod, dev]
+
+  Owner:
+    Type: String
+    Default: bryanchasko
+
+  CostCenter:
+    Type: String
+    Default: heraldstack
+
+  Project:
+    Type: String
+    Default: cloud-del-norte
+
+Conditions:
+  HasEmail: !Not [!Equals [!Ref NotificationEmail, ""]]
+  HasNtfy: !Not [!Equals [!Ref NtfyEndpoint, ""]]
+
+Resources:
+  # ---------------------------------------------------------------------------
+  # SNS topic — receives alarm state-change notifications
+  # This topic lives in 170473530355 because the existing cdn-deploy-alerts
+  # topic is in 211125425201 (hosting account) and cannot receive CloudWatch
+  # alarm actions from a different account without cross-account policy.
+  # ---------------------------------------------------------------------------
+  JitsiOpsAlertsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: jitsi-ops-alerts
+      DisplayName: Jitsi Ops
+      Tags:
+        - Key: project
+          Value: !Ref Project
+        - Key: env
+          Value: !Ref Env
+        - Key: owner
+          Value: !Ref Owner
+        - Key: cost-center
+          Value: !Ref CostCenter
+
+  # ---------------------------------------------------------------------------
+  # Email subscription — SNS sends email directly (NOT via SES)
+  # ---------------------------------------------------------------------------
+  EmailSubscription:
+    Type: AWS::SNS::Subscription
+    Condition: HasEmail
+    Properties:
+      TopicArn: !Ref JitsiOpsAlertsTopic
+      Protocol: email
+      Endpoint: !Ref NotificationEmail
+
+  # ---------------------------------------------------------------------------
+  # HTTPS subscription — ntfy.sh push target
+  # ---------------------------------------------------------------------------
+  NtfySubscription:
+    Type: AWS::SNS::Subscription
+    Condition: HasNtfy
+    Properties:
+      TopicArn: !Ref JitsiOpsAlertsTopic
+      Protocol: https
+      Endpoint: !Ref NtfyEndpoint
+
+  # ---------------------------------------------------------------------------
+  # P0 ALARM: jitsi-ecs-zero-tasks
+  # Namespace: AWS/ECS
+  # Fires when the ECS service has zero running tasks for 1 minute.
+  # TreatMissingData: breaching — if CloudWatch stops receiving data, that
+  # itself means the service is gone.
+  # ---------------------------------------------------------------------------
+  EcsZeroTasksAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: jitsi-ecs-zero-tasks
+      AlarmDescription: >
+        P0 — ECS service has zero running tasks. meet.clouddelnorte.org is
+        completely down. Immediate action required.
+      Namespace: AWS/ECS
+      MetricName: RunningTaskCount
+      Dimensions:
+        - Name: ClusterName
+          Value: !Ref ClusterName
+        - Name: ServiceName
+          Value: !Ref ServiceName
+      Statistic: Minimum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: LessThanThreshold
+      TreatMissingData: breaching
+      AlarmActions:
+        - !Ref JitsiOpsAlertsTopic
+      OKActions:
+        - !Ref JitsiOpsAlertsTopic
+      Tags:
+        - Key: project
+          Value: !Ref Project
+        - Key: env
+          Value: !Ref Env
+        - Key: owner
+          Value: !Ref Owner
+        - Key: cost-center
+          Value: !Ref CostCenter
+        - Key: priority
+          Value: P0
+
+  # ---------------------------------------------------------------------------
+  # P0 ALARM: jitsi-web-tg-unhealthy
+  #
+  # NAMESPACE: AWS/ApplicationELB
+  # The web target group (jitsi-video-platform-web-tg) is attached to an ALB
+  # (jitsi-video-platform-web-alb). ALB target group metrics use the
+  # AWS/ApplicationELB namespace with dimensions TargetGroup + LoadBalancer.
+  #
+  # This is DIFFERENT from the JVB alarms below which use AWS/NetworkELB
+  # because those target groups sit behind an NLB.
+  # ---------------------------------------------------------------------------
+  WebTgUnhealthyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: jitsi-web-tg-unhealthy
+      AlarmDescription: >
+        P0 — Web target group has zero healthy targets. The Jitsi UI will not
+        load (HTTP 503 from ALB). Immediate action required.
+      # Web TG is behind an ALB — use AWS/ApplicationELB namespace
+      Namespace: AWS/ApplicationELB
+      MetricName: HealthyHostCount
+      Dimensions:
+        - Name: TargetGroup
+          Value: !Ref WebTargetGroupFullName
+        - Name: LoadBalancer
+          Value: !Ref WebAlbFullName
+      Statistic: Minimum
+      Period: 60
+      EvaluationPeriods: 1
+      Threshold: 1
+      ComparisonOperator: LessThanThreshold
+      TreatMissingData: breaching
+      AlarmActions:
+        - !Ref JitsiOpsAlertsTopic
+      OKActions:
+        - !Ref JitsiOpsAlertsTopic
+      Tags:
+        - Key: project
+          Value: !Ref Project
+        - Key: env
+          Value: !Ref Env
+        - Key: owner
+          Value: !Ref Owner
+        - Key: cost-center
+          Value: !Ref CostCenter
+        - Key: priority
+          Value: P0
+
+  # ---------------------------------------------------------------------------
+  # P1 ALARM: jitsi-jvb-tcp-tg-unhealthy
+  #
+  # NAMESPACE: AWS/NetworkELB
+  # The JVB TCP target group (jitsi-video-platform-jvb-tcp-tg) is behind an NLB
+  # (jitsi-video-platform-jvb-nlb). NLB target group metrics use the
+  # AWS/NetworkELB namespace with dimensions TargetGroup + LoadBalancer.
+  #
+  # This is the TCP 4443 fallback path for clients that cannot reach JVB via
+  # UDP 10000 directly. 2 evaluation periods to avoid flap on task replacement.
+  # ---------------------------------------------------------------------------
+  JvbTcpTgUnhealthyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: jitsi-jvb-tcp-tg-unhealthy
+      AlarmDescription: >
+        P1 — JVB TCP target group (port 4443) has zero healthy targets. TCP
+        media fallback path is down. Users on restricted networks cannot
+        exchange audio/video.
+      # JVB TGs are behind an NLB — use AWS/NetworkELB namespace
+      Namespace: AWS/NetworkELB
+      MetricName: HealthyHostCount
+      Dimensions:
+        - Name: TargetGroup
+          Value: !Ref JvbTcpTargetGroupFullName
+        - Name: LoadBalancer
+          Value: !Ref JvbNlbFullName
+      Statistic: Minimum
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 1
+      ComparisonOperator: LessThanThreshold
+      TreatMissingData: breaching
+      AlarmActions:
+        - !Ref JitsiOpsAlertsTopic
+      OKActions:
+        - !Ref JitsiOpsAlertsTopic
+      Tags:
+        - Key: project
+          Value: !Ref Project
+        - Key: env
+          Value: !Ref Env
+        - Key: owner
+          Value: !Ref Owner
+        - Key: cost-center
+          Value: !Ref CostCenter
+        - Key: priority
+          Value: P1
+
+  # ---------------------------------------------------------------------------
+  # P1 ALARM: jitsi-jvb-udp-tg-unhealthy
+  #
+  # NAMESPACE: AWS/NetworkELB
+  # The JVB UDP target group (jitsi-video-platform-jvb-udp-tg) is behind the
+  # same NLB (jitsi-video-platform-jvb-nlb). Same namespace rationale as above.
+  #
+  # This is the primary media path (UDP 10000). When unhealthy, no audio/video
+  # flows even though the room UI loads fine — the most dangerous failure mode.
+  # ---------------------------------------------------------------------------
+  JvbUdpTgUnhealthyAlarm:
+    Type: AWS::CloudWatch::Alarm
+    Properties:
+      AlarmName: jitsi-jvb-udp-tg-unhealthy
+      AlarmDescription: >
+        P1 — JVB UDP target group (port 10000) has zero healthy targets. Primary
+        media path is down. Audio and video will fail even though the room UI
+        loads. This is the most dangerous silent failure mode.
+      # JVB TGs are behind an NLB — use AWS/NetworkELB namespace
+      Namespace: AWS/NetworkELB
+      MetricName: HealthyHostCount
+      Dimensions:
+        - Name: TargetGroup
+          Value: !Ref JvbUdpTargetGroupFullName
+        - Name: LoadBalancer
+          Value: !Ref JvbNlbFullName
+      Statistic: Minimum
+      Period: 60
+      EvaluationPeriods: 2
+      Threshold: 1
+      ComparisonOperator: LessThanThreshold
+      TreatMissingData: breaching
+      AlarmActions:
+        - !Ref JitsiOpsAlertsTopic
+      OKActions:
+        - !Ref JitsiOpsAlertsTopic
+      Tags:
+        - Key: project
+          Value: !Ref Project
+        - Key: env
+          Value: !Ref Env
+        - Key: owner
+          Value: !Ref Owner
+        - Key: cost-center
+          Value: !Ref CostCenter
+        - Key: priority
+          Value: P1
+
+  # ---------------------------------------------------------------------------
+  # P2 EVENT RULE: jitsi-ecs-desired-zero
+  # Catches ANY controller (Lambda, console, CLI, auto-scaling policy) that
+  # sets desiredCount to zero on this service. Targets the SNS topic so the
+  # operator knows immediately — regardless of whether the scale-down is
+  # intentional or accidental.
+  #
+  # ECS emits "ECS Service Action" events with eventName
+  # SERVICE_DESIRED_COUNT_SET when the desired count changes.
+  # ---------------------------------------------------------------------------
+  DesiredCountZeroRule:
+    Type: AWS::Events::Rule
+    Properties:
+      Name: jitsi-ecs-desired-zero
+      Description: >
+        P2 — Fires when any controller sets ECS desiredCount to zero on
+        jitsi-service. Announces via SNS so operator is aware of scale-down.
+      State: ENABLED
+      EventPattern:
+        source:
+          - aws.ecs
+        detail-type:
+          - ECS Service Action
+        detail:
+          clusterArn:
+            - !Sub "arn:aws:ecs:${AWS::Region}:${AWS::AccountId}:cluster/${ClusterName}"
+          eventName:
+            - SERVICE_DESIRED_COUNT_SET
+      Targets:
+        - Id: notify-sns
+          Arn: !Ref JitsiOpsAlertsTopic
+
+  # ---------------------------------------------------------------------------
+  # SNS topic policy — allow EventBridge to publish to the topic
+  # ---------------------------------------------------------------------------
+  JitsiOpsAlertsTopicPolicy:
+    Type: AWS::SNS::TopicPolicy
+    Properties:
+      Topics:
+        - !Ref JitsiOpsAlertsTopic
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: AllowEventsPublish
+            Effect: Allow
+            Principal:
+              Service: events.amazonaws.com
+            Action: sns:Publish
+            Resource: !Ref JitsiOpsAlertsTopic
+
+Outputs:
+  TopicArn:
+    Description: ARN of the jitsi-ops-alerts SNS topic
+    Value: !Ref JitsiOpsAlertsTopic
+    Export:
+      Name: !Sub "${AWS::StackName}-TopicArn"
+
+  TopicName:
+    Description: SNS topic name
+    Value: jitsi-ops-alerts
+
+  EcsZeroTasksAlarmName:
+    Description: Name of the P0 ECS zero tasks alarm
+    Value: !Ref EcsZeroTasksAlarm
+
+  WebTgUnhealthyAlarmName:
+    Description: Name of the P0 web TG unhealthy alarm
+    Value: !Ref WebTgUnhealthyAlarm
+
+  JvbTcpTgUnhealthyAlarmName:
+    Description: Name of the P1 JVB TCP TG unhealthy alarm
+    Value: !Ref JvbTcpTgUnhealthyAlarm
+
+  JvbUdpTgUnhealthyAlarmName:
+    Description: Name of the P1 JVB UDP TG unhealthy alarm
+    Value: !Ref JvbUdpTgUnhealthyAlarm
