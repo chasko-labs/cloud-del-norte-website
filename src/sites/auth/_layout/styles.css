@@ -331,9 +331,9 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 	text-transform: uppercase;
 	background-image: linear-gradient(
 		135deg,
-		#8b5a2b 0%,
+		var(--cdn-amber) 0%,
 		var(--cdn-gold, #c9a23f) 50%,
-		#8b5a2b 100%
+		var(--cdn-amber) 100%
 	);
 	background-size: 200% 100%;
 	background-position: 0% 50%;
@@ -358,7 +358,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
    ("Sign in to Cloud del Norte" / "Create your account") from a plain caption
    to a postcard message — the handwritten note below the addressee. */
 .cdn-auth-context {
-	font-family: "Cinzel", Georgia, serif;
+	font-family: var(--cdn-font-display, "Cinzel", Georgia, serif);
 	font-style: italic;
 	font-size: 0.95rem;
 	font-weight: 500;
@@ -759,7 +759,7 @@ body.cdn-auth-subdomain.awsui-dark-mode:not(#\9):not(#\9):not(#\9)
 .cdn-auth-code-cell {
 	width: 44px;
 	height: 56px;
-	font-family: "Cinzel", Georgia, serif;
+	font-family: var(--cdn-font-display, "Cinzel", Georgia, serif);
 	font-size: 1.4rem;
 	font-weight: 700;
 	text-align: center;
@@ -881,13 +881,13 @@ body.cdn-auth-subdomain [data-cdn-dune-fallback] {
    error reads with intent. */
 .cdn-auth-card [class*="awsui_error__message"],
 .cdn-auth-card [class*="awsui_error_"] {
-	color: #c53030;
+	color: var(--cdn-color-error);
 	font-weight: 500;
 }
 
 .awsui-dark-mode .cdn-auth-card [class*="awsui_error__message"],
 .awsui-dark-mode .cdn-auth-card [class*="awsui_error_"] {
-	color: #f87171;
+	color: var(--cdn-color-error-dark, #f87171);
 }
 
 /* Form-level errorText (under the actions row) — same red family as the
@@ -895,7 +895,7 @@ body.cdn-auth-subdomain [data-cdn-dune-fallback] {
    instead of floating loose against the card. */
 .cdn-auth-card form [class*="awsui_root_"] > [class*="awsui_error_"],
 .cdn-auth-card [class*="awsui_form-component-error"] {
-	color: #c53030;
+	color: var(--cdn-color-error);
 	font-weight: 500;
 	padding-left: 12px;
 	border-left: 3px solid rgba(197, 48, 48, 0.55);
@@ -908,7 +908,7 @@ body.cdn-auth-subdomain [data-cdn-dune-fallback] {
 	[class*="awsui_root_"]
 	> [class*="awsui_error_"],
 .awsui-dark-mode .cdn-auth-card [class*="awsui_form-component-error"] {
-	color: #f87171;
+	color: var(--cdn-color-error-dark, #f87171);
 	border-left-color: rgba(248, 113, 113, 0.55);
 }
 
@@ -997,7 +997,7 @@ body.cdn-auth-subdomain:not(#\9):not(#\9) .cdn-footer {
 }
 
 .cdn-auth-stepper__title {
-	font-family: "Cinzel", Georgia, serif;
+	font-family: var(--cdn-font-display, "Cinzel", Georgia, serif);
 	font-style: italic;
 	font-size: 1.05rem;
 	font-weight: 600;
@@ -1083,7 +1083,13 @@ body.cdn-auth-subdomain .cdn-logo-hero cdn-star-logo {
 
 body.cdn-auth-subdomain [class*="awsui_input"] input,
 body.cdn-auth-subdomain [class*="awsui_input-container"] {
-	font-family: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+	font-family: var(
+		--cdn-font-mono,
+		"JetBrains Mono",
+		"Fira Code",
+		"SF Mono",
+		monospace
+	);
 	border: none;
 	border-bottom: 1.5px solid var(--cdn-amber, #e8a040);
 	border-radius: 0;
@@ -1091,7 +1097,13 @@ body.cdn-auth-subdomain [class*="awsui_input-container"] {
 }
 
 body.cdn-auth-subdomain [class*="awsui_label_"] {
-	font-family: "JetBrains Mono", "Fira Code", "SF Mono", monospace;
+	font-family: var(
+		--cdn-font-mono,
+		"JetBrains Mono",
+		"Fira Code",
+		"SF Mono",
+		monospace
+	);
 	font-size: 0.8rem;
 	letter-spacing: 0.06em;
 	text-transform: uppercase;

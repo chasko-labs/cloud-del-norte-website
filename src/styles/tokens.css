@@ -65,6 +65,11 @@
 	--cdn-white: #f0f0f0;
 	--cdn-aws-orange: #ff9900;
 	--cdn-gold: #c9a23f;
+	--cdn-gold-dark: #a07828;
+	--cdn-color-error: #c53030;
+	--cdn-color-error-dark: #f87171;
+	--cdn-font-display: "Cinzel", Georgia, serif;
+	--cdn-font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
 
 	/* ---------- Semantic color tokens — light mode defaults ---------- */
 	--cdn-color-bg: #ede5d4; /* cream — matches page ground; replaces off-white */
@@ -252,6 +257,11 @@ html:not(.awsui-dark-mode) body {
    Dark mode overrides  (Cloudscape adds .awsui-dark-mode to <html>)
    -------------------------------------------------------------------------- */
 .awsui-dark-mode {
+	/* Auth token dark-mode overrides */
+	--cdn-gold-dark: #7040c0;
+	--cdn-color-error: #f87171;
+	--cdn-color-error-dark: #f87171;
+
 	/* ---------- Elevation ramp — progressive lightening for depth perception (issue #63) ---------- */
 	--cdn-elevation-0: #0a0a2e; /* base background */
 	--cdn-elevation-1: #12123a; /* cards, panels */
