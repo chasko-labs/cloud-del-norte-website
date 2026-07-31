@@ -848,6 +848,7 @@
 			"signUpLink": "Apply to join",
 			"invalidCredentials": "Email or password is incorrect",
 			"genericError": "Something went wrong. Try again.",
+			"credentialsErrorMessage": "That email and password combination didn't work. Double-check both and try again, or use one of the options below.",
 			"magicLinkHeader": "Forgot your password?",
 			"magicLinkDescription": "We'll email you a one-time code so you can reset your password and get in.",
 			"magicLinkCta": "Email me a reset code",

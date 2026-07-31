@@ -131,6 +131,93 @@ describe("login → wave 92 1-tap forgot-password CTA", () => {
 		expect(screen.getByText("auth.login.magicLinkDescription")).toBeTruthy();
 	});
 
+	it("displays actionable credential error message using credentialsErrorMessage key", async () => {
+		vi.mocked(cognito.signInWithPassword).mockRejectedValueOnce(
+			new cognito.AuthError("wrong password", "NotAuthorizedException"),
+		);
+		Object.defineProperty(window, "location", {
+			value: { ...window.location, search: "", assign: vi.fn() },
+			writable: true,
+		});
+		localStorage.clear();
+
+		render(<App />);
+
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.login.emailPlaceholder"),
+			{ target: { value: "user@example.com" } },
+		);
+		const passwordInputs = screen.getAllByDisplayValue("");
+		const pw = passwordInputs.find(
+			(el) => (el as HTMLInputElement).type === "password",
+		) as HTMLInputElement;
+		fireEvent.change(pw, { target: { value: "wrong-pw" } });
+		fireEvent.click(screen.getByText("auth.login.signInButton"));
+
+		await waitFor(() => {
+			expect(
+				screen.getByText("auth.login.credentialsErrorMessage"),
+			).toBeTruthy();
+		});
+	});
+
+	it("CTA label resolves to reset-code wording via magicLinkCta key", async () => {
+		vi.mocked(cognito.signInWithPassword).mockRejectedValueOnce(
+			new cognito.AuthError("wrong password", "NotAuthorizedException"),
+		);
+		Object.defineProperty(window, "location", {
+			value: { ...window.location, search: "", assign: vi.fn() },
+			writable: true,
+		});
+		localStorage.clear();
+
+		render(<App />);
+
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.login.emailPlaceholder"),
+			{ target: { value: "user@example.com" } },
+		);
+		const passwordInputs = screen.getAllByDisplayValue("");
+		const pw = passwordInputs.find(
+			(el) => (el as HTMLInputElement).type === "password",
+		) as HTMLInputElement;
+		fireEvent.change(pw, { target: { value: "wrong-pw" } });
+		fireEvent.click(screen.getByText("auth.login.signInButton"));
+
+		const cta = await screen.findByTestId("magic-link-cta");
+		// The CTA text comes from the translation key auth.login.magicLinkCta
+		// which now says "Email me a reset code" (not "sign-in link")
+		expect(cta.textContent).toBe("auth.login.magicLinkCta");
+	});
+
+	it("shows CTA for UserNotFoundException too (unified per OWASP)", async () => {
+		vi.mocked(cognito.signInWithPassword).mockRejectedValueOnce(
+			new cognito.AuthError("user not found", "UserNotFoundException"),
+		);
+		Object.defineProperty(window, "location", {
+			value: { ...window.location, search: "", assign: vi.fn() },
+			writable: true,
+		});
+		localStorage.clear();
+
+		render(<App />);
+
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.login.emailPlaceholder"),
+			{ target: { value: "nobody@example.com" } },
+		);
+		const passwordInputs = screen.getAllByDisplayValue("");
+		const pw = passwordInputs.find(
+			(el) => (el as HTMLInputElement).type === "password",
+		) as HTMLInputElement;
+		fireEvent.change(pw, { target: { value: "some-pw" } });
+		fireEvent.click(screen.getByText("auth.login.signInButton"));
+
+		await waitFor(() => {
+			expect(screen.getByTestId("magic-link-cta")).toBeTruthy();
+		});
+	});
+
 	it("clicking magic-link CTA calls forgotPassword and redirects with email + sent params", async () => {
 		const forgotMock = vi.mocked(cognito.forgotPassword);
 		forgotMock.mockResolvedValueOnce(undefined);

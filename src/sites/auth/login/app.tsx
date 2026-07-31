@@ -76,6 +76,7 @@ function LoginForm() {
 	const [cancelModalVisible, setCancelModalVisible] = useState(false);
 	const [magicLinkLoading, setMagicLinkLoading] = useState(false);
 	const [magicLinkError, setMagicLinkError] = useState("");
+	const [showCredentialHelp, setShowCredentialHelp] = useState(false);
 
 	document.title = `${t("auth.login.title")} — ${t("auth.siteTitle")}`;
 
@@ -164,6 +165,7 @@ function LoginForm() {
 		setLoading(true);
 		setFormError("");
 		setMagicLinkError("");
+		setShowCredentialHelp(false);
 		try {
 			sessionStorage.setItem("cdn.mfaUsername", email);
 			const result = await signInWithPassword(email, password);
@@ -179,9 +181,11 @@ function LoginForm() {
 				(err.code === "NotAuthorizedException" ||
 					err.code === "UserNotFoundException")
 			) {
-				setFormError(t("auth.login.invalidCredentials"));
+				setFormError(t("auth.login.credentialsErrorMessage"));
+				setShowCredentialHelp(true);
 			} else {
 				setFormError(t("auth.login.genericError"));
+				setShowCredentialHelp(false);
 			}
 			setLoading(false);
 		}
@@ -486,7 +490,7 @@ function LoginForm() {
 					</SpaceBetween>
 				</Form>
 			</form>
-			{formError === t("auth.login.invalidCredentials") && (
+			{showCredentialHelp && (
 				<Box margin={{ top: "m" }}>
 					<Alert
 						type="info"
