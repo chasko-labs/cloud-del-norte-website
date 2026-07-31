@@ -486,4 +486,15 @@ export const variationsData: meeting[] = [
 		scheduledDate: "2026-06-03",
 		scheduledTime: "18:00",
 	},
+	{
+		name: "Workshop: How AI agents really work",
+		presenters: "Bryan Chasko, Kenneth Jefferson",
+		happened: "false",
+		ondemand: "no",
+		eventlink: "https://www.meetup.com/awsugclouddelnorte/events/315665501/",
+		meetupRsvpUrl:
+			"https://www.meetup.com/awsugclouddelnorte/events/315665501/",
+		scheduledDate: "2026-07-31",
+		scheduledTime: "19:00",
+	},
 ];
