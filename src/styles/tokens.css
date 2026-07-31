@@ -68,6 +68,7 @@
 	--cdn-gold-dark: #a07828;
 	--cdn-color-error: #c53030;
 	--cdn-color-error-dark: #f87171;
+	--cdn-passkey-surface-dark: #1c2230;
 	--cdn-font-display: "Cinzel", Georgia, serif;
 	--cdn-font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
 
@@ -261,6 +262,7 @@ html:not(.awsui-dark-mode) body {
 	--cdn-gold-dark: #7040c0;
 	--cdn-color-error: #f87171;
 	--cdn-color-error-dark: #f87171;
+	--cdn-passkey-surface-dark: #1c2230;
 
 	/* ---------- Elevation ramp — progressive lightening for depth perception (issue #63) ---------- */
 	--cdn-elevation-0: #0a0a2e; /* base background */
