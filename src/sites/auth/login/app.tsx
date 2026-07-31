@@ -76,6 +76,7 @@ function LoginForm() {
 	const [cancelModalVisible, setCancelModalVisible] = useState(false);
 	const [magicLinkLoading, setMagicLinkLoading] = useState(false);
 	const [magicLinkError, setMagicLinkError] = useState("");
+	const [showCredentialHelp, setShowCredentialHelp] = useState(false);
 
 	document.title = `${t("auth.login.title")} — ${t("auth.siteTitle")}`;
 
@@ -121,12 +122,7 @@ function LoginForm() {
 				return;
 			}
 
-			console.log("[passkey] calling initiatePasskeyAuth for:", passkeyEmail);
 			const { session, credentials } = await initiatePasskeyAuth(passkeyEmail);
-			console.log(
-				"[passkey] initiatePasskeyAuth succeeded, credentials keys:",
-				Object.keys(credentials),
-			);
 			const publicKey =
 				((credentials as Record<string, unknown>).publicKey as Record<
 					string,
@@ -138,25 +134,36 @@ function LoginForm() {
 					publicKey.allowCredentials as Array<Record<string, unknown>>
 				).map((c) => ({ ...c, id: base64urlToBuffer(c.id as string) }));
 			}
-			console.log("[passkey] calling navigator.credentials.get");
 			const assertion = (await navigator.credentials.get({
 				publicKey: publicKey as unknown as PublicKeyCredentialRequestOptions,
 			})) as PublicKeyCredential;
 			if (!assertion) throw new AuthError("passkey cancelled");
-			console.log("[passkey] got assertion, calling completePasskeyAuth");
 			await completePasskeyAuth(session, assertion);
 			// Persist email so the next sign-in pre-fills the field.
 			localStorage.setItem("cdn.passkey_email", passkeyEmail);
 			redirectWithTokens();
 		} catch (err) {
-			console.error("[passkey] error:", err);
-			const msg =
-				err instanceof AuthError
-					? err.message
-					: err instanceof Error
-						? `passkey error: ${err.message}`
-						: "passkey login failed";
-			setFormError(msg);
+			if (err instanceof AuthError) {
+				const passkeyErrorMap: Record<string, string> = {
+					PasskeyNoCredential: "auth.login.passkeyNoCredential",
+					PasskeyServerError: "auth.login.passkeyServerError",
+					PasskeyAuthFlowNotEnabled: "auth.login.passkeyServerError",
+					MissingCredentialRequestOptions: "auth.login.passkeyServerError",
+				};
+				const key = err.code ? passkeyErrorMap[err.code] : undefined;
+				setFormError(key ? t(key) : err.message);
+			} else if (
+				err instanceof DOMException ||
+				(err instanceof Error && err.name === "NotAllowedError")
+			) {
+				setFormError(t("auth.login.passkeyPlatformUnavailable"));
+			} else {
+				setFormError(
+					err instanceof Error
+						? err.message
+						: t("auth.login.passkeyServerError"),
+				);
+			}
 			setLoading(false);
 		}
 	}
@@ -172,6 +179,7 @@ function LoginForm() {
 		setLoading(true);
 		setFormError("");
 		setMagicLinkError("");
+		setShowCredentialHelp(false);
 		try {
 			sessionStorage.setItem("cdn.mfaUsername", email);
 			const result = await signInWithPassword(email, password);
@@ -187,9 +195,11 @@ function LoginForm() {
 				(err.code === "NotAuthorizedException" ||
 					err.code === "UserNotFoundException")
 			) {
-				setFormError(t("auth.login.invalidCredentials"));
+				setFormError(t("auth.login.credentialsErrorMessage"));
+				setShowCredentialHelp(true);
 			} else {
 				setFormError(t("auth.login.genericError"));
+				setShowCredentialHelp(false);
 			}
 			setLoading(false);
 		}
@@ -420,6 +430,7 @@ function LoginForm() {
 									value={mfaCode}
 									onChange={({ detail }) => setMfaCode(detail.value)}
 									inputMode="numeric"
+									autoComplete="one-time-code"
 									autoFocus
 								/>
 							</FormField>
@@ -494,7 +505,7 @@ function LoginForm() {
 					</SpaceBetween>
 				</Form>
 			</form>
-			{formError === t("auth.login.invalidCredentials") && (
+			{showCredentialHelp && (
 				<Box margin={{ top: "m" }}>
 					<Alert
 						type="info"
