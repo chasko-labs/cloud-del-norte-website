@@ -435,8 +435,8 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 	)?.CredentialRequestOptions;
 	if (!credentialRequestOptionsRaw) {
 		throw new AuthError(
-			"Missing credential request options from server",
-			"PasskeyServerError",
+			"No passkey enrolled on this account",
+			"MissingCredentialRequestOptions",
 		);
 	}
 	return {

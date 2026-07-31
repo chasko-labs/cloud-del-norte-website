@@ -843,6 +843,8 @@
 			"passwordLabel": "Contraseña",
 			"signInButton": "Entrar",
 			"passkeyButton": "Entrar con clave de acceso",
+			"passkeyNotEnrolled": "Todavía no hay clave de acceso en esta cuenta. Entra con tu contraseña aquí abajo, y luego agrega una clave de acceso desde tu configuración.",
+			"passkeyEnrollLink": "Configurar clave de acceso",
 			"passkeyNoCredential": "No hay clave de acceso registrada para esta cuenta. Entra con tu contraseña y luego agrega una clave de acceso desde configuración.",
 			"passkeyPlatformUnavailable": "Tu dispositivo no puede usar la clave de acceso registrada en esta cuenta. Prueba otro dispositivo, o entra con tu contraseña.",
 			"passkeyServerError": "Entrar con clave de acceso no está disponible ahorita — es bronca de nuestro lado. Entra con contraseña y código del autenticador por ahora.",

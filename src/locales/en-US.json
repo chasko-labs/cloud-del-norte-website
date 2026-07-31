@@ -843,6 +843,8 @@
 			"passwordLabel": "Password",
 			"signInButton": "Sign in",
 			"passkeyButton": "Sign in with passkey",
+			"passkeyNotEnrolled": "No passkey is set up on this account yet. Sign in with your password below, then add a passkey from your account settings.",
+			"passkeyEnrollLink": "Set up a passkey",
 			"passkeyNoCredential": "No passkey is registered for this account. Sign in with your password, then add a passkey from your account settings.",
 			"passkeyPlatformUnavailable": "Your device can't use the passkey registered on this account. Try a different device, or sign in with your password instead.",
 			"passkeyServerError": "Passkey sign-in is temporarily unavailable — our end, not yours. Sign in with your password and authenticator code for now.",

@@ -71,7 +71,13 @@
 
 .cdn-auth-form:not(#\9) [class*="awsui_input_"] input {
 	padding: 12px 4px;
-	font-family: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
+	font-family: var(
+		--cdn-font-mono,
+		"JetBrains Mono",
+		"SF Mono",
+		"Fira Code",
+		monospace
+	);
 	font-size: 15px;
 	color: var(--cdn-color-text, #2c1a0e);
 	background: transparent;
@@ -142,7 +148,7 @@
 	   with warmer gold using the --cdn-gold brand token (#c9a23f). */
 	background: linear-gradient(
 		135deg,
-		#a07828 0%,
+		var(--cdn-gold-dark, #a07828) 0%,
 		var(--cdn-gold, #c9a23f) 100%
 	);
 	border-color: transparent;
@@ -158,7 +164,7 @@
 	button[class*="variant-primary"]:hover {
 	background: linear-gradient(
 		135deg,
-		#a07828 0%,
+		var(--cdn-gold-dark, #a07828) 0%,
 		var(--cdn-gold, #c9a23f) 100%
 	);
 	box-shadow: 0 4px 14px rgba(201, 162, 63, 0.4);
@@ -282,13 +288,13 @@
 
 /* ── error text ────────────────────────────────────────────────────────── */
 .cdn-auth-form:not(#\9) [class*="awsui_error_"] {
-	color: #c53030;
+	color: var(--cdn-color-error);
 	font-weight: 500;
 	font-size: 13px;
 }
 
 .awsui-dark-mode .cdn-auth-form:not(#\9) [class*="awsui_error_"] {
-	color: #f87171;
+	color: var(--cdn-color-error-dark, #f87171);
 }
 
 /* ── auth component version ────────────────────────────────────────────── */
