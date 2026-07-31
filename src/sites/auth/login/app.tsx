@@ -121,12 +121,7 @@ function LoginForm() {
 				return;
 			}
 
-			console.log("[passkey] calling initiatePasskeyAuth for:", passkeyEmail);
 			const { session, credentials } = await initiatePasskeyAuth(passkeyEmail);
-			console.log(
-				"[passkey] initiatePasskeyAuth succeeded, credentials keys:",
-				Object.keys(credentials),
-			);
 			const publicKey =
 				((credentials as Record<string, unknown>).publicKey as Record<
 					string,
@@ -138,18 +133,15 @@ function LoginForm() {
 					publicKey.allowCredentials as Array<Record<string, unknown>>
 				).map((c) => ({ ...c, id: base64urlToBuffer(c.id as string) }));
 			}
-			console.log("[passkey] calling navigator.credentials.get");
 			const assertion = (await navigator.credentials.get({
 				publicKey: publicKey as unknown as PublicKeyCredentialRequestOptions,
 			})) as PublicKeyCredential;
 			if (!assertion) throw new AuthError("passkey cancelled");
-			console.log("[passkey] got assertion, calling completePasskeyAuth");
 			await completePasskeyAuth(session, assertion);
 			// Persist email so the next sign-in pre-fills the field.
 			localStorage.setItem("cdn.passkey_email", passkeyEmail);
 			redirectWithTokens();
 		} catch (err) {
-			console.error("[passkey] error:", err);
 			const msg =
 				err instanceof AuthError
 					? err.message

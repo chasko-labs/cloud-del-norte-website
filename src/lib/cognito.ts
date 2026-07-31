@@ -423,13 +423,6 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 		}
 		throw err;
 	}
-	console.log("[passkey] InitiateAuth response:", {
-		ChallengeName: result.ChallengeName,
-		ChallengeParameters: result.ChallengeParameters,
-		hasCredentialRequestOptions: !!(
-			result.ChallengeParameters as Record<string, string> | undefined
-		)?.CredentialRequestOptions,
-	});
 	const challengeName = result.ChallengeName as string;
 	if (challengeName !== "WEB_AUTHN") {
 		throw new AuthError(
@@ -478,10 +471,6 @@ export async function completePasskeyAuth(
 				authenticatorAttachment: credential.authenticatorAttachment,
 			}),
 		},
-	});
-	console.log("[passkey] RespondToAuthChallenge response:", {
-		ChallengeName: result.ChallengeName,
-		hasAuthResult: !!result.AuthenticationResult,
 	});
 	if (result.AuthenticationResult) {
 		storeTokens(result);
