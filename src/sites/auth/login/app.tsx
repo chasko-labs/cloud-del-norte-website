@@ -143,13 +143,27 @@ function LoginForm() {
 			localStorage.setItem("cdn.passkey_email", passkeyEmail);
 			redirectWithTokens();
 		} catch (err) {
-			const msg =
-				err instanceof AuthError
-					? err.message
-					: err instanceof Error
-						? `passkey error: ${err.message}`
-						: "passkey login failed";
-			setFormError(msg);
+			if (err instanceof AuthError) {
+				const passkeyErrorMap: Record<string, string> = {
+					PasskeyNoCredential: "auth.login.passkeyNoCredential",
+					PasskeyServerError: "auth.login.passkeyServerError",
+					PasskeyAuthFlowNotEnabled: "auth.login.passkeyServerError",
+					MissingCredentialRequestOptions: "auth.login.passkeyServerError",
+				};
+				const key = err.code ? passkeyErrorMap[err.code] : undefined;
+				setFormError(key ? t(key) : err.message);
+			} else if (
+				err instanceof DOMException ||
+				(err instanceof Error && err.name === "NotAllowedError")
+			) {
+				setFormError(t("auth.login.passkeyPlatformUnavailable"));
+			} else {
+				setFormError(
+					err instanceof Error
+						? err.message
+						: t("auth.login.passkeyServerError"),
+				);
+			}
 			setLoading(false);
 		}
 	}
@@ -416,6 +430,7 @@ function LoginForm() {
 									value={mfaCode}
 									onChange={({ detail }) => setMfaCode(detail.value)}
 									inputMode="numeric"
+									autoComplete="one-time-code"
 									autoFocus
 								/>
 							</FormField>

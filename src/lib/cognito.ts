@@ -417,7 +417,7 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 	} catch (err) {
 		if (err instanceof AuthError && err.code === "InvalidParameterException") {
 			throw new AuthError(
-				"Passkey sign-in isn't available right now. Sign in with your password and authenticator code instead.",
+				"Passkey auth flow not enabled",
 				"PasskeyAuthFlowNotEnabled",
 			);
 		}
@@ -426,8 +426,8 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 	const challengeName = result.ChallengeName as string;
 	if (challengeName !== "WEB_AUTHN") {
 		throw new AuthError(
-			"No passkey is registered for this account. Sign in with your password instead, then add a passkey from your account settings.",
-			challengeName,
+			"No passkey registered for this account",
+			"PasskeyNoCredential",
 		);
 	}
 	const credentialRequestOptionsRaw = (
@@ -435,8 +435,8 @@ export async function initiatePasskeyAuth(email: string): Promise<{
 	)?.CredentialRequestOptions;
 	if (!credentialRequestOptionsRaw) {
 		throw new AuthError(
-			"Passkey sign-in is temporarily unavailable. Sign in with your password instead.",
-			"MissingCredentialRequestOptions",
+			"Missing credential request options from server",
+			"PasskeyServerError",
 		);
 	}
 	return {

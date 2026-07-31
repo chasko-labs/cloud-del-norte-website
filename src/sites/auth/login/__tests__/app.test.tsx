@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as cognito from "../../../../lib/cognito";
 
 vi.mock("../../../_layout", () => ({
@@ -291,6 +291,123 @@ describe("login → wave 92 1-tap forgot-password CTA", () => {
 			expect(assign).toHaveBeenCalledWith(
 				"/forgot-password/index.html?email=user%40example.com&sent=1",
 			);
+		});
+	});
+});
+
+describe("login → passkey error differentiation", () => {
+	beforeEach(() => {
+		Object.defineProperty(window, "location", {
+			value: { ...window.location, search: "", assign: vi.fn() },
+			writable: true,
+		});
+		// Expose PublicKeyCredential so the passkey button renders
+		Object.defineProperty(window, "PublicKeyCredential", {
+			value: class {},
+			writable: true,
+			configurable: true,
+		});
+		localStorage.clear();
+		localStorage.setItem("cdn.passkey_email", "user@example.com");
+	});
+
+	it("shows passkeyNoCredential when PasskeyNoCredential code is thrown", async () => {
+		vi.mocked(cognito.initiatePasskeyAuth).mockRejectedValueOnce(
+			new cognito.AuthError(
+				"No passkey registered for this account",
+				"PasskeyNoCredential",
+			),
+		);
+
+		render(<App />);
+		const emailInput = screen.getByPlaceholderText(
+			"auth.login.emailPlaceholder",
+		);
+		fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+		const passkeyBtn = screen.getByText("auth.login.passkeyButton");
+		fireEvent.click(passkeyBtn);
+
+		await waitFor(() => {
+			expect(screen.getByText("auth.login.passkeyNoCredential")).toBeTruthy();
+		});
+	});
+
+	it("shows passkeyServerError when PasskeyServerError code is thrown", async () => {
+		vi.mocked(cognito.initiatePasskeyAuth).mockRejectedValueOnce(
+			new cognito.AuthError(
+				"Missing credential request options from server",
+				"PasskeyServerError",
+			),
+		);
+
+		render(<App />);
+		const emailInput = screen.getByPlaceholderText(
+			"auth.login.emailPlaceholder",
+		);
+		fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+		const passkeyBtn = screen.getByText("auth.login.passkeyButton");
+		fireEvent.click(passkeyBtn);
+
+		await waitFor(() => {
+			expect(screen.getByText("auth.login.passkeyServerError")).toBeTruthy();
+		});
+	});
+
+	it("shows passkeyServerError when PasskeyAuthFlowNotEnabled code is thrown", async () => {
+		vi.mocked(cognito.initiatePasskeyAuth).mockRejectedValueOnce(
+			new cognito.AuthError(
+				"Passkey auth flow not enabled",
+				"PasskeyAuthFlowNotEnabled",
+			),
+		);
+
+		render(<App />);
+		const emailInput = screen.getByPlaceholderText(
+			"auth.login.emailPlaceholder",
+		);
+		fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+		const passkeyBtn = screen.getByText("auth.login.passkeyButton");
+		fireEvent.click(passkeyBtn);
+
+		await waitFor(() => {
+			expect(screen.getByText("auth.login.passkeyServerError")).toBeTruthy();
+		});
+	});
+
+	it("shows passkeyPlatformUnavailable when DOMException is thrown by navigator.credentials", async () => {
+		vi.mocked(cognito.initiatePasskeyAuth).mockResolvedValueOnce({
+			challengeName: "WEB_AUTHN",
+			session: "fake-session",
+			credentials: { publicKey: { challenge: "dGVzdA", allowCredentials: [] } },
+		});
+		// Simulate navigator.credentials.get throwing a NotAllowedError
+		Object.defineProperty(navigator, "credentials", {
+			value: {
+				get: () => {
+					const err = new DOMException(
+						"The operation either timed out or was not allowed.",
+						"NotAllowedError",
+					);
+					return Promise.reject(err);
+				},
+			},
+			writable: true,
+			configurable: true,
+		});
+		vi.mocked(cognito.base64urlToBuffer).mockReturnValue(new ArrayBuffer(8));
+
+		render(<App />);
+		const emailInput = screen.getByPlaceholderText(
+			"auth.login.emailPlaceholder",
+		);
+		fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+		const passkeyBtn = screen.getByText("auth.login.passkeyButton");
+		fireEvent.click(passkeyBtn);
+
+		await waitFor(() => {
+			expect(
+				screen.getByText("auth.login.passkeyPlatformUnavailable"),
+			).toBeTruthy();
 		});
 	});
 });
