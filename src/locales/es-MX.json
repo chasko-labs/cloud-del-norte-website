@@ -850,7 +850,7 @@
 			"genericError": "Algo salió mal. Intenta de nuevo.",
 			"magicLinkHeader": "¿Olvidaste tu contraseña?",
 			"magicLinkDescription": "Te mandamos un código de un solo uso pa' que reinicies la contraseña y entres.",
-			"magicLinkCta": "Mándame liga pa' entrar",
+			"magicLinkCta": "Mándame un código pa' reiniciar",
 			"magicLinkEmailRequired": "Escribe tu correo arriba primero, luego pica el botón.",
 			"mfaSetup": {
 				"alertHeader": "Consigue una app autenticadora",

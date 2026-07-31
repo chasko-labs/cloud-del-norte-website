@@ -850,7 +850,7 @@
 			"genericError": "Something went wrong. Try again.",
 			"magicLinkHeader": "Forgot your password?",
 			"magicLinkDescription": "We'll email you a one-time code so you can reset your password and get in.",
-			"magicLinkCta": "Email me a sign-in link",
+			"magicLinkCta": "Email me a reset code",
 			"magicLinkEmailRequired": "Type your email above first, then click this button.",
 			"mfaSetup": {
 				"alertHeader": "Get an authenticator app",
