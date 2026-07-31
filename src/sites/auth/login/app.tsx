@@ -12,7 +12,7 @@ import Modal from "@cloudscape-design/components/modal";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { QRCodeSVG } from "qrcode.react";
 import type React from "react";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	type AuthChallenge,
@@ -77,6 +77,30 @@ function LoginForm() {
 	const [magicLinkLoading, setMagicLinkLoading] = useState(false);
 	const [magicLinkError, setMagicLinkError] = useState("");
 	const [showCredentialHelp, setShowCredentialHelp] = useState(false);
+	const [passkeyPlatformAvailable, setPasskeyPlatformAvailable] =
+		useState(false);
+
+	useEffect(() => {
+		let cancelled = false;
+		(async () => {
+			try {
+				if (
+					window.PublicKeyCredential &&
+					typeof window.PublicKeyCredential
+						.isUserVerifyingPlatformAuthenticatorAvailable === "function"
+				) {
+					const available =
+						await window.PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+					if (!cancelled) setPasskeyPlatformAvailable(available);
+				}
+			} catch {
+				// Feature detection failed — treat as unavailable
+			}
+		})();
+		return () => {
+			cancelled = true;
+		};
+	}, []);
 
 	document.title = `${t("auth.login.title")} — ${t("auth.siteTitle")}`;
 
@@ -148,10 +172,14 @@ function LoginForm() {
 					PasskeyNoCredential: "auth.login.passkeyNoCredential",
 					PasskeyServerError: "auth.login.passkeyServerError",
 					PasskeyAuthFlowNotEnabled: "auth.login.passkeyServerError",
-					MissingCredentialRequestOptions: "auth.login.passkeyServerError",
+					MissingCredentialRequestOptions: "auth.login.passkeyNotEnrolled",
 				};
 				const key = err.code ? passkeyErrorMap[err.code] : undefined;
-				setFormError(key ? t(key) : err.message);
+				if (key === "auth.login.passkeyNotEnrolled") {
+					setFormError(key);
+				} else {
+					setFormError(key ? t(key) : err.message);
+				}
 			} else if (
 				err instanceof DOMException ||
 				(err instanceof Error && err.name === "NotAllowedError")
@@ -470,7 +498,11 @@ function LoginForm() {
 							</Button>
 						</SpaceBetween>
 					}
-					errorText={formError || undefined}
+					errorText={
+						formError && formError !== "auth.login.passkeyNotEnrolled"
+							? formError
+							: undefined
+					}
 				>
 					<SpaceBetween size="m">
 						<FormField
@@ -541,7 +573,7 @@ function LoginForm() {
 					</Link>
 				</SpaceBetween>
 			</Box>
-			{window.PublicKeyCredential && (
+			{passkeyPlatformAvailable && (
 				<Box margin={{ top: "m" }} textAlign="center">
 					<Button
 						variant="link"
@@ -552,6 +584,16 @@ function LoginForm() {
 					>
 						{t("auth.login.passkeyButton")}
 					</Button>
+				</Box>
+			)}
+			{formError === "auth.login.passkeyNotEnrolled" && (
+				<Box margin={{ top: "m" }}>
+					<Alert type="info" data-testid="passkey-not-enrolled-alert">
+						{t("auth.login.passkeyNotEnrolled")}{" "}
+						<Link href="/passkeys/index.html">
+							{t("auth.login.passkeyEnrollLink")}
+						</Link>
+					</Alert>
 				</Box>
 			)}
 		</div>

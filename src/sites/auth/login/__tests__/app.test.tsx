@@ -301,9 +301,12 @@ describe("login → passkey error differentiation", () => {
 			value: { ...window.location, search: "", assign: vi.fn() },
 			writable: true,
 		});
-		// Expose PublicKeyCredential so the passkey button renders
+		// Expose PublicKeyCredential with platform authenticator available so the passkey button renders
 		Object.defineProperty(window, "PublicKeyCredential", {
-			value: class {},
+			value: {
+				isUserVerifyingPlatformAuthenticatorAvailable: () =>
+					Promise.resolve(true),
+			},
 			writable: true,
 			configurable: true,
 		});
@@ -324,7 +327,7 @@ describe("login → passkey error differentiation", () => {
 			"auth.login.emailPlaceholder",
 		);
 		fireEvent.change(emailInput, { target: { value: "user@example.com" } });
-		const passkeyBtn = screen.getByText("auth.login.passkeyButton");
+		const passkeyBtn = await screen.findByText("auth.login.passkeyButton");
 		fireEvent.click(passkeyBtn);
 
 		await waitFor(() => {
@@ -345,7 +348,7 @@ describe("login → passkey error differentiation", () => {
 			"auth.login.emailPlaceholder",
 		);
 		fireEvent.change(emailInput, { target: { value: "user@example.com" } });
-		const passkeyBtn = screen.getByText("auth.login.passkeyButton");
+		const passkeyBtn = await screen.findByText("auth.login.passkeyButton");
 		fireEvent.click(passkeyBtn);
 
 		await waitFor(() => {
@@ -366,7 +369,7 @@ describe("login → passkey error differentiation", () => {
 			"auth.login.emailPlaceholder",
 		);
 		fireEvent.change(emailInput, { target: { value: "user@example.com" } });
-		const passkeyBtn = screen.getByText("auth.login.passkeyButton");
+		const passkeyBtn = await screen.findByText("auth.login.passkeyButton");
 		fireEvent.click(passkeyBtn);
 
 		await waitFor(() => {
@@ -401,13 +404,89 @@ describe("login → passkey error differentiation", () => {
 			"auth.login.emailPlaceholder",
 		);
 		fireEvent.change(emailInput, { target: { value: "user@example.com" } });
-		const passkeyBtn = screen.getByText("auth.login.passkeyButton");
+		const passkeyBtn = await screen.findByText("auth.login.passkeyButton");
 		fireEvent.click(passkeyBtn);
 
 		await waitFor(() => {
 			expect(
 				screen.getByText("auth.login.passkeyPlatformUnavailable"),
 			).toBeTruthy();
+		});
+	});
+
+	it("shows passkeyNotEnrolled alert with enroll link when MissingCredentialRequestOptions code is thrown", async () => {
+		vi.mocked(cognito.initiatePasskeyAuth).mockRejectedValueOnce(
+			new cognito.AuthError(
+				"No passkey enrolled on this account",
+				"MissingCredentialRequestOptions",
+			),
+		);
+
+		render(<App />);
+		const emailInput = screen.getByPlaceholderText(
+			"auth.login.emailPlaceholder",
+		);
+		fireEvent.change(emailInput, { target: { value: "user@example.com" } });
+		const passkeyBtn = await screen.findByText("auth.login.passkeyButton");
+		fireEvent.click(passkeyBtn);
+
+		await waitFor(() => {
+			const alert = screen.getByTestId("passkey-not-enrolled-alert");
+			expect(alert).toBeTruthy();
+			expect(alert.textContent).toContain("auth.login.passkeyNotEnrolled");
+			expect(alert.textContent).toContain("auth.login.passkeyEnrollLink");
+		});
+		// Verify the enroll link points to the passkeys page
+		const enrollLink = screen.getByText("auth.login.passkeyEnrollLink");
+		expect(enrollLink.closest("a")?.getAttribute("href")).toBe(
+			"/passkeys/index.html",
+		);
+	});
+});
+
+describe("login → passkey button platform gating", () => {
+	it("hides passkey button when isUserVerifyingPlatformAuthenticatorAvailable resolves false", async () => {
+		Object.defineProperty(window, "location", {
+			value: { ...window.location, search: "", assign: vi.fn() },
+			writable: true,
+		});
+		Object.defineProperty(window, "PublicKeyCredential", {
+			value: {
+				isUserVerifyingPlatformAuthenticatorAvailable: () =>
+					Promise.resolve(false),
+			},
+			writable: true,
+			configurable: true,
+		});
+		localStorage.clear();
+
+		render(<App />);
+
+		// Wait a tick for the useEffect to resolve
+		await waitFor(() => {
+			expect(screen.queryByText("auth.login.passkeyButton")).toBeNull();
+		});
+	});
+
+	it("shows passkey button when isUserVerifyingPlatformAuthenticatorAvailable resolves true", async () => {
+		Object.defineProperty(window, "location", {
+			value: { ...window.location, search: "", assign: vi.fn() },
+			writable: true,
+		});
+		Object.defineProperty(window, "PublicKeyCredential", {
+			value: {
+				isUserVerifyingPlatformAuthenticatorAvailable: () =>
+					Promise.resolve(true),
+			},
+			writable: true,
+			configurable: true,
+		});
+		localStorage.clear();
+
+		render(<App />);
+
+		await waitFor(() => {
+			expect(screen.getByText("auth.login.passkeyButton")).toBeTruthy();
 		});
 	});
 });
