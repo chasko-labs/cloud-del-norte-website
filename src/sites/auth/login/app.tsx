@@ -471,19 +471,21 @@ function LoginForm() {
 
 	return (
 		<div className="cdn-auth-form-inner">
-			<Box
-				variant="small"
-				textAlign="right"
-				margin={{ bottom: "s" }}
-				padding={{ right: "xl" }}
-			>
-				{t("auth.login.noAccount")}{" "}
-				<Link
-					href={`/signup/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
+			<div className="cdn-auth-apply-cta">
+				<Box
+					variant="small"
+					textAlign="right"
+					margin={{ bottom: "s" }}
+					padding={{ right: "xl" }}
 				>
-					{t("auth.login.signUpLink")}
-				</Link>
-			</Box>
+					{t("auth.login.noAccount")}{" "}
+					<Link
+						href={`/signup/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
+					>
+						{t("auth.login.signUpLink")}
+					</Link>
+				</Box>
+			</div>
 			<form
 				onSubmit={(e) => {
 					void handleCredentialsSubmit(e);

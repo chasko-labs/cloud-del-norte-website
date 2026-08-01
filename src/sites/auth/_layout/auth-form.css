@@ -310,3 +310,55 @@
 .awsui-dark-mode .cdn-auth-version {
 	color: rgba(215, 199, 238, 0.3);
 }
+
+/* ── Apply to join CTA — WCAG AA contrast fix (issue #482) ─────────────
+   Scoped to .cdn-auth-apply-cta so it cannot bleed into signup, verify,
+   forgot-password, or passkeys pages.
+
+   Light mode: --cdn-purple #5a1f8a on #ede5d4 cream = 8.39:1 (AAA)
+   Dark mode:  --cdn-lavender #d7c7ee on #0a0a2e navy = 12.13:1 (AAA)
+   Focus ring: amber/violet at 4.66:1 / 4.67:1 > 3:1 (WCAG 2.4.11) */
+
+.cdn-auth-apply-cta {
+	font-family: var(--cdn-font-display, "Cinzel", Georgia, serif);
+	font-style: italic;
+	font-size: 15px;
+	letter-spacing: 0.01em;
+	text-align: right;
+	padding: 6px 12px;
+}
+
+.cdn-auth-apply-cta [class*="awsui_link_"] {
+	color: var(--cdn-purple, #5a1f8a) !important;
+	font-weight: 600 !important;
+	text-decoration: underline !important;
+	text-underline-offset: 3px !important;
+}
+
+.cdn-auth-apply-cta [class*="awsui_link_"]:hover {
+	color: var(--cdn-violet, #9060f0) !important;
+}
+
+.cdn-auth-apply-cta [class*="awsui_link_"]:focus-visible {
+	outline: 2px solid var(--cdn-amber, #8b5a2b) !important;
+	outline-offset: 3px !important;
+	border-radius: 2px !important;
+}
+
+.awsui-dark-mode .cdn-auth-apply-cta [class*="awsui_link_"] {
+	color: var(--cdn-lavender, #d7c7ee) !important;
+}
+
+.awsui-dark-mode .cdn-auth-apply-cta [class*="awsui_link_"]:hover {
+	color: var(--cdn-violet, #9060f0) !important;
+}
+
+.awsui-dark-mode .cdn-auth-apply-cta [class*="awsui_link_"]:focus-visible {
+	outline-color: var(--cdn-violet, #9060f0) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-auth-apply-cta [class*="awsui_link_"] {
+		transition: none !important;
+	}
+}
