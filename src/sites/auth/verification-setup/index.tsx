@@ -12,6 +12,7 @@ import {
 	getAccessToken,
 	setUserAttribute,
 } from "../../../lib/cognito";
+import { ENABLE_TOTP_SETUP } from "../../../lib/feature-flags";
 import AuthLayout from "../_layout";
 import { clearReturnTo, getReturnTo } from "../_shared/return-to";
 import TotpStep from "./totp-step";
@@ -45,7 +46,9 @@ function SetupForm() {
 	const { t } = useTranslation();
 	document.title = `${t("auth.verificationSetup.title")} — ${t("auth.siteTitle")}`;
 
-	const [selection, setSelection] = useState<Selection>("totp");
+	const [selection, setSelection] = useState<Selection>(
+		ENABLE_TOTP_SETUP ? "totp" : "passkey",
+	);
 	const [showTotp, setShowTotp] = useState(false);
 	const [skipping, setSkipping] = useState(false);
 	const [error, setError] = useState("");
@@ -58,7 +61,7 @@ function SetupForm() {
 		return null;
 	}
 
-	if (showTotp) {
+	if (ENABLE_TOTP_SETUP && showTotp) {
 		return (
 			<div className="cdn-auth-form-inner">
 				<TotpStep
@@ -122,11 +125,17 @@ function SetupForm() {
 									setSelection(detail.value as Selection)
 								}
 								items={[
-									{
-										value: "totp",
-										label: t("auth.verificationSetup.totpLabel"),
-										description: t("auth.verificationSetup.totpDescription"),
-									},
+									...(ENABLE_TOTP_SETUP
+										? [
+												{
+													value: "totp" as const,
+													label: t("auth.verificationSetup.totpLabel"),
+													description: t(
+														"auth.verificationSetup.totpDescription",
+													),
+												},
+											]
+										: []),
 									{
 										value: "passkey",
 										label: t("auth.verificationSetup.passkeyLabel"),

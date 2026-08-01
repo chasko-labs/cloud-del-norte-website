@@ -25,6 +25,10 @@ import {
 	signUp,
 	verifySoftwareToken,
 } from "../../../lib/cognito";
+import {
+	ENABLE_SMS_VERIFICATION,
+	ENABLE_TOTP_SETUP,
+} from "../../../lib/feature-flags";
 import AuthLayout from "../_layout";
 import CodeInput from "../_layout/CodeInput";
 
@@ -519,33 +523,43 @@ function SignupWizard() {
 			content: (
 				<SpaceBetween size="m">
 					{formError && <Alert type="error">{formError}</Alert>}
-					<FormField label="How would you like to verify your account?">
-						<RadioGroup
-							value={verifyMethod}
-							onChange={({ detail }) =>
-								setVerifyMethod(detail.value as VerifyMethod)
-							}
-							items={[
-								{
-									value: "email",
-									label: "Email me a code",
-									description: `We'll send a 6-digit code to ${email}`,
-								},
-								{
-									value: "totp",
-									label: "Set up authenticator app instead",
-									description:
-										"Skip the email step entirely. Works with Google Authenticator, Microsoft Authenticator, Authy — the same way banking apps work.",
-								},
-								{
-									value: "sms",
-									label: "Send code to my phone",
-									description: "SMS verification — coming soon",
-									disabled: true,
-								},
-							]}
-						/>
-					</FormField>
+					{(ENABLE_TOTP_SETUP || ENABLE_SMS_VERIFICATION) && (
+						<FormField label="How would you like to verify your account?">
+							<RadioGroup
+								value={verifyMethod}
+								onChange={({ detail }) =>
+									setVerifyMethod(detail.value as VerifyMethod)
+								}
+								items={[
+									{
+										value: "email",
+										label: "Email me a code",
+										description: `We'll send a 6-digit code to ${email}`,
+									},
+									...(ENABLE_TOTP_SETUP
+										? [
+												{
+													value: "totp" as const,
+													label: "Set up authenticator app instead",
+													description:
+														"Skip the email step entirely. Works with Google Authenticator, Microsoft Authenticator, Authy — the same way banking apps work.",
+												},
+											]
+										: []),
+									...(ENABLE_SMS_VERIFICATION
+										? [
+												{
+													value: "sms" as const,
+													label: "Send code to my phone",
+													description: "SMS verification — coming soon",
+													disabled: true,
+												},
+											]
+										: []),
+								]}
+							/>
+						</FormField>
+					)}
 
 					{verifyMethod === "email" && (
 						<SpaceBetween size="m">
@@ -572,7 +586,7 @@ function SignupWizard() {
 						</SpaceBetween>
 					)}
 
-					{verifyMethod === "totp" && (
+					{ENABLE_TOTP_SETUP && verifyMethod === "totp" && (
 						<SpaceBetween size="m">
 							{totpError && (
 								<Alert type="error" header="TOTP setup unavailable">
@@ -634,7 +648,7 @@ function SignupWizard() {
 						</SpaceBetween>
 					)}
 
-					{verifyMethod === "sms" && (
+					{ENABLE_SMS_VERIFICATION && verifyMethod === "sms" && (
 						<Alert type="info">
 							SMS verification is coming soon. Please choose Email or
 							Authenticator app for now.
