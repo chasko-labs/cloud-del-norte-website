@@ -1001,7 +1001,20 @@
 		"meetings": {
 			"pendingApproval": "tu solicitud está pendiente. las juntas van a estar disponibles cuando te aprueben.",
 			"createPendingApproval": "tu solicitud está pendiente. crear juntas va a estar disponible cuando te aprueben.",
-			"pendingJoinError": "Tu cuenta está pendiente de aprobación. Vas a poder unirte a las juntas cuando te aprueben."
+			"pendingJoinError": "Tu cuenta está pendiente de aprobación. Vas a poder unirte a las juntas cuando te aprueben.",
+			"bannedMessage": "tu cuenta fue suspendida de las juntas.",
+			"header": "juntas",
+			"openRoomDescription": "Entra a la sala de juntas de Cloud del Norte, o checa meetup.com pa los próximos eventos.",
+			"openCallRoom": "entrar a la sala",
+			"viewOnMeetup": "ver en meetup.com",
+			"scheduleSession": "programar una sesión",
+			"scheduleDescription": "Los organizadores pueden programar sesiones nuevas desde la página de crear junta.",
+			"createMeeting": "crear junta",
+			"leaveCall": "salir de la llamada",
+			"joiningRoom": "entrando a la sala de juntas…",
+			"autoJoinErrorHeader": "no se pudo entrar a la sala",
+			"autoJoinFailed": "no se conectó a la sala de juntas. intenta entrar manualmente.",
+			"fp021Error": "la sala no cargó bien. puede que no se haya conectado la llamada — intenta entrar manualmente."
 		}
 	},
 	"fiona": {
