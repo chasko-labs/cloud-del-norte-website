@@ -19,7 +19,6 @@ import {
 	isModerator,
 	requireAuth,
 } from "../_shared/auth";
-import MyTickets from "./components/my-tickets";
 import "../rsvp/styles.css";
 
 const MEETUP_URL = "https://www.meetup.com/cloud-del-norte/";
@@ -30,7 +29,6 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 
 	return (
 		<SpaceBetween size="l">
-			<MyTickets auth={auth} />
 			<Container header={<Header variant="h1">meetings</Header>}>
 				<SpaceBetween size="m">
 					<Box>
