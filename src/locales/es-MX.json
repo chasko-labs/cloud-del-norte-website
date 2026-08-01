@@ -936,7 +936,12 @@
 			"backToSignIn": "Volver al inicio de sesión",
 			"codeSentHeader": "Revisa tu correo",
 			"codeSentBody": "Te mandamos un código de 6 dígitos a {email}. Escíbelo aquí con tu nueva contraseña.",
-			"genericError": "Algo salió mal. Intenta de nuevo."
+			"genericError": "Algo salió mal. Intenta de nuevo.",
+			"signingIn": "Iniciándote sesión…",
+			"successMessage": "Contraseña actualizada — ya puedes iniciar sesión con tu nueva contraseña.",
+			"mfaPrompt": "Tu cuenta tiene autenticación multifactor activada. Ingresa el código de 6 dígitos de tu app de autenticación.",
+			"mfaCodeLabel": "Código de 6 dígitos de tu autenticador",
+			"mfaVerifyButton": "Verificar e iniciar sesión"
 		},
 		"verificationSetup": {
 			"title": "Configura verificación adicional",

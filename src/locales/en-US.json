@@ -936,7 +936,12 @@
 			"backToSignIn": "Back to sign in",
 			"codeSentHeader": "Check your email",
 			"codeSentBody": "We sent a 6-digit code to {email}. Enter it below along with your new password.",
-			"genericError": "Something went wrong. Try again."
+			"genericError": "Something went wrong. Try again.",
+			"signingIn": "Signing you in…",
+			"successMessage": "Password updated — you can now sign in with your new password.",
+			"mfaPrompt": "Your account has multi-factor authentication enabled. Enter the 6-digit code from your authenticator app.",
+			"mfaCodeLabel": "6-digit code from your authenticator",
+			"mfaVerifyButton": "Verify & sign in"
 		},
 		"verificationSetup": {
 			"title": "Set up extra verification",

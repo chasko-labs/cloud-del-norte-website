@@ -17,10 +17,12 @@ import {
 	assertNonEmpty,
 	confirmForgotPassword,
 	forgotPassword,
+	respondToMfaChallenge,
+	signInWithPassword,
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
 
-type Phase = "request" | "reset" | "done";
+type Phase = "request" | "reset" | "signing-in" | "mfa-verify" | "done";
 
 function ForgotPasswordForm() {
 	const { t } = useTranslation();
@@ -52,6 +54,25 @@ function ForgotPasswordForm() {
 	const [submitState, setSubmitState] = useState<
 		"idle" | "verifying" | "success" | "failed"
 	>("idle");
+
+	// MFA state for auto sign-in challenge handling
+	const [mfaSession, setMfaSession] = useState("");
+	const [mfaCode, setMfaCode] = useState("");
+	const [mfaChallengeName, setMfaChallengeName] = useState("");
+
+	const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
+
+	function redirectWithTokens() {
+		const idToken = sessionStorage.getItem("cdn.idToken") ?? "";
+		const accessToken = sessionStorage.getItem("cdn.accessToken") ?? "";
+		const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
+		const returnTo =
+			new URLSearchParams(window.location.search).get("return_to") ?? "";
+		const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
+		window.location.assign(
+			`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
+		);
+	}
 
 	async function handleRequestCode(e: React.FormEvent) {
 		e.preventDefault();
@@ -110,7 +131,25 @@ function ForgotPasswordForm() {
 		try {
 			await confirmForgotPassword(email, code.trim(), newPassword);
 			setSubmitState("success");
-			window.setTimeout(() => setPhase("done"), 500);
+			// Auto sign-in: attempt to sign the user in with the new password
+			setPhase("signing-in");
+			try {
+				sessionStorage.setItem("cdn.mfaUsername", email);
+				const result = await signInWithPassword(email, newPassword);
+				if (result.type === "success") {
+					redirectWithTokens();
+					return;
+				}
+				// MFA challenge — show the TOTP code entry step
+				setMfaSession(result.challenge.session);
+				setMfaChallengeName(result.challenge.challengeName);
+				setPhase("mfa-verify");
+				setLoading(false);
+			} catch {
+				// Sign-in failed — fall back to the manual "Back to sign in" UX
+				setPhase("done");
+				setLoading(false);
+			}
 		} catch (err) {
 			if (err instanceof AuthError) {
 				if (err.code === "CodeMismatchException") {
@@ -131,12 +170,77 @@ function ForgotPasswordForm() {
 		}
 	}
 
+	async function handleMfaVerifySubmit(e: React.FormEvent) {
+		e.preventDefault();
+		setFormError("");
+		setLoading(true);
+		try {
+			await respondToMfaChallenge(mfaSession, mfaCode, mfaChallengeName);
+			redirectWithTokens();
+		} catch (err) {
+			setFormError(
+				err instanceof AuthError
+					? err.message
+					: t("auth.forgotPassword.genericError"),
+			);
+			setLoading(false);
+		}
+	}
+
+	if (phase === "signing-in") {
+		return (
+			<div className="cdn-auth-form-inner">
+				<SpaceBetween size="m">
+					<Box textAlign="center" padding="xl">
+						{t("auth.forgotPassword.signingIn")}
+					</Box>
+				</SpaceBetween>
+			</div>
+		);
+	}
+
+	if (phase === "mfa-verify") {
+		return (
+			<div className="cdn-auth-form-inner">
+				<form
+					onSubmit={(e) => {
+						void handleMfaVerifySubmit(e);
+					}}
+					noValidate
+				>
+					<Form
+						actions={
+							<Button formAction="submit" variant="primary" loading={loading}>
+								{t("auth.forgotPassword.mfaVerifyButton")}
+							</Button>
+						}
+						errorText={formError || undefined}
+					>
+						<SpaceBetween size="m">
+							<Alert type="info">{t("auth.forgotPassword.mfaPrompt")}</Alert>
+							<FormField label={t("auth.forgotPassword.mfaCodeLabel")}>
+								<Input
+									type="text"
+									value={mfaCode}
+									onChange={({ detail }) => setMfaCode(detail.value)}
+									inputMode="numeric"
+									autoComplete="one-time-code"
+									autoFocus
+								/>
+							</FormField>
+						</SpaceBetween>
+					</Form>
+				</form>
+			</div>
+		);
+	}
+
 	if (phase === "done") {
 		return (
 			<div className="cdn-auth-form-inner">
 				<SpaceBetween size="m">
 					<Alert type="success">
-						Password updated — you can now sign in with your new password.
+						{t("auth.forgotPassword.successMessage")}
 					</Alert>
 					<Box textAlign="center">
 						<Link href="/login/index.html">
