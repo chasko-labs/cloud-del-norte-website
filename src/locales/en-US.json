@@ -1001,7 +1001,20 @@
 		"meetings": {
 			"pendingApproval": "your application is pending approval. meetings are available once approved.",
 			"createPendingApproval": "your application is pending approval. meeting creation is available once approved.",
-			"pendingJoinError": "Your account is pending admin approval. You'll be able to join meetings once approved."
+			"pendingJoinError": "Your account is pending admin approval. You'll be able to join meetings once approved.",
+			"bannedMessage": "your account has been suspended from meetings.",
+			"header": "meetings",
+			"openRoomDescription": "Open the Cloud del Norte meeting room, or check meetup.com for upcoming events.",
+			"openCallRoom": "open call room",
+			"viewOnMeetup": "view on meetup.com",
+			"scheduleSession": "schedule a session",
+			"scheduleDescription": "Organizers can schedule new sessions from the create meeting page.",
+			"createMeeting": "create meeting",
+			"leaveCall": "leave call",
+			"joiningRoom": "joining the meeting room…",
+			"autoJoinErrorHeader": "could not join the meeting room",
+			"autoJoinFailed": "failed to connect to the meeting room. try joining manually.",
+			"fp021Error": "the meeting room did not load correctly. the call may not have connected — try joining manually."
 		}
 	},
 	"fiona": {
