@@ -284,6 +284,12 @@ export interface ShellProps {
 	/** Suppress the persistent radio player slot. Used on subdomains where the player
 	 *  bar is irrelevant (e.g. awsug). */
 	hidePlayer?: boolean;
+	/** Controlled navigation-open state. If provided Shell becomes a controlled
+	 *  component for navigation — caller must also supply onNavigationChange.
+	 *  If omitted Shell self-manages nav state as before (backward compatible). */
+	navigationOpen?: boolean;
+	/** Callback when the user toggles navigation drawer. Required when navigationOpen is provided. */
+	onNavigationChange?: (open: boolean) => void;
 }
 
 function ShellContent({
@@ -305,6 +311,8 @@ function ShellContent({
 	toolsHide,
 	hideSignInUtility,
 	hidePlayer,
+	navigationOpen: navigationOpenProp,
+	onNavigationChange: onNavigationChangeProp,
 }: ShellProps) {
 	const { t } = useTranslation();
 	const auth = useAuth();
@@ -328,21 +336,27 @@ function ShellContent({
 	// Initialize nav state from localStorage OR viewport (Cloudscape breakpoint: 688px)
 	const [signInLabel, setSignInLabel] = useState("sign in");
 
-	const [navOpen, setNavOpen] = useState(() => {
+	const isNavControlled = navigationOpenProp !== undefined;
+	const [navOpenInternal, setNavOpenInternal] = useState(() => {
 		const stored = getStoredNavState();
 		if (stored !== null) return stored;
 		return typeof window !== "undefined" && window.innerWidth >= 688;
 	});
+	const navOpen = isNavControlled ? navigationOpenProp : navOpenInternal;
 
 	const handleNavigationChange = useCallback(
 		(event: { detail: { open: boolean } }) => {
 			const newState = event.detail.open;
-			setNavOpen(newState);
-			setStoredNavState(newState);
+			if (isNavControlled) {
+				onNavigationChangeProp?.(newState);
+			} else {
+				setNavOpenInternal(newState);
+				setStoredNavState(newState);
+			}
 			// Wave 66: notify Navigation component so it can gate FionaFrame mount
 			dispatchNavState(newState);
 		},
-		[],
+		[isNavControlled, onNavigationChangeProp],
 	);
 
 	useEffect(() => {
@@ -358,19 +372,20 @@ function ShellContent({
 
 	// Add resize listener to handle viewport changes
 	useEffect(() => {
+		if (isNavControlled) return; // controlled mode — parent manages state
 		function handleResize() {
 			const isDesktop = window.innerWidth >= 688;
 			const stored = getStoredNavState();
 
 			// Only auto-adjust if user hasn't set a preference
 			if (stored === null) {
-				setNavOpen(isDesktop);
+				setNavOpenInternal(isDesktop);
 			}
 		}
 
 		window.addEventListener("resize", handleResize);
 		return () => window.removeEventListener("resize", handleResize);
-	}, []);
+	}, [isNavControlled]);
 
 	// Tools-panel open/close → body class so the Volunteer pill (the
 	// repurposed Cloudscape Info popover anchor) can fade out when the

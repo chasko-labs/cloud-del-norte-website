@@ -38,7 +38,13 @@ function verifyJitsiIframe(): boolean {
 	return iframe.src.includes(JITSI_DOMAIN);
 }
 
-function MeetingsContent({ auth }: { auth: AuthState }) {
+function MeetingsContent({
+	auth,
+	onImmersiveChange,
+}: {
+	auth: AuthState;
+	onImmersiveChange: (immersive: boolean) => void;
+}) {
 	const { t } = useTranslation();
 	const [inCall, setInCall] = useState(false);
 	const [autoJoinFailed, setAutoJoinFailed] = useState(false);
@@ -49,27 +55,31 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 	const handleLeaveCall = useCallback(() => {
 		setInCall(false);
 		setIsAutoJoining(false);
+		onImmersiveChange(false);
 		if (fp021CheckRef.current) {
 			clearTimeout(fp021CheckRef.current);
 			fp021CheckRef.current = null;
 		}
-	}, []);
+	}, [onImmersiveChange]);
 
 	const handleManualJoin = useCallback(() => {
 		setAutoJoinFailed(false);
 		setAutoJoinError("");
 		setInCall(true);
-	}, []);
+		onImmersiveChange(true);
+	}, [onImmersiveChange]);
 
 	// Auto-join on mount for permitted users
 	useEffect(() => {
 		if (isBanned(auth)) {
 			setIsAutoJoining(false);
+			onImmersiveChange(false);
 			return;
 		}
 		// Mount the embed immediately — JitsiEmbed handles token fetch internally
 		setInCall(true);
-	}, [auth]);
+		onImmersiveChange(true);
+	}, [auth, onImmersiveChange]);
 
 	// FP-021 guard: after the embed has had time to initialize (15s),
 	// verify that the iframe src contains the jitsi domain. If not, surface
@@ -79,10 +89,9 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 		fp021CheckRef.current = setTimeout(() => {
 			if (!verifyJitsiIframe()) {
 				setAutoJoinFailed(true);
-				setAutoJoinError(
-					t("awsug.meetings.fp021Error"),
-				);
+				setAutoJoinError(t("awsug.meetings.fp021Error"));
 				setInCall(false);
+				onImmersiveChange(false);
 			}
 		}, 15_000);
 		return () => {
@@ -91,7 +100,7 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 				fp021CheckRef.current = null;
 			}
 		};
-	}, [inCall, t]);
+	}, [inCall, t, onImmersiveChange]);
 
 	// If the embed reports an error via onClose while auto-joining, treat as failure
 	const handleEmbedClose = useCallback(() => {
@@ -100,17 +109,14 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 			setAutoJoinError(t("awsug.meetings.autoJoinFailed"));
 		}
 		setInCall(false);
-	}, [isAutoJoining, t]);
+		onImmersiveChange(false);
+	}, [isAutoJoining, t, onImmersiveChange]);
 
 	if (inCall) {
 		return (
 			<SpaceBetween size="m">
 				<Box>
-					<Button
-						variant="link"
-						iconName="close"
-						onClick={handleLeaveCall}
-					>
+					<Button variant="link" iconName="close" onClick={handleLeaveCall}>
 						{t("awsug.meetings.leaveCall")}
 					</Button>
 				</Box>
@@ -139,7 +145,9 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 					{autoJoinError || t("awsug.meetings.autoJoinFailed")}
 				</Alert>
 			)}
-			<Container header={<Header variant="h1">{t("awsug.meetings.header")}</Header>}>
+			<Container
+				header={<Header variant="h1">{t("awsug.meetings.header")}</Header>}
+			>
 				<SpaceBetween size="m">
 					<Box>{t("awsug.meetings.openRoomDescription")}</Box>
 					<SpaceBetween direction="horizontal" size="s">
@@ -153,7 +161,11 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 				</SpaceBetween>
 			</Container>
 			{isModerator(auth) && (
-				<Container header={<Header variant="h2">{t("awsug.meetings.scheduleSession")}</Header>}>
+				<Container
+					header={
+						<Header variant="h2">{t("awsug.meetings.scheduleSession")}</Header>
+					}
+				>
 					<SpaceBetween size="s">
 						<Box>{t("awsug.meetings.scheduleDescription")}</Box>
 						<Button href="/create-meeting/index.html">
@@ -166,7 +178,13 @@ function MeetingsContent({ auth }: { auth: AuthState }) {
 	);
 }
 
-function MeetingsPage({ auth }: { auth: AuthState }) {
+function MeetingsPage({
+	auth,
+	onImmersiveChange,
+}: {
+	auth: AuthState;
+	onImmersiveChange: (immersive: boolean) => void;
+}) {
 	const { t } = useTranslation();
 	if (isBanned(auth)) {
 		return (
@@ -182,11 +200,23 @@ function MeetingsPage({ auth }: { auth: AuthState }) {
 			</Container>
 		);
 	}
-	return <MeetingsContent auth={auth} />;
+	return <MeetingsContent auth={auth} onImmersiveChange={onImmersiveChange} />;
 }
 
 function MeetingsWithLayout() {
 	const [auth, setAuth] = useState<AuthState | null>(null);
+	const [immersive, setImmersive] = useState(false);
+	const [navOpen, setNavOpen] = useState(true);
+
+	const handleImmersiveChange = useCallback((active: boolean) => {
+		setImmersive(active);
+		// Collapse navigation when entering the call; user can still reopen via hamburger
+		setNavOpen(!active);
+	}, []);
+
+	const handleNavigationChange = useCallback((open: boolean) => {
+		setNavOpen(open);
+	}, []);
 
 	useEffect(() => {
 		setAuth(requireAuth());
@@ -201,8 +231,12 @@ function MeetingsWithLayout() {
 	}
 
 	return (
-		<AwsugLayout>
-			<MeetingsPage auth={auth} />
+		<AwsugLayout
+			toolsHide={immersive}
+			navigationOpen={navOpen}
+			onNavigationChange={handleNavigationChange}
+		>
+			<MeetingsPage auth={auth} onImmersiveChange={handleImmersiveChange} />
 		</AwsugLayout>
 	);
 }

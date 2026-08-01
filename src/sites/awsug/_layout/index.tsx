@@ -43,11 +43,24 @@ function ToolsPanel() {
 	);
 }
 
+export interface AwsugLayoutProps {
+	children: React.ReactNode;
+	/** Hide the tools (help) panel entirely — used in immersive mode */
+	toolsHide?: boolean;
+	/** Override the navigation-open state. When provided, the layout uses this
+	 *  value instead of Shell's internal state. The user can still toggle the
+	 *  drawer open/closed via the hamburger — this only sets the initial/forced value. */
+	navigationOpen?: boolean;
+	/** Callback when the user toggles navigation. Required when navigationOpen is provided. */
+	onNavigationChange?: (open: boolean) => void;
+}
+
 export default function AwsugLayout({
 	children,
-}: {
-	children: React.ReactNode;
-}) {
+	toolsHide,
+	navigationOpen,
+	onNavigationChange,
+}: AwsugLayoutProps) {
 	const [theme, setTheme] = useState<Theme>(() => initializeTheme());
 	const [locale, setLocale] = useState<Locale>(() => initializeLocale());
 
@@ -66,7 +79,10 @@ export default function AwsugLayout({
 				setStoredLocale(l);
 			}}
 			navigation={<AwsugNavigation />}
-			tools={<ToolsPanel />}
+			tools={toolsHide ? undefined : <ToolsPanel />}
+			toolsHide={toolsHide}
+			navigationOpen={navigationOpen}
+			onNavigationChange={onNavigationChange}
 			identityHref="/"
 		>
 			<PendingApprovalBanner />
