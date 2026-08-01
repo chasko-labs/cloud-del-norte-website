@@ -1001,7 +1001,16 @@
 		"meetings": {
 			"pendingApproval": "tu solicitud está pendiente. las juntas van a estar disponibles cuando te aprueben.",
 			"createPendingApproval": "tu solicitud está pendiente. crear juntas va a estar disponible cuando te aprueben.",
-			"pendingJoinError": "Tu cuenta está pendiente de aprobación. Vas a poder unirte a las juntas cuando te aprueben."
+			"pendingJoinError": "Tu cuenta está pendiente de aprobación. Vas a poder unirte a las juntas cuando te aprueben.",
+			"header": "encuentros",
+			"description": "Abre la sala de Cloud del Norte, o checa meetup.com pa' los próximos eventos.",
+			"openCallRoom": "abrir sala",
+			"viewOnMeetup": "ver en meetup.com",
+			"leaveCall": "salir de la llamada",
+			"roomHeader": "Cloud del Norte — sala de reuniones",
+			"scheduleHeader": "programar sesión",
+			"scheduleDescription": "Los organizadores pueden programar sesiones nuevas desde la página de crear reunión.",
+			"createMeeting": "crear reunión"
 		}
 	},
 	"fiona": {

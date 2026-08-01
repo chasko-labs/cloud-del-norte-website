@@ -1001,7 +1001,16 @@
 		"meetings": {
 			"pendingApproval": "your application is pending approval. meetings are available once approved.",
 			"createPendingApproval": "your application is pending approval. meeting creation is available once approved.",
-			"pendingJoinError": "Your account is pending admin approval. You'll be able to join meetings once approved."
+			"pendingJoinError": "Your account is pending admin approval. You'll be able to join meetings once approved.",
+			"header": "meetings",
+			"description": "Open the Cloud del Norte meeting room, or check meetup.com for upcoming events.",
+			"openCallRoom": "open call room",
+			"viewOnMeetup": "view on meetup.com",
+			"leaveCall": "leave call",
+			"roomHeader": "Cloud del Norte — meeting room",
+			"scheduleHeader": "schedule a session",
+			"scheduleDescription": "Organizers can schedule new sessions from the create meeting page.",
+			"createMeeting": "create meeting"
 		}
 	},
 	"fiona": {

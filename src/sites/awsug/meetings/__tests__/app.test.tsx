@@ -1,7 +1,7 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -40,7 +40,7 @@ import App from "../app";
 
 const mockRequireAuth = requireAuth as ReturnType<typeof vi.fn>;
 
-describe("meetings/app.tsx — create meeting button visibility", () => {
+describe("meetings/app.tsx", () => {
 	beforeEach(() => {
 		Object.defineProperty(window, "location", {
 			value: { pathname: "/meetings/index.html", assign: vi.fn() },
@@ -48,7 +48,7 @@ describe("meetings/app.tsx — create meeting button visibility", () => {
 		});
 	});
 
-	it("moderator sees create meeting button", async () => {
+	it("moderator sees open call room and create meeting buttons", async () => {
 		mockRequireAuth.mockReturnValue({
 			email: "mod@example.com",
 			sub: "sub-mod",
@@ -60,12 +60,15 @@ describe("meetings/app.tsx — create meeting button visibility", () => {
 
 		await waitFor(() =>
 			expect(
-				screen.getByRole("link", { name: /create meeting/i }),
+				screen.getByRole("button", { name: "awsug.meetings.openCallRoom" }),
 			).toBeInTheDocument(),
 		);
+		expect(
+			screen.getByRole("link", { name: "awsug.meetings.createMeeting" }),
+		).toBeInTheDocument();
 	});
 
-	it("member does not see create meeting button", async () => {
+	it("member sees open call room but not create meeting", async () => {
 		mockRequireAuth.mockReturnValue({
 			email: "member@example.com",
 			sub: "sub-mem",
@@ -77,11 +80,11 @@ describe("meetings/app.tsx — create meeting button visibility", () => {
 
 		await waitFor(() =>
 			expect(
-				screen.getByRole("button", { name: /open call room/i }),
+				screen.getByRole("button", { name: "awsug.meetings.openCallRoom" }),
 			).toBeInTheDocument(),
 		);
 		expect(
-			screen.queryByRole("link", { name: /create meeting/i }),
+			screen.queryByRole("link", { name: "awsug.meetings.createMeeting" }),
 		).not.toBeInTheDocument();
 	});
 
@@ -99,6 +102,26 @@ describe("meetings/app.tsx — create meeting button visibility", () => {
 			expect(
 				screen.getByText("awsug.meetings.pendingApproval"),
 			).toBeInTheDocument(),
+		);
+	});
+
+	it("clicking open call room renders JitsiEmbed inline", async () => {
+		mockRequireAuth.mockReturnValue({
+			email: "mod@example.com",
+			sub: "sub-mod",
+			groups: ["members", "moderators"],
+			idToken: "tok",
+		});
+
+		render(<App />);
+
+		const btn = await screen.findByRole("button", {
+			name: "awsug.meetings.openCallRoom",
+		});
+		fireEvent.click(btn);
+
+		await waitFor(() =>
+			expect(screen.getByTestId("jitsi-embed")).toBeInTheDocument(),
 		);
 	});
 });

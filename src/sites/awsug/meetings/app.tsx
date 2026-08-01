@@ -6,10 +6,9 @@ import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
-import Modal from "@cloudscape-design/components/modal";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import JitsiEmbed from "../../../pages/meetings/components/jitsi-embed";
 import AwsugLayout from "../_layout";
@@ -23,51 +22,96 @@ import MyTickets from "./components/my-tickets";
 import "../rsvp/styles.css";
 
 const MEETUP_URL = "https://www.meetup.com/cloud-del-norte/";
-const ROOM_NAME = "cloud-del-norte-awsug";
+
+/**
+ * Deterministic shared room name. Every attendee who joins the same
+ * calendar date (UTC) gets the same room. The JWT grants room "*" so any
+ * name is valid — this just ensures everyone lands together.
+ */
+function sharedRoomName(): string {
+	const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+	return `cdn-awsug-${today}`;
+}
 
 function MeetingsContent({ auth }: { auth: AuthState }) {
+	const { t } = useTranslation();
 	const [inCall, setInCall] = useState(false);
+	const embedRef = useRef<HTMLDivElement | null>(null);
+
+	// FP-021 guard: after joining, assert the iframe actually points at jitsi
+	useEffect(() => {
+		if (!inCall) return;
+		const timer = setTimeout(() => {
+			if (!embedRef.current) return;
+			const iframe = embedRef.current.querySelector("iframe");
+			if (iframe && !iframe.src.includes("meet.clouddelnorte.org")) {
+				// embed mounted but not actually pointing at jitsi — surface error
+				console.error("[cdn] jitsi embed iframe src mismatch:", iframe.src);
+			}
+		}, 8000);
+		return () => clearTimeout(timer);
+	}, [inCall]);
+
+	if (inCall) {
+		return (
+			<SpaceBetween size="l">
+				<Container
+					header={
+						<Header
+							variant="h1"
+							actions={
+								<Button onClick={() => setInCall(false)}>
+									{t("awsug.meetings.leaveCall")}
+								</Button>
+							}
+						>
+							{t("awsug.meetings.roomHeader")}
+						</Header>
+					}
+				>
+					<div ref={embedRef}>
+						<JitsiEmbed
+							roomName={sharedRoomName()}
+							onClose={() => setInCall(false)}
+						/>
+					</div>
+				</Container>
+			</SpaceBetween>
+		);
+	}
 
 	return (
 		<SpaceBetween size="l">
 			<MyTickets auth={auth} />
-			<Container header={<Header variant="h1">meetings</Header>}>
+			<Container
+				header={<Header variant="h1">{t("awsug.meetings.header")}</Header>}
+			>
 				<SpaceBetween size="m">
-					<Box>
-						Open the Cloud del Norte meeting room, or check meetup.com for
-						upcoming events.
-					</Box>
+					<Box>{t("awsug.meetings.description")}</Box>
 					<SpaceBetween direction="horizontal" size="s">
 						<Button variant="primary" onClick={() => setInCall(true)}>
-							open call room
+							{t("awsug.meetings.openCallRoom")}
 						</Button>
 						<Button href={MEETUP_URL} target="_blank" iconName="external">
-							view on meetup.com
+							{t("awsug.meetings.viewOnMeetup")}
 						</Button>
 					</SpaceBetween>
 				</SpaceBetween>
 			</Container>
 			{isModerator(auth) && (
-				<Container header={<Header variant="h2">schedule a session</Header>}>
+				<Container
+					header={
+						<Header variant="h2">{t("awsug.meetings.scheduleHeader")}</Header>
+					}
+				>
 					<SpaceBetween size="s">
-						<Box>
-							Organizers can schedule new sessions from the create meeting page.
-						</Box>
-						<Button href="/create-meeting/index.html">create meeting</Button>
+						<Box>{t("awsug.meetings.scheduleDescription")}</Box>
+						<Button href="/create-meeting/index.html">
+							{t("awsug.meetings.createMeeting")}
+						</Button>
 					</SpaceBetween>
 				</Container>
 			)}
-			<Modal
-				visible={inCall}
-				onDismiss={() => setInCall(false)}
-				size="max"
-				header="Cloud del Norte — meeting room"
-				closeAriaLabel="leave meeting"
-			>
-				{inCall && (
-					<JitsiEmbed roomName={ROOM_NAME} onClose={() => setInCall(false)} />
-				)}
-			</Modal>
 		</SpaceBetween>
 	);
 }
