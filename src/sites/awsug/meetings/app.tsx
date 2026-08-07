@@ -20,6 +20,7 @@ import {
 	requireAuth,
 } from "../_shared/auth";
 import "../rsvp/styles.css";
+import "../_shared/styles.css";
 
 const MEETUP_URL = "https://www.meetup.com/cloud-del-norte/";
 const ROOM_NAME = "cloud-del-norte-awsug";
@@ -151,8 +152,19 @@ function MeetingsContent({
 				<SpaceBetween size="m">
 					<Box>{t("awsug.meetings.openRoomDescription")}</Box>
 					<SpaceBetween direction="horizontal" size="s">
-						<Button variant="primary" onClick={handleManualJoin}>
-							{t("awsug.meetings.openCallRoom")}
+						<span className="cdn-join-call-btn">
+							<Button variant="primary" onClick={handleManualJoin}>
+								{t("awsug.meetings.openCallRoom")}
+							</Button>
+						</span>
+						<Button
+							iconName="copy"
+							onClick={() => {
+								const url = `${window.location.origin}/meetings/index.html`;
+								navigator.clipboard.writeText(url);
+							}}
+						>
+							{t("awsug.meetings.shareLink")}
 						</Button>
 						<Button href={MEETUP_URL} target="_blank" iconName="external">
 							{t("awsug.meetings.viewOnMeetup")}

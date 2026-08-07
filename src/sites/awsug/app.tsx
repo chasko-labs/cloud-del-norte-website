@@ -23,6 +23,7 @@ import {
 	isMember,
 	requireAuth,
 } from "./_shared/auth";
+import "./_shared/styles.css";
 
 function PendingScreen(_: { auth: AuthState }) {
 	const { t } = useTranslation();
@@ -98,6 +99,7 @@ function MemberHome({ auth }: { auth: AuthState }) {
 
 	const name = auth.name?.split(" ")[0] || firstName(auth.email);
 	const isMod = auth.groups.includes("moderators");
+	const { t } = useTranslation();
 
 	return (
 		<SpaceBetween size="l">
@@ -110,9 +112,11 @@ function MemberHome({ auth }: { auth: AuthState }) {
 				}
 			>
 				<SpaceBetween direction="horizontal" size="s">
-					<Button href="/meetings/index.html" variant="primary">
-						open call room
-					</Button>
+					<span className="cdn-join-call-btn">
+						<Button href="/meetings/index.html" variant="primary">
+							{t("awsug.meetings.openCallRoom")}
+						</Button>
+					</span>
 					{isMod && <Button href="/admin/index.html">admin panel</Button>}
 					{isMod && (
 						<Button href="/create-meeting/index.html">create meeting</Button>

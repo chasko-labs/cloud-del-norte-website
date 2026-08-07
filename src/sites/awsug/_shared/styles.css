@@ -1,0 +1,62 @@
+/* Join call CTA — on-brand animated pulse */
+.cdn-join-call-btn [class*="awsui_button"][class*="variant-primary"] {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-purple, #5a1f8a),
+		var(--cdn-violet, #9060f0)
+	) !important;
+	border: none !important;
+	box-shadow: 0 0 0 0 rgba(144, 96, 240, 0.5) !important;
+	animation: cdn-pulse-ring 2s ease-in-out infinite !important;
+	font-weight: 700 !important;
+	letter-spacing: 0.02em !important;
+	transition:
+		transform 0.15s ease,
+		box-shadow 0.15s ease !important;
+}
+
+.cdn-join-call-btn [class*="awsui_button"][class*="variant-primary"]:hover {
+	transform: scale(1.03) !important;
+	box-shadow: 0 4px 20px rgba(144, 96, 240, 0.4) !important;
+	animation: none !important;
+}
+
+.cdn-join-call-btn [class*="awsui_button"][class*="variant-primary"]:active {
+	transform: scale(0.98) !important;
+}
+
+@keyframes cdn-pulse-ring {
+	0% {
+		box-shadow: 0 0 0 0 rgba(144, 96, 240, 0.5);
+	}
+	70% {
+		box-shadow: 0 0 0 10px rgba(144, 96, 240, 0);
+	}
+	100% {
+		box-shadow: 0 0 0 0 rgba(144, 96, 240, 0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-join-call-btn [class*="awsui_button"][class*="variant-primary"] {
+		animation: none !important;
+	}
+}
+
+/* Dark mode */
+:root.awsui-dark-mode
+	.cdn-join-call-btn
+	[class*="awsui_button"][class*="variant-primary"] {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-violet, #9060f0),
+		var(--cdn-lavender, #d7c7ee)
+	) !important;
+	box-shadow: 0 0 0 0 rgba(215, 199, 238, 0.4) !important;
+}
+
+:root.awsui-dark-mode
+	.cdn-join-call-btn
+	[class*="awsui_button"][class*="variant-primary"]:hover {
+	box-shadow: 0 4px 20px rgba(215, 199, 238, 0.3) !important;
+}
