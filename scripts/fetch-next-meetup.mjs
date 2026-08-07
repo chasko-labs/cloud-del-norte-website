@@ -23,22 +23,22 @@ const OUT_PATH = join(OUT_DIR, "next-meetup.json");
 const ICAL_URL = "https://www.meetup.com/awsugclouddelnorte/events/ical/";
 const GROUP_URL = "https://www.meetup.com/awsugclouddelnorte/";
 
-// hardcoded past-event fallback. used only when the ical feed returns 0
+// hardcoded upcoming-event fallback. used only when the ical feed returns 0
 // parseable events (current state, since meetup.com does not always include
-// past events in the public ical export). update this when a more recent
-// past meetup should display, or when an upcoming meetup is scheduled (the
-// upcoming event from ical wins automatically once it appears).
-const PAST_FALLBACK = {
-	status: "past",
+// future events in the public ical export). update this when the next meetup
+// is scheduled — the upcoming event from ical wins automatically once it
+// appears in the feed.
+const UPCOMING_FALLBACK = {
+	status: "upcoming",
 	summary:
-		"👩🏾‍💻 Beginner Friendly 👩🏻‍🎓 Overview from AWS 🤖 Learn AI & Cloud 📚",
-	url: "https://www.meetup.com/awsugclouddelnorte/events/312792622/",
+		"🔬 Getting Started with Quantum Superpositions — Amazon Braket Part 1",
+	url: "https://www.meetup.com/awsugclouddelnorte/",
 	location: "Online event",
 	description:
-		"AWS Strands Agents — beginner-friendly overview hosted by Bryan C. Hands-on with live expert guidance: compute basics, databases, serverless, AI applications, cost management. Part of the 10,000 AIdeas competition for $1000 in cloud credits using AWS Free Tier 2026.",
-	// 2026-01-15 13:00 MST (UTC-7) = 2026-01-15 20:00 UTC
-	dtstart: "2026-01-15T20:00:00.000Z",
-	dtend: "2026-01-15T21:00:00.000Z",
+		"Hands-on Amazon Braket workshop: understanding multi-state superpositions, wavefunctions, measurement & collapse. Follow along with the AWS Braket Learning Plan. Joint event with AWS User Group Clarksville. Part 1 of a quantum computing series.",
+	// 2026-11-30 15:00 MST (UTC-7) = 2026-11-30 22:00 UTC
+	dtstart: "2026-11-30T22:00:00.000Z",
+	dtend: "2026-11-30T23:30:00.000Z",
 };
 
 // ── iCal parsing ──────────────────────────────────────────────────────────
@@ -202,15 +202,15 @@ try {
 		);
 	} else {
 		console.log(
-			"[fetch-next-meetup] feed had no parseable events; using PAST_FALLBACK",
+			"[fetch-next-meetup] feed had no parseable events; using UPCOMING_FALLBACK",
 		);
-		payload = PAST_FALLBACK;
+		payload = UPCOMING_FALLBACK;
 	}
 } catch (err) {
 	console.warn(
-		`[fetch-next-meetup] warn: fetch/parse failed — ${err.message}. Using PAST_FALLBACK.`,
+		`[fetch-next-meetup] warn: fetch/parse failed — ${err.message}. Using UPCOMING_FALLBACK.`,
 	);
-	payload = PAST_FALLBACK;
+	payload = UPCOMING_FALLBACK;
 }
 
 writeFileSync(OUT_PATH, JSON.stringify(payload, null, 2));
