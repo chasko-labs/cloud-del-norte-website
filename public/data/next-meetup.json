@@ -1,9 +1,9 @@
 {
   "status": "upcoming",
-  "summary": "Workshop: How AI agents really work",
-  "url": "https://www.meetup.com/awsugclouddelnorte/events/315665501/",
-  "location": "",
-  "description": "AWS UG Cloud Del Norte Casually paced supported workshop. We'll go as fast as our slowest progress & cross the finish line together, thus a 3 hour time-block. Run AI development on AWS - do this on your own account to leave the workshop with an agentic harness you control. Learn how to deploy open-weight models (Qwen3)",
-  "dtstart": "2026-08-01T01:00:00.000Z",
-  "dtend": "2026-08-01T04:00:00.000Z"
+  "summary": "🔬 Getting Started with Quantum Superpositions — Amazon Braket Part 1",
+  "url": "https://www.meetup.com/awsugclouddelnorte/",
+  "location": "Online event",
+  "description": "Hands-on Amazon Braket workshop: understanding multi-state superpositions, wavefunctions, measurement & collapse. Follow along with the AWS Braket Learning Plan. Joint event with AWS User Group Clarksville. Part 1 of a quantum computing series.",
+  "dtstart": "2026-08-30T21:00:00.000Z",
+  "dtend": "2026-08-30T22:30:00.000Z"
 }
