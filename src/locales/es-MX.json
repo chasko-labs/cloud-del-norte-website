@@ -838,6 +838,7 @@
 		"login": {
 			"title": "Iniciar sesión",
 			"pageContext": "Iniciar sesión en Nube del Norte",
+			"welcomeBack": "Bienvenido de vuelta",
 			"emailLabel": "Correo electrónico",
 			"emailPlaceholder": "tu@ejemplo.com",
 			"passwordLabel": "Contraseña",

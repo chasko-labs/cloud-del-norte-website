@@ -471,21 +471,11 @@ function LoginForm() {
 
 	return (
 		<div className="cdn-auth-form-inner">
-			<div className="cdn-auth-apply-cta">
-				<Box
-					variant="small"
-					textAlign="right"
-					margin={{ bottom: "s" }}
-					padding={{ right: "xl" }}
-				>
-					{t("auth.login.noAccount")}{" "}
-					<Link
-						href={`/signup/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
-					>
-						{t("auth.login.signUpLink")}
-					</Link>
+			<Box textAlign="center" margin={{ bottom: "m" }}>
+				<Box fontSize="heading-m" fontWeight="bold">
+					{t("auth.login.welcomeBack")}
 				</Box>
-			</div>
+			</Box>
 			<form
 				onSubmit={(e) => {
 					void handleCredentialsSubmit(e);
@@ -570,6 +560,13 @@ function LoginForm() {
 			)}
 			<Box margin={{ top: "m" }} textAlign="center">
 				<SpaceBetween size="xs">
+					<Box fontSize="heading-s">
+						<Link
+							href={`/signup/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
+						>
+							{t("auth.login.noAccount")} {t("auth.login.signUpLink")}
+						</Link>
+					</Box>
 					<Link href="/forgot-password/index.html">
 						{t("auth.login.forgotPassword")}
 					</Link>

@@ -838,6 +838,7 @@
 		"login": {
 			"title": "Sign in",
 			"pageContext": "Sign in to Cloud del Norte",
+			"welcomeBack": "Welcome back",
 			"emailLabel": "Email",
 			"emailPlaceholder": "you@example.com",
 			"passwordLabel": "Password",
