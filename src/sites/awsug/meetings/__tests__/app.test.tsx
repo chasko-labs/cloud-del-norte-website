@@ -53,7 +53,10 @@ vi.mock("../../../../pages/meetings/components/jitsi-embed", () => ({
 	default: ({
 		roomName,
 		onClose,
-	}: { roomName?: string; onClose?: () => void }) =>
+	}: {
+		roomName?: string;
+		onClose?: () => void;
+	}) =>
 		React.createElement("div", {
 			"data-testid": "jitsi-embed",
 			"data-room": roomName,
