@@ -471,11 +471,6 @@ function LoginForm() {
 
 	return (
 		<div className="cdn-auth-form-inner">
-			<Box textAlign="center" margin={{ bottom: "m" }}>
-				<Box fontSize="heading-m" fontWeight="bold">
-					{t("auth.login.welcomeBack")}
-				</Box>
-			</Box>
 			<form
 				onSubmit={(e) => {
 					void handleCredentialsSubmit(e);
@@ -558,20 +553,6 @@ function LoginForm() {
 					</Alert>
 				</Box>
 			)}
-			<Box margin={{ top: "m" }} textAlign="center">
-				<SpaceBetween size="xs">
-					<Box fontSize="heading-s">
-						<Link
-							href={`/signup/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
-						>
-							{t("auth.login.noAccount")} {t("auth.login.signUpLink")}
-						</Link>
-					</Box>
-					<Link href="/forgot-password/index.html">
-						{t("auth.login.forgotPassword")}
-					</Link>
-				</SpaceBetween>
-			</Box>
 			{passkeyPlatformAvailable && (
 				<Box margin={{ top: "m" }} textAlign="center">
 					<Button
@@ -595,6 +576,20 @@ function LoginForm() {
 					</Alert>
 				</Box>
 			)}
+			<Box margin={{ top: "m" }} textAlign="center">
+				<SpaceBetween size="xs">
+					<Link href="/forgot-password/index.html">
+						{t("auth.login.forgotPassword")}
+					</Link>
+					<Box fontSize="heading-s">
+						<Link
+							href={`/signup/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
+						>
+							{t("auth.login.noAccount")} {t("auth.login.signUpLink")}
+						</Link>
+					</Box>
+				</SpaceBetween>
+			</Box>
 		</div>
 	);
 }
