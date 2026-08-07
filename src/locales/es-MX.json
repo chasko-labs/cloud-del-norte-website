@@ -1001,7 +1001,11 @@
 			"emptyBanned": "Sin usuarios bloqueados",
 			"moderatorAccessRequired": "No tienes acceso al área de admin. Esto es solo pa' moderadores.",
 			"approveSuccess": "{{email}} aprobado/a y notificado/a por correo.",
-			"approveSuccessNoEmail": "Usuario aprobado. Notificación por correo no disponible."
+			"approveSuccessNoEmail": "Usuario aprobado. Notificación por correo no disponible.",
+			"meetingCreated": "¡Junta creada!",
+			"addToCalendar": "Agregar a Google Calendar",
+			"shareUrl": "URL para compartir",
+			"done": "Listo"
 		},
 		"meetings": {
 			"pendingApproval": "tu solicitud está pendiente. las juntas van a estar disponibles cuando te aprueben.",

@@ -8,12 +8,14 @@ import DatePicker from "@cloudscape-design/components/date-picker";
 import FormField from "@cloudscape-design/components/form-field";
 import Header from "@cloudscape-design/components/header";
 import Input from "@cloudscape-design/components/input";
+import Link from "@cloudscape-design/components/link";
 import Modal from "@cloudscape-design/components/modal";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Table from "@cloudscape-design/components/table";
 import Textarea from "@cloudscape-design/components/textarea";
 import TimeInput from "@cloudscape-design/components/time-input";
 import { useCallback, useEffect, useState } from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	type AdminMeeting,
 	createMeeting,
@@ -23,6 +25,7 @@ import {
 	type ScheduledMeetingApi,
 	updateAdminMeeting,
 } from "../_shared/api";
+import { buildGoogleCalendarUrl } from "../_shared/calendar";
 
 const SHARE_BASE = "https://clouddelnorte.org/m/";
 
@@ -63,6 +66,7 @@ const EMPTY_EDIT: EditForm = {
 };
 
 export function MeetingsTable() {
+	const { t } = useTranslation();
 	const [meetings, setMeetings] = useState<ScheduledMeetingApi[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [showCreate, setShowCreate] = useState(false);
@@ -71,6 +75,9 @@ export function MeetingsTable() {
 	const [saving, setSaving] = useState(false);
 	const [deletingId, setDeletingId] = useState<string | null>(null);
 	const [invitees, setInvitees] = useState("");
+	const [lastCreated, setLastCreated] = useState<ScheduledMeetingApi | null>(
+		null,
+	);
 
 	// Edit state
 	const [editTarget, setEditTarget] = useState<AdminMeeting | null>(null);
@@ -129,9 +136,7 @@ export function MeetingsTable() {
 					: undefined,
 			});
 			setMeetings((prev) => [...prev, created]);
-			setShowCreate(false);
-			setForm(EMPTY_FORM);
-			setInvitees("");
+			setLastCreated(created);
 		} catch {
 			setError("Failed to create meeting.");
 		} finally {
@@ -387,92 +392,135 @@ export function MeetingsTable() {
 				onDismiss={() => {
 					setShowCreate(false);
 					setForm(EMPTY_FORM);
+					setLastCreated(null);
 					setError("");
 				}}
 				header="Create Meeting"
 				footer={
-					<SpaceBetween direction="horizontal" size="xs">
-						<Button
-							onClick={() => {
-								setShowCreate(false);
-								setForm(EMPTY_FORM);
-								setError("");
-							}}
-						>
-							Cancel
-						</Button>
+					lastCreated ? (
 						<Button
 							variant="primary"
-							loading={saving}
 							onClick={() => {
-								void handleCreate();
+								setLastCreated(null);
+								setShowCreate(false);
+								setForm(EMPTY_FORM);
+								setInvitees("");
 							}}
 						>
-							Create
+							{t("awsug.admin.done")}
 						</Button>
-					</SpaceBetween>
+					) : (
+						<SpaceBetween direction="horizontal" size="xs">
+							<Button
+								onClick={() => {
+									setShowCreate(false);
+									setForm(EMPTY_FORM);
+									setError("");
+								}}
+							>
+								Cancel
+							</Button>
+							<Button
+								variant="primary"
+								loading={saving}
+								onClick={() => {
+									void handleCreate();
+								}}
+							>
+								Create
+							</Button>
+						</SpaceBetween>
+					)
 				}
 			>
-				<SpaceBetween size="m">
-					{error && <Alert type="error">{error}</Alert>}
-					<FormField label="Title">
-						<Input
-							value={form.title}
-							onChange={({ detail }) =>
-								setForm((f) => ({ ...f, title: detail.value }))
-							}
-							placeholder="Meeting title"
-						/>
-					</FormField>
-					<FormField label="Date">
-						<DatePicker
-							value={form.date}
-							onChange={({ detail }) =>
-								setForm((f) => ({ ...f, date: detail.value }))
-							}
-							placeholder="YYYY/MM/DD"
-						/>
-					</FormField>
-					<FormField label="Time">
-						<TimeInput
-							value={form.time}
-							onChange={({ detail }) =>
-								setForm((f) => ({ ...f, time: detail.value }))
-							}
-							format="hh:mm"
-							placeholder="hh:mm"
-						/>
-					</FormField>
-					<FormField label="Duration (minutes)">
-						<Input
-							value={form.duration_minutes}
-							onChange={({ detail }) =>
-								setForm((f) => ({ ...f, duration_minutes: detail.value }))
-							}
-							type="number"
-							placeholder="60"
-						/>
-					</FormField>
-					<FormField label="Description">
-						<Textarea
-							value={form.description}
-							onChange={({ detail }) =>
-								setForm((f) => ({ ...f, description: detail.value }))
-							}
-							placeholder="Optional description"
-						/>
-					</FormField>
-					<FormField
-						label="invite (emails, comma-separated)"
-						description="optional — sends email invites with meeting link"
-					>
-						<Input
-							value={invitees}
-							onChange={({ detail }) => setInvitees(detail.value)}
-							placeholder="alice@example.com, bob@example.com"
-						/>
-					</FormField>
-				</SpaceBetween>
+				{lastCreated ? (
+					<SpaceBetween size="m">
+						<Alert type="success">{t("awsug.admin.meetingCreated")}</Alert>
+						<FormField label={t("awsug.admin.shareUrl")}>
+							<Link href={`${SHARE_BASE}${lastCreated.room_hash}`} external>
+								{`${SHARE_BASE}${lastCreated.room_hash}`}
+							</Link>
+						</FormField>
+						<Button
+							iconName="external"
+							onClick={() => {
+								window.open(
+									buildGoogleCalendarUrl({
+										title: lastCreated.title,
+										scheduledStart: lastCreated.scheduled_start,
+										durationMinutes: lastCreated.duration_minutes,
+										description: lastCreated.description,
+										roomHash: lastCreated.room_hash,
+									}),
+									"_blank",
+								);
+							}}
+						>
+							{t("awsug.admin.addToCalendar")}
+						</Button>
+					</SpaceBetween>
+				) : (
+					<SpaceBetween size="m">
+						{error && <Alert type="error">{error}</Alert>}
+						<FormField label="Title">
+							<Input
+								value={form.title}
+								onChange={({ detail }) =>
+									setForm((f) => ({ ...f, title: detail.value }))
+								}
+								placeholder="Meeting title"
+							/>
+						</FormField>
+						<FormField label="Date">
+							<DatePicker
+								value={form.date}
+								onChange={({ detail }) =>
+									setForm((f) => ({ ...f, date: detail.value }))
+								}
+								placeholder="YYYY/MM/DD"
+							/>
+						</FormField>
+						<FormField label="Time">
+							<TimeInput
+								value={form.time}
+								onChange={({ detail }) =>
+									setForm((f) => ({ ...f, time: detail.value }))
+								}
+								format="hh:mm"
+								placeholder="hh:mm"
+							/>
+						</FormField>
+						<FormField label="Duration (minutes)">
+							<Input
+								value={form.duration_minutes}
+								onChange={({ detail }) =>
+									setForm((f) => ({ ...f, duration_minutes: detail.value }))
+								}
+								type="number"
+								placeholder="60"
+							/>
+						</FormField>
+						<FormField label="Description">
+							<Textarea
+								value={form.description}
+								onChange={({ detail }) =>
+									setForm((f) => ({ ...f, description: detail.value }))
+								}
+								placeholder="Optional description"
+							/>
+						</FormField>
+						<FormField
+							label="invite (emails, comma-separated)"
+							description="optional — sends email invites with meeting link"
+						>
+							<Input
+								value={invitees}
+								onChange={({ detail }) => setInvitees(detail.value)}
+								placeholder="alice@example.com, bob@example.com"
+							/>
+						</FormField>
+					</SpaceBetween>
+				)}
 			</Modal>
 
 			<SpaceBetween size="m">

@@ -1001,7 +1001,11 @@
 			"emptyBanned": "no banned users",
 			"moderatorAccessRequired": "You don't have access to the admin area. This area is for moderators only.",
 			"approveSuccess": "Approved {{email}} — welcome email sent.",
-			"approveSuccessNoEmail": "Approved. Email notification unavailable."
+			"approveSuccessNoEmail": "Approved. Email notification unavailable.",
+			"meetingCreated": "Meeting created!",
+			"addToCalendar": "Add to Google Calendar",
+			"shareUrl": "Share URL",
+			"done": "Done"
 		},
 		"meetings": {
 			"pendingApproval": "your application is pending approval. meetings are available once approved.",
