@@ -124,9 +124,10 @@ export interface ScheduledMeetingApi {
 }
 
 export async function listMeetings(): Promise<ScheduledMeetingApi[]> {
-	const res = await apiRequest("/admin/scheduled-meetings", "GET");
+	const res = await apiRequest("/admin/meetings", "GET");
 	if (!res.ok) throw new Error(`list meetings failed: ${res.status}`);
-	return res.json() as Promise<ScheduledMeetingApi[]>;
+	const data = (await res.json()) as { meetings: ScheduledMeetingApi[] };
+	return data.meetings;
 }
 
 export async function createMeeting(body: {
@@ -136,7 +137,7 @@ export async function createMeeting(body: {
 	duration_minutes: number;
 	invitees?: string[];
 }): Promise<ScheduledMeetingApi> {
-	const res = await apiRequest("/admin/scheduled-meetings", "POST", body);
+	const res = await apiRequest("/admin/meetings", "POST", body);
 	if (!res.ok) throw new Error(`create meeting failed: ${res.status}`);
 	return res.json() as Promise<ScheduledMeetingApi>;
 }
@@ -145,7 +146,8 @@ export async function deleteMeeting(
 	meeting_id: string,
 	scheduled_start: string,
 ): Promise<void> {
-	const res = await apiRequest("/admin/scheduled-meetings", "DELETE", {
+	// NOTE: DELETE route not yet provisioned on API Gateway
+	const res = await apiRequest("/admin/meetings", "DELETE", {
 		meeting_id,
 		scheduled_start,
 	});
