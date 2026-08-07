@@ -124,7 +124,7 @@ describe("verification-setup page", () => {
 				"1",
 			);
 			expect(window.location.assign).toHaveBeenCalledWith(
-				expect.stringContaining("awsug.clouddelnorte.org/auth/redeem"),
+				expect.stringContaining("clouddelnorte.org/auth/callback/"),
 			);
 		});
 	});
@@ -181,7 +181,7 @@ describe("verification-setup page", () => {
 					"123456",
 				);
 				expect(window.location.assign).toHaveBeenCalledWith(
-					expect.stringContaining("awsug.clouddelnorte.org/auth/redeem"),
+					expect.stringContaining("clouddelnorte.org/auth/callback/"),
 				);
 			});
 		},

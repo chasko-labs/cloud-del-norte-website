@@ -60,7 +60,7 @@ function ForgotPasswordForm() {
 	const [mfaCode, setMfaCode] = useState("");
 	const [mfaChallengeName, setMfaChallengeName] = useState("");
 
-	const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
+	const MAIN_ORIGIN = "https://clouddelnorte.org";
 
 	function redirectWithTokens() {
 		const idToken = sessionStorage.getItem("cdn.idToken") ?? "";
@@ -68,10 +68,16 @@ function ForgotPasswordForm() {
 		const refreshToken = sessionStorage.getItem("cdn.refreshToken") ?? "";
 		const returnTo =
 			new URLSearchParams(window.location.search).get("return_to") ?? "";
-		const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
-		window.location.assign(
-			`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
-		);
+
+		let finalReturnTo = returnTo;
+		if (returnTo.startsWith("/")) {
+			finalReturnTo = `${MAIN_ORIGIN}${returnTo}`;
+		} else if (!returnTo) {
+			finalReturnTo = `${MAIN_ORIGIN}/`;
+		}
+
+		const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(finalReturnTo)}`;
+		window.location.assign(`${MAIN_ORIGIN}/auth/callback/#${fragment}`);
 	}
 
 	async function handleRequestCode(e: React.FormEvent) {

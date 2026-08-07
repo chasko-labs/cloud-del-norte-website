@@ -27,7 +27,13 @@ describe("/auth/callback app", () => {
 	it("on success calls handleCallback and redirects to returnTo", async () => {
 		const replace = vi.fn();
 		Object.defineProperty(window, "location", {
-			value: { replace, href: "https://example.test/auth/callback?code=xyz" },
+			value: {
+				replace,
+				href: "https://example.test/auth/callback?code=xyz",
+				hash: "",
+				pathname: "/auth/callback",
+				search: "?code=xyz",
+			},
 			writable: true,
 		});
 
@@ -48,7 +54,13 @@ describe("/auth/callback app", () => {
 	it("defaults redirect to / when returnTo is empty", async () => {
 		const replace = vi.fn();
 		Object.defineProperty(window, "location", {
-			value: { replace, href: "https://example.test/auth/callback?code=xyz" },
+			value: {
+				replace,
+				href: "https://example.test/auth/callback?code=xyz",
+				hash: "",
+				pathname: "/auth/callback",
+				search: "?code=xyz",
+			},
 			writable: true,
 		});
 		const { handleCallback } = await import("../../../../lib/auth");
@@ -64,6 +76,15 @@ describe("/auth/callback app", () => {
 	});
 
 	it("renders error alert when handleCallback throws (no code)", async () => {
+		Object.defineProperty(window, "location", {
+			value: {
+				href: "https://example.test/auth/callback",
+				hash: "",
+				pathname: "/auth/callback",
+				search: "",
+			},
+			writable: true,
+		});
 		const { handleCallback } = await import("../../../../lib/auth");
 		(handleCallback as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
 			new Error("oidc callback missing code"),
@@ -77,6 +98,15 @@ describe("/auth/callback app", () => {
 	});
 
 	it("renders error alert when token exchange fails (PKCE mismatch)", async () => {
+		Object.defineProperty(window, "location", {
+			value: {
+				href: "https://example.test/auth/callback?code=abc",
+				hash: "",
+				pathname: "/auth/callback",
+				search: "?code=abc",
+			},
+			writable: true,
+		});
 		const { handleCallback } = await import("../../../../lib/auth");
 		(handleCallback as ReturnType<typeof vi.fn>).mockRejectedValueOnce(
 			new Error("oidc token exchange failed: 400"),

@@ -34,7 +34,7 @@ import CodeInput from "../_layout/CodeInput";
 
 type VerifyMethod = "email" | "totp" | "sms";
 
-const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
+const MAIN_ORIGIN = "https://clouddelnorte.org";
 /* match verify/app.tsx — 120s gives time to switch to email/authenticator
    apps and back without missing the resend window. was 30s, too short */
 const RESEND_COOLDOWN_SECS = 120;
@@ -289,9 +289,7 @@ function SignupWizard() {
 			setSubmitState("success");
 			clearWizardState();
 			window.setTimeout(() => {
-				window.location.assign(
-					`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
-				);
+				window.location.assign(`${MAIN_ORIGIN}/auth/callback/#${fragment}`);
 			}, 500);
 		} catch (err) {
 			if (err instanceof AuthError) {
@@ -390,9 +388,7 @@ function SignupWizard() {
 				new URLSearchParams(window.location.search).get("return_to") ?? "";
 			const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
 			clearWizardState();
-			window.location.assign(
-				`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`,
-			);
+			window.location.assign(`${MAIN_ORIGIN}/auth/callback/#${fragment}`);
 		} catch (err) {
 			setTotpError(
 				err instanceof AuthError ? err.message : "TOTP verification failed",

@@ -30,7 +30,7 @@ import {
 import AuthLayout from "../_layout";
 import { stashReturnTo } from "../_shared/return-to";
 
-const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
+const MAIN_ORIGIN = "https://clouddelnorte.org";
 
 type Step = "credentials" | "mfa-setup" | "mfa-verify";
 
@@ -51,8 +51,17 @@ function redirectWithTokens() {
 		return;
 	}
 
-	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
-	window.location.assign(`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`);
+	// Ensure returnTo is a full URL so the chain knows which origin to land on
+	let finalReturnTo = returnTo;
+	if (returnTo.startsWith("/")) {
+		finalReturnTo = `${MAIN_ORIGIN}${returnTo}`;
+	} else if (!returnTo) {
+		finalReturnTo = `${MAIN_ORIGIN}/`;
+	}
+
+	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(finalReturnTo)}`;
+	// Chain through main site callback to propagate tokens to all subdomains
+	window.location.assign(`${MAIN_ORIGIN}/auth/callback/#${fragment}`);
 }
 
 function LoginForm() {

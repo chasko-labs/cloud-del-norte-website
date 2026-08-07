@@ -62,9 +62,18 @@ export default function App() {
 
 		const returnTo = params.get("return_to") || getReturnTo();
 		clearReturnTo();
-		window.location.assign(
-			returnTo?.startsWith("/") ? returnTo : "/index.html",
-		);
+
+		// If returnTo points to a different origin, redirect there directly
+		if (
+			returnTo?.startsWith("https://") &&
+			!returnTo.startsWith("https://awsug.clouddelnorte.org")
+		) {
+			window.location.assign(returnTo);
+		} else {
+			window.location.assign(
+				returnTo?.startsWith("/") ? returnTo : "/index.html",
+			);
+		}
 	}, []);
 
 	if (error) {

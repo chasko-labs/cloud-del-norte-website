@@ -17,7 +17,7 @@ import AuthLayout from "../_layout";
 import { clearReturnTo, getReturnTo } from "../_shared/return-to";
 import TotpStep from "./totp-step";
 
-const AWSUG_ORIGIN = "https://awsug.clouddelnorte.org";
+const MAIN_ORIGIN = "https://clouddelnorte.org";
 
 type Selection = "totp" | "passkey" | "skip";
 
@@ -39,7 +39,7 @@ function redirectToFeed() {
 	const returnTo = getReturnTo();
 	clearReturnTo();
 	const fragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
-	window.location.assign(`${AWSUG_ORIGIN}/auth/redeem/index.html#${fragment}`);
+	window.location.assign(`${MAIN_ORIGIN}/auth/callback/#${fragment}`);
 }
 
 function SetupForm() {

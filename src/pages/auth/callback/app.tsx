@@ -13,6 +13,44 @@ export default function App() {
 	const [errorMsg, setErrorMsg] = useState<string>("");
 
 	useEffect(() => {
+		// Cross-origin token handoff: if fragment contains tokens, store them and
+		// forward to awsug to complete the propagation chain.
+		const fragment = window.location.hash.slice(1);
+		if (fragment?.includes("id_token=")) {
+			history.replaceState(
+				null,
+				"",
+				window.location.pathname + window.location.search,
+			);
+			const params = new URLSearchParams(fragment);
+			const idToken = params.get("id_token") ?? "";
+			const accessToken = params.get("access_token") ?? "";
+			const refreshToken = params.get("refresh_token") ?? "";
+			const returnTo = params.get("return_to") ?? "";
+
+			if (idToken && accessToken) {
+				sessionStorage.setItem("cdn.idToken", idToken);
+				sessionStorage.setItem("cdn.accessToken", accessToken);
+				if (refreshToken)
+					sessionStorage.setItem("cdn.refreshToken", refreshToken);
+				try {
+					const payload = JSON.parse(
+						atob(idToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")),
+					);
+					if (payload.exp)
+						sessionStorage.setItem("cdn.expiresAt", String(payload.exp * 1000));
+				} catch {
+					/* best effort */
+				}
+
+				const awsugFragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(returnTo)}`;
+				window.location.assign(
+					`https://awsug.clouddelnorte.org/auth/redeem/index.html#${awsugFragment}`,
+				);
+				return;
+			}
+		}
+
 		let cancelled = false;
 		(async () => {
 			try {
