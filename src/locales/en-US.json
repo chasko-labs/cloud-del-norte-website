@@ -936,7 +936,12 @@
 			"backToSignIn": "Back to sign in",
 			"codeSentHeader": "Check your email",
 			"codeSentBody": "We sent a 6-digit code to {email}. Enter it below along with your new password.",
-			"genericError": "Something went wrong. Try again."
+			"genericError": "Something went wrong. Try again.",
+			"signingIn": "Signing you in…",
+			"successMessage": "Password updated — you can now sign in with your new password.",
+			"mfaPrompt": "Your account has multi-factor authentication enabled. Enter the 6-digit code from your authenticator app.",
+			"mfaCodeLabel": "6-digit code from your authenticator",
+			"mfaVerifyButton": "Verify & sign in"
 		},
 		"verificationSetup": {
 			"title": "Set up extra verification",
@@ -996,7 +1001,11 @@
 			"emptyBanned": "no banned users",
 			"moderatorAccessRequired": "You don't have access to the admin area. This area is for moderators only.",
 			"approveSuccess": "Approved {{email}} — welcome email sent.",
-			"approveSuccessNoEmail": "Approved. Email notification unavailable."
+			"approveSuccessNoEmail": "Approved. Email notification unavailable.",
+			"meetingCreated": "Meeting created!",
+			"addToCalendar": "Add to Google Calendar",
+			"shareUrl": "Share URL",
+			"done": "Done"
 		},
 		"meetings": {
 			"pendingApproval": "your application is pending approval. meetings are available once approved.",

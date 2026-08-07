@@ -26,7 +26,11 @@
 	.cdn-passkeys-wrap
 	[class*="awsui_root_"][class*="awsui_variant-default"] {
 	background-image:
-		linear-gradient(135deg, var(--cdn-passkey-surface-dark, #1c2230) 0%, #141030 100%),
+		linear-gradient(
+			135deg,
+			var(--cdn-passkey-surface-dark, #1c2230) 0%,
+			#141030 100%
+		),
 		linear-gradient(
 			135deg,
 			var(--cdn-violet) 0%,

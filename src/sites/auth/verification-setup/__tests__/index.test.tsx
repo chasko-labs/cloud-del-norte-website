@@ -1,6 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as cognito from "../../../../lib/cognito";
+import { ENABLE_TOTP_SETUP } from "../../../../lib/feature-flags";
 
 vi.mock("../../../../lib/cognito", () => ({
 	getAccessToken: vi.fn().mockReturnValue("fake-token"),
@@ -70,19 +71,22 @@ describe("verification-setup page", () => {
 		expect(sessionStorage.getItem("cdn.needsVerificationSetup")).toBe("1");
 	});
 
-	it("renders three method options when authenticated", async () => {
+	it("renders method options when authenticated (TOTP hidden by default)", async () => {
 		setAuthSession();
 		render(<App />);
 
 		await waitFor(() => {
-			expect(
-				screen.getByText(/authenticator app \(TOTP\)/i),
-			).toBeInTheDocument();
+			expect(screen.getByText(/passkey \(biometric/i)).toBeInTheDocument();
 		});
-		expect(screen.getByText(/passkey \(biometric/i)).toBeInTheDocument();
 		expect(screen.getAllByText(/skip for now/i).length).toBeGreaterThanOrEqual(
 			1,
 		);
+		// TOTP should NOT be visible when flag is off
+		if (!ENABLE_TOTP_SETUP) {
+			expect(
+				screen.queryByText(/authenticator app \(TOTP\)/i),
+			).not.toBeInTheDocument();
+		}
 	});
 
 	it("passkey selection + continue navigates to passkeys page", async () => {
@@ -92,7 +96,8 @@ describe("verification-setup page", () => {
 
 		await waitFor(() => screen.getByText(/passkey \(biometric/i));
 		const radios = screen.getAllByRole("radio");
-		fireEvent.click(radios[1]); // passkey
+		// passkey is the first option when TOTP is hidden
+		fireEvent.click(radios[ENABLE_TOTP_SETUP ? 1 : 0]);
 		fireEvent.click(screen.getByRole("button", { name: /continue/i }));
 
 		await waitFor(() => {
@@ -109,7 +114,8 @@ describe("verification-setup page", () => {
 
 		await waitFor(() => screen.getAllByText(/skip for now/i));
 		const radios = screen.getAllByRole("radio");
-		fireEvent.click(radios[2]); // skip
+		// skip is the second option when TOTP is hidden
+		fireEvent.click(radios[ENABLE_TOTP_SETUP ? 2 : 1]);
 		fireEvent.click(screen.getByRole("button", { name: /skip for now/i }));
 
 		await waitFor(() => {
@@ -123,89 +129,106 @@ describe("verification-setup page", () => {
 		});
 	});
 
-	it("TOTP selection + continue shows QR code step", async () => {
-		vi.mocked(cognito.associateSoftwareTokenWithAccessToken).mockResolvedValue({
-			secretCode: "JBSWY3DPEHPK3PXP",
-		} as never);
-		setAuthSession();
-		render(<App />);
+	it.skipIf(!ENABLE_TOTP_SETUP)(
+		"TOTP selection + continue shows QR code step",
+		async () => {
+			vi.mocked(
+				cognito.associateSoftwareTokenWithAccessToken,
+			).mockResolvedValue({
+				secretCode: "JBSWY3DPEHPK3PXP",
+			} as never);
+			setAuthSession();
+			render(<App />);
 
-		await waitFor(() => screen.getByText(/authenticator app \(TOTP\)/i));
-		// TOTP is default — click Continue
-		fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+			await waitFor(() => screen.getByText(/authenticator app \(TOTP\)/i));
+			// TOTP is default — click Continue
+			fireEvent.click(screen.getByRole("button", { name: /continue/i }));
 
-		await waitFor(() => {
-			expect(screen.getByTestId("qr-code")).toBeInTheDocument();
-		});
-	});
+			await waitFor(() => {
+				expect(screen.getByTestId("qr-code")).toBeInTheDocument();
+			});
+		},
+	);
 
-	it("verifySoftwareTokenWithAccessToken success redirects to feed", async () => {
-		vi.mocked(cognito.associateSoftwareTokenWithAccessToken).mockResolvedValue({
-			secretCode: "JBSWY3DPEHPK3PXP",
-		} as never);
-		vi.mocked(cognito.verifySoftwareTokenWithAccessToken).mockResolvedValue(
-			undefined as never,
-		);
-		setAuthSession();
-		render(<App />);
-
-		// navigate to QR step
-		await waitFor(() => screen.getByText(/authenticator app \(TOTP\)/i));
-		fireEvent.click(screen.getByRole("button", { name: /continue/i }));
-		await waitFor(() => screen.getByTestId("qr-code"));
-
-		// enter 6-digit code and submit
-		const input = screen.getByRole("textbox");
-		fireEvent.change(input, { target: { value: "123456" } });
-		fireEvent.click(screen.getByRole("button", { name: /verify & continue/i }));
-
-		await waitFor(() => {
-			expect(cognito.verifySoftwareTokenWithAccessToken).toHaveBeenCalledWith(
-				"123456",
+	it.skipIf(!ENABLE_TOTP_SETUP)(
+		"verifySoftwareTokenWithAccessToken success redirects to feed",
+		async () => {
+			vi.mocked(
+				cognito.associateSoftwareTokenWithAccessToken,
+			).mockResolvedValue({
+				secretCode: "JBSWY3DPEHPK3PXP",
+			} as never);
+			vi.mocked(cognito.verifySoftwareTokenWithAccessToken).mockResolvedValue(
+				undefined as never,
 			);
-			expect(window.location.assign).toHaveBeenCalledWith(
-				expect.stringContaining("awsug.clouddelnorte.org/auth/redeem"),
+			setAuthSession();
+			render(<App />);
+
+			// navigate to QR step
+			await waitFor(() => screen.getByText(/authenticator app \(TOTP\)/i));
+			fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+			await waitFor(() => screen.getByTestId("qr-code"));
+
+			// enter 6-digit code and submit
+			const input = screen.getByRole("textbox");
+			fireEvent.change(input, { target: { value: "123456" } });
+			fireEvent.click(
+				screen.getByRole("button", { name: /verify & continue/i }),
 			);
-		});
-	});
 
-	it("verifySoftwareTokenWithAccessToken failure shows inline error, stays on totp step", async () => {
-		vi.mocked(cognito.associateSoftwareTokenWithAccessToken).mockResolvedValue({
-			secretCode: "JBSWY3DPEHPK3PXP",
-		} as never);
-		vi.mocked(cognito.verifySoftwareTokenWithAccessToken).mockRejectedValue(
-			new cognito.AuthError("Code mismatch"),
-		);
-		setAuthSession();
-		render(<App />);
+			await waitFor(() => {
+				expect(cognito.verifySoftwareTokenWithAccessToken).toHaveBeenCalledWith(
+					"123456",
+				);
+				expect(window.location.assign).toHaveBeenCalledWith(
+					expect.stringContaining("awsug.clouddelnorte.org/auth/redeem"),
+				);
+			});
+		},
+	);
 
-		// navigate to QR step
-		await waitFor(() => screen.getByText(/authenticator app \(TOTP\)/i));
-		fireEvent.click(screen.getByRole("button", { name: /continue/i }));
-		await waitFor(() => screen.getByTestId("qr-code"));
+	it.skipIf(!ENABLE_TOTP_SETUP)(
+		"verifySoftwareTokenWithAccessToken failure shows inline error, stays on totp step",
+		async () => {
+			vi.mocked(
+				cognito.associateSoftwareTokenWithAccessToken,
+			).mockResolvedValue({
+				secretCode: "JBSWY3DPEHPK3PXP",
+			} as never);
+			vi.mocked(cognito.verifySoftwareTokenWithAccessToken).mockRejectedValue(
+				new cognito.AuthError("Code mismatch"),
+			);
+			setAuthSession();
+			render(<App />);
 
-		// enter 6-digit code and submit
-		const input = screen.getByRole("textbox");
-		fireEvent.change(input, { target: { value: "999999" } });
+			// navigate to QR step
+			await waitFor(() => screen.getByText(/authenticator app \(TOTP\)/i));
+			fireEvent.click(screen.getByRole("button", { name: /continue/i }));
+			await waitFor(() => screen.getByTestId("qr-code"));
 
-		const verifyBtn = screen.getByRole("button", {
-			name: /verify & continue/i,
-		});
-		fireEvent.click(verifyBtn);
+			// enter 6-digit code and submit
+			const input = screen.getByRole("textbox");
+			fireEvent.change(input, { target: { value: "999999" } });
 
-		await waitFor(() =>
-			expect(cognito.verifySoftwareTokenWithAccessToken).toHaveBeenCalled(),
-		);
-		// error shown — stays on totp step
-		await waitFor(() =>
+			const verifyBtn = screen.getByRole("button", {
+				name: /verify & continue/i,
+			});
+			fireEvent.click(verifyBtn);
+
+			await waitFor(() =>
+				expect(cognito.verifySoftwareTokenWithAccessToken).toHaveBeenCalled(),
+			);
+			// error shown — stays on totp step
+			await waitFor(() =>
+				expect(
+					screen.getAllByText(/code mismatch|something went wrong/i).length,
+				).toBeGreaterThan(0),
+			);
 			expect(
-				screen.getAllByText(/code mismatch|something went wrong/i).length,
-			).toBeGreaterThan(0),
-		);
-		expect(
-			screen.getByRole("button", { name: /verify & continue/i }),
-		).toBeInTheDocument();
-	});
+				screen.getByRole("button", { name: /verify & continue/i }),
+			).toBeInTheDocument();
+		},
+	);
 
 	it("redirectToFeed includes return_to from sessionStorage when search is empty", async () => {
 		setAuthSession();
@@ -215,7 +238,7 @@ describe("verification-setup page", () => {
 
 		await waitFor(() => screen.getAllByText(/skip for now/i));
 		const radios = screen.getAllByRole("radio");
-		fireEvent.click(radios[2]); // skip
+		fireEvent.click(radios[ENABLE_TOTP_SETUP ? 2 : 1]); // skip
 		fireEvent.click(screen.getByRole("button", { name: /skip for now/i }));
 
 		await waitFor(() => {
@@ -245,7 +268,7 @@ describe("verification-setup page", () => {
 
 		await waitFor(() => screen.getAllByText(/skip for now/i));
 		const radios = screen.getAllByRole("radio");
-		fireEvent.click(radios[2]); // skip
+		fireEvent.click(radios[ENABLE_TOTP_SETUP ? 2 : 1]); // skip
 		fireEvent.click(screen.getByRole("button", { name: /skip for now/i }));
 
 		await waitFor(() => {
@@ -265,7 +288,7 @@ describe("verification-setup page", () => {
 
 		await waitFor(() => screen.getAllByText(/skip for now/i));
 		const radios = screen.getAllByRole("radio");
-		fireEvent.click(radios[2]); // skip
+		fireEvent.click(radios[ENABLE_TOTP_SETUP ? 2 : 1]); // skip
 		fireEvent.click(screen.getByRole("button", { name: /skip for now/i }));
 
 		await waitFor(() => {
