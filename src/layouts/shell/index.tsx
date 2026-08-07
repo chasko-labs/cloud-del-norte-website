@@ -334,7 +334,6 @@ function ShellContent({
 	);
 
 	// Initialize nav state from localStorage OR viewport (Cloudscape breakpoint: 688px)
-	const [signInLabel, setSignInLabel] = useState("sign in");
 
 	const isNavControlled = navigationOpenProp !== undefined;
 	const [navOpenInternal, setNavOpenInternal] = useState(() => {
@@ -358,14 +357,6 @@ function ShellContent({
 		},
 		[isNavControlled, onNavigationChangeProp],
 	);
-
-	useEffect(() => {
-		if (auth.isAuthenticated) return;
-		const id = setInterval(() => {
-			setSignInLabel((prev) => (prev === "sign in" ? "sign up" : "sign in"));
-		}, 4000);
-		return () => clearInterval(id);
-	}, [auth.isAuthenticated]);
 
 	// Wallpaper + cdn-star-logo lifecycle now owned by <CdnWallpaper />.
 	// See src/components/cdn-wallpaper/index.tsx.
@@ -661,17 +652,20 @@ function ShellContent({
 									: [
 											{
 												type: "button" as const,
-												// Bryan v0.0.0058: "sign in" was hiding behind "More"
-												// (Cloudscape's overflow collapse) on mobile even
-												// though "sign in" is shorter than "more ▼". Force
-												// always visible.
 												disableUtilityCollapse: true,
-												text: signInLabel,
+												text: "sign in",
+												onClick: () => {
+													window.location.assign(AUTH_LOGIN_URL);
+												},
+											},
+											{
+												type: "button" as const,
+												variant: "primary-button" as const,
+												disableUtilityCollapse: true,
+												text: "sign up",
 												onClick: () => {
 													window.location.assign(
-														signInLabel === "sign up"
-															? AUTH_LOGIN_URL.replace("/login/", "/signup/")
-															: AUTH_LOGIN_URL,
+														AUTH_LOGIN_URL.replace("/login/", "/signup/"),
 													);
 												},
 											},

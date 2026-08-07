@@ -671,16 +671,19 @@ function SignupWizard() {
 
 	return (
 		<div className={`cdn-auth-submit-state ${submitState}`}>
-			{activeStepIndex === 0 && (
-				<Box variant="small" textAlign="right" margin={{ bottom: "s" }}>
-					{t("auth.signup.alreadyMember")}{" "}
-					<Link
-						href={`/login/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
-					>
-						{t("auth.signup.signInLink")}
-					</Link>
-				</Box>
-			)}
+			<Box
+				textAlign="center"
+				padding={{ vertical: "xs" }}
+				className="cdn-auth-signin-banner"
+			>
+				<span>{t("auth.signup.alreadyMember")} </span>
+				<Link
+					href={`/login/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
+					fontSize="body-m"
+				>
+					{t("auth.signup.signInLink")}
+				</Link>
+			</Box>
 			<StepDots current={activeStepIndex} total={steps.length} />
 			<div className="cdn-auth-stepper__title">
 				{steps[activeStepIndex].title}

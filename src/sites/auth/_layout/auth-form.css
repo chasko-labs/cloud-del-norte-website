@@ -362,3 +362,16 @@
 		transition: none !important;
 	}
 }
+
+/* ── sign-in banner — prominent returning-user prompt at top of signup ──── */
+.cdn-auth-signin-banner {
+	padding: 8px 16px;
+	border-radius: 8px;
+	background: rgba(90, 31, 138, 0.08);
+	margin-bottom: 12px;
+	font-size: 0.9rem;
+}
+
+:root.awsui-dark-mode .cdn-auth-signin-banner {
+	background: rgba(215, 199, 238, 0.1);
+}
