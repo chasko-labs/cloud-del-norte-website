@@ -32,23 +32,17 @@ import UpcomingVirtualEvent from "../upcoming-virtual-event";
 const STYLES_CSS_PATH = resolve(__dirname, "..", "..", "styles.css");
 const stylesCss = readFileSync(STYLES_CSS_PATH, "utf8");
 
-// FeaturedEvent's spotsRemaining() hits the public RSVP API. Stub fetch so
-// the inner component renders without a network call. Mirrors the stub in
-// featured-event.test.tsx.
+// FeaturedEvent no longer renders images (quantum event card),
+// so the fetch mock is only needed by UpcomingVirtualEvent.
 const fetchMock = vi.fn();
 
 beforeEach(() => {
 	fetchMock.mockReset();
 	fetchMock.mockResolvedValue(
-		new Response(
-			JSON.stringify({
-				eventId: "happy-hour-2026-06-03",
-				capacity: 50,
-				taken: 0,
-				remaining: 50,
-			}),
-			{ status: 200, headers: { "Content-Type": "application/json" } },
-		),
+		new Response(JSON.stringify({}), {
+			status: 200,
+			headers: { "Content-Type": "application/json" },
+		}),
 	);
 	globalThis.fetch = fetchMock as unknown as typeof fetch;
 });
@@ -102,31 +96,21 @@ describe("Wave 37b — image fade-in CSS rules", () => {
 });
 
 describe("Wave 37b — onLoad handler adds is-loaded class", () => {
-	it("FeaturedEvent: each <img> picks up the is-loaded class after firing the load event", () => {
+	it("FeaturedEvent: renders without images (quantum event card)", () => {
 		const { container } = render(
 			<LocaleProvider locale="us">
 				<FeaturedEvent />
 			</LocaleProvider>,
 		);
+		// Quantum event card does not render images
 		const lightImg = container.querySelector(
 			".feed-featured-event__image--light",
 		);
 		const darkImg = container.querySelector(
 			".feed-featured-event__image--dark",
 		);
-		expect(lightImg).not.toBeNull();
-		expect(darkImg).not.toBeNull();
-
-		// Pre-load: no is-loaded class.
-		expect(lightImg?.classList.contains("is-loaded")).toBe(false);
-		expect(darkImg?.classList.contains("is-loaded")).toBe(false);
-
-		// Fire the load event — the onLoad handler should add the class.
-		if (lightImg) fireEvent.load(lightImg);
-		if (darkImg) fireEvent.load(darkImg);
-
-		expect(lightImg?.classList.contains("is-loaded")).toBe(true);
-		expect(darkImg?.classList.contains("is-loaded")).toBe(true);
+		expect(lightImg).toBeNull();
+		expect(darkImg).toBeNull();
 	});
 
 	it("UpcomingVirtualEvent: each <img> picks up the is-loaded class after firing the load event", () => {

@@ -35,7 +35,7 @@
  * structural rendering. This file is the scroll-stability layer on top.
  */
 
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import FeaturedEvent, { FeaturedEventErrorBoundary } from "../featured-event";
@@ -59,32 +59,14 @@ function renderInsideTallScrollContainer() {
 }
 
 describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
-	let fetchMock: ReturnType<typeof vi.fn>;
-
 	beforeEach(() => {
 		// Defensive — make sure no leaked .cdn-scrolling class from a previous
 		// test bleeds into this one's assertions.
 		document.body.classList.remove("cdn-scrolling");
-		// Wave 35b — spotsRemaining() now hits the public cdn-rsvp API. Stub
-		// fetch so the spots chip renders; without the stub the call returns
-		// NaN and .feed-featured-event__spots is hidden, breaking the
-		// structural assertion below.
-		fetchMock = vi.fn().mockResolvedValue(
-			new Response(
-				JSON.stringify({
-					counts: {
-						"happy-hour-2026-06-03": { remaining: 50, capacity: 50, taken: 0 },
-					},
-				}),
-				{ status: 200, headers: { "Content-Type": "application/json" } },
-			),
-		);
-		globalThis.fetch = fetchMock as unknown as typeof fetch;
 	});
 
 	afterEach(() => {
 		document.body.classList.remove("cdn-scrolling");
-		fetchMock.mockReset();
 	});
 
 	it("renders without crashing inside a tall scrollable container", () => {
@@ -112,7 +94,7 @@ describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
 		expect(screen.getByText(/Featured event/i)).toBeInTheDocument();
 	});
 
-	it("renders the structural class names that wave 30a CSS targets for tearing mitigation", async () => {
+	it("renders the structural class names that wave 30a CSS targets for tearing mitigation", () => {
 		const { container } = renderInsideTallScrollContainer();
 
 		// The card root is the primary GPU layer promotion target — CSS
@@ -127,14 +109,6 @@ describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
 			".feed-featured-event__date-plate",
 		);
 		expect(datePlate).not.toBeNull();
-
-		// The spots-remaining chip carries will-change: transform, opacity
-		// (3.4s pulse + outer ring breathe). Wave 35b — chip renders only
-		// after the async spotsRemaining fetch resolves.
-		await waitFor(() => {
-			const spots = container.querySelector(".feed-featured-event__spots");
-			expect(spots).not.toBeNull();
-		});
 	});
 
 	it("does not leak the body.cdn-scrolling class on initial mount (added only by the scroll-jank-mitigation listener at runtime)", () => {

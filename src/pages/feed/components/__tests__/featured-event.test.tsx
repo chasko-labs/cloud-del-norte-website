@@ -1,8 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import FeaturedEvent from "../featured-event";
 
@@ -14,303 +14,92 @@ function renderWithLocale(locale: "us" | "mx") {
 	);
 }
 
-// Wave 35b — spotsRemaining() now hits the public cdn-rsvp API. Stub fetch
-// so the spots-remaining chip renders in tests; without the stub the call
-// would return NaN and the chip element would be hidden, breaking layout
-// assertions that expect .feed-featured-event__spots.
-const fetchMock = vi.fn();
-
-beforeEach(() => {
-	fetchMock.mockReset();
-	fetchMock.mockResolvedValue(
-		new Response(
-			JSON.stringify({
-				counts: {
-					"happy-hour-2026-06-03": { remaining: 50, capacity: 50, taken: 0 },
-				},
-			}),
-			{ status: 200, headers: { "Content-Type": "application/json" } },
-		),
-	);
-	globalThis.fetch = fetchMock as unknown as typeof fetch;
-});
-
-afterEach(() => {
-	fetchMock.mockReset();
-});
-
-describe("FeaturedEvent", () => {
-	it("renders the v2 event title linking to the Meetup RSVP URL", () => {
+describe("FeaturedEvent — quantum event", () => {
+	it("renders the quantum event title linking to the Meetup RSVP URL", () => {
 		renderWithLocale("us");
-		const link = screen.getByText("Community Happy Hour & Networking Night");
-		const expected =
-			"https://www.meetup.com/awsugclouddelnorte/events/314839263/rsvp/";
-		expect(link.closest("a")).toHaveAttribute("href", expected);
+		const link = screen.getByText(
+			/Getting Started with Quantum Superpositions/,
+		);
+		expect(link.closest("a")).toHaveAttribute(
+			"href",
+			"https://www.meetup.com/awsugclouddelnorte/",
+		);
 	});
 
-	it("renders the date in en-US format", () => {
+	it("renders the date in en-US format (August 30, 2026)", () => {
 		renderWithLocale("us");
-		expect(screen.getByText(/June 3, 2026/)).toBeInTheDocument();
+		expect(screen.getByText(/August 30, 2026/)).toBeInTheDocument();
 	});
 
-	it("renders the date in es-MX format", () => {
+	it("renders the date in es-MX format (agosto)", () => {
 		renderWithLocale("mx");
-		expect(screen.getAllByText(/junio/i).length).toBeGreaterThan(0);
+		expect(screen.getAllByText(/agosto/i).length).toBeGreaterThan(0);
 	});
 
-	it("renders the date inside the date-plate VFX wrapper", () => {
+	it("renders the RSVP button", () => {
+		renderWithLocale("us");
+		const btn = screen.getByRole("link", { name: /RSVP/i });
+		expect(btn).toHaveAttribute(
+			"href",
+			"https://www.meetup.com/awsugclouddelnorte/",
+		);
+	});
+
+	it("renders the quantum event description in en-US", () => {
+		renderWithLocale("us");
+		expect(screen.getByText(/Amazon Braket workshop/i)).toBeInTheDocument();
+	});
+
+	it("renders the quantum event description in es-MX", () => {
+		renderWithLocale("mx");
+		expect(
+			screen.getByText(/Taller práctico de Amazon Braket/i),
+		).toBeInTheDocument();
+	});
+
+	it("renders the es-MX title", () => {
+		renderWithLocale("mx");
+		expect(
+			screen.getByText(/Introducción a Superposiciones Cuánticas/),
+		).toBeInTheDocument();
+	});
+
+	it("renders the secondary link to AWS Braket Learning Plan", () => {
+		renderWithLocale("us");
+		const link = screen.getByText(/AWS Braket Learning Plan & Digital Badge/i);
+		expect(link.closest("a")).toHaveAttribute(
+			"href",
+			"https://aws.amazon.com/blogs/quantum-computing/introducing-the-amazon-braket-learning-plan-and-digital-badge/",
+		);
+	});
+
+	it("renders the online event location", () => {
+		renderWithLocale("us");
+		expect(screen.getByText(/Online event/i)).toBeInTheDocument();
+	});
+
+	it("renders the date-plate VFX wrapper", () => {
 		const { container } = renderWithLocale("us");
 		const plate = container.querySelector(".feed-featured-event__date-plate");
 		expect(plate).not.toBeNull();
-		expect(plate?.textContent).toMatch(/June 3, 2026/);
+		expect(plate?.textContent).toMatch(/August 30, 2026/);
 	});
 
-	it("renders the Meetup RSVP button with target=_blank (violet variant — no red)", () => {
-		renderWithLocale("us");
-		const btn = screen.getByRole("link", { name: /RSVP on Meetup/i });
-		expect(btn).toHaveAttribute("target", "_blank");
-		expect(btn.className).toContain("cdn-brand-btn--meetup-violet");
-		expect(btn.className).not.toMatch(/cdn-brand-btn--meetup\b(?!-)/);
-	});
-
-	it("renders both the light and dark image variants with proper alt text and lazy loading", () => {
-		renderWithLocale("us");
-		const imgs = screen.getAllByAltText(
-			"AWS Cloud del Norte UG community event photo",
-		);
-		expect(imgs).toHaveLength(2);
-		for (const img of imgs) {
-			expect(img).toHaveAttribute("loading", "lazy");
-		}
-		const lightImg = imgs.find((i) =>
-			i.className.includes("feed-featured-event__image--light"),
-		);
-		const darkImg = imgs.find((i) =>
-			i.className.includes("feed-featured-event__image--dark"),
-		);
-		expect(lightImg).toBeDefined();
-		expect(darkImg).toBeDefined();
-		expect(lightImg).toHaveAttribute("src", "/events/featured-2026-06-03.webp");
-		expect(darkImg).toHaveAttribute(
-			"src",
-			"/events/featured-2026-06-03-dark.webp",
-		);
-	});
-
-	// ---------- Wave 33c — clickable image RSVP link ----------
-
-	it("wave 33c — wraps the image-area in an anchor pointing at the Meetup RSVP URL with the aria-label locale key", () => {
-		const { container } = renderWithLocale("us");
-		const link = container.querySelector(".feed-featured-event__image-link");
-		expect(link).not.toBeNull();
-		const expectedHref =
-			"https://www.meetup.com/awsugclouddelnorte/events/314839263/rsvp/";
-		expect(link?.getAttribute("href")).toBe(expectedHref);
-		// aria-label resolves through the new feedPage.featuredEventImageLinkLabel
-		// locale key — describes the link action; the inner <img> alt text
-		// continues to describe the image content.
-		expect(link?.getAttribute("aria-label")).toBe(
-			"RSVP for the Community Happy Hour & Networking Night",
-		);
-		// Both image variants live inside the anchor.
-		expect(
-			link?.querySelector(".feed-featured-event__image--light"),
-		).not.toBeNull();
-		expect(
-			link?.querySelector(".feed-featured-event__image--dark"),
-		).not.toBeNull();
-	});
-
-	it("renders the in-person location label", () => {
-		renderWithLocale("us");
-		expect(
-			screen.getByText(/in person: Downtown El Paso, Texas/i),
-		).toBeInTheDocument();
-	});
-
-	it("renders the wave 31a responsive grid layout wrapper containing all card children", async () => {
+	it("renders the layout wrapper with expected children", () => {
 		const { container } = renderWithLocale("us");
 		const layout = container.querySelector(".feed-featured-event__layout");
 		expect(layout).not.toBeNull();
-		// Wave 32a — badge slot was removed; logical children remain inside
-		// the grid layout (image-area, title, date, in-person, description,
-		// spots, buttons). DOM order is the logical reading order —
-		// preserved across the SpaceBetween → grid migration.
-		// Wave 35b — the spots chip renders only after the async
-		// spotsRemaining fetch resolves; await it before asserting.
-		// Wave 38e — the redundant __location-text Box was removed
-		// (its content duplicated the in-person pill above); the
-		// __location-text assertion is gone.
-		expect(
-			layout?.querySelector(".feed-featured-event__image-area"),
-		).not.toBeNull();
 		expect(layout?.querySelector(".feed-featured-event__title")).not.toBeNull();
 		expect(layout?.querySelector(".feed-featured-event__date")).not.toBeNull();
 		expect(
-			layout?.querySelector(".feed-featured-event__in-person-pill"),
-		).not.toBeNull();
-		expect(
 			layout?.querySelector(".feed-featured-event__description"),
 		).not.toBeNull();
-		await waitFor(() => {
-			expect(
-				layout?.querySelector(".feed-featured-event__spots"),
-			).not.toBeNull();
-		});
 		expect(layout?.querySelector(".cdn-brand-btn-stack")).not.toBeNull();
-		// Wave 32a — badge was removed entirely.
-		expect(layout?.querySelector(".feed-featured-event__badge")).toBeNull();
 	});
 
-	it("wraps both light + dark image variants inside the __image-area grid cell wrapper (single grid slot for the pair)", () => {
-		const { container } = renderWithLocale("us");
-		const imageArea = container.querySelector(
-			".feed-featured-event__image-area",
-		);
-		expect(imageArea).not.toBeNull();
-		const lightImg = imageArea?.querySelector(
-			".feed-featured-event__image--light",
-		);
-		const darkImg = imageArea?.querySelector(
-			".feed-featured-event__image--dark",
-		);
-		expect(lightImg).not.toBeNull();
-		expect(darkImg).not.toBeNull();
-	});
-
-	it("preserves DOM reading order: image → title → date → in-person → description → spots → buttons (a11y / screen-reader contract; wave 32a dropped badge slot, wave 33c wraps image in anchor, wave 38e dropped redundant location-text row)", async () => {
-		const { container } = renderWithLocale("us");
-		const layout = container.querySelector(".feed-featured-event__layout");
-		expect(layout).not.toBeNull();
-		// Wave 33c — the first direct grid child is now the wrapping
-		// <a class="feed-featured-event__image-link"> anchor (the inner
-		// __image-area div is nested inside it). The reading order intent
-		// is preserved: the image link reads before the title, date, etc.
-		// Wave 35b — spots chip is async; wait for it before asserting order.
-		// Wave 38e — the redundant __location-text row was removed (its
-		// content duplicated the in-person pill above); the expected DOM
-		// order shrinks by one slot.
-		await waitFor(() => {
-			expect(
-				layout?.querySelector(".feed-featured-event__spots"),
-			).not.toBeNull();
-		});
-		const expected = [
-			"feed-featured-event__image-link",
-			"feed-featured-event__title",
-			"feed-featured-event__date",
-			"feed-featured-event__in-person-pill",
-			"feed-featured-event__description",
-			"feed-featured-event__spots",
-			"cdn-brand-btn-stack",
-		];
-		const actual = Array.from(layout?.children ?? [])
-			.map((el) => Array.from(el.classList).find((c) => expected.includes(c)))
-			.filter((c): c is string => Boolean(c));
-		expect(actual).toEqual(expected);
-	});
-
-	it("no longer renders the on-site CloudDelNorte.org RSVP button (signup flow unproven)", () => {
+	it("renders the header as h2", () => {
 		renderWithLocale("us");
-		expect(
-			screen.queryByRole("link", { name: /RSVP on CloudDelNorte\.org/i }),
-		).toBeNull();
-	});
-
-	it("renders the limited-space CTA", async () => {
-		localStorage.clear();
-		renderWithLocale("us");
-		// Wave 35b — copy comes from the spotsCopy slot which is hidden
-		// until spotsRemaining() resolves; await it.
-		expect(
-			await screen.findByText(/Limited space — RSVP now/i),
-		).toBeInTheDocument();
-	});
-
-	it("inlines the AsciiSmirk SVG inside the description (after the 'game' hook)", () => {
-		const { container } = renderWithLocale("us");
-		const desc = container.querySelector(".feed-featured-event__description");
-		expect(desc).not.toBeNull();
-		const smirk = desc?.querySelector(".cdn-ascii-smirk");
-		expect(smirk).not.toBeNull();
-		const smirkSvg = smirk?.querySelector('svg[aria-label="smirk"]');
-		expect(smirkSvg).not.toBeNull();
-	});
-
-	it("description begins with the new 'Hop the trolley' copy in en-US", () => {
-		renderWithLocale("us");
-		expect(screen.getByText(/Hop the trolley/i)).toBeInTheDocument();
-	});
-
-	it("description begins with the new 'Cáele en el trolley' copy in es-MX", () => {
-		renderWithLocale("mx");
-		expect(screen.getByText(/Cáele en el trolley/i)).toBeInTheDocument();
-	});
-
-	// ---------- Wave 32a — theater marquee header ----------
-
-	it("wave 32a — DON'T MISS badge is gone from the card body", () => {
-		const { container } = renderWithLocale("us");
-		expect(screen.queryByText("DON'T MISS")).not.toBeInTheDocument();
-		expect(container.querySelector(".feed-featured-event__badge")).toBeNull();
-	});
-
-	it("wave 32a — renders the theater marquee header with role=heading aria-level=2", () => {
-		const { container } = renderWithLocale("us");
-		const marquee = container.querySelector(".feed-featured-event__marquee");
-		expect(marquee).not.toBeNull();
-		expect(marquee?.getAttribute("role")).toBe("heading");
-		expect(marquee?.getAttribute("aria-level")).toBe("2");
-	});
-
-	it("wave 32a — marquee text contains the localized FEATURED EVENT header string", () => {
-		const { container } = renderWithLocale("us");
-		const marqueeText = container.querySelector(
-			".feed-featured-event__marquee-text",
-		);
-		expect(marqueeText).not.toBeNull();
-		expect(marqueeText?.textContent).toMatch(/Featured event/i);
-	});
-
-	it("wave 32a — marquee renders 16 chasing bulb spans inside an aria-hidden container", () => {
-		const { container } = renderWithLocale("us");
-		const bulbs = container.querySelector(
-			".feed-featured-event__marquee-bulbs",
-		);
-		expect(bulbs).not.toBeNull();
-		expect(bulbs?.getAttribute("aria-hidden")).toBe("true");
-		const dots = bulbs?.querySelectorAll(".feed-featured-event__marquee-bulb");
-		expect(dots?.length).toBe(16);
-	});
-
-	it("wave 32a — each bulb carries an inline --bulb-index custom property for the chase stagger", () => {
-		const { container } = renderWithLocale("us");
-		const dots = container.querySelectorAll(
-			".feed-featured-event__marquee-bulb",
-		);
-		dots.forEach((dot, i) => {
-			// jsdom serializes inline custom properties on the style attribute.
-			const style = dot.getAttribute("style") ?? "";
-			expect(style).toMatch(new RegExp(`--bulb-index:\\s*${i}`));
-		});
-	});
-});
-
-describe("FeaturedEvent — wave 44 no-image fallback", () => {
-	it("hides the light image via state when onError fires and preserves aria-label on wrapper", () => {
-		const { container } = renderWithLocale("us");
-		const lightImg = container.querySelector(
-			".feed-featured-event__image--light",
-		);
-		expect(lightImg).not.toBeNull();
-		if (!lightImg) return;
-		fireEvent.error(lightImg);
-		// After onError, the light img should be removed from DOM
-		expect(
-			container.querySelector(".feed-featured-event__image--light"),
-		).toBeNull();
-		// The image-area wrapper preserves aria-label for AT
-		const area = container.querySelector(".feed-featured-event__image-area");
-		expect(area?.getAttribute("aria-label")).toBeTruthy();
+		const header = screen.getByRole("heading", { level: 2 });
+		expect(header).toHaveTextContent(/Featured event/i);
 	});
 });

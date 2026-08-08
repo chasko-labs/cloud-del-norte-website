@@ -36,9 +36,9 @@ const UPCOMING_FALLBACK = {
 	location: "Online event",
 	description:
 		"Hands-on Amazon Braket workshop: understanding multi-state superpositions, wavefunctions, measurement & collapse. Follow along with the AWS Braket Learning Plan. Joint event with AWS User Group Clarksville. Part 1 of a quantum computing series.",
-	// 2026-11-30 15:00 MST (UTC-7) = 2026-11-30 22:00 UTC
-	dtstart: "2026-11-30T22:00:00.000Z",
-	dtend: "2026-11-30T23:30:00.000Z",
+	// 2026-08-30 15:00 MST (UTC-7) = 2026-08-30 22:00 UTC
+	dtstart: "2026-08-30T22:00:00.000Z",
+	dtend: "2026-08-30T23:30:00.000Z",
 };
 
 // ── iCal parsing ──────────────────────────────────────────────────────────

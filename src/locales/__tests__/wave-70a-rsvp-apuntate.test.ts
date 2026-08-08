@@ -48,12 +48,12 @@ describe("wave 70a — RSVP → Apúntate (es-MX)", () => {
 		expect(rsvpInEn.length).toBeGreaterThan(0);
 	});
 
-	it("featuredEventSpotsRemaining uses Apúntate in es-MX", () => {
-		expect(esMX.feedPage.featuredEventSpotsRemaining).toMatch(/apúntate/i);
+	it("featuredEventSpotsRemaining uses Regístrate in es-MX", () => {
+		expect(esMX.feedPage.featuredEventSpotsRemaining).toMatch(/regístrate/i);
 	});
 
-	it("featuredEventRsvpMeetup uses Apúntate in es-MX", () => {
-		expect(esMX.feedPage.featuredEventRsvpMeetup).toMatch(/apúntate/i);
+	it("featuredEventRsvpMeetup uses Regístrate in es-MX", () => {
+		expect(esMX.feedPage.featuredEventRsvpMeetup).toMatch(/regístrate/i);
 	});
 
 	it("meetings.rsvpButton uses Apúntate in es-MX", () => {
