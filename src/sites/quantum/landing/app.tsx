@@ -6,6 +6,7 @@ import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useState } from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	applyLocale,
 	initializeLocale,
@@ -36,35 +37,35 @@ const GLOBAL_UG_URL =
 	"https://www.meetup.com/pro/global-aws-user-group-community/";
 
 function LandingContent() {
+	const { t } = useTranslation();
+
 	return (
 		<SpaceBetween size="xl">
 			{/* Hero */}
 			<Container>
 				<SpaceBetween size="m">
 					<Box variant="small" color="text-status-info">
-						LIVE AWS WEBINAR
+						{t("quantum.badge")}
 					</Box>
 					<Header variant="h1">
-						Hands-On{" "}
+						{t("quantum.title").replace("Amazon Braket", "")}{" "}
 						<Link href={BRAKET_URL} external fontSize="heading-xl">
 							Amazon Braket
 						</Link>{" "}
-						Workshop
 					</Header>
 					<Box color="text-body-secondary" fontSize="heading-s">
-						quantum superpositions, wavefunctions, entanglement
+						{t("quantum.subtitle")}
 					</Box>
-					<Box fontSize="body-m">Sun Aug 30 · 3:00–6:00 PM CDT</Box>
+					<Box fontSize="body-m">{t("quantum.date")}</Box>
 					<Box fontSize="body-s" color="text-body-secondary">
-						Bilingual workshop with accommodations for English and Spanish
-						speakers
+						{t("quantum.bilingual")}
 					</Box>
 					<SpaceBetween size="xs" direction="horizontal">
 						<Button variant="primary" href={REGISTER_URL}>
-							Register for Workshop
+							{t("quantum.registerButton")}
 						</Button>
 						<Button variant="link" href={MEETUP_URL} target="_blank">
-							RSVP on Meetup
+							{t("quantum.rsvpMeetup")}
 						</Button>
 					</SpaceBetween>
 				</SpaceBetween>
@@ -72,21 +73,15 @@ function LandingContent() {
 
 			{/* Description */}
 			<Container
-				header={<Header variant="h2">3-hour hands-on workshop</Header>}
+				header={<Header variant="h2">{t("quantum.descriptionHeader")}</Header>}
 			>
-				<Box fontSize="body-m">
-					A beginner-friendly intro to{" "}
-					<Link href={BRAKET_URL} external>
-						Amazon Braket
-					</Link>{" "}
-					— we'll build up superposition and entanglement, then run Deutsch's
-					algorithm using Amazon Braket quantum computing from AWS. Bring your
-					questions.
-				</Box>
+				<Box fontSize="body-m">{t("quantum.description")}</Box>
 			</Container>
 
 			{/* Hosts */}
-			<Container header={<Header variant="h2">Hosts</Header>}>
+			<Container
+				header={<Header variant="h2">{t("quantum.hostsHeader")}</Header>}
+			>
 				<Grid gridDefinition={[{ colspan: 4 }, { colspan: 4 }, { colspan: 4 }]}>
 					<SpaceBetween size="xs" alignItems="center">
 						<img
@@ -105,7 +100,7 @@ function LandingContent() {
 							</Link>
 						</Box>
 						<Box color="text-body-secondary" fontSize="body-s">
-							CEO · AWS UG Clarksville · HOST
+							{t("quantum.christianTitle")}
 						</Box>
 					</SpaceBetween>
 					<SpaceBetween size="xs" alignItems="center">
@@ -116,7 +111,7 @@ function LandingContent() {
 						/>
 						<Box fontWeight="bold">Amelia Hough-Ross</Box>
 						<Box color="text-body-secondary" fontSize="body-s">
-							Chief Data Officer · Columbia AWS UG
+							{t("quantum.ameliaTitle")}
 						</Box>
 					</SpaceBetween>
 					<SpaceBetween size="xs" alignItems="center">
@@ -131,7 +126,7 @@ function LandingContent() {
 							</Link>
 						</Box>
 						<Box color="text-body-secondary" fontSize="body-s">
-							CTO · Cloud Del Norte
+							{t("quantum.bryanTitle")}
 						</Box>
 					</SpaceBetween>
 				</Grid>
@@ -139,7 +134,7 @@ function LandingContent() {
 
 			{/* Hosting */}
 			<Container
-				header={<Header variant="h2">Virtual workshop featuring</Header>}
+				header={<Header variant="h2">{t("quantum.groupsHeader")}</Header>}
 			>
 				<SpaceBetween size="s">
 					<Box fontWeight="bold">AWS User Group Clarksville</Box>
@@ -147,7 +142,7 @@ function LandingContent() {
 					<Box fontWeight="bold">AWS SBG at University of South Carolina</Box>
 					<Box fontWeight="bold">Cloud Del Norte</Box>
 					<Link href={GLOBAL_UG_URL} external>
-						Find your local AWS User Group →
+						{t("quantum.findLocal")}
 					</Link>
 				</SpaceBetween>
 			</Container>
@@ -155,7 +150,7 @@ function LandingContent() {
 			{/* Footer CTA */}
 			<Box textAlign="center">
 				<Button variant="primary" href={REGISTER_URL}>
-					Register for Workshop
+					{t("quantum.registerButton")}
 				</Button>
 			</Box>
 		</SpaceBetween>

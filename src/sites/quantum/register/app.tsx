@@ -9,6 +9,7 @@ import Link from "@cloudscape-design/components/link";
 import Select from "@cloudscape-design/components/select";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useState } from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	applyLocale,
 	initializeLocale,
@@ -39,6 +40,7 @@ const GROUP_OPTIONS = [
 ];
 
 function RegisterForm() {
+	const { t } = useTranslation();
 	const [email, setEmail] = useState("");
 	const [name, setName] = useState("");
 	const [group, setGroup] = useState<{
@@ -51,7 +53,7 @@ function RegisterForm() {
 
 	const handleSubmit = async () => {
 		if (!email || !name) {
-			setError("Please fill in your email and name.");
+			setError(t("quantumRegister.validationError"));
 			return;
 		}
 		setLoading(true);
@@ -70,7 +72,7 @@ function RegisterForm() {
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			setSuccess(true);
 		} catch (_e) {
-			setError("Something went wrong. Please try again.");
+			setError(t("quantumRegister.genericError"));
 		} finally {
 			setLoading(false);
 		}
@@ -78,17 +80,15 @@ function RegisterForm() {
 
 	if (success) {
 		return (
-			<Container header={<Header variant="h1">You're registered!</Header>}>
+			<Container
+				header={
+					<Header variant="h1">{t("quantumRegister.successHeader")}</Header>
+				}
+			>
 				<SpaceBetween size="m">
-					<Alert type="success">
-						We'll send workshop details to <strong>{email}</strong> before Aug
-						30.
-					</Alert>
-					<Box>
-						Bookmark this page — we'll post the meeting link here on the day of
-						the event.
-					</Box>
-					<Link href="/">← Back to workshop details</Link>
+					<Alert type="success">{t("quantumRegister.successBody")}</Alert>
+					<Box>{t("quantumRegister.successBookmark")}</Box>
+					<Link href="/">{t("quantumRegister.backLink")}</Link>
 				</SpaceBetween>
 			</Container>
 		);
@@ -96,16 +96,15 @@ function RegisterForm() {
 
 	return (
 		<SpaceBetween size="xl">
-			<Container header={<Header variant="h1">Register for Workshop</Header>}>
+			<Container
+				header={<Header variant="h1">{t("quantumRegister.header")}</Header>}
+			>
 				<SpaceBetween size="m">
-					<Box color="text-body-secondary">
-						Quick registration — get access to the Aug 30 hands-on session +
-						recording.
-					</Box>
+					<Box color="text-body-secondary">{t("quantumRegister.subtitle")}</Box>
 					{error && <Alert type="error">{error}</Alert>}
 					<FormField
-						label="Email"
-						constraintText="We'll send you the meeting link"
+						label={t("quantumRegister.emailLabel")}
+						constraintText={t("quantumRegister.emailHint")}
 					>
 						<Input
 							value={email}
@@ -115,8 +114,8 @@ function RegisterForm() {
 						/>
 					</FormField>
 					<FormField
-						label="Name"
-						constraintText="What should we call you in the workshop?"
+						label={t("quantumRegister.nameLabel")}
+						constraintText={t("quantumRegister.nameHint")}
 					>
 						<Input
 							value={name}
@@ -125,8 +124,8 @@ function RegisterForm() {
 						/>
 					</FormField>
 					<FormField
-						label="Which group are you from?"
-						constraintText="Optional"
+						label={t("quantumRegister.groupLabel")}
+						constraintText={t("quantumRegister.groupHint")}
 					>
 						<Select
 							selectedOption={group}
@@ -143,16 +142,15 @@ function RegisterForm() {
 						/>
 					</FormField>
 					<Button variant="primary" loading={loading} onClick={handleSubmit}>
-						Register for Workshop
+						{t("quantumRegister.submitButton")}
 					</Button>
 				</SpaceBetween>
 			</Container>
 
 			<Box textAlign="center" color="text-body-secondary" fontSize="body-s">
-				Want full Cloud Del Norte access? Joining grants access to this and
-				other workshops hosted by Cloud Del Norte.{" "}
+				{t("quantumRegister.communityAccess")}{" "}
 				<Link href="https://auth.clouddelnorte.org/signup/index.html">
-					Join Cloud Del Norte
+					{t("quantumRegister.joinCdn")}
 				</Link>
 			</Box>
 		</SpaceBetween>
