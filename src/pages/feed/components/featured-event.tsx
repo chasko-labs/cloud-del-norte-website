@@ -15,11 +15,8 @@ import {
 } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 
-const BRAKET_LEARNING_URL =
-	"https://aws.amazon.com/blogs/quantum-computing/introducing-the-amazon-braket-learning-plan-and-digital-badge/";
+const EVENT_URL = "https://quantum.clouddelnorte.org";
 const EVENT_DATE = "2026-08-30T15:00:00-06:00";
-const SIGNUP_URL =
-	"https://auth.clouddelnorte.org/signup/index.html?event=quantum";
 
 interface CountdownValues {
 	days: number;
@@ -80,7 +77,7 @@ function FeaturedEventInner() {
 						fontSize="heading-m"
 						className="feed-featured-event__title"
 					>
-						<Link href={SIGNUP_URL}>{t("feedPage.featuredEventTitle")}</Link>
+						<Link href={EVENT_URL}>{t("feedPage.featuredEventTitle")}</Link>
 					</Box>
 					<div className="feed-featured-event__date">
 						<span className="feed-featured-event__date-plate">
@@ -116,16 +113,8 @@ function FeaturedEventInner() {
 					>
 						{t("feedPage.featuredEventDescription")}
 					</Box>
-					<Box color="text-body-secondary" fontSize="body-s">
-						{t("feedPage.featuredEventSeriesNote")}
-					</Box>
-					<Box fontSize="body-s" className="feed-featured-event__secondary">
-						<Link href={BRAKET_LEARNING_URL} external>
-							{t("feedPage.featuredEventSecondaryLink")}
-						</Link>
-					</Box>
 					<div className="cdn-brand-btn-stack">
-						<Button variant="primary" href={SIGNUP_URL}>
+						<Button variant="primary" href={EVENT_URL}>
 							{t("feedPage.featuredEventJoinCta")}
 						</Button>
 					</div>

@@ -303,12 +303,6 @@ function AppContent({
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<FeaturedEvent />
 			</div>
-			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
-				<NextMeetup />
-			</div>
-			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
-				<UpcomingVirtualEvent />
-			</div>
 			<hr className="feed-section-divider" />
 			<div className="feed-grid__cell cdn-card feed-grid__cell--full">
 				<BuilderCenterCard />
