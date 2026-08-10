@@ -62,8 +62,8 @@ function RegisterForm() {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					type: "event-registration",
-					summary: `Quantum Workshop Registration: ${name}`,
+					type: "wish",
+					summary: `[QUANTUM REGISTRATION] ${name}`,
 					details: `Email: ${email}\nName: ${name}\nGroup: ${group?.label ?? "not specified"}\nEvent: Quantum Superpositions Aug 30, 2026`,
 					email,
 				}),
