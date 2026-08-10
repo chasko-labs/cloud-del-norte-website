@@ -168,10 +168,9 @@ function LandingContent() {
 				header={<Header variant="h2">{t("quantum.groupsHeader")}</Header>}
 			>
 				<SpaceBetween size="s">
+					<Box fontWeight="bold">Cloud Del Norte</Box>
 					<Box fontWeight="bold">AWS User Group Clarksville</Box>
 					<Box fontWeight="bold">Columbia AWS User Group</Box>
-					<Box fontWeight="bold">AWS SBG at University of South Carolina</Box>
-					<Box fontWeight="bold">Cloud Del Norte</Box>
 					<Link href={GLOBAL_UG_URL} external>
 						{t("quantum.findLocal")}
 					</Link>

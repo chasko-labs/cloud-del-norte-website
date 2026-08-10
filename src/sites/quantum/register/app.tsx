@@ -34,7 +34,6 @@ const GROUP_OPTIONS = [
 	},
 	{ value: "clarksville", label: "AWS UG Clarksville" },
 	{ value: "columbia", label: "Columbia AWS Users Group" },
-	{ value: "usc", label: "AWS SBG at University of South Carolina" },
 	{ value: "other", label: "Another AWS User Group" },
 	{ value: "none", label: "Not part of a group yet" },
 ];
