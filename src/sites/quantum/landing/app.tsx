@@ -32,7 +32,7 @@ const BRYAN_AVATAR =
 const BRYAN_PROFILE = "https://builder.aws.com/community/@bryanchasko";
 const BRAKET_URL =
 	"https://builder.aws.com/content/3GaxVTZeaL9pWzjXj3k7tMynzbI/a-developers-field-guide-to-amazon-braket";
-const REGISTER_URL = "/register/index.html";
+const REGISTER_URL = "/register/";
 const MEETUP_URL = "https://www.meetup.com/awsugclouddelnorte/";
 const GLOBAL_UG_URL =
 	"https://www.meetup.com/pro/global-aws-user-group-community/";

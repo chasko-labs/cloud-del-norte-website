@@ -1083,6 +1083,7 @@
 		"submitButton": "Register for Workshop",
 		"successHeader": "You're registered!",
 		"successBody": "We'll send workshop details to your email before Aug 30.",
+		"successNextSteps": "What happens next: check your email for a confirmation with the meeting link and calendar invite.",
 		"successBookmark": "Bookmark this page — we'll post the meeting link here on the day of the event.",
 		"backLink": "← Back to workshop details",
 		"communityAccess": "Looking for more workshops? AWS User Group Cloud Del Norte hosts regular events for learners across Far West Texas, New Mexico & Chihuahua, Mexico.",

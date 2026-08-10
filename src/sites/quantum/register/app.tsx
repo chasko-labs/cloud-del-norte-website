@@ -116,6 +116,7 @@ function RegisterForm() {
 						<Box fontSize="heading-s" fontWeight="bold">
 							Sun Aug 30 · 3:00–6:00 PM CDT
 						</Box>
+						<Box fontWeight="bold">{t("quantumRegister.successNextSteps")}</Box>
 						<Box>{t("quantumRegister.successBookmark")}</Box>
 						<Link href="/">{t("quantumRegister.backLink")}</Link>
 					</SpaceBetween>
