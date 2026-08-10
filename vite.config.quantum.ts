@@ -16,6 +16,10 @@ export default defineConfig({
 			input: {
 				landing: resolve(__dirname, "./src/sites/quantum/landing/index.html"),
 				register: resolve(__dirname, "./src/sites/quantum/register/index.html"),
+				"auth-callback": resolve(
+					__dirname,
+					"./src/sites/quantum/auth-callback/index.html",
+				),
 			},
 			output: {
 				manualChunks(id) {

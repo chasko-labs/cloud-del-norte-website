@@ -1090,7 +1090,12 @@
 		"joinCdn": "Join Cloud Del Norte",
 		"findLocal": "Not in our region? Find your local AWS User Group",
 		"validationError": "Please fill in your email and name.",
-		"genericError": "Something went wrong. Please try again."
+		"genericError": "Something went wrong. Please try again.",
+		"memberWelcome": "Welcome back, {{name}}!",
+		"memberConfirmRsvp": "Confirm your RSVP",
+		"memberAlreadyRegistered": "You're confirmed for the quantum workshop.",
+		"addToCalendar": "Add to Google Calendar",
+		"memberSubtext": "We'll send meeting details to {{email}} before the event."
 	},
 	"rsvp": {
 		"breadcrumb": "RSVP",

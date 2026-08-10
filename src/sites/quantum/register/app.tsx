@@ -8,7 +8,7 @@ import Input from "@cloudscape-design/components/input";
 import Link from "@cloudscape-design/components/link";
 import Select from "@cloudscape-design/components/select";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	applyLocale,
@@ -27,6 +27,9 @@ import QuantumLayout from "../_layout";
 const FEEDBACK_API =
 	"https://rknnfq6urf.execute-api.us-west-2.amazonaws.com/feedback";
 
+const GOOGLE_CALENDAR_URL =
+	"https://calendar.google.com/calendar/render?action=TEMPLATE&text=Quantum+Computing+Workshop+-+Amazon+Braket&dates=20260830T210000Z/20260831T000000Z&details=Hands-on+Amazon+Braket+workshop.+quantum.clouddelnorte.org&location=Online+(quantum.clouddelnorte.org)";
+
 const GROUP_OPTIONS = [
 	{
 		value: "cloud-del-norte",
@@ -38,8 +41,149 @@ const GROUP_OPTIONS = [
 	{ value: "none", label: "Not part of a group yet" },
 ];
 
+interface AuthUser {
+	email: string;
+	name: string;
+}
+
+function decodeIdToken(): AuthUser | null {
+	const idToken = sessionStorage.getItem("cdn.idToken");
+	if (!idToken) return null;
+	try {
+		const payload = JSON.parse(
+			atob(idToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/")),
+		);
+		const expiresAt = Number(sessionStorage.getItem("cdn.expiresAt") ?? "0");
+		if (expiresAt && Date.now() > expiresAt) return null;
+		return {
+			email: payload.email ?? "",
+			name:
+				payload["custom:display_name"] ??
+				payload.name ??
+				payload.email?.split("@")[0] ??
+				"",
+		};
+	} catch {
+		return null;
+	}
+}
+
+function MemberRsvp({ user }: { user: AuthUser }) {
+	const { t } = useTranslation();
+	const [loading, setLoading] = useState(false);
+	const [confirmed, setConfirmed] = useState(false);
+	const [error, setError] = useState("");
+
+	const handleConfirm = async () => {
+		setLoading(true);
+		setError("");
+		try {
+			const res = await fetch(FEEDBACK_API, {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					type: "wish",
+					summary: `[QUANTUM REGISTRATION] ${user.name}`,
+					details: `Email: ${user.email}\nName: ${user.name}\nGroup: Cloud Del Norte (member)\nEvent: Quantum Superpositions Aug 30, 2026`,
+					email: user.email,
+				}),
+			});
+			if (!res.ok) throw new Error(`HTTP ${res.status}`);
+			setConfirmed(true);
+		} catch (_e) {
+			setError(t("quantumRegister.genericError"));
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	if (confirmed) {
+		return (
+			<Container>
+				<div style={{ textAlign: "center", padding: "2rem 0" }}>
+					<div className="quantum-success-pulse">
+						<svg
+							width="64"
+							height="64"
+							viewBox="0 0 64 64"
+							fill="none"
+							aria-hidden="true"
+						>
+							<circle
+								cx="32"
+								cy="32"
+								r="30"
+								stroke="#9060f0"
+								strokeWidth="2"
+								opacity="0.3"
+							/>
+							<circle cx="32" cy="32" r="24" fill="rgba(144,96,240,0.1)" />
+							<path
+								d="M20 32 L28 40 L44 24"
+								stroke="#9060f0"
+								strokeWidth="3"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								fill="none"
+							/>
+						</svg>
+					</div>
+					<SpaceBetween size="m">
+						<Header variant="h1">
+							{t("quantumRegister.memberAlreadyRegistered")}
+						</Header>
+						<Box color="text-body-secondary">
+							{t("quantumRegister.memberSubtext").replace(
+								"{{email}}",
+								user.email,
+							)}
+						</Box>
+						<Button
+							variant="primary"
+							href={GOOGLE_CALENDAR_URL}
+							target="_blank"
+							iconName="external"
+						>
+							{t("quantumRegister.addToCalendar")}
+						</Button>
+						<Link href="/">{t("quantumRegister.backLink")}</Link>
+					</SpaceBetween>
+				</div>
+			</Container>
+		);
+	}
+
+	return (
+		<Container>
+			<div style={{ textAlign: "center", padding: "2rem 0" }}>
+				<SpaceBetween size="l">
+					<Header variant="h1">
+						{t("quantumRegister.memberWelcome").replace("{{name}}", user.name)}
+					</Header>
+					<Box color="text-body-secondary" fontSize="heading-s">
+						Sun Aug 30 · 3:00–6:00 PM CDT
+					</Box>
+					{error && <Alert type="error">{error}</Alert>}
+					<Button variant="primary" loading={loading} onClick={handleConfirm}>
+						{t("quantumRegister.memberConfirmRsvp")}
+					</Button>
+					<Button
+						variant="link"
+						href={GOOGLE_CALENDAR_URL}
+						target="_blank"
+						iconName="external"
+					>
+						{t("quantumRegister.addToCalendar")}
+					</Button>
+				</SpaceBetween>
+			</div>
+		</Container>
+	);
+}
+
 function RegisterForm() {
 	const { t } = useTranslation();
+	const [user, setUser] = useState<AuthUser | null>(null);
 	const [email, setEmail] = useState("");
 	const [name, setName] = useState("");
 	const [group, setGroup] = useState<{
@@ -49,6 +193,14 @@ function RegisterForm() {
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 	const [error, setError] = useState("");
+
+	useEffect(() => {
+		setUser(decodeIdToken());
+	}, []);
+
+	if (user) {
+		return <MemberRsvp user={user} />;
+	}
 
 	const handleSubmit = async () => {
 		if (!email || !name) {

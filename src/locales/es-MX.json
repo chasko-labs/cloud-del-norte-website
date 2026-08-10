@@ -1090,7 +1090,12 @@
 		"joinCdn": "Únete a Cloud Del Norte",
 		"findLocal": "¿No estás en nuestra región? Encuentra tu grupo local de AWS",
 		"validationError": "Por favor completa tu correo y nombre.",
-		"genericError": "Algo salió mal. Intenta de nuevo."
+		"genericError": "Algo salió mal. Intenta de nuevo.",
+		"memberWelcome": "¡Bienvenido, {{name}}!",
+		"memberConfirmRsvp": "Confirma tu RSVP",
+		"memberAlreadyRegistered": "Estás confirmado para el taller cuántico.",
+		"addToCalendar": "Agregar a Google Calendar",
+		"memberSubtext": "Enviaremos los detalles de la reunión a {{email}} antes del evento."
 	},
 	"rsvp": {
 		"breadcrumb": "Apúntate",
