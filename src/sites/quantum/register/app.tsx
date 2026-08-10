@@ -149,7 +149,8 @@ function RegisterForm() {
 			</Container>
 
 			<Box textAlign="center" color="text-body-secondary" fontSize="body-s">
-				Want full community access?{" "}
+				Want full Cloud Del Norte access? Joining grants access to this and
+				other workshops hosted by Cloud Del Norte.{" "}
 				<Link href="https://auth.clouddelnorte.org/signup/index.html">
 					Join Cloud Del Norte
 				</Link>
