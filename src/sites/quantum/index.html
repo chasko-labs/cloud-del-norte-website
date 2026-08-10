@@ -1,491 +1,464 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quantum Computing Workshop — Free Online · 4 AWS User Groups</title>
-  <meta name="description" content="Hands-on Amazon Braket workshop: build quantum circuits, observe superposition. Free, online, Aug 30. Joint event: Cloud Del Norte, Clarksville, Columbia, USC.">
-
-  <!-- OG Meta -->
-  <meta property="og:title" content="Quantum Computing Workshop — Free Online · 4 AWS User Groups">
-  <meta property="og:description" content="Hands-on Amazon Braket workshop: build quantum circuits, observe superposition. Free, online, Aug 30. Joint event: Cloud Del Norte, Clarksville, Columbia, USC.">
+  <title>Amazon Braket Workshop — Cloud Del Norte</title>
+  <meta name="description" content="Hands-on quantum computing workshop using Amazon Braket. Free live webinar.">
+  <meta property="og:title" content="Hands-On Amazon Braket Workshop">
+  <meta property="og:description" content="Superposition, entanglement, Deutsch's algorithm — live on Amazon Braket.">
   <meta property="og:image" content="https://dev.clouddelnorte.org/_previews/cdn-atmosphere-og-1200x630.png">
   <meta property="og:url" content="https://quantum.clouddelnorte.org">
   <meta property="og:type" content="website">
-
-  <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Quantum Computing Workshop — Free Online · 4 AWS User Groups">
-  <meta name="twitter:description" content="Hands-on Amazon Braket workshop: build quantum circuits, observe superposition. Free, online, Aug 30. Joint event: Cloud Del Norte, Clarksville, Columbia, USC.">
+  <meta name="twitter:title" content="Hands-On Amazon Braket Workshop">
+  <meta name="twitter:description" content="Free quantum computing workshop — Cloud Del Norte">
   <meta name="twitter:image" content="https://dev.clouddelnorte.org/_previews/cdn-atmosphere-og-1200x630.png">
-
   <style>
-    *, *::before, *::after {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #00002a;
+      --text: #f0eee8;
+      --text-muted: #b8b4ac;
+      --surface: rgba(255,255,255,0.04);
+      --brass: #c9a23f;
+      --brass-dark: #8b6914;
+      --brass-light: #daa520;
+      --purple: #5a1f8a;
+      --violet: #9060f0;
     }
 
-    html {
-      scroll-behavior: smooth;
+    [data-theme="light"] {
+      --bg: #faf6f0;
+      --text: #00002a;
+      --text-muted: #4a4540;
+      --surface: rgba(0,0,42,0.04);
     }
 
+    html { font-size: 16px; }
     body {
-      font-family: system-ui, -apple-system, sans-serif;
-      background: #00002a;
-      color: #ffffff;
-      line-height: 1.6;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    a {
-      color: #d7c7ee;
+    /* Background layers */
+    .bg-atmosphere {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      background: url('https://dev.clouddelnorte.org/_previews/cdn-atmosphere-hero-1920x1080.webp') center/cover no-repeat;
+      opacity: 0.4;
+    }
+    [data-theme="light"] .bg-atmosphere { opacity: 0.15; }
+
+    .bg-noise {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+    }
+
+    /* Nav */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(0,0,42,0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    [data-theme="light"] .nav {
+      background: rgba(250,246,240,0.95);
+      border-bottom: 1px solid rgba(0,0,42,0.08);
+    }
+    .nav-brand {
+      color: var(--text);
       text-decoration: none;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: -0.01em;
     }
-
-    a:hover {
-      color: #ffffff;
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      align-items: center;
     }
+    .nav-btn {
+      background: none;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text);
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      transition: border-color 0.2s;
+    }
+    [data-theme="light"] .nav-btn { border-color: rgba(0,0,42,0.15); }
+    .nav-btn:hover { border-color: var(--brass); }
 
+    /* Main content */
     .container {
-      max-width: 960px;
+      max-width: 720px;
       margin: 0 auto;
-      padding: 0 1.5rem;
+      padding: 48px 20px 64px;
+    }
+
+    /* Badge */
+    .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--brass);
+      border: 1px solid rgba(201,162,63,0.4);
+      padding: 4px 12px;
+      border-radius: 4px;
+      margin-bottom: 24px;
     }
 
     /* Hero */
-    .hero {
-      position: relative;
-      min-height: 90vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 4rem 1.5rem;
-      overflow: hidden;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: url('https://dev.clouddelnorte.org/_previews/cdn-atmosphere-hero-1920x1080.webp') center/cover no-repeat;
-      opacity: 0.35;
-      z-index: 0;
-    }
-
-    .hero::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(0,0,42,0.4) 0%, rgba(0,0,42,0.95) 100%);
-      z-index: 1;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 720px;
-    }
-
-    .badge {
-      display: inline-block;
-      background: rgba(144, 96, 240, 0.2);
-      border: 1px solid rgba(144, 96, 240, 0.5);
-      border-radius: 2rem;
-      padding: 0.4rem 1.2rem;
-      font-size: 0.8rem;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #d7c7ee;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700;
+    .hero-title {
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
       line-height: 1.15;
-      margin-bottom: 0.75rem;
+      margin-bottom: 8px;
     }
-
-    .hero .subtitle {
-      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
-      color: #d7c7ee;
-      margin-bottom: 1rem;
-    }
-
-    .hero .date {
+    .hero-subtitle {
       font-size: 1rem;
-      color: rgba(255,255,255,0.8);
-      margin-bottom: 2rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .hero-date {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-bottom: 32px;
     }
 
-    .date .tz {
-      display: block;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.6);
-      margin-top: 0.25rem;
-    }
-
-    .btn-primary {
+    /* Brass button */
+    .btn-brass {
       display: inline-block;
-      background: linear-gradient(135deg, #5a1f8a, #9060f0);
-      color: #ffffff;
+      background: linear-gradient(135deg, #c9a23f 0%, #8b6914 40%, #daa520 60%, #c9a23f 100%);
+      background-size: 200% 200%;
+      color: #1a0a00;
+      font-weight: 700;
+      text-shadow: 0 1px 0 rgba(255,215,0,0.4);
+      border: 2px solid rgba(218,165,32,0.6);
+      box-shadow: 0 2px 12px rgba(201,162,63,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+      padding: 16px 32px;
+      border-radius: 8px;
       font-size: 1.1rem;
-      font-weight: 600;
-      padding: 1rem 2.5rem;
-      border-radius: 0.5rem;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: background-position 0.3s, box-shadow 0.3s;
       text-decoration: none;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
-      box-shadow: 0 4px 20px rgba(90, 31, 138, 0.4);
+    }
+    .btn-brass:hover {
+      background-position: 100% 100%;
+      box-shadow: 0 4px 20px rgba(201,162,63,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 28px rgba(90, 31, 138, 0.6);
-      color: #ffffff;
-    }
-
-    .hero .cta-note {
+    /* Secondary CTA */
+    .cta-secondary {
       display: block;
-      margin-top: 1rem;
-      font-size: 0.85rem;
-      color: rgba(255,255,255,0.6);
-    }
-
-    /* Sections */
-    section {
-      padding: 4rem 1.5rem;
-    }
-
-    section h2 {
-      font-size: 1.6rem;
-      font-weight: 700;
-      margin-bottom: 1.5rem;
-      color: #d7c7ee;
-    }
-
-    /* What you'll do */
-    .outcomes {
-      background: rgba(90, 31, 138, 0.08);
-      border-top: 1px solid rgba(144, 96, 240, 0.15);
-    }
-
-    .outcomes-list {
-      list-style: none;
-      display: grid;
-      gap: 1.25rem;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .outcomes-list li {
-      padding-left: 2rem;
-      position: relative;
-      font-size: 1.05rem;
-      color: rgba(255,255,255,0.9);
-    }
-
-    .outcomes-list li::before {
-      content: '▸';
-      position: absolute;
-      left: 0;
-      color: #9060f0;
-      font-weight: 700;
-    }
-
-    /* Who this is for */
-    .audience {
-      border-top: 1px solid rgba(144, 96, 240, 0.1);
-    }
-
-    .audience-list {
-      list-style: none;
-      display: grid;
-      gap: 1rem;
-      max-width: 700px;
-      margin: 0 auto;
-    }
-
-    .audience-list li {
-      padding-left: 2rem;
-      position: relative;
-      font-size: 1.05rem;
-      color: rgba(255,255,255,0.85);
-    }
-
-    .audience-list li::before {
-      content: '✓';
-      position: absolute;
-      left: 0;
-      color: #9060f0;
-    }
-
-    /* Hosted by */
-    .hosted-by {
-      background: rgba(90, 31, 138, 0.06);
-      border-top: 1px solid rgba(144, 96, 240, 0.15);
-      text-align: center;
-    }
-
-    .hosted-by .lead {
-      font-size: 1rem;
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 2rem;
-    }
-
-    .groups-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.5rem;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    .group-card {
-      background: rgba(90, 31, 138, 0.12);
-      border: 1px solid rgba(144, 96, 240, 0.2);
-      border-radius: 0.75rem;
-      padding: 1.5rem 1rem;
-      text-align: center;
-      transition: border-color 0.2s ease;
-    }
-
-    .group-card:hover {
-      border-color: rgba(144, 96, 240, 0.5);
-    }
-
-    .group-card h3 {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #ffffff;
-      margin-bottom: 0.4rem;
-      line-height: 1.3;
-    }
-
-    .group-card .location {
-      font-size: 0.8rem;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 0.75rem;
-    }
-
-    .group-card a {
-      font-size: 0.8rem;
-      color: #9060f0;
-      font-weight: 500;
-    }
-
-    .group-card a:hover {
-      color: #d7c7ee;
-    }
-
-    /* Meetup RSVP */
-    .meetup-rsvp {
-      text-align: center;
-      border-top: 1px solid rgba(144, 96, 240, 0.1);
-      padding: 3rem 1.5rem;
-    }
-
-    .meetup-rsvp h2 {
-      font-size: 1.3rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .meetup-rsvp .lead {
-      color: rgba(255,255,255,0.7);
-      margin-bottom: 1.5rem;
+      margin-top: 16px;
+      color: var(--brass);
+      text-decoration: underline;
+      text-underline-offset: 3px;
       font-size: 0.95rem;
     }
+    .cta-secondary:hover { color: var(--brass-light); }
 
-    .meetup-links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 0.75rem;
+    /* Description */
+    .description {
+      margin-top: 48px;
+      font-size: 1.2rem;
+      line-height: 1.7;
+      color: var(--text);
+      max-width: 600px;
+    }
+    .description a {
+      color: var(--brass);
+      text-decoration: underline;
+      text-underline-offset: 3px;
     }
 
-    .meetup-links a {
-      display: inline-block;
-      padding: 0.5rem 1.2rem;
-      border: 1px solid rgba(144, 96, 240, 0.4);
-      border-radius: 2rem;
-      font-size: 0.85rem;
-      color: #d7c7ee;
-      transition: background 0.2s ease, border-color 0.2s ease;
+    /* Speakers */
+    .speakers {
+      margin-top: 56px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+    @media (max-width: 520px) {
+      .speakers { grid-template-columns: 1fr; gap: 32px; }
+    }
+    .speaker { position: relative; }
+    .speaker-avatar {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      object-fit: cover;
+      border: 3px solid var(--surface);
+    }
+    .speaker-placeholder {
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      margin: 0 auto 12px;
+      background: linear-gradient(135deg, var(--purple), var(--violet));
+      border: 3px solid var(--surface);
+    }
+    .speaker-host-ring {
+      border: 3px solid transparent;
+      background: linear-gradient(var(--bg), var(--bg)) padding-box,
+        linear-gradient(135deg, #c9a23f, #9060f0, #00ffaa, #c9a23f) border-box;
+      border-radius: 50%;
+      animation: holo-spin 4s linear infinite;
+    }
+    @keyframes holo-spin {
+      to { filter: hue-rotate(360deg); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .speaker-host-ring { animation: none; }
+    }
+    .speaker-host-badge {
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      transform: translateX(20px);
+      background: linear-gradient(135deg, #c9a23f, #daa520);
+      color: #1a0a00;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .speaker-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 2px;
+    }
+    .speaker-name a {
+      color: var(--text);
+      text-decoration: none;
+    }
+    .speaker-name a:hover { color: var(--brass); }
+    .speaker-title {
+      font-size: 0.8rem;
+      color: var(--text-muted);
     }
 
-    .meetup-links a:hover {
-      background: rgba(144, 96, 240, 0.15);
-      border-color: #9060f0;
-      color: #ffffff;
+    /* Hosting info */
+    .hosting {
+      margin-top: 48px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
     }
+    .hosting a {
+      color: var(--brass);
+      text-decoration: none;
+    }
+    .hosting a:hover { text-decoration: underline; }
 
     /* Footer */
-    .site-footer {
+    .footer {
+      margin-top: 64px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
       text-align: center;
-      padding: 4rem 1.5rem 3rem;
-      border-top: 1px solid rgba(144, 96, 240, 0.1);
     }
-
-    .site-footer .series-note {
-      font-size: 0.9rem;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 0.5rem;
-    }
-
-    .site-footer .powered-by {
+    [data-theme="light"] .footer { border-top-color: rgba(0,0,42,0.08); }
+    .footer-tagline {
+      margin-top: 20px;
       font-size: 0.85rem;
-      color: rgba(255,255,255,0.5);
-      margin-bottom: 2rem;
+      color: var(--text-muted);
+    }
+    .footer-tagline a {
+      color: var(--brass);
+      text-decoration: none;
     }
 
-    .site-footer .powered-by a {
-      color: #9060f0;
-    }
+    /* Language toggle */
+    .lang-es { display: none; }
+    [data-lang="es"] .lang-en { display: none; }
+    [data-lang="es"] .lang-es { display: inline; }
+    /* For block-level elements */
+    [data-lang="es"] .lang-en-block { display: none; }
+    [data-lang="es"] .lang-es-block { display: block; }
+    .lang-es-block { display: none; }
 
-    .site-footer .btn-primary {
-      font-size: 1rem;
-      padding: 0.85rem 2rem;
-    }
-
-    /* Responsive */
-    @media (max-width: 600px) {
-      .hero {
-        min-height: 80vh;
-        padding: 3rem 1rem;
-      }
-
-      section {
-        padding: 3rem 1rem;
-      }
-
-      .groups-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .meetup-links {
-        flex-direction: column;
-        align-items: center;
-      }
-    }
-
-    /* Focus states for accessibility */
-    a:focus-visible,
-    .btn-primary:focus-visible {
-      outline: 2px solid #9060f0;
-      outline-offset: 3px;
-    }
-
-    /* Reduced motion */
-    @media (prefers-reduced-motion: reduce) {
-      .btn-primary {
-        transition: none;
-      }
-      .group-card {
-        transition: none;
-      }
+    /* Light mode speaker cards */
+    [data-theme="light"] .speaker {
+      background: rgba(255,255,255,0.7);
+      padding: 20px 12px;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,42,0.06);
     }
   </style>
 </head>
 <body>
+  <div class="bg-atmosphere" aria-hidden="true"></div>
+  <div class="bg-noise" aria-hidden="true"></div>
 
-  <!-- Hero -->
-  <header class="hero">
-    <div class="hero-content">
-      <span class="badge">Free · Online · Open to All</span>
-      <h1>Getting Started with Quantum Superpositions</h1>
-      <p class="subtitle">Hands-on with <a href="https://builder.aws.com/content/3GaxVTZeaL9pWzjXj3k7tMynzbI/a-developers-field-guide-to-amazon-braket" target="_blank" rel="noopener" style="color: #ffffff; text-decoration: underline; text-decoration-color: #9060f0;">Amazon Braket</a> — A Practical Workshop · Part 1</p>
-      <p style="font-size: 1.1rem; color: #d7c7ee; margin-bottom: 1.5rem;">Hosted by <a href="https://builder.aws.com/content/3FFVnDe3HIsgHRwAz0zPsKBgjZv/dear-builder-welcome-to-quantum-computing" target="_blank" rel="noopener" style="color: #ffffff; font-weight: 600; text-decoration: underline; text-decoration-color: #9060f0;">Christian Perez</a></p>
-      <p class="date">
-        Sunday, August 30, 2026
-        <span class="tz">3:00 PM MDT · 4:00 PM CDT · 5:00 PM EDT</span>
+  <!-- Nav -->
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <a href="https://clouddelnorte.org" class="nav-brand">Cloud Del Norte</a>
+    <div class="nav-controls">
+      <button class="nav-btn" id="theme-toggle" aria-label="Toggle light/dark mode">🌙</button>
+      <button class="nav-btn" id="lang-toggle" aria-label="Toggle language">🇺🇸</button>
+    </div>
+  </nav>
+
+  <!-- Content -->
+  <main class="container">
+    <!-- Badge -->
+    <div class="badge">
+      <span class="lang-en">LIVE AWS WEBINAR · FREE</span>
+      <span class="lang-es">WEBINAR AWS EN VIVO · GRATIS</span>
+    </div>
+
+    <!-- Hero -->
+    <h1 class="hero-title">
+      <span class="lang-en">Hands-On Amazon Braket Workshop</span>
+      <span class="lang-es">Taller Práctico de Amazon Braket</span>
+    </h1>
+    <p class="hero-subtitle">quantum superpositions, wavefunctions, entanglement</p>
+    <p class="hero-date">
+      <span class="lang-en">Sun Aug 30 · 3:00–6:00 PM CDT</span>
+      <span class="lang-es">Dom 30 Ago · 3:00–6:00 PM CDT</span>
+    </p>
+
+    <!-- Primary CTA -->
+    <a href="https://quantum.clouddelnorte.org/register/" class="btn-brass">
+      Workshop @ quantum.clouddelnorte.org
+    </a>
+
+    <!-- Secondary CTA -->
+    <a href="https://www.meetup.com/awsugclouddelnorte/" class="cta-secondary">
+      <span class="lang-en">RSVP on Meetup</span>
+      <span class="lang-es">RSVP en Meetup</span>
+    </a>
+
+    <!-- Description -->
+    <div class="description lang-en-block">
+      <p>A beginner-friendly intro to <a href="https://builder.aws.com/content/3GaxVTZeaL9pWzjXj3k7tMynzbI/a-developers-field-guide-to-amazon-braket">Amazon Braket</a> — we'll build up superposition and entanglement, then run Deutsch's algorithm using Amazon Braket quantum computing from AWS. Bring your questions.</p>
+    </div>
+    <div class="description lang-es-block">
+      <p>Intro a <a href="https://builder.aws.com/content/3GaxVTZeaL9pWzjXj3k7tMynzbI/a-developers-field-guide-to-amazon-braket">Amazon Braket</a> — construiremos superposición y entrelazamiento, luego ejecutaremos el algoritmo de Deutsch usando computación cuántica de AWS. Trae tus preguntas.</p>
+    </div>
+
+    <!-- Speakers -->
+    <section class="speakers" aria-label="Speakers">
+      <!-- Christian Perez -->
+      <div class="speaker">
+        <span class="speaker-host-badge">HOST</span>
+        <img
+          src="https://avatars.builderprofile.aws.dev/2baMniGqrdbQ0xOBEPgtgiGkWsX.webp"
+          alt="Christian Perez"
+          class="speaker-avatar speaker-host-ring"
+          width="88" height="88"
+          loading="lazy"
+        >
+        <p class="speaker-name"><a href="https://builder.aws.com/content/3FFVnDe3HIsgHRwAz0zPsKBgjZv/dear-builder-welcome-to-quantum-computing">Christian Perez</a></p>
+        <p class="speaker-title">CEO</p>
+      </div>
+
+      <!-- Amelia Hough-Ross -->
+      <div class="speaker">
+        <div class="speaker-placeholder" aria-label="Amelia Hough-Ross avatar"></div>
+        <p class="speaker-name">Amelia Hough-Ross</p>
+        <p class="speaker-title">Chief Data Officer</p>
+      </div>
+
+      <!-- Bryan Chasko -->
+      <div class="speaker">
+        <div class="speaker-placeholder" aria-label="Bryan Chasko avatar"></div>
+        <p class="speaker-name">Bryan Chasko</p>
+        <p class="speaker-title">CTO</p>
+      </div>
+    </section>
+
+    <!-- Hosting info -->
+    <div class="hosting">
+      <p>
+        <span class="lang-en">Hosted by Cloud Del Norte · featuring AWS User Groups from Clarksville, Columbia &amp; USC</span>
+        <span class="lang-es">Organizado por Cloud Del Norte · con AWS User Groups de Clarksville, Columbia &amp; USC</span>
       </p>
-      <p class="date" style="margin-bottom: 2rem;">This event will be presented in English &amp; Spanish</p>
-      <a href="https://quantum.clouddelnorte.org/register/" class="btn-primary">Register Now</a>
-      <span class="cta-note">Hands-on workshop — you'll write real quantum circuits, not just watch slides</span>
+      <p>
+        <a href="https://www.meetup.com/pro/global-aws-user-group-community/">
+          <span class="lang-en">Find your local group →</span>
+          <span class="lang-es">Encuentra tu grupo local →</span>
+        </a>
+      </p>
     </div>
-  </header>
 
-  <!-- What You'll Do -->
-  <section class="outcomes">
-    <div class="container">
-      <h2>What You'll Do — Hands-on with <a href="https://builder.aws.com/content/3GaxVTZeaL9pWzjXj3k7tMynzbI/a-developers-field-guide-to-amazon-braket" target="_blank" rel="noopener" style="color: #d7c7ee;">Amazon Braket</a></h2>
-      <p style="font-size: 1rem; color: rgba(255,255,255,0.7); margin-bottom: 1.5rem; max-width: 700px; margin-left: auto; margin-right: auto;">This is a practical workshop — you'll build and run real quantum circuits live, not sit through slides.</p>
-      <ul class="outcomes-list">
-        <li>Build your first quantum circuit on Amazon Braket</li>
-        <li>Observe superposition &amp; wavefunction collapse live</li>
-        <li>Run measurements and interpret results</li>
-        <li>Start the AWS Braket Learning Plan toward your digital badge</li>
-      </ul>
-    </div>
-  </section>
+    <!-- Footer -->
+    <footer class="footer">
+      <a href="https://quantum.clouddelnorte.org/register/" class="btn-brass">
+        Workshop @ quantum.clouddelnorte.org
+      </a>
+      <p class="footer-tagline">
+        <a href="https://clouddelnorte.org">Cloud Del Norte</a> — Far West Texas, New Mexico &amp; Chihuahua
+      </p>
+    </footer>
+  </main>
 
-  <!-- Who This Is For -->
-  <section class="audience">
-    <div class="container">
-      <h2>Who This Is For</h2>
-      <ul class="audience-list">
-        <li>Complete beginners welcome — no quantum physics background needed</li>
-        <li>Developers curious about quantum computing</li>
-        <li>Students and educators exploring AWS services</li>
-        <li>Anyone from any AWS User Group (or none!)</li>
-      </ul>
-    </div>
-  </section>
+  <script>
+    // Theme toggle — syncs with main site localStorage key
+    (() => {
+      const KEY = 'awsaerospace-theme';
+      const html = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
 
-  <!-- Hosted By -->
-  <section class="hosted-by">
-    <div class="container">
-      <h2>Hosted By</h2>
-      <p class="lead">Cloud Del Norte is the host of this workshop, featuring multiple AWS User Groups</p>
-      <p style="font-size: 0.9rem; color: rgba(255,255,255,0.6); margin-bottom: 2rem;">A joint event across 4 AWS User Groups</p>
-      <div class="groups-grid">
-        <div class="group-card">
-          <h3>AWS UG Cloud Del Norte</h3>
-          <p class="location">El Paso, TX</p>
-          <a href="https://www.meetup.com/awsugclouddelnorte/" target="_blank" rel="noopener">View on Meetup →</a>
-        </div>
-        <div class="group-card">
-          <h3>AWS User Group — Clarksville</h3>
-          <p class="location">Clarksville, TN</p>
-          <a href="https://www.meetup.com/aws-user-group-clarksville/" target="_blank" rel="noopener">View on Meetup →</a>
-        </div>
-        <div class="group-card">
-          <h3>AWS SBG at University of South Carolina</h3>
-          <p class="location">Columbia Campus, SC</p>
-          <a href="https://www.meetup.com/aws-sbg-at-univ-of-south-carolina/" target="_blank" rel="noopener">View on Meetup →</a>
-        </div>
-        <div class="group-card">
-          <h3>Columbia AWS User Group</h3>
-          <p class="location">Columbia, SC</p>
-          <a href="https://www.meetup.com/columbia-aws-users-group/" target="_blank" rel="noopener">View on Meetup →</a>
-        </div>
-      </div>
-      <p style="margin-top: 2rem; font-size: 0.95rem; color: rgba(255,255,255,0.7);">Not in our region? <a href="https://www.meetup.com/pro/global-aws-user-group-community/" target="_blank" rel="noopener" style="color: #9060f0;">Find your local AWS User Group →</a></p>
-    </div>
-  </section>
+      function apply(theme) {
+        html.setAttribute('data-theme', theme);
+        btn.textContent = theme === 'dark' ? '🌙' : '☀️';
+        localStorage.setItem(KEY, theme);
+      }
 
-  <!-- Already on Meetup? -->
-  <section class="meetup-rsvp">
-    <div class="container">
-      <h2>Already on Meetup?</h2>
-      <p class="lead">RSVP through your local group:</p>
-      <div class="meetup-links">
-        <a href="https://www.meetup.com/awsugclouddelnorte/" target="_blank" rel="noopener">Cloud Del Norte</a>
-        <a href="https://www.meetup.com/aws-user-group-clarksville/" target="_blank" rel="noopener">Clarksville</a>
-        <a href="https://www.meetup.com/aws-sbg-at-univ-of-south-carolina/" target="_blank" rel="noopener">USC</a>
-        <a href="https://www.meetup.com/columbia-aws-users-group/" target="_blank" rel="noopener">Columbia</a>
-      </div>
-    </div>
-  </section>
+      const stored = localStorage.getItem(KEY);
+      if (stored === 'light' || stored === 'dark') {
+        apply(stored);
+      } else if (window.matchMedia('(prefers-color-scheme: light)').matches) {
+        apply('light');
+      }
 
-  <!-- Footer -->
-  <footer class="site-footer">
-    <p class="series-note">Part 1 of a quantum computing series</p>
-    <p class="powered-by">Powered by <a href="https://explore.skillbuilder.aws/learn/learning_plan/view/1986/amazon-braket-badge-knowledge-badge-readiness-path" target="_blank" rel="noopener">Amazon Braket</a></p>
-    <a href="https://quantum.clouddelnorte.org/register/" class="btn-primary">Register Now</a>
-  </footer>
+      btn.addEventListener('click', () => {
+        apply(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+      });
+    })();
 
+    // Language toggle
+    (() => {
+      const html = document.documentElement;
+      const btn = document.getElementById('lang-toggle');
+
+      function apply(lang) {
+        html.setAttribute('data-lang', lang);
+        btn.textContent = lang === 'en' ? '🇺🇸' : '🇲🇽';
+      }
+
+      btn.addEventListener('click', () => {
+        apply(html.getAttribute('data-lang') === 'en' ? 'es' : 'en');
+      });
+    })();
+  </script>
 </body>
 </html>
