@@ -85,23 +85,49 @@ function LandingContent() {
 			>
 				<Grid gridDefinition={[{ colspan: 4 }, { colspan: 4 }, { colspan: 4 }]}>
 					<SpaceBetween size="xs" alignItems="center">
-						<img
-							src={CHRISTIAN_AVATAR}
-							alt="Christian Perez"
-							style={{
-								width: 80,
-								height: 80,
-								borderRadius: "50%",
-								border: "3px solid #c9a23f",
-							}}
-						/>
-						<Box fontWeight="bold">
+						<div style={{ position: "relative", display: "inline-block" }}>
+							<img
+								src={CHRISTIAN_AVATAR}
+								alt="Christian Perez"
+								style={{
+									width: 100,
+									height: 100,
+									borderRadius: "50%",
+									border: "3px solid #c9a23f",
+									boxShadow: "0 0 20px rgba(201,162,63,0.3)",
+								}}
+							/>
+							<span
+								style={{
+									position: "absolute",
+									top: "-4px",
+									right: "-4px",
+									background: "linear-gradient(135deg,#c9a23f,#daa520)",
+									color: "#1a0a00",
+									fontSize: "0.6rem",
+									fontWeight: 800,
+									padding: "2px 8px",
+									borderRadius: "4px",
+									letterSpacing: "0.05em",
+								}}
+							>
+								{t("quantum.hostBadge")}
+							</span>
+						</div>
+						<Box fontWeight="bold" fontSize="heading-s">
 							<Link href={CHRISTIAN_PROFILE} external>
 								Christian Perez
 							</Link>
 						</Box>
 						<Box color="text-body-secondary" fontSize="body-s">
 							{t("quantum.christianTitle")}
+						</Box>
+						<Box
+							color="text-body-secondary"
+							fontSize="body-s"
+							textAlign="center"
+						>
+							{t("quantum.christianBio")}
 						</Box>
 					</SpaceBetween>
 					<SpaceBetween size="xs" alignItems="center">

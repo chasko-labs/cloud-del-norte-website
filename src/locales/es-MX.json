@@ -1053,7 +1053,7 @@
 		"pauseLabel": "pausa"
 	},
 	"quantum": {
-		"badge": "WEBINAR AWS EN VIVO",
+		"badge": "TALLER EN LÍNEA EN VIVO · HUBS PRESENCIALES DISPONIBLES",
 		"title": "Taller Práctico de Amazon Braket",
 		"subtitle": "superposiciones cuánticas, funciones de onda, entrelazamiento",
 		"date": "Dom 30 Ago · 3:00–6:00 PM CDT",
@@ -1064,9 +1064,10 @@
 		"description": "Intro a Amazon Braket — construiremos superposición y entrelazamiento, luego ejecutaremos el algoritmo de Deutsch usando computación cuántica de AWS. Trae tus preguntas.",
 		"hostsHeader": "Anfitriones",
 		"hostBadge": "ANFITRIÓN",
-		"groupsHeader": "Taller virtual presentando",
+		"groupsHeader": "Dirigido por comunidades AWS · Organizado por AWS UG Cloud Del Norte, El Paso TX",
 		"findLocal": "Encuentra tu grupo local de AWS →",
 		"christianTitle": "CEO · AWS UG Clarksville · ANFITRIÓN",
+		"christianBio": "Anfitrión del taller — dirigiendo la sesión práctica de Amazon Braket desde AWS User Group Clarksville",
 		"ameliaTitle": "Chief Data Officer · Columbia AWS UG",
 		"bryanTitle": "CTO · Cloud Del Norte"
 	},
