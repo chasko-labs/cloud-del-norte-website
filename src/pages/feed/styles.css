@@ -1468,6 +1468,10 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	/* Wave 80 — safety for unbroken strings when nowrap is relaxed by
+	   the tablet @container override (520–859px). */
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 .feed-featured-event__title a {
@@ -2102,16 +2106,24 @@
 }
 
 /* Tablet — 2-column hybrid. Image stays full-width hero across both
-   columns; meta/content rows split into a 2-col grid; buttons span both
-   columns again to anchor the call-to-action. Calibrated to ~520px
-   container width because below that, the 2-col split crushes the date
-   string + spots chip into wrap territory. */
+   columns; title and date each span full width (stacked, not side-by-
+   side) so long titles don't clip to unreadable ellipsis at tablet
+   container widths (520–860px). in-person + spots split into two
+   columns; description + buttons span both columns.
+   Wave 80 fix: raised the "title date" side-by-side split to the ≥860px
+   desktop breakpoint only. At 520–859px the title + date each get the
+   full card width so white-space:nowrap + text-overflow:ellipsis still
+   shows the majority of the title text instead of clipping to ~30% of
+   it in a half-width 1fr column.
+   Calibrated to ~520px container width because below that, the 2-col
+   split crushes the in-person + spots chips into wrap territory. */
 @container cdn-feed-featured (min-width: 520px) {
 	.feed-featured-event__layout {
 		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
 		grid-template-areas:
 			"image image"
-			"title date"
+			"title title"
+			"date date"
 			"in-person spots"
 			"desc desc"
 			"buttons buttons";
@@ -2120,9 +2132,7 @@
 		   (16px). The 2-col layout reads row-by-row at this breakpoint, so
 		   uniform grid gap is the right primitive — per-item margin-block-
 		   end is reset to 0 below so the row spacing stays even across
-		   the title/date and in-person/spots row pairs.
-		   Wave 38e — `location` row dropped; the description now spans
-		   both columns on its own row. */
+		   the in-person/spots row pair. */
 		gap: var(--cdn-space-12, 12px) var(--cdn-space-md, 16px);
 	}
 
@@ -2142,8 +2152,22 @@
 		margin-block-end: 0;
 	}
 
+	/* Wave 80 — allow title to wrap at tablet widths where the card is
+	   wide enough for 2+ lines to still read well but not wide enough
+	   for the full title on a single line. word-wrap + overflow-wrap
+	   handle long unbroken strings (URLs, hyphenated compound titles). */
+	.feed-featured-event__layout .feed-featured-event__title {
+		white-space: normal;
+		word-wrap: break-word;
+		overflow-wrap: break-word;
+		text-overflow: clip;
+	}
+
 	.feed-featured-event__layout .cdn-brand-btn-stack {
 		margin-block-start: var(--cdn-space-12, 12px);
+		/* Wave 80 — button stack at tablet: fit-content width so buttons
+		   don't stretch to fill the full 2-col span. */
+		width: fit-content;
 	}
 
 	/* Center the buttons stack across the 2-col span so it reads as a
@@ -2218,6 +2242,19 @@
 	.feed-featured-event__layout .feed-featured-event__date,
 	.feed-featured-event__layout .cdn-brand-btn-stack {
 		min-width: 0;
+	}
+
+	/* Wave 80 — restore nowrap + ellipsis at desktop where the right
+	   column (minmax(0, 1fr) beside the image) is wide enough for the
+	   title to read well on a single line. Also reset button width. */
+	.feed-featured-event__layout .feed-featured-event__title {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.feed-featured-event__layout .cdn-brand-btn-stack {
+		width: auto;
 	}
 }
 
@@ -3979,6 +4016,10 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	/* Wave 80 — safety for unbroken strings if nowrap is ever relaxed
+	   by a container query override at narrower card widths. */
+	word-wrap: break-word;
+	overflow-wrap: break-word;
 }
 
 .feed-next-meetup__title a {
