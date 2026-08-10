@@ -2,6 +2,7 @@ node_modules/
 /lib/
 /lib-auth/
 /lib-awsug/
+/lib-quantum/
 dist/
 *.log
 .DS_Store
