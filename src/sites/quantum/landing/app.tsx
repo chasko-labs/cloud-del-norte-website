@@ -83,8 +83,8 @@ function LandingContent() {
 				</Box>
 			</Container>
 
-			{/* Speakers */}
-			<Container header={<Header variant="h2">Speakers</Header>}>
+			{/* Hosts */}
+			<Container header={<Header variant="h2">Hosts</Header>}>
 				<Grid gridDefinition={[{ colspan: 4 }, { colspan: 4 }, { colspan: 4 }]}>
 					<SpaceBetween size="xs" alignItems="center">
 						<img
@@ -103,7 +103,7 @@ function LandingContent() {
 							</Link>
 						</Box>
 						<Box color="text-body-secondary" fontSize="body-s">
-							CEO · HOST
+							CEO · AWS UG Clarksville · HOST
 						</Box>
 					</SpaceBetween>
 					<SpaceBetween size="xs" alignItems="center">
@@ -125,7 +125,7 @@ function LandingContent() {
 						</div>
 						<Box fontWeight="bold">Amelia Hough-Ross</Box>
 						<Box color="text-body-secondary" fontSize="body-s">
-							Chief Data Officer
+							Chief Data Officer · Columbia AWS UG
 						</Box>
 					</SpaceBetween>
 					<SpaceBetween size="xs" alignItems="center">
@@ -140,7 +140,7 @@ function LandingContent() {
 							</Link>
 						</Box>
 						<Box color="text-body-secondary" fontSize="body-s">
-							CTO
+							CTO · Cloud Del Norte
 						</Box>
 					</SpaceBetween>
 				</Grid>
@@ -148,17 +148,13 @@ function LandingContent() {
 
 			{/* Hosting */}
 			<Container
-				header={<Header variant="h2">Hosted by Cloud Del Norte</Header>}
+				header={<Header variant="h2">Virtual workshop featuring</Header>}
 			>
 				<SpaceBetween size="s">
-					<Box>
-						AWS User Group serving Far West Texas, New Mexico & Chihuahua,
-						Mexico
-					</Box>
-					<Box>
-						Featuring speakers and attendees from AWS User Groups in
-						Clarksville, Columbia & USC
-					</Box>
+					<Box fontWeight="bold">AWS User Group Clarksville</Box>
+					<Box fontWeight="bold">Columbia AWS User Group</Box>
+					<Box fontWeight="bold">AWS SBG at University of South Carolina</Box>
+					<Box fontWeight="bold">Cloud Del Norte</Box>
 					<Link href={GLOBAL_UG_URL} external>
 						Find your local AWS User Group →
 					</Link>

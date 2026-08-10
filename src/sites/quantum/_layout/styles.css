@@ -24,3 +24,16 @@
 	margin: 2rem auto;
 	padding: 0 1.5rem;
 }
+
+.quantum-main [class*="awsui_button"][class*="variant-primary"] {
+	background-color: #5a1f8a !important;
+	background-image: linear-gradient(135deg, #5a1f8a, #9060f0) !important;
+	border-color: #5a1f8a !important;
+	color: #fff !important;
+}
+
+.quantum-main [class*="awsui_button"][class*="variant-primary"]:hover {
+	background-color: #9060f0 !important;
+	background-image: linear-gradient(135deg, #9060f0, #5a1f8a) !important;
+	border-color: #9060f0 !important;
+}
