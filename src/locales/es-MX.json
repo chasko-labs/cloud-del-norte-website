@@ -1084,8 +1084,9 @@
 		"successBody": "Te enviaremos los detalles del taller a tu correo antes del 30 de agosto.",
 		"successBookmark": "Guarda esta página — publicaremos el enlace de la reunión aquí el día del evento.",
 		"backLink": "← Volver a los detalles del taller",
-		"communityAccess": "¿Quieres acceso completo a Cloud Del Norte? Al unirte obtienes acceso a este y otros talleres organizados por Cloud Del Norte.",
+		"communityAccess": "¿Buscas más talleres? AWS User Group Cloud Del Norte organiza eventos regulares para aprendices del lejano oeste de Texas, Nuevo México y Chihuahua, México.",
 		"joinCdn": "Únete a Cloud Del Norte",
+		"findLocal": "¿No estás en nuestra región? Encuentra tu grupo local de AWS",
 		"validationError": "Por favor completa tu correo y nombre.",
 		"genericError": "Algo salió mal. Intenta de nuevo."
 	},

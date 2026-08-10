@@ -1084,8 +1084,9 @@
 		"successBody": "We'll send workshop details to your email before Aug 30.",
 		"successBookmark": "Bookmark this page — we'll post the meeting link here on the day of the event.",
 		"backLink": "← Back to workshop details",
-		"communityAccess": "Want full Cloud Del Norte access? Joining grants access to this and other workshops hosted by Cloud Del Norte.",
+		"communityAccess": "Looking for more workshops? AWS User Group Cloud Del Norte hosts regular events for learners across Far West Texas, New Mexico & Chihuahua, Mexico.",
 		"joinCdn": "Join Cloud Del Norte",
+		"findLocal": "Not in our region? Find your local AWS User Group",
 		"validationError": "Please fill in your email and name.",
 		"genericError": "Something went wrong. Please try again."
 	},

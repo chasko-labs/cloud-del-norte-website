@@ -148,10 +148,21 @@ function RegisterForm() {
 			</Container>
 
 			<Box textAlign="center" color="text-body-secondary" fontSize="body-s">
-				{t("quantumRegister.communityAccess")}{" "}
-				<Link href="https://auth.clouddelnorte.org/signup/index.html">
-					{t("quantumRegister.joinCdn")}
-				</Link>
+				<SpaceBetween size="xs">
+					<Box>{t("quantumRegister.communityAccess")}</Box>
+					<Box>
+						<Link href="https://auth.clouddelnorte.org/signup/index.html">
+							{t("quantumRegister.joinCdn")}
+						</Link>
+						{" · "}
+						<Link
+							href="https://www.meetup.com/pro/global-aws-user-group-community/"
+							external
+						>
+							{t("quantumRegister.findLocal")}
+						</Link>
+					</Box>
+				</SpaceBetween>
 			</Box>
 		</SpaceBetween>
 	);
