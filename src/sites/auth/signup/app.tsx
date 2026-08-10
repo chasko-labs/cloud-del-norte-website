@@ -96,6 +96,12 @@ function SignupWizard() {
 	const { t } = useTranslation();
 	document.title = `${t("auth.signup.title")} — ${t("auth.siteTitle")}`;
 
+	// dual-path signup: event param skips steps 2+3 (about you, interests)
+	const [isEventPath] = useState(() => {
+		const params = new URLSearchParams(window.location.search);
+		return params.has("event");
+	});
+
 	const saved = loadWizardState();
 
 	const [activeStepIndex, setActiveStepIndex] = useState(
@@ -217,6 +223,46 @@ function SignupWizard() {
 		if (requestedStepIndex > activeStepIndex) {
 			if (activeStepIndex === 0 && !validateStep1()) return;
 			// step 2 (member type + location) is optional — no validation gate
+
+			// event-path: after step 1, call signUp immediately and jump to verify (step 3)
+			if (isEventPath && activeStepIndex === 0 && !signUpCalled) {
+				setLoading(true);
+				setFormError("");
+				try {
+					await signUp({
+						email,
+						password,
+						displayName,
+						memberType: "",
+						location: "",
+						topics: "",
+						background: "",
+					});
+					setSignUpCalled(true);
+					if (verifyMethod === "email") startCooldown();
+					if (verifyMethod === "totp") void handleTotpSetup();
+				} catch (err) {
+					if (err instanceof AuthError) {
+						if (err.code === "UsernameExistsException") {
+							setFormError(t("auth.signup.emailExists"));
+						} else if (err.code === "InvalidPasswordException") {
+							setStep1Errors({ password: t("auth.signup.weakPassword") });
+							setActiveStepIndex(0);
+							setLoading(false);
+							return;
+						} else {
+							setFormError(t("auth.signup.genericError"));
+						}
+					} else {
+						setFormError(t("auth.signup.genericError"));
+					}
+					setLoading(false);
+					return;
+				}
+				setLoading(false);
+				setActiveStepIndex(3);
+				return;
+			}
 
 			// transition from interests (2) → verify (3): call signUp
 			if (activeStepIndex === 2 && !signUpCalled) {
@@ -655,6 +701,14 @@ function SignupWizard() {
 		},
 	];
 
+	// For event-path: only show steps 0 and 3 (create account + verify)
+	const visibleSteps = isEventPath ? [steps[0], steps[3]] : steps;
+	const visibleStepIndex = isEventPath
+		? activeStepIndex === 0
+			? 0
+			: 1
+		: activeStepIndex;
+
 	async function handleNextOrSubmit() {
 		if (activeStepIndex === steps.length - 1) {
 			void handleSubmit();
@@ -680,13 +734,13 @@ function SignupWizard() {
 					{t("auth.signup.signInLink")}
 				</Link>
 			</Box>
-			<StepDots current={activeStepIndex} total={steps.length} />
+			<StepDots current={visibleStepIndex} total={visibleSteps.length} />
 			<div className="cdn-auth-stepper__title">
 				{steps[activeStepIndex].title}
 			</div>
 			{steps[activeStepIndex].content}
 			<div className="cdn-auth-stepper-actions">
-				{activeStepIndex > 0 && (
+				{activeStepIndex > 0 && !isEventPath && (
 					<Button
 						variant="normal"
 						onClick={() => setActiveStepIndex((s) => s - 1)}

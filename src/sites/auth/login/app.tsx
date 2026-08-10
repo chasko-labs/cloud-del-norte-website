@@ -590,13 +590,13 @@ function LoginForm() {
 					<Link href="/forgot-password/index.html">
 						{t("auth.login.forgotPassword")}
 					</Link>
-					<Box fontSize="heading-s">
+					<div className="cdn-auth-apply-cta">
 						<Link
 							href={`/signup/index.html${typeof window !== "undefined" && window.location.search ? window.location.search : ""}`}
 						>
 							{t("auth.login.noAccount")} {t("auth.login.signUpLink")}
 						</Link>
-					</Box>
+					</div>
 				</SpaceBetween>
 			</Box>
 		</div>

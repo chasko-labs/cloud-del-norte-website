@@ -2057,6 +2057,50 @@
 	grid-area: buttons;
 }
 
+/* Primary button in featured-event — brand purple per cloudscape-overrides.md */
+.feed-featured-event [class*="awsui_button"][class*="variant-primary"] {
+	background-color: var(--cdn-purple, #5a1f8a) !important;
+	background-image: linear-gradient(
+		135deg,
+		var(--cdn-purple, #5a1f8a),
+		var(--cdn-violet, #9060f0)
+	) !important;
+	border-color: var(--cdn-purple, #5a1f8a) !important;
+	color: #fff !important;
+	box-shadow: 0 2px 8px rgba(90, 31, 138, 0.35) !important;
+}
+
+.feed-featured-event [class*="awsui_button"][class*="variant-primary"]:hover {
+	background-color: var(--cdn-violet, #9060f0) !important;
+	background-image: linear-gradient(
+		135deg,
+		var(--cdn-violet, #9060f0),
+		var(--cdn-purple, #5a1f8a)
+	) !important;
+	border-color: var(--cdn-violet, #9060f0) !important;
+	color: #fff !important;
+	box-shadow: 0 4px 14px rgba(144, 96, 240, 0.45) !important;
+}
+
+.feed-featured-event
+	[class*="awsui_button"][class*="variant-primary"]:focus-visible {
+	outline: 2px solid var(--cdn-violet, #9060f0) !important;
+	outline-offset: 2px !important;
+}
+
+:root.awsui-dark-mode
+	.feed-featured-event
+	[class*="awsui_button"][class*="variant-primary"] {
+	background-color: var(--cdn-violet, #9060f0) !important;
+	background-image: linear-gradient(
+		135deg,
+		var(--cdn-violet, #9060f0),
+		var(--cdn-purple, #5a1f8a)
+	) !important;
+	border-color: var(--cdn-violet, #9060f0) !important;
+	color: #fff !important;
+}
+
 /* Tablet — 2-column hybrid. Image stays full-width hero across both
    columns; meta/content rows split into a 2-col grid; buttons span both
    columns again to anchor the call-to-action. Calibrated to ~520px
