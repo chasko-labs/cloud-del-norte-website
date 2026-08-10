@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon-star.svg" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Register | Quantum Computing Workshop | quantum.clouddelnorte.org</title>
+    <meta name="description" content="Register for the hands-on Amazon Braket workshop or join Cloud Del Norte AWS User Group." />
+    <meta property="og:title" content="Register — Quantum Computing Workshop" />
+    <meta property="og:description" content="Register for the hands-on Amazon Braket workshop or join Cloud Del Norte." />
+    <meta property="og:image" content="https://dev.clouddelnorte.org/_previews/cdn-atmosphere-og-1200x630.png" />
+    <meta property="og:url" content="https://quantum.clouddelnorte.org/register/" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <!-- cdn-theme-fouc-guard: critical-path theme apply (must run before React hydrates). -->
+    <script>
+      (() => {
+        var t;
+        try {
+          t = localStorage.getItem('awsaerospace-theme');
+        } catch (_e) { /* localStorage unavailable; safe fall-through */ }
+        if (t !== 'dark' && t !== 'light') {
+          t = window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        if (t === 'dark') {
+          document.documentElement.classList.add('awsui-dark-mode');
+          document.documentElement.style.colorScheme = 'dark';
+        } else {
+          document.documentElement.style.colorScheme = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="./main.tsx"></script>
+  </body>
+</html>
