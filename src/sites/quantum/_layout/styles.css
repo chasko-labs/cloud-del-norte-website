@@ -19,7 +19,7 @@
 	color: var(--cdn-color-text, #2c1a0e);
 }
 
-/* Top bar — glass effect */
+/* ── TOP BAR — glass effect ───────────────────────────────────────────── */
 .quantum-toolbar {
 	display: flex;
 	justify-content: space-between;
@@ -95,7 +95,116 @@
 	background: rgba(90, 31, 138, 0.12);
 }
 
-/* Main content */
+/* ── CDN SUN — animated rays + pulsing core ───────────────────────────── */
+.cdn-svg-sun {
+	overflow: visible;
+	filter: drop-shadow(0 0 2px rgba(255, 200, 80, 0.85))
+		drop-shadow(0 0 6px rgba(255, 153, 0, 0.55))
+		drop-shadow(0 0 14px rgba(255, 153, 0, 0.28));
+	transition: filter 0.3s ease;
+}
+
+.cdn-svg-sun__core {
+	fill: #ffcd55;
+	stroke: #ffb14a;
+	stroke-width: 0.6;
+	transform-origin: 11px 11px;
+}
+
+.cdn-svg-sun__rays {
+	stroke: #ffb14a;
+	stroke-width: 1.6;
+	stroke-linecap: round;
+	transform-origin: 11px 11px;
+}
+
+.cdn-svg-sun__rays line {
+	stroke: #ffb14a;
+}
+
+@keyframes cdn-sun-spin {
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes cdn-sun-pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		fill: #ffcd55;
+	}
+	50% {
+		transform: scale(1.08);
+		fill: #ffd877;
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.quantum-pill--celestial .cdn-svg-sun__rays {
+		animation: cdn-sun-spin 18s linear infinite;
+	}
+	.quantum-pill--celestial .cdn-svg-sun__core {
+		animation: cdn-sun-pulse 4s ease-in-out infinite;
+	}
+}
+
+.quantum-pill--celestial:hover .cdn-svg-sun {
+	filter: drop-shadow(0 0 3px rgba(255, 220, 120, 1))
+		drop-shadow(0 0 9px rgba(255, 153, 0, 0.85))
+		drop-shadow(0 0 22px rgba(255, 153, 0, 0.5));
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.quantum-pill--celestial:hover .cdn-svg-sun__rays {
+		animation-duration: 4s;
+	}
+	.quantum-pill--celestial:hover .cdn-svg-sun__core {
+		animation-duration: 1.6s;
+	}
+}
+
+/* ── CDN MOON — crescent with glow animation ─────────────────────────── */
+.cdn-svg-moon {
+	overflow: visible;
+	transform-origin: center;
+	transition: filter 0.3s ease;
+	animation: cdn-moon-shine 6s ease-in-out infinite;
+}
+
+.cdn-svg-moon__disc {
+	fill: #ede5d4;
+}
+
+@keyframes cdn-moon-shine {
+	0%,
+	100% {
+		filter: drop-shadow(0 0 1px rgba(215, 199, 238, 0.55))
+			drop-shadow(0 0 3px rgba(144, 96, 240, 0.32));
+		transform: scale(1);
+	}
+	50% {
+		filter: drop-shadow(0 0 1.5px rgba(215, 199, 238, 0.75))
+			drop-shadow(0 0 5px rgba(144, 96, 240, 0.5));
+		transform: scale(1.04);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cdn-svg-moon {
+		animation: none;
+	}
+}
+
+.quantum-pill--celestial:hover .cdn-svg-moon {
+	filter: drop-shadow(0 0 2px rgba(215, 199, 238, 0.95))
+		drop-shadow(0 0 6px rgba(144, 96, 240, 0.7));
+}
+
+/* ── MAIN CONTENT ─────────────────────────────────────────────────────── */
 .quantum-main {
 	flex: 1;
 	max-width: 860px;
@@ -104,27 +213,46 @@
 	padding: 0 1.5rem;
 }
 
-/* Glass containers for quantum content */
+/* ── GLASS CONTAINERS — enhanced depth ────────────────────────────────── */
 .quantum-main [class*="awsui_container"] {
-	backdrop-filter: blur(8px) saturate(1.2) !important;
-	-webkit-backdrop-filter: blur(8px) saturate(1.2) !important;
-	background: rgba(0, 0, 42, 0.4) !important;
-	border: 1px solid rgba(144, 96, 240, 0.15) !important;
-	border-radius: 12px !important;
+	backdrop-filter: blur(12px) saturate(1.4) !important;
+	-webkit-backdrop-filter: blur(12px) saturate(1.4) !important;
+	background: rgba(0, 0, 42, 0.55) !important;
+	border: 1px solid rgba(144, 96, 240, 0.2) !important;
+	border-radius: 16px !important;
 	box-shadow:
-		0 4px 24px rgba(0, 0, 0, 0.3),
-		inset 0 1px 0 rgba(144, 96, 240, 0.1) !important;
+		0 8px 32px rgba(0, 0, 0, 0.4),
+		inset 0 1px 0 rgba(144, 96, 240, 0.15),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
+	transition:
+		box-shadow 0.3s,
+		border-color 0.3s;
+}
+
+.quantum-main [class*="awsui_container"]:hover {
+	border-color: rgba(144, 96, 240, 0.35) !important;
+	box-shadow:
+		0 12px 40px rgba(90, 31, 138, 0.3),
+		inset 0 1px 0 rgba(144, 96, 240, 0.2),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
 }
 
 :root:not(.awsui-dark-mode) .quantum-main [class*="awsui_container"] {
-	background: rgba(255, 255, 255, 0.7) !important;
-	border-color: rgba(90, 31, 138, 0.12) !important;
+	background: rgba(255, 255, 255, 0.8) !important;
+	border-color: rgba(90, 31, 138, 0.1) !important;
 	box-shadow:
-		0 4px 24px rgba(90, 31, 138, 0.08),
-		inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+		0 8px 32px rgba(90, 31, 138, 0.06),
+		inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
 }
 
-/* Purple primary buttons */
+:root:not(.awsui-dark-mode) .quantum-main [class*="awsui_container"]:hover {
+	border-color: rgba(90, 31, 138, 0.2) !important;
+	box-shadow:
+		0 12px 40px rgba(90, 31, 138, 0.1),
+		inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ── PURPLE PRIMARY BUTTONS ───────────────────────────────────────────── */
 .quantum-main [class*="awsui_button"][class*="variant-primary"] {
 	background-color: #5a1f8a !important;
 	background-image: linear-gradient(135deg, #5a1f8a, #9060f0) !important;
@@ -140,29 +268,58 @@
 	box-shadow: 0 4px 20px rgba(144, 96, 240, 0.5) !important;
 }
 
-/* Background atmosphere — subtle quantum-themed radial */
+/* ── BACKGROUND ATMOSPHERE — Bloch sphere constellation ───────────────── */
 .quantum-layout::before {
 	content: "";
 	position: fixed;
 	inset: 0;
 	z-index: -1;
-	background:
-		radial-gradient(
-			ellipse at 20% 80%,
-			rgba(90, 31, 138, 0.15) 0%,
-			transparent 50%
-		),
-		radial-gradient(
-			ellipse at 80% 20%,
-			rgba(144, 96, 240, 0.1) 0%,
-			transparent 50%
-		),
-		radial-gradient(
-			ellipse at 50% 50%,
-			rgba(0, 0, 42, 0.05) 0%,
-			transparent 70%
-		);
+	background: /* Bloch sphere - subtle rotating conic gradient */
+			conic-gradient(
+				from 0deg at 75% 25%,
+				transparent 0deg,
+				rgba(144, 96, 240, 0.03) 60deg,
+				transparent 120deg,
+				rgba(90, 31, 138, 0.02) 180deg,
+				transparent 240deg,
+				rgba(215, 199, 238, 0.03) 300deg,
+				transparent 360deg
+			),
+			/* Interference pattern - repeating subtle waves */
+			repeating-linear-gradient(
+				135deg,
+				transparent 0px,
+				transparent 40px,
+				rgba(144, 96, 240, 0.015) 40px,
+				rgba(144, 96, 240, 0.015) 41px
+			),
+			/* Lattice of light dots */
+			radial-gradient(
+				circle at 20% 80%,
+				rgba(144, 96, 240, 0.08) 0%,
+				transparent 40%
+			),
+			radial-gradient(
+				circle at 80% 20%,
+				rgba(90, 31, 138, 0.06) 0%,
+				transparent 40%
+			),
+			radial-gradient(
+				circle at 50% 50%,
+				rgba(215, 199, 238, 0.04) 0%,
+				transparent 60%
+			);
 	pointer-events: none;
+	animation: quantum-drift 30s linear infinite;
+}
+
+@keyframes quantum-drift {
+	from {
+		filter: hue-rotate(0deg);
+	}
+	to {
+		filter: hue-rotate(15deg);
+	}
 }
 
 :root:not(.awsui-dark-mode) .quantum-layout::before {
@@ -177,9 +334,44 @@
 			rgba(144, 96, 240, 0.03) 0%,
 			transparent 50%
 		);
+	animation: none;
 }
 
-/* Responsive */
+/* ── REGISTRATION SUCCESS ANIMATION ───────────────────────────────────── */
+.quantum-success-pulse {
+	display: inline-block;
+	margin-bottom: 1rem;
+	animation: success-pulse 2s ease-in-out infinite;
+}
+
+@keyframes success-pulse {
+	0%,
+	100% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	50% {
+		transform: scale(1.05);
+		opacity: 0.9;
+	}
+}
+
+/* ── ACCESSIBILITY — focus rings + link differentiation ───────────────── */
+.quantum-main a:hover {
+	text-decoration: underline;
+}
+
+.quantum-main *:focus-visible {
+	outline: 2px solid var(--cdn-violet, #9060f0);
+	outline-offset: 2px;
+}
+
+.quantum-pill:focus-visible {
+	outline: 2px solid var(--cdn-violet, #9060f0);
+	outline-offset: 2px;
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────────── */
 @media (max-width: 640px) {
 	.quantum-toolbar {
 		padding: 0.5rem 1rem;
@@ -197,5 +389,11 @@
 	.quantum-layout,
 	.quantum-toolbar {
 		transition: none;
+	}
+	.quantum-layout::before {
+		animation: none;
+	}
+	.quantum-success-pulse {
+		animation: none;
 	}
 }

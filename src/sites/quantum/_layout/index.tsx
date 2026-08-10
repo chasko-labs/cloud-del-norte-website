@@ -5,45 +5,49 @@ import type { Theme } from "../../../utils/theme";
 
 import "./styles.css";
 
-function SunIcon() {
+/* Full CDN SunSvg — animated rays + pulsing gold core */
+function SunSvg() {
 	return (
 		<svg
-			width="20"
-			height="20"
+			className="cdn-svg-sun"
+			width="22"
+			height="22"
 			viewBox="0 0 22 22"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
 		>
-			<circle cx="11" cy="11" r="4.4" fill="#c9a23f" />
-			<g stroke="#c9a23f" strokeWidth="1.5" strokeLinecap="round">
+			<g className="cdn-svg-sun__rays">
 				<line x1="11" y1="1.5" x2="11" y2="4.5" />
 				<line x1="11" y1="17.5" x2="11" y2="20.5" />
 				<line x1="1.5" y1="11" x2="4.5" y2="11" />
 				<line x1="17.5" y1="11" x2="20.5" y2="11" />
-				<line x1="3.9" y1="3.9" x2="6" y2="6" />
-				<line x1="16" y1="16" x2="18.1" y2="18.1" />
-				<line x1="3.9" y1="18.1" x2="6" y2="16" />
-				<line x1="16" y1="6" x2="18.1" y2="3.9" />
+				<line x1="3.9" y1="3.9" x2="6.0" y2="6.0" />
+				<line x1="16.0" y1="16.0" x2="18.1" y2="18.1" />
+				<line x1="3.9" y1="18.1" x2="6.0" y2="16.0" />
+				<line x1="16.0" y1="6.0" x2="18.1" y2="3.9" />
 			</g>
+			<circle className="cdn-svg-sun__core" cx="11" cy="11" r="4.4" />
 		</svg>
 	);
 }
 
-function MoonIcon() {
+/* Full CDN MoonSvg — fat waxing crescent with glow animation */
+const MOON_CRESCENT_PATH =
+	"M 16.2,3.6 A 8.5,8.5 0 1,0 18.6,15.6 A 6.5,6.5 0 1,1 16.2,3.6 Z";
+
+function MoonSvg() {
 	return (
 		<svg
-			width="20"
-			height="20"
+			className="cdn-svg-moon"
+			width="22"
+			height="22"
 			viewBox="0 0 22 22"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 			aria-hidden="true"
 		>
-			<path
-				d="M16.2 3.6 A8.5 8.5 0 1 0 18.6 15.6 A6.5 6.5 0 0 1 16.2 3.6Z"
-				fill="#d7c7ee"
-			/>
+			<path className="cdn-svg-moon__disc" d={MOON_CRESCENT_PATH} />
 		</svg>
 	);
 }
@@ -121,7 +125,7 @@ export default function QuantumLayout({
 					<div className="quantum-toolbar__controls">
 						<button
 							type="button"
-							className="quantum-pill"
+							className="quantum-pill quantum-pill--celestial"
 							onClick={() => onThemeChange(theme === "dark" ? "light" : "dark")}
 							aria-label={
 								theme === "dark"
@@ -129,7 +133,7 @@ export default function QuantumLayout({
 									: "Switch to dark mode"
 							}
 						>
-							{theme === "dark" ? <SunIcon /> : <MoonIcon />}
+							{theme === "dark" ? <SunSvg /> : <MoonSvg />}
 						</button>
 						<button
 							type="button"

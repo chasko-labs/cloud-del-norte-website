@@ -80,16 +80,47 @@ function RegisterForm() {
 
 	if (success) {
 		return (
-			<Container
-				header={
+			<Container>
+				<div style={{ textAlign: "center", padding: "2rem 0" }}>
+					<div className="quantum-success-pulse">
+						<svg
+							width="64"
+							height="64"
+							viewBox="0 0 64 64"
+							fill="none"
+							aria-hidden="true"
+						>
+							<circle
+								cx="32"
+								cy="32"
+								r="30"
+								stroke="#9060f0"
+								strokeWidth="2"
+								opacity="0.3"
+							/>
+							<circle cx="32" cy="32" r="24" fill="rgba(144,96,240,0.1)" />
+							<path
+								d="M20 32 L28 40 L44 24"
+								stroke="#9060f0"
+								strokeWidth="3"
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								fill="none"
+							/>
+						</svg>
+					</div>
 					<Header variant="h1">{t("quantumRegister.successHeader")}</Header>
-				}
-			>
-				<SpaceBetween size="m">
-					<Alert type="success">{t("quantumRegister.successBody")}</Alert>
-					<Box>{t("quantumRegister.successBookmark")}</Box>
-					<Link href="/">{t("quantumRegister.backLink")}</Link>
-				</SpaceBetween>
+					<SpaceBetween size="m">
+						<Alert type="success" header={t("quantumRegister.successHeader")}>
+							{t("quantumRegister.successBody")}
+						</Alert>
+						<Box fontSize="heading-s" fontWeight="bold">
+							Sun Aug 30 · 3:00–6:00 PM CDT
+						</Box>
+						<Box>{t("quantumRegister.successBookmark")}</Box>
+						<Link href="/">{t("quantumRegister.backLink")}</Link>
+					</SpaceBetween>
+				</div>
 			</Container>
 		);
 	}
