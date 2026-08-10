@@ -15,10 +15,8 @@
    Footer dock — fixed bottom, glass treatment mirroring top-nav
    z-index 200: below tools-toggle (~900) but above page content.
 
-   Wave 70c: footer uses position:fixed with panel-aware left/right insets.
-   body.cdn-nav-open insets left edge (280px nav panel width).
-   body.cdn-tools-open insets right edge (290px tools panel width).
-   Resolves wave 51 known limitation where footer overlapped side panels.
+   Footer spans full viewport width (left:0, right:0). Nav and tools panels
+   layer above via their own z-index — no panel-aware inset needed.
    -------------------------------------------------------------------------- */
 .cdn-footer {
 	position: fixed;
@@ -33,10 +31,6 @@
 	backdrop-filter: blur(4px) saturate(1.2); /* cycle-3: shell-level @supports(backdrop-filter:blur(0)){backdrop-filter:none} override removed so this computes */
 	/* 1px top border — brand-amber light mode */
 	border-top: 1px solid var(--cdn-amber, #8b5a2b);
-	/* Wave 70c: panel-aware insets via CSS transitions */
-	transition:
-		left 0.3s ease,
-		right 0.3s ease;
 	/* Wave cycle-2: isolation ensures backdrop-filter computes against
 	   content behind, not composited within the footer's own layer */
 	isolation: isolate;
@@ -55,21 +49,7 @@
 	}
 }
 
-/* Wave 70c — inset footer when left nav panel is open */
-body.cdn-nav-open .cdn-footer {
-	left: 280px;
-}
-
-/* Wave 70c — inset footer when right tools panel is open */
-body.cdn-tools-open .cdn-footer {
-	right: 290px;
-}
-
-/* Both panels open simultaneously */
-body.cdn-nav-open.cdn-tools-open .cdn-footer {
-	left: 280px;
-	right: 290px;
-}
+/* Footer spans full viewport width — nav and tools panels layer above via z-index */
 
 /* Reduced vertical padding on compact viewports */
 @media (max-height: 690px) {
@@ -494,9 +474,6 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer {
    Reduced motion — disable all animations and transitions
    -------------------------------------------------------------------------- */
 @media (prefers-reduced-motion: reduce) {
-	.cdn-footer {
-		transition: none;
-	}
 	.cdn-footer-social [role="listitem"] {
 		transition: none;
 	}
@@ -650,26 +627,7 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer {
 	margin-left: auto;
 }
 
-/* Wave 70c: when both panels open, stack footer rows vertically */
-body.cdn-nav-open.cdn-tools-open .cdn-footer-bar {
-	flex-direction: column;
-	align-items: stretch;
-	gap: var(--cdn-space-xs, 4px);
-}
-
-body.cdn-nav-open.cdn-tools-open .cdn-footer-left {
-	justify-content: center;
-}
-
-body.cdn-nav-open.cdn-tools-open .cdn-footer-weather {
-	max-width: none;
-	max-height: 48px;
-}
-
-body.cdn-nav-open.cdn-tools-open .cdn-footer-bar .cdn-version {
-	margin-left: 0;
-	text-align: center;
-}
+/* Footer spans full width — no panel-aware stacking needed */
 
 /* Mobile: 2-col grid */
 @media (max-width: 480px) {
@@ -793,12 +751,4 @@ body.cdn-nav-open.cdn-tools-open .cdn-footer-bar .cdn-version {
 	}
 }
 
-/* Tablet with nav open: 2-col fallback */
-@media (min-width: 481px) and (max-width: 900px) {
-	body.cdn-nav-open .cdn-footer-bar {
-		grid-template-columns: 1fr 1fr;
-		grid-template-areas:
-			"left weather"
-			"version version";
-	}
-}
+/* Tablet with nav open: full-width footer — no special handling needed */

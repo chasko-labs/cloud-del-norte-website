@@ -6,8 +6,6 @@ import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useState } from "react";
-import { LocaleProvider } from "../../../contexts/locale-context";
-import Shell from "../../../layouts/shell";
 import {
 	applyLocale,
 	initializeLocale,
@@ -20,6 +18,7 @@ import {
 	setStoredTheme,
 	type Theme,
 } from "../../../utils/theme";
+import QuantumLayout from "../_layout";
 
 const CHRISTIAN_AVATAR =
 	"https://avatars.builderprofile.aws.dev/33kByuRaGaQfqwc41T52Ws9w4v1.webp";
@@ -192,18 +191,13 @@ export default function App() {
 	};
 
 	return (
-		<LocaleProvider locale={locale}>
-			<Shell
-				theme={theme}
-				onThemeChange={handleThemeChange}
-				locale={locale}
-				onLocaleChange={handleLocaleChange}
-				navigationHide
-				toolsHide
-				identityHref="https://clouddelnorte.org"
-			>
-				<LandingContent />
-			</Shell>
-		</LocaleProvider>
+		<QuantumLayout
+			theme={theme}
+			onThemeChange={handleThemeChange}
+			locale={locale}
+			onLocaleChange={handleLocaleChange}
+		>
+			<LandingContent />
+		</QuantumLayout>
 	);
 }
