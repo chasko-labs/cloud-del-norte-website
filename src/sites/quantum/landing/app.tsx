@@ -26,6 +26,7 @@ const CHRISTIAN_AVATAR =
 const CHRISTIAN_PROFILE = "https://builder.aws.com/community/@chrisgrey0321";
 const AMELIA_AVATAR =
 	"https://avatars.builderprofile.aws.dev/2baMniGqrdbQ0xOBEPgtgiGkWsX.webp";
+const AMELIA_PROFILE = "https://builder.aws.com/community/@ameliahr";
 const BRYAN_AVATAR =
 	"https://avatars.builderprofile.aws.dev/2pBt75Hl5Kze3KoYvJXCh8fDel1.webp";
 const BRYAN_PROFILE = "https://builder.aws.com/community/@bryanchasko";
@@ -109,7 +110,11 @@ function LandingContent() {
 							alt="Amelia Hough-Ross"
 							style={{ width: 80, height: 80, borderRadius: "50%" }}
 						/>
-						<Box fontWeight="bold">Amelia Hough-Ross</Box>
+						<Box fontWeight="bold">
+							<Link href={AMELIA_PROFILE} external>
+								Amelia Hough-Ross
+							</Link>
+						</Box>
 						<Box color="text-body-secondary" fontSize="body-s">
 							{t("quantum.ameliaTitle")}
 						</Box>
