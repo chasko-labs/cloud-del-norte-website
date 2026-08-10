@@ -1,8 +1,5 @@
-import SpaceBetween from "@cloudscape-design/components/space-between";
-import Toggle from "@cloudscape-design/components/toggle";
 import type { ReactNode } from "react";
 import { LocaleProvider } from "../../../contexts/locale-context";
-import { useTranslation } from "../../../hooks/useTranslation";
 import type { Locale } from "../../../utils/locale";
 import type { Theme } from "../../../utils/theme";
 
@@ -16,43 +13,6 @@ interface QuantumLayoutProps {
 	onLocaleChange: (locale: Locale) => void;
 }
 
-function QuantumToolbar({
-	theme,
-	onThemeChange,
-	locale,
-	onLocaleChange,
-}: Pick<
-	QuantumLayoutProps,
-	"theme" | "onThemeChange" | "locale" | "onLocaleChange"
->) {
-	const { t } = useTranslation();
-
-	return (
-		<header className="quantum-toolbar">
-			<SpaceBetween size="s" direction="horizontal" alignItems="center">
-				<Toggle
-					checked={theme === "dark"}
-					onChange={({ detail }) =>
-						onThemeChange(detail.checked ? "dark" : "light")
-					}
-				>
-					{theme === "dark"
-						? t("shell.switchToLightMode")
-						: t("shell.switchToDarkMode")}
-				</Toggle>
-				<Toggle
-					checked={locale === "mx"}
-					onChange={({ detail }) =>
-						onLocaleChange(detail.checked ? "mx" : "us")
-					}
-				>
-					{locale === "mx" ? "ES" : "EN"}
-				</Toggle>
-			</SpaceBetween>
-		</header>
-	);
-}
-
 export default function QuantumLayout({
 	children,
 	theme,
@@ -63,12 +23,38 @@ export default function QuantumLayout({
 	return (
 		<LocaleProvider locale={locale}>
 			<div className="quantum-layout">
-				<QuantumToolbar
-					theme={theme}
-					onThemeChange={onThemeChange}
-					locale={locale}
-					onLocaleChange={onLocaleChange}
-				/>
+				<header className="quantum-toolbar">
+					<a
+						href="https://quantum.clouddelnorte.org"
+						className="quantum-toolbar__brand"
+					>
+						quantum computing workshop series
+					</a>
+					<div className="quantum-toolbar__controls">
+						<button
+							type="button"
+							className="quantum-pill"
+							onClick={() => onThemeChange(theme === "dark" ? "light" : "dark")}
+							aria-label={
+								theme === "dark"
+									? "Switch to light mode"
+									: "Switch to dark mode"
+							}
+						>
+							{theme === "dark" ? "light" : "dark"}
+						</button>
+						<button
+							type="button"
+							className="quantum-pill"
+							onClick={() => onLocaleChange(locale === "us" ? "mx" : "us")}
+							aria-label={
+								locale === "us" ? "Cambiar a español" : "Switch to English"
+							}
+						>
+							{locale === "us" ? "ES" : "EN"}
+						</button>
+					</div>
+				</header>
 				<main className="quantum-main">{children}</main>
 			</div>
 		</LocaleProvider>
