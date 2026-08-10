@@ -40,15 +40,22 @@
 }
 
 .quantum-toolbar__brand {
-	font-size: 0.85rem;
+	font-family: var(--cdn-font-display, "Cinzel", Georgia, serif);
+	font-size: 0.9rem;
 	font-weight: 600;
-	color: var(--cdn-lavender);
+	background: linear-gradient(90deg, var(--cdn-lavender), var(--cdn-violet));
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
+	letter-spacing: 0.04em;
 	text-decoration: none;
-	letter-spacing: 0.02em;
 }
 
 :root:not(.awsui-dark-mode) .quantum-toolbar__brand {
-	color: var(--cdn-purple);
+	background: linear-gradient(90deg, var(--cdn-purple), var(--cdn-violet));
+	-webkit-background-clip: text;
+	background-clip: text;
+	-webkit-text-fill-color: transparent;
 }
 
 .quantum-toolbar__controls {
@@ -58,34 +65,34 @@
 }
 
 .quantum-pill {
-	background: rgba(144, 96, 240, 0.15);
-	border: 1px solid rgba(144, 96, 240, 0.3);
-	color: var(--cdn-lavender);
-	font-size: 0.7rem;
-	font-weight: 600;
-	letter-spacing: 0.05em;
-	text-transform: uppercase;
-	padding: 4px 12px;
-	border-radius: 12px;
+	background: rgba(144, 96, 240, 0.1);
+	border: 1px solid rgba(144, 96, 240, 0.25);
+	padding: 6px 8px;
+	border-radius: 8px;
 	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	transition:
 		background 0.2s,
-		border-color 0.2s;
+		border-color 0.2s,
+		transform 0.15s;
+	line-height: 0;
 }
 
 .quantum-pill:hover {
-	background: rgba(144, 96, 240, 0.3);
-	border-color: rgba(144, 96, 240, 0.5);
+	background: rgba(144, 96, 240, 0.2);
+	border-color: rgba(144, 96, 240, 0.4);
+	transform: scale(1.05);
 }
 
 :root:not(.awsui-dark-mode) .quantum-pill {
-	background: rgba(90, 31, 138, 0.08);
-	border-color: rgba(90, 31, 138, 0.2);
-	color: var(--cdn-purple);
+	background: rgba(90, 31, 138, 0.06);
+	border-color: rgba(90, 31, 138, 0.15);
 }
 
 :root:not(.awsui-dark-mode) .quantum-pill:hover {
-	background: rgba(90, 31, 138, 0.15);
+	background: rgba(90, 31, 138, 0.12);
 }
 
 /* Main content */

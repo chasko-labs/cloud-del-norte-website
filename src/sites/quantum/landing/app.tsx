@@ -23,6 +23,8 @@ import QuantumLayout from "../_layout";
 const CHRISTIAN_AVATAR =
 	"https://avatars.builderprofile.aws.dev/33kByuRaGaQfqwc41T52Ws9w4v1.webp";
 const CHRISTIAN_PROFILE = "https://builder.aws.com/community/@chrisgrey0321";
+const AMELIA_AVATAR =
+	"https://avatars.builderprofile.aws.dev/2baMniGqrdbQ0xOBEPgtgiGkWsX.webp";
 const BRYAN_AVATAR =
 	"https://avatars.builderprofile.aws.dev/2pBt75Hl5Kze3KoYvJXCh8fDel1.webp";
 const BRYAN_PROFILE = "https://builder.aws.com/community/@bryanchasko";
@@ -40,7 +42,7 @@ function LandingContent() {
 			<Container>
 				<SpaceBetween size="m">
 					<Box variant="small" color="text-status-info">
-						LIVE AWS WEBINAR · FREE
+						LIVE AWS WEBINAR
 					</Box>
 					<Header variant="h1">
 						Hands-On{" "}
@@ -107,22 +109,11 @@ function LandingContent() {
 						</Box>
 					</SpaceBetween>
 					<SpaceBetween size="xs" alignItems="center">
-						<div
-							style={{
-								width: 80,
-								height: 80,
-								borderRadius: "50%",
-								background: "linear-gradient(135deg, #5a1f8a, #9060f0)",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								color: "#fff",
-								fontSize: "1.4rem",
-								fontWeight: 700,
-							}}
-						>
-							AH
-						</div>
+						<img
+							src={AMELIA_AVATAR}
+							alt="Amelia Hough-Ross"
+							style={{ width: 80, height: 80, borderRadius: "50%" }}
+						/>
 						<Box fontWeight="bold">Amelia Hough-Ross</Box>
 						<Box color="text-body-secondary" fontSize="body-s">
 							Chief Data Officer · Columbia AWS UG
