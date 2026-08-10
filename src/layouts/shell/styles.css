@@ -536,15 +536,24 @@ main[class*="awsui_layout"] > [class*="tools-container"] {
 		align-self: stretch;
 		min-block-size: 0 !important;
 	}
-	/* Left navigation-container: align-self:start + viewport height cap keeps
-	   the sticky nav-container shorter than the viewport so the left
-	   navigation-toggle stays pinned on scroll, mirroring the right
-	   tools-container. */
+	/* Left navigation-container: stretch to fill the grid row so the drawer
+	   extends all the way to the footer — no torn/abrupt termination.
+	   Inner content still scrolls via the nav[awsui_navigation_] max-height
+	   rule further down. */
 	[class*="awsui_navigation-container"] {
-		align-self: start;
-		max-block-size: calc(100vh - 62px);
-		overflow-y: auto;
+		align-self: stretch;
+		overflow-y: visible;
 	}
+}
+
+/* Tools-toggle button — z-index above the fixed footer (z-index:200) so
+   the ⓘ button remains clickable when the drawers-container sticky
+   positioning places it near the bottom viewport edge. The drawers-container
+   is position:sticky and creates its own stacking context — to beat the
+   fixed footer (z-index:200) at the root stacking level, the container
+   itself needs z-index > 200. */
+[class*="awsui_drawers-container"] {
+	z-index: 210;
 }
 
 /* v0.0.0110 — left nav drawer parity with right tools panel
