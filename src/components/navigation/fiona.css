@@ -3189,6 +3189,62 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .fiona-led,
 	animation: none;
 }
 
+/* === Opt-in prompt — CRT console style ================================= */
+.fiona-optin-prompt {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	padding: 12px;
+}
+
+.fiona-optin-actions {
+	display: flex;
+	gap: 14px;
+}
+
+.fiona-optin-btn {
+	appearance: none;
+	background: transparent;
+	border: 1px solid #22c55eb3;
+	border-radius: 2px;
+	color: #22c55eb3;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+	font-size: clamp(11px, 4cqi, 15px);
+	letter-spacing: 0.12em;
+	padding: 4px 14px;
+	cursor: pointer;
+	text-shadow: 0 0 4px #22c55e4d;
+	transition:
+		color 0.15s,
+		background 0.15s,
+		border-color 0.15s,
+		text-shadow 0.15s;
+}
+
+.fiona-optin-btn:hover,
+.fiona-optin-btn:focus-visible {
+	color: #050805;
+	background: #22c55eb3;
+	border-color: #22c55e;
+	text-shadow: none;
+}
+
+.fiona-optin-btn--no {
+	border-color: #9060f0b3;
+	color: #9060f0b3;
+	text-shadow: 0 0 4px #9060f04d;
+}
+
+.fiona-optin-btn--no:hover,
+.fiona-optin-btn--no:focus-visible {
+	color: #050805;
+	background: #9060f0b3;
+	border-color: #9060f0;
+	text-shadow: none;
+}
+
 .fiona-poster {
 	width: 100%;
 	height: 100%;

@@ -110,6 +110,17 @@ export default function FionaFrame() {
 		() => TIER_RANK[getDeviceTier()] < TIER_RANK[FIONA_REQUIRED_TIER],
 		[],
 	);
+
+	// Opt-in gate — ask user before loading the Sumerian scene. Persisted in
+	// localStorage so repeat visitors skip the prompt. Device-tier gate takes
+	// priority: low-tier devices never see the prompt (they get the poster).
+	const [userConsent, setUserConsent] = useState<"pending" | "yes" | "no">(
+		() => {
+			if (gatedOut) return "no";
+			const stored = localStorage.getItem("cdn-fiona-optin");
+			return stored === "yes" ? "yes" : stored === "no" ? "no" : "pending";
+		},
+	);
 	const [gatedFallback, setGatedFallback] = useState(false);
 	const diagnosticLoggedRef = useRef(false);
 
@@ -180,6 +191,9 @@ export default function FionaFrame() {
 	}, [gatedOut]);
 
 	useEffect(() => {
+		// Only mount fiona-embed when user has opted in
+		if (userConsent !== "yes") return;
+
 		let cancelled = false;
 		let observer: ResizeObserver | null = null;
 
@@ -261,7 +275,7 @@ export default function FionaFrame() {
 			cancelled = true;
 			observer?.disconnect();
 		};
-	}, []);
+	}, [userConsent]);
 
 	return (
 		<div className="fiona-frame">
@@ -270,16 +284,18 @@ export default function FionaFrame() {
 					{/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: role+aria-label are co-conditional on gatedFallback */}
 					<div
 						id="fiona-shimmer"
-						className={`fiona-placeholder${gatedFallback ? " fiona-placeholder--static" : ""}`}
-						aria-hidden={gatedFallback ? undefined : true}
-						role={gatedFallback ? "img" : undefined}
+						className={`fiona-placeholder${gatedFallback || userConsent === "no" ? " fiona-placeholder--static" : ""}`}
+						aria-hidden={
+							gatedFallback || userConsent === "no" ? undefined : true
+						}
+						role={gatedFallback || userConsent === "no" ? "img" : undefined}
 						aria-label={
-							gatedFallback
+							gatedFallback || userConsent === "no"
 								? "Fiona avatar - 3D view unavailable on this device"
 								: undefined
 						}
 					>
-						{gatedFallback ? (
+						{gatedFallback || userConsent === "no" ? (
 							<img
 								src="/assets/fiona-poster.webp"
 								alt=""
@@ -292,6 +308,46 @@ export default function FionaFrame() {
 									(e.currentTarget as HTMLImageElement).style.display = "none";
 								}}
 							/>
+						) : userConsent === "pending" ? (
+							<div className="fiona-optin-prompt">
+								<span className="fiona-placeholder-label">
+									{withFallback(
+										t("fiona.optinPrompt"),
+										"fiona.optinPrompt",
+										"load Amazon Sumerian demo?",
+									)}
+								</span>
+								<div className="fiona-optin-actions">
+									<button
+										type="button"
+										className="fiona-optin-btn fiona-optin-btn--yes"
+										onClick={() => {
+											localStorage.setItem("cdn-fiona-optin", "yes");
+											setUserConsent("yes");
+										}}
+									>
+										{withFallback(
+											t("fiona.optinYes"),
+											"fiona.optinYes",
+											"[Y] yes",
+										)}
+									</button>
+									<button
+										type="button"
+										className="fiona-optin-btn fiona-optin-btn--no"
+										onClick={() => {
+											localStorage.setItem("cdn-fiona-optin", "no");
+											setUserConsent("no");
+										}}
+									>
+										{withFallback(
+											t("fiona.optinNo"),
+											"fiona.optinNo",
+											"[N] no",
+										)}
+									</button>
+								</div>
+							</div>
 						) : (
 							<span className="fiona-placeholder-label">
 								modem connecting
@@ -304,14 +360,16 @@ export default function FionaFrame() {
 						)}
 					</div>
 					{/* Wave 53: gate the Babylon end-credit canvas behind device tier ≥ medium */}
-					<BabylonGate tier={FIONA_REQUIRED_TIER} fallback={null}>
-						<canvas
-							id="fiona-canvas"
-							className="fiona-canvas"
-							aria-hidden="true"
-							tabIndex={-1}
-						/>
-					</BabylonGate>
+					{userConsent === "yes" && (
+						<BabylonGate tier={FIONA_REQUIRED_TIER} fallback={null}>
+							<canvas
+								id="fiona-canvas"
+								className="fiona-canvas"
+								aria-hidden="true"
+								tabIndex={-1}
+							/>
+						</BabylonGate>
+					)}
 				</div>
 				<div
 					id="fiona-status-bar"

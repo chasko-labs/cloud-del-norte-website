@@ -1038,7 +1038,10 @@
 	"fiona": {
 		"stickynoteLine1": "no aguanta",
 		"stickynoteLine2": "nada",
-		"welcomeGreeting": "qué onda"
+		"welcomeGreeting": "qué onda",
+		"optinPrompt": "¿cargar demo de Amazon Sumerian?",
+		"optinYes": "[S] sí",
+		"optinNo": "[N] no"
 	},
 	"persistentPlayer": {
 		"streamErrorRetrying": "se trabó tantito — reintentando",
