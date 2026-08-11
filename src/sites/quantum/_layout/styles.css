@@ -204,6 +204,107 @@
 		drop-shadow(0 0 6px rgba(144, 96, 240, 0.7));
 }
 
+/* ── USER IDENTITY — toolbar auth state ────────────────────────────────── */
+.quantum-user {
+	font-size: 0.75rem;
+	border-radius: 999px;
+	padding: 4px 10px;
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	white-space: nowrap;
+	line-height: 1.2;
+}
+
+.quantum-user--authed {
+	background: rgba(144, 96, 240, 0.12);
+	border: 1px solid rgba(144, 96, 240, 0.25);
+	color: var(--cdn-lavender, #d7c7ee);
+}
+
+.quantum-user__name {
+	max-width: 120px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.quantum-user__signout {
+	background: none;
+	border: none;
+	color: rgba(215, 199, 238, 0.7);
+	font-size: 0.65rem;
+	cursor: pointer;
+	padding: 0;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.quantum-user__signout:hover {
+	color: #fff;
+}
+
+.quantum-user--registered {
+	background: rgba(46, 160, 67, 0.12);
+	border: 1px solid rgba(46, 160, 67, 0.3);
+	color: #7ee787;
+	font-size: 0.7rem;
+}
+
+.quantum-user--guest {
+	color: var(--cdn-lavender, #d7c7ee);
+	font-size: 0.75rem;
+	text-decoration: none;
+	padding: 4px 10px;
+	border-radius: 999px;
+	border: 1px solid rgba(144, 96, 240, 0.25);
+	background: rgba(144, 96, 240, 0.08);
+	transition:
+		background 0.2s,
+		border-color 0.2s;
+}
+
+.quantum-user--guest:hover {
+	background: rgba(144, 96, 240, 0.2);
+	border-color: rgba(144, 96, 240, 0.4);
+	text-decoration: none;
+}
+
+:root:not(.awsui-dark-mode) .quantum-user--authed {
+	background: rgba(90, 31, 138, 0.08);
+	border-color: rgba(90, 31, 138, 0.2);
+	color: #5a1f8a;
+}
+
+:root:not(.awsui-dark-mode) .quantum-user__signout {
+	color: rgba(90, 31, 138, 0.6);
+}
+
+:root:not(.awsui-dark-mode) .quantum-user__signout:hover {
+	color: #5a1f8a;
+}
+
+:root:not(.awsui-dark-mode) .quantum-user--registered {
+	background: rgba(46, 160, 67, 0.08);
+	border-color: rgba(46, 160, 67, 0.2);
+	color: #1a7f37;
+}
+
+:root:not(.awsui-dark-mode) .quantum-user--guest {
+	color: #5a1f8a;
+	background: rgba(90, 31, 138, 0.05);
+	border-color: rgba(90, 31, 138, 0.15);
+}
+
+:root:not(.awsui-dark-mode) .quantum-user--guest:hover {
+	background: rgba(90, 31, 138, 0.1);
+}
+
+.quantum-user:focus-visible,
+.quantum-user__signout:focus-visible {
+	outline: 2px solid var(--cdn-violet, #9060f0);
+	outline-offset: 2px;
+}
+
 /* ── MAIN CONTENT ─────────────────────────────────────────────────────── */
 .quantum-main {
 	flex: 1;

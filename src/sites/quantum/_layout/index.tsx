@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import { LocaleProvider } from "../../../contexts/locale-context";
+import { decodeToken, getIdToken } from "../../../lib/auth";
 import type { Locale } from "../../../utils/locale";
 import type { Theme } from "../../../utils/theme";
 
@@ -97,6 +99,98 @@ function MxFlagIcon() {
 	);
 }
 
+const AUTH_SIGN_IN_URL =
+	"https://auth.clouddelnorte.org/login/index.html?returnTo=https://quantum.clouddelnorte.org/dashboard/";
+
+type UserState =
+	| { kind: "authenticated"; displayName: string }
+	| { kind: "registered" }
+	| { kind: "guest" };
+
+function resolveUserState(): UserState {
+	const idToken = getIdToken();
+	if (idToken) {
+		try {
+			const payload = decodeToken(idToken);
+			const name =
+				(payload["custom:display_name"] as string) ??
+				(payload.name as string) ??
+				(payload.email as string) ??
+				"User";
+			return { kind: "authenticated", displayName: name };
+		} catch {
+			// token decode failure — treat as guest
+		}
+	}
+	try {
+		if (localStorage.getItem("cdn-quantum-registered") !== null) {
+			return { kind: "registered" };
+		}
+	} catch {
+		// localStorage unavailable
+	}
+	return { kind: "guest" };
+}
+
+function handleSignOut(): void {
+	sessionStorage.removeItem("cdn.idToken");
+	sessionStorage.removeItem("cdn.accessToken");
+	sessionStorage.removeItem("cdn.refreshToken");
+	sessionStorage.removeItem("cdn.expiresAt");
+	sessionStorage.removeItem("cdn.loginState");
+	try {
+		localStorage.removeItem("cdn-quantum-registered");
+		localStorage.removeItem("cdn-quantum-celebration-shown");
+		localStorage.removeItem("cdn-quantum-passkey-dismissed");
+	} catch {
+		// non-critical
+	}
+	window.location.reload();
+}
+
+function UserIdentity() {
+	const [state, setState] = useState<UserState>({ kind: "guest" });
+
+	useEffect(() => {
+		setState(resolveUserState());
+	}, []);
+
+	if (state.kind === "authenticated") {
+		const truncated =
+			state.displayName.length > 20
+				? `${state.displayName.slice(0, 18)}…`
+				: state.displayName;
+		return (
+			<span className="quantum-user quantum-user--authed">
+				<span className="quantum-user__name" title={state.displayName}>
+					{truncated}
+				</span>
+				<button
+					type="button"
+					className="quantum-user__signout"
+					onClick={handleSignOut}
+				>
+					Sign out
+				</button>
+			</span>
+		);
+	}
+
+	if (state.kind === "registered") {
+		return (
+			<span className="quantum-user quantum-user--registered">
+				✓ Registered
+			</span>
+		);
+	}
+
+	return (
+		<a href={AUTH_SIGN_IN_URL} className="quantum-user quantum-user--guest">
+			Sign in
+		</a>
+	);
+}
+
 interface QuantumLayoutProps {
 	children: ReactNode;
 	theme: Theme;
@@ -145,6 +239,7 @@ export default function QuantumLayout({
 						>
 							{locale === "us" ? <MxFlagIcon /> : <UsFlagIcon />}
 						</button>
+						<UserIdentity />
 					</div>
 				</header>
 				<main className="quantum-main">{children}</main>
