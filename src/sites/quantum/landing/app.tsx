@@ -5,7 +5,7 @@ import Grid from "@cloudscape-design/components/grid";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	applyLocale,
@@ -33,12 +33,25 @@ const BRYAN_PROFILE = "https://builder.aws.com/community/@bryanchasko";
 const BRAKET_URL =
 	"https://builder.aws.com/content/3GaxVTZeaL9pWzjXj3k7tMynzbI/a-developers-field-guide-to-amazon-braket";
 const REGISTER_URL = "/register/";
+const DASHBOARD_URL = "/dashboard/";
 const MEETUP_URL = "https://www.meetup.com/awsugclouddelnorte/";
 const GLOBAL_UG_URL =
 	"https://www.meetup.com/pro/global-aws-user-group-community/";
 
+function isLoggedIn(): boolean {
+	const idToken = sessionStorage.getItem("cdn.idToken");
+	if (!idToken) return false;
+	const expiresAt = Number(sessionStorage.getItem("cdn.expiresAt") ?? "0");
+	return expiresAt > 0 && Date.now() < expiresAt;
+}
+
 function LandingContent() {
 	const { t } = useTranslation();
+	const [loggedIn, setLoggedIn] = useState(false);
+
+	useEffect(() => {
+		setLoggedIn(isLoggedIn());
+	}, []);
 
 	return (
 		<SpaceBetween size="xl">
@@ -62,9 +75,15 @@ function LandingContent() {
 						{t("quantum.bilingual")}
 					</Box>
 					<SpaceBetween size="xs" direction="horizontal">
-						<Button variant="primary" href={REGISTER_URL}>
-							{t("quantum.registerButton")}
-						</Button>
+						{loggedIn ? (
+							<Button variant="primary" href={DASHBOARD_URL}>
+								Go to Dashboard
+							</Button>
+						) : (
+							<Button variant="primary" href={REGISTER_URL}>
+								{t("quantum.registerButton")}
+							</Button>
+						)}
 						<Button variant="link" href={MEETUP_URL} target="_blank">
 							{t("quantum.rsvpMeetup")}
 						</Button>
@@ -179,9 +198,15 @@ function LandingContent() {
 
 			{/* Footer CTA */}
 			<Box textAlign="center">
-				<Button variant="primary" href={REGISTER_URL}>
-					{t("quantum.registerButton")}
-				</Button>
+				{loggedIn ? (
+					<Button variant="primary" href={DASHBOARD_URL}>
+						Go to Dashboard
+					</Button>
+				) : (
+					<Button variant="primary" href={REGISTER_URL}>
+						{t("quantum.registerButton")}
+					</Button>
+				)}
 			</Box>
 		</SpaceBetween>
 	);

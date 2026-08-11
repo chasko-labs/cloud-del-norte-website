@@ -280,6 +280,9 @@ function RegisterForm() {
 						</Box>
 						<Box fontWeight="bold">{t("quantumRegister.successNextSteps")}</Box>
 						<Box>{t("quantumRegister.successBookmark")}</Box>
+						<Button variant="primary" href="/dashboard/">
+							{t("quantumDashboard.goToDashboard")}
+						</Button>
 						<Link href="/?registered=quantum-workshop">
 							{t("quantumRegister.backLink")}
 						</Link>
