@@ -239,7 +239,7 @@ function WolfCelebration({ onDismiss }: { onDismiss: () => void }) {
 				type="button"
 				className={`lobo-celebration${dismissing ? " dismissing" : ""}`}
 				onClick={dismiss}
-				aria-label={t("quantumDashboard.celebrationDismiss")}
+				aria-label={t("quantumDashboard.celebrationHeader")}
 				style={{
 					textAlign: "left",
 					width: "100%",
