@@ -1178,11 +1178,18 @@
 	"calendarActions": {
 		"addToCalendar": "Agregar a tu calendario",
 		"google": "Agregar a Google Calendar",
+		"googleLabel": "Google",
 		"outlook": "Agregar a Outlook",
+		"outlookLabel": "Outlook",
 		"yahoo": "Agregar a Yahoo Calendar",
+		"yahooLabel": "Yahoo",
 		"downloadIcs": "Descargar archivo .ics",
+		"downloadLabel": "Descargar .ics",
 		"copyLink": "Copiar enlace del evento",
+		"copyDetails": "Copiar detalles del evento",
+		"copyLabel": "Copiar detalles",
 		"copied": "¡Copiado!",
-		"share": "Compartir evento"
+		"share": "Compartir evento",
+		"shareLabel": "Compartir"
 	}
 }

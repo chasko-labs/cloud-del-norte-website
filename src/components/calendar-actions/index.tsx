@@ -12,11 +12,17 @@ const EVENT_URL = "https://quantum.clouddelnorte.org";
 const EVENT_DESCRIPTION =
 	"Hands-on Amazon Braket workshop. Build quantum circuits, observe superposition & collapse, run Deutsch's algorithm. Hosted by Christian Perez. Bilingual (EN/ES).";
 
+const SHAREABLE_TEXT = `Quantum Computing Workshop — Amazon Braket Part 1
+Sun Aug 30 · 3:00–6:00 PM CDT
+Online: quantum.clouddelnorte.org
+Hands-on Amazon Braket workshop. Build quantum circuits, observe superposition & collapse, run Deutsch's algorithm.
+Register: quantum.clouddelnorte.org/register/`;
+
 function GoogleCalendarIcon() {
 	return (
 		<svg
-			width="20"
-			height="20"
+			width="18"
+			height="18"
 			viewBox="0 0 24 24"
 			fill="none"
 			aria-hidden="true"
@@ -40,8 +46,8 @@ function GoogleCalendarIcon() {
 function OutlookIcon() {
 	return (
 		<svg
-			width="20"
-			height="20"
+			width="18"
+			height="18"
 			viewBox="0 0 24 24"
 			fill="none"
 			aria-hidden="true"
@@ -65,8 +71,8 @@ function OutlookIcon() {
 function YahooIcon() {
 	return (
 		<svg
-			width="20"
-			height="20"
+			width="18"
+			height="18"
 			viewBox="0 0 24 24"
 			fill="none"
 			aria-hidden="true"
@@ -90,8 +96,8 @@ function YahooIcon() {
 function DownloadIcon() {
 	return (
 		<svg
-			width="20"
-			height="20"
+			width="18"
+			height="18"
 			viewBox="0 0 24 24"
 			fill="none"
 			aria-hidden="true"
@@ -116,8 +122,8 @@ function DownloadIcon() {
 function CopyIcon() {
 	return (
 		<svg
-			width="20"
-			height="20"
+			width="18"
+			height="18"
 			viewBox="0 0 24 24"
 			fill="none"
 			aria-hidden="true"
@@ -143,8 +149,8 @@ function CopyIcon() {
 function ShareIcon() {
 	return (
 		<svg
-			width="20"
-			height="20"
+			width="18"
+			height="18"
 			viewBox="0 0 24 24"
 			fill="none"
 			aria-hidden="true"
@@ -164,8 +170,8 @@ function ShareIcon() {
 function CheckIcon() {
 	return (
 		<svg
-			width="20"
-			height="20"
+			width="18"
+			height="18"
 			viewBox="0 0 24 24"
 			fill="none"
 			aria-hidden="true"
@@ -257,7 +263,7 @@ export default function CalendarActions() {
 
 	const handleCopy = useCallback(async () => {
 		try {
-			await navigator.clipboard.writeText(EVENT_URL);
+			await navigator.clipboard.writeText(SHAREABLE_TEXT);
 			setCopied(true);
 			setTimeout(() => setCopied(false), 2000);
 		} catch {
@@ -269,7 +275,7 @@ export default function CalendarActions() {
 		try {
 			await navigator.share({
 				title: EVENT_TITLE,
-				text: EVENT_DESCRIPTION,
+				text: SHAREABLE_TEXT,
 				url: EVENT_URL,
 			});
 		} catch {
@@ -288,67 +294,76 @@ export default function CalendarActions() {
 					target="_blank"
 					rel="noopener noreferrer"
 					className="calendar-actions__btn"
-					title={t("calendarActions.google")}
 					aria-label={t("calendarActions.google")}
 				>
 					<GoogleCalendarIcon />
+					<span className="calendar-actions__btn-text">
+						{t("calendarActions.googleLabel")}
+					</span>
 				</a>
 				<a
 					href={buildOutlookUrl()}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="calendar-actions__btn"
-					title={t("calendarActions.outlook")}
 					aria-label={t("calendarActions.outlook")}
 				>
 					<OutlookIcon />
+					<span className="calendar-actions__btn-text">
+						{t("calendarActions.outlookLabel")}
+					</span>
 				</a>
 				<a
 					href={buildYahooUrl()}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="calendar-actions__btn"
-					title={t("calendarActions.yahoo")}
 					aria-label={t("calendarActions.yahoo")}
 				>
 					<YahooIcon />
+					<span className="calendar-actions__btn-text">
+						{t("calendarActions.yahooLabel")}
+					</span>
 				</a>
 				<button
 					type="button"
 					className="calendar-actions__btn"
 					onClick={downloadIcs}
-					title={t("calendarActions.downloadIcs")}
 					aria-label={t("calendarActions.downloadIcs")}
 				>
 					<DownloadIcon />
+					<span className="calendar-actions__btn-text">
+						{t("calendarActions.downloadLabel")}
+					</span>
 				</button>
 				<button
 					type="button"
 					className="calendar-actions__btn"
 					onClick={handleCopy}
-					title={
-						copied ? t("calendarActions.copied") : t("calendarActions.copyLink")
-					}
 					aria-label={
-						copied ? t("calendarActions.copied") : t("calendarActions.copyLink")
+						copied
+							? t("calendarActions.copied")
+							: t("calendarActions.copyDetails")
 					}
 				>
 					{copied ? <CheckIcon /> : <CopyIcon />}
-					{copied && (
-						<span className="calendar-actions__toast">
-							{t("calendarActions.copied")}
-						</span>
-					)}
+					<span className="calendar-actions__btn-text">
+						{copied
+							? t("calendarActions.copied")
+							: t("calendarActions.copyLabel")}
+					</span>
 				</button>
 				{canShare && (
 					<button
 						type="button"
 						className="calendar-actions__btn"
 						onClick={handleShare}
-						title={t("calendarActions.share")}
 						aria-label={t("calendarActions.share")}
 					>
 						<ShareIcon />
+						<span className="calendar-actions__btn-text">
+							{t("calendarActions.shareLabel")}
+						</span>
 					</button>
 				)}
 			</div>

@@ -1178,11 +1178,18 @@
 	"calendarActions": {
 		"addToCalendar": "Add to your calendar",
 		"google": "Add to Google Calendar",
+		"googleLabel": "Google",
 		"outlook": "Add to Outlook",
+		"outlookLabel": "Outlook",
 		"yahoo": "Add to Yahoo Calendar",
+		"yahooLabel": "Yahoo",
 		"downloadIcs": "Download .ics file",
+		"downloadLabel": "Download .ics",
 		"copyLink": "Copy event link",
+		"copyDetails": "Copy event details",
+		"copyLabel": "Copy event details",
 		"copied": "Copied!",
-		"share": "Share event"
+		"share": "Share event",
+		"shareLabel": "Share"
 	}
 }

@@ -1,4 +1,4 @@
-/* ── Calendar Actions — glass-aesthetic row of icon buttons ─────────── */
+/* ── Calendar Actions — pill-shaped icon+text buttons ───────────────── */
 .calendar-actions {
 	display: flex;
 	flex-direction: column;
@@ -28,15 +28,19 @@
 	position: relative;
 	display: inline-flex;
 	align-items: center;
-	justify-content: center;
-	width: 36px;
-	height: 36px;
+	gap: 0.35rem;
+	padding: 0.4rem 0.75rem;
 	border: 1px solid rgba(144, 96, 240, 0.25);
-	border-radius: 8px;
+	border-radius: 9999px;
 	background: rgba(144, 96, 240, 0.06);
 	color: var(--cdn-purple, #9060f0);
 	cursor: pointer;
 	text-decoration: none;
+	font-family: inherit;
+	font-size: 0.78rem;
+	font-weight: 500;
+	line-height: 1;
+	white-space: nowrap;
 	transition:
 		background 0.2s ease,
 		border-color 0.2s ease,
@@ -57,7 +61,11 @@
 }
 
 .calendar-actions__btn:active {
-	transform: scale(0.95);
+	transform: scale(0.97);
+}
+
+.calendar-actions__btn-text {
+	pointer-events: none;
 }
 
 /* Toast for "Copied!" */
