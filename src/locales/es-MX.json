@@ -1104,7 +1104,7 @@
 	},
 	"quantumDashboard": {
 		"guestHeader": "Serie de Talleres de Computación Cuántica",
-		"guestSubtext": "Regístrate abajo para apartar tu lugar — no necesitas cuenta para asistir.",
+		"guestSubtext": "Regístrate para apartar tu lugar y recibir el enlace de la reunión.",
 		"signInButton": "Iniciar sesión",
 		"guestRegisterButton": "Regístrate para este taller",
 		"guestSignInLink": "¿Ya eres miembro de Cloud Del Norte? Inicia sesión",
@@ -1136,10 +1136,14 @@
 		"celebrationBody": "Ya estás registrado — los lobos están aullando por ti. Nos vemos en el taller.",
 		"celebrationDismiss": "Cerrar celebración de bienvenida",
 		"registeredHeader": "¡Listo! — Registro al Taller Confirmado",
-		"registeredInfo": "Estás registrado para el Taller de Computación Cuántica. No necesitas cuenta para asistir — solo regresa aquí el día del evento.",
+		"registeredInfo": "Ya estás registrado. Regresa aquí el día del evento para unirte a la sesión en vivo.",
 		"joinOnEventDay": "Únete el Día del Evento",
 		"joinOnEventDayBody": "El día del evento, el enlace a la sesión en vivo aparecerá aquí mismo. Guarda esta página en favoritos para encontrarla fácilmente.",
-		"wantFullAccess": "¿Quieres acceso completo? Crea una cuenta de Cloud Del Norte"
+		"wantFullAccess": "¿Quieres más talleres de AWS? Cloud Del Norte tiene eventos regulares sobre nube, IA y carrera profesional.",
+		"registeredHosts": "Organizado por AWS User Groups: Cloud Del Norte (El Paso), Clarksville (TN), Columbia (SC)",
+		"passkeyOffer": "Configura inicio de sesión sin contraseña",
+		"passkeyOfferBody": "Guarda una passkey para iniciar sesión al instante la próxima vez — sin contraseña.",
+		"passkeyButton": "Configurar passkey"
 	},
 	"rsvp": {
 		"breadcrumb": "Apúntate",

@@ -42,7 +42,6 @@ const RECORDINGS_URL =
 	"https://s3.console.aws.amazon.com/s3/buckets/cdn-jitsi-recordings?region=us-west-2&prefix=cloud-del-norte-awsug/";
 const POLL_INTERVAL_MS = 30_000;
 const CELEBRATION_DURATION_MS = 5_000;
-const CREATE_ACCOUNT_URL = "https://auth.clouddelnorte.org/signup/index.html";
 
 interface UserInfo {
 	name: string;
@@ -247,6 +246,14 @@ function RegisteredView() {
 	const [showCelebration, setShowCelebration] = useState(
 		() => !hasCelebrationShown(),
 	);
+	const [passkeyDismissed, setPasskeyDismissed] = useState(
+		() => localStorage.getItem("cdn-quantum-passkey-dismissed") === "true",
+	);
+
+	const dismissPasskey = useCallback(() => {
+		localStorage.setItem("cdn-quantum-passkey-dismissed", "true");
+		setPasskeyDismissed(true);
+	}, []);
 
 	return (
 		<SpaceBetween size="l">
@@ -267,6 +274,9 @@ function RegisteredView() {
 						{t("quantumDashboard.upcomingInfoStyle")}
 					</Box>
 					<CalendarActions />
+					<Box color="text-body-secondary" fontSize="body-s">
+						{t("quantumDashboard.registeredHosts")}
+					</Box>
 				</SpaceBetween>
 			</Container>
 
@@ -280,12 +290,38 @@ function RegisteredView() {
 						{t("quantumDashboard.joinOnEventDayBody")}
 					</Box>
 					<Box>
-						<Link href={CREATE_ACCOUNT_URL}>
+						<Link href="https://clouddelnorte.org/">
 							{t("quantumDashboard.wantFullAccess")}
 						</Link>
 					</Box>
 				</SpaceBetween>
 			</Container>
+
+			{!passkeyDismissed && (
+				<Container
+					header={
+						<Header variant="h2">{t("quantumDashboard.passkeyOffer")}</Header>
+					}
+				>
+					<SpaceBetween size="s">
+						<Box color="text-body-secondary">
+							{t("quantumDashboard.passkeyOfferBody")}
+						</Box>
+						<SpaceBetween direction="horizontal" size="s">
+							<Button
+								variant="primary"
+								href="https://auth.clouddelnorte.org/passkeys/index.html"
+								target="_blank"
+							>
+								{t("quantumDashboard.passkeyButton")}
+							</Button>
+							<Button variant="link" onClick={dismissPasskey}>
+								{t("quantumDashboard.celebrationDismiss")}
+							</Button>
+						</SpaceBetween>
+					</SpaceBetween>
+				</Container>
+			)}
 		</SpaceBetween>
 	);
 }
