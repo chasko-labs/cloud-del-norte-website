@@ -9,6 +9,7 @@ import Breadcrumbs from "../../components/breadcrumbs";
 import { FeedSentinel } from "../../components/feed-sentinel";
 import Navigation from "../../components/navigation";
 import SpeakerProposalCta from "../../components/speaker-proposal-cta";
+import WorkshopBanner from "../../components/workshop-banner";
 import { useAndresLive } from "../../hooks/useAndresLive";
 import { useChannelLive } from "../../hooks/useChannelLive";
 import { useInfiniteCards } from "../../hooks/useInfiniteCards";
@@ -358,6 +359,7 @@ export default function App() {
 			onLocaleChange={handleLocaleChange}
 			breadcrumbs={<BreadcrumbsContent />}
 			navigation={<Navigation />}
+			notifications={<WorkshopBanner />}
 			tools={<HelpPanelHome />}
 			toolsOpen={toolsOpen}
 			onToolsChange={setToolsOpen}

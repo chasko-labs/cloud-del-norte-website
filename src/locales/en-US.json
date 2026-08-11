@@ -1124,5 +1124,11 @@
 			"unauthorized": "Sign in to RSVP.",
 			"generic": "Something went wrong — we logged it. Try again or RSVP on Meetup."
 		}
+	},
+	"workshopBanner": {
+		"message": "You're registered for the Quantum Computing Workshop!",
+		"backToWorkshop": "Back to Workshop →",
+		"joinCdn": "Sign up for Cloud Del Norte",
+		"dismiss": "Dismiss notification"
 	}
 }

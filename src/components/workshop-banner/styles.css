@@ -1,0 +1,43 @@
+.workshop-banner {
+	margin-bottom: 8px;
+}
+
+.workshop-banner__content {
+	font-weight: 500;
+}
+
+.workshop-banner__actions {
+	display: inline-flex;
+	gap: 12px;
+	flex-wrap: wrap;
+}
+
+.workshop-banner__link {
+	text-decoration: none;
+	font-weight: 600;
+	padding: 4px 12px;
+	border-radius: 4px;
+	white-space: nowrap;
+}
+
+.workshop-banner__link--primary {
+	background: linear-gradient(
+		135deg,
+		var(--cdn-purple, #5a1f8a),
+		var(--cdn-violet, #9060f0)
+	);
+	color: #fff;
+}
+
+.workshop-banner__link--primary:hover {
+	opacity: 0.9;
+}
+
+.workshop-banner__link--secondary {
+	border: 1px solid var(--cdn-purple, #5a1f8a);
+	color: var(--cdn-purple, #5a1f8a);
+}
+
+.workshop-banner__link--secondary:hover {
+	background: rgba(90, 31, 138, 0.08);
+}

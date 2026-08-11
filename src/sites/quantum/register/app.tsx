@@ -90,6 +90,10 @@ function MemberRsvp({ user }: { user: AuthUser }) {
 			});
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			setConfirmed(true);
+			localStorage.setItem(
+				"cdn-quantum-registered",
+				JSON.stringify({ email: user.email, date: new Date().toISOString() }),
+			);
 		} catch (_e) {
 			setError(t("quantumRegister.genericError"));
 		} finally {
@@ -146,7 +150,9 @@ function MemberRsvp({ user }: { user: AuthUser }) {
 						>
 							{t("quantumRegister.addToCalendar")}
 						</Button>
-						<Link href="/">{t("quantumRegister.backLink")}</Link>
+						<Link href="/?registered=quantum-workshop">
+							{t("quantumRegister.backLink")}
+						</Link>
 					</SpaceBetween>
 				</div>
 			</Container>
@@ -222,6 +228,10 @@ function RegisterForm() {
 			});
 			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			setSuccess(true);
+			localStorage.setItem(
+				"cdn-quantum-registered",
+				JSON.stringify({ email, date: new Date().toISOString() }),
+			);
 		} catch (_e) {
 			setError(t("quantumRegister.genericError"));
 		} finally {
@@ -270,7 +280,9 @@ function RegisterForm() {
 						</Box>
 						<Box fontWeight="bold">{t("quantumRegister.successNextSteps")}</Box>
 						<Box>{t("quantumRegister.successBookmark")}</Box>
-						<Link href="/">{t("quantumRegister.backLink")}</Link>
+						<Link href="/?registered=quantum-workshop">
+							{t("quantumRegister.backLink")}
+						</Link>
 					</SpaceBetween>
 				</div>
 			</Container>

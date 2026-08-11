@@ -1124,5 +1124,11 @@
 			"unauthorized": "Inicia sesión para apuntarte.",
 			"generic": "Algo salió mal — lo registramos. Intenta de nuevo o apúntate en Meetup."
 		}
+	},
+	"workshopBanner": {
+		"message": "¡Estás registrado para el Taller de Computación Cuántica!",
+		"backToWorkshop": "Volver al Taller →",
+		"joinCdn": "Únete a Cloud Del Norte",
+		"dismiss": "Cerrar notificación"
 	}
 }
