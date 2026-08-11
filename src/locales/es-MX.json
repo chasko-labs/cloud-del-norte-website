@@ -1127,7 +1127,15 @@
 		"tasksRunning": "tareas ejecutándose",
 		"loadingInfra": "Verificando infraestructura…",
 		"viewRecordings": "Ver Grabaciones",
-		"goToDashboard": "Ir al Panel"
+		"goToDashboard": "Ir al Panel",
+		"celebrationHeader": "¡Bienvenido al pack!",
+		"celebrationBody": "Ya estás registrado — los lobos están aullando por ti. Nos vemos en el taller.",
+		"celebrationDismiss": "Cerrar celebración de bienvenida",
+		"registeredHeader": "¡Listo! — Registro al Taller Confirmado",
+		"registeredInfo": "Estás registrado para el Taller de Computación Cuántica. No necesitas cuenta para asistir — solo regresa aquí el día del evento.",
+		"joinOnEventDay": "Únete el Día del Evento",
+		"joinOnEventDayBody": "El día del evento, el enlace a la sesión en vivo aparecerá aquí mismo. Guarda esta página en favoritos para encontrarla fácilmente.",
+		"wantFullAccess": "¿Quieres acceso completo? Crea una cuenta de Cloud Del Norte"
 	},
 	"rsvp": {
 		"breadcrumb": "Apúntate",

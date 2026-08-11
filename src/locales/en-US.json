@@ -1127,7 +1127,15 @@
 		"tasksRunning": "tasks running",
 		"loadingInfra": "Checking infrastructure…",
 		"viewRecordings": "View Recordings",
-		"goToDashboard": "Go to Dashboard"
+		"goToDashboard": "Go to Dashboard",
+		"celebrationHeader": "Welcome to the pack!",
+		"celebrationBody": "You're registered — the lobos are howling for you. See you at the workshop.",
+		"celebrationDismiss": "Dismiss welcome celebration",
+		"registeredHeader": "You're In — Workshop Registration Confirmed",
+		"registeredInfo": "You're registered for the Quantum Computing Workshop. No account needed to attend — just come back here on the day of the event.",
+		"joinOnEventDay": "Join on Event Day",
+		"joinOnEventDayBody": "On the day of the event, the live session link will appear right here. Bookmark this page so you can find it easily.",
+		"wantFullAccess": "Want full access now? Create a Cloud Del Norte account"
 	},
 	"rsvp": {
 		"breadcrumb": "RSVP",

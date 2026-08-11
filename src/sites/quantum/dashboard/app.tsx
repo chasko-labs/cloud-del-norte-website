@@ -5,6 +5,7 @@ import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
 import ExpandableSection from "@cloudscape-design/components/expandable-section";
 import Header from "@cloudscape-design/components/header";
+import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import StatusIndicator from "@cloudscape-design/components/status-indicator";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -39,6 +40,8 @@ const SIGN_IN_URL =
 const RECORDINGS_URL =
 	"https://s3.console.aws.amazon.com/s3/buckets/cdn-jitsi-recordings?region=us-west-2&prefix=cloud-del-norte-awsug/";
 const POLL_INTERVAL_MS = 30_000;
+const CELEBRATION_DURATION_MS = 5_000;
+const CREATE_ACCOUNT_URL = "https://auth.clouddelnorte.org/signup/index.html";
 
 interface UserInfo {
 	name: string;
@@ -65,6 +68,227 @@ function getUserInfo(): UserInfo | null {
 		return null;
 	}
 }
+
+function isRegistered(): boolean {
+	try {
+		return localStorage.getItem("cdn-quantum-registered") !== null;
+	} catch {
+		return false;
+	}
+}
+
+function hasCelebrationShown(): boolean {
+	try {
+		return localStorage.getItem("cdn-quantum-celebration-shown") !== null;
+	} catch {
+		return false;
+	}
+}
+
+function markCelebrationShown(): void {
+	try {
+		localStorage.setItem("cdn-quantum-celebration-shown", "true");
+	} catch {
+		// localStorage unavailable — non-critical
+	}
+}
+
+/* ─── Wolf Celebration Banner ─── */
+
+const celebrationStyles = `
+@keyframes lobo-run {
+	0% { transform: translateX(-100%); opacity: 0; }
+	15% { opacity: 1; }
+	100% { transform: translateX(0); opacity: 1; }
+}
+@keyframes lobo-fade-out {
+	0% { opacity: 1; transform: translateY(0); }
+	100% { opacity: 0; transform: translateY(-20px); }
+}
+@keyframes lobo-particle {
+	0% { transform: translateY(0) scale(1); opacity: 1; }
+	50% { opacity: 0.8; }
+	100% { transform: translateY(-60px) scale(0.3); opacity: 0; }
+}
+@keyframes lobo-shimmer {
+	0% { background-position: -200% center; }
+	100% { background-position: 200% center; }
+}
+.lobo-celebration {
+	position: relative;
+	overflow: hidden;
+	padding: 1.5rem 2rem;
+	background: linear-gradient(135deg, #1a0a2e 0%, #2d1052 30%, #5a1f8a 60%, #9060f0 100%);
+	border-radius: 12px;
+	cursor: pointer;
+	animation: lobo-run 0.8s ease-out forwards;
+	border: 1px solid rgba(144, 96, 240, 0.3);
+}
+.lobo-celebration.dismissing {
+	animation: lobo-fade-out 0.5s ease-in forwards;
+}
+.lobo-celebration__wolves {
+	font-size: 2rem;
+	letter-spacing: 0.3em;
+	animation: lobo-run 1s ease-out forwards;
+	animation-delay: 0.2s;
+	opacity: 0;
+}
+.lobo-celebration__header {
+	color: #fff;
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin: 0.5rem 0 0.25rem;
+	background: linear-gradient(90deg, #fff, #d7c7ee, #fff);
+	background-size: 200% auto;
+	-webkit-background-clip: text;
+	-webkit-text-fill-color: transparent;
+	background-clip: text;
+	animation: lobo-shimmer 3s linear infinite;
+}
+.lobo-celebration__body {
+	color: rgba(215, 199, 238, 0.9);
+	font-size: 0.95rem;
+	margin: 0;
+}
+.lobo-celebration__particles {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
+	overflow: hidden;
+}
+.lobo-celebration__particle {
+	position: absolute;
+	font-size: 1.2rem;
+	animation: lobo-particle 2.5s ease-out forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+	.lobo-celebration,
+	.lobo-celebration__wolves,
+	.lobo-celebration__header,
+	.lobo-celebration__particle {
+		animation: none !important;
+		opacity: 1 !important;
+		transform: none !important;
+	}
+	.lobo-celebration.dismissing { display: none; }
+}
+`;
+
+function WolfCelebration({ onDismiss }: { onDismiss: () => void }) {
+	const { t } = useTranslation();
+	const [dismissing, setDismissing] = useState(false);
+	const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+	const dismiss = useCallback(() => {
+		setDismissing(true);
+		markCelebrationShown();
+		setTimeout(onDismiss, 500);
+	}, [onDismiss]);
+
+	useEffect(() => {
+		timerRef.current = setTimeout(dismiss, CELEBRATION_DURATION_MS);
+		return () => {
+			if (timerRef.current) clearTimeout(timerRef.current);
+		};
+	}, [dismiss]);
+
+	const particles = Array.from({ length: 8 }, (_, i) => ({
+		left: `${10 + i * 11}%`,
+		delay: `${0.3 + i * 0.15}s`,
+		emoji: i % 2 === 0 ? "🐺" : "✨",
+	}));
+
+	return (
+		<>
+			<style>{celebrationStyles}</style>
+			<button
+				type="button"
+				className={`lobo-celebration${dismissing ? " dismissing" : ""}`}
+				onClick={dismiss}
+				aria-label={t("quantumDashboard.celebrationDismiss")}
+				style={{
+					textAlign: "left",
+					width: "100%",
+					font: "inherit",
+				}}
+			>
+				<div className="lobo-celebration__particles">
+					{particles.map((p) => (
+						<span
+							key={p.left}
+							className="lobo-celebration__particle"
+							style={{ left: p.left, animationDelay: p.delay, bottom: "10%" }}
+						>
+							{p.emoji}
+						</span>
+					))}
+				</div>
+				<div className="lobo-celebration__wolves">🐺 🐺 🐺 🐺 🐺</div>
+				<p className="lobo-celebration__header">
+					{t("quantumDashboard.celebrationHeader")}
+				</p>
+				<p className="lobo-celebration__body">
+					{t("quantumDashboard.celebrationBody")}
+				</p>
+			</button>
+		</>
+	);
+}
+
+/* ─── Registered View (no Cognito token, but localStorage flag set) ─── */
+
+function RegisteredView() {
+	const { t } = useTranslation();
+	const [showCelebration, setShowCelebration] = useState(
+		() => !hasCelebrationShown(),
+	);
+
+	return (
+		<SpaceBetween size="l">
+			{showCelebration && (
+				<WolfCelebration onDismiss={() => setShowCelebration(false)} />
+			)}
+
+			<Container
+				header={
+					<Header variant="h1">{t("quantumDashboard.registeredHeader")}</Header>
+				}
+			>
+				<SpaceBetween size="m">
+					<Alert type="info">{t("quantumDashboard.registeredInfo")}</Alert>
+					<Box fontWeight="bold">{t("quantumDashboard.upcomingInfoDate")}</Box>
+					<Box>{t("quantumDashboard.upcomingInfoTopic")}</Box>
+					<Box color="text-body-secondary">
+						{t("quantumDashboard.upcomingInfoStyle")}
+					</Box>
+				</SpaceBetween>
+			</Container>
+
+			<Container
+				header={
+					<Header variant="h2">{t("quantumDashboard.joinOnEventDay")}</Header>
+				}
+			>
+				<SpaceBetween size="s">
+					<Box color="text-body-secondary">
+						{t("quantumDashboard.joinOnEventDayBody")}
+					</Box>
+					<Box>
+						<Link href={CREATE_ACCOUNT_URL}>
+							{t("quantumDashboard.wantFullAccess")}
+						</Link>
+					</Box>
+				</SpaceBetween>
+			</Container>
+		</SpaceBetween>
+	);
+}
+
+/* ─── Guest View ─── */
 
 function GuestView() {
 	const { t } = useTranslation();
@@ -102,6 +326,8 @@ function GuestView() {
 		</SpaceBetween>
 	);
 }
+
+/* ─── Session Status ─── */
 
 function SessionStatus({
 	status,
@@ -165,6 +391,8 @@ function SessionStatus({
 		</StatusIndicator>
 	);
 }
+
+/* ─── Moderator Controls ─── */
 
 function ModeratorControls() {
 	const { t } = useTranslation();
@@ -273,6 +501,8 @@ function ModeratorControls() {
 	);
 }
 
+/* ─── Member View (authenticated) ─── */
+
 function MemberView({ user }: { user: UserInfo }) {
 	const { t } = useTranslation();
 	const [meetingStatus, setMeetingStatus] = useState<MeetingStatus | null>(
@@ -334,6 +564,8 @@ function MemberView({ user }: { user: UserInfo }) {
 	);
 }
 
+/* ─── Dashboard Content (state router) ─── */
+
 function DashboardContent() {
 	const [user, setUser] = useState<UserInfo | null>(null);
 	const [checked, setChecked] = useState(false);
@@ -345,9 +577,14 @@ function DashboardContent() {
 
 	if (!checked) return null;
 
-	if (!user) return <GuestView />;
+	// Authenticated user → full member view
+	if (user) return <MemberView user={user} />;
 
-	return <MemberView user={user} />;
+	// Registered via form (localStorage flag) but no Cognito token → registered view
+	if (isRegistered()) return <RegisteredView />;
+
+	// No token, no registration → guest view
+	return <GuestView />;
 }
 
 export default function App() {
