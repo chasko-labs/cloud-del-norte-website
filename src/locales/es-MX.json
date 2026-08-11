@@ -1101,9 +1101,11 @@
 		"memberSubtext": "Enviaremos los detalles de la reunión a {{email}} antes del evento."
 	},
 	"quantumDashboard": {
-		"guestHeader": "Inicia sesión para acceder a los talleres",
-		"guestSubtext": "Los miembros tienen acceso a sesiones en vivo, grabaciones y laboratorios prácticos.",
+		"guestHeader": "Serie de Talleres de Computación Cuántica",
+		"guestSubtext": "Regístrate abajo para apartar tu lugar — no necesitas cuenta para asistir.",
 		"signInButton": "Iniciar sesión",
+		"guestRegisterButton": "Regístrate para este taller",
+		"guestSignInLink": "¿Ya eres miembro de Cloud Del Norte? Inicia sesión",
 		"upcomingInfoHeader": "Próximo Taller",
 		"upcomingInfoDate": "Dom 30 Ago · 3:00–6:00 PM CDT",
 		"upcomingInfoTopic": "Taller Práctico de Amazon Braket — superposiciones cuánticas, funciones de onda, entrelazamiento",

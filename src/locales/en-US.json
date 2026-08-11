@@ -1101,9 +1101,11 @@
 		"memberSubtext": "We'll send meeting details to {{email}} before the event."
 	},
 	"quantumDashboard": {
-		"guestHeader": "Sign in to access workshop sessions",
-		"guestSubtext": "Members get access to live sessions, recordings, and hands-on labs.",
+		"guestHeader": "Quantum Computing Workshop Series",
+		"guestSubtext": "Register below to reserve your spot — no account needed to attend.",
 		"signInButton": "Sign in",
+		"guestRegisterButton": "Register for this workshop",
+		"guestSignInLink": "Already a Cloud Del Norte member? Sign in",
 		"upcomingInfoHeader": "Upcoming Workshop",
 		"upcomingInfoDate": "Sun Aug 30 · 3:00–6:00 PM CDT",
 		"upcomingInfoTopic": "Hands-On Amazon Braket — quantum superpositions, wavefunctions, entanglement",

@@ -303,26 +303,22 @@ function GuestView() {
 					<Box color="text-body-secondary" fontSize="heading-s">
 						{t("quantumDashboard.guestSubtext")}
 					</Box>
-					<Button variant="primary" href={SIGN_IN_URL}>
-						{t("quantumDashboard.signInButton")}
-					</Button>
-				</SpaceBetween>
-			</Container>
-			<Container
-				header={
-					<Header variant="h2">
-						{t("quantumDashboard.upcomingInfoHeader")}
-					</Header>
-				}
-			>
-				<SpaceBetween size="s">
 					<Box fontWeight="bold">{t("quantumDashboard.upcomingInfoDate")}</Box>
 					<Box>{t("quantumDashboard.upcomingInfoTopic")}</Box>
 					<Box color="text-body-secondary">
 						{t("quantumDashboard.upcomingInfoStyle")}
 					</Box>
+					<Button variant="primary" href="/register/">
+						{t("quantumDashboard.guestRegisterButton")}
+					</Button>
 				</SpaceBetween>
 			</Container>
+
+			<Box color="text-body-secondary" fontSize="body-s">
+				<Link href={SIGN_IN_URL} fontSize="body-s">
+					{t("quantumDashboard.guestSignInLink")}
+				</Link>
+			</Box>
 		</SpaceBetween>
 	);
 }
