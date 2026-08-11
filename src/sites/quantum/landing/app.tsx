@@ -133,7 +133,7 @@ function LandingContent() {
 							href={REGISTER_URL}
 							className="quantum-register-cta"
 							data-tool-name="register_for_workshop"
-							data-tool-description="Register for the free quantum computing workshop on Amazon Braket, August 30 2026"
+							data-tool-description="Register for the quantum computing workshop on Amazon Braket, August 30 2026"
 						>
 							<span className="quantum-register-cta__text">
 								{t("quantum.registerButton")}

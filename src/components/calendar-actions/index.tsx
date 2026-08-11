@@ -10,7 +10,7 @@ const EVENT_END_ISO = "2026-08-31T00:00:00Z";
 const EVENT_LOCATION = "Online — quantum.clouddelnorte.org";
 const EVENT_URL = "https://quantum.clouddelnorte.org";
 const EVENT_DESCRIPTION =
-	"Hands-on Amazon Braket workshop. Build quantum circuits, observe superposition & collapse, run Deutsch's algorithm. Hosted by Christian Perez. Free & bilingual (EN/ES).";
+	"Hands-on Amazon Braket workshop. Build quantum circuits, observe superposition & collapse, run Deutsch's algorithm. Hosted by Christian Perez. Bilingual (EN/ES).";
 
 function GoogleCalendarIcon() {
 	return (
