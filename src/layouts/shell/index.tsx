@@ -17,6 +17,7 @@ const AtmosphereRibbon = lazy(
 
 import LogoSvg from "../../components/logo-svg";
 import PersistentPlayer from "../../components/persistent-player";
+import WorkshopBanner from "../../components/workshop-banner";
 import { AuthProvider } from "../../contexts/auth-context";
 import { LocaleProvider } from "../../contexts/locale-context";
 import { useAuth } from "../../hooks/useAuth";
@@ -691,7 +692,12 @@ function ShellContent({
 				navigationOpen={navOpen}
 				onNavigationChange={handleNavigationChange}
 				breadcrumbs={breadcrumbs}
-				notifications={notifications}
+				notifications={
+					<>
+						<WorkshopBanner />
+						{notifications}
+					</>
+				}
 				stickyNotifications={true}
 				tools={tools}
 				toolsHide={toolsHide}
