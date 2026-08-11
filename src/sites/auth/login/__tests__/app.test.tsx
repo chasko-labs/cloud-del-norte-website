@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as cognito from "../../../../lib/cognito";
 
-vi.mock("../../../_layout", () => ({
+vi.mock("../../_layout", () => ({
 	default: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
@@ -48,7 +48,14 @@ describe("login → signup cross-link", () => {
 
 		render(<App />);
 
-		const link = screen.getByText("auth.login.signUpLink").closest("a");
+		const link = screen
+			.getByText((_content, element) => {
+				return (
+					element?.tagName === "A" &&
+					(element.textContent?.includes("auth.login.signUpLink") ?? false)
+				);
+			})
+			.closest("a");
 		expect(link?.getAttribute("href")).toContain(
 			"?return_to=%2Frsvp%2F%3Fevent%3Dhappy-hour-2026-06-03",
 		);
@@ -62,7 +69,14 @@ describe("login → signup cross-link", () => {
 
 		render(<App />);
 
-		const link = screen.getByText("auth.login.signUpLink").closest("a");
+		const link = screen
+			.getByText((_content, element) => {
+				return (
+					element?.tagName === "A" &&
+					(element.textContent?.includes("auth.login.signUpLink") ?? false)
+				);
+			})
+			.closest("a");
 		expect(link?.getAttribute("href")).toBe("/signup/index.html");
 	});
 });
@@ -441,6 +455,200 @@ describe("login → passkey error differentiation", () => {
 		expect(enrollLink.closest("a")?.getAttribute("href")).toBe(
 			"/passkeys/index.html",
 		);
+	});
+});
+
+describe("login → form validation errors", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		Object.defineProperty(window, "location", {
+			value: { ...window.location, search: "", assign: vi.fn() },
+			writable: true,
+		});
+		localStorage.clear();
+	});
+
+	it("shows email-required error when email is empty and sign in is clicked", async () => {
+		vi.mocked(cognito.assertNonEmpty).mockImplementation(
+			(value: string, _label: string) => {
+				if (!value?.trim()) {
+					throw new Error(`${_label} is required`);
+				}
+			},
+		);
+
+		render(<App />);
+
+		// Leave email empty, type a password
+		const passwordInputs = screen.getAllByDisplayValue("");
+		const pw = passwordInputs.find(
+			(el) => (el as HTMLInputElement).type === "password",
+		) as HTMLInputElement;
+		fireEvent.change(pw, { target: { value: "some-password" } });
+
+		fireEvent.click(screen.getByText("auth.login.signInButton"));
+
+		await waitFor(() => {
+			expect(
+				screen.getByText("auth.login.emailLabel is required"),
+			).toBeTruthy();
+		});
+		// signInWithPassword should NOT have been called for this test
+		expect(cognito.signInWithPassword).not.toHaveBeenCalled();
+	});
+
+	it("shows password-required error when password is empty and sign in is clicked", async () => {
+		vi.mocked(cognito.assertNonEmpty).mockImplementation(
+			(value: string, _label: string) => {
+				if (!value?.trim()) {
+					throw new Error(`${_label} is required`);
+				}
+			},
+		);
+
+		render(<App />);
+
+		// Type an email but leave password empty
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.login.emailPlaceholder"),
+			{ target: { value: "user@example.com" } },
+		);
+
+		fireEvent.click(screen.getByText("auth.login.signInButton"));
+
+		await waitFor(() => {
+			expect(
+				screen.getByText("auth.login.passwordLabel is required"),
+			).toBeTruthy();
+		});
+		// signInWithPassword should NOT have been called for this test
+		expect(cognito.signInWithPassword).not.toHaveBeenCalled();
+	});
+
+	it("shows both errors when email and password are empty", async () => {
+		vi.mocked(cognito.assertNonEmpty).mockImplementation(
+			(value: string, _label: string) => {
+				if (!value?.trim()) {
+					throw new Error(`${_label} is required`);
+				}
+			},
+		);
+
+		render(<App />);
+
+		fireEvent.click(screen.getByText("auth.login.signInButton"));
+
+		await waitFor(() => {
+			expect(
+				screen.getByText("auth.login.emailLabel is required"),
+			).toBeTruthy();
+			expect(
+				screen.getByText("auth.login.passwordLabel is required"),
+			).toBeTruthy();
+		});
+		expect(cognito.signInWithPassword).not.toHaveBeenCalled();
+	});
+});
+
+describe("login → sign-in error states", () => {
+	beforeEach(() => {
+		vi.clearAllMocks();
+		Object.defineProperty(window, "location", {
+			value: { ...window.location, search: "", assign: vi.fn() },
+			writable: true,
+		});
+		localStorage.clear();
+		// Default assertNonEmpty passes (no-op)
+		vi.mocked(cognito.assertNonEmpty).mockImplementation(() => {});
+	});
+
+	it("shows generic error for unexpected auth failures", async () => {
+		vi.mocked(cognito.signInWithPassword).mockRejectedValueOnce(
+			new cognito.AuthError("internal error", "InternalErrorException"),
+		);
+
+		render(<App />);
+
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.login.emailPlaceholder"),
+			{ target: { value: "user@example.com" } },
+		);
+		const passwordInputs = screen.getAllByDisplayValue("");
+		const pw = passwordInputs.find(
+			(el) => (el as HTMLInputElement).type === "password",
+		) as HTMLInputElement;
+		fireEvent.change(pw, { target: { value: "password123" } });
+		fireEvent.click(screen.getByText("auth.login.signInButton"));
+
+		await waitFor(() => {
+			expect(screen.getByText("auth.login.genericError")).toBeTruthy();
+		});
+		// Should NOT show the credential help panel for non-auth errors
+		expect(screen.queryByTestId("magic-link-cta")).toBeNull();
+	});
+
+	it("shows credential error and magic-link CTA for NotAuthorizedException", async () => {
+		vi.mocked(cognito.signInWithPassword).mockRejectedValueOnce(
+			new cognito.AuthError("incorrect password", "NotAuthorizedException"),
+		);
+
+		render(<App />);
+
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.login.emailPlaceholder"),
+			{ target: { value: "user@example.com" } },
+		);
+		const passwordInputs = screen.getAllByDisplayValue("");
+		const pw = passwordInputs.find(
+			(el) => (el as HTMLInputElement).type === "password",
+		) as HTMLInputElement;
+		fireEvent.change(pw, { target: { value: "wrong" } });
+		fireEvent.click(screen.getByText("auth.login.signInButton"));
+
+		await waitFor(() => {
+			expect(
+				screen.getByText("auth.login.credentialsErrorMessage"),
+			).toBeTruthy();
+			expect(screen.getByTestId("magic-link-cta")).toBeTruthy();
+		});
+	});
+});
+
+describe("login → magic-link CTA navigates to forgot-password", () => {
+	it("navigates to /forgot-password/ with email param after clicking reset CTA", async () => {
+		vi.mocked(cognito.assertNonEmpty).mockImplementation(() => {});
+		vi.mocked(cognito.forgotPassword).mockResolvedValueOnce(undefined);
+		vi.mocked(cognito.signInWithPassword).mockRejectedValueOnce(
+			new cognito.AuthError("wrong password", "NotAuthorizedException"),
+		);
+		const assign = vi.fn();
+		Object.defineProperty(window, "location", {
+			value: { ...window.location, search: "", assign },
+			writable: true,
+		});
+		localStorage.clear();
+
+		render(<App />);
+
+		fireEvent.change(
+			screen.getByPlaceholderText("auth.login.emailPlaceholder"),
+			{ target: { value: "test@clouddelnorte.org" } },
+		);
+		const passwordInputs = screen.getAllByDisplayValue("");
+		const pw = passwordInputs.find(
+			(el) => (el as HTMLInputElement).type === "password",
+		) as HTMLInputElement;
+		fireEvent.change(pw, { target: { value: "bad-pass" } });
+		fireEvent.click(screen.getByText("auth.login.signInButton"));
+
+		const cta = await screen.findByTestId("magic-link-cta");
+		fireEvent.click(cta);
+
+		await waitFor(() => {
+			expect(assign).toHaveBeenCalledWith(
+				"/forgot-password/index.html?email=test%40clouddelnorte.org&sent=1",
+			);
+		});
 	});
 });
 
