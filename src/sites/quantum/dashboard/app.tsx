@@ -9,6 +9,7 @@ import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import StatusIndicator from "@cloudscape-design/components/status-indicator";
 import { useCallback, useEffect, useRef, useState } from "react";
+import CalendarActions from "../../../components/calendar-actions";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { decodeToken, getIdToken } from "../../../lib/auth";
 import {
@@ -265,6 +266,7 @@ function RegisteredView() {
 					<Box color="text-body-secondary">
 						{t("quantumDashboard.upcomingInfoStyle")}
 					</Box>
+					<CalendarActions />
 				</SpaceBetween>
 			</Container>
 
@@ -552,7 +554,10 @@ function MemberView({ user }: { user: UserInfo }) {
 					</Header>
 				}
 			>
-				<SessionStatus status={meetingStatus} onJoin={handleJoin} />
+				<SpaceBetween size="m">
+					<SessionStatus status={meetingStatus} onJoin={handleJoin} />
+					<CalendarActions />
+				</SpaceBetween>
 			</Container>
 
 			{user.isModerator && <ModeratorControls />}

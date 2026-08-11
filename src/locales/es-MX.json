@@ -1174,5 +1174,15 @@
 		"backToWorkshop": "Volver al Taller →",
 		"joinCdn": "Únete a Cloud Del Norte",
 		"dismiss": "Cerrar notificación"
+	},
+	"calendarActions": {
+		"addToCalendar": "Agregar a tu calendario",
+		"google": "Agregar a Google Calendar",
+		"outlook": "Agregar a Outlook",
+		"yahoo": "Agregar a Yahoo Calendar",
+		"downloadIcs": "Descargar archivo .ics",
+		"copyLink": "Copiar enlace del evento",
+		"copied": "¡Copiado!",
+		"share": "Compartir evento"
 	}
 }

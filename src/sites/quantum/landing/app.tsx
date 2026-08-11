@@ -5,6 +5,7 @@ import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useEffect, useState } from "react";
+import CalendarActions from "../../../components/calendar-actions";
 import { useTranslation } from "../../../hooks/useTranslation";
 import {
 	applyLocale,
@@ -143,6 +144,7 @@ function LandingContent() {
 							/>
 						</a>
 					</div>
+					<CalendarActions />
 				</SpaceBetween>
 			</Container>
 

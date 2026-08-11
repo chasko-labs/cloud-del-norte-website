@@ -1174,5 +1174,15 @@
 		"backToWorkshop": "Back to Workshop →",
 		"joinCdn": "Sign up for Cloud Del Norte",
 		"dismiss": "Dismiss notification"
+	},
+	"calendarActions": {
+		"addToCalendar": "Add to your calendar",
+		"google": "Add to Google Calendar",
+		"outlook": "Add to Outlook",
+		"yahoo": "Add to Yahoo Calendar",
+		"downloadIcs": "Download .ics file",
+		"copyLink": "Copy event link",
+		"copied": "Copied!",
+		"share": "Share event"
 	}
 }
