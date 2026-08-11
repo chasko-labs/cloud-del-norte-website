@@ -27,6 +27,8 @@ vi.mock("../../../lib/auth", () => ({
 vi.mock("../../../lib/admin", () => ({
 	listPendingUsers: vi.fn(),
 	approveUser: vi.fn(),
+	listProposals: vi.fn(),
+	patchProposal: vi.fn(),
 }));
 
 vi.mock("../../../layouts/shell", () => ({
@@ -43,6 +45,7 @@ vi.mock("../../../hooks/useTranslation", () => ({
 	useTranslation: () => ({ locale: "us", t: (k: string) => k }),
 }));
 
+import { listProposals } from "../../../lib/admin";
 import App from "../app";
 
 function state(overrides: Partial<AuthState> = {}): AuthState {
@@ -61,6 +64,7 @@ function state(overrides: Partial<AuthState> = {}): AuthState {
 
 describe("/admin auth gating + table", () => {
 	beforeEach(() => {
+		(listProposals as ReturnType<typeof vi.fn>).mockResolvedValue([]);
 		Object.defineProperty(window, "location", {
 			value: {
 				pathname: "/admin",

@@ -863,8 +863,8 @@
 			"genericError": "Algo salió mal. Intenta de nuevo.",
 			"credentialsErrorMessage": "Esa combinación de correo y contraseña no jaló. Checa los dos e intenta de nuevo, o usa una de las opciones de abajo.",
 			"magicLinkHeader": "¿Olvidaste tu contraseña?",
-			"magicLinkDescription": "Te mandamos un código de un solo uso pa' que reinicies la contraseña y entres.",
-			"magicLinkCta": "Mándame un código pa' reiniciar",
+			"magicLinkDescription": "Te mandamos un enlace pa' que reinicies tu contraseña.",
+			"magicLinkCta": "Restablecer contraseña",
 			"magicLinkEmailRequired": "Escribe tu correo arriba primero, luego pica el botón.",
 			"mfaSetup": {
 				"alertHeader": "Consigue una app autenticadora",

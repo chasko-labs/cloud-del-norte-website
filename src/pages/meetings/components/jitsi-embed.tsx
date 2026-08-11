@@ -28,35 +28,52 @@ interface JitsiApi {
 	dispose?: () => void;
 }
 
+const SCRIPT_LOAD_TIMEOUT_MS = 15_000;
+
 // Loads the jitsi external_api.js script once per page and resolves when ready.
+// Removes stale failed script tags on retry so a fresh network request occurs.
 function loadJitsiScript(domain: string): Promise<void> {
 	if (typeof window === "undefined")
 		return Promise.reject(new Error("no window"));
 	if (window.JitsiMeetExternalAPI) return Promise.resolve();
 
-	const existing = document.querySelector<HTMLScriptElement>(
+	// Remove any previously-failed script tag so a fresh attempt can start.
+	const stale = document.querySelector<HTMLScriptElement>(
 		'script[data-cdn-jitsi="1"]',
 	);
-	if (existing) {
-		return new Promise((resolve, reject) => {
-			existing.addEventListener("load", () => resolve(), { once: true });
-			existing.addEventListener(
-				"error",
-				() => reject(new Error("jitsi script failed to load")),
-				{
-					once: true,
-				},
-			);
-		});
-	}
+	if (stale) stale.remove();
 
 	return new Promise((resolve, reject) => {
+		let settled = false;
+		const timer = setTimeout(() => {
+			if (!settled) {
+				settled = true;
+				reject(
+					new Error(
+						"jitsi script load timed out — the meeting server may be unavailable",
+					),
+				);
+			}
+		}, SCRIPT_LOAD_TIMEOUT_MS);
+
 		const script = document.createElement("script");
 		script.src = `https://${domain}/external_api.js`;
 		script.async = true;
 		script.setAttribute("data-cdn-jitsi", "1");
-		script.onload = () => resolve();
-		script.onerror = () => reject(new Error("jitsi script failed to load"));
+		script.onload = () => {
+			if (!settled) {
+				settled = true;
+				clearTimeout(timer);
+				resolve();
+			}
+		};
+		script.onerror = () => {
+			if (!settled) {
+				settled = true;
+				clearTimeout(timer);
+				reject(new Error("jitsi script failed to load"));
+			}
+		};
 		document.head.appendChild(script);
 	});
 }
@@ -252,7 +269,16 @@ export default function JitsiEmbed({
 
 	if (status === "error") {
 		return (
-			<Alert type="error" header="cannot join meeting">
+			<Alert
+				type="error"
+				statusIconAriaLabel="Error"
+				header="cannot join meeting"
+				action={
+					<Button onClick={() => setRetryKey((k) => k + 1)}>
+						{t.retryButton}
+					</Button>
+				}
+			>
 				{errorMsg}
 			</Alert>
 		);
