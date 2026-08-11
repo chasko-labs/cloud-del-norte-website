@@ -1,0 +1,264 @@
+/* ── REGISTER CTA — the most prominent element on the page ─────────────── */
+.quantum-register-cta-wrapper {
+	display: flex;
+	justify-content: center;
+	padding: 0.5rem 0;
+}
+
+.quantum-register-cta-wrapper--footer {
+	padding: 1rem 0;
+}
+
+.quantum-register-cta {
+	position: relative;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: 1rem 2.5rem;
+	font-size: 1.1rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-decoration: none;
+	color: #fff;
+	border-radius: 12px;
+	overflow: hidden;
+	cursor: pointer;
+	border: 1px solid rgba(201, 162, 63, 0.5);
+	transition:
+		transform 0.2s ease,
+		box-shadow 0.3s ease,
+		border-color 0.3s ease;
+
+	/* Brass/gold scuffed texture gradient */
+	background: linear-gradient(
+		135deg,
+		#8b6914 0%,
+		#c9a23f 30%,
+		#daa520 50%,
+		#c9a23f 70%,
+		#8b6914 100%
+	);
+	box-shadow:
+		0 4px 20px rgba(201, 162, 63, 0.4),
+		0 0 40px rgba(201, 162, 63, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.25),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+
+	/* Glow pulse animation */
+	animation: register-glow-pulse 3s ease-in-out infinite;
+}
+
+.quantum-register-cta:hover {
+	transform: scale(1.04) translateY(-1px);
+	border-color: rgba(218, 165, 32, 0.8);
+	box-shadow:
+		0 8px 32px rgba(201, 162, 63, 0.6),
+		0 0 60px rgba(201, 162, 63, 0.25),
+		inset 0 1px 0 rgba(255, 255, 255, 0.3),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.quantum-register-cta:focus-visible {
+	outline: 3px solid #daa520;
+	outline-offset: 3px;
+}
+
+.quantum-register-cta:active {
+	transform: scale(0.98);
+}
+
+.quantum-register-cta__text {
+	position: relative;
+	z-index: 1;
+	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Light sweep shimmer across the button surface */
+.quantum-register-cta__shimmer {
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(
+		105deg,
+		transparent 0%,
+		transparent 35%,
+		rgba(255, 255, 255, 0.25) 45%,
+		rgba(255, 255, 255, 0.4) 50%,
+		rgba(255, 255, 255, 0.25) 55%,
+		transparent 65%,
+		transparent 100%
+	);
+	animation: register-light-sweep 4s ease-in-out infinite;
+	pointer-events: none;
+}
+
+@keyframes register-glow-pulse {
+	0%,
+	100% {
+		box-shadow:
+			0 4px 20px rgba(201, 162, 63, 0.4),
+			0 0 40px rgba(201, 162, 63, 0.15),
+			inset 0 1px 0 rgba(255, 255, 255, 0.25),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+	}
+	50% {
+		box-shadow:
+			0 4px 28px rgba(201, 162, 63, 0.6),
+			0 0 60px rgba(201, 162, 63, 0.25),
+			inset 0 1px 0 rgba(255, 255, 255, 0.3),
+			inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+	}
+}
+
+@keyframes register-light-sweep {
+	0% {
+		transform: translateX(-120%);
+	}
+	60%,
+	100% {
+		transform: translateX(120%);
+	}
+}
+
+/* Light mode adjustments */
+:root:not(.awsui-dark-mode) .quantum-register-cta {
+	background: linear-gradient(
+		135deg,
+		#7a5c10 0%,
+		#b8922f 30%,
+		#c9a23f 50%,
+		#b8922f 70%,
+		#7a5c10 100%
+	);
+	color: #fff;
+	border-color: rgba(139, 105, 20, 0.6);
+}
+
+/* ── MEETUP GROUP LINKS ───────────────────────────────────────────────── */
+.quantum-meetup-group {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.75rem 1rem;
+	border-radius: 10px;
+	background: rgba(144, 96, 240, 0.05);
+	border: 1px solid rgba(144, 96, 240, 0.12);
+	transition:
+		background 0.2s,
+		border-color 0.2s,
+		transform 0.15s;
+}
+
+.quantum-meetup-group:hover {
+	background: rgba(144, 96, 240, 0.1);
+	border-color: rgba(144, 96, 240, 0.25);
+	transform: translateX(2px);
+}
+
+:root:not(.awsui-dark-mode) .quantum-meetup-group {
+	background: rgba(90, 31, 138, 0.03);
+	border-color: rgba(90, 31, 138, 0.08);
+}
+
+:root:not(.awsui-dark-mode) .quantum-meetup-group:hover {
+	background: rgba(90, 31, 138, 0.06);
+	border-color: rgba(90, 31, 138, 0.15);
+}
+
+.quantum-meetup-group__info {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 0.15rem;
+}
+
+.quantum-meetup-group__name {
+	font-weight: 600;
+	font-size: 0.95rem;
+	color: var(--cdn-lavender, #d7c7ee);
+	text-decoration: none;
+	transition: color 0.15s;
+}
+
+.quantum-meetup-group__name:hover {
+	color: #fff;
+	text-decoration: underline;
+}
+
+:root:not(.awsui-dark-mode) .quantum-meetup-group__name {
+	color: var(--cdn-purple, #5a1f8a);
+}
+
+:root:not(.awsui-dark-mode) .quantum-meetup-group__name:hover {
+	color: #3a0f5a;
+}
+
+.quantum-meetup-group__location {
+	font-size: 0.8rem;
+	color: rgba(215, 199, 238, 0.7);
+}
+
+:root:not(.awsui-dark-mode) .quantum-meetup-group__location {
+	color: rgba(90, 31, 138, 0.6);
+}
+
+.quantum-meetup-group__rsvp {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.35rem;
+	padding: 0.4rem 0.85rem;
+	font-size: 0.78rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	text-decoration: none;
+	color: #fff;
+	background: #ed1c40;
+	border-radius: 6px;
+	white-space: nowrap;
+	transition:
+		background 0.2s,
+		transform 0.15s;
+}
+
+.quantum-meetup-group__rsvp:hover {
+	background: #d01535;
+	transform: scale(1.03);
+}
+
+.quantum-meetup-group__rsvp:focus-visible {
+	outline: 2px solid #ed1c40;
+	outline-offset: 2px;
+}
+
+/* ── REDUCED MOTION ───────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+	.quantum-register-cta {
+		animation: none;
+	}
+	.quantum-register-cta__shimmer {
+		animation: none;
+		display: none;
+	}
+	.quantum-meetup-group:hover {
+		transform: none;
+	}
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────────────────── */
+@media (max-width: 640px) {
+	.quantum-register-cta {
+		padding: 0.85rem 1.8rem;
+		font-size: 1rem;
+	}
+
+	.quantum-meetup-group {
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.quantum-meetup-group__rsvp {
+		width: 100%;
+		justify-content: center;
+		margin-top: 0.25rem;
+	}
+}

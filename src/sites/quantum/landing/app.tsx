@@ -1,5 +1,4 @@
 import Box from "@cloudscape-design/components/box";
-import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
 import Grid from "@cloudscape-design/components/grid";
 import Header from "@cloudscape-design/components/header";
@@ -20,6 +19,7 @@ import {
 	type Theme,
 } from "../../../utils/theme";
 import QuantumLayout from "../_layout";
+import "./landing.css";
 
 const CHRISTIAN_AVATAR =
 	"https://avatars.builderprofile.aws.dev/33kByuRaGaQfqwc41T52Ws9w4v1.webp";
@@ -34,9 +34,47 @@ const BRAKET_URL =
 	"https://builder.aws.com/content/3GaxVTZeaL9pWzjXj3k7tMynzbI/a-developers-field-guide-to-amazon-braket";
 const REGISTER_URL = "/register/";
 const DASHBOARD_URL = "/dashboard/";
-const MEETUP_URL = "https://www.meetup.com/awsugclouddelnorte/";
 const GLOBAL_UG_URL =
 	"https://www.meetup.com/pro/global-aws-user-group-community/";
+
+const MEETUP_GROUPS = [
+	{
+		name: "AWS UG Cloud Del Norte",
+		url: "https://www.meetup.com/awsugclouddelnorte/",
+		location: "El Paso, TX",
+	},
+	{
+		name: "AWS User Group Clarksville",
+		url: "https://www.meetup.com/aws-user-group-clarksville/",
+		location: "Clarksville, TN",
+	},
+	{
+		name: "Columbia AWS Users Group",
+		url: "https://www.meetup.com/columbia-aws-users-group/",
+		location: "Columbia, SC",
+	},
+];
+
+/* Meetup logo mark — simplified M in rounded square, brand red #ED1C40 */
+function MeetupLogo({ size = 20 }: { size?: number }) {
+	return (
+		<svg
+			width={size}
+			height={size}
+			viewBox="0 0 24 24"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			aria-label="Meetup"
+			role="img"
+		>
+			<rect width="24" height="24" rx="4" fill="#ED1C40" />
+			<path
+				d="M6.5 16.5c.3.5.8.7 1.3.5.5-.2.7-.7.6-1.2l-.8-4.2c-.2-.8.4-1.5 1.2-1.5.6 0 1.1.4 1.2 1l.9 4.1c.1.5.6.9 1.1.8.5-.1.9-.6.8-1.1l-.9-4.3c-.1-.8.4-1.5 1.2-1.5.6 0 1.1.4 1.2 1l1 4.5c.1.5.6.8 1.1.7.5-.1.9-.6.7-1.1l-1.4-5.8c-.3-1.3-1.5-2.2-2.8-2.1-1 .1-1.8.6-2.2 1.4-.5-.6-1.3-.9-2.1-.8-1.3.2-2.3 1.3-2.2 2.7l.6 5c.1.6.3 1.1.5 1.4z"
+				fill="white"
+			/>
+		</svg>
+	);
+}
 
 function isLoggedIn(): boolean {
 	const idToken = sessionStorage.getItem("cdn.idToken");
@@ -55,6 +93,19 @@ function LandingContent() {
 
 	return (
 		<SpaceBetween size="xl">
+			{/* CTA 1: Sign in — small, understated, implies returning visitors */}
+			<Box textAlign="right">
+				{loggedIn ? (
+					<Link href={DASHBOARD_URL} fontSize="body-s">
+						{t("quantum.goToDashboard")}
+					</Link>
+				) : (
+					<Link href={DASHBOARD_URL} fontSize="body-s">
+						{t("quantum.signIn")}
+					</Link>
+				)}
+			</Box>
+
 			{/* Hero */}
 			<Container>
 				<SpaceBetween size="m">
@@ -74,20 +125,24 @@ function LandingContent() {
 					<Box fontSize="body-s" color="text-body-secondary">
 						{t("quantum.bilingual")}
 					</Box>
-					<SpaceBetween size="xs" direction="horizontal">
-						{loggedIn ? (
-							<Button variant="primary" href={DASHBOARD_URL}>
-								Go to Dashboard
-							</Button>
-						) : (
-							<Button variant="primary" href={REGISTER_URL}>
+
+					{/* CTA 2: Register — PRIMARY, most prominent, animated */}
+					<div className="quantum-register-cta-wrapper">
+						<a
+							href={REGISTER_URL}
+							className="quantum-register-cta"
+							data-tool-name="register_for_workshop"
+							data-tool-description="Register for the free quantum computing workshop on Amazon Braket, August 30 2026"
+						>
+							<span className="quantum-register-cta__text">
 								{t("quantum.registerButton")}
-							</Button>
-						)}
-						<Button variant="link" href={MEETUP_URL} target="_blank">
-							{t("quantum.rsvpMeetup")}
-						</Button>
-					</SpaceBetween>
+							</span>
+							<span
+								className="quantum-register-cta__shimmer"
+								aria-hidden="true"
+							/>
+						</a>
+					</div>
 				</SpaceBetween>
 			</Container>
 
@@ -98,7 +153,7 @@ function LandingContent() {
 				<Box fontSize="body-m">{t("quantum.description")}</Box>
 			</Container>
 
-			{/* Hosts */}
+			{/* Hosts / Speakers */}
 			<Container
 				header={<Header variant="h2">{t("quantum.hostsHeader")}</Header>}
 			>
@@ -182,31 +237,63 @@ function LandingContent() {
 				</Grid>
 			</Container>
 
-			{/* Hosting */}
+			{/* CTA 3: Meetup groups — "Run by AWS communities" */}
 			<Container
 				header={<Header variant="h2">{t("quantum.groupsHeader")}</Header>}
 			>
-				<SpaceBetween size="s">
-					<Box fontWeight="bold">Cloud Del Norte</Box>
-					<Box fontWeight="bold">AWS User Group Clarksville</Box>
-					<Box fontWeight="bold">Columbia AWS User Group</Box>
-					<Link href={GLOBAL_UG_URL} external>
-						{t("quantum.findLocal")}
-					</Link>
+				<SpaceBetween size="m">
+					{MEETUP_GROUPS.map((group) => (
+						<div key={group.url} className="quantum-meetup-group">
+							<MeetupLogo size={22} />
+							<div className="quantum-meetup-group__info">
+								<a
+									href={group.url}
+									target="_blank"
+									rel="noopener noreferrer"
+									className="quantum-meetup-group__name"
+								>
+									{group.name}
+								</a>
+								<span className="quantum-meetup-group__location">
+									{group.location}
+								</span>
+							</div>
+							<a
+								href={group.url}
+								target="_blank"
+								rel="noopener noreferrer"
+								className="quantum-meetup-group__rsvp"
+							>
+								{t("quantum.rsvpMeetup")}
+							</a>
+						</div>
+					))}
+					<Box fontSize="body-s" color="text-body-secondary">
+						<Link href={GLOBAL_UG_URL} external>
+							{t("quantum.findLocal")}
+						</Link>
+					</Box>
 				</SpaceBetween>
 			</Container>
 
-			{/* Footer CTA */}
+			{/* Footer CTA — register repeat */}
 			<Box textAlign="center">
-				{loggedIn ? (
-					<Button variant="primary" href={DASHBOARD_URL}>
-						Go to Dashboard
-					</Button>
-				) : (
-					<Button variant="primary" href={REGISTER_URL}>
-						{t("quantum.registerButton")}
-					</Button>
-				)}
+				<div className="quantum-register-cta-wrapper quantum-register-cta-wrapper--footer">
+					<a
+						href={loggedIn ? DASHBOARD_URL : REGISTER_URL}
+						className="quantum-register-cta"
+					>
+						<span className="quantum-register-cta__text">
+							{loggedIn
+								? t("quantum.goToDashboard")
+								: t("quantum.registerButton")}
+						</span>
+						<span
+							className="quantum-register-cta__shimmer"
+							aria-hidden="true"
+						/>
+					</a>
+				</div>
 			</Box>
 		</SpaceBetween>
 	);
