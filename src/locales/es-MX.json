@@ -1143,7 +1143,11 @@
 		"registeredHosts": "Organizado por AWS User Groups: Cloud Del Norte (El Paso), Clarksville (TN), Columbia (SC)",
 		"passkeyOffer": "Configura inicio de sesión sin contraseña",
 		"passkeyOfferBody": "Guarda una passkey para iniciar sesión al instante la próxima vez — sin contraseña.",
-		"passkeyButton": "Configurar passkey"
+		"passkeyButton": "Configurar passkey",
+		"sessionsHeader": "Próximas Sesiones",
+		"statusLive": "En vivo",
+		"statusToday": "Hoy",
+		"statusUpcoming": "Próximamente"
 	},
 	"rsvp": {
 		"breadcrumb": "Apúntate",

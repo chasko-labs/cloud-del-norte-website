@@ -43,6 +43,33 @@ const RECORDINGS_URL =
 const POLL_INTERVAL_MS = 30_000;
 const CELEBRATION_DURATION_MS = 5_000;
 
+interface UpcomingSession {
+	title: string;
+	date: string;
+	time: string;
+	description?: string;
+	isoStart: string;
+	isoEnd: string;
+}
+
+const UPCOMING_SESSIONS: UpcomingSession[] = [
+	{
+		title: "Test Call — Bryan & Amelia",
+		date: "Wed Aug 12",
+		time: "9:00 AM – 12:00 PM ET",
+		isoStart: "2026-08-12T13:00:00Z",
+		isoEnd: "2026-08-12T16:00:00Z",
+	},
+	{
+		title: "Quantum Computing Workshop — Amazon Braket Part 1",
+		date: "Sun Aug 30",
+		time: "3:00–6:00 PM CDT",
+		description: "Hands-on superpositions, wavefunctions, Deutsch's algorithm",
+		isoStart: "2026-08-30T20:00:00Z",
+		isoEnd: "2026-08-30T23:00:00Z",
+	},
+];
+
 interface UserInfo {
 	name: string;
 	email: string;
@@ -239,6 +266,82 @@ function WolfCelebration({ onDismiss }: { onDismiss: () => void }) {
 	);
 }
 
+/* ─── Upcoming Sessions List ─── */
+
+function getSessionStatus(
+	session: UpcomingSession,
+	now: Date,
+): "live" | "today" | "upcoming" {
+	const start = new Date(session.isoStart);
+	const end = new Date(session.isoEnd);
+	if (now >= start && now <= end) return "live";
+	if (
+		now.getUTCFullYear() === start.getUTCFullYear() &&
+		now.getUTCMonth() === start.getUTCMonth() &&
+		now.getUTCDate() === start.getUTCDate()
+	)
+		return "today";
+	return "upcoming";
+}
+
+function UpcomingSessions({ onJoin }: { onJoin?: () => void }) {
+	const { t } = useTranslation();
+	const now = new Date();
+
+	return (
+		<Container
+			header={
+				<Header variant="h2">{t("quantumDashboard.sessionsHeader")}</Header>
+			}
+		>
+			<SpaceBetween size="m">
+				{UPCOMING_SESSIONS.map((session) => {
+					const status = getSessionStatus(session, now);
+					return (
+						<SpaceBetween size="xxs" key={session.isoStart}>
+							<SpaceBetween
+								size="xs"
+								direction="horizontal"
+								alignItems="center"
+							>
+								<StatusIndicator
+									type={
+										status === "live"
+											? "success"
+											: status === "today"
+												? "in-progress"
+												: "pending"
+									}
+								>
+									{status === "live"
+										? t("quantumDashboard.statusLive")
+										: status === "today"
+											? t("quantumDashboard.statusToday")
+											: t("quantumDashboard.statusUpcoming")}
+								</StatusIndicator>
+							</SpaceBetween>
+							<Box fontWeight="bold">{session.title}</Box>
+							<Box color="text-body-secondary">
+								{session.date} · {session.time}
+							</Box>
+							{session.description && (
+								<Box color="text-body-secondary" fontSize="body-s">
+									{session.description}
+								</Box>
+							)}
+							{status === "live" && onJoin && (
+								<Button variant="primary" onClick={onJoin}>
+									{t("quantumDashboard.joinButton")}
+								</Button>
+							)}
+						</SpaceBetween>
+					);
+				})}
+			</SpaceBetween>
+		</Container>
+	);
+}
+
 /* ─── Registered View (no Cognito token, but localStorage flag set) ─── */
 
 function RegisteredView() {
@@ -279,6 +382,8 @@ function RegisteredView() {
 					</Box>
 				</SpaceBetween>
 			</Container>
+
+			<UpcomingSessions />
 
 			<Container
 				header={
@@ -351,6 +456,8 @@ function GuestView() {
 					</Button>
 				</SpaceBetween>
 			</Container>
+
+			<UpcomingSessions />
 
 			<Box color="text-body-secondary" fontSize="body-s">
 				<Link href={SIGN_IN_URL} fontSize="body-s">
@@ -595,6 +702,8 @@ function MemberView({ user }: { user: UserInfo }) {
 					<CalendarActions />
 				</SpaceBetween>
 			</Container>
+
+			<UpcomingSessions onJoin={handleJoin} />
 
 			{user.isModerator && <ModeratorControls />}
 		</SpaceBetween>
