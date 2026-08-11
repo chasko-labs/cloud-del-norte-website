@@ -2,21 +2,32 @@ import { useCallback, useState } from "react";
 import { useTranslation } from "../../hooks/useTranslation";
 import "./styles.css";
 
-const EVENT_TITLE = "Quantum Computing Workshop — Amazon Braket Part 1";
-const EVENT_START = "20260830T210000Z";
-const EVENT_END = "20260831T000000Z";
-const EVENT_START_ISO = "2026-08-30T21:00:00Z";
-const EVENT_END_ISO = "2026-08-31T00:00:00Z";
-const EVENT_LOCATION = "Online — quantum.clouddelnorte.org";
-const EVENT_URL = "https://quantum.clouddelnorte.org";
-const EVENT_DESCRIPTION =
+export interface CalendarActionsProps {
+	title?: string;
+	description?: string;
+	startUtc?: string;
+	endUtc?: string;
+	location?: string;
+}
+
+const DEFAULT_TITLE = "Quantum Computing Workshop — Amazon Braket Part 1";
+const DEFAULT_START_ISO = "2026-08-30T21:00:00Z";
+const DEFAULT_END_ISO = "2026-08-31T00:00:00Z";
+const DEFAULT_LOCATION = "Online — quantum.clouddelnorte.org";
+const DEFAULT_DESCRIPTION =
 	"Hands-on Amazon Braket workshop. Build quantum circuits, observe superposition & collapse, run Deutsch's algorithm. Hosted by Christian Perez. Bilingual (EN/ES).";
 
-const SHAREABLE_TEXT = `Quantum Computing Workshop — Amazon Braket Part 1
-Sun Aug 30 · 3:00–6:00 PM CDT
-Online: quantum.clouddelnorte.org
-Hands-on Amazon Braket workshop. Build quantum circuits, observe superposition & collapse, run Deutsch's algorithm.
-Register: quantum.clouddelnorte.org/register/`;
+function isoToCalFormat(iso: string): string {
+	return iso.replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+}
+
+function buildShareableText(
+	title: string,
+	location: string,
+	description: string,
+): string {
+	return `${title}\nOnline: ${location}\n${description}\nRegister: quantum.clouddelnorte.org/register/`;
+}
 
 function GoogleCalendarIcon() {
 	return (
@@ -187,41 +198,66 @@ function CheckIcon() {
 	);
 }
 
-function buildGoogleCalendarUrl(): string {
+function buildGoogleCalendarUrl(
+	title: string,
+	start: string,
+	end: string,
+	description: string,
+	location: string,
+): string {
 	const params = new URLSearchParams({
 		action: "TEMPLATE",
-		text: EVENT_TITLE,
-		dates: `${EVENT_START}/${EVENT_END}`,
-		details: EVENT_DESCRIPTION,
-		location: EVENT_LOCATION,
+		text: title,
+		dates: `${isoToCalFormat(start)}/${isoToCalFormat(end)}`,
+		details: description,
+		location,
 	});
 	return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
-function buildOutlookUrl(): string {
+function buildOutlookUrl(
+	title: string,
+	start: string,
+	end: string,
+	description: string,
+	location: string,
+): string {
 	const params = new URLSearchParams({
-		subject: EVENT_TITLE,
-		startdt: EVENT_START_ISO,
-		enddt: EVENT_END_ISO,
-		body: EVENT_DESCRIPTION,
-		location: EVENT_LOCATION,
+		subject: title,
+		startdt: start,
+		enddt: end,
+		body: description,
+		location,
 	});
 	return `https://outlook.live.com/calendar/0/action/compose?${params.toString()}`;
 }
 
-function buildYahooUrl(): string {
+function buildYahooUrl(
+	title: string,
+	start: string,
+	description: string,
+	location: string,
+): string {
+	const startCal = isoToCalFormat(start);
 	const params = new URLSearchParams({
 		v: "60",
-		title: EVENT_TITLE,
-		st: EVENT_START,
+		title,
+		st: startCal,
 		dur: "0300",
-		desc: EVENT_DESCRIPTION,
-		in_loc: EVENT_LOCATION,
+		desc: description,
+		in_loc: location,
 	});
 	return `https://calendar.yahoo.com/?${params.toString()}`;
 }
 
-function generateIcsContent(): string {
+function generateIcsContent(
+	title: string,
+	start: string,
+	end: string,
+	description: string,
+	location: string,
+): string {
+	const uid = `${title.replace(/\W+/g, "-").toLowerCase()}-${isoToCalFormat(start)}@clouddelnorte.org`;
 	return [
 		"BEGIN:VCALENDAR",
 		"VERSION:2.0",
@@ -229,59 +265,76 @@ function generateIcsContent(): string {
 		"CALSCALE:GREGORIAN",
 		"METHOD:PUBLISH",
 		"BEGIN:VEVENT",
-		`DTSTART:${EVENT_START}`,
-		`DTEND:${EVENT_END}`,
-		`SUMMARY:${EVENT_TITLE}`,
-		`DESCRIPTION:${EVENT_DESCRIPTION.replace(/,/g, "\\,")}`,
-		`LOCATION:${EVENT_LOCATION}`,
-		`URL:${EVENT_URL}`,
+		`DTSTART:${isoToCalFormat(start)}`,
+		`DTEND:${isoToCalFormat(end)}`,
+		`SUMMARY:${title}`,
+		`DESCRIPTION:${description.replace(/,/g, "\\,")}`,
+		`LOCATION:${location}`,
+		`URL:https://quantum.clouddelnorte.org`,
 		"STATUS:CONFIRMED",
-		`UID:quantum-workshop-20260830@clouddelnorte.org`,
+		`UID:${uid}`,
 		"END:VEVENT",
 		"END:VCALENDAR",
 	].join("\r\n");
 }
 
-function downloadIcs(): void {
-	const content = generateIcsContent();
+function downloadIcs(
+	title: string,
+	start: string,
+	end: string,
+	description: string,
+	location: string,
+): void {
+	const content = generateIcsContent(title, start, end, description, location);
 	const blob = new Blob([content], { type: "text/calendar;charset=utf-8" });
 	const url = URL.createObjectURL(blob);
 	const anchor = document.createElement("a");
 	anchor.href = url;
-	anchor.download = "quantum-workshop-braket.ics";
+	anchor.download = `${title.replace(/\W+/g, "-").toLowerCase()}.ics`;
 	document.body.appendChild(anchor);
 	anchor.click();
 	document.body.removeChild(anchor);
 	URL.revokeObjectURL(url);
 }
 
-export default function CalendarActions() {
+export default function CalendarActions(props: CalendarActionsProps = {}) {
 	const { t } = useTranslation();
 	const [copied, setCopied] = useState(false);
 	const canShare =
 		typeof navigator !== "undefined" && typeof navigator.share === "function";
 
+	const title = props.title ?? DEFAULT_TITLE;
+	const description = props.description ?? DEFAULT_DESCRIPTION;
+	const startUtc = props.startUtc ?? DEFAULT_START_ISO;
+	const endUtc = props.endUtc ?? DEFAULT_END_ISO;
+	const location = props.location ?? DEFAULT_LOCATION;
+	const shareableText = buildShareableText(title, location, description);
+
 	const handleCopy = useCallback(async () => {
 		try {
-			await navigator.clipboard.writeText(SHAREABLE_TEXT);
+			await navigator.clipboard.writeText(shareableText);
 			setCopied(true);
 			setTimeout(() => setCopied(false), 2000);
 		} catch {
 			// clipboard API unavailable — non-critical
 		}
-	}, []);
+	}, [shareableText]);
 
 	const handleShare = useCallback(async () => {
 		try {
 			await navigator.share({
-				title: EVENT_TITLE,
-				text: SHAREABLE_TEXT,
-				url: EVENT_URL,
+				title,
+				text: shareableText,
+				url: "https://quantum.clouddelnorte.org",
 			});
 		} catch {
 			// user cancelled or API unavailable — non-critical
 		}
-	}, []);
+	}, [title, shareableText]);
+
+	const handleDownloadIcs = useCallback(() => {
+		downloadIcs(title, startUtc, endUtc, description, location);
+	}, [title, startUtc, endUtc, description, location]);
 
 	return (
 		<div className="calendar-actions">
@@ -290,7 +343,13 @@ export default function CalendarActions() {
 			</span>
 			<div className="calendar-actions__buttons">
 				<a
-					href={buildGoogleCalendarUrl()}
+					href={buildGoogleCalendarUrl(
+						title,
+						startUtc,
+						endUtc,
+						description,
+						location,
+					)}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="calendar-actions__btn"
@@ -302,7 +361,7 @@ export default function CalendarActions() {
 					</span>
 				</a>
 				<a
-					href={buildOutlookUrl()}
+					href={buildOutlookUrl(title, startUtc, endUtc, description, location)}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="calendar-actions__btn"
@@ -314,7 +373,7 @@ export default function CalendarActions() {
 					</span>
 				</a>
 				<a
-					href={buildYahooUrl()}
+					href={buildYahooUrl(title, startUtc, description, location)}
 					target="_blank"
 					rel="noopener noreferrer"
 					className="calendar-actions__btn"
@@ -328,7 +387,7 @@ export default function CalendarActions() {
 				<button
 					type="button"
 					className="calendar-actions__btn"
-					onClick={downloadIcs}
+					onClick={handleDownloadIcs}
 					aria-label={t("calendarActions.downloadIcs")}
 				>
 					<DownloadIcon />

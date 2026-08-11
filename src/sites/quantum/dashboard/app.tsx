@@ -50,6 +50,7 @@ interface UpcomingSession {
 	description?: string;
 	isoStart: string;
 	isoEnd: string;
+	location: string;
 }
 
 const UPCOMING_SESSIONS: UpcomingSession[] = [
@@ -59,14 +60,16 @@ const UPCOMING_SESSIONS: UpcomingSession[] = [
 		time: "9:00 AM – 12:00 PM ET",
 		isoStart: "2026-08-12T13:00:00Z",
 		isoEnd: "2026-08-12T16:00:00Z",
+		location: "meet.clouddelnorte.org/cloud-del-norte-awsug",
 	},
 	{
 		title: "Quantum Computing Workshop — Amazon Braket Part 1",
 		date: "Sun Aug 30",
 		time: "3:00–6:00 PM CDT",
 		description: "Hands-on superpositions, wavefunctions, Deutsch's algorithm",
-		isoStart: "2026-08-30T20:00:00Z",
-		isoEnd: "2026-08-30T23:00:00Z",
+		isoStart: "2026-08-30T21:00:00Z",
+		isoEnd: "2026-08-31T00:00:00Z",
+		location: "quantum.clouddelnorte.org",
 	},
 ];
 
@@ -334,6 +337,13 @@ function UpcomingSessions({ onJoin }: { onJoin?: () => void }) {
 									{t("quantumDashboard.joinButton")}
 								</Button>
 							)}
+							<CalendarActions
+								title={session.title}
+								description={session.description}
+								startUtc={session.isoStart}
+								endUtc={session.isoEnd}
+								location={session.location}
+							/>
 						</SpaceBetween>
 					);
 				})}
