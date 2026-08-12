@@ -8,6 +8,7 @@
 	flex-direction: column;
 	background: var(--cdn-navy);
 	color: var(--cdn-white);
+	overflow-x: hidden;
 	transition:
 		background 0.3s,
 		color 0.3s;
@@ -312,6 +313,8 @@
 	width: 100%;
 	margin: 2rem auto;
 	padding: 0 1.5rem;
+	box-sizing: border-box;
+	overflow-x: hidden;
 }
 
 /* ── GLASS CONTAINERS — enhanced depth ────────────────────────────────── */

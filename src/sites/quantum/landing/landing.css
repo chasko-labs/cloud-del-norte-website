@@ -24,13 +24,17 @@
 	overflow: hidden;
 	cursor: pointer;
 	border: 1px solid rgba(201, 162, 63, 0.5);
+	box-sizing: border-box;
+	max-width: 100%;
 	transition:
 		transform 0.2s ease,
 		box-shadow 0.3s ease,
 		border-color 0.3s ease;
 
+	/* Solid fallback behind the gradient */
+	background-color: #8b6914;
 	/* Brass/gold scuffed texture gradient */
-	background: linear-gradient(
+	background-image: linear-gradient(
 		135deg,
 		#8b6914 0%,
 		#c9a23f 30%,
@@ -77,6 +81,7 @@
 .quantum-register-cta__shimmer {
 	position: absolute;
 	inset: 0;
+	overflow: hidden;
 	background: linear-gradient(
 		105deg,
 		transparent 0%,
@@ -121,7 +126,8 @@
 
 /* Light mode adjustments */
 :root:not(.awsui-dark-mode) .quantum-register-cta {
-	background: linear-gradient(
+	background-color: #7a5c10;
+	background-image: linear-gradient(
 		135deg,
 		#7a5c10 0%,
 		#b8922f 30%,
@@ -260,5 +266,17 @@
 		width: 100%;
 		justify-content: center;
 		margin-top: 0.25rem;
+	}
+}
+
+@media (max-width: 480px) {
+	.quantum-register-cta {
+		overflow: hidden;
+		max-width: 100%;
+	}
+
+	.quantum-register-cta-wrapper {
+		overflow: hidden;
+		max-width: 100%;
 	}
 }
