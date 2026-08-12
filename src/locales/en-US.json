@@ -1131,6 +1131,7 @@
 		"liveBadge": "SESSION IN PROGRESS",
 		"sessionInProgress": "A live workshop session is happening now",
 		"joinButton": "Join Now",
+		"signInToJoin": "sign in to join",
 		"nextSession": "Next session",
 		"startsIn": "Starts in {{hours}}h {{minutes}}m",
 		"noSessions": "No sessions scheduled",

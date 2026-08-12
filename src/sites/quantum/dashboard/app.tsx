@@ -290,6 +290,7 @@ function getSessionStatus(
 function UpcomingSessions({ onJoin }: { onJoin?: () => void }) {
 	const { t } = useTranslation();
 	const now = new Date();
+	const hasToken = !!getIdToken();
 
 	return (
 		<Container
@@ -337,16 +338,14 @@ function UpcomingSessions({ onJoin }: { onJoin?: () => void }) {
 									<Button variant="primary" onClick={onJoin}>
 										{t("quantumDashboard.joinButton")}
 									</Button>
+								) : hasToken ? (
+									<Button variant="primary" onClick={onJoin}>
+										{t("quantumDashboard.joinButton")}
+									</Button>
 								) : (
-									<a
-										href={`https://meet.clouddelnorte.org/${ROOM_NAME}`}
-										target="_blank"
-										rel="noopener noreferrer"
-									>
-										<Button variant="primary">
-											{t("quantumDashboard.joinButton")}
-										</Button>
-									</a>
+									<Button variant="primary" href={SIGN_IN_URL}>
+										{t("quantumDashboard.signInToJoin")}
+									</Button>
 								))}
 							<CalendarActions
 								title={session.title}
@@ -418,15 +417,9 @@ function RegisteredView() {
 						<Alert type="success">
 							{t("quantumDashboard.sessionInProgress")}
 						</Alert>
-						<a
-							href={`https://meet.clouddelnorte.org/${ROOM_NAME}`}
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							<Button variant="primary">
-								{t("quantumDashboard.joinButton")}
-							</Button>
-						</a>
+						<Button variant="primary" href={SIGN_IN_URL}>
+							{t("quantumDashboard.signInToJoin")}
+						</Button>
 						<Box>
 							<Link href="https://clouddelnorte.org/">
 								{t("quantumDashboard.wantFullAccess")}

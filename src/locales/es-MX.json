@@ -1131,6 +1131,7 @@
 		"liveBadge": "SESIÓN EN CURSO",
 		"sessionInProgress": "Hay una sesión de taller en vivo ahora",
 		"joinButton": "Unirse Ahora",
+		"signInToJoin": "inicia sesión para unirte",
 		"nextSession": "Próxima sesión",
 		"startsIn": "Comienza en {{hours}}h {{minutes}}m",
 		"noSessions": "No hay sesiones programadas",
