@@ -332,11 +332,22 @@ function UpcomingSessions({ onJoin }: { onJoin?: () => void }) {
 									{session.description}
 								</Box>
 							)}
-							{status === "live" && onJoin && (
-								<Button variant="primary" onClick={onJoin}>
-									{t("quantumDashboard.joinButton")}
-								</Button>
-							)}
+							{status === "live" &&
+								(onJoin ? (
+									<Button variant="primary" onClick={onJoin}>
+										{t("quantumDashboard.joinButton")}
+									</Button>
+								) : (
+									<a
+										href={`https://meet.clouddelnorte.org/${ROOM_NAME}`}
+										target="_blank"
+										rel="noopener noreferrer"
+									>
+										<Button variant="primary">
+											{t("quantumDashboard.joinButton")}
+										</Button>
+									</a>
+								))}
 							<CalendarActions
 								title={session.title}
 								description={session.description}
@@ -395,22 +406,52 @@ function RegisteredView() {
 
 			<UpcomingSessions />
 
-			<Container
-				header={
-					<Header variant="h2">{t("quantumDashboard.joinOnEventDay")}</Header>
-				}
-			>
-				<SpaceBetween size="s">
-					<Box color="text-body-secondary">
-						{t("quantumDashboard.joinOnEventDayBody")}
-					</Box>
-					<Box>
-						<Link href="https://clouddelnorte.org/">
-							{t("quantumDashboard.wantFullAccess")}
-						</Link>
-					</Box>
-				</SpaceBetween>
-			</Container>
+			{UPCOMING_SESSIONS.some(
+				(s) => getSessionStatus(s, new Date()) === "live",
+			) ? (
+				<Container
+					header={
+						<Header variant="h2">{t("quantumDashboard.statusLive")}</Header>
+					}
+				>
+					<SpaceBetween size="s">
+						<Alert type="success">
+							{t("quantumDashboard.sessionInProgress")}
+						</Alert>
+						<a
+							href={`https://meet.clouddelnorte.org/${ROOM_NAME}`}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							<Button variant="primary">
+								{t("quantumDashboard.joinButton")}
+							</Button>
+						</a>
+						<Box>
+							<Link href="https://clouddelnorte.org/">
+								{t("quantumDashboard.wantFullAccess")}
+							</Link>
+						</Box>
+					</SpaceBetween>
+				</Container>
+			) : (
+				<Container
+					header={
+						<Header variant="h2">{t("quantumDashboard.joinOnEventDay")}</Header>
+					}
+				>
+					<SpaceBetween size="s">
+						<Box color="text-body-secondary">
+							{t("quantumDashboard.joinOnEventDayBody")}
+						</Box>
+						<Box>
+							<Link href="https://clouddelnorte.org/">
+								{t("quantumDashboard.wantFullAccess")}
+							</Link>
+						</Box>
+					</SpaceBetween>
+				</Container>
+			)}
 
 			{!passkeyDismissed && (
 				<Container
