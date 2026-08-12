@@ -29,34 +29,34 @@
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
-	background: /* Bloch sphere outer shell — subtle ellipse evoking a sphere boundary */
+	background: /* Bloch sphere outer shell — stronger ellipse evoking a sphere boundary */
 			radial-gradient(
 				ellipse at 50% 50%,
-				transparent 30%,
-				rgba(144, 96, 240, 0.05) 60%,
+				transparent 25%,
+				rgba(144, 96, 240, 0.09) 55%,
 				transparent 70%
 			),
 			/* Bloch sphere meridians — conic gradient latitude/longitude lines */
 			conic-gradient(
 				from 0deg at 50% 50%,
-				rgba(144, 96, 240, 0.03) 0deg,
+				rgba(144, 96, 240, 0.05) 0deg,
 				transparent 30deg,
-				rgba(90, 31, 138, 0.03) 60deg,
+				rgba(90, 31, 138, 0.05) 60deg,
 				transparent 90deg,
-				rgba(144, 96, 240, 0.03) 120deg,
+				rgba(144, 96, 240, 0.05) 120deg,
 				transparent 150deg,
-				rgba(90, 31, 138, 0.03) 180deg,
+				rgba(90, 31, 138, 0.05) 180deg,
 				transparent 210deg,
-				rgba(144, 96, 240, 0.03) 240deg,
+				rgba(144, 96, 240, 0.05) 240deg,
 				transparent 270deg,
-				rgba(90, 31, 138, 0.03) 300deg,
+				rgba(90, 31, 138, 0.05) 300deg,
 				transparent 330deg,
-				rgba(144, 96, 240, 0.03) 360deg
+				rgba(144, 96, 240, 0.05) 360deg
 			),
-			/* Bloch sphere center glow */
+			/* Bloch sphere center glow — more visible */
 			radial-gradient(
 				circle at 50% 50%,
-				rgba(215, 199, 238, 0.08) 0%,
+				rgba(215, 199, 238, 0.12) 0%,
 				transparent 50%
 			),
 			/* Base navy */
@@ -71,6 +71,7 @@
 	transition:
 		background 0.3s,
 		color 0.3s;
+	position: relative;
 }
 
 /* Light mode */
@@ -497,15 +498,15 @@
 	position: fixed;
 	inset: 0;
 	z-index: -1;
-	background: /* Bloch sphere - subtle rotating conic gradient */
+	background: /* Bloch sphere - slow-rotating conic gradient (120s full rotation) */
 			conic-gradient(
-				from 0deg at 75% 25%,
+				from var(--q-bloch-angle, 0deg) at 75% 25%,
 				transparent 0deg,
-				rgba(144, 96, 240, 0.03) 60deg,
+				rgba(144, 96, 240, 0.05) 60deg,
 				transparent 120deg,
-				rgba(90, 31, 138, 0.02) 180deg,
+				rgba(90, 31, 138, 0.04) 180deg,
 				transparent 240deg,
-				rgba(215, 199, 238, 0.03) 300deg,
+				rgba(215, 199, 238, 0.05) 300deg,
 				transparent 360deg
 			),
 			/* Interference pattern - repeating subtle waves */
@@ -513,36 +514,123 @@
 				135deg,
 				transparent 0px,
 				transparent 40px,
-				rgba(144, 96, 240, 0.015) 40px,
-				rgba(144, 96, 240, 0.015) 41px
+				rgba(144, 96, 240, 0.02) 40px,
+				rgba(144, 96, 240, 0.02) 41px
 			),
-			/* Lattice of light dots */
+			/* Lattice of light dots — stronger */
 			radial-gradient(
 				circle at 20% 80%,
-				rgba(144, 96, 240, 0.08) 0%,
+				rgba(144, 96, 240, 0.12) 0%,
 				transparent 40%
 			),
 			radial-gradient(
 				circle at 80% 20%,
-				rgba(90, 31, 138, 0.06) 0%,
+				rgba(90, 31, 138, 0.09) 0%,
 				transparent 40%
 			),
 			radial-gradient(
 				circle at 50% 50%,
-				rgba(215, 199, 238, 0.04) 0%,
+				rgba(215, 199, 238, 0.06) 0%,
 				transparent 60%
 			);
 	pointer-events: none;
-	animation: quantum-drift 30s linear infinite;
+	animation: quantum-bloch-rotate 120s linear infinite;
 }
 
-@keyframes quantum-drift {
+/* ── FLOATING QUANTUM PARTICLES — pure CSS drift dots ─────────────────── */
+.quantum-layout .quantum-particles {
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	overflow: hidden;
+}
+
+.quantum-particle {
+	position: absolute;
+	border-radius: 50%;
+	opacity: 0.6;
+	animation: quantum-particle-drift 25s ease-in-out infinite;
+}
+
+.quantum-particle--1 {
+	width: 6px;
+	height: 6px;
+	background: var(--q-cyan, #06b6d4);
+	top: 20%;
+	left: 15%;
+	animation-duration: 22s;
+	animation-delay: 0s;
+	box-shadow: 0 0 8px var(--q-cyan, #06b6d4);
+}
+
+.quantum-particle--2 {
+	width: 4px;
+	height: 4px;
+	background: var(--q-violet-bright, #a855f7);
+	top: 60%;
+	right: 20%;
+	animation-duration: 28s;
+	animation-delay: -5s;
+	box-shadow: 0 0 6px var(--q-violet-bright, #a855f7);
+}
+
+.quantum-particle--3 {
+	width: 5px;
+	height: 5px;
+	background: var(--q-gold-warm, #f59e0b);
+	top: 75%;
+	left: 70%;
+	animation-duration: 32s;
+	animation-delay: -12s;
+	box-shadow: 0 0 7px var(--q-gold-warm, #f59e0b);
+}
+
+.quantum-particle--4 {
+	width: 3px;
+	height: 3px;
+	background: var(--q-cyan, #06b6d4);
+	top: 35%;
+	right: 10%;
+	animation-duration: 26s;
+	animation-delay: -8s;
+	box-shadow: 0 0 5px var(--q-cyan, #06b6d4);
+}
+
+@keyframes quantum-particle-drift {
+	0%,
+	100% {
+		transform: translate(0, 0) scale(1);
+		opacity: 0.5;
+	}
+	25% {
+		transform: translate(20px, -30px) scale(1.2);
+		opacity: 0.7;
+	}
+	50% {
+		transform: translate(-15px, 20px) scale(0.8);
+		opacity: 0.4;
+	}
+	75% {
+		transform: translate(10px, 15px) scale(1.1);
+		opacity: 0.6;
+	}
+}
+
+@keyframes quantum-bloch-rotate {
 	from {
-		filter: hue-rotate(0deg);
+		--q-bloch-angle: 0deg;
 	}
 	to {
-		filter: hue-rotate(15deg);
+		--q-bloch-angle: 360deg;
 	}
+}
+
+/* Register the custom property for animation */
+@property --q-bloch-angle {
+	syntax: "<angle>";
+	initial-value: 0deg;
+	inherits: false;
 }
 
 @keyframes quantum-interference-drift {
@@ -636,6 +724,10 @@
 	}
 	.quantum-main [class*="awsui_container"] {
 		animation: none !important;
+	}
+	.quantum-particle {
+		animation: none !important;
+		opacity: 0.3 !important;
 	}
 }
 
@@ -804,11 +896,94 @@
 	box-shadow: var(--q-shadow-elevated);
 }
 
-/* 5. FONT UPGRADE — JetBrains Mono for technical/terminal elements */
+/* 5. FONT UPGRADE — JetBrains Mono for technical/terminal elements ONLY */
+/* Reserve monospace for: brand text, status badges, code snippets, technical labels */
 .quantum-brand-text,
-.quantum-user,
 [class*="status"] {
 	font-family: var(--q-font-mono);
+}
+
+/* ── CARD TEXT READABILITY — senior-friendly body text ─────────────────── */
+/* Body text in cards: system sans-serif, 16px min, 1.6 line-height */
+.quantum-main [class*="awsui_container"] p,
+.quantum-main
+	[class*="awsui_container"]
+	[class*="awsui_box"]:not([class*="variant-small"]):not(
+		[class*="font-weight-bold"]
+	),
+.quantum-main [class*="awsui_container"] [class*="body-m"],
+.quantum-main [class*="awsui_container"] [class*="body-s"] {
+	font-family:
+		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+		Cantarell, sans-serif !important;
+	font-size: max(16px, clamp(15px, 1.1vw, 17px)) !important;
+	line-height: 1.6 !important;
+}
+
+/* Event type label — was 12px, increase to 15px minimum */
+.quantum-main
+[class*="awsui_box"][class*="variant-small"][class*="color-text-status-info"] {
+	font-size: clamp(15px, 1.1vw, 16px) !important;
+	line-height: 1.5 !important;
+}
+
+/* Calendar action links — increase from 14px/1.0 to 16px/1.5 */
+.quantum-main [class*="awsui_link"],
+.quantum-main a[class*="awsui"] {
+	font-size: max(16px, clamp(15px, 1.1vw, 17px)) !important;
+	line-height: 1.5 !important;
+}
+
+/* CTA button text — fix line-height from 0.96 to 1.3 */
+.quantum-main [class*="awsui_button"] {
+	line-height: 1.3 !important;
+}
+
+/* Headers remain at their current size but ensure decent line-height */
+.quantum-main [class*="awsui_header"] [class*="awsui_title"],
+.quantum-main h2,
+.quantum-main h3 {
+	line-height: 1.3 !important;
+}
+
+@media (max-width: 640px) {
+	.quantum-main [class*="awsui_container"] p,
+	.quantum-main
+		[class*="awsui_container"]
+		[class*="awsui_box"]:not([class*="variant-small"]):not(
+			[class*="font-weight-bold"]
+		),
+	.quantum-main [class*="awsui_container"] [class*="body-m"],
+	.quantum-main [class*="awsui_container"] [class*="body-s"] {
+		font-size: 15px !important;
+	}
+}
+
+/* ── TOUCH TARGETS — WCAG 2.5.8 minimum 44×44px ──────────────────────── */
+/* All interactive elements inside quantum-main */
+.quantum-main a,
+.quantum-main button,
+.quantum-main [role="button"],
+.quantum-main [tabindex="0"] {
+	min-height: 44px !important;
+	min-width: 44px !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	box-sizing: border-box !important;
+}
+
+/* Toolbar pills (theme/locale toggles) — were 40×36 and 42×30 */
+.quantum-pill {
+	min-height: 44px !important;
+	min-width: 44px !important;
+	padding: 10px !important;
+}
+
+/* Sign-in link in toolbar — was 19px tall */
+.quantum-user--guest {
+	min-height: 44px !important;
+	display: inline-flex !important;
+	align-items: center !important;
 }
 
 /* 6. FOCUS-VISIBLE rings — purple glow */

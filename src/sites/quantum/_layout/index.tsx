@@ -209,6 +209,13 @@ export default function QuantumLayout({
 	return (
 		<LocaleProvider locale={locale}>
 			<div className="quantum-layout">
+				{/* Floating quantum particles — pure CSS drift dots */}
+				<div className="quantum-particles" aria-hidden="true">
+					<div className="quantum-particle quantum-particle--1" />
+					<div className="quantum-particle quantum-particle--2" />
+					<div className="quantum-particle quantum-particle--3" />
+					<div className="quantum-particle quantum-particle--4" />
+				</div>
 				<header className="quantum-toolbar">
 					<a
 						href="https://quantum.clouddelnorte.org"
