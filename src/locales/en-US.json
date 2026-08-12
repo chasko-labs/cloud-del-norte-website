@@ -1089,7 +1089,16 @@
 		"badgeSectionAfterLabel": "After",
 		"badgeSectionAfterText": "Take the assessment, earn the badge, share on LinkedIn",
 		"badgeSectionProves": "Proves: superposition, wavefunctions, Deutsch's algorithm, Braket SDK",
-		"badgeSectionSkillBuilderLink": "Braket Learning Plan on Skill Builder"
+		"badgeSectionSkillBuilderLink": "Braket Learning Plan on Skill Builder",
+		"buildSectionHeader": "What You'll Build",
+		"buildDeutschIntro": "Deutsch's algorithm — the first proof that quantum beats classical",
+		"buildFunctionQuestion": "A function takes one bit in, one bit out. Is it constant or balanced?",
+		"buildClassicalVsQuantum": "Classical: must check both inputs (2 queries). Quantum: one query. Done",
+		"buildCircuitInstruction": "You'll build the circuit: |1⟩|0⟩ → Hadamard → oracle → Hadamard → measure",
+		"buildCircuitAlt": "Deutsch algorithm circuit: two qubits through Hadamard gates, oracle, final Hadamard, and measurement",
+		"buildRunBraket": "Run it on Amazon Braket. See the result. One query where classical needs two",
+		"buildPhaseKickback": "Then: phase kickback — why it works, what's happening to the qubit states",
+		"buildDeepDiveLink": "Deep dive: Deutsch's Algorithm on IBM Quantum →"
 	},
 	"quantumRegister": {
 		"header": "Register for Workshop",

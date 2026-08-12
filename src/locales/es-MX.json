@@ -1089,7 +1089,16 @@
 		"badgeSectionAfterLabel": "Después",
 		"badgeSectionAfterText": "Toma el examen, gana la insignia, compártela en LinkedIn",
 		"badgeSectionProves": "Demuestra: superposición, funciones de onda, algoritmo de Deutsch, Braket SDK",
-		"badgeSectionSkillBuilderLink": "Braket Learning Plan en Skill Builder"
+		"badgeSectionSkillBuilderLink": "Braket Learning Plan en Skill Builder",
+		"buildSectionHeader": "Lo Que Vas a Construir",
+		"buildDeutschIntro": "Algoritmo de Deutsch — la primera prueba de que lo cuántico supera lo clásico",
+		"buildFunctionQuestion": "Una función toma un bit de entrada, un bit de salida. ¿Es constante o balanceada?",
+		"buildClassicalVsQuantum": "Clásico: hay que checar ambas entradas (2 consultas). Cuántico: una consulta. Listo",
+		"buildCircuitInstruction": "Vas a construir el circuito: |1⟩|0⟩ → Hadamard → oráculo → Hadamard → medición",
+		"buildCircuitAlt": "Circuito del algoritmo de Deutsch: dos qubits a través de compuertas Hadamard, oráculo, Hadamard final y medición",
+		"buildRunBraket": "Ejecútalo en Amazon Braket. Ve el resultado. Una consulta donde clásico necesita dos",
+		"buildPhaseKickback": "Después: phase kickback — por qué funciona, qué le pasa a los estados de los qubits",
+		"buildDeepDiveLink": "A fondo: Algoritmo de Deutsch en IBM Quantum →"
 	},
 	"quantumRegister": {
 		"header": "Regístrate al Taller",

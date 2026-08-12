@@ -316,6 +316,228 @@ function LandingContent() {
 			{/* Quantum Circuit — decorative 2-qubit diagram */}
 			<QuantumCircuitDecoration />
 
+			{/* What You'll Build — Deutsch's Algorithm specifics */}
+			<Container
+				header={<Header variant="h2">{t("quantum.buildSectionHeader")}</Header>}
+			>
+				<SpaceBetween size="m">
+					<Box fontSize="body-m" fontWeight="bold">
+						{t("quantum.buildDeutschIntro")}
+					</Box>
+					<Box fontSize="body-m">{t("quantum.buildFunctionQuestion")}</Box>
+					<Box fontSize="body-m">{t("quantum.buildClassicalVsQuantum")}</Box>
+					<Box fontSize="body-m" fontWeight="bold">
+						{t("quantum.buildCircuitInstruction")}
+					</Box>
+
+					{/* Deutsch circuit diagram: |1⟩|0⟩ → H⊗H → Uf → H → measure */}
+					<div
+						aria-label={t("quantum.buildCircuitAlt")}
+						role="img"
+						style={{ textAlign: "center" }}
+					>
+						<svg
+							width="420"
+							height="120"
+							viewBox="0 0 420 120"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							style={{ maxWidth: "100%" }}
+						>
+							<title>Deutsch algorithm circuit</title>
+							{/* Wire 1 (top qubit — |0⟩ input) */}
+							<line
+								x1="50"
+								y1="40"
+								x2="400"
+								y2="40"
+								stroke="#9060f0"
+								strokeWidth="1.5"
+								strokeOpacity="0.7"
+							/>
+							{/* Wire 2 (bottom qubit — |1⟩ ancilla) */}
+							<line
+								x1="50"
+								y1="85"
+								x2="340"
+								y2="85"
+								stroke="#9060f0"
+								strokeWidth="1.5"
+								strokeOpacity="0.7"
+							/>
+
+							{/* Input labels */}
+							<text
+								x="20"
+								y="44"
+								fontSize="13"
+								fill="#14b8a6"
+								fontFamily="monospace"
+							>
+								|0⟩
+							</text>
+							<text
+								x="20"
+								y="89"
+								fontSize="13"
+								fill="#14b8a6"
+								fontFamily="monospace"
+							>
+								|1⟩
+							</text>
+
+							{/* H gate on wire 1 */}
+							<rect
+								x="80"
+								y="24"
+								width="32"
+								height="32"
+								rx="4"
+								stroke="#a855f7"
+								strokeWidth="1.5"
+								fill="rgba(168, 85, 247, 0.1)"
+							/>
+							<text
+								x="96"
+								y="46"
+								fontSize="16"
+								fill="#a855f7"
+								textAnchor="middle"
+								fontWeight="bold"
+								fontFamily="monospace"
+							>
+								H
+							</text>
+
+							{/* H gate on wire 2 */}
+							<rect
+								x="80"
+								y="69"
+								width="32"
+								height="32"
+								rx="4"
+								stroke="#a855f7"
+								strokeWidth="1.5"
+								fill="rgba(168, 85, 247, 0.1)"
+							/>
+							<text
+								x="96"
+								y="91"
+								fontSize="16"
+								fill="#a855f7"
+								textAnchor="middle"
+								fontWeight="bold"
+								fontFamily="monospace"
+							>
+								H
+							</text>
+
+							{/* Uf oracle box spanning both wires */}
+							<rect
+								x="150"
+								y="18"
+								width="60"
+								height="88"
+								rx="6"
+								stroke="#06b6d4"
+								strokeWidth="2"
+								fill="rgba(6, 182, 212, 0.08)"
+							/>
+							<text
+								x="180"
+								y="67"
+								fontSize="18"
+								fill="#06b6d4"
+								textAnchor="middle"
+								fontWeight="bold"
+								fontFamily="monospace"
+							>
+								U
+							</text>
+							<text
+								x="192"
+								y="72"
+								fontSize="11"
+								fill="#06b6d4"
+								fontFamily="monospace"
+							>
+								f
+							</text>
+
+							{/* H gate on wire 1 (after oracle) */}
+							<rect
+								x="250"
+								y="24"
+								width="32"
+								height="32"
+								rx="4"
+								stroke="#a855f7"
+								strokeWidth="1.5"
+								fill="rgba(168, 85, 247, 0.1)"
+							/>
+							<text
+								x="266"
+								y="46"
+								fontSize="16"
+								fill="#a855f7"
+								textAnchor="middle"
+								fontWeight="bold"
+								fontFamily="monospace"
+							>
+								H
+							</text>
+
+							{/* Measurement symbol on wire 1 */}
+							<rect
+								x="320"
+								y="24"
+								width="32"
+								height="32"
+								rx="4"
+								stroke="#f59e0b"
+								strokeWidth="1.5"
+								fill="rgba(245, 158, 11, 0.06)"
+							/>
+							<path
+								d="M328 48 Q336 34 344 48"
+								stroke="#f59e0b"
+								strokeWidth="1.2"
+								fill="none"
+							/>
+							<line
+								x1="336"
+								y1="48"
+								x2="340"
+								y2="36"
+								stroke="#f59e0b"
+								strokeWidth="1"
+							/>
+
+							{/* Output label */}
+							<text
+								x="362"
+								y="44"
+								fontSize="12"
+								fill="#10b981"
+								fontFamily="monospace"
+							>
+								f(0)⊕f(1)
+							</text>
+						</svg>
+					</div>
+
+					<Box fontSize="body-m">{t("quantum.buildRunBraket")}</Box>
+					<Box fontSize="body-m">{t("quantum.buildPhaseKickback")}</Box>
+
+					<Link
+						href="https://quantum.cloud.ibm.com/learning/en/courses/fundamentals-of-quantum-algorithms/quantum-query-algorithms/deutsch-algorithm"
+						external
+					>
+						{t("quantum.buildDeepDiveLink")}
+					</Link>
+				</SpaceBetween>
+			</Container>
+
 			{/* Digital Badge Section */}
 			<Container
 				header={
