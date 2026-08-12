@@ -10,6 +10,9 @@
 	z-index: 0;
 	opacity: 0;
 	transition: opacity 600ms ease-in;
+	/* Clear both side panels — ribbon is a full-bleed decorative strip that
+	   must not be clipped by nav/tools drawer overflow */
+	clear: both;
 	/* Asymmetric mask: gentle fade-in at top, stronger fade-out at bottom
 	   so the ribbon melts into the footer's accent line without a hard seam */
 	-webkit-mask-image: linear-gradient(

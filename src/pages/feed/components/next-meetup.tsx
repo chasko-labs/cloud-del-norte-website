@@ -533,6 +533,11 @@ function NextMeetupInner() {
 						{renderDescriptionWithLinks(event.description)}
 					</Box>
 				)}
+				<div className="feed-next-meetup__cta-stack">
+					<Button variant="primary" href="/signup/index.html">
+						{t("feedPage.featuredEventJoinCta")}
+					</Button>
+				</div>
 			</div>
 		);
 	}
