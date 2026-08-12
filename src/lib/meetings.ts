@@ -1,6 +1,6 @@
 import { getIdToken, refreshTokens } from "./auth";
 
-const API_BASE = "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com/prod";
+const API_BASE = "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com";
 
 // --- Types ---
 
@@ -76,11 +76,6 @@ async function request(
 			throw new MeetingApiError(401, "unauthorized after refresh");
 	}
 
-	if (!res.ok) {
-		const text = await res.text().catch(() => res.statusText);
-		throw new MeetingApiError(res.status, text);
-	}
-
 	return res;
 }
 
@@ -88,6 +83,13 @@ async function request(
 
 export async function fetchMeetingStatus(): Promise<MeetingStatus> {
 	const res = await request("/meetings/status", { method: "GET" });
+	if (res.status === 404) {
+		return { live: false, scheduled: [] };
+	}
+	if (!res.ok) {
+		const text = await res.text().catch(() => res.statusText);
+		throw new MeetingApiError(res.status, text);
+	}
 	return (await res.json()) as MeetingStatus;
 }
 
@@ -95,6 +97,10 @@ export async function scheduleMeeting(
 	body: Record<string, unknown>,
 ): Promise<unknown> {
 	const res = await request("/admin/meetings", { method: "POST", body });
+	if (!res.ok) {
+		const text = await res.text().catch(() => res.statusText);
+		throw new MeetingApiError(res.status, text);
+	}
 	return res.json();
 }
 
@@ -102,6 +108,16 @@ export async function launchMeeting(
 	body: Record<string, unknown>,
 ): Promise<unknown> {
 	const res = await request("/admin/meetings/launch", { method: "POST", body });
+	if (res.status === 404) {
+		throw new MeetingApiError(
+			404,
+			"Meeting launch not available yet — backend not deployed",
+		);
+	}
+	if (!res.ok) {
+		const text = await res.text().catch(() => res.statusText);
+		throw new MeetingApiError(res.status, text);
+	}
 	return res.json();
 }
 
@@ -110,10 +126,27 @@ export async function endMeeting(roomName: string): Promise<unknown> {
 		method: "POST",
 		body: { roomName },
 	});
+	if (res.status === 404) {
+		throw new MeetingApiError(
+			404,
+			"Meeting end not available yet — backend not deployed",
+		);
+	}
+	if (!res.ok) {
+		const text = await res.text().catch(() => res.statusText);
+		throw new MeetingApiError(res.status, text);
+	}
 	return res.json();
 }
 
 export async function fetchInfrastructureStatus(): Promise<InfraStatus> {
 	const res = await request("/admin/infrastructure/status", { method: "GET" });
+	if (res.status === 404) {
+		return { cluster: "unknown", tasks_running: 0, tasks_desired: 0 };
+	}
+	if (!res.ok) {
+		const text = await res.text().catch(() => res.statusText);
+		throw new MeetingApiError(res.status, text);
+	}
 	return (await res.json()) as InfraStatus;
 }
