@@ -170,7 +170,7 @@ function UserIdentity() {
 					className="quantum-user__signout"
 					onClick={handleSignOut}
 				>
-					Sign out
+					sign out
 				</button>
 			</span>
 		);
@@ -186,7 +186,7 @@ function UserIdentity() {
 
 	return (
 		<a href={AUTH_SIGN_IN_URL} className="quantum-user quantum-user--guest">
-			Sign in
+			sign in
 		</a>
 	);
 }

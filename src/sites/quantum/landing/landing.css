@@ -15,7 +15,8 @@
 	align-items: center;
 	justify-content: center;
 	padding: 1rem 2.5rem;
-	font-size: 1.1rem;
+	min-height: 48px;
+	font-size: clamp(1rem, 1.5vw, 1.2rem);
 	font-weight: 700;
 	letter-spacing: 0.04em;
 	text-decoration: none;
@@ -211,7 +212,8 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.35rem;
-	padding: 0.4rem 0.85rem;
+	padding: 0.5rem 0.85rem;
+	min-height: 44px;
 	font-size: 0.78rem;
 	font-weight: 600;
 	text-transform: uppercase;
@@ -221,6 +223,7 @@
 	background: #ed1c40;
 	border-radius: 6px;
 	white-space: nowrap;
+	box-sizing: border-box;
 	transition:
 		background 0.2s,
 		transform 0.15s;
@@ -234,6 +237,29 @@
 .quantum-meetup-group__rsvp:focus-visible {
 	outline: 2px solid #ed1c40;
 	outline-offset: 2px;
+}
+
+/* ── DESKTOP — increase text sizes for real estate ─────────────────────── */
+@media (min-width: 768px) {
+	.quantum-register-cta {
+		font-size: 1.3rem;
+		padding: 1.1rem 3rem;
+		min-height: 52px;
+	}
+
+	.quantum-meetup-group__name {
+		font-size: 1.1rem;
+	}
+
+	.quantum-meetup-group__location {
+		font-size: 0.9rem;
+	}
+
+	.quantum-meetup-group__rsvp {
+		font-size: 0.85rem;
+		padding: 0.5rem 1rem;
+		min-height: 44px;
+	}
 }
 
 /* ── REDUCED MOTION ───────────────────────────────────────────────────── */

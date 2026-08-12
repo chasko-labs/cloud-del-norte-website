@@ -84,12 +84,22 @@ function isLoggedIn(): boolean {
 	return expiresAt > 0 && Date.now() < expiresAt;
 }
 
+function isRegistered(): boolean {
+	try {
+		return localStorage.getItem("cdn-quantum-registered") !== null;
+	} catch {
+		return false;
+	}
+}
+
 function LandingContent() {
 	const { t } = useTranslation();
 	const [loggedIn, setLoggedIn] = useState(false);
+	const [registered, setRegistered] = useState(false);
 
 	useEffect(() => {
 		setLoggedIn(isLoggedIn());
+		setRegistered(isRegistered());
 	}, []);
 
 	return (
@@ -100,9 +110,13 @@ function LandingContent() {
 					<Link href={DASHBOARD_URL} fontSize="body-s">
 						{t("quantum.goToDashboard")}
 					</Link>
+				) : registered ? (
+					<Link href={DASHBOARD_URL} fontSize="body-s">
+						sign in for full access
+					</Link>
 				) : (
 					<Link href={DASHBOARD_URL} fontSize="body-s">
-						{t("quantum.signIn")}
+						sign in
 					</Link>
 				)}
 			</Box>
@@ -130,13 +144,15 @@ function LandingContent() {
 					{/* CTA 2: Register — PRIMARY, most prominent, animated */}
 					<div className="quantum-register-cta-wrapper">
 						<a
-							href={REGISTER_URL}
+							href={registered || loggedIn ? DASHBOARD_URL : REGISTER_URL}
 							className="quantum-register-cta"
 							data-tool-name="register_for_workshop"
 							data-tool-description="Register for the quantum computing workshop on Amazon Braket, August 30 2026"
 						>
 							<span className="quantum-register-cta__text">
-								{t("quantum.registerButton")}
+								{registered || loggedIn
+									? t("quantum.goToDashboard")
+									: t("quantum.registerButton")}
 							</span>
 							<span
 								className="quantum-register-cta__shimmer"
@@ -282,11 +298,11 @@ function LandingContent() {
 			<Box textAlign="center">
 				<div className="quantum-register-cta-wrapper quantum-register-cta-wrapper--footer">
 					<a
-						href={loggedIn ? DASHBOARD_URL : REGISTER_URL}
+						href={loggedIn || registered ? DASHBOARD_URL : REGISTER_URL}
 						className="quantum-register-cta"
 					>
 						<span className="quantum-register-cta__text">
-							{loggedIn
+							{loggedIn || registered
 								? t("quantum.goToDashboard")
 								: t("quantum.registerButton")}
 						</span>
