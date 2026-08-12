@@ -262,7 +262,7 @@ function LandingContent() {
 									right: "-4px",
 									background: "linear-gradient(135deg,#c9a23f,#daa520)",
 									color: "#1a0a00",
-									fontSize: "0.6rem",
+									fontSize: "0.75rem",
 									fontWeight: 800,
 									padding: "2px 8px",
 									borderRadius: "4px",
