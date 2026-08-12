@@ -1,0 +1,24 @@
+version: 0.2
+env:
+  variables:
+    AWS_DEFAULT_REGION: us-west-2
+    S3_BUCKET_MAIN: clouddelnorte.org
+    CF_DIST_MAIN: ECC3LP1BL2CZS
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - npm ci --no-audit --no-fund
+  build:
+    commands:
+      - npm run build
+      - test -f lib/index.html || { echo 'build failed - lib/index.html missing'; exit 1; }
+      - test -d lib/assets || { echo 'build failed - lib/assets missing'; exit 1; }
+  post_build:
+    commands:
+      # the --exclude flags are load-bearing: they protect fiona/, fiona-embed/,
+      # data/ and assets/ from --delete
+      - aws s3 sync lib/ s3://${S3_BUCKET_MAIN}/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib/assets/ s3://${S3_BUCKET_MAIN}/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws cloudfront create-invalidation --distribution-id ${CF_DIST_MAIN} --paths "/*"
