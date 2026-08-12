@@ -107,11 +107,11 @@ function LandingContent() {
 			{/* CTA 1: Sign in — small, understated, implies returning visitors */}
 			<Box textAlign="right">
 				{loggedIn || registered ? (
-					<Link href={DASHBOARD_URL} fontSize="body-s">
+					<Link href={DASHBOARD_URL} fontSize="body-m">
 						{t("quantum.goToDashboard")}
 					</Link>
 				) : (
-					<Link href={DASHBOARD_URL} fontSize="body-s">
+					<Link href={DASHBOARD_URL} fontSize="body-m">
 						{t("quantum.signIn")}
 					</Link>
 				)}
@@ -260,11 +260,11 @@ function LandingContent() {
 									right: "-4px",
 									background: "linear-gradient(135deg,#c9a23f,#daa520)",
 									color: "#1a0a00",
-									fontSize: "0.75rem",
+									fontSize: "0.875rem",
 									fontWeight: 800,
-									padding: "2px 8px",
+									padding: "2px 10px",
 									borderRadius: "4px",
-									letterSpacing: "0.05em",
+									letterSpacing: "0.06em",
 								}}
 							>
 								{t("quantum.hostBadge")}

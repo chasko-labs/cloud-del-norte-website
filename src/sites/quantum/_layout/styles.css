@@ -251,7 +251,7 @@
 	background: none;
 	border: none;
 	color: rgba(215, 199, 238, 0.7);
-	font-size: clamp(12px, 0.9vw, 14px);
+	font-size: clamp(14px, 1vw, 15px);
 	cursor: pointer;
 	padding: 0;
 	text-decoration: underline;
@@ -334,6 +334,44 @@
 	margin: 2rem auto;
 	padding: 0 1.5rem;
 	box-sizing: border-box;
+	font-size: clamp(15px, 1.1vw, 16px);
+}
+
+/* Bump Cloudscape body-m elements to match */
+.quantum-main [class*="awsui_box"][class*="font-size-body-m"],
+.quantum-main [class*="awsui_box"][class*="body-m"] {
+	font-size: clamp(15px, 1.1vw, 16px) !important;
+}
+
+/* Bump Cloudscape body-s elements to readable floor */
+.quantum-main [class*="awsui_box"][class*="font-size-body-s"],
+.quantum-main [class*="awsui_box"][class*="body-s"] {
+	font-size: 14px !important;
+}
+
+/* Cloudscape link body-s override */
+.quantum-main [class*="awsui_link"][class*="font-size-body-s"] {
+	font-size: 14px !important;
+}
+
+/* ── STATUS BADGE — "LIVE ONLINE WORKSHOP" pill ───────────────────────── */
+.quantum-main
+[class*="awsui_box"][class*="variant-small"][class*="color-text-status-info"] {
+	font-size: clamp(14px, 1.1vw, 15px) !important;
+	font-weight: 600 !important;
+	letter-spacing: 0.06em !important;
+	padding: 4px 12px !important;
+	background: rgba(144, 96, 240, 0.1) !important;
+	border: 1px solid rgba(144, 96, 240, 0.25) !important;
+	border-radius: 999px !important;
+	display: inline-block !important;
+}
+
+:root:not(.awsui-dark-mode)
+	.quantum-main
+	[class*="awsui_box"][class*="variant-small"][class*="color-text-status-info"] {
+	background: rgba(90, 31, 138, 0.06) !important;
+	border-color: rgba(90, 31, 138, 0.15) !important;
 }
 
 /* ── GLASS CONTAINERS — enhanced depth ────────────────────────────────── */

@@ -180,7 +180,7 @@
 
 .quantum-meetup-group__name {
 	font-weight: 600;
-	font-size: 0.95rem;
+	font-size: 1rem;
 	color: var(--cdn-lavender, #d7c7ee);
 	text-decoration: none;
 	transition: color 0.15s;
@@ -200,7 +200,7 @@
 }
 
 .quantum-meetup-group__location {
-	font-size: 0.8rem;
+	font-size: 0.875rem;
 	color: rgba(215, 199, 238, 0.7);
 }
 
@@ -214,8 +214,8 @@
 	gap: 0.35rem;
 	padding: 0.5rem 0.85rem;
 	min-height: 44px;
-	font-size: 0.78rem;
-	font-weight: 600;
+	font-size: 0.875rem;
+	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 	text-decoration: none;
@@ -252,11 +252,11 @@
 	}
 
 	.quantum-meetup-group__location {
-		font-size: 0.9rem;
+		font-size: 1rem;
 	}
 
 	.quantum-meetup-group__rsvp {
-		font-size: 0.85rem;
+		font-size: 0.9375rem;
 		padding: 0.5rem 1rem;
 		min-height: 44px;
 	}
