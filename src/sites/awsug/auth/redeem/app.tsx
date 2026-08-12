@@ -63,12 +63,19 @@ export default function App() {
 		const returnTo = params.get("return_to") || getReturnTo();
 		clearReturnTo();
 
-		// If returnTo points to a different origin, redirect there directly
+		// If returnTo points to a different origin, pass tokens via fragment
 		if (
 			returnTo?.startsWith("https://") &&
 			!returnTo.startsWith("https://awsug.clouddelnorte.org")
 		) {
-			window.location.assign(returnTo);
+			// Extract any existing hash/fragment from the returnTo URL
+			const [baseUrl, existingHash] = returnTo.split("#");
+			// Parse the original return_to from the existing hash (if present)
+			const innerParams = new URLSearchParams(existingHash || "");
+			const finalDest = innerParams.get("return_to") || "/dashboard/";
+			// Build token fragment with the final destination
+			const tokenFragment = `id_token=${encodeURIComponent(idToken)}&access_token=${encodeURIComponent(accessToken)}&refresh_token=${encodeURIComponent(refreshToken)}&return_to=${encodeURIComponent(finalDest)}`;
+			window.location.assign(`${baseUrl}#${tokenFragment}`);
 		} else {
 			window.location.assign(
 				returnTo?.startsWith("/") ? returnTo : "/index.html",
