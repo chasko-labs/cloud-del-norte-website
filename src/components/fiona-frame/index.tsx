@@ -296,18 +296,33 @@ export default function FionaFrame() {
 						}
 					>
 						{gatedFallback || userConsent === "no" ? (
-							<img
-								src="/assets/fiona-poster.webp"
-								alt=""
-								className="fiona-poster"
-								draggable={false}
-								onError={(e) => {
-									// Asset 404? Hide the broken image — the green-phosphor
-									// background of .fiona-placeholder--static still reads as
-									// 'CRT off' and the aria-label still labels the region.
-									(e.currentTarget as HTMLImageElement).style.display = "none";
-								}}
-							/>
+							<>
+								<img
+									src="/assets/fiona-poster.webp"
+									alt=""
+									className="fiona-poster"
+									draggable={false}
+									onError={(e) => {
+										// Asset 404? Hide the broken image — the green-phosphor
+										// background of .fiona-placeholder--static still reads as
+										// 'CRT off' and the aria-label still labels the region.
+										(e.currentTarget as HTMLImageElement).style.display =
+											"none";
+									}}
+								/>
+								{userConsent === "no" && !gatedOut && (
+									<button
+										type="button"
+										className="fiona-wakeup-link"
+										onClick={() => {
+											localStorage.removeItem("cdn-fiona-optin");
+											setUserConsent("pending");
+										}}
+									>
+										wake up?
+									</button>
+								)}
+							</>
 						) : userConsent === "pending" ? (
 							<div className="fiona-optin-prompt">
 								<span className="fiona-placeholder-label">

@@ -163,7 +163,11 @@ export async function beginSilentLogin(returnTo?: string): Promise<void> {
 	const challenge = await pkceChallenge(verifier);
 	const state: LoginState = {
 		pkceVerifier: verifier,
-		returnTo: returnTo ?? window.location.pathname + window.location.search,
+		returnTo:
+			returnTo ??
+			window.location.origin +
+				window.location.pathname +
+				window.location.search,
 	};
 	sessionStorage.setItem(KEY_LOGIN_STATE, JSON.stringify(state));
 
@@ -231,7 +235,9 @@ export function requireAuth(): AuthState {
 	if (!state) {
 		clearTokens();
 		const returnTo = encodeURIComponent(
-			window.location.pathname + window.location.search,
+			window.location.origin +
+				window.location.pathname +
+				window.location.search,
 		);
 		window.location.assign(
 			`${AUTH_ORIGIN}/login/index.html?return_to=${returnTo}`,
