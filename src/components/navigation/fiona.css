@@ -3263,29 +3263,3 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .fiona-led,
 	filter: drop-shadow(0 0 4px #22c55e4d);
 	opacity: 0.92;
 }
-
-.fiona-wakeup-link {
-	position: absolute;
-	bottom: 8px;
-	right: 10px;
-	font-family: "Courier New", monospace;
-	font-size: 11px;
-	color: #22c55eaa;
-	background: none;
-	border: none;
-	cursor: pointer;
-	padding: 2px 6px;
-	text-shadow: 0 0 4px #22c55e4d;
-	opacity: 0.7;
-	transition:
-		opacity 0.2s ease,
-		color 0.2s ease;
-}
-
-.fiona-wakeup-link:hover,
-.fiona-wakeup-link:focus-visible {
-	opacity: 1;
-	color: #22c55e;
-	text-decoration: underline;
-	outline: none;
-}

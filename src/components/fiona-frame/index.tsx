@@ -114,13 +114,15 @@ export default function FionaFrame() {
 	// Opt-in gate — ask user before loading the Sumerian scene. Persisted in
 	// localStorage so repeat visitors skip the prompt. Device-tier gate takes
 	// priority: low-tier devices never see the prompt (they get the poster).
-	const [userConsent, setUserConsent] = useState<"pending" | "yes" | "no">(
-		() => {
-			if (gatedOut) return "no";
-			const stored = localStorage.getItem("cdn-fiona-optin");
-			return stored === "yes" ? "yes" : stored === "no" ? "no" : "pending";
-		},
-	);
+	// 'no' state removed — previously stored 'no' values are treated as 'pending'.
+	const [userConsent, setUserConsent] = useState<"pending" | "yes">(() => {
+		if (gatedOut) return "pending";
+		const stored = localStorage.getItem("cdn-fiona-optin");
+		if (stored === "yes") return "yes";
+		// Clear stale 'no' from localStorage — there's no 'no' state anymore
+		if (stored === "no") localStorage.removeItem("cdn-fiona-optin");
+		return "pending";
+	});
 	const [gatedFallback, setGatedFallback] = useState(false);
 	const diagnosticLoggedRef = useRef(false);
 
@@ -281,55 +283,38 @@ export default function FionaFrame() {
 		<div className="fiona-frame">
 			<div className="fiona-bezel">
 				<div className="fiona-panel-wrap">
-					{/* biome-ignore lint/a11y/useAriaPropsSupportedByRole: role+aria-label are co-conditional on gatedFallback */}
-					<div
-						id="fiona-shimmer"
-						className={`fiona-placeholder${gatedFallback || userConsent === "no" ? " fiona-placeholder--static" : ""}`}
-						aria-hidden={
-							gatedFallback || userConsent === "no" ? undefined : true
-						}
-						role={gatedFallback || userConsent === "no" ? "img" : undefined}
-						aria-label={
-							gatedFallback || userConsent === "no"
-								? "Fiona avatar - 3D view unavailable on this device"
-								: undefined
-						}
-					>
-						{gatedFallback || userConsent === "no" ? (
-							<>
-								<img
-									src="/assets/fiona-poster.webp"
-									alt=""
-									className="fiona-poster"
-									draggable={false}
-									onError={(e) => {
-										// Asset 404? Hide the broken image — the green-phosphor
-										// background of .fiona-placeholder--static still reads as
-										// 'CRT off' and the aria-label still labels the region.
-										(e.currentTarget as HTMLImageElement).style.display =
-											"none";
-									}}
-								/>
-								{userConsent === "no" && !gatedOut && (
-									<button
-										type="button"
-										className="fiona-wakeup-link"
-										onClick={() => {
-											localStorage.removeItem("cdn-fiona-optin");
-											setUserConsent("pending");
-										}}
-									>
-										wake up?
-									</button>
-								)}
-							</>
-						) : userConsent === "pending" ? (
+					{/* Static poster fallback for gated-out (low-tier) devices */}
+					{gatedOut && gatedFallback && (
+						<div
+							id="fiona-shimmer"
+							className="fiona-placeholder fiona-placeholder--static"
+							role="img"
+							aria-label="Fiona avatar - 3D view unavailable on this device"
+						>
+							<img
+								src="/assets/fiona-poster.webp"
+								alt=""
+								className="fiona-poster"
+								draggable={false}
+								onError={(e) => {
+									(e.currentTarget as HTMLImageElement).style.display = "none";
+								}}
+							/>
+						</div>
+					)}
+					{/* Opt-in prompt for pending consent (non-gated devices) */}
+					{!gatedOut && userConsent === "pending" && (
+						<div
+							id="fiona-shimmer"
+							className="fiona-placeholder"
+							aria-hidden={true}
+						>
 							<div className="fiona-optin-prompt">
 								<span className="fiona-placeholder-label">
 									{withFallback(
 										t("fiona.optinPrompt"),
 										"fiona.optinPrompt",
-										"load Amazon Sumerian demo?",
+										"load Amazon Sumerian scene?",
 									)}
 								</span>
 								<div className="fiona-optin-actions">
@@ -351,19 +336,25 @@ export default function FionaFrame() {
 										type="button"
 										className="fiona-optin-btn fiona-optin-btn--no"
 										onClick={() => {
-											localStorage.setItem("cdn-fiona-optin", "no");
-											setUserConsent("no");
+											window.open(
+												"https://github.com/aws-samples/amazon-sumerian-hosts",
+												"_blank",
+											);
 										}}
 									>
-										{withFallback(
-											t("fiona.optinNo"),
-											"fiona.optinNo",
-											"[N] no",
-										)}
+										{withFallback(t("fiona.optinNo"), "fiona.optinNo", "[?]")}
 									</button>
 								</div>
 							</div>
-						) : (
+						</div>
+					)}
+					{/* Shimmer loading state (gated devices before fallback timeout) */}
+					{gatedOut && !gatedFallback && (
+						<div
+							id="fiona-shimmer"
+							className="fiona-placeholder"
+							aria-hidden={true}
+						>
 							<span className="fiona-placeholder-label">
 								modem connecting
 								<span className="fiona-block-stream">
@@ -372,18 +363,34 @@ export default function FionaFrame() {
 									<span className="fiona-block">▓</span>
 								</span>
 							</span>
-						)}
-					</div>
+						</div>
+					)}
 					{/* Wave 53: gate the Babylon end-credit canvas behind device tier ≥ medium */}
 					{userConsent === "yes" && (
-						<BabylonGate tier={FIONA_REQUIRED_TIER} fallback={null}>
-							<canvas
-								id="fiona-canvas"
-								className="fiona-canvas"
-								aria-hidden="true"
-								tabIndex={-1}
-							/>
-						</BabylonGate>
+						<>
+							<div
+								id="fiona-shimmer"
+								className="fiona-placeholder"
+								aria-hidden={true}
+							>
+								<span className="fiona-placeholder-label">
+									modem connecting
+									<span className="fiona-block-stream">
+										<span className="fiona-block">▓</span>
+										<span className="fiona-block">▓</span>
+										<span className="fiona-block">▓</span>
+									</span>
+								</span>
+							</div>
+							<BabylonGate tier={FIONA_REQUIRED_TIER} fallback={null}>
+								<canvas
+									id="fiona-canvas"
+									className="fiona-canvas"
+									aria-hidden="true"
+									tabIndex={-1}
+								/>
+							</BabylonGate>
+						</>
 					)}
 				</div>
 				<div
@@ -395,71 +402,74 @@ export default function FionaFrame() {
 					<span id="fiona-sys-status"> SYS:▓▓▓</span>
 				</div>
 			</div>
-			<div className="fiona-notes-row">
-				<button
-					key={stickyKey}
-					type="button"
-					className={`fiona-stickynote${stickyZoomed ? " fiona-stickynote--zoomed" : ""}`}
-					onClick={() => {
-						const bezel = document.querySelector(".fiona-bezel");
-						if (
-							bezel instanceof HTMLElement &&
-							(bezel.classList.contains("screen-tap-1") ||
-								bezel.classList.contains("screen-tap-2"))
-						)
-							return;
-						setStickyZoomed((v) => !v);
-						setStickyKey((k) => k + 1);
-					}}
-					aria-expanded={stickyZoomed}
-					aria-label={
-						stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
-					}
-				>
-					<span className="fiona-stickynote-line fiona-stickynote-line-1">
-						{withFallback(
-							t("fiona.stickynoteLine1"),
-							"fiona.stickynoteLine1",
-							locale === "mx" ? "no aguanta" : "non load",
-						)}
-					</span>
-					<span className="fiona-stickynote-line fiona-stickynote-line-2">
-						{withFallback(
-							t("fiona.stickynoteLine2"),
-							"fiona.stickynoteLine2",
-							locale === "mx" ? "nada" : "bearing",
-						)}
-					</span>
-					<span className="fiona-stickynote-sig">- ^.^</span>
-				</button>
-				<button
-					type="button"
-					className={`fiona-stickynote-2${sticky2Fallen ? " fiona-stickynote-2--fallen" : ""}${sticky2Zoomed ? " fiona-stickynote-2--zoomed" : ""}`}
-					aria-expanded={sticky2Zoomed}
-					aria-label={
-						visitor
-							? `${sticky2Zoomed ? getTimeOfDayGreeting(locale) : greetingPrefix}, ${visitor.greeting}.`
-							: greetingPrefix
-					}
-					onClick={() => {
-						if (stickyZoomed) return;
-						setSticky2Zoomed((v) => !v);
-					}}
-				>
-					<span className="fiona-stickynote-2-line">
-						{sticky2Zoomed ? getTimeOfDayGreeting(locale) : greetingPrefix},{" "}
-						{visitor?.greeting ?? ""}
-					</span>
-					{visitor?.flag ? (
-						<span className="fiona-stickynote-2-flag" aria-hidden="true">
-							{visitor.flag}
+			{/* Sticky notes only appear after consent — they reference Fiona */}
+			{userConsent === "yes" && (
+				<div className="fiona-notes-row">
+					<button
+						key={stickyKey}
+						type="button"
+						className={`fiona-stickynote${stickyZoomed ? " fiona-stickynote--zoomed" : ""}`}
+						onClick={() => {
+							const bezel = document.querySelector(".fiona-bezel");
+							if (
+								bezel instanceof HTMLElement &&
+								(bezel.classList.contains("screen-tap-1") ||
+									bezel.classList.contains("screen-tap-2"))
+							)
+								return;
+							setStickyZoomed((v) => !v);
+							setStickyKey((k) => k + 1);
+						}}
+						aria-expanded={stickyZoomed}
+						aria-label={
+							stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
+						}
+					>
+						<span className="fiona-stickynote-line fiona-stickynote-line-1">
+							{withFallback(
+								t("fiona.stickynoteLine1"),
+								"fiona.stickynoteLine1",
+								locale === "mx" ? "no aguanta" : "non load",
+							)}
 						</span>
-					) : null}
-					{visitor?.ip ? (
-						<span className="fiona-stickynote-2-ip">{visitor.ip}</span>
-					) : null}
-				</button>
-			</div>
+						<span className="fiona-stickynote-line fiona-stickynote-line-2">
+							{withFallback(
+								t("fiona.stickynoteLine2"),
+								"fiona.stickynoteLine2",
+								locale === "mx" ? "nada" : "bearing",
+							)}
+						</span>
+						<span className="fiona-stickynote-sig">- ^.^</span>
+					</button>
+					<button
+						type="button"
+						className={`fiona-stickynote-2${sticky2Fallen ? " fiona-stickynote-2--fallen" : ""}${sticky2Zoomed ? " fiona-stickynote-2--zoomed" : ""}`}
+						aria-expanded={sticky2Zoomed}
+						aria-label={
+							visitor
+								? `${sticky2Zoomed ? getTimeOfDayGreeting(locale) : greetingPrefix}, ${visitor.greeting}.`
+								: greetingPrefix
+						}
+						onClick={() => {
+							if (stickyZoomed) return;
+							setSticky2Zoomed((v) => !v);
+						}}
+					>
+						<span className="fiona-stickynote-2-line">
+							{sticky2Zoomed ? getTimeOfDayGreeting(locale) : greetingPrefix},{" "}
+							{visitor?.greeting ?? ""}
+						</span>
+						{visitor?.flag ? (
+							<span className="fiona-stickynote-2-flag" aria-hidden="true">
+								{visitor.flag}
+							</span>
+						) : null}
+						{visitor?.ip ? (
+							<span className="fiona-stickynote-2-ip">{visitor.ip}</span>
+						) : null}
+					</button>
+				</div>
+			)}
 		</div>
 	);
 }

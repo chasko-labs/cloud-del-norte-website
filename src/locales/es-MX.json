@@ -1039,9 +1039,9 @@
 		"stickynoteLine1": "no aguanta",
 		"stickynoteLine2": "nada",
 		"welcomeGreeting": "qué onda",
-		"optinPrompt": "¿cargar demo de Amazon Sumerian?",
+		"optinPrompt": "¿cargar escena de Amazon Sumerian?",
 		"optinYes": "[S] sí",
-		"optinNo": "[N] no"
+		"optinNo": "[?]"
 	},
 	"persistentPlayer": {
 		"streamErrorRetrying": "se trabó tantito — reintentando",
