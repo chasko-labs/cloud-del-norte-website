@@ -431,7 +431,7 @@ function RegisteredView() {
 								{t("quantumDashboard.passkeyButton")}
 							</Button>
 							<Button variant="link" onClick={dismissPasskey}>
-								{t("quantumDashboard.celebrationDismiss")}
+								{t("quantumDashboard.passkeyDismiss")}
 							</Button>
 						</SpaceBetween>
 					</SpaceBetween>

@@ -1134,7 +1134,7 @@
 		"goToDashboard": "Go to Dashboard",
 		"celebrationHeader": "Welcome to the pack!",
 		"celebrationBody": "You're registered — the lobos are howling for you. See you at the workshop.",
-		"celebrationDismiss": "Dismiss welcome celebration",
+		"passkeyDismiss": "Not now",
 		"registeredHeader": "You're In — Workshop Registration Confirmed",
 		"registeredInfo": "You're registered. Come back here on event day to join the live session.",
 		"joinOnEventDay": "Join on Event Day",
