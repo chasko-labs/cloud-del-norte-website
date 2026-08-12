@@ -133,9 +133,7 @@ function LandingContent() {
 						{t("quantum.subtitle")}
 					</Box>
 					<Box fontSize="body-m">{t("quantum.date")}</Box>
-					<Box fontSize="body-s" color="text-body-secondary">
-						{t("quantum.bilingual")}
-					</Box>
+					<Box fontSize="body-m">{t("quantum.bilingual")}</Box>
 
 					{/* CTA 2: Register — PRIMARY, most prominent, animated */}
 					<div className="quantum-register-cta-wrapper">
