@@ -1,4 +1,83 @@
 /* ── REGISTER CTA — the most prominent element on the page ─────────────── */
+
+/* ── QUANTUM CIRCUIT DECORATION — decorative 2-qubit circuit diagram ───── */
+.quantum-circuit-decoration {
+	display: flex;
+	justify-content: center;
+	padding: 1.5rem 0;
+	opacity: 0.7;
+	transition: opacity 0.3s;
+}
+
+.quantum-circuit-decoration:hover {
+	opacity: 1;
+}
+
+.quantum-circuit-decoration svg {
+	max-width: 100%;
+	height: auto;
+}
+
+:root:not(.awsui-dark-mode) .quantum-circuit-decoration {
+	opacity: 0.5;
+}
+
+:root:not(.awsui-dark-mode) .quantum-circuit-decoration:hover {
+	opacity: 0.8;
+}
+
+/* ── ATMOSPHERE HERO — background image for the hero container ─────────── */
+.quantum-hero-atmosphere {
+	position: relative;
+}
+
+.quantum-hero-atmosphere [class*="awsui_container"] {
+	background-image: /* dark overlay for text readability */
+			linear-gradient(
+				to bottom,
+				rgba(0, 0, 42, 0.75) 0%,
+				rgba(0, 0, 42, 0.6) 50%,
+				rgba(0, 0, 42, 0.8) 100%
+			),
+			/* atmosphere render — progressive enhancement via image-set */
+			image-set(
+				url("/brand/atmosphere/cdn-atmosphere-hero-1920x1080.webp")
+					type("image/webp"),
+				url("/brand/atmosphere/cdn-atmosphere-hero-1920x1080.png")
+					type("image/png")
+			) !important;
+	background-size: cover !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+}
+
+/* fallback for browsers without image-set — gradient only (already applied by container base) */
+@supports not (background-image: image-set(url("x.webp") type("image/webp"))) {
+	.quantum-hero-atmosphere [class*="awsui_container"] {
+		background-image: none !important;
+	}
+}
+
+:root:not(.awsui-dark-mode)
+	.quantum-hero-atmosphere
+	[class*="awsui_container"] {
+	background-image:
+		linear-gradient(
+			to bottom,
+			rgba(255, 255, 255, 0.8) 0%,
+			rgba(255, 255, 255, 0.65) 50%,
+			rgba(255, 255, 255, 0.85) 100%
+		),
+		image-set(
+			url("/brand/atmosphere/cdn-atmosphere-hero-1920x1080.webp")
+				type("image/webp"),
+			url("/brand/atmosphere/cdn-atmosphere-hero-1920x1080.png")
+				type("image/png")
+		) !important;
+	background-size: cover !important;
+	background-position: center !important;
+}
+
 .quantum-register-cta-wrapper {
 	display: flex;
 	justify-content: center;

@@ -56,6 +56,159 @@ const MEETUP_GROUPS = [
 	},
 ];
 
+/**
+ * Decorative 2-qubit quantum circuit diagram — H gate + CNOT.
+ * Pure SVG, no external assets. CDN purple/violet palette.
+ */
+function QuantumCircuitDecoration() {
+	return (
+		<div
+			className="quantum-circuit-decoration"
+			aria-hidden="true"
+			role="presentation"
+		>
+			<svg
+				width="320"
+				height="100"
+				viewBox="0 0 320 100"
+				fill="none"
+				xmlns="http://www.w3.org/2000/svg"
+			>
+				<title>Quantum circuit diagram</title>
+				{/* Qubit wire 1 */}
+				<line
+					x1="20"
+					y1="30"
+					x2="300"
+					y2="30"
+					stroke="#9060f0"
+					strokeWidth="1.5"
+					strokeOpacity="0.6"
+				/>
+				{/* Qubit wire 2 */}
+				<line
+					x1="20"
+					y1="70"
+					x2="300"
+					y2="70"
+					stroke="#9060f0"
+					strokeWidth="1.5"
+					strokeOpacity="0.6"
+				/>
+
+				{/* |0⟩ labels */}
+				<text x="8" y="34" fontSize="12" fill="#14b8a6" fontFamily="monospace">
+					|0⟩
+				</text>
+				<text x="8" y="74" fontSize="12" fill="#14b8a6" fontFamily="monospace">
+					|0⟩
+				</text>
+
+				{/* H gate box on wire 1 */}
+				<rect
+					x="80"
+					y="14"
+					width="32"
+					height="32"
+					rx="4"
+					stroke="#a855f7"
+					strokeWidth="1.5"
+					fill="rgba(168, 85, 247, 0.1)"
+				/>
+				<text
+					x="96"
+					y="36"
+					fontSize="16"
+					fill="#a855f7"
+					textAnchor="middle"
+					fontWeight="bold"
+					fontFamily="monospace"
+				>
+					H
+				</text>
+
+				{/* CNOT gate — control dot on wire 1, vertical line, target ⊕ on wire 2 */}
+				{/* Control dot */}
+				<circle cx="180" cy="30" r="5" fill="#06b6d4" />
+				{/* Vertical connection */}
+				<line
+					x1="180"
+					y1="35"
+					x2="180"
+					y2="57"
+					stroke="#06b6d4"
+					strokeWidth="1.5"
+				/>
+				{/* Target circle (⊕) */}
+				<circle
+					cx="180"
+					cy="70"
+					r="13"
+					stroke="#06b6d4"
+					strokeWidth="1.5"
+					fill="rgba(6, 182, 212, 0.08)"
+				/>
+				{/* Plus inside target */}
+				<line
+					x1="180"
+					y1="57"
+					x2="180"
+					y2="83"
+					stroke="#06b6d4"
+					strokeWidth="1.2"
+				/>
+				<line
+					x1="167"
+					y1="70"
+					x2="193"
+					y2="70"
+					stroke="#06b6d4"
+					strokeWidth="1.2"
+				/>
+
+				{/* Measurement box at end of wire 1 */}
+				<rect
+					x="250"
+					y="16"
+					width="28"
+					height="28"
+					rx="3"
+					stroke="#f59e0b"
+					strokeWidth="1.2"
+					fill="rgba(245, 158, 11, 0.06)"
+				/>
+				{/* Meter arc inside measurement */}
+				<path
+					d="M258 36 Q264 24 270 36"
+					stroke="#f59e0b"
+					strokeWidth="1.2"
+					fill="none"
+				/>
+				{/* Meter needle */}
+				<line
+					x1="264"
+					y1="36"
+					x2="268"
+					y2="26"
+					stroke="#f59e0b"
+					strokeWidth="1"
+				/>
+
+				{/* Output labels */}
+				<text
+					x="290"
+					y="74"
+					fontSize="11"
+					fill="#10b981"
+					fontFamily="monospace"
+				>
+					|ψ⟩
+				</text>
+			</svg>
+		</div>
+	);
+}
+
 /* Meetup logo mark — simplified M in rounded square, brand red #ED1C40 */
 function MeetupLogo({ size = 20 }: { size?: number }) {
 	return (
@@ -118,45 +271,50 @@ function LandingContent() {
 			</Box>
 
 			{/* Hero */}
-			<Container>
-				<SpaceBetween size="m">
-					<Box variant="small" color="text-status-info">
-						{t("quantum.badge")}
-					</Box>
-					<Header variant="h1">
-						{t("quantum.title").replace("Amazon Braket", "")}{" "}
-						<Link href={BRAKET_URL} external fontSize="heading-xl">
-							Amazon Braket
-						</Link>{" "}
-					</Header>
-					<Box color="text-body-secondary" fontSize="heading-s">
-						{t("quantum.subtitle")}
-					</Box>
-					<Box fontSize="body-m">{t("quantum.date")}</Box>
-					<Box fontSize="body-m">{t("quantum.bilingual")}</Box>
+			<div className="quantum-hero-atmosphere">
+				<Container>
+					<SpaceBetween size="m">
+						<Box variant="small" color="text-status-info">
+							{t("quantum.badge")}
+						</Box>
+						<Header variant="h1">
+							{t("quantum.title").replace("Amazon Braket", "")}{" "}
+							<Link href={BRAKET_URL} external fontSize="heading-xl">
+								Amazon Braket
+							</Link>{" "}
+						</Header>
+						<Box color="text-body-secondary" fontSize="heading-s">
+							{t("quantum.subtitle")}
+						</Box>
+						<Box fontSize="body-m">{t("quantum.date")}</Box>
+						<Box fontSize="body-m">{t("quantum.bilingual")}</Box>
 
-					{/* CTA 2: Register — PRIMARY, most prominent, animated */}
-					<div className="quantum-register-cta-wrapper">
-						<a
-							href={registered || loggedIn ? DASHBOARD_URL : REGISTER_URL}
-							className="quantum-register-cta"
-							data-tool-name="register_for_workshop"
-							data-tool-description="Register for the quantum computing workshop on Amazon Braket, August 30 2026"
-						>
-							<span className="quantum-register-cta__text">
-								{registered || loggedIn
-									? t("quantum.goToDashboard")
-									: t("quantum.registerButton")}
-							</span>
-							<span
-								className="quantum-register-cta__shimmer"
-								aria-hidden="true"
-							/>
-						</a>
-					</div>
-					<CalendarActions />
-				</SpaceBetween>
-			</Container>
+						{/* CTA 2: Register — PRIMARY, most prominent, animated */}
+						<div className="quantum-register-cta-wrapper">
+							<a
+								href={registered || loggedIn ? DASHBOARD_URL : REGISTER_URL}
+								className="quantum-register-cta"
+								data-tool-name="register_for_workshop"
+								data-tool-description="Register for the quantum computing workshop on Amazon Braket, August 30 2026"
+							>
+								<span className="quantum-register-cta__text">
+									{registered || loggedIn
+										? t("quantum.goToDashboard")
+										: t("quantum.registerButton")}
+								</span>
+								<span
+									className="quantum-register-cta__shimmer"
+									aria-hidden="true"
+								/>
+							</a>
+						</div>
+						<CalendarActions />
+					</SpaceBetween>
+				</Container>
+			</div>
+
+			{/* Quantum Circuit — decorative 2-qubit diagram */}
+			<QuantumCircuitDecoration />
 
 			{/* Digital Badge Section */}
 			<Container
