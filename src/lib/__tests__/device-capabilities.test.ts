@@ -9,6 +9,7 @@ import {
 	isSoftwareWebGL,
 	prefersReducedMotion,
 	readTierOverride,
+	setTierOverride,
 } from "../device-capabilities";
 
 function mockCanvas(renderer: string | null) {
@@ -147,11 +148,11 @@ describe("prefersReducedMotion", () => {
 // isCapableForBabylon
 // ---------------------------------------------------------------------------
 describe("isCapableForBabylon", () => {
-	it("returns false when prefers-reduced-motion is on", () => {
+	it("returns true when prefers-reduced-motion is on (preference, not capability)", () => {
 		mockMotion(true);
 		mockCanvas("NVIDIA RTX 4080");
 		mockNav({ deviceMemory: 16, hardwareConcurrency: 8 });
-		expect(isCapableForBabylon()).toBe(false);
+		expect(isCapableForBabylon()).toBe(true);
 	});
 
 	it("returns false for software WebGL", () => {
@@ -216,11 +217,11 @@ describe("getDeviceTier", () => {
 		expect(getDeviceTier()).toBe("medium");
 	});
 
-	it("returns low when reduced motion on", () => {
+	it("returns high when reduced motion on but hardware is high-end (preference, not capability)", () => {
 		mockMotion(true);
 		mockCanvas("NVIDIA RTX 4080");
 		mockNav({ deviceMemory: 16, hardwareConcurrency: 16 });
-		expect(getDeviceTier()).toBe("low");
+		expect(getDeviceTier()).toBe("high");
 	});
 });
 
@@ -258,12 +259,12 @@ describe("getDeviceDiagnostics", () => {
 		expect(d.renderer).toMatch(/SwiftShader/);
 	});
 
-	it("reports tier=low + reducedMotion=true on Reduce Motion", () => {
+	it("reports tier=high + reducedMotion=true on capable hardware with Reduce Motion", () => {
 		mockMotion(true);
 		mockCanvas("NVIDIA GeForce RTX 4080");
 		mockNav({ deviceMemory: 16, hardwareConcurrency: 12 });
 		const d = getDeviceDiagnostics();
-		expect(d.tier).toBe("low");
+		expect(d.tier).toBe("high");
 		expect(d.reducedMotion).toBe(true);
 		expect(d.softwareWebGL).toBe(false);
 	});
@@ -385,5 +386,54 @@ describe("getDeviceTier honours ?babylon-tier override", () => {
 		expect(d.override).toBe("high");
 		// Real probe results are still reported — only `tier` reflects the override.
 		expect(d.softwareWebGL).toBe(true);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// setTierOverride (programmatic override for load-anyway button)
+// ---------------------------------------------------------------------------
+describe("setTierOverride", () => {
+	beforeEach(() => {
+		try {
+			window.sessionStorage.clear();
+		} catch {
+			/* ignore */
+		}
+	});
+
+	it("writes to sessionStorage so readTierOverride picks it up", () => {
+		setTierOverride("medium");
+		expect(readTierOverride()).toBe("medium");
+	});
+
+	it("overrides getDeviceTier on next call", () => {
+		mockMotion(false);
+		mockCanvas("SwiftShader");
+		mockNav({ deviceMemory: 2, hardwareConcurrency: 2 });
+		// Without override: low
+		expect(getDeviceTier()).toBe("low");
+		setTierOverride("medium");
+		expect(getDeviceTier()).toBe("medium");
+	});
+});
+
+// ---------------------------------------------------------------------------
+// reduced-motion + capable hardware → tier at least medium (regression guard)
+// ---------------------------------------------------------------------------
+describe("reduced-motion user on capable hardware", () => {
+	it("reports tier of at least medium (not gated out)", () => {
+		mockMotion(true);
+		mockCanvas("NVIDIA RTX 4080");
+		mockNav({ deviceMemory: 16, hardwareConcurrency: 16 });
+		const tier = getDeviceTier();
+		const rank = { high: 2, medium: 1, low: 0 };
+		expect(rank[tier]).toBeGreaterThanOrEqual(rank.medium);
+	});
+
+	it("isCapableForBabylon returns true regardless of reduced-motion", () => {
+		mockMotion(true);
+		mockCanvas("Apple M3");
+		mockNav({ deviceMemory: 8, hardwareConcurrency: 8 });
+		expect(isCapableForBabylon()).toBe(true);
 	});
 });

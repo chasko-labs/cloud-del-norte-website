@@ -3263,3 +3263,44 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .fiona-led,
 	filter: drop-shadow(0 0 4px #22c55e4d);
 	opacity: 0.92;
 }
+
+/* === load-anyway override button on gated poster ======================== */
+.fiona-load-anyway {
+	appearance: none;
+	background: transparent;
+	border: 1px solid #22c55e73;
+	border-radius: 2px;
+	color: #22c55eb3;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+	font-size: clamp(10px, 3.5cqi, 13px);
+	letter-spacing: 0.08em;
+	padding: 10px 16px;
+	min-height: 44px;
+	min-width: 44px;
+	cursor: pointer;
+	text-shadow: 0 0 4px #22c55e4d;
+	position: absolute;
+	bottom: 12px;
+	left: 50%;
+	transform: translateX(-50%);
+	transition:
+		color 0.15s,
+		background 0.15s,
+		border-color 0.15s,
+		text-shadow 0.15s;
+}
+
+.fiona-load-anyway:hover,
+.fiona-load-anyway:focus-visible {
+	color: #050805;
+	background: #22c55eb3;
+	border-color: #22c55e;
+	text-shadow: none;
+}
+
+/* === reduced-motion acknowledgement line in opt-in prompt =============== */
+.fiona-reduced-motion-note {
+	font-size: clamp(8px, 3cqi, 11px);
+	opacity: 0.7;
+	letter-spacing: 0.08em;
+}

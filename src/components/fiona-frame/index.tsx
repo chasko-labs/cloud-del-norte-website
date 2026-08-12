@@ -5,6 +5,7 @@ import {
 	getDeviceDiagnostics,
 	getDeviceTier,
 	prefersReducedMotion,
+	setTierOverride,
 } from "../../lib/device-capabilities";
 import { loadVisitorInfo, type VisitorInfo } from "../../utils/visitor";
 import BabylonGate from "../babylon-gate";
@@ -300,6 +301,17 @@ export default function FionaFrame() {
 									(e.currentTarget as HTMLImageElement).style.display = "none";
 								}}
 							/>
+							<button
+								type="button"
+								className="fiona-load-anyway"
+								onClick={() => {
+									setTierOverride("medium");
+									localStorage.setItem("cdn-fiona-optin", "yes");
+									window.location.reload();
+								}}
+							>
+								scene skipped for performance - load anyway
+							</button>
 						</div>
 					)}
 					{/* Opt-in prompt for pending consent (non-gated devices) */}
@@ -317,6 +329,11 @@ export default function FionaFrame() {
 										"load Amazon Sumerian scene?",
 									)}
 								</span>
+								{prefersReducedMotion() && (
+									<span className="fiona-placeholder-label fiona-reduced-motion-note">
+										you have reduced motion on - this scene animates
+									</span>
+								)}
 								<div className="fiona-optin-actions">
 									<button
 										type="button"
