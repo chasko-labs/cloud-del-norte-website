@@ -82,7 +82,7 @@ async function run() {
 	try {
 		await page.evaluate(() => window.scrollTo({ top: 0 }));
 		await page.waitForTimeout(300);
-		const cta = await page.$("[class*='variant-primary']");
+		const cta = await page.$('[data-tool-name="register_for_workshop"]');
 		const visible = cta ? await cta.isVisible() : false;
 		await screenshot(page, "03-register-cta");
 		record("3. Register CTA visible", visible);
@@ -92,8 +92,7 @@ async function run() {
 
 	// 4. Registration form fields
 	try {
-		const cta = await page.$("[class*='variant-primary']");
-		if (cta) await cta.click();
+		await page.goto(`${BASE_URL}/register/`, { waitUntil: "domcontentloaded" });
 		await page.waitForTimeout(500);
 		const nameField = await page.$("input[name='name'], input[placeholder*='name' i], [class*='awsui_input']");
 		await screenshot(page, "04-registration-form");
