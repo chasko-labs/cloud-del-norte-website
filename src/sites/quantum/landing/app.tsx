@@ -164,6 +164,77 @@ function LandingContent() {
 				</SpaceBetween>
 			</Container>
 
+			{/* Digital Badge Section */}
+			<Container
+				header={
+					<Header variant="h2" description={t("quantum.badgeSectionNoCost")}>
+						{t("quantum.badgeSectionHeader")}
+					</Header>
+				}
+			>
+				<SpaceBetween size="m">
+					<Grid gridDefinition={[{ colspan: 2 }, { colspan: 10 }]}>
+						<Box textAlign="center" padding={{ top: "s" }}>
+							<svg
+								width="64"
+								height="64"
+								viewBox="0 0 64 64"
+								fill="none"
+								xmlns="http://www.w3.org/2000/svg"
+								aria-label="Digital badge"
+								role="img"
+							>
+								<path
+									d="M32 4L40 20H56L44 32L48 48L32 40L16 48L20 32L8 20H24L32 4Z"
+									fill="#c9a23f"
+									opacity="0.9"
+								/>
+								<circle cx="32" cy="28" r="10" fill="#1a0a2e" />
+								<path
+									d="M28 28L31 31L37 25"
+									stroke="#c9a23f"
+									strokeWidth="2.5"
+									strokeLinecap="round"
+									strokeLinejoin="round"
+								/>
+								<path
+									d="M24 48L28 56L32 50L36 56L40 48"
+									fill="#c9a23f"
+									opacity="0.7"
+								/>
+							</svg>
+						</Box>
+						<SpaceBetween size="s">
+							<Box fontSize="body-m">{t("quantum.badgeSectionIntro")}</Box>
+							<Box fontSize="body-m">
+								<ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+									<li>{t("quantum.badgeSectionStep1")}</li>
+									<li>{t("quantum.badgeSectionStep2")}</li>
+									<li>{t("quantum.badgeSectionStep3")}</li>
+								</ul>
+							</Box>
+							<Box fontSize="body-s" color="text-body-secondary">
+								{t("quantum.badgeSectionCourses")}
+							</Box>
+							<SpaceBetween size="xs" direction="horizontal">
+								<Link
+									href="https://aws.amazon.com/blogs/quantum-computing/introducing-the-amazon-braket-learning-plan-and-digital-badge/"
+									external
+								>
+									{t("quantum.badgeSectionBlogLink")}
+								</Link>
+								<Link
+									href="https://explore.skillbuilder.aws/learn/learning_plan/view/2252/amazon-braket-badge-readiness-path"
+									external
+								>
+									{t("quantum.badgeSectionSkillBuilderLink")}
+								</Link>
+							</SpaceBetween>
+						</SpaceBetween>
+					</Grid>
+				</SpaceBetween>
+			</Container>
+
 			{/* Description */}
 			<Container
 				header={<Header variant="h2">{t("quantum.descriptionHeader")}</Header>}

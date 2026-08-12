@@ -1074,7 +1074,16 @@
 		"christianTitle": "CEO · AWS UG Clarksville · ANFITRIÓN",
 		"christianBio": "Anfitrión del taller — dirigiendo la sesión práctica de Amazon Braket desde AWS User Group Clarksville",
 		"ameliaTitle": "Chief Data Officer · Columbia AWS UG",
-		"bryanTitle": "CTO · Cloud Del Norte"
+		"bryanTitle": "CTO · Cloud Del Norte",
+		"badgeSectionHeader": "Obtén tu Insignia Digital de Amazon Braket",
+		"badgeSectionIntro": "Esta serie de talleres te guía por el Plan de Aprendizaje de Amazon Braket — sesiones prácticas con discusión grupal, no solo ver videos.",
+		"badgeSectionStep1": "Completa la serie de talleres con práctica en vivo",
+		"badgeSectionStep2": "Toma la evaluación de 50 preguntas (80% para aprobar)",
+		"badgeSectionStep3": "Gana tu insignia — comparte en LinkedIn vía Credly",
+		"badgeSectionCourses": "Cubre dos cursos de AWS: Getting Started (60 min) + Application Development (90 min). Nuestros talleres amplían estos con práctica en vivo y preguntas.",
+		"badgeSectionNoCost": "Insignia obtenida sin costo adicional",
+		"badgeSectionBlogLink": "Conoce más sobre el Plan de Aprendizaje Braket →",
+		"badgeSectionSkillBuilderLink": "Ver en AWS Skill Builder →"
 	},
 	"quantumRegister": {
 		"header": "Regístrate al Taller",

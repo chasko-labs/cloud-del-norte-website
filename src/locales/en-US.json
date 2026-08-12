@@ -1074,7 +1074,16 @@
 		"christianTitle": "CEO · AWS UG Clarksville · HOST",
 		"christianBio": "Workshop host — leading the hands-on Amazon Braket session from AWS User Group Clarksville",
 		"ameliaTitle": "Chief Data Officer · Columbia AWS UG",
-		"bryanTitle": "CTO · Cloud Del Norte"
+		"bryanTitle": "CTO · Cloud Del Norte",
+		"badgeSectionHeader": "Earn Your Amazon Braket Digital Badge",
+		"badgeSectionIntro": "This workshop series walks you through the Amazon Braket Learning Plan — hands-on sessions with group discussion, not just watching videos alone.",
+		"badgeSectionStep1": "Complete the workshop series with live hands-on practice",
+		"badgeSectionStep2": "Take the 50-question assessment (80% to pass)",
+		"badgeSectionStep3": "Earn your badge — share on LinkedIn via Credly",
+		"badgeSectionCourses": "Covers two AWS courses: Getting Started (60 min) + Application Development (90 min). Our workshops expand on these with live practice and Q&A.",
+		"badgeSectionNoCost": "Badge earned at no additional cost",
+		"badgeSectionBlogLink": "Learn more about the Braket Learning Plan →",
+		"badgeSectionSkillBuilderLink": "View on AWS Skill Builder →"
 	},
 	"quantumRegister": {
 		"header": "Register for Workshop",
