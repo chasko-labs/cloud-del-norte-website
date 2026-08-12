@@ -73,6 +73,15 @@ export function readTierOverride(): DeviceTier | null {
 	return null;
 }
 
+/** Force a tier for this session (same storage the ?babylon-tier= param writes). */
+export function setTierOverride(tier: DeviceTier): void {
+	try {
+		window.sessionStorage.setItem(TIER_OVERRIDE_STORAGE_KEY, tier);
+	} catch {
+		/* storage unavailable - override simply will not persist */
+	}
+}
+
 /**
  * One-shot WebGL probe. Returns whether a WebGL context could be obtained and
  * the UNMASKED_RENDERER_WEBGL string (empty when the extension is blocked).
@@ -126,18 +135,23 @@ export function prefersReducedMotion(): boolean {
 }
 
 /**
- * Gate: true when device can run Babylon scenes.
+ * True when the hardware can plausibly render a Babylon scene.
+ *
+ * Deliberately does NOT consider prefers-reduced-motion. That is a user
+ * PREFERENCE, not a hardware capability - conflating them denied
+ * reduced-motion users any choice about loading the scene (they were forced
+ * into the gated poster with no opt-in prompt). Reduced motion now shapes the
+ * DEFAULT answer, not the availability of the question. See prefersReducedMotion()
+ * consumers for the preference path.
  *
  * Fails when:
  * - software WebGL (would chug regardless of tier)
  * - BOTH low memory AND few cores (double-constrained)
- * - prefers-reduced-motion (always fail-closed)
  *
  * MacBook Air M-series: 8 GB RAM (not low) + 8 cores → capable.
  * Pixel 10: ample RAM + many cores → capable.
  */
 export function isCapableForBabylon(): boolean {
-	if (prefersReducedMotion()) return false;
 	if (isSoftwareWebGL()) return false;
 	if (hasLowMemory() && hasFewCores()) return false;
 	return true;
@@ -203,7 +217,7 @@ export function getDeviceDiagnostics(): DeviceDiagnostics {
 	let tier: DeviceTier;
 	if (override !== null) {
 		tier = override;
-	} else if (reducedMotion || softwareWebGL || (lowMemory && fewCores)) {
+	} else if (softwareWebGL || (lowMemory && fewCores)) {
 		tier = "low";
 	} else {
 		const highMem = deviceMemory === undefined ? true : deviceMemory >= 8;

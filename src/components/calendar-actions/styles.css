@@ -8,12 +8,11 @@
 }
 
 .calendar-actions__label {
-	font-size: 0.8rem;
+	font-size: clamp(0.875rem, 1.1vw, 1rem);
 	font-weight: 600;
-	letter-spacing: 0.04em;
+	letter-spacing: 0.06em;
 	text-transform: uppercase;
 	color: var(--cdn-purple, #9060f0);
-	opacity: 0.8;
 }
 
 .calendar-actions__buttons {
@@ -37,8 +36,8 @@
 	cursor: pointer;
 	text-decoration: none;
 	font-family: inherit;
-	font-size: 0.78rem;
-	font-weight: 500;
+	font-size: clamp(0.875rem, 1.1vw, 1rem);
+	font-weight: 600;
 	line-height: 1;
 	white-space: nowrap;
 	transition:
