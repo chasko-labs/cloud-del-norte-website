@@ -1141,6 +1141,8 @@
 		"sessionInProgress": "A live workshop session is happening now",
 		"joinButton": "Join Now",
 		"signInToJoin": "sign in to join",
+		"signInToJoinCall": "sign in to join the call",
+		"signInExplanation": "Registration saves your spot — signing in connects you to the video room",
 		"nextSession": "Next session",
 		"startsIn": "Starts in {{hours}}h {{minutes}}m",
 		"noSessions": "No sessions scheduled",

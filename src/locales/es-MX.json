@@ -1141,6 +1141,8 @@
 		"sessionInProgress": "Hay una sesión de taller en vivo ahora",
 		"joinButton": "Unirse Ahora",
 		"signInToJoin": "inicia sesión para unirte",
+		"signInToJoinCall": "inicia sesión para unirte a la llamada",
+		"signInExplanation": "Tu registro aparta tu lugar — iniciar sesión te conecta a la sala de video",
 		"nextSession": "Próxima sesión",
 		"startsIn": "Comienza en {{hours}}h {{minutes}}m",
 		"noSessions": "No hay sesiones programadas",

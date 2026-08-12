@@ -46,7 +46,7 @@ async function getToken(): Promise<string> {
 async function request(
 	path: string,
 	options: { method: string; body?: unknown },
-): Promise<Response> {
+): Promise<Response | null> {
 	const idToken = await getToken();
 
 	const headers: Record<string, string> = {
@@ -54,11 +54,18 @@ async function request(
 		"Content-Type": "application/json",
 	};
 
-	let res = await fetch(`${API_BASE}${path}`, {
-		method: options.method,
-		headers,
-		body: options.body != null ? JSON.stringify(options.body) : undefined,
-	});
+	let res: Response;
+	try {
+		res = await fetch(`${API_BASE}${path}`, {
+			method: options.method,
+			headers,
+			body: options.body != null ? JSON.stringify(options.body) : undefined,
+		});
+	} catch (err) {
+		// Network error (CORS block on missing route, offline, etc) — return null
+		if (err instanceof TypeError) return null;
+		throw err;
+	}
 
 	// 401 retry: refresh tokens once and replay
 	if (res.status === 401) {
@@ -67,11 +74,16 @@ async function request(
 		if (!refreshed)
 			throw new MeetingApiError(401, "refresh failed — not authenticated");
 		headers.Authorization = `Bearer ${refreshed}`;
-		res = await fetch(`${API_BASE}${path}`, {
-			method: options.method,
-			headers,
-			body: options.body != null ? JSON.stringify(options.body) : undefined,
-		});
+		try {
+			res = await fetch(`${API_BASE}${path}`, {
+				method: options.method,
+				headers,
+				body: options.body != null ? JSON.stringify(options.body) : undefined,
+			});
+		} catch (err) {
+			if (err instanceof TypeError) return null;
+			throw err;
+		}
 		if (res.status === 401)
 			throw new MeetingApiError(401, "unauthorized after refresh");
 	}
@@ -83,7 +95,7 @@ async function request(
 
 export async function fetchMeetingStatus(): Promise<MeetingStatus> {
 	const res = await request("/meetings/status", { method: "GET" });
-	if (res.status === 404) {
+	if (!res || res.status === 404) {
 		return { live: false, scheduled: [] };
 	}
 	if (!res.ok) {
@@ -97,6 +109,9 @@ export async function scheduleMeeting(
 	body: Record<string, unknown>,
 ): Promise<unknown> {
 	const res = await request("/admin/meetings", { method: "POST", body });
+	if (!res) {
+		throw new MeetingApiError(0, "Network error — could not reach server");
+	}
 	if (!res.ok) {
 		const text = await res.text().catch(() => res.statusText);
 		throw new MeetingApiError(res.status, text);
@@ -108,6 +123,9 @@ export async function launchMeeting(
 	body: Record<string, unknown>,
 ): Promise<unknown> {
 	const res = await request("/admin/meetings/launch", { method: "POST", body });
+	if (!res) {
+		throw new MeetingApiError(0, "Network error — could not reach server");
+	}
 	if (res.status === 404) {
 		throw new MeetingApiError(
 			404,
@@ -126,6 +144,9 @@ export async function endMeeting(roomName: string): Promise<unknown> {
 		method: "POST",
 		body: { roomName },
 	});
+	if (!res) {
+		throw new MeetingApiError(0, "Network error — could not reach server");
+	}
 	if (res.status === 404) {
 		throw new MeetingApiError(
 			404,
@@ -141,7 +162,7 @@ export async function endMeeting(roomName: string): Promise<unknown> {
 
 export async function fetchInfrastructureStatus(): Promise<InfraStatus> {
 	const res = await request("/admin/infrastructure/status", { method: "GET" });
-	if (res.status === 404) {
+	if (!res || res.status === 404) {
 		return { cluster: "unknown", tasks_running: 0, tasks_desired: 0 };
 	}
 	if (!res.ok) {

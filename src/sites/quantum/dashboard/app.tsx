@@ -343,9 +343,14 @@ function UpcomingSessions({ onJoin }: { onJoin?: () => void }) {
 										{t("quantumDashboard.joinButton")}
 									</Button>
 								) : (
-									<Button variant="primary" href={SIGN_IN_URL}>
-										{t("quantumDashboard.signInToJoin")}
-									</Button>
+									<SpaceBetween size="xxs">
+										<Button variant="primary" href={SIGN_IN_URL}>
+											{t("quantumDashboard.signInToJoinCall")}
+										</Button>
+										<Box color="text-body-secondary" fontSize="body-s">
+											{t("quantumDashboard.signInExplanation")}
+										</Box>
+									</SpaceBetween>
 								))}
 							<CalendarActions
 								title={session.title}
@@ -418,8 +423,11 @@ function RegisteredView() {
 							{t("quantumDashboard.sessionInProgress")}
 						</Alert>
 						<Button variant="primary" href={SIGN_IN_URL}>
-							{t("quantumDashboard.signInToJoin")}
+							{t("quantumDashboard.signInToJoinCall")}
 						</Button>
+						<Box color="text-body-secondary" fontSize="body-s">
+							{t("quantumDashboard.signInExplanation")}
+						</Box>
 						<Box>
 							<Link href="https://clouddelnorte.org/">
 								{t("quantumDashboard.wantFullAccess")}
