@@ -1010,3 +1010,24 @@ a:focus-visible,
 		transform: none !important;
 	}
 }
+
+/* ── IMMERSIVE JITSI VIEW — responsive container for in-call state ─── */
+.quantum-immersive {
+	width: 100%;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.quantum-immersive [data-testid="jitsi-iframe-host"] iframe {
+	width: 100% !important;
+	max-height: 80vh;
+	border: none;
+	border-radius: 8px;
+}
+
+@media (max-width: 640px) {
+	.quantum-immersive [data-testid="jitsi-iframe-host"] iframe {
+		max-height: 60vh;
+		border-radius: 0;
+	}
+}

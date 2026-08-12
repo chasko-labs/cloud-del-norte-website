@@ -602,7 +602,15 @@ function ModeratorControls() {
 				const s = await fetchInfrastructureStatus();
 				if (!cancelled) setInfraStatus(s);
 			} catch {
-				// non-critical — swallow
+				// non-critical — degrade to "unavailable" state so the UI
+				// does not spin a loading indicator forever when the backend
+				// endpoint is missing or unreachable.
+				if (!cancelled)
+					setInfraStatus({
+						cluster: "unavailable",
+						tasks_running: 0,
+						tasks_desired: 0,
+					});
 			}
 		};
 		poll();

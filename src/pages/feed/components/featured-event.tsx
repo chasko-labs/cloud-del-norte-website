@@ -15,7 +15,7 @@ import {
 } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
 
-const EVENT_URL = "https://quantum.clouddelnorte.org";
+const EVENT_URL = "https://quantum.clouddelnorte.org/register/";
 const EVENT_DATE = "2026-08-30T15:00:00-06:00";
 
 interface CountdownValues {

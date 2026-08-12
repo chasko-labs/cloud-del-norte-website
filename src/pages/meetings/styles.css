@@ -41,3 +41,12 @@
 		font-size: var(--cdn-text-sm, 0.75rem);
 	}
 }
+
+/* phone: prevent Jitsi iframe from overflowing the modal height on
+   mobile viewports. the embed component sets height:640px inline;
+   this caps it to fit the available viewport. */
+@media (max-width: 640px) {
+	[data-testid="jitsi-iframe-host"] iframe {
+		max-height: 60vh !important;
+	}
+}

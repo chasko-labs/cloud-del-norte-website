@@ -100,7 +100,7 @@ function MxFlagIcon() {
 }
 
 const AUTH_SIGN_IN_URL =
-	"https://auth.clouddelnorte.org/login/index.html?returnTo=https://quantum.clouddelnorte.org/dashboard/";
+	"https://auth.clouddelnorte.org/login/index.html?return_to=https://quantum.clouddelnorte.org/auth-callback/%23return_to=/dashboard/";
 
 type UserState =
 	| { kind: "authenticated"; displayName: string }
