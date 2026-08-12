@@ -3197,6 +3197,13 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .fiona-led,
 	justify-content: center;
 	gap: 16px;
 	padding: 12px;
+	min-height: 90px;
+}
+
+.fiona-optin-prompt .fiona-placeholder-label {
+	white-space: nowrap;
+	font-size: clamp(10px, 4cqi, 14px);
+	letter-spacing: clamp(0.06em, 2cqi, 0.18em);
 }
 
 .fiona-optin-actions {
