@@ -334,7 +334,6 @@
 	margin: 2rem auto;
 	padding: 0 1.5rem;
 	box-sizing: border-box;
-	overflow-x: hidden;
 }
 
 /* ── GLASS CONTAINERS — enhanced depth ────────────────────────────────── */
@@ -637,55 +636,42 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
-   PREMIUM EFFECTS — dcode/bench design system uplift
+   PREMIUM EFFECTS — consolidated single-layer overlay
+   Combines scanlines + noise + vignette into ONE compositing layer
+   on .quantum-layout::after to eliminate scroll jank from 3 separate
+   position:fixed pseudo-elements.
    ══════════════════════════════════════════════════════════════════════════ */
 
-/* 1. SCANLINES — subtle CRT texture on main content */
-.quantum-main::after {
+.quantum-layout::after {
 	content: "";
 	position: fixed;
 	inset: 0;
-	background: repeating-linear-gradient(
-		0deg,
-		rgba(0, 0, 0, 0.02) 0px,
-		rgba(0, 0, 0, 0.02) 1px,
-		transparent 1px,
-		transparent 2px
-	);
-	pointer-events: none;
-	z-index: 1000;
-}
-
-/* 2. NOISE texture overlay — very subtle grain */
-.quantum-layout {
-	position: relative;
-}
-
-/* NOTE: ::before is already used for the Bloch sphere atmosphere.
-   Noise is layered via box-shadow trick on the layout container itself,
-   or we use the quantum-main::before for noise. Using quantum-toolbar area
-   won't work. Instead, we inject noise via a dedicated rule on .quantum-layout
-   using an additional pseudo — but CSS only allows one ::before.
-   Solution: apply noise to .quantum-main::before since ::after is scanlines. */
-.quantum-main::before {
-	content: "";
-	position: fixed;
-	inset: 0;
-	background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-	opacity: 0.02;
 	pointer-events: none;
 	z-index: 999;
+	will-change: transform;
+	contain: strict;
+	background: /* Scanlines — subtle CRT texture */
+			repeating-linear-gradient(
+				0deg,
+				rgba(0, 0, 0, 0.02) 0px,
+				rgba(0, 0, 0, 0.02) 1px,
+				transparent 1px,
+				transparent 2px
+			),
+			/* Noise — fractal grain texture */
+			url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E"),
+			/* Vignette — cinematic dark edges */
+			radial-gradient(
+				ellipse at center,
+				transparent 60%,
+				rgba(0, 0, 0, 0.3) 100%
+			);
 	mix-blend-mode: overlay;
+	opacity: 0.5;
 }
 
-/* 3. VIGNETTE — cinematic dark edges (applied via box-shadow on layout
-   since ::before and ::after are consumed). Using an inset shadow instead. */
-.quantum-layout {
-	box-shadow: inset 0 0 120px 60px rgba(0, 0, 0, 0.3);
-}
-
-:root:not(.awsui-dark-mode) .quantum-layout {
-	box-shadow: inset 0 0 120px 60px rgba(0, 0, 0, 0.1);
+:root:not(.awsui-dark-mode) .quantum-layout::after {
+	opacity: 0.25;
 }
 
 /* 4. CARD HOVER elevation — interactive lift */
@@ -715,18 +701,11 @@ a:focus-visible,
 	box-shadow: var(--q-shadow-focus);
 }
 
-/* 7. LIGHT MODE — reduce effect intensity */
-:root:not(.awsui-dark-mode) .quantum-main::after {
-	opacity: 0.5;
-}
-
-:root:not(.awsui-dark-mode) .quantum-main::before {
-	opacity: 0.01;
-}
+/* 7. LIGHT MODE — reduce noise intensity handled by .quantum-layout::after rule above */
 
 /* 8. REDUCED MOTION — disable transforms and overlays */
 @media (prefers-reduced-motion: reduce) {
-	.quantum-main::after {
+	.quantum-layout::after {
 		display: none;
 	}
 
