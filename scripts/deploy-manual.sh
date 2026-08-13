@@ -19,11 +19,13 @@ S3_BUCKET_MAIN="clouddelnorte.org"
 S3_BUCKET_AUTH="auth.clouddelnorte.org"
 S3_BUCKET_AWSUG="awsug.clouddelnorte.org"
 S3_BUCKET_DEV="dev.clouddelnorte.org"
+S3_BUCKET_QUANTUM="quantum.clouddelnorte.org"
 
 CF_DIST_MAIN="ECC3LP1BL2CZS"
 CF_DIST_AUTH="ECQ44FO9MBTCY"
 CF_DIST_AWSUG="E2QLAWFVIT1AR8"
 CF_DIST_DEV="EEHVTUEQ97V0X"
+CF_DIST_QUANTUM="EXLFK7JNU2JNM"
 
 # ── Args ──────────────────────────────────────────────────────────────────────
 TARGET="${1:-}"
@@ -68,8 +70,8 @@ case "${TARGET}" in
     LIB_DIR="lib"
     ;;
   quantum)
-    BUCKET="${S3_BUCKET_DEV}"
-    DIST="${CF_DIST_DEV}"
+    BUCKET="${S3_BUCKET_QUANTUM}"
+    DIST="${CF_DIST_QUANTUM}"
     LIB_DIR="lib-quantum"
     QUANTUM_MODE=true
     ;;
@@ -137,7 +139,7 @@ echo ""
 
 if [[ "${DRY_RUN}" == "true" ]]; then
   if [[ "${QUANTUM_MODE}" == "true" ]]; then
-    echo "[dry-run] Would sync ${LIB_PATH}/ → s3://${BUCKET}/quantum/"
+    echo "[dry-run] Would sync ${LIB_PATH}/ → s3://${BUCKET}/"
   else
     echo "[dry-run] Would sync ${LIB_PATH}/ → s3://${BUCKET}/"
   fi
@@ -147,18 +149,17 @@ if [[ "${DRY_RUN}" == "true" ]]; then
 fi
 
 if [[ "${QUANTUM_MODE}" == "true" ]]; then
-  # ── Quantum: simple sync to quantum/ prefix ─────────────────────────────────
-  # --delete is safe here because it's scoped to the quantum/ prefix only
-  echo "Syncing quantum site to s3://${BUCKET}/quantum/…"
-  aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/quantum/" \
+  # ── Quantum: dedicated bucket (quantum.clouddelnorte.org) ───────────────────
+  echo "Syncing quantum site to s3://${BUCKET}/…"
+  aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/" \
     --delete \
     --exact-timestamps
 
   echo ""
-  echo "Creating CloudFront invalidation for ${DIST} (quantum paths)…"
+  echo "Creating CloudFront invalidation for ${DIST}…"
   INVALIDATION_ID="$(aws cloudfront create-invalidation \
     --distribution-id "${DIST}" \
-    --paths "/quantum/*" \
+    --paths "/*" \
     --query 'Invalidation.Id' \
     --output text)"
 

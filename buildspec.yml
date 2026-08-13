@@ -6,10 +6,12 @@ env:
     S3_BUCKET_AUTH: auth.clouddelnorte.org
     S3_BUCKET_AWSUG: awsug.clouddelnorte.org
     S3_BUCKET_DEV: dev.clouddelnorte.org
+    S3_BUCKET_QUANTUM: quantum.clouddelnorte.org
     CF_DIST_MAIN: ECC3LP1BL2CZS
     CF_DIST_AUTH: ECQ44FO9MBTCY
     CF_DIST_AWSUG: E2QLAWFVIT1AR8
     CF_DIST_DEV: EEHVTUEQ97V0X
+    CF_DIST_QUANTUM: EXLFK7JNU2JNM
 phases:
   install:
     runtime-versions:
@@ -58,9 +60,9 @@ phases:
       - aws s3 sync s3://${S3_BUCKET_MAIN}/fiona-embed/ s3://${S3_BUCKET_DEV}/fiona-embed/ --exact-timestamps
       - aws s3 sync s3://${S3_BUCKET_MAIN}/fiona/ s3://${S3_BUCKET_DEV}/fiona/ --exact-timestamps
 
-      # ─── quantum site (quantum.clouddelnorte.org via dev bucket /quantum/) ──
-      - aws s3 sync lib-quantum/ s3://${S3_BUCKET_DEV}/quantum/ --delete --exact-timestamps
-      - aws cloudfront create-invalidation --distribution-id ${CF_DIST_DEV} --paths "/quantum/*"
+      # ─── quantum site (quantum.clouddelnorte.org — dedicated bucket) ─────────
+      - aws s3 sync lib-quantum/ s3://${S3_BUCKET_QUANTUM}/ --delete --exact-timestamps
+      - aws cloudfront create-invalidation --distribution-id ${CF_DIST_QUANTUM} --paths "/*"
 
       - aws cloudfront create-invalidation --distribution-id ${CF_DIST_DEV} --paths "/*"
 

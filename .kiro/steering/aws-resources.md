@@ -64,7 +64,15 @@
 
 ## cloudfront (account 211125425201)
 
-see .kiro/steering/deployment.md for distribution IDs and bucket mapping.
+| distribution | domain | bucket | notes |
+| ------------ | ------ | ------ | ----- |
+| ECC3LP1BL2CZS | clouddelnorte.org | clouddelnorte.org | main site |
+| ECQ44FO9MBTCY | auth.clouddelnorte.org | auth.clouddelnorte.org | cognito hosted UI |
+| E2QLAWFVIT1AR8 | awsug.clouddelnorte.org | awsug.clouddelnorte.org | members area |
+| EEHVTUEQ97V0X | dev.clouddelnorte.org | dev.clouddelnorte.org | preview/dev |
+| EXLFK7JNU2JNM | quantum.clouddelnorte.org | quantum.clouddelnorte.org | braket workshop (dedicated, isolated from dev) |
+
+quantum uses CloudFront Function `quantum-dedicated-router` for path routing. Route53 CNAME: quantum.clouddelnorte.org → d3acslbn0mxgjm.cloudfront.net.
 
 ## ses (account 211125425201, us-west-2)
 

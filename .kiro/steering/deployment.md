@@ -10,7 +10,7 @@
 ## manual deploy syntax
 
 ```bash
-./scripts/deploy-manual.sh <main|auth|awsug|dev> [--skip-build] [--dry-run]
+./scripts/deploy-manual.sh <main|auth|awsug|dev|quantum> [--skip-build] [--dry-run]
 ```
 
 - `--dry-run` prints what would happen without touching S3 or CloudFront
@@ -26,6 +26,9 @@
 | auth.clouddelnorte.org | auth.clouddelnorte.org | ECQ44FO9MBTCY |
 | awsug.clouddelnorte.org | awsug.clouddelnorte.org | E2QLAWFVIT1AR8 |
 | dev.clouddelnorte.org | dev.clouddelnorte.org | EEHVTUEQ97V0X |
+| quantum.clouddelnorte.org | quantum.clouddelnorte.org | EXLFK7JNU2JNM |
+
+quantum is fully isolated from dev — dedicated bucket + distribution + CloudFront Function (quantum-dedicated-router). previously served from dev.clouddelnorte.org/quantum/ prefix.
 
 ## cloudfront invalidation pattern
 
