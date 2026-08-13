@@ -1,15 +1,16 @@
+import { createHash } from "node:crypto";
 import {
 	AdminGetUserCommand,
 	CognitoIdentityProviderClient,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import {
 	DynamoDBDocumentClient,
 	PutCommand,
 	QueryCommand,
 	ScanCommand,
 } from "@aws-sdk/lib-dynamodb";
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 // ── module-scope singletons ──────────────────────────────────────────────────
 const dynamo = DynamoDBDocumentClient.from(
@@ -25,6 +26,7 @@ const ALLOWED_ORIGINS = new Set([
 	"https://clouddelnorte.org",
 	"https://awsug.clouddelnorte.org",
 	"https://dev.clouddelnorte.org",
+	"https://quantum.clouddelnorte.org",
 ]);
 
 function corsHeaders(requestOrigin) {
@@ -65,6 +67,20 @@ function decodeJwtSub(authHeader) {
 		return null;
 	}
 }
+
+// Deterministic anonymous key: "anon:" + first 16 hex chars of SHA-256 of
+// lowercased trimmed email. Matches the strategy used by the
+// github-issue-migration import so returning registrants hit the same
+// partition key instead of creating a duplicate.
+function deriveAnonSub(email) {
+	const normalized = email.trim().toLowerCase();
+	const hash = createHash("sha256").update(normalized).digest("hex");
+	return `anon:${hash.slice(0, 16)}`;
+}
+
+// Maximum request body size (bytes). Rejects obviously abusive payloads before
+// JSON parsing. 4 KB is generous for a name + email + eventId + group.
+const MAX_BODY_BYTES = 4096;
 
 // ── per-IP rate limit (mirror feedback/index.mjs rateMap) ────────────────────
 const rateMap = new Map();
@@ -108,7 +124,7 @@ function validEventId(id) {
 	);
 }
 
-function validateCreateBody(body) {
+function validateCreateBody(body, isAuthenticated) {
 	const errors = [];
 	if (!validEventId(body.eventId))
 		errors.push("eventId must match ^[a-z0-9-]+$ (max 64 chars)");
@@ -118,12 +134,32 @@ function validateCreateBody(body) {
 		(typeof body.name !== "string" || body.name.length > 200)
 	)
 		errors.push("name must be a string ≤200 chars");
-	if (
-		body.email !== undefined &&
-		body.email !== null &&
-		(typeof body.email !== "string" || !EMAIL_RE.test(body.email))
-	)
-		errors.push("email must be a valid address");
+	if (!isAuthenticated) {
+		// Anonymous path requires a valid email (used as the deterministic key)
+		if (
+			!body.email ||
+			typeof body.email !== "string" ||
+			!EMAIL_RE.test(body.email) ||
+			body.email.length > 254
+		)
+			errors.push("email is required and must be a valid address (≤254 chars)");
+		if (
+			!body.name ||
+			typeof body.name !== "string" ||
+			body.name.trim().length === 0
+		)
+			errors.push("name is required for anonymous registration");
+	} else {
+		// Authenticated path: email is optional but must be valid if present
+		if (
+			body.email !== undefined &&
+			body.email !== null &&
+			(typeof body.email !== "string" ||
+				!EMAIL_RE.test(body.email) ||
+				body.email.length > 254)
+		)
+			errors.push("email must be a valid address (≤254 chars)");
+	}
 	return errors;
 }
 
@@ -263,19 +299,40 @@ async function handleListMine(authHeader, headers) {
 }
 
 async function handleCreate(event, headers) {
+	// ── body size guard ──────────────────────────────────────────────────────
+	const rawBody = event.body || "";
+	if (Buffer.byteLength(rawBody, "utf8") > MAX_BODY_BYTES) {
+		return respond(413, { error: "payload_too_large" }, headers);
+	}
+
+	// ── auth: optional ──────────────────────────────────────────────────────
 	const authHeader =
 		event.headers?.authorization || event.headers?.Authorization;
-	const userSub = decodeJwtSub(authHeader);
-	if (!userSub) return respond(401, { error: "unauthorized" }, headers);
+	const cognitoSub = decodeJwtSub(authHeader);
+	const isAuthenticated = !!cognitoSub;
 
 	let body;
 	try {
-		body = JSON.parse(event.body || "{}");
+		body = JSON.parse(rawBody || "{}");
 	} catch {
 		return respond(400, { error: "invalid_json" }, headers);
 	}
 
-	const errors = validateCreateBody(body);
+	// Reject unexpected top-level keys to limit abuse surface
+	const ALLOWED_KEYS = new Set(["eventId", "name", "email", "group"]);
+	const unexpected = Object.keys(body).filter((k) => !ALLOWED_KEYS.has(k));
+	if (unexpected.length > 0) {
+		return respond(
+			400,
+			{
+				error: "validation",
+				details: [`unexpected fields: ${unexpected.join(", ")}`],
+			},
+			headers,
+		);
+	}
+
+	const errors = validateCreateBody(body, isAuthenticated);
 	if (errors.length > 0)
 		return respond(400, { error: "validation", details: errors }, headers);
 
@@ -290,6 +347,10 @@ async function handleCreate(event, headers) {
 		event.requestContext?.identity?.sourceIp ||
 		"unknown";
 	if (!checkRate(ip)) return respond(429, { error: "rate_limit" }, headers);
+
+	// Derive the partition key: Cognito sub for authenticated users,
+	// deterministic hash for anonymous (matches github-issue-migration keys).
+	const userSub = isAuthenticated ? cognitoSub : deriveAnonSub(body.email);
 
 	// Idempotent: if user already has an RSVP for this event, return it (200).
 	const existing = await findExistingRsvp(userSub, eventId);
@@ -357,7 +418,11 @@ async function handleCreate(event, headers) {
 	// acceptable; the user has already submitted and is waiting for confirmation.
 	await writeSnapshot();
 
-	log("info", "rsvp created", { userSub, eventId });
+	log("info", "rsvp created", {
+		userSub,
+		eventId,
+		authenticated: isAuthenticated,
+	});
 	return respond(
 		201,
 		{
@@ -377,7 +442,10 @@ export async function handler(event) {
 	// EventBridge scheduled invocation — refresh the static rsvp-counts.json snapshot.
 	// No HTTP response is consumed; the rule's purpose is to keep the JSON fresh
 	// for static-served reads from /data/rsvp-counts.json.
-	if (event.source === "aws.events" || event["detail-type"] === "Scheduled Event") {
+	if (
+		event.source === "aws.events" ||
+		event["detail-type"] === "Scheduled Event"
+	) {
 		await writeSnapshot();
 		return { statusCode: 200, body: "snapshot_refreshed" };
 	}
