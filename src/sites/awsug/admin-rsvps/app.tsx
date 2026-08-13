@@ -5,6 +5,8 @@ import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Container from "@cloudscape-design/components/container";
 import Header from "@cloudscape-design/components/header";
+import type { SelectProps } from "@cloudscape-design/components/select";
+import Select from "@cloudscape-design/components/select";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import Table from "@cloudscape-design/components/table";
@@ -15,18 +17,36 @@ import AwsugLayout from "../_layout";
 import { type AuthState, isModerator, requireAuth } from "../_shared/auth";
 import { type AdminRsvpRecord, listEventRsvps } from "./api";
 
+/** Known events — add new events here. Most recent first. */
+const EVENT_OPTIONS: SelectProps.Option[] = [
+	{
+		value: "quantum-superpositions-2026-08-30",
+		label: "Quantum Superpositions — 2026-08-30",
+	},
+	{
+		value: "happy-hour-2026-06-03",
+		label: "Community Happy Hour — 2026-06-03",
+	},
+];
+
+const DEFAULT_EVENT = EVENT_OPTIONS[0];
+
 function RegistrationsTable() {
 	const { t } = useTranslation();
+	const [selectedEvent, setSelectedEvent] = useState<SelectProps.Option | null>(
+		DEFAULT_EVENT,
+	);
 	const [records, setRecords] = useState<AdminRsvpRecord[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState("");
 	const [showTest, setShowTest] = useState(false);
 
 	const load = useCallback(async () => {
+		if (!selectedEvent?.value) return;
 		setLoading(true);
 		setError("");
 		try {
-			setRecords(await listEventRsvps("happy-hour-2026-06-03"));
+			setRecords(await listEventRsvps(selectedEvent.value));
 		} catch (err) {
 			setError(
 				err instanceof Error ? err.message : t("awsug.adminRsvps.loadError"),
@@ -34,7 +54,7 @@ function RegistrationsTable() {
 		} finally {
 			setLoading(false);
 		}
-	}, [t]);
+	}, [selectedEvent, t]);
 
 	useEffect(() => {
 		void load();
@@ -89,6 +109,12 @@ function RegistrationsTable() {
 					{error}
 				</Alert>
 			)}
+			<Select
+				selectedOption={selectedEvent}
+				onChange={({ detail }) => setSelectedEvent(detail.selectedOption)}
+				options={EVENT_OPTIONS}
+				placeholder={t("awsug.adminRsvps.selectEvent")}
+			/>
 			<Toggle
 				checked={showTest}
 				onChange={({ detail }) => setShowTest(detail.checked)}
@@ -126,8 +152,24 @@ function AccessDenied() {
 	);
 }
 
-function AdminRsvpsWithLayout() {
+/** Page content rendered INSIDE AwsugLayout (which provides LocaleProvider). */
+function AdminRsvpsContent() {
 	const { t } = useTranslation();
+	return (
+		<Container
+			header={<Header variant="h1">{t("awsug.adminRsvps.pageTitle")}</Header>}
+		>
+			<RegistrationsTable />
+		</Container>
+	);
+}
+
+/**
+ * Wrapper component — does NOT call useTranslation() because AwsugLayout
+ * (which supplies LocaleProvider via Shell) renders as its child, not its
+ * parent. Matches the pattern in admin/app.tsx.
+ */
+function AdminRsvpsWithLayout() {
 	const [auth, setAuth] = useState<AuthState | null>(null);
 
 	useEffect(() => {
@@ -152,11 +194,7 @@ function AdminRsvpsWithLayout() {
 
 	return (
 		<AwsugLayout>
-			<Container
-				header={<Header variant="h1">{t("awsug.adminRsvps.pageTitle")}</Header>}
-			>
-				<RegistrationsTable />
-			</Container>
+			<AdminRsvpsContent />
 		</AwsugLayout>
 	);
 }
