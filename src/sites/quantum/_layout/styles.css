@@ -432,8 +432,7 @@ a.quantum-user--guest {
 }
 
 /* ── STATUS BADGE — "LIVE ONLINE WORKSHOP" pill ───────────────────────── */
-.quantum-main
-[class*="awsui_box"][class*="variant-small"][class*="color-text-status-info"] {
+.quantum-main [class*="awsui_small-variant"][class*="color-text-status-info"] {
 	font-size: clamp(14px, 1.1vw, 15px) !important;
 	font-weight: 600 !important;
 	letter-spacing: 0.06em !important;
@@ -446,13 +445,13 @@ a.quantum-user--guest {
 
 :root:not(.awsui-dark-mode)
 	.quantum-main
-	[class*="awsui_box"][class*="variant-small"][class*="color-text-status-info"] {
+	[class*="awsui_small-variant"][class*="color-text-status-info"] {
 	background: rgba(90, 31, 138, 0.06) !important;
 	border-color: rgba(90, 31, 138, 0.15) !important;
 }
 
 /* ── GLASS CONTAINERS — enhanced depth + quantum interference ──────────── */
-.quantum-main [class*="awsui_container"] {
+.quantum-main [class*="awsui_root"][class*="variant-default"] {
 	backdrop-filter: blur(12px) saturate(1.4) !important;
 	-webkit-backdrop-filter: blur(12px) saturate(1.4) !important;
 	background: /* Quantum interference pattern — crossing wave fronts */
@@ -485,7 +484,7 @@ a.quantum-user--guest {
 	background-size: auto, auto, 100% !important;
 }
 
-.quantum-main [class*="awsui_container"]:hover {
+.quantum-main [class*="awsui_root"][class*="variant-default"]:hover {
 	border-color: rgba(144, 96, 240, 0.35) !important;
 	box-shadow:
 		0 12px 40px rgba(90, 31, 138, 0.3),
@@ -493,7 +492,9 @@ a.quantum-user--guest {
 		inset 0 -1px 0 rgba(0, 0, 0, 0.2) !important;
 }
 
-:root:not(.awsui-dark-mode) .quantum-main [class*="awsui_container"] {
+:root:not(.awsui-dark-mode)
+	.quantum-main
+	[class*="awsui_root"][class*="variant-default"] {
 	background: rgba(255, 255, 255, 0.8) !important;
 	border-color: rgba(90, 31, 138, 0.1) !important;
 	box-shadow:
@@ -502,7 +503,9 @@ a.quantum-user--guest {
 	animation: none;
 }
 
-:root:not(.awsui-dark-mode) .quantum-main [class*="awsui_container"]:hover {
+:root:not(.awsui-dark-mode)
+	.quantum-main
+	[class*="awsui_root"][class*="variant-default"]:hover {
 	border-color: rgba(90, 31, 138, 0.2) !important;
 	box-shadow:
 		0 12px 40px rgba(90, 31, 138, 0.1),
@@ -755,7 +758,7 @@ a.quantum-user--guest {
 	.quantum-success-pulse {
 		animation: none;
 	}
-	.quantum-main [class*="awsui_container"] {
+	.quantum-main [class*="awsui_root"][class*="variant-default"] {
 		animation: none !important;
 	}
 	.quantum-particle {
@@ -788,7 +791,7 @@ a.quantum-user--guest {
 }
 
 /* 3. Headers — gradient text on h2 */
-.quantum-main [class*="awsui_header-variant--h2"] [class*="awsui_title"] {
+.quantum-main [class*="awsui_root-variant-h2"] [class*="awsui_title"] {
 	background: linear-gradient(
 		90deg,
 		var(--cdn-lavender, #d7c7ee),
@@ -800,7 +803,7 @@ a.quantum-user--guest {
 }
 :root:not(.awsui-dark-mode)
 	.quantum-main
-	[class*="awsui_header-variant--h2"]
+	[class*="awsui_root-variant-h2"]
 	[class*="awsui_title"] {
 	background: linear-gradient(
 		90deg,
@@ -813,16 +816,16 @@ a.quantum-user--guest {
 }
 
 /* 4. Card entrance animation — fade-up on load */
-.quantum-main [class*="awsui_container"] {
+.quantum-main [class*="awsui_root"][class*="variant-default"] {
 	animation: quantum-fade-up 0.6s ease-out both;
 }
-.quantum-main [class*="awsui_container"]:nth-child(2) {
+.quantum-main [class*="awsui_root"][class*="variant-default"]:nth-child(2) {
 	animation-delay: 0.1s;
 }
-.quantum-main [class*="awsui_container"]:nth-child(3) {
+.quantum-main [class*="awsui_root"][class*="variant-default"]:nth-child(3) {
 	animation-delay: 0.2s;
 }
-.quantum-main [class*="awsui_container"]:nth-child(4) {
+.quantum-main [class*="awsui_root"][class*="variant-default"]:nth-child(4) {
 	animation-delay: 0.3s;
 }
 
@@ -838,7 +841,7 @@ a.quantum-user--guest {
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.quantum-main [class*="awsui_container"] {
+	.quantum-main [class*="awsui_root"][class*="variant-default"] {
 		animation: none !important;
 	}
 }
@@ -939,14 +942,16 @@ a.quantum-user--guest {
 
 /* ── CARD TEXT READABILITY — senior-friendly body text ─────────────────── */
 /* Body text in cards: system sans-serif, 16px min, 1.6 line-height */
-.quantum-main [class*="awsui_container"] p,
+.quantum-main [class*="awsui_root"][class*="variant-default"] p,
 .quantum-main
-	[class*="awsui_container"]
+	[class*="awsui_root"][class*="variant-default"]
 	[class*="awsui_box"]:not([class*="variant-small"]):not(
 		[class*="font-weight-bold"]
 	),
-.quantum-main [class*="awsui_container"] [class*="body-m"],
-.quantum-main [class*="awsui_container"] [class*="body-s"] {
+.quantum-main [class*="awsui_root"][class*="variant-default"] [class*="body-m"],
+.quantum-main
+	[class*="awsui_root"][class*="variant-default"]
+	[class*="body-s"] {
 	font-family:
 		-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
 		Cantarell, sans-serif !important;
@@ -955,8 +960,7 @@ a.quantum-user--guest {
 }
 
 /* Event type label — was 12px, increase to 15px minimum */
-.quantum-main
-[class*="awsui_box"][class*="variant-small"][class*="color-text-status-info"] {
+.quantum-main [class*="awsui_small-variant"][class*="color-text-status-info"] {
 	font-size: clamp(15px, 1.1vw, 16px) !important;
 	line-height: 1.5 !important;
 }
@@ -976,7 +980,7 @@ a.quantum-user--guest {
 /* Headers remain at their current size but ensure decent line-height */
 .quantum-main [class*="awsui_header"] [class*="awsui_title"],
 .quantum-main [class*="awsui_header"],
-.quantum-main [class*="awsui_header-variant"],
+.quantum-main [class*="awsui_root-variant-h"],
 .quantum-main [class*="awsui_heading"],
 .quantum-main [class*="awsui_root"][class*="variant-h"],
 .quantum-main h1,
@@ -992,14 +996,18 @@ a.quantum-user--guest {
 }
 
 @media (max-width: 640px) {
-	.quantum-main [class*="awsui_container"] p,
+	.quantum-main [class*="awsui_root"][class*="variant-default"] p,
 	.quantum-main
-		[class*="awsui_container"]
+		[class*="awsui_root"][class*="variant-default"]
 		[class*="awsui_box"]:not([class*="variant-small"]):not(
 			[class*="font-weight-bold"]
 		),
-	.quantum-main [class*="awsui_container"] [class*="body-m"],
-	.quantum-main [class*="awsui_container"] [class*="body-s"] {
+	.quantum-main
+		[class*="awsui_root"][class*="variant-default"]
+		[class*="body-m"],
+	.quantum-main
+		[class*="awsui_root"][class*="variant-default"]
+		[class*="body-s"] {
 		font-size: 15px !important;
 	}
 }

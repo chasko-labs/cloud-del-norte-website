@@ -31,7 +31,7 @@
 	position: relative;
 }
 
-.quantum-hero-atmosphere [class*="awsui_container"] {
+.quantum-hero-atmosphere > [class*="awsui_root"] {
 	background-image: /* dark overlay for text readability */
 			linear-gradient(
 				to bottom,
@@ -51,14 +51,14 @@
 
 /* fallback for browsers without image-set — gradient only (already applied by container base) */
 @supports not (background-image: image-set(url("x.webp") type("image/webp"))) {
-	.quantum-hero-atmosphere [class*="awsui_container"] {
+	.quantum-hero-atmosphere > [class*="awsui_root"] {
 		background-image: none !important;
 	}
 }
 
 /* ── MOBILE HERO — 9:16 portrait plate for narrow viewports ────────────── */
 @media (max-width: 640px) {
-	.quantum-hero-atmosphere [class*="awsui_container"] {
+	.quantum-hero-atmosphere > [class*="awsui_root"] {
 		background-image:
 			linear-gradient(
 				to bottom,
@@ -77,9 +77,7 @@
 		background-repeat: no-repeat !important;
 	}
 
-	:root:not(.awsui-dark-mode)
-		.quantum-hero-atmosphere
-		[class*="awsui_container"] {
+	:root:not(.awsui-dark-mode) .quantum-hero-atmosphere > [class*="awsui_root"] {
 		background-image:
 			linear-gradient(
 				to bottom,
@@ -98,9 +96,7 @@
 	}
 }
 
-:root:not(.awsui-dark-mode)
-	.quantum-hero-atmosphere
-	[class*="awsui_container"] {
+:root:not(.awsui-dark-mode) .quantum-hero-atmosphere > [class*="awsui_root"] {
 	background-image:
 		linear-gradient(
 			to bottom,
@@ -453,7 +449,7 @@
 }
 
 /* Dark mode: origami (badges section) */
-.quantum-card--origami [class*="awsui_container"] {
+.quantum-card--origami > [class*="awsui_root"] {
 	background-image:
 		var(--q-card-overlay-dark),
 		image-set(
@@ -466,7 +462,7 @@
 }
 
 /* Dark mode: lattices (speakers section) */
-.quantum-card--lattices [class*="awsui_container"] {
+.quantum-card--lattices > [class*="awsui_root"] {
 	background-image:
 		var(--q-card-overlay-dark),
 		image-set(
@@ -479,7 +475,7 @@
 }
 
 /* Dark mode: prism (groups/sessions section) */
-.quantum-card--prism [class*="awsui_container"] {
+.quantum-card--prism > [class*="awsui_root"] {
 	background-image:
 		var(--q-card-overlay-dark),
 		image-set(
@@ -492,7 +488,7 @@
 }
 
 /* Light mode: all three cards */
-:root:not(.awsui-dark-mode) .quantum-card--origami [class*="awsui_container"] {
+:root:not(.awsui-dark-mode) .quantum-card--origami > [class*="awsui_root"] {
 	background-image:
 		var(--q-card-overlay-light),
 		image-set(
@@ -504,7 +500,7 @@
 	background-repeat: no-repeat !important;
 }
 
-:root:not(.awsui-dark-mode) .quantum-card--lattices [class*="awsui_container"] {
+:root:not(.awsui-dark-mode) .quantum-card--lattices > [class*="awsui_root"] {
 	background-image:
 		var(--q-card-overlay-light),
 		image-set(
@@ -516,7 +512,7 @@
 	background-repeat: no-repeat !important;
 }
 
-:root:not(.awsui-dark-mode) .quantum-card--prism [class*="awsui_container"] {
+:root:not(.awsui-dark-mode) .quantum-card--prism > [class*="awsui_root"] {
 	background-image:
 		var(--q-card-overlay-light),
 		image-set(
@@ -530,9 +526,9 @@
 
 /* Fallback for browsers without image-set */
 @supports not (background-image: image-set(url("x.webp") type("image/webp"))) {
-	.quantum-card--origami [class*="awsui_container"],
-	.quantum-card--lattices [class*="awsui_container"],
-	.quantum-card--prism [class*="awsui_container"] {
+	.quantum-card--origami > [class*="awsui_root"],
+	.quantum-card--lattices > [class*="awsui_root"],
+	.quantum-card--prism > [class*="awsui_root"] {
 		background-image: none !important;
 	}
 }
