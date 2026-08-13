@@ -88,6 +88,18 @@ function decodeJwtSub(authHeader) {
 	}
 }
 
+// Matches email-shaped strings anywhere in text (for scrubbing free-text fields)
+const EMAIL_PATTERN_GLOBAL = /[^\s@]+@[^\s@]+\.[^\s@]+/g;
+
+/**
+ * Redact any email-address-shaped string in text, replacing with [REDACTED].
+ * Defensive scrub — protects against submitters embedding PII in free-text fields.
+ */
+function redactEmails(text) {
+	if (!text) return text;
+	return text.replace(EMAIL_PATTERN_GLOBAL, "[REDACTED]");
+}
+
 const VALID_FORMATS = new Set(["in_person_west_tx_nm", "virtual", "either"]);
 const VALID_DAYS = new Set(["mon", "tue", "wed", "thu", "fri", "sat", "sun"]);
 const VALID_TOD = new Set(["morning", "afternoon", "evening"]);
@@ -180,24 +192,34 @@ async function createGitHubIssue(proposal) {
 	const tod = Array.isArray(proposal.preferredTimeOfDay)
 		? proposal.preferredTimeOfDay.join(", ")
 		: proposal.preferredTimeOfDay || "any";
+
+	// Defensive scrub: redact any email patterns in free-text fields
+	const safeTopic = redactEmails(proposal.topic);
+	const safeAbstract = redactEmails(proposal.abstract);
+	const safeNotes = redactEmails(proposal.notes);
+	const safeBioUrl = redactEmails(proposal.bioUrl);
+
+	// Short proposal reference for correlation (no PII)
+	const shortId = proposal.id.slice(0, 8);
+
 	const body = [
 		"## Speaker proposal received",
 		"",
-		`**Submitter:** ${proposal.name} (${proposal.email})`,
-		`**Topic:** ${proposal.topic}`,
+		`**Proposal ID:** \`${proposal.id}\``,
+		`**Topic:** ${safeTopic}`,
 		`**Format:** ${proposal.format}`,
 		`**Earliest available:** ${proposal.earliestDate}`,
 		`**Preferred days:** ${days}`,
 		`**Preferred time:** ${tod}`,
-		...(proposal.bioUrl ? [`**Bio:** ${proposal.bioUrl}`] : []),
+		...(safeBioUrl ? [`**Bio:** ${safeBioUrl}`] : []),
 		"",
 		"### Abstract",
-		proposal.abstract,
+		safeAbstract,
 		"",
-		...(proposal.notes ? [`### Notes`, proposal.notes, ""] : []),
+		...(safeNotes ? ["### Notes", safeNotes, ""] : []),
 		"---",
 		"",
-		`**Submission ID:** \`${proposal.id}\``,
+		"**Submitter:** *(see SES notification and DynamoDB record)*",
 		`**Source:** ${proposal.source || "web"}`,
 		`**Cognito sub:** \`${proposal.cognitoSub || "anonymous"}\``,
 		"",
@@ -217,7 +239,7 @@ async function createGitHubIssue(proposal) {
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				title: `[CFP] ${proposal.topic} — ${proposal.name}`,
+				title: `[CFP] ${safeTopic} (${shortId})`,
 				body,
 				labels: ["speaker-proposal", "needs-review"],
 			}),
