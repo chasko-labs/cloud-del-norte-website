@@ -1028,7 +1028,8 @@
 			"colRegisteredAt": "fecha de registro",
 			"colMigrated": "migrado",
 			"yes": "sí",
-			"showTestRecords": "incluir registros de prueba"
+			"showTestRecords": "incluir registros de prueba",
+			"selectEvent": "seleccionar evento"
 		},
 		"meetings": {
 			"pendingApproval": "tu solicitud está pendiente. las juntas van a estar disponibles cuando te aprueben.",

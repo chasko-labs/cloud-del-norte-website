@@ -1028,7 +1028,8 @@
 			"colRegisteredAt": "registered",
 			"colMigrated": "migrated",
 			"yes": "yes",
-			"showTestRecords": "include test records"
+			"showTestRecords": "include test records",
+			"selectEvent": "select event"
 		},
 		"meetings": {
 			"pendingApproval": "your application is pending approval. meetings are available once approved.",
