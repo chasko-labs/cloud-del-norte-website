@@ -98,22 +98,24 @@
 	}
 }
 
-:root:not(.awsui-dark-mode)
-	.quantum-hero-atmosphere
-	> [class*="awsui_root"][class*="variant-default"] {
-	background-image:
-		linear-gradient(
-			to bottom,
-			rgba(255, 255, 255, 0.8) 0%,
-			rgba(255, 255, 255, 0.65) 50%,
-			rgba(255, 255, 255, 0.85) 100%
-		),
-		image-set(
-			url("/brand/quantum/quantum-hero-1920x600.webp") type("image/webp"),
-			url("/brand/quantum/quantum-hero-1920x600.png") type("image/png")
-		) !important;
-	background-size: cover !important;
-	background-position: center !important;
+@media (min-width: 641px) {
+	:root:not(.awsui-dark-mode)
+		.quantum-hero-atmosphere
+		> [class*="awsui_root"][class*="variant-default"] {
+		background-image:
+			linear-gradient(
+				to bottom,
+				rgba(255, 255, 255, 0.8) 0%,
+				rgba(255, 255, 255, 0.65) 50%,
+				rgba(255, 255, 255, 0.85) 100%
+			),
+			image-set(
+				url("/brand/quantum/quantum-hero-1920x600.webp") type("image/webp"),
+				url("/brand/quantum/quantum-hero-1920x600.png") type("image/png")
+			) !important;
+		background-size: cover !important;
+		background-position: center !important;
+	}
 }
 
 .quantum-register-cta-wrapper {
