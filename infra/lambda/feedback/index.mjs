@@ -1,4 +1,5 @@
-import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { GetParameterCommand, SSMClient } from "@aws-sdk/client-ssm";
 
 const ssm = new SSMClient({ region: "us-west-2" });
@@ -187,9 +188,17 @@ async function uploadAttachments(attachments) {
 					ContentType: att.contentType,
 				}),
 			);
-			urls.push(
-				`https://${ATTACHMENTS_BUCKET}.s3.us-west-2.amazonaws.com/${key}`,
+
+			// Generate presigned GET URL valid for 7 days (604800s) — the maximum
+			// SigV4 allows. After 7 days the link expires; the object remains in S3
+			// for 365 days accessible via AWS console.
+			const presignedUrl = await getSignedUrl(
+				s3,
+				new GetObjectCommand({ Bucket: ATTACHMENTS_BUCKET, Key: key }),
+				{ expiresIn: 604800 },
 			);
+
+			urls.push(presignedUrl);
 		} catch (err) {
 			console.log(
 				JSON.stringify({
@@ -288,9 +297,11 @@ async function createIssue(
 	if (reporterSub) lines.push("", `**Reporter:** ${reporterSub}`);
 	// Never write contactEmail into the public issue.
 	// Signal that contact info exists so maintainers know to check logs.
-	if (hasContact) lines.push("", "**Contact:** *(provided — see Lambda logs)*");
+	if (hasContact) lines.push("", "**Contact:** *(provided -- see Lambda logs)*");
 
 	if (attachmentUrls?.length) {
+		lines.push("");
+		lines.push("> Screenshot links expire after 7 days. Originals remain in S3 (bucket: `cdn-feedback-attachments`) for 365 days and are viewable via the AWS console.");
 		lines.push("");
 		attachmentUrls.forEach((url, i) => {
 			lines.push(`![screenshot ${i + 1}](${url})`);
@@ -300,7 +311,7 @@ async function createIssue(
 	lines.push(
 		"",
 		"---",
-		`*Source: feedback-form · ${new Date().toISOString()}*`,
+		`*Source: feedback-form -- ${new Date().toISOString()}*`,
 	);
 
 	const controller = new AbortController();
