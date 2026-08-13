@@ -1015,6 +1015,21 @@
 			"shareUrl": "URL para compartir",
 			"done": "Listo"
 		},
+		"adminRsvps": {
+			"pageTitle": "registros de evento",
+			"tableHeader": "registros",
+			"tableDescription": "todos los registros de este evento",
+			"loadingText": "cargando registros",
+			"loadError": "no se pudieron cargar los registros",
+			"emptyText": "sin registros",
+			"colName": "nombre",
+			"colEmail": "correo",
+			"colGroup": "grupo",
+			"colRegisteredAt": "fecha de registro",
+			"colMigrated": "migrado",
+			"yes": "sí",
+			"showTestRecords": "incluir registros de prueba"
+		},
 		"meetings": {
 			"pendingApproval": "tu solicitud está pendiente. las juntas van a estar disponibles cuando te aprueben.",
 			"createPendingApproval": "tu solicitud está pendiente. crear juntas va a estar disponible cuando te aprueben.",

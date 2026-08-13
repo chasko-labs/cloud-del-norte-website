@@ -30,7 +30,14 @@ export default function AwsugNavigation() {
 				]
 			: []),
 		...(isMod
-			? [{ type: "link" as const, text: "admin", href: "/admin/index.html" }]
+			? [
+					{ type: "link" as const, text: "admin", href: "/admin/index.html" },
+					{
+						type: "link" as const,
+						text: "registrations",
+						href: "/admin-rsvps/index.html",
+					},
+				]
 			: []),
 		...(!isPending || isMod ? [{ type: "divider" as const }] : []),
 		{
