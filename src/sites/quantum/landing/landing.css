@@ -35,9 +35,9 @@
 	background-image: /* dark overlay for text readability */
 			linear-gradient(
 				to bottom,
-				rgba(0, 0, 42, 0.75) 0%,
-				rgba(0, 0, 42, 0.6) 50%,
-				rgba(0, 0, 42, 0.8) 100%
+				rgba(0, 0, 42, 0.6) 0%,
+				rgba(0, 0, 42, 0.45) 50%,
+				rgba(0, 0, 42, 0.65) 100%
 			),
 			/* quantum atmosphere render — progressive enhancement via image-set */
 			image-set(
@@ -62,9 +62,9 @@
 		background-image:
 			linear-gradient(
 				to bottom,
-				rgba(0, 0, 42, 0.75) 0%,
-				rgba(0, 0, 42, 0.6) 50%,
-				rgba(0, 0, 42, 0.8) 100%
+				rgba(0, 0, 42, 0.6) 0%,
+				rgba(0, 0, 42, 0.45) 50%,
+				rgba(0, 0, 42, 0.65) 100%
 			),
 			image-set(
 				url("/brand/quantum/quantum-hero-mobile-1080x1920.webp")
@@ -83,9 +83,9 @@
 		background-image:
 			linear-gradient(
 				to bottom,
-				rgba(255, 255, 255, 0.8) 0%,
-				rgba(255, 255, 255, 0.65) 50%,
-				rgba(255, 255, 255, 0.85) 100%
+				rgba(255, 255, 255, 0.55) 0%,
+				rgba(255, 255, 255, 0.4) 50%,
+				rgba(255, 255, 255, 0.6) 100%
 			),
 			image-set(
 				url("/brand/quantum/quantum-hero-mobile-1080x1920.webp")
@@ -105,9 +105,9 @@
 		background-image:
 			linear-gradient(
 				to bottom,
-				rgba(255, 255, 255, 0.8) 0%,
-				rgba(255, 255, 255, 0.65) 50%,
-				rgba(255, 255, 255, 0.85) 100%
+				rgba(255, 255, 255, 0.55) 0%,
+				rgba(255, 255, 255, 0.4) 50%,
+				rgba(255, 255, 255, 0.6) 100%
 			),
 			image-set(
 				url("/brand/quantum/quantum-hero-1920x600.webp") type("image/webp"),
@@ -413,6 +413,21 @@
 		justify-content: center;
 		margin-top: 0.25rem;
 	}
+
+	/* DEFECT 2 FIX: stack all multi-column Cloudscape Grids to single column */
+	.quantum-card--origami [class*="awsui_grid"],
+	.quantum-card--lattices [class*="awsui_grid"] {
+		display: flex !important;
+		flex-direction: column !important;
+		gap: 1.5rem !important;
+	}
+
+	.quantum-card--origami [class*="awsui_grid"] > *,
+	.quantum-card--lattices [class*="awsui_grid"] > * {
+		width: 100% !important;
+		max-width: 100% !important;
+		flex: none !important;
+	}
 }
 
 @media (max-width: 480px) {
@@ -442,15 +457,15 @@
 	--q-card-prism-fallback: url("/brand/quantum/quantum-card-prism-600x400.png");
 	--q-card-overlay-dark: linear-gradient(
 		to bottom,
-		rgba(0, 0, 42, 0.82) 0%,
-		rgba(0, 0, 42, 0.72) 50%,
-		rgba(0, 0, 42, 0.85) 100%
+		rgba(0, 0, 42, 0.65) 0%,
+		rgba(0, 0, 42, 0.55) 50%,
+		rgba(0, 0, 42, 0.7) 100%
 	);
 	--q-card-overlay-light: linear-gradient(
 		to bottom,
-		rgba(255, 255, 255, 0.88) 0%,
-		rgba(255, 255, 255, 0.78) 50%,
-		rgba(255, 255, 255, 0.9) 100%
+		rgba(255, 255, 255, 0.6) 0%,
+		rgba(255, 255, 255, 0.5) 50%,
+		rgba(255, 255, 255, 0.65) 100%
 	);
 }
 
