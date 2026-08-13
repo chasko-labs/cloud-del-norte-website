@@ -129,6 +129,8 @@ if [[ "${QUANTUM_MODE}" == "true" ]]; then
   QUANTUM_REQUIRED_ASSETS=(
     "quantum-hero-1920x600.webp"
     "quantum-hero-1920x600.png"
+    "quantum-hero-mobile-1080x1920.webp"
+    "quantum-hero-mobile-1080x1920.png"
     "quantum-card-origami-600x400.png"
     "quantum-card-lattices-600x400.png"
     "quantum-card-prism-600x400.png"

@@ -56,6 +56,48 @@
 	}
 }
 
+/* ── MOBILE HERO — 9:16 portrait plate for narrow viewports ────────────── */
+@media (max-width: 640px) {
+	.quantum-hero-atmosphere [class*="awsui_container"] {
+		background-image:
+			linear-gradient(
+				to bottom,
+				rgba(0, 0, 42, 0.75) 0%,
+				rgba(0, 0, 42, 0.6) 50%,
+				rgba(0, 0, 42, 0.8) 100%
+			),
+			image-set(
+				url("/brand/quantum/quantum-hero-mobile-1080x1920.webp")
+					type("image/webp"),
+				url("/brand/quantum/quantum-hero-mobile-1080x1920.png")
+					type("image/png")
+			) !important;
+		background-size: cover !important;
+		background-position: center top !important;
+		background-repeat: no-repeat !important;
+	}
+
+	:root:not(.awsui-dark-mode)
+		.quantum-hero-atmosphere
+		[class*="awsui_container"] {
+		background-image:
+			linear-gradient(
+				to bottom,
+				rgba(255, 255, 255, 0.8) 0%,
+				rgba(255, 255, 255, 0.65) 50%,
+				rgba(255, 255, 255, 0.85) 100%
+			),
+			image-set(
+				url("/brand/quantum/quantum-hero-mobile-1080x1920.webp")
+					type("image/webp"),
+				url("/brand/quantum/quantum-hero-mobile-1080x1920.png")
+					type("image/png")
+			) !important;
+		background-size: cover !important;
+		background-position: center top !important;
+	}
+}
+
 :root:not(.awsui-dark-mode)
 	.quantum-hero-atmosphere
 	[class*="awsui_container"] {
