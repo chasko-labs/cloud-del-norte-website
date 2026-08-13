@@ -15,8 +15,7 @@ const { execSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 
-const BASE_URL =
-	process.env.QUANTUM_URL || "https://quantum.clouddelnorte.org";
+const BASE_URL = process.env.QUANTUM_URL || "https://quantum.clouddelnorte.org";
 const RESULTS_DIR = path.join(__dirname, "quantum-interaction-results");
 const TIMEOUT = 20000;
 
@@ -116,7 +115,9 @@ function getCognitoTokens(email, password) {
 		return JSON.parse(result);
 	} catch (err) {
 		const stderr = err.stderr ? err.stderr.toString() : "";
-		console.log(`    ⚠ Cognito auth failed for ${email}: ${stderr.slice(0, 200)}`);
+		console.log(
+			`    ⚠ Cognito auth failed for ${email}: ${stderr.slice(0, 200)}`,
+		);
 		return null;
 	}
 }
@@ -247,7 +248,9 @@ async function testGuest(browser) {
 			"GUEST",
 			STEPS[7],
 			joinBlocked,
-			joinBlocked ? "no join button (blocked)" : "join button unexpectedly present",
+			joinBlocked
+				? "no join button (blocked)"
+				: "join button unexpectedly present",
 		);
 
 		// 9. Moderator controls — hidden
@@ -310,7 +313,12 @@ async function testRegistered(browser) {
 		);
 
 		// 3. Registration form — already done (redirect or shows dashboard)
-		record("REGISTERED", STEPS[2], true, "already registered (localStorage flag)");
+		record(
+			"REGISTERED",
+			STEPS[2],
+			true,
+			"already registered (localStorage flag)",
+		);
 
 		// 4. Dashboard view — registered view
 		await page.goto(`${BASE_URL}/dashboard/`, {
@@ -355,7 +363,12 @@ async function testRegistered(browser) {
 		);
 
 		// 7. After sign-in — would become member view (tested separately)
-		record("REGISTERED", STEPS[6], true, "→ member view (tested in MEMBER role)");
+		record(
+			"REGISTERED",
+			STEPS[6],
+			true,
+			"→ member view (tested in MEMBER role)",
+		);
 
 		// 8. Join call — blocked (no auth token)
 		const joinDirectBtn = await page.$(
@@ -371,8 +384,7 @@ async function testRegistered(browser) {
 		);
 
 		// 9. Moderator controls — hidden
-		const modControls =
-			dashText.includes("Launch") && dashText.includes("End");
+		const modControls = dashText.includes("Launch") && dashText.includes("End");
 		record(
 			"REGISTERED",
 			STEPS[8],
@@ -517,7 +529,12 @@ async function testAuthenticatedRole(browser, role, user) {
 
 		// 7. After sign-in state
 		if (!authSuccess) {
-			record(role, STEPS[6], false, "auth failed — cannot verify post-login state");
+			record(
+				role,
+				STEPS[6],
+				false,
+				"auth failed — cannot verify post-login state",
+			);
 		} else if (role === "PENDING") {
 			const hasPendingMsg =
 				dashText.includes("pending") ||
@@ -528,7 +545,9 @@ async function testAuthenticatedRole(browser, role, user) {
 				role,
 				STEPS[6],
 				true,
-				hasPendingMsg ? "pending message shown" : "member view (no pending gate on quantum)",
+				hasPendingMsg
+					? "pending message shown"
+					: "member view (no pending gate on quantum)",
 			);
 		} else if (role === "BANNED") {
 			const hasBannedMsg =
@@ -540,7 +559,9 @@ async function testAuthenticatedRole(browser, role, user) {
 				role,
 				STEPS[6],
 				true,
-				hasBannedMsg ? "banned message shown" : "member view (ban checked at jitsi level)",
+				hasBannedMsg
+					? "banned message shown"
+					: "member view (ban checked at jitsi level)",
 			);
 		} else {
 			record(role, STEPS[6], true, "member view active");

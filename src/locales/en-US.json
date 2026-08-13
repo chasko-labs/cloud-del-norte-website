@@ -1015,6 +1015,21 @@
 			"shareUrl": "Share URL",
 			"done": "Done"
 		},
+		"adminRsvps": {
+			"pageTitle": "event registrations",
+			"tableHeader": "registrations",
+			"tableDescription": "all registrations for this event",
+			"loadingText": "loading registrations",
+			"loadError": "could not load registrations",
+			"emptyText": "no registrations",
+			"colName": "name",
+			"colEmail": "email",
+			"colGroup": "group",
+			"colRegisteredAt": "registered",
+			"colMigrated": "migrated",
+			"yes": "yes",
+			"showTestRecords": "include test records"
+		},
 		"meetings": {
 			"pendingApproval": "your application is pending approval. meetings are available once approved.",
 			"createPendingApproval": "your application is pending approval. meeting creation is available once approved.",
@@ -1115,9 +1130,9 @@
 		"successNextSteps": "What happens next: check your email for a confirmation with the meeting link and calendar invite",
 		"successBookmark": "Head to your sessions on the day of the event to join the live session",
 		"backLink": "← Back to workshop details",
-		"communityAccess": "Looking for more workshops? AWS User Group Cloud Del Norte hosts regular events for learners across Far West Texas, New Mexico & Chihuahua, Mexico",
+		"communityAccess": "Looking for more workshops? AWS User Group Cloud Del Norte hosts regular events open to all builders",
 		"joinCdn": "Join Cloud Del Norte",
-		"findLocal": "Not in our region? Find your local AWS User Group",
+		"findLocal": "Find your local AWS User Group",
 		"validationError": "Please fill in your email and name",
 		"genericError": "Something went wrong. Please try again",
 		"capacityFullError": "This workshop is full. Join the waitlist on Meetup for cancellation spots",

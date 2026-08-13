@@ -3,16 +3,22 @@
  * Simulates CloudFront Function viewer-response events and asserts CSP header output.
  */
 import { readFileSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { describe, it, expect } from "vitest";
 import vm from "node:vm";
+import { describe, expect, it } from "vitest";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, "../..");
 
-const funcSrc = readFileSync(resolve(ROOT, "infra/cloudfront-functions/csp-main.js"), "utf-8");
-const allowlistPath = resolve(ROOT, "infra/cloudfront-functions/csp-allowlist.json");
+const funcSrc = readFileSync(
+	resolve(ROOT, "infra/cloudfront-functions/csp-main.js"),
+	"utf-8",
+);
+const allowlistPath = resolve(
+	ROOT,
+	"infra/cloudfront-functions/csp-allowlist.json",
+);
 let allowlistJson;
 try {
 	allowlistJson = readFileSync(allowlistPath, "utf-8");
@@ -29,7 +35,10 @@ try {
 }
 
 // Inject allowlist and evaluate
-const injectedSrc = funcSrc.replace("var ALLOWLIST = {};", `var ALLOWLIST = ${allowlistJson};`);
+const injectedSrc = funcSrc.replace(
+	"var ALLOWLIST = {};",
+	`var ALLOWLIST = ${allowlistJson};`,
+);
 const context = vm.createContext({});
 vm.runInContext(injectedSrc, context);
 const handler = context.handler;
@@ -39,7 +48,9 @@ describe("csp-main.js CloudFront Function", () => {
 		const event = { response: { headers: {}, statusCode: 200 } };
 		const result = handler(event);
 		expect(result.headers["content-security-policy"]).toBeTruthy();
-		expect(result.headers["content-security-policy"].value.length).toBeGreaterThan(0);
+		expect(
+			result.headers["content-security-policy"].value.length,
+		).toBeGreaterThan(0);
 	});
 
 	it("includes default-src 'self'", () => {
@@ -53,9 +64,19 @@ describe("csp-main.js CloudFront Function", () => {
 		const event = { response: { headers: {} } };
 		const result = handler(event);
 		const csp = result.headers["content-security-policy"].value;
-		for (const d of ["script-src", "script-src-elem", "style-src", "connect-src",
-			"font-src", "img-src", "object-src", "frame-ancestors", "frame-src",
-			"media-src", "worker-src"]) {
+		for (const d of [
+			"script-src",
+			"script-src-elem",
+			"style-src",
+			"connect-src",
+			"font-src",
+			"img-src",
+			"object-src",
+			"frame-ancestors",
+			"frame-src",
+			"media-src",
+			"worker-src",
+		]) {
 			expect(csp).toContain(d);
 		}
 	});

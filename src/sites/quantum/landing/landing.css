@@ -39,12 +39,10 @@
 				rgba(0, 0, 42, 0.6) 50%,
 				rgba(0, 0, 42, 0.8) 100%
 			),
-			/* atmosphere render — progressive enhancement via image-set */
+			/* quantum atmosphere render — progressive enhancement via image-set */
 			image-set(
-				url("/brand/atmosphere/cdn-atmosphere-hero-1920x1080.webp")
-					type("image/webp"),
-				url("/brand/atmosphere/cdn-atmosphere-hero-1920x1080.png")
-					type("image/png")
+				url("/brand/quantum/quantum-hero-1920x600.webp") type("image/webp"),
+				url("/brand/quantum/quantum-hero-1920x600.png") type("image/png")
 			) !important;
 	background-size: cover !important;
 	background-position: center !important;
@@ -69,10 +67,8 @@
 			rgba(255, 255, 255, 0.85) 100%
 		),
 		image-set(
-			url("/brand/atmosphere/cdn-atmosphere-hero-1920x1080.webp")
-				type("image/webp"),
-			url("/brand/atmosphere/cdn-atmosphere-hero-1920x1080.png")
-				type("image/png")
+			url("/brand/quantum/quantum-hero-1920x600.webp") type("image/webp"),
+			url("/brand/quantum/quantum-hero-1920x600.png") type("image/png")
 		) !important;
 	background-size: cover !important;
 	background-position: center !important;
@@ -384,5 +380,117 @@
 	.quantum-register-cta-wrapper {
 		overflow: hidden;
 		max-width: 100%;
+	}
+}
+
+/* ── CONCEPT CARD GRADIENTS — ComfyUI-generated plates behind glass panels ─ */
+/* Decoration never costs contrast. The glass panel + dark overlay ensures
+   text remains readable. Cards reference tokenized background images at low
+   opacity behind the existing glass treatment. */
+
+/* Tokens */
+:root {
+	--q-card-origami-bg: url("/brand/quantum/quantum-card-origami-600x400.webp");
+	--q-card-origami-fallback: url("/brand/quantum/quantum-card-origami-600x400.png");
+	--q-card-lattices-bg: url("/brand/quantum/quantum-card-lattices-600x400.webp");
+	--q-card-lattices-fallback: url("/brand/quantum/quantum-card-lattices-600x400.png");
+	--q-card-prism-bg: url("/brand/quantum/quantum-card-prism-600x400.webp");
+	--q-card-prism-fallback: url("/brand/quantum/quantum-card-prism-600x400.png");
+	--q-card-overlay-dark: linear-gradient(
+		to bottom,
+		rgba(0, 0, 42, 0.82) 0%,
+		rgba(0, 0, 42, 0.72) 50%,
+		rgba(0, 0, 42, 0.85) 100%
+	);
+	--q-card-overlay-light: linear-gradient(
+		to bottom,
+		rgba(255, 255, 255, 0.88) 0%,
+		rgba(255, 255, 255, 0.78) 50%,
+		rgba(255, 255, 255, 0.9) 100%
+	);
+}
+
+/* Dark mode: origami (badges section) */
+.quantum-card--origami [class*="awsui_container"] {
+	background-image:
+		var(--q-card-overlay-dark),
+		image-set(
+			var(--q-card-origami-bg) type("image/webp"),
+			var(--q-card-origami-fallback) type("image/png")
+		) !important;
+	background-size: cover !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+}
+
+/* Dark mode: lattices (speakers section) */
+.quantum-card--lattices [class*="awsui_container"] {
+	background-image:
+		var(--q-card-overlay-dark),
+		image-set(
+			var(--q-card-lattices-bg) type("image/webp"),
+			var(--q-card-lattices-fallback) type("image/png")
+		) !important;
+	background-size: cover !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+}
+
+/* Dark mode: prism (groups/sessions section) */
+.quantum-card--prism [class*="awsui_container"] {
+	background-image:
+		var(--q-card-overlay-dark),
+		image-set(
+			var(--q-card-prism-bg) type("image/webp"),
+			var(--q-card-prism-fallback) type("image/png")
+		) !important;
+	background-size: cover !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+}
+
+/* Light mode: all three cards */
+:root:not(.awsui-dark-mode) .quantum-card--origami [class*="awsui_container"] {
+	background-image:
+		var(--q-card-overlay-light),
+		image-set(
+			var(--q-card-origami-bg) type("image/webp"),
+			var(--q-card-origami-fallback) type("image/png")
+		) !important;
+	background-size: cover !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+}
+
+:root:not(.awsui-dark-mode) .quantum-card--lattices [class*="awsui_container"] {
+	background-image:
+		var(--q-card-overlay-light),
+		image-set(
+			var(--q-card-lattices-bg) type("image/webp"),
+			var(--q-card-lattices-fallback) type("image/png")
+		) !important;
+	background-size: cover !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+}
+
+:root:not(.awsui-dark-mode) .quantum-card--prism [class*="awsui_container"] {
+	background-image:
+		var(--q-card-overlay-light),
+		image-set(
+			var(--q-card-prism-bg) type("image/webp"),
+			var(--q-card-prism-fallback) type("image/png")
+		) !important;
+	background-size: cover !important;
+	background-position: center !important;
+	background-repeat: no-repeat !important;
+}
+
+/* Fallback for browsers without image-set */
+@supports not (background-image: image-set(url("x.webp") type("image/webp"))) {
+	.quantum-card--origami [class*="awsui_container"],
+	.quantum-card--lattices [class*="awsui_container"],
+	.quantum-card--prism [class*="awsui_container"] {
+		background-image: none !important;
 	}
 }

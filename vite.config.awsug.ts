@@ -33,6 +33,10 @@ export default defineConfig({
 					"./src/sites/awsug/create-meeting/index.html",
 				),
 				admin: resolve(__dirname, "./src/sites/awsug/admin/index.html"),
+				"admin-rsvps": resolve(
+					__dirname,
+					"./src/sites/awsug/admin-rsvps/index.html",
+				),
 			},
 			output: {
 				manualChunks(id) {

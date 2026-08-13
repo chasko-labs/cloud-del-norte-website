@@ -4,7 +4,7 @@
  * Parses src/lib/streams.ts to extract all stream/podcast hostnames (with ports)
  * and emits infra/cloudfront-functions/csp-allowlist.json grouped by CSP directive.
  */
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -60,14 +60,14 @@ for (const u of knownRedirects) {
 // Wildcards for domains with multiple subdomains used at runtime
 // (redirect targets, CDN subdomains, API subdomains)
 const wildcardConnectSrc = [
-	"https://*.open-meteo.com",      // api.open-meteo.com, air-quality-api.open-meteo.com
-	"https://*.twitch.tv",           // gql.twitch.tv, embed.twitch.tv, player.twitch.tv
-	"https://*.talkpython.fm",       // talkpython.fm, download-cdn.talkpython.fm
-	"https://*.megaphone.fm",        // traffic, feeds, dcs-cached, dcs-spotify
-	"https://*.podbean.com",         // mcdn.podbean.com redirects to s*.podbean.com
-	"https://*.cloudfront.net",      // multiple CDN distributions for podcast audio
-	"https://*.token.awswaf.com",    // WAF token endpoint
-	"https://*.zeno.fm",             // stream.zeno.fm + stream-NNN.zeno.fm load-balanced subdomains
+	"https://*.open-meteo.com", // api.open-meteo.com, air-quality-api.open-meteo.com
+	"https://*.twitch.tv", // gql.twitch.tv, embed.twitch.tv, player.twitch.tv
+	"https://*.talkpython.fm", // talkpython.fm, download-cdn.talkpython.fm
+	"https://*.megaphone.fm", // traffic, feeds, dcs-cached, dcs-spotify
+	"https://*.podbean.com", // mcdn.podbean.com redirects to s*.podbean.com
+	"https://*.cloudfront.net", // multiple CDN distributions for podcast audio
+	"https://*.token.awswaf.com", // WAF token endpoint
+	"https://*.zeno.fm", // stream.zeno.fm + stream-NNN.zeno.fm load-balanced subdomains
 ];
 for (const w of wildcardConnectSrc) connectSrc.add(w);
 
@@ -103,20 +103,34 @@ const styleSrc = ["https://fonts.googleapis.com"];
 
 // Remove non-audio origins from media-src
 const nonMediaHosts = new Set([
-	"https://ipinfo.io", "https://cognito-idp.us-west-2.amazonaws.com",
-	"https://*.token.awswaf.com", "https://*.open-meteo.com",
+	"https://ipinfo.io",
+	"https://cognito-idp.us-west-2.amazonaws.com",
+	"https://*.token.awswaf.com",
+	"https://*.open-meteo.com",
 	"https://*.twitch.tv",
-	"https://api.kexp.org", "https://api.zeno.fm",
-	"https://api.composer.nprstations.org", "https://api.open-meteo.com",
-	"https://brand.nmsu.edu", "https://cargocollective.com",
-	"https://conceptoradial.com", "https://ibero909.fm",
-	"https://nmsufoundation.org", "https://udgtv.com",
-	"https://www.kexp.org", "https://www.ksfr.org", "https://www.kutx.org",
-	"https://www.radio.unam.mx", "https://www.omnycontent.com",
-	"https://feed.podbean.com", "https://media.rss.com",
-	"https://feeds.captivate.fm", "https://feeds.megaphone.fm",
-	"https://aws-podcast.s3.amazonaws.com", "https://rustacean-station.org",
-	"https://krux.nmsu.edu", "https://noasrv.caster.fm:10182",
+	"https://api.kexp.org",
+	"https://api.zeno.fm",
+	"https://api.composer.nprstations.org",
+	"https://api.open-meteo.com",
+	"https://brand.nmsu.edu",
+	"https://cargocollective.com",
+	"https://conceptoradial.com",
+	"https://ibero909.fm",
+	"https://nmsufoundation.org",
+	"https://udgtv.com",
+	"https://www.kexp.org",
+	"https://www.ksfr.org",
+	"https://www.kutx.org",
+	"https://www.radio.unam.mx",
+	"https://www.omnycontent.com",
+	"https://feed.podbean.com",
+	"https://media.rss.com",
+	"https://feeds.captivate.fm",
+	"https://feeds.megaphone.fm",
+	"https://aws-podcast.s3.amazonaws.com",
+	"https://rustacean-station.org",
+	"https://krux.nmsu.edu",
+	"https://noasrv.caster.fm:10182",
 ]);
 for (const h of nonMediaHosts) mediaSrc.delete(h);
 

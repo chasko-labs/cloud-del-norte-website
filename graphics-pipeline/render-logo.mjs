@@ -37,9 +37,15 @@ for (const [w, h, name] of targets) {
 		},
 	})
 		.composite([
-			{ input: png, left: Math.round((w - side) / 2), top: Math.round((h - side) / 2) },
+			{
+				input: png,
+				left: Math.round((w - side) / 2),
+				top: Math.round((h - side) / 2),
+			},
 		])
 		.png()
 		.toFile(join(OUT, name));
-	console.log(`wrote graphics-pipeline/renders/${name} (${w}x${h}, mark ${side}px centered)`);
+	console.log(
+		`wrote graphics-pipeline/renders/${name} (${w}x${h}, mark ${side}px centered)`,
+	);
 }

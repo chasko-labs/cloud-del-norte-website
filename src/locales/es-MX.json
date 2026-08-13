@@ -1015,6 +1015,21 @@
 			"shareUrl": "URL para compartir",
 			"done": "Listo"
 		},
+		"adminRsvps": {
+			"pageTitle": "registros de evento",
+			"tableHeader": "registros",
+			"tableDescription": "todos los registros de este evento",
+			"loadingText": "cargando registros",
+			"loadError": "no se pudieron cargar los registros",
+			"emptyText": "sin registros",
+			"colName": "nombre",
+			"colEmail": "correo",
+			"colGroup": "grupo",
+			"colRegisteredAt": "fecha de registro",
+			"colMigrated": "migrado",
+			"yes": "sí",
+			"showTestRecords": "incluir registros de prueba"
+		},
 		"meetings": {
 			"pendingApproval": "tu solicitud está pendiente. las juntas van a estar disponibles cuando te aprueben.",
 			"createPendingApproval": "tu solicitud está pendiente. crear juntas va a estar disponible cuando te aprueben.",
@@ -1115,9 +1130,9 @@
 		"successNextSteps": "¿Qué sigue? Revisa tu correo para una confirmación con el enlace de la reunión y la invitación de calendario",
 		"successBookmark": "Ve a tus sesiones el día del evento para unirte a la sesión en vivo",
 		"backLink": "← Volver a los detalles del taller",
-		"communityAccess": "¿Buscas más talleres? AWS User Group Cloud Del Norte organiza eventos regulares para aprendices del lejano oeste de Texas, Nuevo México y Chihuahua, México",
+		"communityAccess": "¿Buscas más talleres? AWS User Group Cloud Del Norte organiza eventos regulares abiertos a todos los builders",
 		"joinCdn": "Únete a Cloud Del Norte",
-		"findLocal": "¿No estás en nuestra región? Encuentra tu grupo local de AWS",
+		"findLocal": "Encuentra tu grupo local de AWS",
 		"validationError": "Por favor completa tu correo y nombre",
 		"genericError": "Algo salió mal. Intenta de nuevo",
 		"capacityFullError": "Este taller está lleno. Únete a la lista de espera en Meetup por si hay cancelaciones",
