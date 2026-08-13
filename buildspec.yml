@@ -25,6 +25,9 @@ phases:
       - test -d lib-auth/assets || { echo 'build failed - lib-auth/assets missing'; exit 1; }
       - test -f lib-awsug/index.html || { echo 'build failed - lib-awsug/index.html missing'; exit 1; }
       - test -d lib-awsug/assets || { echo 'build failed - lib-awsug/assets missing'; exit 1; }
+      # ─── quantum site build ─────────────────────────────────────────────────
+      - npx vite build --config vite.config.quantum.ts
+      - test -f lib-quantum/index.html || { echo 'build failed - lib-quantum/index.html missing'; exit 1; }
   post_build:
     commands:
       # ─── main site (clouddelnorte.org) ──────────────────────────────────────
@@ -48,8 +51,30 @@ phases:
 
       # ─── dev site (dev.clouddelnorte.org) ───────────────────────────────────
       # mirrors main-site build to dev for preview continuity
-      - aws s3 sync lib/ s3://${S3_BUCKET_DEV}/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"
+      # --exclude quantum/* and _previews/* are load-bearing: they protect the
+      # quantum sub-site and preview artifacts from --delete
+      - aws s3 sync lib/ s3://${S3_BUCKET_DEV}/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --exclude "quantum/*" --exclude "_previews/*" --cache-control "no-cache"
       - aws s3 sync lib/assets/ s3://${S3_BUCKET_DEV}/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
       - aws s3 sync s3://${S3_BUCKET_MAIN}/fiona-embed/ s3://${S3_BUCKET_DEV}/fiona-embed/ --exact-timestamps
       - aws s3 sync s3://${S3_BUCKET_MAIN}/fiona/ s3://${S3_BUCKET_DEV}/fiona/ --exact-timestamps
+
+      # ─── quantum site (quantum.clouddelnorte.org via dev bucket /quantum/) ──
+      - aws s3 sync lib-quantum/ s3://${S3_BUCKET_DEV}/quantum/ --delete --exact-timestamps
+      - aws cloudfront create-invalidation --distribution-id ${CF_DIST_DEV} --paths "/quantum/*"
+
       - aws cloudfront create-invalidation --distribution-id ${CF_DIST_DEV} --paths "/*"
+
+      # ─── post-deploy verification ──────────────────────────────────────────
+      - |
+        echo "=== Post-deploy verification ==="
+        for check in "https://clouddelnorte.org/|AWS UG Cloud del Norte" "https://quantum.clouddelnorte.org/|Amazon Braket Workshop" "https://awsug.clouddelnorte.org/|Cloud del Norte" "https://auth.clouddelnorte.org/login/index.html|Sign in"; do
+          url="${check%%|*}"
+          expected="${check##*|}"
+          title=$(curl -s "$url" | grep -o '<title>[^<]*' | head -1)
+          if echo "$title" | grep -q "$expected"; then
+            echo "  PASS: $url — $title"
+          else
+            echo "  FAIL: $url — expected '$expected', got '$title'"
+            exit 1
+          fi
+        done

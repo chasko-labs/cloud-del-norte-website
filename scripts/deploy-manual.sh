@@ -4,7 +4,7 @@
 # Replicates the Woodpecker deploy pattern for one subdomain at a time.
 #
 # Usage:
-#   ./scripts/deploy-manual.sh <main|auth|awsug|dev> [--skip-build]
+#   ./scripts/deploy-manual.sh <main|auth|awsug|dev|quantum> [--skip-build]
 #
 # Prereqs: aws cli v2, npm
 
@@ -37,8 +37,10 @@ for arg in "$@"; do
   esac
 done
 
+QUANTUM_MODE=false
+
 usage() {
-  echo "Usage: $0 <main|auth|awsug|dev> [--skip-build] [--dry-run]" >&2
+  echo "Usage: $0 <main|auth|awsug|dev|quantum> [--skip-build] [--dry-run]" >&2
   exit 1
 }
 
@@ -65,6 +67,12 @@ case "${TARGET}" in
     DIST="${CF_DIST_DEV}"
     LIB_DIR="lib"
     ;;
+  quantum)
+    BUCKET="${S3_BUCKET_DEV}"
+    DIST="${CF_DIST_DEV}"
+    LIB_DIR="lib-quantum"
+    QUANTUM_MODE=true
+    ;;
   *)
     usage
     ;;
@@ -84,6 +92,11 @@ echo ""
 if [[ "${SKIP_BUILD}" == "true" ]]; then
   echo "⚠️  WARNING: CAUTION: deploying existing build output without rebuilding."
   echo "   Only use if you just ran npm run build."
+  echo ""
+elif [[ "${QUANTUM_MODE}" == "true" ]]; then
+  echo "Building quantum site with vite.config.quantum.ts…"
+  rm -rf "${REPO_ROOT}/${LIB_DIR}"
+  npx vite build --config vite.config.quantum.ts
   echo ""
 else
   echo "Cleaning ${LIB_DIR}/ and running npm run build…"
@@ -123,87 +136,118 @@ echo ""
 # ──────────────────────────────────────────────────────────────────────────────
 
 if [[ "${DRY_RUN}" == "true" ]]; then
-  echo "[dry-run] Would sync ${LIB_PATH}/ → s3://${BUCKET}/"
+  if [[ "${QUANTUM_MODE}" == "true" ]]; then
+    echo "[dry-run] Would sync ${LIB_PATH}/ → s3://${BUCKET}/quantum/"
+  else
+    echo "[dry-run] Would sync ${LIB_PATH}/ → s3://${BUCKET}/"
+  fi
   echo "[dry-run] Would invalidate distribution ${DIST}"
   echo "=== deploy-manual dry-run complete ==="
   exit 0
 fi
 
-# pass 1: app shell — everything except tiered paths (no-cache)
-echo "Pass 1/4: app shell (no-cache)…"
-aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/" \
-  --delete \
-  --exclude "assets/*" \
-  --exclude "events/*" \
-  --exclude "brand/*" \
-  --exclude "icons/*" \
-  --exclude "data/*" \
-  --exclude "liora/*" \
-  --exclude "liora-embed/*" \
-  --exclude "fiona/*" \
-  --exclude "fiona-embed/*" \
-  --exclude "screenshots/*" \
-  --cache-control "no-cache"
+if [[ "${QUANTUM_MODE}" == "true" ]]; then
+  # ── Quantum: simple sync to quantum/ prefix ─────────────────────────────────
+  # --delete is safe here because it's scoped to the quantum/ prefix only
+  echo "Syncing quantum site to s3://${BUCKET}/quantum/…"
+  aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/quantum/" \
+    --delete \
+    --exact-timestamps
 
-# pass 2: media assets — 24h cache (events, brand, icons)
-if [[ -d "${LIB_PATH}/events" ]] || [[ -d "${LIB_PATH}/brand" ]] || [[ -d "${LIB_PATH}/icons" ]]; then
   echo ""
-  echo "Pass 2/4: media (24h, must-revalidate)…"
-  [[ -d "${LIB_PATH}/events" ]] && aws s3 sync "${LIB_PATH}/events/" "s3://${BUCKET}/events/" \
-    --delete \
-    --cache-control "public, max-age=86400, must-revalidate"
-  [[ -d "${LIB_PATH}/brand" ]] && aws s3 sync "${LIB_PATH}/brand/" "s3://${BUCKET}/brand/" \
-    --delete \
-    --cache-control "public, max-age=86400, must-revalidate"
-  [[ -d "${LIB_PATH}/icons" ]] && aws s3 sync "${LIB_PATH}/icons/" "s3://${BUCKET}/icons/" \
-    --delete \
-    --cache-control "public, max-age=86400, must-revalidate"
-fi
+  echo "Creating CloudFront invalidation for ${DIST} (quantum paths)…"
+  INVALIDATION_ID="$(aws cloudfront create-invalidation \
+    --distribution-id "${DIST}" \
+    --paths "/quantum/*" \
+    --query 'Invalidation.Id' \
+    --output text)"
 
-# pass 3: build-time data feeds — 5min cache
-if [[ -d "${LIB_PATH}/data" ]]; then
+  echo "✓ Invalidation created: ${INVALIDATION_ID}"
+  echo "  Waiting for invalidation to complete…"
+  aws cloudfront wait invalidation-completed \
+    --distribution-id "${DIST}" \
+    --id "${INVALIDATION_ID}"
+  echo "✓ Invalidation complete."
+
+else
+  # ── Standard multi-pass deploy ──────────────────────────────────────────────
+
+  # pass 1: app shell — everything except tiered paths (no-cache)
+  echo "Pass 1/4: app shell (no-cache)…"
+  aws s3 sync "${LIB_PATH}/" "s3://${BUCKET}/" \
+    --delete \
+    --exclude "assets/*" \
+    --exclude "events/*" \
+    --exclude "brand/*" \
+    --exclude "icons/*" \
+    --exclude "data/*" \
+    --exclude "liora/*" \
+    --exclude "liora-embed/*" \
+    --exclude "fiona/*" \
+    --exclude "fiona-embed/*" \
+    --exclude "screenshots/*" \
+    --exclude "quantum/*" \
+    --exclude "_previews/*" \
+    --cache-control "no-cache"
+
+  # pass 2: media assets — 24h cache (events, brand, icons)
+  if [[ -d "${LIB_PATH}/events" ]] || [[ -d "${LIB_PATH}/brand" ]] || [[ -d "${LIB_PATH}/icons" ]]; then
+    echo ""
+    echo "Pass 2/4: media (24h, must-revalidate)…"
+    [[ -d "${LIB_PATH}/events" ]] && aws s3 sync "${LIB_PATH}/events/" "s3://${BUCKET}/events/" \
+      --delete \
+      --cache-control "public, max-age=86400, must-revalidate"
+    [[ -d "${LIB_PATH}/brand" ]] && aws s3 sync "${LIB_PATH}/brand/" "s3://${BUCKET}/brand/" \
+      --delete \
+      --cache-control "public, max-age=86400, must-revalidate"
+    [[ -d "${LIB_PATH}/icons" ]] && aws s3 sync "${LIB_PATH}/icons/" "s3://${BUCKET}/icons/" \
+      --delete \
+      --cache-control "public, max-age=86400, must-revalidate"
+  fi
+
+  # pass 3: build-time data feeds — 5min cache
+  if [[ -d "${LIB_PATH}/data" ]]; then
+    echo ""
+    echo "Pass 3/4: data feeds (5min, must-revalidate)…"
+    aws s3 sync "${LIB_PATH}/data/" "s3://${BUCKET}/data/" \
+      --delete \
+      --cache-control "public, max-age=300, must-revalidate"
+  fi
+
+  # pass 4: vite hashed bundles — immutable 1y
+  if [[ -d "${LIB_PATH}/assets" ]]; then
+    echo ""
+    echo "Pass 4/4: hashed bundles (immutable, 1y)…"
+    aws s3 sync "${LIB_PATH}/assets/" "s3://${BUCKET}/assets/" \
+      --delete \
+      --cache-control "public, max-age=31536000, immutable"
+  fi
+
   echo ""
-  echo "Pass 3/4: data feeds (5min, must-revalidate)…"
-  aws s3 sync "${LIB_PATH}/data/" "s3://${BUCKET}/data/" \
-    --delete \
-    --cache-control "public, max-age=300, must-revalidate"
+
+  # ── Liora/Fiona vendor assets (awsug only) ─────────────────────────────────
+  if [[ "${TARGET}" == "awsug" ]]; then
+    echo ""
+    echo "Syncing fiona vendor assets from main bucket…"
+    aws s3 sync "s3://${S3_BUCKET_MAIN}/fiona-embed/" "s3://${BUCKET}/fiona-embed/"
+    aws s3 sync "s3://${S3_BUCKET_MAIN}/fiona/" "s3://${BUCKET}/fiona/"
+  fi
+
+  # ── CloudFront invalidation ─────────────────────────────────────────────────
+  echo "Creating CloudFront invalidation for ${DIST}…"
+  INVALIDATION_ID="$(aws cloudfront create-invalidation \
+    --distribution-id "${DIST}" \
+    --paths "/*" \
+    --query 'Invalidation.Id' \
+    --output text)"
+
+  echo "✓ Invalidation created: ${INVALIDATION_ID}"
+  echo "  Waiting for invalidation to complete…"
+  aws cloudfront wait invalidation-completed \
+    --distribution-id "${DIST}" \
+    --id "${INVALIDATION_ID}"
+  echo "✓ Invalidation complete."
 fi
-
-# pass 4: vite hashed bundles — immutable 1y
-if [[ -d "${LIB_PATH}/assets" ]]; then
-  echo ""
-  echo "Pass 4/4: hashed bundles (immutable, 1y)…"
-  aws s3 sync "${LIB_PATH}/assets/" "s3://${BUCKET}/assets/" \
-    --delete \
-    --cache-control "public, max-age=31536000, immutable"
-fi
-
-echo ""
-
-# ── Liora/Fiona vendor assets (awsug only) ───────────────────────────────────
-# The awsug bucket needs liora-embed/ and liora/ from the main bucket.
-# These are vendor assets built by chasko-labs/sumerian-hosts, not by this repo.
-if [[ "${TARGET}" == "awsug" ]]; then
-  echo ""
-  echo "Syncing fiona vendor assets from main bucket…"
-  aws s3 sync "s3://${S3_BUCKET_MAIN}/fiona-embed/" "s3://${BUCKET}/fiona-embed/"
-  aws s3 sync "s3://${S3_BUCKET_MAIN}/fiona/" "s3://${BUCKET}/fiona/"
-fi
-
-# ── CloudFront invalidation ───────────────────────────────────────────────────
-echo "Creating CloudFront invalidation for ${DIST}…"
-INVALIDATION_ID="$(aws cloudfront create-invalidation \
-  --distribution-id "${DIST}" \
-  --paths "/*" \
-  --query 'Invalidation.Id' \
-  --output text)"
-
-echo "✓ Invalidation created: ${INVALIDATION_ID}"
-echo "  Waiting for invalidation to complete…"
-aws cloudfront wait invalidation-completed \
-  --distribution-id "${DIST}" \
-  --id "${INVALIDATION_ID}"
-echo "✓ Invalidation complete."
 
 # ── Deploy log ────────────────────────────────────────────────────────────────
 DEPLOY_LOG="${REPO_ROOT}/.deploy.log"
@@ -213,15 +257,32 @@ echo "✓ Logged to ${DEPLOY_LOG}"
 
 # ── Verify ────────────────────────────────────────────────────────────────────
 case "${TARGET}" in
-  main)  VERIFY_URL="https://clouddelnorte.org/" ;;
-  auth)  VERIFY_URL="https://auth.clouddelnorte.org/" ;;
-  awsug) VERIFY_URL="https://awsug.clouddelnorte.org/" ;;
-  dev)   VERIFY_URL="https://dev.clouddelnorte.org/" ;;
+  main)    VERIFY_URL="https://clouddelnorte.org/" ;;
+  auth)    VERIFY_URL="https://auth.clouddelnorte.org/" ;;
+  awsug)   VERIFY_URL="https://awsug.clouddelnorte.org/" ;;
+  dev)     VERIFY_URL="https://dev.clouddelnorte.org/" ;;
+  quantum) VERIFY_URL="https://quantum.clouddelnorte.org/" ;;
 esac
 
 echo ""
 echo "Verifying deploy landed…"
 LAST_MOD="$(curl -sI "${VERIFY_URL}" | grep -i last-modified || echo "(no last-modified header)")"
 echo "  ${VERIFY_URL} → ${LAST_MOD}"
+
+# ── Post-deploy title verification ────────────────────────────────────────────
+echo ""
+echo "=== Post-deploy verification ==="
+for check in "https://clouddelnorte.org/|AWS UG Cloud del Norte" "https://quantum.clouddelnorte.org/|Amazon Braket Workshop" "https://awsug.clouddelnorte.org/|Cloud del Norte" "https://auth.clouddelnorte.org/login/index.html|Sign in"; do
+  url="${check%%|*}"
+  expected="${check##*|}"
+  title=$(curl -s "$url" | grep -o '<title>[^<]*' | head -1)
+  if echo "$title" | grep -q "$expected"; then
+    echo "  PASS: $url — $title"
+  else
+    echo "  FAIL: $url — expected '$expected', got '$title'"
+    exit 1
+  fi
+done
+
 echo ""
 echo "=== deploy-manual complete ==="
