@@ -54,6 +54,57 @@ opensource-codeofconduct@amazon.com with any additional questions or comments.
 If you discover a potential security issue in this project we ask that you notify AWS/Amazon Security via our [vulnerability reporting page](http://aws.amazon.com/security/vulnerability-reporting/). Please do **not** create a public github issue.
 
 
+## Testing Standards
+
+### Definition of 'Joined' for Meeting Tests
+
+A meeting test asserting 'user joined the call' MUST verify all of these steps in sequence:
+
+1. Dashboard 'Join Now' button clicked
+2. JitsiEmbed iframe appears in DOM with `src` containing `meet.clouddelnorte`
+3. Jitsi pre-join lobby loads inside iframe
+4. 'Join Meeting' button clicked INSIDE the iframe (via `frameLocator`)
+5. Conference view renders (toolbar visible, participant tiles present)
+6. Screenshot captured showing the actual conference UI
+
+A test that stops at step 2 or 3 is a **FALSE PASS** — the user has NOT joined the meeting. Merely loading the iframe or seeing the pre-join lobby does not constitute joining.
+
+### Screenshot Evidence Standards
+
+Screenshots used as evidence of a working flow must show the FINAL state, not an intermediate loading/lobby state:
+
+| Assertion | Required evidence |
+| --------- | ----------------- |
+| 'In call' | Conference toolbar visible + video area rendering |
+| 'Registered' | Success message visible + dashboard link present |
+| 'Signed in' | User identity visible in toolbar |
+| 'Meeting launched' | Status API returns `live=true` AND dashboard shows SESSION IN PROGRESS |
+
+A screenshot of a loading spinner, lobby screen, or intermediate redirect does NOT satisfy any of the above assertions.
+
+### Testing Tool Usage
+
+| Test suite | File | Purpose |
+| ---------- | ---- | ------- |
+| Meeting flow (dogfood) | `tests/dogfood-e2e.cjs` | End-to-end meeting lifecycle: create, join (mod + member), end |
+| UX persona matrix | `tests/quantum-interaction-matrix.cjs` | Multi-persona interaction coverage |
+| Accessibility audit | `tests/brutal-audit.cjs` | WCAG compliance, contrast, focus management |
+
+Run relevant test suites before declaring any flow 'working'. A flow is not verified until:
+- The test passes (exit 0)
+- Screenshots show the final expected state (not intermediate)
+- Screenshots are uploaded to `s3://dev.clouddelnorte.org/_previews/` and reachable via HTTPS
+
+### False Pass Prevention Checklist
+
+Before marking a meeting flow test as passing:
+
+- [ ] iframe `src` verified (not just iframe element presence)
+- [ ] Actions taken INSIDE iframe via `frameLocator` (not on parent page)
+- [ ] Toolbar or conference-specific element waited for AFTER clicking join
+- [ ] Screenshot taken AFTER conference view renders (not during lobby)
+- [ ] Test comments explicitly define what 'joined' means at each assertion point
+
 ## Licensing
 
 See the [LICENSE](LICENSE) file for our project's licensing. We will ask you to confirm the licensing of your contribution.
