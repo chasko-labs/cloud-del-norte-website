@@ -1,3 +1,7 @@
+// QUANTUM FLOW MANDATE: users must never exit quantum and land stranded in the UG system.
+// Every external link either carries ?return_to= back to /auth-callback/#return_to=<quantum-path>
+// or opens in a new tab (target="_blank") so the quantum tab persists.
+
 import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
@@ -349,7 +353,7 @@ function RegisterForm() {
 				<SpaceBetween size="xs">
 					<Box>{t("quantumRegister.communityAccess")}</Box>
 					<Box>
-						<Link href="https://auth.clouddelnorte.org/signup/index.html">
+						<Link href="https://auth.clouddelnorte.org/signup/index.html?return_to=https://quantum.clouddelnorte.org/auth-callback/%23return_to=/dashboard/">
 							{t("quantumRegister.joinCdn")}
 						</Link>
 						{" · "}

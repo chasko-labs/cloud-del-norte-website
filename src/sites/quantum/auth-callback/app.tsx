@@ -1,3 +1,7 @@
+// QUANTUM FLOW MANDATE: users must never exit quantum and land stranded in the UG system.
+// Every external link either carries ?return_to= back to /auth-callback/#return_to=<quantum-path>
+// or opens in a new tab (target="_blank") so the quantum tab persists.
+
 import { useEffect } from "react";
 
 export default function App() {

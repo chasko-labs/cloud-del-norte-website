@@ -1,3 +1,7 @@
+// QUANTUM FLOW MANDATE: users must never exit quantum and land stranded in the UG system.
+// Every external link either carries ?return_to= back to /auth-callback/#return_to=<quantum-path>
+// or opens in a new tab (target="_blank") so the quantum tab persists.
+
 import Alert from "@cloudscape-design/components/alert";
 import Badge from "@cloudscape-design/components/badge";
 import Box from "@cloudscape-design/components/box";
@@ -429,7 +433,7 @@ function RegisteredView() {
 							{t("quantumDashboard.signInExplanation")}
 						</Box>
 						<Box>
-							<Link href="https://clouddelnorte.org/">
+							<Link href="https://clouddelnorte.org/" external>
 								{t("quantumDashboard.wantFullAccess")}
 							</Link>
 						</Box>
@@ -446,7 +450,7 @@ function RegisteredView() {
 							{t("quantumDashboard.joinOnEventDayBody")}
 						</Box>
 						<Box>
-							<Link href="https://clouddelnorte.org/">
+							<Link href="https://clouddelnorte.org/" external>
 								{t("quantumDashboard.wantFullAccess")}
 							</Link>
 						</Box>
@@ -464,11 +468,15 @@ function RegisteredView() {
 						<Box color="text-body-secondary">
 							{t("quantumDashboard.passkeyOfferBody")}
 						</Box>
+						<Box color="text-body-secondary" fontSize="body-s">
+							{t("quantumDashboard.passkeyNote")}
+						</Box>
 						<SpaceBetween direction="horizontal" size="s">
 							<Button
 								variant="primary"
-								href="https://auth.clouddelnorte.org/passkeys/index.html"
-								target="_blank"
+								href="https://auth.clouddelnorte.org/passkeys/index.html?return_to=https://quantum.clouddelnorte.org/auth-callback/%23return_to=/dashboard/"
+								iconName="external"
+								iconAlign="right"
 							>
 								{t("quantumDashboard.passkeyButton")}
 							</Button>

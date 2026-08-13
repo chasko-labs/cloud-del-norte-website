@@ -1,3 +1,7 @@
+// QUANTUM FLOW MANDATE: users must never exit quantum and land stranded in the UG system.
+// Every external link either carries ?return_to= back to /auth-callback/#return_to=<quantum-path>
+// or opens in a new tab (target="_blank") so the quantum tab persists.
+
 import Box from "@cloudscape-design/components/box";
 import Container from "@cloudscape-design/components/container";
 import Grid from "@cloudscape-design/components/grid";
