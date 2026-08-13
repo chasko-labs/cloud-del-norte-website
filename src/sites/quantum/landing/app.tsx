@@ -261,19 +261,6 @@ function LandingContent() {
 
 	return (
 		<SpaceBetween size="xl">
-			{/* CTA 1: Sign in — small, understated, implies returning visitors */}
-			<Box textAlign="right">
-				{loggedIn || registered ? (
-					<Link href={DASHBOARD_URL} fontSize="body-m">
-						{t("quantum.goToDashboard")}
-					</Link>
-				) : (
-					<Link href={DASHBOARD_URL} fontSize="body-m">
-						{t("quantum.signIn")}
-					</Link>
-				)}
-			</Box>
-
 			{/* Hero */}
 			<div className="quantum-hero-atmosphere">
 				<Container>
