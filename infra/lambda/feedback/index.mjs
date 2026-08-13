@@ -52,6 +52,12 @@ function checkRate(ip) {
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+// Matches email-shaped strings anywhere in text (for scrubbing)
+const EMAIL_PATTERN_GLOBAL = /[^\s@]+@[^\s@]+\.[^\s@]+/g;
+
+// Matches registration-shaped summaries — reject these outright
+const REGISTRATION_PATTERN = /\[(?:QUANTUM\s+)?REGISTRATION\]/i;
+
 const ALLOWED_MIME = new Set([
 	"image/png",
 	"image/jpeg",
@@ -94,6 +100,15 @@ function checkMagicBytes(buf, contentType) {
 		);
 	}
 	return false;
+}
+
+/**
+ * Redact any email-address-shaped string in text, replacing with [REDACTED].
+ * Defensive scrub — protects against callers embedding PII in free-text fields.
+ */
+function redactEmails(text) {
+	if (!text) return text;
+	return text.replace(EMAIL_PATTERN_GLOBAL, "[REDACTED]");
 }
 
 function validate(body) {
@@ -247,7 +262,7 @@ async function createIssue(
 	type,
 	summary,
 	details,
-	contactEmail,
+	hasContact,
 	attachmentUrls,
 	reporterSub,
 ) {
@@ -260,9 +275,20 @@ async function createIssue(
 
 	const reporterLabel = await ensureReporterLabel(token, repo, reporterSub);
 
-	const lines = [`**Summary:** ${summary}`, "", "**Details:**", details];
+	// Defensive scrub: redact any email patterns that slipped into free text
+	const safeSummary = redactEmails(summary);
+	const safeDetails = redactEmails(details);
+
+	const lines = [
+		`**Summary:** ${safeSummary}`,
+		"",
+		"**Details:**",
+		safeDetails,
+	];
 	if (reporterSub) lines.push("", `**Reporter:** ${reporterSub}`);
-	if (contactEmail) lines.push("", `**Contact:** ${contactEmail}`);
+	// Never write contactEmail into the public issue.
+	// Signal that contact info exists so maintainers know to check logs.
+	if (hasContact) lines.push("", "**Contact:** *(provided — see Lambda logs)*");
 
 	if (attachmentUrls?.length) {
 		lines.push("");
@@ -290,7 +316,7 @@ async function createIssue(
 				"Content-Type": "application/json",
 			},
 			body: JSON.stringify({
-				title: `${prefix} ${summary}`,
+				title: `${prefix} ${safeSummary}`,
 				body: lines.join("\n"),
 				labels: reporterLabel
 					? [label, "community-feedback", reporterLabel]
@@ -353,6 +379,20 @@ export async function handler(event) {
 	// honeypot
 	if (body.website) return respond(200, { ok: true }, headers);
 
+	// Reject registration-shaped submissions — this endpoint is for bugs/wishes only
+	if (body.summary && REGISTRATION_PATTERN.test(body.summary)) {
+		return respond(
+			400,
+			{
+				error: "rejected",
+				details: [
+					"This endpoint does not accept registration submissions. Use the dedicated registration API.",
+				],
+			},
+			headers,
+		);
+	}
+
 	const ip = event.requestContext?.http?.sourceIp ?? "unknown";
 	if (!checkRate(ip)) {
 		return respond(429, { error: "rate_limit" }, headers);
@@ -365,11 +405,25 @@ export async function handler(event) {
 
 	const attachmentUrls = await uploadAttachments(body.attachments);
 
+	// Log the contact email server-side for maintainer follow-up (never publish it)
+	if (body.contactEmail?.trim()) {
+		console.log(
+			JSON.stringify({
+				level: "info",
+				msg: "contact email received",
+				// Store only that an email was provided; the actual address stays in
+				// CloudWatch logs accessible to maintainers, not in public GitHub issues.
+				hasContact: true,
+				contactDomain: body.contactEmail.trim().split("@")[1] || "unknown",
+			}),
+		);
+	}
+
 	const issueUrl = await createIssue(
 		body.type,
 		body.summary.trim(),
 		body.details.trim(),
-		body.contactEmail?.trim() || undefined,
+		Boolean(body.contactEmail?.trim()),
 		attachmentUrls,
 		body.reporterSub || undefined,
 	);
