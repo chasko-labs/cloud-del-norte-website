@@ -1120,6 +1120,8 @@
 		"findLocal": "¿No estás en nuestra región? Encuentra tu grupo local de AWS",
 		"validationError": "Por favor completa tu correo y nombre",
 		"genericError": "Algo salió mal. Intenta de nuevo",
+		"capacityFullError": "Este taller está lleno. Únete a la lista de espera en Meetup por si hay cancelaciones",
+		"authRequiredError": "Para registrarte necesitas una cuenta de Cloud Del Norte. Regístrate arriba para apartar tu lugar",
 		"memberWelcome": "¡Bienvenido, {{name}}!",
 		"memberConfirmRsvp": "Confirma tu RSVP",
 		"memberAlreadyRegistered": "Estás confirmado para el taller cuántico",

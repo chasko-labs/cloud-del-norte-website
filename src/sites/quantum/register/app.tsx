@@ -14,6 +14,7 @@ import Select from "@cloudscape-design/components/select";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
+import { addRsvp } from "../../../lib/rsvp";
 import {
 	applyLocale,
 	initializeLocale,
@@ -28,8 +29,9 @@ import {
 } from "../../../utils/theme";
 import QuantumLayout from "../_layout";
 
-const FEEDBACK_API =
-	"https://rknnfq6urf.execute-api.us-west-2.amazonaws.com/feedback";
+const RSVP_API = "https://tta0e43bs0.execute-api.us-west-2.amazonaws.com/prod";
+
+const QUANTUM_EVENT_ID = "quantum-superpositions-2026-08-30";
 
 const GOOGLE_CALENDAR_URL =
 	"https://calendar.google.com/calendar/render?action=TEMPLATE&text=Quantum+Computing+Workshop+-+Amazon+Braket&dates=20260830T210000Z/20260831T000000Z&details=Hands-on+Amazon+Braket+workshop.+quantum.clouddelnorte.org&location=Online+(quantum.clouddelnorte.org)";
@@ -82,24 +84,23 @@ function MemberRsvp({ user }: { user: AuthUser }) {
 		setLoading(true);
 		setError("");
 		try {
-			const res = await fetch(FEEDBACK_API, {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					type: "wish",
-					summary: `[QUANTUM REGISTRATION] ${user.name}`,
-					details: `Email: ${user.email}\nName: ${user.name}\nGroup: Cloud Del Norte (member)\nEvent: Quantum Superpositions Aug 30, 2026`,
-					email: user.email,
-				}),
+			await addRsvp({
+				eventId: QUANTUM_EVENT_ID,
+				name: user.name,
+				email: user.email,
 			});
-			if (!res.ok) throw new Error(`HTTP ${res.status}`);
 			setConfirmed(true);
 			localStorage.setItem(
 				"cdn-quantum-registered",
 				JSON.stringify({ email: user.email, date: new Date().toISOString() }),
 			);
-		} catch (_e) {
-			setError(t("quantumRegister.genericError"));
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : "";
+			if (msg === "capacity_full") {
+				setError(t("quantumRegister.capacityFullError"));
+			} else {
+				setError(t("quantumRegister.genericError"));
+			}
 		} finally {
 			setLoading(false);
 		}
@@ -220,24 +221,40 @@ function RegisterForm() {
 		setLoading(true);
 		setError("");
 		try {
-			const res = await fetch(FEEDBACK_API, {
+			const res = await fetch(`${RSVP_API}/rsvp`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
 				body: JSON.stringify({
-					type: "wish",
-					summary: `[QUANTUM REGISTRATION] ${name}`,
-					details: `Email: ${email}\nName: ${name}\nGroup: ${group?.label ?? "not specified"}\nEvent: Quantum Superpositions Aug 30, 2026`,
+					eventId: QUANTUM_EVENT_ID,
+					name,
 					email,
+					group: group?.value ?? null,
 				}),
 			});
-			if (!res.ok) throw new Error(`HTTP ${res.status}`);
+			if (!res.ok) {
+				const body = (await res.json().catch(() => ({}))) as { error?: string };
+				if (res.status === 401) {
+					throw new Error("auth_required");
+				}
+				if (res.status === 409) {
+					throw new Error("capacity_full");
+				}
+				throw new Error(body.error ?? "generic");
+			}
 			setSuccess(true);
 			localStorage.setItem(
 				"cdn-quantum-registered",
 				JSON.stringify({ email, date: new Date().toISOString() }),
 			);
-		} catch (_e) {
-			setError(t("quantumRegister.genericError"));
+		} catch (e) {
+			const msg = e instanceof Error ? e.message : "";
+			if (msg === "auth_required") {
+				setError(t("quantumRegister.authRequiredError"));
+			} else if (msg === "capacity_full") {
+				setError(t("quantumRegister.capacityFullError"));
+			} else {
+				setError(t("quantumRegister.genericError"));
+			}
 		} finally {
 			setLoading(false);
 		}
