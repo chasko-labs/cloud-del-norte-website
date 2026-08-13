@@ -543,74 +543,80 @@ function LandingContent() {
 			</Container>
 
 			{/* Digital Badge Section */}
-			<Container
-				header={
-					<Header variant="h2" description={t("quantum.badgeSectionNoCost")}>
-						{t("quantum.badgeSectionHeader")}
-					</Header>
-				}
-			>
-				<SpaceBetween size="m">
-					<Box fontSize="body-m">{t("quantum.badgeSectionIntro")}</Box>
+			<div className="quantum-card--origami">
+				<Container
+					header={
+						<Header variant="h2" description={t("quantum.badgeSectionNoCost")}>
+							{t("quantum.badgeSectionHeader")}
+						</Header>
+					}
+				>
+					<SpaceBetween size="m">
+						<Box fontSize="body-m">{t("quantum.badgeSectionIntro")}</Box>
 
-					<Grid
-						gridDefinition={[{ colspan: 4 }, { colspan: 4 }, { colspan: 4 }]}
-					>
-						{/* Before */}
-						<SpaceBetween size="xs">
-							<Box fontWeight="bold" fontSize="heading-s">
-								{t("quantum.badgeSectionBeforeLabel")}
-							</Box>
-							<Box fontSize="body-m">{t("quantum.badgeSectionBeforeText")}</Box>
-							<SpaceBetween size="xxs">
+						<Grid
+							gridDefinition={[{ colspan: 4 }, { colspan: 4 }, { colspan: 4 }]}
+						>
+							{/* Before */}
+							<SpaceBetween size="xs">
+								<Box fontWeight="bold" fontSize="heading-s">
+									{t("quantum.badgeSectionBeforeLabel")}
+								</Box>
+								<Box fontSize="body-m">
+									{t("quantum.badgeSectionBeforeText")}
+								</Box>
+								<SpaceBetween size="xxs">
+									<Link
+										href="https://builder.aws.com/content/3FFVnDe3HIsgHRwAz0zPsKBgjZv/dear-builder-welcome-to-quantum-computing"
+										external
+									>
+										{t("quantum.badgeSectionArticle1")}
+									</Link>
+									<Link
+										href="https://builder.aws.com/content/3GaxVTZeaL9pWzjXj3k7tMynzbI/a-developers-field-guide-to-amazon-braket"
+										external
+									>
+										{t("quantum.badgeSectionArticle2")}
+									</Link>
+								</SpaceBetween>
+							</SpaceBetween>
+
+							{/* During */}
+							<SpaceBetween size="xs">
+								<Box fontWeight="bold" fontSize="heading-s">
+									{t("quantum.badgeSectionDuringLabel")}
+								</Box>
+								<Box fontSize="body-m">
+									<ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+										<li>{t("quantum.badgeSectionDuring1")}</li>
+										<li>{t("quantum.badgeSectionDuring2")}</li>
+										<li>{t("quantum.badgeSectionDuring3")}</li>
+									</ul>
+								</Box>
+							</SpaceBetween>
+
+							{/* After */}
+							<SpaceBetween size="xs">
+								<Box fontWeight="bold" fontSize="heading-s">
+									{t("quantum.badgeSectionAfterLabel")}
+								</Box>
+								<Box fontSize="body-m">
+									{t("quantum.badgeSectionAfterText")}
+								</Box>
+								<Box fontSize="body-s" color="text-body-secondary">
+									{t("quantum.badgeSectionProves")}
+								</Box>
 								<Link
-									href="https://builder.aws.com/content/3FFVnDe3HIsgHRwAz0zPsKBgjZv/dear-builder-welcome-to-quantum-computing"
+									href="https://explore.skillbuilder.aws/learn/learning_plan/view/2252/amazon-braket-badge-readiness-path"
 									external
 								>
-									{t("quantum.badgeSectionArticle1")}
-								</Link>
-								<Link
-									href="https://builder.aws.com/content/3GaxVTZeaL9pWzjXj3k7tMynzbI/a-developers-field-guide-to-amazon-braket"
-									external
-								>
-									{t("quantum.badgeSectionArticle2")}
+									{t("quantum.badgeSectionSkillBuilderLink")}
 								</Link>
 							</SpaceBetween>
-						</SpaceBetween>
-
-						{/* During */}
-						<SpaceBetween size="xs">
-							<Box fontWeight="bold" fontSize="heading-s">
-								{t("quantum.badgeSectionDuringLabel")}
-							</Box>
-							<Box fontSize="body-m">
-								<ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
-									<li>{t("quantum.badgeSectionDuring1")}</li>
-									<li>{t("quantum.badgeSectionDuring2")}</li>
-									<li>{t("quantum.badgeSectionDuring3")}</li>
-								</ul>
-							</Box>
-						</SpaceBetween>
-
-						{/* After */}
-						<SpaceBetween size="xs">
-							<Box fontWeight="bold" fontSize="heading-s">
-								{t("quantum.badgeSectionAfterLabel")}
-							</Box>
-							<Box fontSize="body-m">{t("quantum.badgeSectionAfterText")}</Box>
-							<Box fontSize="body-s" color="text-body-secondary">
-								{t("quantum.badgeSectionProves")}
-							</Box>
-							<Link
-								href="https://explore.skillbuilder.aws/learn/learning_plan/view/2252/amazon-braket-badge-readiness-path"
-								external
-							>
-								{t("quantum.badgeSectionSkillBuilderLink")}
-							</Link>
-						</SpaceBetween>
-					</Grid>
-				</SpaceBetween>
-			</Container>
+						</Grid>
+					</SpaceBetween>
+				</Container>
+			</div>
 
 			{/* Description */}
 			<Container
@@ -620,127 +626,133 @@ function LandingContent() {
 			</Container>
 
 			{/* Hosts / Speakers */}
-			<Container
-				header={<Header variant="h2">{t("quantum.hostsHeader")}</Header>}
-			>
-				<Grid gridDefinition={[{ colspan: 4 }, { colspan: 4 }, { colspan: 4 }]}>
-					<SpaceBetween size="xs" alignItems="center">
-						<div style={{ position: "relative", display: "inline-block" }}>
-							<img
-								src={CHRISTIAN_AVATAR}
-								alt="Christian Perez"
-								style={{
-									width: 100,
-									height: 100,
-									borderRadius: "50%",
-									border: "3px solid #c9a23f",
-									boxShadow: "0 0 20px rgba(201,162,63,0.3)",
-								}}
-							/>
-							<span
-								style={{
-									position: "absolute",
-									top: "-4px",
-									right: "-4px",
-									background: "linear-gradient(135deg,#c9a23f,#daa520)",
-									color: "#1a0a00",
-									fontSize: "0.875rem",
-									fontWeight: 800,
-									padding: "2px 10px",
-									borderRadius: "4px",
-									letterSpacing: "0.06em",
-								}}
+			<div className="quantum-card--lattices">
+				<Container
+					header={<Header variant="h2">{t("quantum.hostsHeader")}</Header>}
+				>
+					<Grid
+						gridDefinition={[{ colspan: 4 }, { colspan: 4 }, { colspan: 4 }]}
+					>
+						<SpaceBetween size="xs" alignItems="center">
+							<div style={{ position: "relative", display: "inline-block" }}>
+								<img
+									src={CHRISTIAN_AVATAR}
+									alt="Christian Perez"
+									style={{
+										width: 100,
+										height: 100,
+										borderRadius: "50%",
+										border: "3px solid #c9a23f",
+										boxShadow: "0 0 20px rgba(201,162,63,0.3)",
+									}}
+								/>
+								<span
+									style={{
+										position: "absolute",
+										top: "-4px",
+										right: "-4px",
+										background: "linear-gradient(135deg,#c9a23f,#daa520)",
+										color: "#1a0a00",
+										fontSize: "0.875rem",
+										fontWeight: 800,
+										padding: "2px 10px",
+										borderRadius: "4px",
+										letterSpacing: "0.06em",
+									}}
+								>
+									{t("quantum.hostBadge")}
+								</span>
+							</div>
+							<Box fontWeight="bold" fontSize="heading-s">
+								<Link href={CHRISTIAN_PROFILE} external>
+									Christian Perez
+								</Link>
+							</Box>
+							<Box color="text-body-secondary" fontSize="body-s">
+								{t("quantum.christianTitle")}
+							</Box>
+							<Box
+								color="text-body-secondary"
+								fontSize="body-s"
+								textAlign="center"
 							>
-								{t("quantum.hostBadge")}
-							</span>
-						</div>
-						<Box fontWeight="bold" fontSize="heading-s">
-							<Link href={CHRISTIAN_PROFILE} external>
-								Christian Perez
-							</Link>
-						</Box>
-						<Box color="text-body-secondary" fontSize="body-s">
-							{t("quantum.christianTitle")}
-						</Box>
-						<Box
-							color="text-body-secondary"
-							fontSize="body-s"
-							textAlign="center"
-						>
-							{t("quantum.christianBio")}
-						</Box>
-					</SpaceBetween>
-					<SpaceBetween size="xs" alignItems="center">
-						<img
-							src={AMELIA_AVATAR}
-							alt="Amelia Hough-Ross"
-							style={{ width: 80, height: 80, borderRadius: "50%" }}
-						/>
-						<Box fontWeight="bold">
-							<Link href={AMELIA_PROFILE} external>
-								Amelia Hough-Ross
-							</Link>
-						</Box>
-						<Box color="text-body-secondary" fontSize="body-s">
-							{t("quantum.ameliaTitle")}
-						</Box>
-					</SpaceBetween>
-					<SpaceBetween size="xs" alignItems="center">
-						<img
-							src={BRYAN_AVATAR}
-							alt="Bryan Chasko"
-							style={{ width: 80, height: 80, borderRadius: "50%" }}
-						/>
-						<Box fontWeight="bold">
-							<Link href={BRYAN_PROFILE} external>
-								Bryan Chasko
-							</Link>
-						</Box>
-						<Box color="text-body-secondary" fontSize="body-s">
-							{t("quantum.bryanTitle")}
-						</Box>
-					</SpaceBetween>
-				</Grid>
-			</Container>
+								{t("quantum.christianBio")}
+							</Box>
+						</SpaceBetween>
+						<SpaceBetween size="xs" alignItems="center">
+							<img
+								src={AMELIA_AVATAR}
+								alt="Amelia Hough-Ross"
+								style={{ width: 80, height: 80, borderRadius: "50%" }}
+							/>
+							<Box fontWeight="bold">
+								<Link href={AMELIA_PROFILE} external>
+									Amelia Hough-Ross
+								</Link>
+							</Box>
+							<Box color="text-body-secondary" fontSize="body-s">
+								{t("quantum.ameliaTitle")}
+							</Box>
+						</SpaceBetween>
+						<SpaceBetween size="xs" alignItems="center">
+							<img
+								src={BRYAN_AVATAR}
+								alt="Bryan Chasko"
+								style={{ width: 80, height: 80, borderRadius: "50%" }}
+							/>
+							<Box fontWeight="bold">
+								<Link href={BRYAN_PROFILE} external>
+									Bryan Chasko
+								</Link>
+							</Box>
+							<Box color="text-body-secondary" fontSize="body-s">
+								{t("quantum.bryanTitle")}
+							</Box>
+						</SpaceBetween>
+					</Grid>
+				</Container>
+			</div>
 
 			{/* CTA 3: Meetup groups — "Run by AWS communities" */}
-			<Container
-				header={<Header variant="h2">{t("quantum.groupsHeader")}</Header>}
-			>
-				<SpaceBetween size="m">
-					{MEETUP_GROUPS.map((group) => (
-						<div key={group.url} className="quantum-meetup-group">
-							<MeetupLogo size={22} />
-							<div className="quantum-meetup-group__info">
+			<div className="quantum-card--prism">
+				<Container
+					header={<Header variant="h2">{t("quantum.groupsHeader")}</Header>}
+				>
+					<SpaceBetween size="m">
+						{MEETUP_GROUPS.map((group) => (
+							<div key={group.url} className="quantum-meetup-group">
+								<MeetupLogo size={22} />
+								<div className="quantum-meetup-group__info">
+									<a
+										href={group.url}
+										target="_blank"
+										rel="noopener noreferrer"
+										className="quantum-meetup-group__name"
+									>
+										{group.name}
+									</a>
+									<span className="quantum-meetup-group__location">
+										{group.location}
+									</span>
+								</div>
 								<a
 									href={group.url}
 									target="_blank"
 									rel="noopener noreferrer"
-									className="quantum-meetup-group__name"
+									className="quantum-meetup-group__rsvp"
 								>
-									{group.name}
+									{t("quantum.rsvpMeetup")}
 								</a>
-								<span className="quantum-meetup-group__location">
-									{group.location}
-								</span>
 							</div>
-							<a
-								href={group.url}
-								target="_blank"
-								rel="noopener noreferrer"
-								className="quantum-meetup-group__rsvp"
-							>
-								{t("quantum.rsvpMeetup")}
-							</a>
-						</div>
-					))}
-					<Box fontSize="body-s" color="text-body-secondary">
-						<Link href={GLOBAL_UG_URL} external>
-							{t("quantum.findLocal")}
-						</Link>
-					</Box>
-				</SpaceBetween>
-			</Container>
+						))}
+						<Box fontSize="body-s" color="text-body-secondary">
+							<Link href={GLOBAL_UG_URL} external>
+								{t("quantum.findLocal")}
+							</Link>
+						</Box>
+					</SpaceBetween>
+				</Container>
+			</div>
 
 			{/* Footer CTA — register repeat */}
 			<Box textAlign="center">

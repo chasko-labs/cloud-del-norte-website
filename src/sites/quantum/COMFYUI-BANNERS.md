@@ -182,3 +182,47 @@ public/brand/quantum/
 ├── quantum-card-speakers-600x400.webp
 └── quantum-card-sessions-600x400.webp
 ```
+
+## Lessons Learned — Diffusion vs Programmatic Generation
+
+### Rule: when to use diffusion, when to use Pillow
+
+**SDXL is correct for:** organic atmospheric gradients with directional light, nebula-style washes, depth-of-field bokeh, painterly color field transitions, any composition where imperfection and organic variation are desirable.
+
+**SDXL is WRONG for:** clean geometric gradients, uniform horizontal bands, precise color swatches, any composition requiring mathematically exact color transitions. Use Pillow (or equivalent programmatic tool) for those.
+
+### What went wrong and how it was fixed
+
+| prompt intent | actual result | fix |
+|---|---|---|
+| "uniform horizontal bands" of brand colors | literal color-swatch chart with white divider lines between bands | do not name geometric structures in positive prompt |
+| prompts naming objects in space (e.g. "prism", "lattice structure") | unwanted architecture, hard seams, rigid geometric artifacts | remove object nouns from positive; describe only color transitions and atmospheric qualities |
+| object-free prompts describing only color transitions + atmospheric qualities | correct organic gradient plates with directional light | this is the winning pattern |
+
+### The canonical positive prompt skeleton for CDN atmospheric plates
+
+```
+ben-day halftone dot field, atmospheric gradient wash, no hard lines,
+[color transition description using word-names not hex],
+[mood/depth descriptor],
+[art movement reference for tonal guidance]
+```
+
+Never include: hex codes, geometric nouns (grid, lattice, pattern, structure, framework, bands), object nouns that SDXL will render literally.
+
+### OG card (quantum-og-1200x630.png) — generated with Pillow, not diffusion
+
+The OG social card required exact brand-color horizontal bands with text composite. This is fundamentally a programmatic task — SDXL cannot produce pixel-exact color fields. Generated via Python Pillow: navy base, purple/violet/lavender bands at exact coordinates, "Quantum Computing Workshop Series" text in Cinzel 600 white, CDN logo composite top-center.
+
+## Approved Seeds — Locked Production Renders
+
+All renders: SDXL Base 1.0, 768x512 (cards) or 1920x768→crop (hero), euler_ancestral sampler, karras scheduler, cfg 4.5, 30 steps.
+
+| deliverable | seed | final crop |
+|---|---|---|
+| quantum-hero-1920x600 | 710042013 | 1920x768 → bottom 168px removed → 1920x600 |
+| quantum-card-origami-600x400 | 710042031 | 768x512 → center crop 600x400 |
+| quantum-card-lattices-600x400 | 830041001 | 768x512 → center crop 600x400 |
+| quantum-card-prism-600x400 | 830041002 | 768x512 → center crop 600x400 |
+
+Reproduction: load these seeds into the same checkpoint (SDXL Base 1.0) with identical params above. Output will be deterministic to the pixel on the same hardware (ROCm RX 6700 XT). Cross-hardware reproduction may vary due to floating-point differences.
