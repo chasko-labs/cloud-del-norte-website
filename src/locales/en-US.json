@@ -1120,6 +1120,8 @@
 		"findLocal": "Not in our region? Find your local AWS User Group",
 		"validationError": "Please fill in your email and name",
 		"genericError": "Something went wrong. Please try again",
+		"capacityFullError": "This workshop is full. Join the waitlist on Meetup for cancellation spots",
+		"authRequiredError": "Registration requires a Cloud Del Norte account. Sign up above to reserve your spot",
 		"memberWelcome": "Welcome back, {{name}}!",
 		"memberConfirmRsvp": "Confirm your RSVP",
 		"memberAlreadyRegistered": "You're confirmed for the quantum workshop",
