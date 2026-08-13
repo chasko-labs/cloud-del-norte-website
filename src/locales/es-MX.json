@@ -1028,6 +1028,9 @@
 			"colRegisteredAt": "fecha de registro",
 			"colMigrated": "migrado",
 			"yes": "sí",
+			"no": "no",
+			"noValue": "sin dato",
+			"noGroup": "sin grupo",
 			"showTestRecords": "incluir registros de prueba",
 			"selectEvent": "seleccionar evento"
 		},
