@@ -189,7 +189,7 @@ export default function JitsiEmbed({
 					width: "100%",
 					height: 640,
 					configOverwrite: {
-						prejoinPageEnabled: true,
+						prejoinPageEnabled: false,
 						startWithAudioMuted: true,
 						startWithVideoMuted: true,
 						dynamicBrandingUrl: "",
