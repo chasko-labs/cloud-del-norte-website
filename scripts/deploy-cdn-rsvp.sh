@@ -6,6 +6,13 @@ set -euo pipefail
 # scripts/deploy-cdn-rsvp-apigw.sh).
 # Profile: jitsi-video-hosting (account 170473530355, us-west-2)
 #
+# DRIFT WARNING: Never use `aws lambda update-function-configuration` ad-hoc.
+# That command REPLACES the entire Environment block — any variable not in
+# the --environment payload is silently deleted. Always re-run this script
+# to update env vars so all declared variables (RSVP_TABLE, EVENT_CAPACITIES,
+# USER_POOL_ID) stay in sync. Incident: 2026-08-13, ad-hoc update dropped
+# EVENT_CAPACITIES + USER_POOL_ID, breaking RSVP creation (404 unknown_event).
+#
 # NOTE: Environment variables are written to a tmp JSON file via jq and passed
 # as `--environment file:///tmp/cdn-rsvp-env.json` (instead of the AWS CLI
 # `Variables={k=v,...}` shorthand). EVENT_CAPACITIES contains JSON with commas,
