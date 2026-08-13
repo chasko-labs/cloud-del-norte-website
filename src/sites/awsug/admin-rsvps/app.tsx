@@ -66,21 +66,21 @@ function RegistrationsTable() {
 		{
 			id: "name",
 			header: t("awsug.adminRsvps.colName"),
-			cell: (r: AdminRsvpRecord) => r.name ?? "—",
+			cell: (r: AdminRsvpRecord) => r.name ?? t("awsug.adminRsvps.noValue"),
 			sortingField: "name",
 			minWidth: 160,
 		},
 		{
 			id: "email",
 			header: t("awsug.adminRsvps.colEmail"),
-			cell: (r: AdminRsvpRecord) => r.email ?? "—",
+			cell: (r: AdminRsvpRecord) => r.email ?? t("awsug.adminRsvps.noValue"),
 			sortingField: "email",
 			minWidth: 200,
 		},
 		{
 			id: "group",
 			header: t("awsug.adminRsvps.colGroup"),
-			cell: (r: AdminRsvpRecord) => r.group ?? "—",
+			cell: (r: AdminRsvpRecord) => r.group ?? t("awsug.adminRsvps.noGroup"),
 			sortingField: "group",
 			minWidth: 120,
 		},
@@ -88,7 +88,9 @@ function RegistrationsTable() {
 			id: "createdAt",
 			header: t("awsug.adminRsvps.colRegisteredAt"),
 			cell: (r: AdminRsvpRecord) =>
-				r.created_at ? new Date(r.created_at).toLocaleString() : "—",
+				r.created_at
+					? new Date(r.created_at).toLocaleString()
+					: t("awsug.adminRsvps.noValue"),
 			sortingField: "created_at",
 			minWidth: 180,
 		},
@@ -96,7 +98,7 @@ function RegistrationsTable() {
 			id: "migrated",
 			header: t("awsug.adminRsvps.colMigrated"),
 			cell: (r: AdminRsvpRecord) =>
-				r.migrated ? t("awsug.adminRsvps.yes") : "—",
+				r.migrated ? t("awsug.adminRsvps.yes") : t("awsug.adminRsvps.no"),
 			sortingField: "migrated",
 			minWidth: 100,
 		},

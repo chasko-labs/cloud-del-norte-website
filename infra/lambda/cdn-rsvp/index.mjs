@@ -264,6 +264,73 @@ export async function lookupUser(userSub) {
 	return out;
 }
 
+// ── admin route handlers ─────────────────────────────────────────────────────
+
+/** Decode the cognito:groups claim from the JWT to verify moderator status. */
+function decodeJwtGroups(authHeader) {
+	try {
+		if (!authHeader?.startsWith("Bearer ")) return [];
+		const token = authHeader.slice(7);
+		const parts = token.split(".");
+		if (parts.length < 2) return [];
+		const payload = JSON.parse(
+			Buffer.from(
+				parts[1].replace(/-/g, "+").replace(/_/g, "/"),
+				"base64",
+			).toString("utf8"),
+		);
+		return payload["cognito:groups"] || [];
+	} catch {
+		return [];
+	}
+}
+
+async function handleAdminListRsvps(event, headers) {
+	const authHeader =
+		event.headers?.authorization || event.headers?.Authorization;
+	const userSub = decodeJwtSub(authHeader);
+	if (!userSub) return respond(401, { error: "unauthorized" }, headers);
+
+	const groups = decodeJwtGroups(authHeader);
+	if (!groups.includes("moderators")) {
+		return respond(403, { error: "moderator_access_required" }, headers);
+	}
+
+	const eventId = event.pathParameters?.eventId || "";
+	if (!validEventId(eventId)) {
+		return respond(400, { error: "invalid_event_id" }, headers);
+	}
+
+	// Scan for all records matching this event_id.
+	let items = [];
+	let lastKey;
+	do {
+		const out = await dynamo.send(
+			new ScanCommand({
+				TableName: process.env.RSVP_TABLE,
+				FilterExpression: "event_id = :e",
+				ExpressionAttributeValues: { ":e": eventId },
+				ExclusiveStartKey: lastKey,
+			}),
+		);
+		items = items.concat(out.Items ?? []);
+		lastKey = out.LastEvaluatedKey;
+	} while (lastKey);
+
+	const records = items.map((it) => ({
+		event_id: it.event_id,
+		user_sub: it.user_sub,
+		name: it.name ?? null,
+		email: it.email ?? null,
+		group: it.group ?? null,
+		created_at: it.created_at ?? null,
+		migrated: it.source === "github-issue-migration" || !!it.migrated_at,
+		is_test: !!it.is_test,
+	}));
+
+	return respond(200, { records }, headers);
+}
+
 // ── route handlers ───────────────────────────────────────────────────────────
 async function handleSpots(eventId, headers) {
 	if (!validEventId(eventId))
@@ -469,6 +536,9 @@ export async function handler(event) {
 		if (routeKey === "GET /rsvp/{eventId}/spots") {
 			const eventId = event.pathParameters?.eventId || "";
 			return await handleSpots(eventId, headers);
+		}
+		if (routeKey === "GET /admin/rsvps/{eventId}") {
+			return await handleAdminListRsvps(event, headers);
 		}
 		return respond(404, { error: "not_found", routeKey }, headers);
 	} catch (err) {

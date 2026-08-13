@@ -1028,6 +1028,9 @@
 			"colRegisteredAt": "registered",
 			"colMigrated": "migrated",
 			"yes": "yes",
+			"no": "no",
+			"noValue": "not provided",
+			"noGroup": "no group",
 			"showTestRecords": "include test records",
 			"selectEvent": "select event"
 		},
