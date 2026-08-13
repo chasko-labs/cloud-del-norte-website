@@ -3,7 +3,13 @@ env:
   variables:
     AWS_DEFAULT_REGION: us-west-2
     S3_BUCKET_MAIN: clouddelnorte.org
+    S3_BUCKET_AUTH: auth.clouddelnorte.org
+    S3_BUCKET_AWSUG: awsug.clouddelnorte.org
+    S3_BUCKET_DEV: dev.clouddelnorte.org
     CF_DIST_MAIN: ECC3LP1BL2CZS
+    CF_DIST_AUTH: ECQ44FO9MBTCY
+    CF_DIST_AWSUG: E2QLAWFVIT1AR8
+    CF_DIST_DEV: EEHVTUEQ97V0X
 phases:
   install:
     runtime-versions:
@@ -15,10 +21,35 @@ phases:
       - npm run build
       - test -f lib/index.html || { echo 'build failed - lib/index.html missing'; exit 1; }
       - test -d lib/assets || { echo 'build failed - lib/assets missing'; exit 1; }
+      - test -f lib-auth/index.html || { echo 'build failed - lib-auth/index.html missing'; exit 1; }
+      - test -d lib-auth/assets || { echo 'build failed - lib-auth/assets missing'; exit 1; }
+      - test -f lib-awsug/index.html || { echo 'build failed - lib-awsug/index.html missing'; exit 1; }
+      - test -d lib-awsug/assets || { echo 'build failed - lib-awsug/assets missing'; exit 1; }
   post_build:
     commands:
+      # ─── main site (clouddelnorte.org) ──────────────────────────────────────
       # the --exclude flags are load-bearing: they protect fiona/, fiona-embed/,
       # data/ and assets/ from --delete
       - aws s3 sync lib/ s3://${S3_BUCKET_MAIN}/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"
       - aws s3 sync lib/assets/ s3://${S3_BUCKET_MAIN}/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
       - aws cloudfront create-invalidation --distribution-id ${CF_DIST_MAIN} --paths "/*"
+
+      # ─── auth site (auth.clouddelnorte.org) ─────────────────────────────────
+      - aws s3 sync lib-auth/ s3://${S3_BUCKET_AUTH}/ --delete --exact-timestamps --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib-auth/assets/ s3://${S3_BUCKET_AUTH}/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws cloudfront create-invalidation --distribution-id ${CF_DIST_AUTH} --paths "/*"
+
+      # ─── awsug site (awsug.clouddelnorte.org) ──────────────────────────────
+      - aws s3 sync lib-awsug/ s3://${S3_BUCKET_AWSUG}/ --delete --exact-timestamps --exclude "assets/*" --exclude "fiona/*" --exclude "fiona-embed/*" --cache-control "no-cache"
+      - aws s3 sync lib-awsug/assets/ s3://${S3_BUCKET_AWSUG}/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws s3 sync s3://${S3_BUCKET_MAIN}/fiona-embed/ s3://${S3_BUCKET_AWSUG}/fiona-embed/
+      - aws s3 sync s3://${S3_BUCKET_MAIN}/fiona/ s3://${S3_BUCKET_AWSUG}/fiona/
+      - aws cloudfront create-invalidation --distribution-id ${CF_DIST_AWSUG} --paths "/*"
+
+      # ─── dev site (dev.clouddelnorte.org) ───────────────────────────────────
+      # mirrors main-site build to dev for preview continuity
+      - aws s3 sync lib/ s3://${S3_BUCKET_DEV}/ --delete --exact-timestamps --exclude "fiona/*" --exclude "fiona-embed/*" --exclude "data/*" --exclude "assets/*" --cache-control "no-cache"
+      - aws s3 sync lib/assets/ s3://${S3_BUCKET_DEV}/assets/ --delete --exact-timestamps --cache-control "public, max-age=31536000, immutable"
+      - aws s3 sync s3://${S3_BUCKET_MAIN}/fiona-embed/ s3://${S3_BUCKET_DEV}/fiona-embed/ --exact-timestamps
+      - aws s3 sync s3://${S3_BUCKET_MAIN}/fiona/ s3://${S3_BUCKET_DEV}/fiona/ --exact-timestamps
+      - aws cloudfront create-invalidation --distribution-id ${CF_DIST_DEV} --paths "/*"
