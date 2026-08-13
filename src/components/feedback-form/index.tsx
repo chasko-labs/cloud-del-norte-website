@@ -13,6 +13,7 @@ import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
 import { useFeedbackDraft } from "../../hooks/useFeedbackDraft";
 import { useTranslation } from "../../hooks/useTranslation";
+import { AUTH_LOGIN_URL } from "../../lib/auth";
 
 interface Props {
 	open: boolean;
@@ -410,7 +411,7 @@ export default function FeedbackForm({ open, onClose, kind }: Props) {
 									/>
 								</FormField>
 								<Box variant="small">
-									<Link href="/login/?returnTo=/feed/">
+									<Link href={`${AUTH_LOGIN_URL}?returnTo=/feed/`}>
 										{t("feedbackForm.signInToFollow")}
 									</Link>
 								</Box>
