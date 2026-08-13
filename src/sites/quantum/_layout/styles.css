@@ -17,6 +17,15 @@
 	--q-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 	--q-transition-glow: box-shadow 600ms ease, border-color 600ms ease;
 
+	/* ── LEGIBILITY TOKENS — line-height + text contrast ─────────────── */
+	--q-line-height-body: 1.6;
+	--q-line-height-toolbar: 1.4;
+	--q-line-height-cta: 1.4;
+	--q-text-dark: #e8e0f4; /* light lavender for dark mode text */
+	--q-text-light: #2d1a4e; /* deep purple for light mode text */
+	--q-text-muted-dark: #b8a8d4; /* muted for secondary on dark */
+	--q-text-muted-light: #4a3570; /* muted for secondary on light */
+
 	/* ── QUANTUM COLOR TOKENS — distinct from generic CDN purple ─────── */
 	--q-cyan: #06b6d4; /* quantum info / measurement */
 	--q-teal: #14b8a6; /* quantum state |0⟩ */
@@ -29,6 +38,7 @@
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+	line-height: var(--q-line-height-body);
 	background: /* Bloch sphere outer shell — stronger ellipse evoking a sphere boundary */
 			radial-gradient(
 				ellipse at 50% 50%,
@@ -86,6 +96,7 @@
 	justify-content: space-between;
 	align-items: center;
 	padding: 0.75rem 1.5rem;
+	line-height: var(--q-line-height-toolbar);
 	backdrop-filter: blur(12px) saturate(1.4);
 	-webkit-backdrop-filter: blur(12px) saturate(1.4);
 	background: rgba(0, 0, 42, 0.7);
@@ -104,6 +115,7 @@
 	font-family: var(--cdn-font-display, "Cinzel", Georgia, serif);
 	font-size: clamp(16px, 2vw, 22px);
 	font-weight: 600;
+	line-height: 1.3;
 	background: linear-gradient(90deg, var(--cdn-lavender), var(--cdn-violet));
 	-webkit-background-clip: text;
 	background-clip: text;
@@ -314,7 +326,7 @@
 }
 
 .quantum-user--guest {
-	color: var(--cdn-lavender, #d7c7ee);
+	color: var(--q-text-dark, #e8e0f4);
 	font-size: clamp(14px, 1.2vw, 18px);
 	text-decoration: none;
 	padding: 8px 12px;
@@ -332,6 +344,14 @@
 	background: rgba(144, 96, 240, 0.2);
 	border-color: rgba(144, 96, 240, 0.4);
 	text-decoration: underline;
+}
+
+/* Sign-in link must override any inherited color from parent text-fill/gradient */
+.quantum-user--guest,
+.quantum-user--guest a,
+a.quantum-user--guest {
+	color: var(--q-text-dark, #e8e0f4) !important;
+	-webkit-text-fill-color: var(--q-text-dark, #e8e0f4) !important;
 }
 
 :root:not(.awsui-dark-mode) .quantum-user--authed {
@@ -355,9 +375,16 @@
 }
 
 :root:not(.awsui-dark-mode) .quantum-user--guest {
-	color: #5a1f8a;
+	color: var(--q-text-light, #2d1a4e);
 	background: rgba(90, 31, 138, 0.05);
 	border-color: rgba(90, 31, 138, 0.15);
+}
+
+:root:not(.awsui-dark-mode) .quantum-user--guest,
+:root:not(.awsui-dark-mode) .quantum-user--guest a,
+:root:not(.awsui-dark-mode) a.quantum-user--guest {
+	color: var(--q-text-light, #2d1a4e) !important;
+	-webkit-text-fill-color: var(--q-text-light, #2d1a4e) !important;
 }
 
 :root:not(.awsui-dark-mode) .quantum-user--guest:hover {
@@ -379,6 +406,12 @@
 	padding: 0 1.5rem;
 	box-sizing: border-box;
 	font-size: clamp(15px, 1.1vw, 16px);
+	line-height: inherit;
+}
+
+/* Override Cloudscape's tight line-height defaults inside quantum pages */
+.quantum-main * {
+	line-height: inherit;
 }
 
 /* Bump Cloudscape body-m elements to match */
@@ -901,6 +934,7 @@
 .quantum-brand-text,
 [class*="status"] {
 	font-family: var(--q-font-mono);
+	line-height: 1.3;
 }
 
 /* ── CARD TEXT READABILITY — senior-friendly body text ─────────────────── */
@@ -941,8 +975,19 @@
 
 /* Headers remain at their current size but ensure decent line-height */
 .quantum-main [class*="awsui_header"] [class*="awsui_title"],
+.quantum-main [class*="awsui_header"],
+.quantum-main [class*="awsui_header-variant"],
+.quantum-main [class*="awsui_heading"],
+.quantum-main [class*="awsui_root"][class*="variant-h"],
+.quantum-main h1,
 .quantum-main h2,
 .quantum-main h3 {
+	line-height: 1.3 !important;
+}
+
+/* Ensure the heading wrapper region doesn't collapse line-height */
+.quantum-main [class*="awsui_header"] *,
+.quantum-main [class*="awsui_heading"] * {
 	line-height: 1.3 !important;
 }
 

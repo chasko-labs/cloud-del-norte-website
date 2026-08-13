@@ -12,6 +12,18 @@ design system for the quantum computing workshop series site. all tokens defined
 | --q-gold-warm | #f59e0b | entanglement, highlights |
 | --q-emerald | #10b981 | coherent, confirmed |
 
+## Legibility Tokens
+
+| token | value | usage |
+|-------|-------|-------|
+| --q-line-height-body | 1.6 | base line-height for all quantum layout text |
+| --q-line-height-toolbar | 1.4 | toolbar elements line-height |
+| --q-line-height-cta | 1.4 | CTA buttons and calendar action buttons |
+| --q-text-dark | #e8e0f4 | light lavender for dark mode text (high contrast on navy) |
+| --q-text-light | #2d1a4e | deep purple for light mode text (high contrast on cream) |
+| --q-text-muted-dark | #b8a8d4 | muted secondary text on dark backgrounds |
+| --q-text-muted-light | #4a3570 | muted secondary text on light backgrounds |
+
 ## Glass Tokens
 
 | token | value | usage |
@@ -42,9 +54,11 @@ design system for the quantum computing workshop series site. all tokens defined
 JetBrains Mono is reserved for: code snippets, toolbar brand text, status badges, and technical labels. body/paragraph text uses system sans-serif for readability (especially important for senior readers).
 
 line-height rules:
-- body text in cards: 1.6 minimum
+- body text in cards: var(--q-line-height-body) = 1.6 minimum
+- toolbar elements: var(--q-line-height-toolbar) = 1.4
 - headers: 1.3 minimum
-- buttons/CTAs: 1.3 minimum (never below 1.2)
+- buttons/CTAs: var(--q-line-height-cta) = 1.4 (never below 1.2)
+- .quantum-layout sets base line-height 1.6, inherited by all children
 
 ## Touch Targets
 
