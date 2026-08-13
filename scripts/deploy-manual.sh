@@ -113,12 +113,48 @@ if [[ ! -d "${LIB_PATH}" ]]; then
   echo "ERROR: ${LIB_PATH} does not exist — build may have failed" >&2
   exit 1
 fi
-if [[ ! -f "${LIB_PATH}/index.html" ]]; then
-  echo "ERROR: ${LIB_PATH}/index.html not found — build output incomplete" >&2
+if [[ ! -f "${LIB_PATH}/index.html" ]] && [[ ! -f "${LIB_PATH}/landing/index.html" ]]; then
+  echo "ERROR: ${LIB_PATH}/index.html (or landing/index.html) not found — build output incomplete" >&2
   exit 1
 fi
 echo "✓ ${LIB_PATH}/index.html exists"
 echo ""
+
+# ── Quantum brand-asset guard ─────────────────────────────────────────────────
+# The quantum deploy uses --delete. If brand assets are missing from the build
+# output, the sync will wipe them from the bucket, 404-ing the hero and cards
+# on a site with live paid ads. Fail loudly before that can happen.
+if [[ "${QUANTUM_MODE}" == "true" ]]; then
+  QUANTUM_BRAND_DIR="${LIB_PATH}/brand/quantum"
+  QUANTUM_REQUIRED_ASSETS=(
+    "quantum-hero-1920x600.webp"
+    "quantum-hero-1920x600.png"
+    "quantum-card-origami-600x400.png"
+    "quantum-card-lattices-600x400.png"
+    "quantum-card-prism-600x400.png"
+    "quantum-og-1200x630.png"
+    "quantum-meetup-1200x675.png"
+    "quantum-fb-event-1920x1005.png"
+  )
+  MISSING=()
+  for asset in "${QUANTUM_REQUIRED_ASSETS[@]}"; do
+    if [[ ! -f "${QUANTUM_BRAND_DIR}/${asset}" ]]; then
+      MISSING+=("${asset}")
+    fi
+  done
+  if [[ ${#MISSING[@]} -gt 0 ]]; then
+    echo "ERROR: quantum brand assets missing from build output (${QUANTUM_BRAND_DIR}):" >&2
+    for m in "${MISSING[@]}"; do
+      echo "  ✗ ${m}" >&2
+    done
+    echo "" >&2
+    echo "The --delete sync would wipe these from the production bucket." >&2
+    echo "Fix the build pipeline so brand assets land in lib-quantum/brand/quantum/." >&2
+    exit 1
+  fi
+  echo "✓ All quantum brand assets present in ${QUANTUM_BRAND_DIR}"
+  echo ""
+fi
 
 # ── S3 sync ───────────────────────────────────────────────────────────────────
 # Wave 49 — 4-pass Cache-Control tiering for El Paso regional perf.

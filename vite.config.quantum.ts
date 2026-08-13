@@ -1,11 +1,31 @@
+import { cpSync } from "node:fs";
 import { resolve } from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
+/**
+ * Copies public/brand/quantum/ into the build output at brand/quantum/.
+ * The quantum site's publicDir is scoped to src/sites/quantum/public (for
+ * quantum-specific static assets), but brand assets live at the repo-root
+ * public/brand/quantum/ as the single source of truth. Without this plugin
+ * the --delete flag on deploy-manual.sh's s3 sync would orphan the brand
+ * assets on the next deploy.
+ */
+function copyBrandAssets() {
+	const src = resolve(__dirname, "public/brand/quantum");
+	return {
+		name: "copy-quantum-brand-assets",
+		closeBundle() {
+			const dest = resolve(__dirname, "lib-quantum/brand/quantum");
+			cpSync(src, dest, { recursive: true });
+		},
+	};
+}
+
 export default defineConfig({
 	root: resolve(__dirname, "src/sites/quantum"),
 	publicDir: resolve(__dirname, "src/sites/quantum/public"),
-	plugins: [react()],
+	plugins: [react(), copyBrandAssets()],
 	server: {
 		port: 8083,
 	},
