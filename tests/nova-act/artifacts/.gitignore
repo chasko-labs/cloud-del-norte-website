@@ -1,0 +1,3 @@
+# Nova Act test artifacts — screenshots are ephemeral
+*.png
+!.gitkeep
