@@ -311,6 +311,67 @@
 		"myTicketsEmpty": "You haven't RSVPed to any in-person Cloud del Norte events yet.",
 		"myTicketsShowAtDoor": "Show this code at the door"
 	},
+	"scheduledMeetings": {
+		"breadcrumb": "Scheduled Meetings",
+		"header": "Scheduled Meetings",
+		"description": "Manage upcoming and past scheduled meetings.",
+		"createButton": "Schedule meeting",
+		"editButton": "Edit",
+		"deleteButton": "Delete",
+		"tabs": {
+			"upcoming": "Upcoming",
+			"past": "Past"
+		},
+		"table": {
+			"title": "Title",
+			"scheduledStart": "Date & Time",
+			"duration": "Duration",
+			"status": "Status",
+			"hashUrl": "Share link",
+			"actions": "Actions",
+			"speakerBio": "Speaker bio",
+			"meetupRsvp": "Meetup RSVP"
+		},
+		"noMeetings": "No scheduled meetings.",
+		"form": {
+			"createHeader": "Schedule new meeting",
+			"editHeader": "Edit meeting",
+			"titleLabel": "Title",
+			"titleRequired": "Title is required.",
+			"descriptionLabel": "Description",
+			"dateLabel": "Date",
+			"dateRequired": "Date is required.",
+			"timeLabel": "Time",
+			"timeRequired": "Time is required.",
+			"timezoneLabel": "Timezone",
+			"durationLabel": "Duration (minutes)",
+			"speakerBioUrlLabel": "Speaker bio URL",
+			"meetupRsvpUrlLabel": "Meetup RSVP link",
+			"meetupRsvpUrlError": "Must be a valid meetup.com URL.",
+			"submit": "Save",
+			"cancel": "Cancel",
+			"success": "Meeting saved successfully.",
+			"deleteConfirmTitle": "Delete meeting",
+			"deleteConfirmBody": "Are you sure you want to delete this meeting? This action cannot be undone.",
+			"deleteConfirm": "Delete",
+			"deleteCancel": "Cancel"
+		},
+		"timezone": {
+			"elPaso": "El Paso (America/Denver)",
+			"boston": "Boston (America/New_York)",
+			"seattle": "Seattle (America/Los_Angeles)",
+			"greenwich": "Greenwich (Europe/London)",
+			"shahrisabz": "Shahrisabz (Asia/Tashkent)"
+		},
+		"status": {
+			"scheduled": "Scheduled",
+			"live": "Live",
+			"ended": "Ended",
+			"cancelled": "Cancelled"
+		},
+		"copyLink": "Copy link",
+		"linkCopied": "Link copied!"
+	},
 	"createMeeting": {
 		"breadcrumb": "Create meeting",
 		"header": "Create meeting",

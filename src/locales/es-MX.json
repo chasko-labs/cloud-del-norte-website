@@ -311,6 +311,67 @@
 		"myTicketsEmpty": "Todavía no te has apuntado a ningún evento presencial de Cloud del Norte.",
 		"myTicketsShowAtDoor": "Muestra este código en la puerta"
 	},
+	"scheduledMeetings": {
+		"breadcrumb": "Juntas programadas",
+		"header": "Juntas programadas",
+		"description": "Administrar juntas programadas y pasadas.",
+		"createButton": "Programar junta",
+		"editButton": "Editar",
+		"deleteButton": "Eliminar",
+		"tabs": {
+			"upcoming": "Próximas",
+			"past": "Pasadas"
+		},
+		"table": {
+			"title": "Título",
+			"scheduledStart": "Fecha y hora",
+			"duration": "Duración",
+			"status": "Estado",
+			"hashUrl": "Link para compartir",
+			"actions": "Acciones",
+			"speakerBio": "Bio del ponente",
+			"meetupRsvp": "Apúntate en Meetup"
+		},
+		"noMeetings": "No hay juntas programadas.",
+		"form": {
+			"createHeader": "Programar nueva junta",
+			"editHeader": "Editar junta",
+			"titleLabel": "Título",
+			"titleRequired": "El título es requerido.",
+			"descriptionLabel": "Descripción",
+			"dateLabel": "Fecha",
+			"dateRequired": "La fecha es requerida.",
+			"timeLabel": "Hora",
+			"timeRequired": "La hora es requerida.",
+			"timezoneLabel": "Zona horaria",
+			"durationLabel": "Duración (minutos)",
+			"speakerBioUrlLabel": "URL de la bio del ponente",
+			"meetupRsvpUrlLabel": "Link para apuntarse en Meetup",
+			"meetupRsvpUrlError": "Debe ser un URL válido de meetup.com.",
+			"submit": "Guardar",
+			"cancel": "Cancelar",
+			"success": "Junta guardada exitosamente.",
+			"deleteConfirmTitle": "Eliminar junta",
+			"deleteConfirmBody": "¿Estás seguro que quieres eliminar esta junta? Esta acción no se puede deshacer.",
+			"deleteConfirm": "Eliminar",
+			"deleteCancel": "Cancelar"
+		},
+		"timezone": {
+			"elPaso": "El Paso (América/Denver)",
+			"boston": "Boston (América/Nueva_York)",
+			"seattle": "Seattle (América/Los_Ángeles)",
+			"greenwich": "Greenwich (Europa/Londres)",
+			"shahrisabz": "Shahrisabz (Asia/Taskent)"
+		},
+		"status": {
+			"scheduled": "Programada",
+			"live": "En vivo",
+			"ended": "Terminada",
+			"cancelled": "Cancelada"
+		},
+		"copyLink": "Copiar link",
+		"linkCopied": "¡Link copiado!"
+	},
 	"createMeeting": {
 		"breadcrumb": "Crear junta",
 		"header": "Crear junta",

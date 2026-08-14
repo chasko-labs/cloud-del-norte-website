@@ -20,6 +20,7 @@ import { useTranslation } from "../../../hooks/useTranslation";
 import type { meeting } from "../data";
 import { generateRoomPassword } from "../data";
 import { formatInTz, getStoredTimezone } from "../util/timezone";
+import EditMeetingModal from "./edit-meeting-modal";
 import JitsiEmbed from "./jitsi-embed";
 
 function generateInstantRoomName(): string {
@@ -225,6 +226,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 		CollectionPreferencesProps["preferences"]
 	>({ pageSize: 20 });
 	const [activeRoom, setActiveRoom] = useState<meeting | null>(null);
+	const [editMeeting, setEditMeeting] = useState<meeting | null>(null);
 	const [selectedTz, setSelectedTz] = useState<string>(() =>
 		getStoredTimezone(),
 	);
@@ -303,7 +305,7 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 					stickyHeader={true}
 					resizableColumns={true}
 					variant="full-page"
-					//selectionType="single"
+					selectionType="single"
 					ariaLabels={{
 						selectionGroupLabel: t("meetings.aria.selectionGroup"),
 						itemSelectionLabel: ({ selectedItems }, item) => {
@@ -348,6 +350,11 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 										<>
 											<Button
 												disabled={collectionProps.selectedItems?.length === 0}
+												onClick={() => {
+													if (collectionProps.selectedItems?.length) {
+														setEditMeeting(collectionProps.selectedItems[0]);
+													}
+												}}
 											>
 												{t("meetings.editButton")}
 											</Button>
@@ -421,6 +428,16 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 					/>
 				)}
 			</Modal>
+			<EditMeetingModal
+				meeting={editMeeting}
+				visible={!!editMeeting}
+				onDismiss={() => setEditMeeting(null)}
+				onSave={(updated) => {
+					const idx = meetings.findIndex((m) => m.name === updated.name);
+					if (idx >= 0) Object.assign(meetings[idx], updated);
+					setEditMeeting(null);
+				}}
+			/>
 		</>
 	);
 }
