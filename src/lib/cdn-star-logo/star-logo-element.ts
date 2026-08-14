@@ -11,7 +11,7 @@
 //
 // The component sizes itself to its host element via CSS (default 100% / 100%).
 
-import { detectRenderCapability } from "../render-capability.js";
+import { getDeviceDiagnostics } from "../device-capabilities.js";
 import { StarScene } from "./StarScene.js";
 
 const TEMPLATE_STYLE = `
@@ -45,8 +45,13 @@ export class CdnStarLogoElement extends HTMLElement {
 		this.canvas = root.querySelector("canvas");
 		if (!this.canvas) return;
 
-		const capability = detectRenderCapability();
-		if (!capability.shouldRenderRichScene) {
+		const d = getDeviceDiagnostics();
+		// cdn-star-logo is lightweight — keep the looser gate that only checks
+		// for hardware WebGL and reduced-motion (no low-memory/few-cores bail).
+		// See issue #393 for the deliberate semantics difference vs dune.
+		const hardwareWebgl =
+			d.webglAvailable && d.renderer !== "" && !d.softwareWebGL;
+		if (!hardwareWebgl || d.reducedMotion) {
 			// Software WebGL or reduced-motion: skip 3D scene. The <LogoSvg> sibling
 			// in the shell DOM is always rendered and serves as the static fallback.
 			return;

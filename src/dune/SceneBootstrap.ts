@@ -32,7 +32,7 @@ import {
 	resumeSceneView,
 	unregisterSceneView,
 } from "../lib/babylon-shared-engine.js";
-import { detectRenderCapability } from "../lib/render-capability.js";
+import { getDeviceTier } from "../lib/device-capabilities.js";
 import {
 	AnimationController,
 	CAMERA_RADIUS_BASE,
@@ -121,9 +121,14 @@ export function mountDuneSceneOnCanvas(
 	const duneDebug =
 		typeof window !== "undefined" &&
 		window.location.search.includes("duneDebug=1");
-	const capability = detectRenderCapability();
-	if (duneDebug) console.log("[dune] render capability:", capability);
-	if (!capability.shouldRenderRichScene) {
+	// Dune is a heavy scene — gate on the full device-tier signal which also
+	// bails when both lowMemory AND fewCores are true (Chromebook-tier).
+	// Behavior delta vs legacy render-capability: adds the double-constraint
+	// bail (deviceMemory < 4 && hardwareConcurrency < 4). See issue #393.
+	const shouldRender = getDeviceTier() !== "low";
+	if (duneDebug)
+		console.log("[dune] device tier gate, shouldRender:", shouldRender);
+	if (!shouldRender) {
 		// Software renderer or reduced-motion: mount static fallback, skip Babylon.
 		const parent = canvas.parentElement;
 		if (parent) {
@@ -345,7 +350,7 @@ export function ensureDuneFallback(container: HTMLElement): () => void {
 export function mountDuneScene(container: HTMLElement): DuneSceneHandle {
 	ensureDuneFallback(container);
 
-	if (shouldForceStatic() || !detectRenderCapability().shouldRenderRichScene) {
+	if (shouldForceStatic() || getDeviceTier() === "low") {
 		// Static-fallback path — no babylon engine, no canvas. The fallback
 		// gradient div above carries the visual. getPerfMedian returns 0 so
 		// the wallpaper integration's perf gate sees "no sample yet" and
