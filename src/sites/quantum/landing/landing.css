@@ -458,15 +458,15 @@
 	--q-card-prism-fallback: url("/brand/quantum/quantum-card-prism-600x400.png");
 	--q-card-overlay-dark: linear-gradient(
 		to bottom,
-		rgba(0, 0, 42, 0.65) 0%,
-		rgba(0, 0, 42, 0.55) 50%,
-		rgba(0, 0, 42, 0.7) 100%
+		rgba(0, 0, 42, 0.78) 0%,
+		rgba(0, 0, 42, 0.72) 50%,
+		rgba(0, 0, 42, 0.8) 100%
 	);
 	--q-card-overlay-light: linear-gradient(
 		to bottom,
-		rgba(255, 255, 255, 0.6) 0%,
-		rgba(255, 255, 255, 0.5) 50%,
-		rgba(255, 255, 255, 0.65) 100%
+		rgba(255, 255, 255, 0.74) 0%,
+		rgba(255, 255, 255, 0.68) 50%,
+		rgba(255, 255, 255, 0.76) 100%
 	);
 }
 
@@ -561,51 +561,8 @@
 	}
 }
 
-/* ── TEXT SCRIMS — localized backdrop behind text crossing gradient edges ── */
-/* These ensure worst-case contrast ≥ 4.5:1 across the entire bounding box
-   of text blocks that overlap busy regions of the card background images.
-   Approach: a semi-transparent pill behind just the text, not the whole panel. */
-
-/* Origami card (badge section): "Proves: ..." body-s text sits over dune ridges */
-.quantum-card--origami [class*="awsui_box"][class*="body-s"] {
-	background: rgba(0, 0, 42, 0.7) !important;
-	border-radius: 6px !important;
-	padding: 4px 8px !important;
-	display: inline-block !important;
-	box-decoration-break: clone !important;
-	-webkit-box-decoration-break: clone !important;
-}
-
-:root:not(.awsui-dark-mode)
-	.quantum-card--origami
-	[class*="awsui_box"][class*="body-s"] {
-	background: rgba(255, 255, 255, 0.75) !important;
-}
-
-/* Prism card (meetup groups): city location names sit on lightest teal wash */
-.quantum-card--prism .quantum-meetup-group__location {
-	background: rgba(0, 0, 42, 0.7);
-	border-radius: 4px;
-	padding: 2px 6px;
-	display: inline-block;
-}
-
-:root:not(.awsui-dark-mode)
-	.quantum-card--prism
-	.quantum-meetup-group__location {
-	background: rgba(255, 255, 255, 0.75);
-}
-
-/* Prism card: meetup group names also cross gradient features */
-.quantum-card--prism .quantum-meetup-group__name {
-	background: rgba(0, 0, 42, 0.6);
-	border-radius: 4px;
-	padding: 2px 6px;
-	display: inline-block;
-	box-decoration-break: clone;
-	-webkit-box-decoration-break: clone;
-}
-
-:root:not(.awsui-dark-mode) .quantum-card--prism .quantum-meetup-group__name {
-	background: rgba(255, 255, 255, 0.7);
-}
+/* ── PANEL-WIDE CONTRAST — uniform overlay strengthened for 4.5:1 floor ── */
+/* Instead of per-text-block scrims (which produce visible hard-edged boxes),
+   we strengthen the panel-wide gradient overlay so the busiest background
+   region still yields ≥ 4.5:1 against text colors. The art remains visible
+   through the translucent overlay (effective opacity ~0.75 dark / ~0.7 light). */
