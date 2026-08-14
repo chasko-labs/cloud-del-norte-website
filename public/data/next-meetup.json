@@ -1,9 +1,9 @@
 {
   "status": "upcoming",
-  "summary": "🔬 Getting Started with Quantum Superpositions — Amazon Braket Part 1",
-  "url": "https://www.meetup.com/awsugclouddelnorte/",
-  "location": "Online event",
-  "description": "Hands-on Amazon Braket workshop: understanding multi-state superpositions, wavefunctions, measurement & collapse. Follow along with the AWS Braket Learning Plan. Joint event with AWS User Group Clarksville. Part 1 of a quantum computing series.",
-  "dtstart": "2026-08-30T22:00:00.000Z",
-  "dtend": "2026-08-30T23:30:00.000Z"
+  "summary": "Workshop: Quantum Essentials",
+  "url": "https://www.meetup.com/awsugclouddelnorte/events/316101931/",
+  "location": "",
+  "description": "AWS UG Cloud Del Norte **Serie de Talleres de Computación Cuántica con Amazon Braket** join the 1st of our virtual workshop series to gain understanding of a quantum algorithm alongside concepts superpositions, wavefunctions & entanglement Cáiganle a esta serie de talleres virtuales para entenderle a un algoritmo cuánt",
+  "dtstart": "2026-08-30T14:00:00.000Z",
+  "dtend": "2026-08-30T17:00:00.000Z"
 }

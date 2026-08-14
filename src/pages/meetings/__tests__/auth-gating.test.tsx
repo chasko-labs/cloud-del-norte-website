@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { AuthState } from "../../../contexts/auth-context";
@@ -21,6 +21,10 @@ vi.mock("../../../lib/auth", () => ({
 	decodeToken: vi.fn(),
 	refreshTokens: vi.fn(),
 	AUTH_LOGIN_URL: "https://auth.clouddelnorte.org/login/index.html",
+}));
+
+vi.mock("../../../lib/scheduled-meetings", () => ({
+	listScheduledMeetings: vi.fn(() => Promise.resolve([])),
 }));
 
 // Shell passes children through (skip AuthProvider wrap — we provide our own below).
@@ -74,7 +78,7 @@ describe("/meetings auth gating", () => {
 		});
 	});
 
-	it("authed member → renders meetings table", () => {
+	it("authed member → renders meetings table", async () => {
 		render(
 			<AuthContext.Provider
 				value={state({ isAuthenticated: true, idToken: "id", email: "a@b.co" })}
@@ -82,10 +86,12 @@ describe("/meetings auth gating", () => {
 				<App />
 			</AuthContext.Provider>,
 		);
-		expect(screen.getByTestId("meetings-table")).toBeInTheDocument();
+		await waitFor(() =>
+			expect(screen.getByTestId("meetings-table")).toBeInTheDocument(),
+		);
 	});
 
-	it("unauthenticated → guests see meetings table (browse allowed, RSVP gates per-row)", () => {
+	it("unauthenticated → guests see meetings table (browse allowed, RSVP gates per-row)", async () => {
 		// Per app.tsx: the whole table is visible to guests; the join action
 		// inside VariationsTable gates per-row (sign in to RSVP, not to view).
 		render(
@@ -93,7 +99,9 @@ describe("/meetings auth gating", () => {
 				<App />
 			</AuthContext.Provider>,
 		);
-		expect(screen.getByTestId("meetings-table")).toBeInTheDocument();
+		await waitFor(() =>
+			expect(screen.getByTestId("meetings-table")).toBeInTheDocument(),
+		);
 		expect(window.location.assign).not.toHaveBeenCalled();
 	});
 });

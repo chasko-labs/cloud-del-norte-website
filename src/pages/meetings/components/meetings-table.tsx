@@ -217,9 +217,13 @@ const EmptyState = ({
 
 export interface VariationTableProps {
 	meetings: meeting[];
+	onRefresh?: () => void;
 }
 
-export default function VariationTable({ meetings }: VariationTableProps) {
+export default function VariationTable({
+	meetings,
+	onRefresh,
+}: VariationTableProps) {
 	const { t } = useTranslation();
 	const auth = useAuth();
 	const [preferences, setPreferences] = useState<
@@ -432,10 +436,9 @@ export default function VariationTable({ meetings }: VariationTableProps) {
 				meeting={editMeeting}
 				visible={!!editMeeting}
 				onDismiss={() => setEditMeeting(null)}
-				onSave={(updated) => {
-					const idx = meetings.findIndex((m) => m.name === updated.name);
-					if (idx >= 0) Object.assign(meetings[idx], updated);
+				onSave={() => {
 					setEditMeeting(null);
+					onRefresh?.();
 				}}
 			/>
 		</>

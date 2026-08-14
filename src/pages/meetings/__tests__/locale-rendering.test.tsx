@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import React from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LocaleProvider } from "../../../contexts/locale-context";
@@ -188,6 +188,10 @@ vi.mock("../../../hooks/useAuth", () => ({
 	}),
 }));
 
+vi.mock("../../../lib/scheduled-meetings", () => ({
+	listScheduledMeetings: vi.fn(() => Promise.resolve([])),
+}));
+
 import App from "../app";
 
 describe("Meetings page locale rendering", () => {
@@ -196,7 +200,7 @@ describe("Meetings page locale rendering", () => {
 		mockTranslation.t = (key: string) => key;
 	});
 
-	it("renders Spanish breadcrumb when locale is mx", () => {
+	it("renders Spanish breadcrumb when locale is mx", async () => {
 		mockTranslation.locale = "mx";
 		mockTranslation.t = (key: string) => {
 			const spanishMap: Record<string, string> = {
@@ -207,10 +211,14 @@ describe("Meetings page locale rendering", () => {
 
 		render(<App />);
 
-		expect(screen.getByTestId("breadcrumb-active").textContent).toBe("Juntas");
+		await waitFor(() =>
+			expect(screen.getByTestId("breadcrumb-active").textContent).toBe(
+				"Juntas",
+			),
+		);
 	});
 
-	it("renders English breadcrumb when locale is us", () => {
+	it("renders English breadcrumb when locale is us", async () => {
 		mockTranslation.locale = "us";
 		mockTranslation.t = (key: string) => {
 			const englishMap: Record<string, string> = {
@@ -221,8 +229,10 @@ describe("Meetings page locale rendering", () => {
 
 		render(<App />);
 
-		expect(screen.getByTestId("breadcrumb-active").textContent).toBe(
-			"Meetings",
+		await waitFor(() =>
+			expect(screen.getByTestId("breadcrumb-active").textContent).toBe(
+				"Meetings",
+			),
 		);
 	});
 

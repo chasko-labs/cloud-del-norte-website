@@ -17,22 +17,20 @@ import TimeInput from "@cloudscape-design/components/time-input";
 import type React from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
+import { createScheduledMeeting } from "../../../lib/scheduled-meetings";
 import { formatInTz, TZ_ZONES } from "../../../pages/meetings/util/timezone";
 import AwsugLayout from "../_layout";
 import { type AuthState, isModerator, requireAuth } from "../_shared/auth";
 
-const API_BASE = "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com";
-
 function CreateMeetingForm({ auth }: { auth: AuthState }) {
 	const { t } = useTranslation();
-	const [meetupLink, setMeetupLink] = useState("");
+	const [title, setTitle] = useState("");
 	const [speakers, setSpeakers] = useState("");
 	const [notes, setNotes] = useState("");
 	const [meetingDate, setMeetingDate] = useState("");
 	const [meetingTime, setMeetingTime] = useState("20:00");
 	const [speakerBioUrl, setSpeakerBioUrl] = useState("");
 	const [meetupRsvpUrl, setMeetupRsvpUrl] = useState("");
-	const [meetupLinkError, setMeetupLinkError] = useState("");
 	const [formError, setFormError] = useState("");
 	const [loading, setLoading] = useState(false);
 	const [done, setDone] = useState(false);
@@ -47,28 +45,28 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 
 	async function handleSubmit(e: React.FormEvent) {
 		e.preventDefault();
-		setMeetupLinkError("");
 		setFormError("");
+
+		if (!title.trim()) {
+			setFormError("Title is required.");
+			return;
+		}
+
+		const scheduledStart =
+			meetingDate && meetingTime
+				? `${meetingDate}T${meetingTime}:00`
+				: undefined;
 
 		setLoading(true);
 		try {
-			const res = await fetch(`${API_BASE}/admin/meetings`, {
-				method: "POST",
-				headers: {
-					Authorization: `Bearer ${auth.idToken}`,
-					"Content-Type": "application/json",
-				},
-				body: JSON.stringify({
-					meetupLink: meetupLink.trim(),
-					speakers: speakers.trim(),
-					notes: notes.trim(),
-					scheduledDate: meetingDate || undefined,
-					scheduledTime: meetingTime || undefined,
-					speakerBioUrl: speakerBioUrl.trim() || undefined,
-					meetupRsvpUrl: meetupRsvpUrl.trim() || undefined,
-				}),
+			await createScheduledMeeting({
+				title: title.trim(),
+				description: notes.trim() || undefined,
+				scheduled_start: scheduledStart ?? new Date().toISOString(),
+				duration_minutes: 60,
+				speaker_bio_url: speakerBioUrl.trim() || undefined,
+				meetup_rsvp_url: meetupRsvpUrl.trim() || undefined,
 			});
-			if (!res.ok) throw new Error(`api error: ${res.status}`);
 			setDone(true);
 		} catch {
 			setFormError(
@@ -124,6 +122,13 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 					errorText={formError || undefined}
 				>
 					<SpaceBetween size="m">
+						<FormField label="Title" description="required">
+							<Input
+								value={title}
+								onChange={({ detail }) => setTitle(detail.value)}
+								placeholder="Meeting title"
+							/>
+						</FormField>
 						<FormField label="date">
 							<DatePicker
 								value={meetingDate}
@@ -153,18 +158,6 @@ function CreateMeetingForm({ auth }: { auth: AuthState }) {
 								))}
 							</SpaceBetween>
 						)}
-						<FormField
-							label="Meetup link"
-							description="optional — add after scheduling the call"
-							errorText={meetupLinkError || undefined}
-						>
-							<Input
-								type="url"
-								value={meetupLink}
-								onChange={({ detail }) => setMeetupLink(detail.value)}
-								placeholder="https://www.meetup.com/cloud-del-norte/events/..."
-							/>
-						</FormField>
 						<FormField
 							label="Meetup RSVP URL"
 							description="optional — takes precedence over event link for RSVP button"

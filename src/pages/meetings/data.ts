@@ -23,6 +23,11 @@ export interface meeting {
 	speakerBio?: string;
 	// Explicit Meetup RSVP URL. Falls back to eventlink when absent.
 	meetupRsvpUrl?: string;
+	// Fields from the scheduled-meetings API
+	meetingId?: string;
+	description?: string;
+	durationMinutes?: number;
+	status?: "scheduled" | "live" | "ended" | "cancelled";
 }
 
 export function generateRoomPassword(len = 6): string {

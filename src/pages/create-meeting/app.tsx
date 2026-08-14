@@ -14,8 +14,8 @@ import Navigation from "../../components/navigation";
 import { RequireAuth } from "../../components/require-auth";
 import { useTranslation } from "../../hooks/useTranslation";
 import ShellLayout from "../../layouts/shell";
-import type { CreateMeetingRequest } from "../../lib/admin";
-import { createMeeting } from "../../lib/admin";
+import type { CreateScheduledMeetingRequest } from "../../lib/scheduled-meetings";
+import { createScheduledMeeting } from "../../lib/scheduled-meetings";
 import {
 	applyLocale,
 	initializeLocale,
@@ -117,19 +117,21 @@ function FormContent() {
 							)
 								return;
 
-							const body: CreateMeetingRequest = {
-								meetupLink: vals.meetupLink || undefined,
-								speakers: vals.speakers || undefined,
-								speakerBioUrl: vals.speakerBioUrl || undefined,
-								meetupRsvpUrl: vals.meetupRsvpUrl || undefined,
-								notes: vals.notes || undefined,
-								scheduledDate: vals.scheduledDate || undefined,
-								scheduledTime: vals.scheduledTime || undefined,
+							const body: CreateScheduledMeetingRequest = {
+								title: vals.speakers || vals.meetupLink || "Untitled meeting",
+								description: vals.notes || undefined,
+								scheduled_start:
+									vals.scheduledDate && vals.scheduledTime
+										? `${vals.scheduledDate}T${vals.scheduledTime}:00`
+										: new Date().toISOString(),
+								duration_minutes: 60,
+								speaker_bio_url: vals.speakerBioUrl || undefined,
+								meetup_rsvp_url: vals.meetupRsvpUrl || undefined,
 							};
 
 							setSubmitting(true);
 							setSubmitError("");
-							createMeeting(body)
+							createScheduledMeeting(body)
 								.then(() => setDone(true))
 								.catch(() =>
 									setSubmitError(

@@ -8,8 +8,12 @@ import Select from "@cloudscape-design/components/select";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Textarea from "@cloudscape-design/components/textarea";
 import TimeInput from "@cloudscape-design/components/time-input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "../../../hooks/useTranslation";
+import {
+	deleteScheduledMeeting,
+	updateScheduledMeeting,
+} from "../../../lib/scheduled-meetings";
 import type { meeting } from "../data";
 
 const TIMEZONE_OPTIONS = [
@@ -24,7 +28,7 @@ export interface EditMeetingModalProps {
 	meeting: meeting | null;
 	visible: boolean;
 	onDismiss: () => void;
-	onSave: (updated: meeting) => void;
+	onSave: () => void;
 }
 
 export default function EditMeetingModal({
@@ -35,34 +39,84 @@ export default function EditMeetingModal({
 }: EditMeetingModalProps) {
 	const { t } = useTranslation();
 
-	const [name, setName] = useState(m?.name ?? "");
-	const [presenters, setPresenters] = useState(m?.presenters ?? "");
-	const [eventlink, setEventlink] = useState(m?.eventlink ?? "");
-	const [scheduledDate, setScheduledDate] = useState(m?.scheduledDate ?? "");
-	const [scheduledTime, setScheduledTime] = useState(
-		m?.scheduledTime ?? "20:00",
-	);
+	const [name, setName] = useState("");
+	const [presenters, setPresenters] = useState("");
+	const [eventlink, setEventlink] = useState("");
+	const [scheduledDate, setScheduledDate] = useState("");
+	const [scheduledTime, setScheduledTime] = useState("20:00");
 	const [timezone, setTimezone] = useState("America/Denver");
-	const [speakerBioUrl, setSpeakerBioUrl] = useState(m?.speakerBioUrl ?? "");
-	const [meetupRsvpUrl, setMeetupRsvpUrl] = useState(m?.meetupRsvpUrl ?? "");
+	const [speakerBioUrl, setSpeakerBioUrl] = useState("");
+	const [meetupRsvpUrl, setMeetupRsvpUrl] = useState("");
 	const [notes, setNotes] = useState("");
+	const [saving, setSaving] = useState(false);
+	const [deleting, setDeleting] = useState(false);
+	const [error, setError] = useState("");
 
 	// Reset form when meeting changes
-	if (m && name !== m.name && visible) {
-		setName(m.name);
-		setPresenters(m.presenters);
-		setEventlink(m.eventlink);
-		setScheduledDate(m.scheduledDate ?? "");
-		setScheduledTime(m.scheduledTime ?? "20:00");
-		setSpeakerBioUrl(m.speakerBioUrl ?? "");
-		setMeetupRsvpUrl(m.meetupRsvpUrl ?? "");
-	}
+	useEffect(() => {
+		if (m && visible) {
+			setName(m.name);
+			setPresenters(m.presenters);
+			setEventlink(m.eventlink);
+			setScheduledDate(m.scheduledDate ?? "");
+			setScheduledTime(m.scheduledTime ?? "20:00");
+			setSpeakerBioUrl(m.speakerBioUrl ?? "");
+			setMeetupRsvpUrl(m.meetupRsvpUrl ?? "");
+			setNotes(m.description ?? "");
+			setError("");
+		}
+	}, [m, visible]);
 
 	const meetupRsvpError =
 		meetupRsvpUrl && !/^https:\/\/(www\.)?meetup\.com\//.test(meetupRsvpUrl)
 			? t("meetings.editModal.meetupRsvpUrlError") ||
 				"Must be a valid meetup.com URL."
 			: "";
+
+	async function handleSave() {
+		if (!m) return;
+		setError("");
+		setSaving(true);
+		try {
+			if (m.meetingId) {
+				// Build scheduled_start from date + time
+				const scheduledStart =
+					scheduledDate && scheduledTime
+						? `${scheduledDate}T${scheduledTime}:00`
+						: undefined;
+				await updateScheduledMeeting(m.meetingId, {
+					title: name || undefined,
+					description: notes || undefined,
+					scheduled_start: scheduledStart,
+					speaker_bio_url: speakerBioUrl || undefined,
+					meetup_rsvp_url: meetupRsvpUrl || undefined,
+				});
+			}
+			onSave();
+		} catch (err) {
+			setError(
+				err instanceof Error ? err.message : "Failed to update meeting.",
+			);
+		} finally {
+			setSaving(false);
+		}
+	}
+
+	async function handleDelete() {
+		if (!m?.meetingId) return;
+		setError("");
+		setDeleting(true);
+		try {
+			await deleteScheduledMeeting(m.meetingId);
+			onSave();
+		} catch (err) {
+			setError(
+				err instanceof Error ? err.message : "Failed to delete meeting.",
+			);
+		} finally {
+			setDeleting(false);
+		}
+	}
 
 	return (
 		<Modal
@@ -73,25 +127,26 @@ export default function EditMeetingModal({
 			footer={
 				<Box float="right">
 					<SpaceBetween direction="horizontal" size="xs">
+						{m?.meetingId && (
+							<Button
+								variant="link"
+								onClick={() => {
+									void handleDelete();
+								}}
+								loading={deleting}
+							>
+								{t("meetings.editModal.delete") || "Delete"}
+							</Button>
+						)}
 						<Button variant="link" onClick={onDismiss}>
 							{t("meetings.editModal.cancel")}
 						</Button>
 						<Button
 							variant="primary"
 							disabled={!!meetupRsvpError}
+							loading={saving}
 							onClick={() => {
-								if (!m) return;
-								onSave({
-									...m,
-									name,
-									presenters,
-									eventlink,
-									scheduledDate: scheduledDate || undefined,
-									scheduledTime: scheduledTime || undefined,
-									speakerBioUrl: speakerBioUrl || undefined,
-									meetupRsvpUrl: meetupRsvpUrl || undefined,
-								});
-								onDismiss();
+								void handleSave();
 							}}
 						>
 							{t("meetings.editModal.save")}
@@ -101,6 +156,11 @@ export default function EditMeetingModal({
 			}
 		>
 			<SpaceBetween size="m">
+				{error && (
+					<Box color="text-status-error" variant="small">
+						{error}
+					</Box>
+				)}
 				<FormField label={t("meetings.editModal.speakers")}>
 					<Input
 						value={presenters}
