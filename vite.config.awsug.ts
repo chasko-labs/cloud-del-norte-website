@@ -7,6 +7,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
 	root: resolve(__dirname, "src/sites/awsug"),
+	envDir: resolve(__dirname, "."),
 	publicDir: resolve(__dirname, "public"),
 	plugins: [react()],
 	server: {
