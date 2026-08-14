@@ -341,7 +341,7 @@
 	letter-spacing: 0.04em;
 	text-decoration: none;
 	color: #fff;
-	background: #ed1c40;
+	background: #d01535;
 	border-radius: 6px;
 	white-space: nowrap;
 	box-sizing: border-box;
@@ -351,12 +351,12 @@
 }
 
 .quantum-meetup-group__rsvp:hover {
-	background: #d01535;
+	background: #b8102c;
 	transform: scale(1.03);
 }
 
 .quantum-meetup-group__rsvp:focus-visible {
-	outline: 2px solid #ed1c40;
+	outline: 2px solid #d01535;
 	outline-offset: 2px;
 }
 
