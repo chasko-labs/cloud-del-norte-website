@@ -11,6 +11,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("../../../lib/device-capabilities", () => ({
 	getDeviceTier: vi.fn(() => "high"),
 	prefersReducedMotion: vi.fn(() => false),
+	isFionaForceOn: vi.fn(() => false),
+	setTierOverride: vi.fn(),
 	getDeviceDiagnostics: vi.fn(() => ({
 		tier: "high",
 		reducedMotion: false,

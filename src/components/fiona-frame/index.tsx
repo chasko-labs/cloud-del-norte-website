@@ -4,6 +4,7 @@ import {
 	type DeviceTier,
 	getDeviceDiagnostics,
 	getDeviceTier,
+	isFionaForceOn,
 	prefersReducedMotion,
 	setTierOverride,
 } from "../../lib/device-capabilities";
@@ -107,9 +108,12 @@ export default function FionaFrame() {
 	// Wave 86 / issue #382 — capture the gate decision in component state so we
 	// can drive the timeout + static-fallback UX from the same render path that
 	// BabylonGate uses to decide canvas insertion.
+	const fionaForced = useMemo(() => isFionaForceOn(), []);
 	const gatedOut = useMemo(
-		() => TIER_RANK[getDeviceTier()] < TIER_RANK[FIONA_REQUIRED_TIER],
-		[],
+		() =>
+			!fionaForced &&
+			TIER_RANK[getDeviceTier()] < TIER_RANK[FIONA_REQUIRED_TIER],
+		[fionaForced],
 	);
 
 	// Opt-in gate — ask user before loading the Sumerian scene. Persisted in
@@ -117,6 +121,7 @@ export default function FionaFrame() {
 	// priority: low-tier devices never see the prompt (they get the poster).
 	// 'no' state removed — previously stored 'no' values are treated as 'pending'.
 	const [userConsent, setUserConsent] = useState<"pending" | "yes">(() => {
+		if (fionaForced) return "yes";
 		if (gatedOut) return "pending";
 		const stored = localStorage.getItem("cdn-fiona-optin");
 		if (stored === "yes") return "yes";
@@ -227,10 +232,16 @@ export default function FionaFrame() {
 					? envBase.replace(/^https:\/\/[^/]+/, origin)
 					: `${origin}/fiona`;
 				const mod = (await import(/* @vite-ignore */ src)) as {
-					mountFionaPanel: (base: string) => Promise<void>;
+					mountFionaPanel: (
+						base: string,
+						opts?: { motion?: "full" | "reduced" },
+					) => Promise<void>;
 				};
 				if (cancelled) return;
-				await mod.mountFionaPanel(base);
+				const reducedMotion = prefersReducedMotion();
+				await mod.mountFionaPanel(base, {
+					motion: reducedMotion ? "reduced" : "full",
+				});
 				const shimmer = document.getElementById("fiona-shimmer");
 				if (shimmer) shimmer.style.display = "none";
 				const canvasEl2 = document.getElementById("fiona-canvas");

@@ -83,6 +83,39 @@ export function setTierOverride(tier: DeviceTier): void {
 }
 
 /**
+ * Issue #382 — ?fiona=force-on query param override.
+ * When present, forces the fiona widget to mount regardless of device tier.
+ * Persisted in sessionStorage so the override survives in-tab navigation.
+ */
+const FIONA_FORCE_STORAGE_KEY = "cdn-fiona-force-on";
+
+export function isFionaForceOn(): boolean {
+	if (typeof window === "undefined") return false;
+
+	let urlValue: string | null = null;
+	try {
+		urlValue = new URLSearchParams(window.location.search).get("fiona");
+	} catch {
+		/* malformed URL — ignore */
+	}
+
+	if (urlValue === "force-on") {
+		try {
+			window.sessionStorage.setItem(FIONA_FORCE_STORAGE_KEY, "1");
+		} catch {
+			/* storage unavailable — still applies for this call */
+		}
+		return true;
+	}
+
+	try {
+		return window.sessionStorage.getItem(FIONA_FORCE_STORAGE_KEY) === "1";
+	} catch {
+		return false;
+	}
+}
+
+/**
  * One-shot WebGL probe. Returns whether a WebGL context could be obtained and
  * the UNMASKED_RENDERER_WEBGL string (empty when the extension is blocked).
  * Disposes the probe context immediately so Chrome reclaims the slot rather
@@ -168,14 +201,38 @@ export function isCapableForBabylon(): boolean {
  */
 export function getDeviceTier(): DeviceTier {
 	const override = readTierOverride();
-	if (override !== null) return override;
-	if (!isCapableForBabylon()) return "low";
+	if (override !== null) {
+		console.debug("[device-tier] override active:", override);
+		return override;
+	}
+	const softwareGL = isSoftwareWebGL();
+	const reducedMotion = prefersReducedMotion();
 	const mem = (navigator as Navigator & { deviceMemory?: number }).deviceMemory;
 	const cores = navigator.hardwareConcurrency;
+	const capable = isCapableForBabylon();
+
+	if (!capable) {
+		console.debug("[device-tier] tier=low", {
+			isSoftwareWebGL: softwareGL,
+			prefersReducedMotion: reducedMotion,
+			deviceMemory: mem,
+			hardwareConcurrency: cores,
+		});
+		return "low";
+	}
+
 	const highMem = mem === undefined ? true : mem >= 8;
 	const highCores = cores >= 8;
-	if (highMem && highCores) return "high";
-	return "medium";
+	const tier: DeviceTier = highMem && highCores ? "high" : "medium";
+
+	console.debug("[device-tier]", `tier=${tier}`, {
+		isSoftwareWebGL: softwareGL,
+		prefersReducedMotion: reducedMotion,
+		deviceMemory: mem,
+		hardwareConcurrency: cores,
+	});
+
+	return tier;
 }
 
 /** Diagnostic snapshot: every signal that contributes to the tier decision. */

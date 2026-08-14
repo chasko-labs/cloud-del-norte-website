@@ -6,6 +6,7 @@ import {
 	hasFewCores,
 	hasLowMemory,
 	isCapableForBabylon,
+	isFionaForceOn,
 	isSoftwareWebGL,
 	prefersReducedMotion,
 	readTierOverride,
@@ -54,6 +55,10 @@ function mockMotion(matches: boolean) {
 function mockUrl(search: string) {
 	window.history.replaceState({}, "", search === "" ? "/" : `/${search}`);
 }
+
+beforeEach(() => {
+	vi.spyOn(console, "debug").mockImplementation(() => {});
+});
 
 afterEach(() => {
 	vi.restoreAllMocks();
@@ -435,5 +440,45 @@ describe("reduced-motion user on capable hardware", () => {
 		mockCanvas("Apple M3");
 		mockNav({ deviceMemory: 8, hardwareConcurrency: 8 });
 		expect(isCapableForBabylon()).toBe(true);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// isFionaForceOn / ?fiona=force-on URL override (issue #382)
+// ---------------------------------------------------------------------------
+describe("isFionaForceOn / ?fiona=force-on override", () => {
+	beforeEach(() => {
+		window.history.replaceState({}, "", "/");
+		try {
+			window.sessionStorage.clear();
+		} catch {
+			/* ignore */
+		}
+	});
+
+	it("returns false when no URL param and no sessionStorage", () => {
+		expect(isFionaForceOn()).toBe(false);
+	});
+
+	it("returns true when ?fiona=force-on is in URL", () => {
+		mockUrl("?fiona=force-on");
+		expect(isFionaForceOn()).toBe(true);
+	});
+
+	it("persists to sessionStorage so subsequent calls without URL param honour it", () => {
+		mockUrl("?fiona=force-on");
+		expect(isFionaForceOn()).toBe(true);
+		mockUrl("");
+		expect(isFionaForceOn()).toBe(true);
+	});
+
+	it("returns false for unrelated ?fiona= values", () => {
+		mockUrl("?fiona=off");
+		expect(isFionaForceOn()).toBe(false);
+	});
+
+	it("returns false when ?fiona param is absent", () => {
+		mockUrl("?babylon-tier=high");
+		expect(isFionaForceOn()).toBe(false);
 	});
 });
