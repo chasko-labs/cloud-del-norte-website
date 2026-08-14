@@ -126,14 +126,20 @@ describe("FionaFrame — gate timeout + static fallback (#382)", () => {
 	it("does NOT swap to static fallback when not gated (tier=high)", () => {
 		vi.mocked(getDeviceTier).mockReturnValue("high");
 		render(<FionaFrame />);
-		expect(screen.getByText(/modem connecting/i)).toBeInTheDocument();
+		// When tier=high, device is NOT gated out. The component shows the
+		// opt-in prompt (userConsent starts as "pending"). withFallback returns
+		// the fallback string because t() mock returns the key which equals the
+		// key param, triggering the fallback path.
+		expect(screen.getByText(/load Amazon Sumerian scene/i)).toBeInTheDocument();
 
 		act(() => {
 			vi.advanceTimersByTime(10000);
 		});
 
+		// No static fallback img appears — high-tier devices never get the poster.
 		expect(screen.queryByRole("img")).not.toBeInTheDocument();
-		expect(screen.getByText(/modem connecting/i)).toBeInTheDocument();
+		// Opt-in prompt is still showing (user hasn't clicked yes).
+		expect(screen.getByText(/load Amazon Sumerian scene/i)).toBeInTheDocument();
 		expect(logSpy).not.toHaveBeenCalled();
 	});
 

@@ -135,6 +135,12 @@ describe("translation coverage", () => {
 			"speakerForm.fields.format.virtual", // "virtual" - same in Spanish
 			// wave 56 proper nouns / channel names
 			"feedPage.howToPlayBuildercardsAuthor", // "AWS for Games" - channel proper noun
+			"awsug.adminRsvps.no", // "no" - same word in Spanish
+			"calendarActions.googleLabel", // "Google" - proper noun
+			"calendarActions.outlookLabel", // "Outlook" - proper noun
+			"calendarActions.yahooLabel", // "Yahoo" - proper noun
+			"feedPage.featuredEventCountdownMinutes", // "min" - universal abbreviation
+			"fiona.optinNo", // "[?]" - UI symbol, not translatable text
 		]);
 
 		// Helper to get value by dot-notation key

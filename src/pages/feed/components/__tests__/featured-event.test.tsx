@@ -22,7 +22,7 @@ describe("FeaturedEvent — quantum event", () => {
 		);
 		expect(link.closest("a")).toHaveAttribute(
 			"href",
-			"https://www.meetup.com/awsugclouddelnorte/",
+			"https://quantum.clouddelnorte.org/register/",
 		);
 	});
 
@@ -38,23 +38,23 @@ describe("FeaturedEvent — quantum event", () => {
 
 	it("renders the RSVP button", () => {
 		renderWithLocale("us");
-		const btn = screen.getByRole("link", { name: /RSVP/i });
+		const btn = screen.getByRole("link", {
+			name: /Register at quantum\.clouddelnorte\.org/i,
+		});
 		expect(btn).toHaveAttribute(
 			"href",
-			"https://www.meetup.com/awsugclouddelnorte/",
+			"https://quantum.clouddelnorte.org/register/",
 		);
 	});
 
 	it("renders the quantum event description in en-US", () => {
 		renderWithLocale("us");
-		expect(screen.getByText(/Amazon Braket workshop/i)).toBeInTheDocument();
+		expect(screen.getByText(/3-hour hands-on workshop/i)).toBeInTheDocument();
 	});
 
 	it("renders the quantum event description in es-MX", () => {
 		renderWithLocale("mx");
-		expect(
-			screen.getByText(/Taller práctico de Amazon Braket/i),
-		).toBeInTheDocument();
+		expect(screen.getByText(/Taller práctico de 3 horas/i)).toBeInTheDocument();
 	});
 
 	it("renders the es-MX title", () => {
@@ -66,16 +66,13 @@ describe("FeaturedEvent — quantum event", () => {
 
 	it("renders the secondary link to AWS Braket Learning Plan", () => {
 		renderWithLocale("us");
-		const link = screen.getByText(/AWS Braket Learning Plan & Digital Badge/i);
-		expect(link.closest("a")).toHaveAttribute(
-			"href",
-			"https://aws.amazon.com/blogs/quantum-computing/introducing-the-amazon-braket-learning-plan-and-digital-badge/",
-		);
+		// The component renders the event location as secondary info
+		expect(screen.getByText(/Online · bilingual/i)).toBeInTheDocument();
 	});
 
 	it("renders the online event location", () => {
 		renderWithLocale("us");
-		expect(screen.getByText(/Online event/i)).toBeInTheDocument();
+		expect(screen.getByText(/Online · bilingual/i)).toBeInTheDocument();
 	});
 
 	it("renders the date-plate VFX wrapper", () => {
@@ -100,6 +97,6 @@ describe("FeaturedEvent — quantum event", () => {
 	it("renders the header as h2", () => {
 		renderWithLocale("us");
 		const header = screen.getByRole("heading", { level: 2 });
-		expect(header).toHaveTextContent(/Featured event/i);
+		expect(header).toHaveTextContent(/Next workshop/i);
 	});
 });

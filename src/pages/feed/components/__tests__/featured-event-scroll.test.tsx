@@ -77,7 +77,7 @@ describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
 		// Header with a custom marquee. The scroll-stability contract is
 		// unchanged: after mount, a stable visible element from the card must
 		// remain in the document.
-		expect(screen.getByText(/Featured event/i)).toBeInTheDocument();
+		expect(screen.getByText(/Next workshop/i)).toBeInTheDocument();
 	});
 
 	it("survives a programmatic window.scrollTo(0, 1000) without unmounting or throwing", () => {
@@ -91,7 +91,7 @@ describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
 		expect(container.querySelector(".feed-featured-event")).not.toBeNull();
 		// Wave 32a — see note above; assert on the marquee header text instead
 		// of the removed DON'T MISS badge.
-		expect(screen.getByText(/Featured event/i)).toBeInTheDocument();
+		expect(screen.getByText(/Next workshop/i)).toBeInTheDocument();
 	});
 
 	it("renders the structural class names that wave 30a CSS targets for tearing mitigation", () => {
