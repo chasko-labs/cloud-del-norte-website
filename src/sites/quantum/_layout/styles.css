@@ -103,7 +103,7 @@
 	border-bottom: 1px solid rgba(144, 96, 240, 0.2);
 	position: sticky;
 	top: 0;
-	z-index: 100;
+	z-index: 1001;
 }
 
 :root:not(.awsui-dark-mode) .quantum-toolbar {
@@ -116,6 +116,9 @@
 	font-size: clamp(16px, 2vw, 22px);
 	font-weight: 600;
 	line-height: 1.3;
+	min-height: 44px;
+	display: inline-flex;
+	align-items: center;
 	background: linear-gradient(90deg, var(--cdn-lavender), var(--cdn-violet));
 	-webkit-background-clip: text;
 	background-clip: text;
@@ -407,6 +410,8 @@ a.quantum-user--guest {
 	box-sizing: border-box;
 	font-size: clamp(15px, 1.1vw, 16px);
 	line-height: inherit;
+	position: relative;
+	z-index: 1000;
 }
 
 /* Override Cloudscape's tight line-height defaults inside quantum pages */
@@ -436,11 +441,14 @@ a.quantum-user--guest {
 	font-size: clamp(14px, 1.1vw, 15px) !important;
 	font-weight: 600 !important;
 	letter-spacing: 0.06em !important;
-	padding: 4px 12px !important;
+	padding: 10px 14px !important;
+	min-height: 44px !important;
 	background: rgba(144, 96, 240, 0.1) !important;
 	border: 1px solid rgba(144, 96, 240, 0.25) !important;
 	border-radius: 999px !important;
-	display: inline-block !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	box-sizing: border-box !important;
 }
 
 :root:not(.awsui-dark-mode)
@@ -448,6 +456,15 @@ a.quantum-user--guest {
 	[class*="awsui_small-variant"][class*="color-text-status-info"] {
 	background: rgba(90, 31, 138, 0.06) !important;
 	border-color: rgba(90, 31, 138, 0.15) !important;
+}
+
+/* ── STATUS BADGE TOUCH TARGET — ensure interactive parent is 44px ──── */
+.quantum-main [class*="awsui_badge"],
+.quantum-main [class*="awsui_status"] {
+	min-height: 44px !important;
+	display: inline-flex !important;
+	align-items: center !important;
+	box-sizing: border-box !important;
 }
 
 /* ── GLASS CONTAINERS — enhanced depth + quantum interference ──────────── */
@@ -470,7 +487,7 @@ a.quantum-user--guest {
 				rgba(90, 31, 138, 0.02) 21px
 			),
 			/* Glass base */
-			rgba(0, 0, 42, 0.55) !important;
+			rgba(0, 0, 42, 0.72) !important;
 	border: 1px solid rgba(144, 96, 240, 0.2) !important;
 	border-radius: 16px !important;
 	box-shadow:
@@ -495,7 +512,7 @@ a.quantum-user--guest {
 :root:not(.awsui-dark-mode)
 	.quantum-main
 	[class*="awsui_root"][class*="variant-default"] {
-	background-color: rgba(255, 255, 255, 0.55) !important;
+	background-color: rgba(255, 255, 255, 0.78) !important;
 	border-color: rgba(90, 31, 138, 0.1) !important;
 	box-shadow:
 		0 8px 32px rgba(90, 31, 138, 0.06),
@@ -790,29 +807,17 @@ a.quantum-user--guest {
 	text-shadow: 0 0 8px rgba(144, 96, 240, 0.3) !important;
 }
 
-/* 3. Headers — gradient text on h2 */
+/* 3. Headers — solid high-contrast text on h2 (gradient removed for a11y) */
 .quantum-main [class*="awsui_root-variant-h2"] [class*="awsui_title"] {
-	background: linear-gradient(
-		90deg,
-		var(--cdn-lavender, #d7c7ee),
-		#fff
-	) !important;
-	-webkit-background-clip: text !important;
-	background-clip: text !important;
-	-webkit-text-fill-color: transparent !important;
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
 }
 :root:not(.awsui-dark-mode)
 	.quantum-main
 	[class*="awsui_root-variant-h2"]
 	[class*="awsui_title"] {
-	background: linear-gradient(
-		90deg,
-		var(--cdn-purple, #5a1f8a),
-		var(--cdn-violet, #9060f0)
-	) !important;
-	-webkit-background-clip: text !important;
-	background-clip: text !important;
-	-webkit-text-fill-color: transparent !important;
+	color: #1a0533 !important;
+	-webkit-text-fill-color: #1a0533 !important;
 }
 
 /* 4. Card entrance animation — fade-up on load */

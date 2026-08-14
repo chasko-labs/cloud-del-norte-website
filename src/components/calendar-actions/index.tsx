@@ -356,9 +356,7 @@ export default function CalendarActions(props: CalendarActionsProps = {}) {
 					aria-label={t("calendarActions.google")}
 				>
 					<GoogleCalendarIcon />
-					<span className="calendar-actions__btn-text">
-						{t("calendarActions.googleLabel")}
-					</span>
+					{t("calendarActions.googleLabel")}
 				</a>
 				<a
 					href={buildOutlookUrl(title, startUtc, endUtc, description, location)}
@@ -368,9 +366,7 @@ export default function CalendarActions(props: CalendarActionsProps = {}) {
 					aria-label={t("calendarActions.outlook")}
 				>
 					<OutlookIcon />
-					<span className="calendar-actions__btn-text">
-						{t("calendarActions.outlookLabel")}
-					</span>
+					{t("calendarActions.outlookLabel")}
 				</a>
 				<a
 					href={buildYahooUrl(title, startUtc, description, location)}
@@ -380,9 +376,7 @@ export default function CalendarActions(props: CalendarActionsProps = {}) {
 					aria-label={t("calendarActions.yahoo")}
 				>
 					<YahooIcon />
-					<span className="calendar-actions__btn-text">
-						{t("calendarActions.yahooLabel")}
-					</span>
+					{t("calendarActions.yahooLabel")}
 				</a>
 				<button
 					type="button"
@@ -391,9 +385,7 @@ export default function CalendarActions(props: CalendarActionsProps = {}) {
 					aria-label={t("calendarActions.downloadIcs")}
 				>
 					<DownloadIcon />
-					<span className="calendar-actions__btn-text">
-						{t("calendarActions.downloadLabel")}
-					</span>
+					{t("calendarActions.downloadLabel")}
 				</button>
 				<button
 					type="button"
@@ -406,11 +398,9 @@ export default function CalendarActions(props: CalendarActionsProps = {}) {
 					}
 				>
 					{copied ? <CheckIcon /> : <CopyIcon />}
-					<span className="calendar-actions__btn-text">
-						{copied
-							? t("calendarActions.copied")
-							: t("calendarActions.copyLabel")}
-					</span>
+					{copied
+						? t("calendarActions.copied")
+						: t("calendarActions.copyLabel")}
 				</button>
 				{canShare && (
 					<button
@@ -420,9 +410,7 @@ export default function CalendarActions(props: CalendarActionsProps = {}) {
 						aria-label={t("calendarActions.share")}
 					>
 						<ShareIcon />
-						<span className="calendar-actions__btn-text">
-							{t("calendarActions.shareLabel")}
-						</span>
+						{t("calendarActions.shareLabel")}
 					</button>
 				)}
 			</div>

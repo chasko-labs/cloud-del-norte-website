@@ -35,9 +35,9 @@
 	background-image: /* dark overlay for text readability */
 			linear-gradient(
 				to bottom,
-				rgba(0, 0, 42, 0.6) 0%,
-				rgba(0, 0, 42, 0.45) 50%,
-				rgba(0, 0, 42, 0.65) 100%
+				rgba(0, 0, 42, 0.75) 0%,
+				rgba(0, 0, 42, 0.7) 50%,
+				rgba(0, 0, 42, 0.78) 100%
 			),
 			/* quantum atmosphere render — progressive enhancement via image-set */
 			image-set(
@@ -62,9 +62,9 @@
 		background-image:
 			linear-gradient(
 				to bottom,
-				rgba(0, 0, 42, 0.6) 0%,
-				rgba(0, 0, 42, 0.45) 50%,
-				rgba(0, 0, 42, 0.65) 100%
+				rgba(0, 0, 42, 0.75) 0%,
+				rgba(0, 0, 42, 0.7) 50%,
+				rgba(0, 0, 42, 0.78) 100%
 			),
 			image-set(
 				url("/brand/quantum/quantum-hero-mobile-1080x1920.webp")
@@ -83,9 +83,9 @@
 		background-image:
 			linear-gradient(
 				to bottom,
-				rgba(255, 255, 255, 0.55) 0%,
-				rgba(255, 255, 255, 0.4) 50%,
-				rgba(255, 255, 255, 0.6) 100%
+				rgba(255, 255, 255, 0.78) 0%,
+				rgba(255, 255, 255, 0.72) 50%,
+				rgba(255, 255, 255, 0.8) 100%
 			),
 			image-set(
 				url("/brand/quantum/quantum-hero-mobile-1080x1920.webp")
@@ -105,9 +105,9 @@
 		background-image:
 			linear-gradient(
 				to bottom,
-				rgba(255, 255, 255, 0.55) 0%,
-				rgba(255, 255, 255, 0.4) 50%,
-				rgba(255, 255, 255, 0.6) 100%
+				rgba(255, 255, 255, 0.78) 0%,
+				rgba(255, 255, 255, 0.72) 50%,
+				rgba(255, 255, 255, 0.8) 100%
 			),
 			image-set(
 				url("/brand/quantum/quantum-hero-1920x600.webp") type("image/webp"),
@@ -121,11 +121,15 @@
 .quantum-register-cta-wrapper {
 	display: flex;
 	justify-content: center;
-	padding: 0.5rem 0;
+	padding: 0.75rem 1.5rem;
+	margin: 0 auto;
+	max-width: fit-content;
 }
 
 .quantum-register-cta-wrapper--footer {
-	padding: 1rem 0;
+	padding: 1.5rem 2rem;
+	background: rgba(139, 105, 20, 0.15);
+	border-radius: 12px;
 }
 
 .quantum-register-cta {
@@ -140,8 +144,8 @@
 	letter-spacing: 0.04em;
 	line-height: var(--q-line-height-cta, 1.4);
 	text-decoration: none;
-	color: #fff;
-	border-radius: 12px;
+	color: #1a0a00;
+	border-radius: 4px;
 	overflow: hidden;
 	cursor: pointer;
 	border: 1px solid rgba(201, 162, 63, 0.5);
@@ -164,10 +168,9 @@
 		#8b6914 100%
 	);
 	box-shadow:
+		0 0 0 4px #8b6914,
 		0 4px 20px rgba(201, 162, 63, 0.4),
-		0 0 40px rgba(201, 162, 63, 0.15),
-		inset 0 1px 0 rgba(255, 255, 255, 0.25),
-		inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+		0 0 40px rgba(201, 162, 63, 0.15);
 
 	/* Glow pulse animation */
 	animation: register-glow-pulse 3s ease-in-out infinite;
@@ -177,10 +180,9 @@
 	transform: scale(1.04) translateY(-1px);
 	border-color: rgba(218, 165, 32, 0.8);
 	box-shadow:
+		0 0 0 4px #8b6914,
 		0 8px 32px rgba(201, 162, 63, 0.6),
-		0 0 60px rgba(201, 162, 63, 0.25),
-		inset 0 1px 0 rgba(255, 255, 255, 0.3),
-		inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+		0 0 60px rgba(201, 162, 63, 0.25);
 }
 
 .quantum-register-cta:focus-visible {
@@ -195,7 +197,7 @@
 .quantum-register-cta__text {
 	position: relative;
 	z-index: 1;
-	text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
 }
 
 /* Light sweep shimmer across the button surface */
@@ -207,9 +209,9 @@
 		105deg,
 		transparent 0%,
 		transparent 35%,
-		rgba(255, 255, 255, 0.25) 45%,
-		rgba(255, 255, 255, 0.4) 50%,
-		rgba(255, 255, 255, 0.25) 55%,
+		rgba(255, 255, 255, 0.12) 45%,
+		rgba(255, 255, 255, 0.2) 50%,
+		rgba(255, 255, 255, 0.12) 55%,
 		transparent 65%,
 		transparent 100%
 	);
@@ -221,17 +223,15 @@
 	0%,
 	100% {
 		box-shadow:
+			0 0 0 4px #8b6914,
 			0 4px 20px rgba(201, 162, 63, 0.4),
-			0 0 40px rgba(201, 162, 63, 0.15),
-			inset 0 1px 0 rgba(255, 255, 255, 0.25),
-			inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+			0 0 40px rgba(201, 162, 63, 0.15);
 	}
 	50% {
 		box-shadow:
+			0 0 0 4px #8b6914,
 			0 4px 28px rgba(201, 162, 63, 0.6),
-			0 0 60px rgba(201, 162, 63, 0.25),
-			inset 0 1px 0 rgba(255, 255, 255, 0.3),
-			inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+			0 0 60px rgba(201, 162, 63, 0.25);
 	}
 }
 
@@ -256,7 +256,7 @@
 		#b8922f 70%,
 		#7a5c10 100%
 	);
-	color: #fff;
+	color: #1a0a00;
 	border-color: rgba(139, 105, 20, 0.6);
 }
 
@@ -322,11 +322,11 @@
 .quantum-meetup-group__location {
 	font-size: 0.875rem;
 	font-weight: 500;
-	color: rgba(215, 199, 238, 0.9);
+	color: #d7c7ee;
 }
 
 :root:not(.awsui-dark-mode) .quantum-meetup-group__location {
-	color: rgba(90, 31, 138, 0.8);
+	color: #3a1260;
 }
 
 .quantum-meetup-group__rsvp {
@@ -458,15 +458,15 @@
 	--q-card-prism-fallback: url("/brand/quantum/quantum-card-prism-600x400.png");
 	--q-card-overlay-dark: linear-gradient(
 		to bottom,
-		rgba(0, 0, 42, 0.78) 0%,
-		rgba(0, 0, 42, 0.72) 50%,
-		rgba(0, 0, 42, 0.8) 100%
+		rgba(0, 0, 42, 0.84) 0%,
+		rgba(0, 0, 42, 0.8) 50%,
+		rgba(0, 0, 42, 0.86) 100%
 	);
 	--q-card-overlay-light: linear-gradient(
 		to bottom,
-		rgba(255, 255, 255, 0.74) 0%,
-		rgba(255, 255, 255, 0.68) 50%,
-		rgba(255, 255, 255, 0.76) 100%
+		rgba(255, 255, 255, 0.82) 0%,
+		rgba(255, 255, 255, 0.78) 50%,
+		rgba(255, 255, 255, 0.84) 100%
 	);
 }
 
@@ -566,3 +566,65 @@
    we strengthen the panel-wide gradient overlay so the busiest background
    region still yields ≥ 4.5:1 against text colors. The art remains visible
    through the translucent overlay (effective opacity ~0.75 dark / ~0.7 light). */
+
+/* ── HERO TEXT CONTRAST — solid colors for readability over hero image ── */
+.quantum-hero-atmosphere [class*="awsui_root-variant-h1"]
+	[class*="awsui_title"],
+.quantum-hero-atmosphere [class*="awsui_heading"],
+.quantum-hero-atmosphere h1 {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+}
+
+:root:not(.awsui-dark-mode)
+	.quantum-hero-atmosphere
+	[class*="awsui_root-variant-h1"]
+	[class*="awsui_title"],
+:root:not(.awsui-dark-mode) .quantum-hero-atmosphere [class*="awsui_heading"],
+:root:not(.awsui-dark-mode) .quantum-hero-atmosphere h1 {
+	color: #1a0533 !important;
+	-webkit-text-fill-color: #1a0533 !important;
+}
+
+/* Hero links (Amazon Braket) */
+.quantum-hero-atmosphere [class*="awsui_link"] {
+	color: #ffffff !important;
+	-webkit-text-fill-color: #ffffff !important;
+}
+
+:root:not(.awsui-dark-mode) .quantum-hero-atmosphere [class*="awsui_link"] {
+	color: #1a0533 !important;
+	-webkit-text-fill-color: #1a0533 !important;
+}
+
+/* Hero dark overlay — strengthen to guarantee 4.5:1 for white text */
+.quantum-hero-atmosphere > [class*="awsui_root"][class*="variant-default"] {
+	background-image:
+		linear-gradient(
+			to bottom,
+			rgba(0, 0, 42, 0.75) 0%,
+			rgba(0, 0, 42, 0.7) 50%,
+			rgba(0, 0, 42, 0.78) 100%
+		),
+		image-set(
+			url("/brand/quantum/quantum-hero-1920x600.webp") type("image/webp"),
+			url("/brand/quantum/quantum-hero-1920x600.png") type("image/png")
+		) !important;
+}
+
+/* Light hero overlay — strengthen for dark text */
+:root:not(.awsui-dark-mode)
+	.quantum-hero-atmosphere
+	> [class*="awsui_root"][class*="variant-default"] {
+	background-image:
+		linear-gradient(
+			to bottom,
+			rgba(255, 255, 255, 0.78) 0%,
+			rgba(255, 255, 255, 0.72) 50%,
+			rgba(255, 255, 255, 0.8) 100%
+		),
+		image-set(
+			url("/brand/quantum/quantum-hero-1920x600.webp") type("image/webp"),
+			url("/brand/quantum/quantum-hero-1920x600.png") type("image/png")
+		) !important;
+}
