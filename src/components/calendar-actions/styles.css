@@ -4,7 +4,17 @@
 	flex-direction: column;
 	align-items: center;
 	gap: 0.5rem;
-	padding: 0.75rem 0;
+	padding: 0.75rem 1rem;
+	background: #00001e;
+	border-radius: 12px;
+	border: 1px solid rgba(144, 96, 240, 0.2);
+	position: relative;
+	z-index: 1000;
+}
+
+:root:not(.awsui-dark-mode) .calendar-actions {
+	background: #ffffff;
+	border-color: rgba(90, 31, 138, 0.12);
 }
 
 .calendar-actions__label {
@@ -12,7 +22,10 @@
 	font-weight: 600;
 	letter-spacing: 0.06em;
 	text-transform: uppercase;
-	color: var(--cdn-purple, #9060f0);
+	color: #ffffff;
+	background: #00001e;
+	padding: 4px 8px;
+	border-radius: 4px;
 }
 
 .calendar-actions__buttons {
@@ -28,11 +41,12 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 0.35rem;
-	padding: 0.4rem 0.75rem;
-	border: 1px solid rgba(144, 96, 240, 0.25);
-	border-radius: 9999px;
-	background: rgba(144, 96, 240, 0.06);
-	color: var(--q-text-dark, #e8e0f4) !important;
+	padding: 0.6rem 0.85rem;
+	min-height: 44px;
+	border: 1px solid rgba(215, 199, 238, 0.3);
+	border-radius: 4px;
+	background: #140f28;
+	color: #ffffff !important;
 	cursor: pointer;
 	text-decoration: none;
 	font-family: inherit;
@@ -40,6 +54,7 @@
 	font-weight: 600;
 	line-height: var(--q-line-height-cta, 1.4);
 	white-space: nowrap;
+	box-sizing: border-box;
 	transition:
 		background 0.2s ease,
 		border-color 0.2s ease,
@@ -48,8 +63,8 @@
 }
 
 .calendar-actions__btn:hover {
-	background: rgba(144, 96, 240, 0.14);
-	border-color: rgba(144, 96, 240, 0.5);
+	background: #1a1430;
+	border-color: rgba(215, 199, 238, 0.5);
 	transform: translateY(-1px);
 	box-shadow: 0 4px 12px rgba(144, 96, 240, 0.2);
 }
@@ -95,33 +110,43 @@
 	}
 }
 
-/* Dark mode parity */
+/* Dark mode parity — default is already dark; these ensure .awsui-dark-mode override */
+:root.awsui-dark-mode .calendar-actions {
+	background: #00001e;
+	border-color: rgba(144, 96, 240, 0.2);
+}
+
 :root.awsui-dark-mode .calendar-actions__label {
-	color: #d7c7ee;
+	color: #ffffff;
 }
 
 :root.awsui-dark-mode .calendar-actions__btn {
-	border-color: rgba(215, 199, 238, 0.2);
-	background: rgba(215, 199, 238, 0.06);
-	color: var(--q-text-dark, #e8e0f4) !important;
+	border-color: rgba(215, 199, 238, 0.3);
+	background: #140f28;
+	color: #ffffff !important;
 }
 
 :root.awsui-dark-mode .calendar-actions__btn:hover {
-	background: rgba(215, 199, 238, 0.12);
-	border-color: rgba(215, 199, 238, 0.4);
+	background: #1a1430;
+	border-color: rgba(215, 199, 238, 0.5);
 	box-shadow: 0 4px 12px rgba(215, 199, 238, 0.15);
 }
 
 /* Light mode contrast */
+:root:not(.awsui-dark-mode) .calendar-actions__label {
+	color: #1a0533;
+	background: #ffffff;
+}
+
 :root:not(.awsui-dark-mode) .calendar-actions__btn {
-	color: var(--q-text-light, #2d1a4e) !important;
-	border-color: rgba(90, 31, 138, 0.25);
-	background: rgba(90, 31, 138, 0.06);
+	color: #1a0533 !important;
+	border-color: rgba(90, 31, 138, 0.3);
+	background: #ffffff;
 }
 
 :root:not(.awsui-dark-mode) .calendar-actions__btn:hover {
-	background: rgba(90, 31, 138, 0.12);
-	border-color: rgba(90, 31, 138, 0.4);
+	background: #f5f0ff;
+	border-color: rgba(90, 31, 138, 0.5);
 }
 
 @media (prefers-reduced-motion: reduce) {
