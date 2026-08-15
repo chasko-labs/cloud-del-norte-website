@@ -155,22 +155,12 @@ export function FionaPanel() {
 					{userConsent === "pending" && (
 						<div
 							id="fiona-shimmer"
-							className="fiona-placeholder"
+							className="fiona-placeholder fiona-placeholder--static"
 							aria-hidden="true"
 						>
 							<div className="fiona-optin-prompt">
 								<span className="fiona-placeholder-label">
-									load Amazon Sumerian scene?
-									<a
-										href="https://github.com/aws-samples/amazon-sumerian-hosts"
-										target="_blank"
-										rel="noopener noreferrer"
-										className="fiona-optin-help"
-										aria-label="What is Amazon Sumerian Hosts?"
-										title="What is Amazon Sumerian Hosts?"
-									>
-										?
-									</a>
+									load sumerian scene
 								</span>
 								<div className="fiona-optin-actions">
 									<button
@@ -181,7 +171,7 @@ export function FionaPanel() {
 											setUserConsent("yes");
 										}}
 									>
-										[Y] yes
+										yes
 									</button>
 									<button
 										type="button"
@@ -191,9 +181,17 @@ export function FionaPanel() {
 											setUserConsent("no");
 										}}
 									>
-										[N] no
+										no
 									</button>
 								</div>
+								<a
+									href="https://github.com/aws-samples/amazon-sumerian-hosts"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="fiona-optin-about"
+								>
+									about this scene
+								</a>
 							</div>
 						</div>
 					)}
@@ -270,9 +268,9 @@ export function FionaPanel() {
 						setUserConsent("pending");
 					}}
 					aria-label="Show Fiona scene prompt"
-					title="Show Fiona"
+					title="Show scene"
 				>
-					f
+					scene
 				</button>
 			)}
 			{/* scene-over "skip credits" button is appended into the bezel by fiona-embed.ts

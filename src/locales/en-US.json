@@ -1121,9 +1121,9 @@
 		"stickynoteLine1": "non load",
 		"stickynoteLine2": "bearing",
 		"welcomeGreeting": "welcome",
-		"optinPrompt": "load Amazon Sumerian scene?",
-		"optinYes": "[Y] yes",
-		"optinNo": "[?]"
+		"optinPrompt": "load sumerian scene",
+		"optinYes": "yes",
+		"optinNo": "no"
 	},
 	"persistentPlayer": {
 		"streamErrorRetrying": "stream hiccup — retrying",

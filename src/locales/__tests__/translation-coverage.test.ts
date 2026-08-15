@@ -140,7 +140,6 @@ describe("translation coverage", () => {
 			"calendarActions.outlookLabel", // "Outlook" - proper noun
 			"calendarActions.yahooLabel", // "Yahoo" - proper noun
 			"feedPage.featuredEventCountdownMinutes", // "min" - universal abbreviation
-			"fiona.optinNo", // "[?]" - UI symbol, not translatable text
 		]);
 
 		// Helper to get value by dot-notation key

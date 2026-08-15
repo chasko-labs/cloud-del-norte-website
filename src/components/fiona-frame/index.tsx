@@ -330,7 +330,7 @@ export default function FionaFrame() {
 					{!gatedOut && userConsent === "pending" && (
 						<div
 							id="fiona-shimmer"
-							className="fiona-placeholder"
+							className="fiona-placeholder fiona-placeholder--static"
 							aria-hidden={true}
 						>
 							<div className="fiona-optin-prompt">
@@ -338,18 +338,8 @@ export default function FionaFrame() {
 									{withFallback(
 										t("fiona.optinPrompt"),
 										"fiona.optinPrompt",
-										"load Amazon Sumerian scene?",
+										"load sumerian scene",
 									)}
-									<a
-										href="https://github.com/aws-samples/amazon-sumerian-hosts"
-										target="_blank"
-										rel="noopener noreferrer"
-										className="fiona-optin-help"
-										aria-label="What is Amazon Sumerian Hosts?"
-										title="What is Amazon Sumerian Hosts?"
-									>
-										?
-									</a>
 								</span>
 								{prefersReducedMotion() && (
 									<span className="fiona-placeholder-label fiona-reduced-motion-note">
@@ -365,11 +355,7 @@ export default function FionaFrame() {
 											setUserConsent("yes");
 										}}
 									>
-										{withFallback(
-											t("fiona.optinYes"),
-											"fiona.optinYes",
-											"[Y] yes",
-										)}
+										{withFallback(t("fiona.optinYes"), "fiona.optinYes", "yes")}
 									</button>
 									<button
 										type="button"
@@ -379,13 +365,17 @@ export default function FionaFrame() {
 											setUserConsent("no");
 										}}
 									>
-										{withFallback(
-											t("fiona.optinNo"),
-											"fiona.optinNo",
-											"[N] no",
-										)}
+										{withFallback(t("fiona.optinNo"), "fiona.optinNo", "no")}
 									</button>
 								</div>
+								<a
+									href="https://github.com/aws-samples/amazon-sumerian-hosts"
+									target="_blank"
+									rel="noopener noreferrer"
+									className="fiona-optin-about"
+								>
+									about this scene
+								</a>
 							</div>
 						</div>
 					)}
@@ -456,9 +446,9 @@ export default function FionaFrame() {
 						setUserConsent("pending");
 					}}
 					aria-label="Show Fiona scene prompt"
-					title="Show Fiona"
+					title="Show scene"
 				>
-					f
+					scene
 				</button>
 			)}
 			{userConsent === "yes" && (

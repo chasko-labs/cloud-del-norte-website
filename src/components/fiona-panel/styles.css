@@ -2928,20 +2928,20 @@ body.cdn-beat-bank-3 .fiona-led:nth-child(4n) {
 	position: fixed;
 	bottom: 12px;
 	right: 12px;
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
+	border-radius: 3px;
 	border: 1px solid rgba(144, 96, 240, 0.3);
 	background: rgba(0, 0, 42, 0.7);
 	color: #d7c7ee;
-	font-size: 16px;
-	font-family: monospace;
+	font-size: 10px;
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+	letter-spacing: 0.06em;
+	padding: 4px 8px;
 	cursor: pointer;
 	z-index: 100;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	opacity: 0.5;
+	opacity: 0.4;
 	transition:
 		opacity 0.2s,
 		border-color 0.2s;
@@ -2956,29 +2956,27 @@ body.cdn-beat-bank-3 .fiona-led:nth-child(4n) {
 	border-color: rgba(90, 31, 138, 0.2);
 }
 
-/* === Opt-in help link — ? circle linking to Sumerian Hosts repo ========= */
-.fiona-optin-help {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 24px;
-	height: 24px;
-	border-radius: 50%;
-	border: 1px solid rgba(144, 96, 240, 0.4);
-	color: #d7c7ee;
-	font-size: 14px;
-	font-family: monospace;
+/* === Opt-in about link — below buttons, links to Sumerian Hosts repo === */
+.fiona-optin-about {
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+	font-size: clamp(9px, 3cqi, 11px);
+	letter-spacing: 0.06em;
+	color: rgba(144, 96, 240, 0.6);
 	text-decoration: none;
-	margin-left: 8px;
 	opacity: 0.7;
-	transition: opacity 0.2s;
-	vertical-align: middle;
+	transition:
+		opacity 0.2s,
+		color 0.2s;
 	pointer-events: auto;
 }
-.fiona-optin-help:hover {
+.fiona-optin-about:hover {
 	opacity: 1;
+	color: rgba(144, 96, 240, 0.9);
+	text-decoration: underline;
 }
-:root:not(.awsui-dark-mode) .fiona-optin-help {
-	color: #5a1f8a;
-	border-color: rgba(90, 31, 138, 0.3);
+:root:not(.awsui-dark-mode) .fiona-optin-about {
+	color: rgba(90, 31, 138, 0.6);
+}
+:root:not(.awsui-dark-mode) .fiona-optin-about:hover {
+	color: rgba(90, 31, 138, 0.9);
 }
