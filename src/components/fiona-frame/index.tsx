@@ -340,6 +340,16 @@ export default function FionaFrame() {
 										"fiona.optinPrompt",
 										"load Amazon Sumerian scene?",
 									)}
+									<a
+										href="https://github.com/aws-samples/amazon-sumerian-hosts"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="fiona-optin-help"
+										aria-label="What is Amazon Sumerian Hosts?"
+										title="What is Amazon Sumerian Hosts?"
+									>
+										?
+									</a>
 								</span>
 								{prefersReducedMotion() && (
 									<span className="fiona-placeholder-label fiona-reduced-motion-note">
@@ -448,7 +458,7 @@ export default function FionaFrame() {
 					aria-label="Show Fiona scene prompt"
 					title="Show Fiona"
 				>
-					?
+					f
 				</button>
 			)}
 			{userConsent === "yes" && (

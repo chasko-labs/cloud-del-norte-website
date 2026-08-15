@@ -2955,3 +2955,30 @@ body.cdn-beat-bank-3 .fiona-led:nth-child(4n) {
 	color: #5a1f8a;
 	border-color: rgba(90, 31, 138, 0.2);
 }
+
+/* === Opt-in help link — ? circle linking to Sumerian Hosts repo ========= */
+.fiona-optin-help {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	border: 1px solid rgba(144, 96, 240, 0.4);
+	color: #d7c7ee;
+	font-size: 14px;
+	font-family: monospace;
+	text-decoration: none;
+	margin-left: 8px;
+	opacity: 0.7;
+	transition: opacity 0.2s;
+	vertical-align: middle;
+	pointer-events: auto;
+}
+.fiona-optin-help:hover {
+	opacity: 1;
+}
+:root:not(.awsui-dark-mode) .fiona-optin-help {
+	color: #5a1f8a;
+	border-color: rgba(90, 31, 138, 0.3);
+}

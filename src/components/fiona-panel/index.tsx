@@ -161,6 +161,16 @@ export function FionaPanel() {
 							<div className="fiona-optin-prompt">
 								<span className="fiona-placeholder-label">
 									load Amazon Sumerian scene?
+									<a
+										href="https://github.com/aws-samples/amazon-sumerian-hosts"
+										target="_blank"
+										rel="noopener noreferrer"
+										className="fiona-optin-help"
+										aria-label="What is Amazon Sumerian Hosts?"
+										title="What is Amazon Sumerian Hosts?"
+									>
+										?
+									</a>
 								</span>
 								<div className="fiona-optin-actions">
 									<button
@@ -262,7 +272,7 @@ export function FionaPanel() {
 					aria-label="Show Fiona scene prompt"
 					title="Show Fiona"
 				>
-					?
+					f
 				</button>
 			)}
 			{/* scene-over "skip credits" button is appended into the bezel by fiona-embed.ts
