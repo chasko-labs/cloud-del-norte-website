@@ -43,7 +43,7 @@ const ROOM_NAME = "cloud-del-norte-awsug";
 const SIGN_IN_URL =
 	"https://auth.clouddelnorte.org/login/index.html?return_to=https://quantum.clouddelnorte.org/auth-callback/%23return_to=/dashboard/";
 const RECORDINGS_URL =
-	"https://s3.console.aws.amazon.com/s3/buckets/cdn-jitsi-recordings?region=us-west-2&prefix=cloud-del-norte-awsug/";
+	"https://s3.console.aws.amazon.com/s3/buckets/jitsi-video-platform-recordings-4b917dff?region=us-west-2";
 const POLL_INTERVAL_MS = 30_000;
 const CELEBRATION_DURATION_MS = 5_000;
 
