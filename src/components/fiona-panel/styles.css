@@ -2841,3 +2841,84 @@ body.cdn-beat-bank-3 .fiona-led:nth-child(4n) {
 		opacity: initial;
 	}
 }
+
+/* === Opt-in consent prompt — CRT console style ============================ */
+.fiona-placeholder--static {
+	animation: none;
+	background: #060806;
+}
+
+.fiona-optin-prompt {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 16px;
+	padding: 12px;
+	min-height: 90px;
+}
+
+.fiona-optin-prompt .fiona-placeholder-label {
+	white-space: nowrap;
+	font-size: clamp(10px, 4cqi, 14px);
+	letter-spacing: clamp(0.06em, 2cqi, 0.18em);
+	animation: none;
+}
+
+.fiona-optin-actions {
+	display: flex;
+	gap: 14px;
+}
+
+.fiona-optin-btn {
+	appearance: none;
+	background: transparent;
+	border: 1px solid rgba(34, 197, 94, 0.7);
+	border-radius: 2px;
+	color: rgba(34, 197, 94, 0.7);
+	font-family: "JetBrains Mono", "Courier New", Courier, monospace;
+	font-size: clamp(11px, 4cqi, 15px);
+	letter-spacing: 0.12em;
+	padding: 4px 14px;
+	cursor: pointer;
+	text-shadow: 0 0 4px rgba(34, 197, 94, 0.3);
+	transition:
+		color 0.15s,
+		background 0.15s,
+		border-color 0.15s,
+		text-shadow 0.15s;
+}
+
+.fiona-optin-btn:hover,
+.fiona-optin-btn:focus-visible {
+	color: #050805;
+	background: rgba(34, 197, 94, 0.7);
+	border-color: #22c55e;
+	text-shadow: none;
+}
+
+.fiona-optin-btn--no {
+	border-color: rgba(144, 96, 240, 0.7);
+	color: rgba(144, 96, 240, 0.7);
+	text-shadow: 0 0 4px rgba(144, 96, 240, 0.3);
+}
+
+.fiona-optin-btn--no:hover,
+.fiona-optin-btn--no:focus-visible {
+	color: #050805;
+	background: rgba(144, 96, 240, 0.7);
+	border-color: #9060f0;
+	text-shadow: none;
+}
+
+.fiona-poster {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	display: block;
+	pointer-events: none;
+	-webkit-user-select: none;
+	user-select: none;
+	filter: drop-shadow(0 0 4px rgba(34, 197, 94, 0.3));
+	opacity: 0.92;
+}

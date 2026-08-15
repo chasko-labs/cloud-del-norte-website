@@ -117,18 +117,19 @@ export default function FionaFrame() {
 	);
 
 	// Opt-in gate — ask user before loading the Sumerian scene. Persisted in
-	// localStorage so repeat visitors skip the prompt. Device-tier gate takes
-	// priority: low-tier devices never see the prompt (they get the poster).
-	// 'no' state removed — previously stored 'no' values are treated as 'pending'.
-	const [userConsent, setUserConsent] = useState<"pending" | "yes">(() => {
-		if (fionaForced) return "yes";
-		if (gatedOut) return "pending";
-		const stored = localStorage.getItem("cdn-fiona-optin");
-		if (stored === "yes") return "yes";
-		// Clear stale 'no' from localStorage — there's no 'no' state anymore
-		if (stored === "no") localStorage.removeItem("cdn-fiona-optin");
-		return "pending";
-	});
+	// sessionStorage so the prompt doesn't repeat within a tab session but
+	// resets on new tabs (privacy-friendly). Device-tier gate takes priority:
+	// low-tier devices never see the prompt (they get the poster).
+	const [userConsent, setUserConsent] = useState<"pending" | "yes" | "no">(
+		() => {
+			if (fionaForced) return "yes";
+			if (gatedOut) return "pending";
+			const stored = sessionStorage.getItem("cdn-fiona-optin");
+			if (stored === "yes") return "yes";
+			if (stored === "no") return "no";
+			return "pending";
+		},
+	);
 	const [gatedFallback, setGatedFallback] = useState(false);
 	const diagnosticLoggedRef = useRef(false);
 
@@ -317,7 +318,7 @@ export default function FionaFrame() {
 								className="fiona-load-anyway"
 								onClick={() => {
 									setTierOverride("medium");
-									localStorage.setItem("cdn-fiona-optin", "yes");
+									sessionStorage.setItem("cdn-fiona-optin", "yes");
 									window.location.reload();
 								}}
 							>
@@ -350,7 +351,7 @@ export default function FionaFrame() {
 										type="button"
 										className="fiona-optin-btn fiona-optin-btn--yes"
 										onClick={() => {
-											localStorage.setItem("cdn-fiona-optin", "yes");
+											sessionStorage.setItem("cdn-fiona-optin", "yes");
 											setUserConsent("yes");
 										}}
 									>
@@ -364,16 +365,37 @@ export default function FionaFrame() {
 										type="button"
 										className="fiona-optin-btn fiona-optin-btn--no"
 										onClick={() => {
-											window.open(
-												"https://github.com/aws-samples/amazon-sumerian-hosts",
-												"_blank",
-											);
+											sessionStorage.setItem("cdn-fiona-optin", "no");
+											setUserConsent("no");
 										}}
 									>
-										{withFallback(t("fiona.optinNo"), "fiona.optinNo", "[?]")}
+										{withFallback(
+											t("fiona.optinNo"),
+											"fiona.optinNo",
+											"[N] no",
+										)}
 									</button>
 								</div>
 							</div>
+						</div>
+					)}
+					{/* User declined — show static poster fallback */}
+					{!gatedOut && userConsent === "no" && (
+						<div
+							id="fiona-shimmer"
+							className="fiona-placeholder fiona-placeholder--static"
+							role="img"
+							aria-label="Fiona avatar - scene declined by user"
+						>
+							<img
+								src="/assets/fiona-poster.webp"
+								alt=""
+								className="fiona-poster"
+								draggable={false}
+								onError={(e) => {
+									(e.currentTarget as HTMLImageElement).style.display = "none";
+								}}
+							/>
 						</div>
 					)}
 					{/* Shimmer loading state (gated devices before fallback timeout) */}

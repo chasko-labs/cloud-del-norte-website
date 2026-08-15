@@ -64,6 +64,7 @@ describe("FionaFrame — gate timeout + static fallback (#382)", () => {
 
 	beforeEach(() => {
 		vi.useFakeTimers();
+		sessionStorage.clear();
 		logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 	});
 

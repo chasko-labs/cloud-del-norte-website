@@ -61,7 +61,22 @@ export function FionaPanel() {
 		setStickyKey((k) => k + 1);
 	};
 
+	// Opt-in gate — require user consent before loading the Sumerian scene.
+	// Persisted in sessionStorage so the prompt doesn't repeat within a tab
+	// session but resets on new tabs.
+	const [userConsent, setUserConsent] = useState<"pending" | "yes" | "no">(
+		() => {
+			const stored = sessionStorage.getItem("cdn-fiona-optin");
+			if (stored === "yes") return "yes";
+			if (stored === "no") return "no";
+			return "pending";
+		},
+	);
+
 	useEffect(() => {
+		// Only mount fiona-embed when user has opted in
+		if (userConsent !== "yes") return;
+
 		let cancelled = false;
 		let drawerObserver: ResizeObserver | null = null;
 
@@ -130,32 +145,92 @@ export function FionaPanel() {
 			cancelled = true;
 			drawerObserver?.disconnect();
 		};
-	}, []);
+	}, [userConsent]);
 
 	return (
 		<div className="fiona-frame">
 			<div className="fiona-bezel">
 				<div className="fiona-panel-wrap">
-					<div
-						id="fiona-shimmer"
-						className="fiona-placeholder"
-						aria-hidden="true"
-					>
-						<span className="fiona-placeholder-label">
-							modem connecting
-							<span className="fiona-block-stream">
-								<span className="fiona-block">▓</span>
-								<span className="fiona-block">▓</span>
-								<span className="fiona-block">▓</span>
-							</span>
-						</span>
-					</div>
-					<canvas
-						id="fiona-canvas"
-						className="fiona-canvas"
-						aria-hidden="true"
-						tabIndex={-1}
-					/>
+					{/* Opt-in prompt — require consent before loading scene */}
+					{userConsent === "pending" && (
+						<div
+							id="fiona-shimmer"
+							className="fiona-placeholder"
+							aria-hidden="true"
+						>
+							<div className="fiona-optin-prompt">
+								<span className="fiona-placeholder-label">
+									load Amazon Sumerian scene?
+								</span>
+								<div className="fiona-optin-actions">
+									<button
+										type="button"
+										className="fiona-optin-btn fiona-optin-btn--yes"
+										onClick={() => {
+											sessionStorage.setItem("cdn-fiona-optin", "yes");
+											setUserConsent("yes");
+										}}
+									>
+										[Y] yes
+									</button>
+									<button
+										type="button"
+										className="fiona-optin-btn fiona-optin-btn--no"
+										onClick={() => {
+											sessionStorage.setItem("cdn-fiona-optin", "no");
+											setUserConsent("no");
+										}}
+									>
+										[N] no
+									</button>
+								</div>
+							</div>
+						</div>
+					)}
+					{/* User declined — show static poster fallback */}
+					{userConsent === "no" && (
+						<div
+							id="fiona-shimmer"
+							className="fiona-placeholder fiona-placeholder--static"
+							role="img"
+							aria-label="Fiona avatar - scene declined by user"
+						>
+							<img
+								src="/assets/fiona-poster.webp"
+								alt=""
+								className="fiona-poster"
+								draggable={false}
+								onError={(e) => {
+									(e.currentTarget as HTMLImageElement).style.display = "none";
+								}}
+							/>
+						</div>
+					)}
+					{/* Loading shimmer + canvas — only after consent */}
+					{userConsent === "yes" && (
+						<>
+							<div
+								id="fiona-shimmer"
+								className="fiona-placeholder"
+								aria-hidden="true"
+							>
+								<span className="fiona-placeholder-label">
+									modem connecting
+									<span className="fiona-block-stream">
+										<span className="fiona-block">▓</span>
+										<span className="fiona-block">▓</span>
+										<span className="fiona-block">▓</span>
+									</span>
+								</span>
+							</div>
+							<canvas
+								id="fiona-canvas"
+								className="fiona-canvas"
+								aria-hidden="true"
+								tabIndex={-1}
+							/>
+						</>
+					)}
 				</div>
 				<div
 					id="fiona-status-bar"
@@ -173,23 +248,25 @@ export function FionaPanel() {
 			    screen click-2: note swings harder then tape rips + falls.
 			    clicking the note itself during sway or fall: fly-out 5x zoom
 			    (embed-owned; handleStickyToggle bails out during tap states) */}
-			<button
-				key={stickyKey}
-				type="button"
-				className={`fiona-stickynote${stickyZoomed ? " fiona-stickynote--zoomed" : ""}`}
-				onClick={handleStickyToggle}
-				aria-label={
-					stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
-				}
-			>
-				<span className="fiona-stickynote-line fiona-stickynote-line-1">
-					non load
-				</span>
-				<span className="fiona-stickynote-line fiona-stickynote-line-2">
-					bearing
-				</span>
-				<span className="fiona-stickynote-sig">- ^.^</span>
-			</button>
+			{userConsent === "yes" && (
+				<button
+					key={stickyKey}
+					type="button"
+					className={`fiona-stickynote${stickyZoomed ? " fiona-stickynote--zoomed" : ""}`}
+					onClick={handleStickyToggle}
+					aria-label={
+						stickyZoomed ? "shrink sticky note" : "zoom into sticky note"
+					}
+				>
+					<span className="fiona-stickynote-line fiona-stickynote-line-1">
+						non load
+					</span>
+					<span className="fiona-stickynote-line fiona-stickynote-line-2">
+						bearing
+					</span>
+					<span className="fiona-stickynote-sig">- ^.^</span>
+				</button>
+			)}
 			{/* scene-over "skip credits" button is appended into the bezel by fiona-embed.ts
 			    at credits-time; this frame slot is reserved for future stage chrome */}
 		</div>
