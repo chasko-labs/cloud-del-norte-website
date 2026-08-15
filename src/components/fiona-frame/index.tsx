@@ -379,25 +379,8 @@ export default function FionaFrame() {
 							</div>
 						</div>
 					)}
-					{/* User declined — show static poster fallback */}
-					{!gatedOut && userConsent === "no" && (
-						<div
-							id="fiona-shimmer"
-							className="fiona-placeholder fiona-placeholder--static"
-							role="img"
-							aria-label="Fiona avatar - scene declined by user"
-						>
-							<img
-								src="/assets/fiona-poster.webp"
-								alt=""
-								className="fiona-poster"
-								draggable={false}
-								onError={(e) => {
-									(e.currentTarget as HTMLImageElement).style.display = "none";
-								}}
-							/>
-						</div>
-					)}
+					{/* User declined — render nothing in the panel; a subtle
+					   re-trigger button appears fixed in the viewport corner (below) */}
 					{/* Shimmer loading state (gated devices before fallback timeout) */}
 					{gatedOut && !gatedFallback && (
 						<div
@@ -453,6 +436,21 @@ export default function FionaFrame() {
 				</div>
 			</div>
 			{/* Sticky notes only appear after consent — they reference Fiona */}
+			{/* Subtle corner button to re-show the opt-in prompt after declining */}
+			{!gatedOut && userConsent === "no" && (
+				<button
+					type="button"
+					className="fiona-reshow-btn"
+					onClick={() => {
+						sessionStorage.removeItem("cdn-fiona-optin");
+						setUserConsent("pending");
+					}}
+					aria-label="Show Fiona scene prompt"
+					title="Show Fiona"
+				>
+					?
+				</button>
+			)}
 			{userConsent === "yes" && (
 				<div className="fiona-notes-row">
 					<button

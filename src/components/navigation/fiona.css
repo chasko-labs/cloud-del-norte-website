@@ -3304,3 +3304,36 @@ body.cdn-stream-playing :root:not(.awsui-dark-mode) .fiona-led,
 	opacity: 0.7;
 	letter-spacing: 0.08em;
 }
+
+/* === Re-show prompt button — appears when user declines Fiona =========== */
+.fiona-reshow-btn {
+	position: fixed;
+	bottom: 12px;
+	right: 12px;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	border: 1px solid rgba(144, 96, 240, 0.3);
+	background: rgba(0, 0, 42, 0.7);
+	color: #d7c7ee;
+	font-size: 16px;
+	font-family: monospace;
+	cursor: pointer;
+	z-index: 100;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0.5;
+	transition:
+		opacity 0.2s,
+		border-color 0.2s;
+}
+.fiona-reshow-btn:hover {
+	opacity: 1;
+	border-color: rgba(144, 96, 240, 0.6);
+}
+:root:not(.awsui-dark-mode) .fiona-reshow-btn {
+	background: rgba(255, 255, 255, 0.9);
+	color: #5a1f8a;
+	border-color: rgba(90, 31, 138, 0.2);
+}
