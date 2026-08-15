@@ -56,6 +56,10 @@ export default defineConfig({
 					__dirname,
 					"./src/pages/meeting-public/index.html",
 				),
+				"architecture/jitsi": resolve(
+					__dirname,
+					"./src/pages/architecture/jitsi/index.html",
+				),
 			},
 			output: {
 				// split React, BabylonJS + Cloudscape into long-lived named chunks so

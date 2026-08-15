@@ -39,7 +39,9 @@
 		"howItWorks": "how it works",
 		"projectResources": "project resources",
 		"plansPage": "website",
-		"costs": "costs"
+		"costs": "costs",
+		"platform": "platform",
+		"jitsiArchitecture": "video call architecture"
 	},
 	"breadcrumbs": {
 		"home": "Cloud del Norte"
@@ -1309,5 +1311,70 @@
 		"copied": "Copied!",
 		"share": "Share event",
 		"shareLabel": "Share"
+	},
+	"jitsiArchitecture": {
+		"pageTitle": "Jitsi Architecture — Cloud del Norte",
+		"header": "Video Call Architecture",
+		"breadcrumb": "Jitsi Architecture",
+		"videoCallArch": {
+			"title": "Video Call Platform",
+			"description": "Cloud del Norte video calls run on a self-hosted Jitsi Meet stack deployed to ECS Fargate. Four containers handle the full WebRTC pipeline, with Jibri recording on a separate EC2 instance.",
+			"containerCol": "Container",
+			"roleCol": "Role",
+			"webRole": "Nginx reverse proxy + Jitsi Meet web UI",
+			"prosodyRole": "XMPP server — signaling and presence",
+			"jicofoRole": "Conference focus — room management and orchestration",
+			"jvbRole": "Video bridge — media routing (SFU)",
+			"scaleToZeroTitle": "Scale-to-Zero",
+			"scaleToZeroDesc": "ECS desired count drops to 0 when no meetings are active. When a user creates or joins a meeting, the platform scales to 1 task. Cold-start is ~45 seconds from zero to a joinable room.",
+			"networkTitle": "Network Transport",
+			"networkDesc": "NLB handles JVB UDP/TCP media transport on ports 10000 (UDP) and 4443 (TCP fallback). CloudFront at meet.clouddelnorte.org terminates HTTPS for the web interface and OHTTP SRTP negotiation."
+		},
+		"authFlow": {
+			"title": "Authentication Flow",
+			"description": "Meeting access uses a zero-dependency OIDC PKCE flow. Cognito Hosted UI handles sign-in, then a Lambda exchanges the Cognito tokens for a signed Jitsi JWT.",
+			"diagram": "Browser → Cognito Hosted UI → /auth/callback → Token-Exchange Lambda → Jitsi iframe (JWT)",
+			"claimCol": "JWT Claim",
+			"purposeCol": "Purpose",
+			"roomClaim": "Authorizes access to a specific meeting room",
+			"moderatorClaim": "Grants moderator controls (mute, kick, lobby)",
+			"recordingClaim": "Permits server-side recording via Jibri"
+		},
+		"recording": {
+			"title": "Recording Pipeline",
+			"description": "Recordings are server-side only — DISABLE_LOCAL_RECORDING is enforced. Jibri runs headless Chrome that joins the meeting as a hidden participant and captures the composite audio/video stream via ffmpeg.",
+			"pipelineTitle": "Dispatch Chain",
+			"pipeline": "UI (record button) → Jicofo → Jibri MUC → Chrome joins room → ffmpeg captures → finalize.sh → S3 upload",
+			"jibriTitle": "Jibri Architecture",
+			"jibriDesc": "EC2 instance with headless Chrome + ffmpeg. Joins via XMPP MUC as a hidden participant. Captures the full composite stream including all video tiles and mixed audio.",
+			"uploadTitle": "Upload Pipeline",
+			"uploadDesc": "finalize.sh runs after recording stops: transcodes to mp4, uploads to S3, and publishes a notification via SNS for downstream processing."
+		},
+		"testing": {
+			"title": "Testing with Nova Act",
+			"description": "Nova Act is the mandated browser validation surface for end-to-end testing. It drives real browser sessions via AWS Bedrock AgentCore, validating the full user flow from signup through active video call participation.",
+			"smoketestTitle": "End-to-End Smoketest",
+			"smoketestFlow": "signup → admin-approve → login → join meeting → verify iframe src contains meet.clouddelnorte.org",
+			"assertionNote": "Assertion discipline (FP-021): we assert the iframe src contains the Jitsi domain, not just that navigation succeeded. Prior false-positives passed users who were redirected to the meetings list without entering a room.",
+			"deviceFarmTitle": "Device Farm Matrix",
+			"deviceFarmDesc": "AWS Device Farm provides cross-browser validation on Chrome, Firefox, and Edge. Nova Act runs as the fast pre-gate (< 4 min per PR); Device Farm runs on prod-bound PRs for real-device variability."
+		},
+		"infra": {
+			"title": "Infrastructure",
+			"accountCol": "Account",
+			"idCol": "Account ID",
+			"roleCol": "Role",
+			"computeAccount": "Compute",
+			"computeRole": "Lambdas, Cognito, DynamoDB, API Gateways, ECS",
+			"hostingAccount": "Hosting",
+			"hostingRole": "S3, CloudFront, SES, Route 53",
+			"testingAccount": "Testing",
+			"testingRole": "Nova Act (us-east-1), Device Farm",
+			"monitoringTitle": "Operational Alarms",
+			"monitoringDesc": "CloudWatch alarms monitor ECS task health, JVB participant count, Jibri recording failures, and Lambda error rates. Alarms route to SNS for email notification.",
+			"costTitle": "Cost Profile",
+			"costDesc": "~$0.92/mo idle (scale-to-zero, no running tasks). ~$32.82/mo active (one ECS task + NLB + Jibri EC2 when meetings are scheduled).",
+			"opsLink": "Full operational documentation:"
+		}
 	}
 }

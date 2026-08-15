@@ -39,7 +39,9 @@
 		"howItWorks": "cómo funciona",
 		"projectResources": "recursos del proyecto",
 		"plansPage": "sitio web",
-		"costs": "costos"
+		"costs": "costos",
+		"platform": "plataforma",
+		"jitsiArchitecture": "arquitectura de videollamadas"
 	},
 	"breadcrumbs": {
 		"home": "Nube of the North"
@@ -1309,5 +1311,70 @@
 		"copied": "¡Copiado!",
 		"share": "Compartir evento",
 		"shareLabel": "Compartir"
+	},
+	"jitsiArchitecture": {
+		"pageTitle": "Arquitectura Jitsi — Cloud del Norte",
+		"header": "Arquitectura de Videollamadas",
+		"breadcrumb": "Arquitectura Jitsi",
+		"videoCallArch": {
+			"title": "Plataforma de Videollamadas",
+			"description": "Las videollamadas de Cloud del Norte corren en un stack Jitsi Meet auto-alojado desplegado en ECS Fargate. Cuatro contenedores manejan el pipeline completo de WebRTC, con grabación Jibri en una instancia EC2 separada.",
+			"containerCol": "Contenedor",
+			"roleCol": "Función",
+			"webRole": "Proxy reverso Nginx + interfaz web Jitsi Meet",
+			"prosodyRole": "Servidor XMPP — señalización y presencia",
+			"jicofoRole": "Enfoque de conferencia — gestión de salas y orquestación",
+			"jvbRole": "Puente de video — enrutamiento de medios (SFU)",
+			"scaleToZeroTitle": "Escalar a Cero",
+			"scaleToZeroDesc": "El conteo deseado de ECS baja a 0 cuando no hay reuniones activas. Cuando un usuario crea o se une a una reunión, la plataforma escala a 1 tarea. El arranque en frío es ~45 segundos desde cero hasta una sala disponible.",
+			"networkTitle": "Transporte de Red",
+			"networkDesc": "NLB maneja el transporte de medios JVB UDP/TCP en los puertos 10000 (UDP) y 4443 (TCP fallback). CloudFront en meet.clouddelnorte.org termina HTTPS para la interfaz web y la negociación OHTTP SRTP."
+		},
+		"authFlow": {
+			"title": "Flujo de Autenticación",
+			"description": "El acceso a reuniones usa un flujo OIDC PKCE sin dependencias. La UI Alojada de Cognito maneja el inicio de sesión, luego una Lambda intercambia los tokens de Cognito por un JWT firmado de Jitsi.",
+			"diagram": "Navegador → Cognito Hosted UI → /auth/callback → Lambda de Intercambio → iframe Jitsi (JWT)",
+			"claimCol": "Claim JWT",
+			"purposeCol": "Propósito",
+			"roomClaim": "Autoriza acceso a una sala de reunión específica",
+			"moderatorClaim": "Otorga controles de moderador (silenciar, expulsar, lobby)",
+			"recordingClaim": "Permite grabación del lado del servidor vía Jibri"
+		},
+		"recording": {
+			"title": "Pipeline de Grabación",
+			"description": "Las grabaciones son solo del lado del servidor — DISABLE_LOCAL_RECORDING está activado. Jibri ejecuta Chrome headless que se une a la reunión como participante oculto y captura el stream compuesto de audio/video vía ffmpeg.",
+			"pipelineTitle": "Cadena de Despacho",
+			"pipeline": "UI (botón grabar) → Jicofo → Jibri MUC → Chrome se une → ffmpeg captura → finalize.sh → Subida a S3",
+			"jibriTitle": "Arquitectura Jibri",
+			"jibriDesc": "Instancia EC2 con Chrome headless + ffmpeg. Se une vía XMPP MUC como participante oculto. Captura el stream compuesto completo incluyendo todos los tiles de video y audio mezclado.",
+			"uploadTitle": "Pipeline de Subida",
+			"uploadDesc": "finalize.sh se ejecuta al detener la grabación: transcodifica a mp4, sube a S3, y publica una notificación vía SNS para procesamiento posterior."
+		},
+		"testing": {
+			"title": "Testing con Nova Act",
+			"description": "Nova Act es la superficie mandatoria de validación de navegador para pruebas de extremo a extremo. Maneja sesiones reales de navegador vía AWS Bedrock AgentCore, validando el flujo completo del usuario desde registro hasta participación activa en videollamada.",
+			"smoketestTitle": "Smoketest de Extremo a Extremo",
+			"smoketestFlow": "registro → admin-aprueba → login → unirse a reunión → verificar que iframe src contiene meet.clouddelnorte.org",
+			"assertionNote": "Disciplina de aserción (FP-021): asertamos que el iframe src contiene el dominio Jitsi, no solo que la navegación fue exitosa. Falsos positivos previos pasaban usuarios redirigidos a la lista de reuniones sin entrar a una sala.",
+			"deviceFarmTitle": "Matriz Device Farm",
+			"deviceFarmDesc": "AWS Device Farm proporciona validación cross-browser en Chrome, Firefox y Edge. Nova Act corre como pre-gate rápido (< 4 min por PR); Device Farm corre en PRs destinados a producción para variabilidad en dispositivos reales."
+		},
+		"infra": {
+			"title": "Infraestructura",
+			"accountCol": "Cuenta",
+			"idCol": "ID de Cuenta",
+			"roleCol": "Función",
+			"computeAccount": "Cómputo",
+			"computeRole": "Lambdas, Cognito, DynamoDB, Puertas de enlace API, ECS",
+			"hostingAccount": "Hospedaje",
+			"hostingRole": "S3, CloudFront, SES, Ruta 53",
+			"testingAccount": "Pruebas",
+			"testingRole": "Nova Act (us-east-1), Granja de Dispositivos",
+			"monitoringTitle": "Alarmas Operacionales",
+			"monitoringDesc": "Alarmas de CloudWatch monitorean salud de tareas ECS, conteo de participantes JVB, fallas de grabación Jibri, y tasas de error Lambda. Las alarmas se enrutan a SNS para notificación por email.",
+			"costTitle": "Perfil de Costos",
+			"costDesc": "~$0.92/mes inactivo (escalar-a-cero, sin tareas corriendo). ~$32.82/mes activo (una tarea ECS + NLB + Jibri EC2 cuando hay reuniones programadas).",
+			"opsLink": "Documentación operacional completa:"
+		}
 	}
 }
