@@ -11,7 +11,7 @@
  */
 
 const { chromium } = require("playwright");
-const { execSync } = require("node:child_process");
+const { execSync, execFileSync } = require("node:child_process");
 const fs = require("node:fs");
 const path = require("node:path");
 
@@ -24,23 +24,38 @@ const COGNITO_CLIENT_ID = "57eikmt418ea6vti2f6h0pl74r";
 const AWS_PROFILE = "jitsi-video-hosting";
 const AWS_REGION = "us-west-2";
 
-// Test users
+function ssmParam(name, withDecryption) {
+	const args = ['ssm', 'get-parameter', '--name', name, '--profile', 'aerospaceug-admin', '--region', 'us-west-2', '--query', 'Parameter.Value', '--output', 'text'];
+	if (withDecryption) args.push('--with-decryption');
+	return execFileSync('aws', args, { encoding: 'utf8' }).trim();
+}
+
+// Test users — all fetched from SSM at runtime
+const CDN_ADMIN_USERNAME = ssmParam('/device-farm/test-users/admin-username', false);
+const CDN_ADMIN_PASSWORD = ssmParam('/device-farm/test-users/admin-password', true);
+const CDN_MEMBER_USERNAME = ssmParam('/device-farm/test-users/member-username', false);
+const CDN_MEMBER_PASSWORD = ssmParam('/device-farm/test-users/member-password', true);
+const CDN_PENDING_USERNAME = ssmParam('/device-farm/test-users/pending-username', false);
+const CDN_PENDING_PASSWORD = ssmParam('/device-farm/test-users/pending-password', true);
+const CDN_BANNED_USERNAME = ssmParam('/device-farm/test-users/banned-username', false);
+const CDN_BANNED_PASSWORD = ssmParam('/device-farm/test-users/banned-password', true);
+
 const USERS = {
 	MODERATOR: {
-		email: "heraldstack-test-admin@clouddelnorte.org",
-		password: "DevFarm-Admin-674dce0c31fd0ee8",
+		email: CDN_ADMIN_USERNAME,
+		password: CDN_ADMIN_PASSWORD,
 	},
 	MEMBER: {
-		email: "cdn-member-only-test@clouddelnorte.org",
-		password: "M!SyfGC9kKBPdQ4npnPbTucJx9",
+		email: CDN_MEMBER_USERNAME,
+		password: CDN_MEMBER_PASSWORD,
 	},
 	PENDING: {
-		email: "cdn-pending-test@clouddelnorte.org",
-		password: "P!GqsORNWYWWvhdtU8cWIr59x9",
+		email: CDN_PENDING_USERNAME,
+		password: CDN_PENDING_PASSWORD,
 	},
 	BANNED: {
-		email: "heraldstack-test-banned@clouddelnorte.org",
-		password: "DevFarm-Banned-d15b4efab480fbee",
+		email: CDN_BANNED_USERNAME,
+		password: CDN_BANNED_PASSWORD,
 	},
 };
 

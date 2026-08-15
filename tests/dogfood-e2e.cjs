@@ -1,19 +1,42 @@
 const { chromium } = require('playwright');
-const { execSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
+
+function ssmParam(name, withDecryption) {
+  const args = ['ssm', 'get-parameter', '--name', name, '--profile', 'aerospaceug-admin', '--region', 'us-west-2', '--query', 'Parameter.Value', '--output', 'text'];
+  if (withDecryption) args.push('--with-decryption');
+  return execFileSync('aws', args, { encoding: 'utf8' }).trim();
+}
 
 (async () => {
   console.log('=== FULL E2E DOG FOOD TEST ===\n');
 
   // 1. Get moderator + member tokens
   console.log('1. Authenticating users...');
-  const modAuth = JSON.parse(execSync(
-    `aws cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --client-id 57eikmt418ea6vti2f6h0pl74r --auth-parameters USERNAME=heraldstack-test-admin@clouddelnorte.org,PASSWORD='DevFarm-Admin-674dce0c31fd0ee8' --profile jitsi-video-hosting --region us-west-2 --query 'AuthenticationResult.{IdToken:IdToken,AccessToken:AccessToken,RefreshToken:RefreshToken}' --output json`,
-    { encoding: 'utf8' }
-  ));
-  const memAuth = JSON.parse(execSync(
-    `aws cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --client-id 57eikmt418ea6vti2f6h0pl74r --auth-parameters USERNAME=cdn-member-only-test@clouddelnorte.org,PASSWORD='M!SyfGC9kKBPdQ4npnPbTucJx9' --profile jitsi-video-hosting --region us-west-2 --query 'AuthenticationResult.{IdToken:IdToken,AccessToken:AccessToken,RefreshToken:RefreshToken}' --output json`,
-    { encoding: 'utf8' }
-  ));
+  const CDN_ADMIN_USERNAME = ssmParam('/device-farm/test-users/admin-username', false);
+  const CDN_ADMIN_PASSWORD = ssmParam('/device-farm/test-users/admin-password', true);
+  const CDN_MEMBER_USERNAME = ssmParam('/device-farm/test-users/member-username', false);
+  const CDN_MEMBER_PASSWORD = ssmParam('/device-farm/test-users/member-password', true);
+
+  const modAuth = JSON.parse(execFileSync('aws', [
+    'cognito-idp', 'initiate-auth',
+    '--auth-flow', 'USER_PASSWORD_AUTH',
+    '--client-id', '57eikmt418ea6vti2f6h0pl74r',
+    '--auth-parameters', `USERNAME=${CDN_ADMIN_USERNAME},PASSWORD=${CDN_ADMIN_PASSWORD}`,
+    '--profile', 'jitsi-video-hosting',
+    '--region', 'us-west-2',
+    '--query', 'AuthenticationResult.{IdToken:IdToken,AccessToken:AccessToken,RefreshToken:RefreshToken}',
+    '--output', 'json'
+  ], { encoding: 'utf8' }));
+  const memAuth = JSON.parse(execFileSync('aws', [
+    'cognito-idp', 'initiate-auth',
+    '--auth-flow', 'USER_PASSWORD_AUTH',
+    '--client-id', '57eikmt418ea6vti2f6h0pl74r',
+    '--auth-parameters', `USERNAME=${CDN_MEMBER_USERNAME},PASSWORD=${CDN_MEMBER_PASSWORD}`,
+    '--profile', 'jitsi-video-hosting',
+    '--region', 'us-west-2',
+    '--query', 'AuthenticationResult.{IdToken:IdToken,AccessToken:AccessToken,RefreshToken:RefreshToken}',
+    '--output', 'json'
+  ], { encoding: 'utf8' }));
   console.log('   Moderator: ✓');
   console.log('   Member: ✓');
 
