@@ -22,3 +22,7 @@ test-results/
 
 # Regenerated at every build (transient, like feeds.json + podcast-episodes.json)
 public/data/youtube-shorts.json
+
+# Playwright/test-run screenshot outputs (regeneratable)
+tests/quantum-interaction-results/
+tests/quantum-ux-results/

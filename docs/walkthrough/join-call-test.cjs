@@ -1,13 +1,28 @@
 const { chromium } = require('playwright');
-const { execSync } = require('child_process');
+const { execFileSync } = require('child_process');
+
+function ssmParam(name, withDecryption) {
+  const args = ['ssm', 'get-parameter', '--name', name, '--profile', 'aerospaceug-admin', '--region', 'us-west-2', '--query', 'Parameter.Value', '--output', 'text'];
+  if (withDecryption) args.push('--with-decryption');
+  return execFileSync('aws', args, { encoding: 'utf8' }).trim();
+}
 
 (async () => {
   // Get real Cognito tokens
   console.log('1. Getting Cognito tokens...');
-  const authResult = JSON.parse(execSync(
-    `aws cognito-idp initiate-auth --auth-flow USER_PASSWORD_AUTH --client-id 57eikmt418ea6vti2f6h0pl74r --auth-parameters USERNAME=cdn-member-only-test@clouddelnorte.org,PASSWORD='M!SyfGC9kKBPdQ4npnPbTucJx9' --profile jitsi-video-hosting --region us-west-2 --query 'AuthenticationResult.{IdToken:IdToken,AccessToken:AccessToken,RefreshToken:RefreshToken}' --output json`,
-    { encoding: 'utf8' }
-  ));
+  const CDN_MEMBER_USERNAME = ssmParam('/device-farm/test-users/member-username', false);
+  const CDN_MEMBER_PASSWORD = ssmParam('/device-farm/test-users/member-password', true);
+
+  const authResult = JSON.parse(execFileSync('aws', [
+    'cognito-idp', 'initiate-auth',
+    '--auth-flow', 'USER_PASSWORD_AUTH',
+    '--client-id', '57eikmt418ea6vti2f6h0pl74r',
+    '--auth-parameters', `USERNAME=${CDN_MEMBER_USERNAME},PASSWORD=${CDN_MEMBER_PASSWORD}`,
+    '--profile', 'jitsi-video-hosting',
+    '--region', 'us-west-2',
+    '--query', 'AuthenticationResult.{IdToken:IdToken,AccessToken:AccessToken,RefreshToken:RefreshToken}',
+    '--output', 'json'
+  ], { encoding: 'utf8' }));
   console.log('   IdToken:', authResult.IdToken.substring(0, 30) + '...');
 
   // Launch browser
