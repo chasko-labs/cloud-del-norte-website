@@ -561,7 +561,7 @@ function SessionStatus({
 		);
 	}
 
-	if (status.scheduled.length > 0) {
+	if (status.scheduled && status.scheduled.length > 0) {
 		const next = status.scheduled[0];
 		const scheduledDate = new Date(next.scheduledAt);
 		const now = new Date();
