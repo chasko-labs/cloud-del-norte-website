@@ -62,7 +62,7 @@ const UPCOMING_SESSIONS: UpcomingSession[] = [
 		title: "Test Call — Mods",
 		date: "Sat Aug 23",
 		time: "3:00 – 5:00 PM CDT",
-		isoStart: "2026-08-23T20:00:00Z",
+		isoStart: "2026-08-23T19:00:00Z",
 		isoEnd: "2026-08-23T22:00:00Z",
 		location: "meet.clouddelnorte.org/cloud-del-norte-awsug",
 	},
