@@ -59,11 +59,11 @@ interface UpcomingSession {
 
 const UPCOMING_SESSIONS: UpcomingSession[] = [
 	{
-		title: "Test Call — Bryan & Amelia",
-		date: "Wed Aug 12",
-		time: "9:00 AM – 12:00 PM ET",
-		isoStart: "2026-08-12T13:00:00Z",
-		isoEnd: "2026-08-13T04:00:00Z",
+		title: "Test Call — Mods",
+		date: "Sat Aug 23",
+		time: "3:00 – 5:00 PM CDT",
+		isoStart: "2026-08-23T20:00:00Z",
+		isoEnd: "2026-08-23T22:00:00Z",
 		location: "meet.clouddelnorte.org/cloud-del-norte-awsug",
 	},
 	{
