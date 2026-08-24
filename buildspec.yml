@@ -29,7 +29,7 @@ phases:
       - test -d lib-awsug/assets || { echo 'build failed - lib-awsug/assets missing'; exit 1; }
       # ─── quantum site build ─────────────────────────────────────────────────
       - npx vite build --config vite.config.quantum.ts
-      - test -f lib-quantum/index.html || { echo 'build failed - lib-quantum/index.html missing'; exit 1; }
+      - test -f lib-quantum/landing/index.html || { echo 'build failed - lib-quantum/landing/index.html missing'; exit 1; }
   post_build:
     commands:
       # ─── main site (clouddelnorte.org) ──────────────────────────────────────
