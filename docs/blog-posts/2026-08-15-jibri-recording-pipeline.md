@@ -1,66 +1,88 @@
-# Jibri Recording Pipeline — Infrastructure Completion
+# Jibri Recording Pipeline — Complete
 
-**date:** 2026-08-15
+**date:** 2026-08-24 (originally 2026-08-15, rewritten with resolution)
 **author:** poltergeist-harald-core-anchor
-**status:** infrastructure deployed, Chrome launch blocker remaining
+**status:** COMPLETE — recording verified end-to-end with MP4 in S3
 
-## what was done
+## summary
 
-the full Jibri recording pipeline for Cloud Del Norte meetings was stood up and debugged end-to-end:
-
-- custom Jibri Docker image built with aws-cli + S3 finalize script, pushed to ECR
-- standalone Jibri ECS service running on EC2 (t3.medium) with SYS_ADMIN + /dev/snd
-- removed dead Jibri sidecar from Fargate task (crash-looped due to missing SYS_ADMIN)
-- fixed XMPP recorder domain (hidden.meet.jitsi, not recorder.meet.jitsi)
-- fixed PUBLIC_URL (https://meet.clouddelnorte.org) so Jibri's Chrome knows where to connect
-- disabled local recording in jitsi-web config (forces server-side Jibri)
-- fixed TOKEN_AUTH_URL redirect loop that prevented JWT-based room joins
-- dashboard "View Recordings" link pointed at correct S3 bucket
-- Nova Act verified the full UI flow: join room → start recording → jicofo dispatches to Jibri
+server-side recording for Cloud Del Norte meetings via Jibri. moderators click "Start Recording" in the Jitsi UI, Jibri captures video + audio, uploads MP4 to S3. moderators access recordings from the quantum dashboard (presigned download URLs, no AWS console needed).
 
 ## architecture
 
-| component | resource | location |
-|-----------|----------|----------|
-| conference | jitsi-web:25 (Fargate) | prosody + jicofo + jvb + web |
-| recorder | jitsi-video-platform-jibri:6 (EC2) | Chrome + ffmpeg + finalize.sh |
-| storage | s3://jitsi-video-platform-recordings-4b917dff | recordings/YYYY-MM-DD/ |
+| component | resource | detail |
+|-----------|----------|--------|
+| conference | jitsi-web:28 (EC2 via Fargate-like deploy) | prosody + jicofo + jvb + web |
+| recorder | jitsi-video-platform-jibri:14 (EC2, bridge mode) | Chrome + ffmpeg + PulseAudio null-sink |
+| storage | s3://jitsi-video-platform-recordings-4b917dff | recordings/YYYY-MM-DD/*.mp4 |
+| access | cdn-recordings Lambda + API Gateway | GET /admin/recordings returns presigned URLs |
 | discovery | Cloud Map jitsi.jitsi.local | Jibri finds prosody via DNS |
-| custom image | 170473530355.dkr.ecr.us-west-2.amazonaws.com/jitsi-jibri:latest | aws-cli + finalize.sh baked in |
+| custom image | 170473530355.dkr.ecr.us-west-2.amazonaws.com/jitsi-jibri:latest | Dockerfile in repo |
 
-## dispatch chain (verified working)
+## recording flow (verified working 2026-08-24)
 
 ```
-user clicks Start Recording
-  → jitsi-web sends IQ to jicofo
-  → jicofo selects available Jibri from brewery MUC
-  → Jibri receives start command with room name + URL
-  → Jibri launches Chrome at PUBLIC_URL/room?jwt=token
-  → Chrome joins conference as hidden recorder
-  → ffmpeg captures display + ALSA loopback audio
-  → on stop: finalize.sh uploads MP4 to S3
+moderator clicks Start Recording in Jitsi UI
+  → jicofo dispatches to Jibri via XMPP brewery MUC
+  → Jibri launches ChromeDriver + Chrome 143
+  → Chrome navigates to https://meet.clouddelnorte.org/{room} (bridge mode — host internet)
+  → Chrome joins conference as hidden recorder (1.5s load time)
+  → ffmpeg captures X11 display + PulseAudio null-sink audio
+  → on stop: finalize.sh uploads MP4 to S3 bucket
+  → moderator downloads from quantum.clouddelnorte.org/dashboard/
 ```
 
-## remaining blocker
+## root cause chain (resolved 2026-08-24)
 
-Jibri's Chrome fails to launch inside the custom container. After loading chrome flags, there's 15s of silence until jicofo times out. Root cause: the `pip3 install awscli` in the Dockerfile likely broke Chrome's shared library dependencies (libglib, libnss, etc).
+five separate issues stacked on top of each other, each masked by the one above it:
 
-**fix path:** multi-stage Docker build that installs aws-cli in isolation (or use a standalone `aws` binary from https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip) without touching apt packages that Chrome depends on.
+| # | issue | symptom | fix |
+|---|-------|---------|-----|
+| 1 | pip3 install awscli broke Chrome shared libs | `google-chrome --version` failed | standalone AWS CLI v2 zip bundle |
+| 2 | awsvpc networking — task ENI has no internet | Chrome couldn't reach meet.clouddelnorte.org | bridge networking mode ($0) |
+| 3 | snd-aloop kernel module missing on Amazon Linux 2 AMI | PulseAudio failed — no audio device | PulseAudio null-sink virtual audio |
+| 4 | dbus policy denied PulseAudio bus ownership | PA crash loop: "not allowed to own org.PulseAudio1" | dbus policy file for jibri user |
+| 5 | jicofo 15s PENDING_TIMEOUT too tight | jicofo canceled before Chrome finished loading | extended to 60s |
+
+## custom docker image layers
+
+built from `jitsi/jibri:stable`, adds:
+
+- dbus + dbus-x11 (Chrome 143 requirement)
+- pulseaudio-utils (pactl for runtime sink management)
+- SSM agent (ECS Exec debugging)
+- AWS CLI v2 standalone bundle (S3 upload in finalize.sh)
+- PulseAudio null-sink config (virtual audio without kernel module)
+- ALSA .asoundrc routing through PulseAudio
+- dbus policy allowing jibri user PA bus ownership
+- launch.sh with PA wait loop + diagnostics
+- console logging config (Selenium output to CloudWatch)
 
 ## lessons learned
 
 | lesson | detail |
 |--------|--------|
-| XMPP_RECORDER_DOMAIN must match the VirtualHost prosody creates | prosody templates `hidden.meet.jitsi`, not `recorder.meet.jitsi` |
-| Fargate cannot run Jibri | SYS_ADMIN + /dev/snd + shm > 64MB — all require EC2 |
-| DISABLE_LOCAL_RECORDING=true is required | without it, the UI triggers browser-local recording, not Jibri |
-| TOKEN_AUTH_URL must be empty for JWT-in-URL to work | setting it to the meet domain causes a redirect loop |
-| PUBLIC_URL tells Jibri where to load the room | without it, Jibri tries the internal XMPP domain which doesn't resolve from EC2 |
-| Nova Act can drive Jitsi UI | overflow menu → start recording → confirm dialog all work via act() |
-| pip install in a Jibri image breaks Chrome | Chrome's apt deps (libglib2.0, libnss3, etc) are fragile — isolate aws-cli install |
+| awsvpc task ENIs have NO internet without NAT gateway | bridge mode inherits host internet for $0 |
+| Amazon Linux 2 ECS AMI does NOT have snd-aloop | PulseAudio null-sink replaces hardware loopback entirely |
+| PulseAudio reads user config from ~/.config/pulse/default.pa | NOT /etc/pulse/default.pa — user config takes priority |
+| Chrome 143 requires dbus or it hangs indefinitely | dbus-daemon must run before Chrome launches |
+| PA needs dbus policy to own org.PulseAudio1 | without it PA crash-loops and ffmpeg gets "No such process" |
+| Jibri logs go to files by default | override logging.properties with ConsoleHandler for CloudWatch visibility |
+| jicofo has a 15s default recording timeout | too tight for Chrome to load the meeting page under network latency |
+| bridge mode is the correct ECS networking for Jibri | single-task EC2 instance, outbound-only connections, no discovery needed |
 
-## related
+## cost
 
-- jitsi-video-hosting docs/JIBRI_RECORDING.md — admin runbook
-- chasko-labs/jitsi-video-hosting#36 — original recording issue
-- task defs: jitsi-web:25, jitsi-video-platform-jibri:6
+| state | monthly |
+|-------|---------|
+| recording enabled, stack running | ~$30 (1x t3.medium EC2) |
+| recording enabled, stack scaled to zero | ~$0 (S3 storage only) |
+| recording disabled | $0 |
+
+## references
+
+- Dockerfile + all configs: chasko-labs/jitsi-video-hosting `modules/jibri/`
+- admin runbook: chasko-labs/jitsi-video-hosting `docs/JIBRI_RECORDING.md`
+- recordings Lambda: chasko-labs/cloud-del-norte-website `infra/lambda/recordings/`
+- deploy script: chasko-labs/cloud-del-norte-website `scripts/deploy-cdn-recordings.sh`
+- test recording: `s3://jitsi-video-platform-recordings-4b917dff/recordings/2026-08-24/cloud-del-norte-awsug_2026-08-24-13-23-10.mp4`
