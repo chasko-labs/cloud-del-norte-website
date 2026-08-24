@@ -144,23 +144,45 @@ when we call `AdminCreateUser` for an RSVPed attendee:
 2. user is added to the `members` group
 3. Cognito sends an invite email via SES from `no-reply@clouddelnorte.org`
 
-### the welcome email
+### the welcome email (captured from SES → S3)
 
-Cognito sends from: **Cloud Del Norte <no-reply@clouddelnorte.org>**
+verified by reading the actual email delivered via SES to an S3 bucket (receipt rule `store-test-verification-emails` → `cdn-ses-inbound-test-emails`).
 
-default invite email content (no custom template configured):
+**from:** `Cloud Del Norte <no-reply@clouddelnorte.org>`
+**to:** `cdn-member-only-test@clouddelnorte.org`
+**subject:** `Your temporary password`
+**body (full content, HTML part):**
 
 ```
-Subject: Your temporary password
-
-Your username is {email} and temporary password is {temp_password}.
+Your username is cdn-member-only-test@clouddelnorte.org and temporary password is Quantum-Temp-2026!.
 ```
 
-this is the raw Cognito default — needs a custom template before sending to real users. the template should include:
-- event name and date (Quantum Computing Workshop, Aug 30)
-- link to quantum.clouddelnorte.org/dashboard/
-- instructions to set a permanent password on first sign-in
-- passkey option mention
+that's the entire email body. one sentence. no formatting, no links, no context.
+
+**email infrastructure verified:**
+- SES identity: `clouddelnorte.org` (DKIM-signed, SPF pass, virus/spam pass)
+- delivery: confirmed in S3 within 2 seconds of AdminCreateUser call
+- DKIM signature: valid (`dkim=pass header.i=@clouddelnorte.org`)
+
+**what real attendees will see with this default template:**
+
+they get an email from "Cloud Del Norte" with a temporary password and nothing else. no event name, no link to the dashboard, no instructions for what to do next. this is a bad first impression.
+
+**fix required before inviting real users:**
+
+set a custom invite message template on the Cognito pool:
+
+```bash
+aws cognito-idp update-user-pool --user-pool-id us-west-2_cyPQF4F3r \
+  --admin-create-user-config '{
+    "InviteMessageTemplate": {
+      "EmailSubject": "Your login for the Quantum Computing Workshop — Aug 30",
+      "EmailMessage": "Hi {username},<br><br>You are confirmed for the <b>Quantum Computing Workshop on Amazon Braket</b> — Saturday, August 30, 3:00–6:00 PM CDT.<br><br>Sign in at: <a href=\"https://auth.clouddelnorte.org/login/\">https://auth.clouddelnorte.org/login/</a><br><br>Your temporary password is: <b>{####}</b><br><br>You will be asked to set a new password on your first sign-in. After signing in, go to <a href=\"https://quantum.clouddelnorte.org/dashboard/\">quantum.clouddelnorte.org/dashboard/</a> to join the live session on event day.<br><br>See you there,<br>Bryan Chasko, co-organizer | Cloud Del Norte"
+    }
+  }' --region us-west-2 --profile jitsi-video-hosting
+```
+
+once that template is set, all future AdminCreateUser calls will use it automatically.
 
 ### first sign-in: NEW_PASSWORD_REQUIRED challenge
 
