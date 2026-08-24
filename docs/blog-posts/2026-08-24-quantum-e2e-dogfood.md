@@ -130,6 +130,94 @@ meeting ended via API, Jibri scaled to 0, infrastructure idle.
 - EC2 instance remains (ASG min=0 would terminate it if configured)
 - cost at idle: ~$0 (EC2 stays until ASG scales down)
 
+---
+
+## new user signup flow (verified 2026-08-24)
+
+this is the flow real attendees will experience when we create their accounts for the Aug 30 event.
+
+### what AdminCreateUser does (the RSVP Lambda path)
+
+when we call `AdminCreateUser` for an RSVPed attendee:
+
+1. Cognito creates the account in `FORCE_CHANGE_PASSWORD` state
+2. user is added to the `members` group
+3. Cognito sends an invite email via SES from `no-reply@clouddelnorte.org`
+
+### the welcome email
+
+Cognito sends from: **Cloud Del Norte <no-reply@clouddelnorte.org>**
+
+default invite email content (no custom template configured):
+
+```
+Subject: Your temporary password
+
+Your username is {email} and temporary password is {temp_password}.
+```
+
+this is the raw Cognito default — needs a custom template before sending to real users. the template should include:
+- event name and date (Quantum Computing Workshop, Aug 30)
+- link to quantum.clouddelnorte.org/dashboard/
+- instructions to set a permanent password on first sign-in
+- passkey option mention
+
+### first sign-in: NEW_PASSWORD_REQUIRED challenge
+
+when the user signs in with the temporary password, Cognito returns a `NEW_PASSWORD_REQUIRED` challenge. the auth.clouddelnorte.org login page handles this:
+
+1. user enters email + temporary password
+2. Cognito returns challenge instead of tokens
+3. login page shows "set your new password" form
+4. user sets permanent password
+5. Cognito returns full token set (id + access + refresh)
+6. redirect to dashboard via auth-callback
+
+### verified: new user sees live meeting + joins
+
+after password change, the new user (`dogfood-newuser@clouddelnorte.org`) was able to:
+
+- authenticate successfully (USER_PASSWORD_AUTH with permanent password)
+- see meeting status via API (`{live: true, title: "New User Join Test"}`)
+- load the quantum dashboard with session active
+- see the "Join Now" button for the live session
+- join the meeting (Nova Act clicked Join Now, page showed "connecting to meeting...")
+
+![new user dashboard](https://dev.clouddelnorte.org/_previews/dogfood-e2e/newuser-01-dashboard.png)
+
+![new user in meeting](https://dev.clouddelnorte.org/_previews/dogfood-e2e/newuser-02-in-meeting.png)
+
+### the full sequence (what happens in the background)
+
+```
+AdminCreateUser (email, temp password, email_verified=true)
+  → Cognito creates user in FORCE_CHANGE_PASSWORD state
+  → SES sends invite email from no-reply@clouddelnorte.org
+  → user receives email with temp password (valid 3 days)
+
+AdminAddUserToGroup (user, "members")
+  → user's JWT will include cognito:groups=["members"]
+
+user clicks link → auth.clouddelnorte.org/login/
+  → enters email + temp password
+  → Cognito returns NEW_PASSWORD_REQUIRED challenge
+  → user sets permanent password
+  → Cognito returns tokens, status changes to CONFIRMED
+  → redirect to quantum.clouddelnorte.org/auth-callback/
+  → tokens stored in sessionStorage
+  → redirect to /dashboard/
+
+user sees dashboard with live meeting → clicks Join Now
+  → Jitsi iframe loads with JWT containing user claims
+  → user joins the conference via WebRTC
+```
+
+### what needs to be done before sending invites to real users
+
+1. **custom invite email template** — the default Cognito message is too generic. need to configure `AdminCreateUserConfig.InviteMessageTemplate` on the pool with event-specific content, sign-in link, and instructions
+2. **test the auth.clouddelnorte.org password-change flow** — verify the login page properly handles the NEW_PASSWORD_REQUIRED challenge (this is the UX the real users will see)
+3. **passkey setup** — after first sign-in, the dashboard offers passkey enrollment. verify this works for the new user
+
 ## infrastructure verified
 
 | component | status | evidence |
