@@ -14,9 +14,11 @@ import SpaceBetween from "@cloudscape-design/components/space-between";
 import StatusIndicator from "@cloudscape-design/components/status-indicator";
 import { useCallback, useEffect, useRef, useState } from "react";
 import CalendarActions from "../../../components/calendar-actions";
+import { CrossSiteBanner } from "../../../components/meetings/cross-site-banner";
 import { useTranslation } from "../../../hooks/useTranslation";
 import { decodeToken, getIdToken } from "../../../lib/auth";
 import {
+	type CrossSiteLock,
 	endMeeting,
 	fetchInfrastructureStatus,
 	fetchMeetingStatus,
@@ -829,6 +831,10 @@ function MemberView({ user }: { user: UserInfo }) {
 				}
 			>
 				<SpaceBetween size="m">
+					<CrossSiteBanner
+						lock={meetingStatus?.crossSiteLock ?? null}
+						currentSite="cdn"
+					/>
 					<SessionStatus status={meetingStatus} onJoin={handleJoin} />
 					<CalendarActions />
 				</SpaceBetween>
