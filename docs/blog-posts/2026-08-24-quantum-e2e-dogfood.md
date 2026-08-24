@@ -164,27 +164,35 @@ that's the entire email body. one sentence. no formatting, no links, no context.
 - delivery: confirmed in S3 within 2 seconds of AdminCreateUser call
 - DKIM signature: valid (`dkim=pass header.i=@clouddelnorte.org`)
 
-**custom template applied — this is what real attendees will receive:**
+**custom invite email — verified delivered via SES (captured from S3 bucket)**
 
-from: `Cloud Del Norte <no-reply@clouddelnorte.org>`
-subject: `Your login for the Quantum Computing Workshop — Aug 30`
+```
+From: Cloud Del Norte <no-reply@clouddelnorte.org>
+To: cdn-member-only-test@clouddelnorte.org
+Subject: Your login for the Quantum Computing Workshop — Aug 30
 
-> Hi {username},
->
-> You are confirmed for the **Quantum Computing Workshop on Amazon Braket** — Saturday, August 30, 3:00-6:00 PM CDT.
->
-> Sign in at: https://auth.clouddelnorte.org/login/
->
-> Your temporary password is: **{####}**
->
-> You will be asked to set a new password on your first sign-in. You can set a passkey for passwordless sign-in from the dashboard after logging in.
->
-> After signing in, go to quantum.clouddelnorte.org/dashboard/ to join the live session on event day.
->
-> See you there,
-> Bryan Chasko, co-organizer | Cloud Del Norte
+Hi cdn-member-only-test@clouddelnorte.org,
 
-verified by capturing the actual delivered email from SES → S3 after applying the template. DKIM signed, SPF pass, delivered in 2 seconds.
+You are confirmed for the Quantum Computing Workshop on Amazon Braket
+— Saturday, August 30, 3:00-6:00 PM CDT.
+
+Sign in at: https://auth.clouddelnorte.org/login/
+
+Your temporary password is: Quantum-Temp-2026!
+
+You will be asked to set a new password on your first sign-in. You can
+set a passkey for passwordless sign-in from the dashboard after logging in.
+
+After signing in, go to quantum.clouddelnorte.org/dashboard/ to join
+the live session on event day.
+
+See you there,
+Bryan Chasko, co-organizer | Cloud Del Norte
+```
+
+captured from: `s3://cdn-ses-inbound-test-emails/incoming/` via SES receipt rule.
+DKIM signed by clouddelnorte.org, SPF pass, delivered in 2 seconds.
+From address: `Cloud Del Norte <no-reply@clouddelnorte.org>` (SES DEVELOPER mode with custom domain).
 
 ### first sign-in: NEW_PASSWORD_REQUIRED challenge
 
@@ -235,12 +243,6 @@ user sees dashboard with live meeting → clicks Join Now
   → Jitsi iframe loads with JWT containing user claims
   → user joins the conference via WebRTC
 ```
-
-### what needs to be done before sending invites to real users
-
-1. **custom invite email template** — the default Cognito message is too generic. need to configure `AdminCreateUserConfig.InviteMessageTemplate` on the pool with event-specific content, sign-in link, and instructions
-2. **test the auth.clouddelnorte.org password-change flow** — verify the login page properly handles the NEW_PASSWORD_REQUIRED challenge (this is the UX the real users will see)
-3. **passkey setup** — after first sign-in, the dashboard offers passkey enrollment. verify this works for the new user
 
 ## infrastructure verified
 
