@@ -42,8 +42,7 @@ import QuantumLayout from "../_layout";
 const ROOM_NAME = "cloud-del-norte-awsug";
 const SIGN_IN_URL =
 	"https://auth.clouddelnorte.org/login/index.html?return_to=https://quantum.clouddelnorte.org/auth-callback/%23return_to=/dashboard/";
-const RECORDINGS_URL =
-	"https://s3.console.aws.amazon.com/s3/buckets/jitsi-video-platform-recordings-4b917dff?region=us-west-2";
+
 const POLL_INTERVAL_MS = 30_000;
 const CELEBRATION_DURATION_MS = 5_000;
 
@@ -585,6 +584,85 @@ function SessionStatus({
 	);
 }
 
+/* ─── Recordings List ─── */
+
+function RecordingsList() {
+	const { t } = useTranslation();
+	const [recordings, setRecordings] = useState<
+		Array<{
+			filename: string;
+			date: string;
+			size: number;
+			downloadUrl: string;
+		}>
+	>([]);
+	const [loading, setLoading] = useState(true);
+
+	useEffect(() => {
+		const fetchRecordings = async () => {
+			try {
+				const token = getIdToken();
+				if (!token) return;
+				const res = await fetch(
+					"https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com/admin/recordings",
+					{ headers: { Authorization: `Bearer ${token}` } },
+				);
+				if (res.ok) {
+					const data = await res.json();
+					setRecordings(data.recordings || []);
+				}
+			} catch {
+				// non-critical
+			} finally {
+				setLoading(false);
+			}
+		};
+		fetchRecordings();
+	}, []);
+
+	if (loading) {
+		return (
+			<StatusIndicator type="loading">
+				{t("quantumDashboard.loadingRecordings") || "Loading recordings..."}
+			</StatusIndicator>
+		);
+	}
+
+	if (recordings.length === 0) {
+		return (
+			<Box color="text-body-secondary">
+				{t("quantumDashboard.noRecordings") || "No recordings yet"}
+			</Box>
+		);
+	}
+
+	return (
+		<SpaceBetween size="s">
+			{recordings.map((rec) => (
+				<SpaceBetween
+					key={rec.filename}
+					size="xxs"
+					direction="horizontal"
+					alignItems="center"
+				>
+					<Box fontWeight="bold">{rec.filename}</Box>
+					<Box color="text-body-secondary" fontSize="body-s">
+						{rec.date} · {(rec.size / 1024 / 1024).toFixed(1)} MB
+					</Box>
+					<Button
+						variant="link"
+						href={rec.downloadUrl}
+						target="_blank"
+						iconName="download"
+					>
+						Download
+					</Button>
+				</SpaceBetween>
+			))}
+		</SpaceBetween>
+	);
+}
+
 /* ─── Moderator Controls ─── */
 
 function ModeratorControls() {
@@ -689,14 +767,7 @@ function ModeratorControls() {
 						</StatusIndicator>
 					)}
 				</Box>
-				<Button
-					variant="link"
-					href={RECORDINGS_URL}
-					target="_blank"
-					iconName="external"
-				>
-					{t("quantumDashboard.viewRecordings")}
-				</Button>
+				<RecordingsList />
 			</SpaceBetween>
 		</ExpandableSection>
 	);
