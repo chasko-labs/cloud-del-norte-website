@@ -164,25 +164,27 @@ that's the entire email body. one sentence. no formatting, no links, no context.
 - delivery: confirmed in S3 within 2 seconds of AdminCreateUser call
 - DKIM signature: valid (`dkim=pass header.i=@clouddelnorte.org`)
 
-**what real attendees will see with this default template:**
+**custom template applied — this is what real attendees will receive:**
 
-they get an email from "Cloud Del Norte" with a temporary password and nothing else. no event name, no link to the dashboard, no instructions for what to do next. this is a bad first impression.
+from: `Cloud Del Norte <no-reply@clouddelnorte.org>`
+subject: `Your login for the Quantum Computing Workshop — Aug 30`
 
-**fix required before inviting real users:**
+> Hi {username},
+>
+> You are confirmed for the **Quantum Computing Workshop on Amazon Braket** — Saturday, August 30, 3:00-6:00 PM CDT.
+>
+> Sign in at: https://auth.clouddelnorte.org/login/
+>
+> Your temporary password is: **{####}**
+>
+> You will be asked to set a new password on your first sign-in. You can set a passkey for passwordless sign-in from the dashboard after logging in.
+>
+> After signing in, go to quantum.clouddelnorte.org/dashboard/ to join the live session on event day.
+>
+> See you there,
+> Bryan Chasko, co-organizer | Cloud Del Norte
 
-set a custom invite message template on the Cognito pool:
-
-```bash
-aws cognito-idp update-user-pool --user-pool-id us-west-2_cyPQF4F3r \
-  --admin-create-user-config '{
-    "InviteMessageTemplate": {
-      "EmailSubject": "Your login for the Quantum Computing Workshop — Aug 30",
-      "EmailMessage": "Hi {username},<br><br>You are confirmed for the <b>Quantum Computing Workshop on Amazon Braket</b> — Saturday, August 30, 3:00–6:00 PM CDT.<br><br>Sign in at: <a href=\"https://auth.clouddelnorte.org/login/\">https://auth.clouddelnorte.org/login/</a><br><br>Your temporary password is: <b>{####}</b><br><br>You will be asked to set a new password on your first sign-in. After signing in, go to <a href=\"https://quantum.clouddelnorte.org/dashboard/\">quantum.clouddelnorte.org/dashboard/</a> to join the live session on event day.<br><br>See you there,<br>Bryan Chasko, co-organizer | Cloud Del Norte"
-    }
-  }' --region us-west-2 --profile jitsi-video-hosting
-```
-
-once that template is set, all future AdminCreateUser calls will use it automatically.
+verified by capturing the actual delivered email from SES → S3 after applying the template. DKIM signed, SPF pass, delivered in 2 seconds.
 
 ### first sign-in: NEW_PASSWORD_REQUIRED challenge
 
