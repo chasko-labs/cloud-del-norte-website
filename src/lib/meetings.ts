@@ -11,9 +11,17 @@ export interface Meeting {
 	createdBy: string;
 }
 
+export interface CrossSiteLock {
+	site: string;
+	title: string;
+	roomName: string;
+	launchedAt: string;
+}
+
 export interface MeetingStatus {
 	live: boolean;
 	scheduled: Meeting[];
+	crossSiteLock: CrossSiteLock | null;
 }
 
 export interface InfraStatus {
@@ -96,7 +104,7 @@ async function request(
 export async function fetchMeetingStatus(): Promise<MeetingStatus> {
 	const res = await request("/meetings/status", { method: "GET" });
 	if (!res || res.status === 404) {
-		return { live: false, scheduled: [] };
+		return { live: false, scheduled: [], crossSiteLock: null };
 	}
 	if (!res.ok) {
 		const text = await res.text().catch(() => res.statusText);
