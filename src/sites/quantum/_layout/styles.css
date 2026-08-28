@@ -1069,23 +1069,39 @@ a:focus-visible,
 	}
 }
 
-/* ── IMMERSIVE JITSI VIEW — responsive container for in-call state ─── */
+/* ── IMMERSIVE JITSI VIEW — responsive 16:9 container for in-call state ─── */
 .quantum-immersive {
 	width: 100%;
 	max-width: 100%;
 	overflow: hidden;
 }
 
-.quantum-immersive [data-testid="jitsi-iframe-host"] iframe {
-	width: 100% !important;
+.quantum-immersive [data-testid="jitsi-iframe-host"] {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16 / 9;
 	max-height: 80vh;
+	overflow: hidden;
+	border-radius: 8px;
+}
+
+.quantum-immersive [data-testid="jitsi-iframe-host"] iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100% !important;
+	height: 100% !important;
 	border: none;
 	border-radius: 8px;
 }
 
 @media (max-width: 640px) {
-	.quantum-immersive [data-testid="jitsi-iframe-host"] iframe {
+	.quantum-immersive [data-testid="jitsi-iframe-host"] {
 		max-height: 60vh;
+		border-radius: 0;
+	}
+
+	.quantum-immersive [data-testid="jitsi-iframe-host"] iframe {
 		border-radius: 0;
 	}
 }

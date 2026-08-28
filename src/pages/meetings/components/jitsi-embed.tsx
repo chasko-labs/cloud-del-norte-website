@@ -187,7 +187,7 @@ export default function JitsiEmbed({
 					password: roomPassword,
 					parentNode: hostRef.current,
 					width: "100%",
-					height: 640,
+					height: "100%",
 					configOverwrite: {
 						prejoinPageEnabled: false,
 						prejoinConfig: {

@@ -43,10 +43,28 @@
 }
 
 /* phone: prevent Jitsi iframe from overflowing the modal height on
-   mobile viewports. the embed component sets height:640px inline;
-   this caps it to fit the available viewport. */
+   mobile viewports. the embed component sets height:100% with the parent
+   container enforcing 16:9 aspect ratio via CSS. this caps max-height
+   on mobile to fit the available viewport. */
+[data-testid="jitsi-iframe-host"] {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	max-height: 80vh;
+	overflow: hidden;
+}
+
+[data-testid="jitsi-iframe-host"] iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100% !important;
+	height: 100% !important;
+	border: none;
+}
+
 @media (max-width: 640px) {
-	[data-testid="jitsi-iframe-host"] iframe {
-		max-height: 60vh !important;
+	[data-testid="jitsi-iframe-host"] {
+		max-height: 60vh;
 	}
 }
