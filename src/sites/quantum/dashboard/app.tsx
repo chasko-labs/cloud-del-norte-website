@@ -674,6 +674,7 @@ function ModeratorControls() {
 	const [infraStatus, setInfraStatus] = useState<InfraStatus | null>(null);
 	const [actionError, setActionError] = useState("");
 	const [actionSuccess, setActionSuccess] = useState("");
+	const [meetingLive, setMeetingLive] = useState(false);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -691,6 +692,14 @@ function ModeratorControls() {
 						tasks_running: 0,
 						tasks_desired: 0,
 					});
+			}
+			try {
+				const s = await fetchMeetingStatus();
+				if (!cancelled) setMeetingLive(s.live);
+			} catch {
+				// non-critical — leave meetingLive at its current value so a
+				// transient status-endpoint failure does not flip the
+				// launch/end controls unexpectedly.
 			}
 		};
 		poll();
@@ -740,13 +749,24 @@ function ModeratorControls() {
 			<SpaceBetween size="m">
 				{actionError && <Alert type="error">{actionError}</Alert>}
 				{actionSuccess && <Alert type="success">{actionSuccess}</Alert>}
+				{meetingLive && (
+					<StatusIndicator type="success">you are live</StatusIndicator>
+				)}
 				<SpaceBetween size="xs" direction="horizontal">
-					<Button variant="primary" loading={launching} onClick={handleLaunch}>
-						{t("quantumDashboard.launchButton")}
-					</Button>
-					<Button loading={ending} onClick={handleEnd}>
-						{t("quantumDashboard.endButton")}
-					</Button>
+					{!meetingLive && (
+						<Button
+							variant="primary"
+							loading={launching}
+							onClick={handleLaunch}
+						>
+							{t("quantumDashboard.launchButton")}
+						</Button>
+					)}
+					{meetingLive && (
+						<Button loading={ending} onClick={handleEnd}>
+							{t("quantumDashboard.endButton")}
+						</Button>
+					)}
 				</SpaceBetween>
 				<Box>
 					<Box variant="awsui-key-label">

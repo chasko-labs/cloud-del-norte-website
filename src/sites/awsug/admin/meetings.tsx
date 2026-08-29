@@ -233,36 +233,20 @@ export function MeetingsTable() {
 			header: "Meeting URL",
 			cell: (m: ScheduledMeetingApi) => {
 				if (!m.room_hash) return "—";
-				const url = `${SHARE_BASE}${m.room_hash}`;
 				const directJoinUrl = `${window.location.origin}/meetings/index.html?room=${m.room_hash}`;
 				return (
-					<SpaceBetween direction="vertical" size="xxs">
-						<SpaceBetween direction="horizontal" size="xs">
-							<Link href={url} external>
-								{url}
-							</Link>
-							<CopyToClipboard
-								variant="inline"
-								textToCopy={url}
-								textToDisplay=""
-								copyButtonAriaLabel="Copy meeting URL"
-								copySuccessText="Meeting URL copied"
-								copyErrorText="Failed to copy meeting URL"
-							/>
-						</SpaceBetween>
-						<SpaceBetween direction="horizontal" size="xs">
-							<Link href={directJoinUrl} external>
-								{directJoinUrl}
-							</Link>
-							<CopyToClipboard
-								variant="inline"
-								textToCopy={directJoinUrl}
-								textToDisplay=""
-								copyButtonAriaLabel="Copy direct join URL"
-								copySuccessText="Direct join URL copied"
-								copyErrorText="Failed to copy"
-							/>
-						</SpaceBetween>
+					<SpaceBetween direction="horizontal" size="xs">
+						<Link href={directJoinUrl} external>
+							{directJoinUrl}
+						</Link>
+						<CopyToClipboard
+							variant="inline"
+							textToCopy={directJoinUrl}
+							textToDisplay=""
+							copyButtonAriaLabel="Copy direct join URL"
+							copySuccessText="Direct join URL copied"
+							copyErrorText="Failed to copy"
+						/>
 					</SpaceBetween>
 				);
 			},
