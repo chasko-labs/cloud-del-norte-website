@@ -23,8 +23,14 @@ import "../rsvp/styles.css";
 import "../_shared/styles.css";
 
 const MEETUP_URL = "https://www.meetup.com/cloud-del-norte/";
-const ROOM_NAME = "cloud-del-norte-awsug";
 const JITSI_DOMAIN = "meet.clouddelnorte.org";
+const DEFAULT_ROOM = "cloud-del-norte-awsug";
+
+function getRoomFromUrl(): string {
+	if (typeof window === "undefined") return DEFAULT_ROOM;
+	const r = new URLSearchParams(window.location.search).get("room");
+	return r && r.trim() ? r.trim() : DEFAULT_ROOM;
+}
 
 /**
  * FP-021 guard: verify the jitsi iframe src contains meet.clouddelnorte.org.
@@ -47,6 +53,7 @@ function MeetingsContent({
 	onImmersiveChange: (immersive: boolean) => void;
 }) {
 	const { t } = useTranslation();
+	const room = getRoomFromUrl();
 	const [inCall, setInCall] = useState(false);
 	const [autoJoinFailed, setAutoJoinFailed] = useState(false);
 	const [autoJoinError, setAutoJoinError] = useState("");
@@ -121,7 +128,7 @@ function MeetingsContent({
 						{t("awsug.meetings.leaveCall")}
 					</Button>
 				</Box>
-				<JitsiEmbed roomName={ROOM_NAME} onClose={handleEmbedClose} />
+				<JitsiEmbed roomName={room} onClose={handleEmbedClose} />
 			</SpaceBetween>
 		);
 	}
@@ -160,7 +167,7 @@ function MeetingsContent({
 						<Button
 							iconName="copy"
 							onClick={() => {
-								const url = `${window.location.origin}/meetings/index.html`;
+								const url = `${window.location.origin}/meetings/index.html?room=${encodeURIComponent(room)}`;
 								navigator.clipboard.writeText(url);
 							}}
 						>
