@@ -7,6 +7,7 @@ import Badge from "@cloudscape-design/components/badge";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
 import Container from "@cloudscape-design/components/container";
+import CopyToClipboard from "@cloudscape-design/components/copy-to-clipboard";
 import ExpandableSection from "@cloudscape-design/components/expandable-section";
 import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
@@ -16,7 +17,12 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import CalendarActions from "../../../components/calendar-actions";
 import { CrossSiteBanner } from "../../../components/meetings/cross-site-banner";
 import { useTranslation } from "../../../hooks/useTranslation";
-import { decodeToken, getIdToken } from "../../../lib/auth";
+import {
+	beginSilentLogin,
+	decodeToken,
+	getIdToken,
+	restoreSession,
+} from "../../../lib/auth";
 import {
 	type CrossSiteLock,
 	endMeeting,
@@ -42,6 +48,7 @@ import {
 import QuantumLayout from "../_layout";
 
 const ROOM_NAME = "cloud-del-norte-awsug";
+const MEETING_URL = `https://meet.clouddelnorte.org/${ROOM_NAME}`;
 const SIGN_IN_URL =
 	"https://auth.clouddelnorte.org/login/index.html?return_to=https://quantum.clouddelnorte.org/auth-callback/%23return_to=/dashboard/";
 
@@ -749,6 +756,7 @@ function ModeratorControls() {
 			<SpaceBetween size="m">
 				{actionError && <Alert type="error">{actionError}</Alert>}
 				{actionSuccess && <Alert type="success">{actionSuccess}</Alert>}
+				<MeetingLinkSurface />
 				{meetingLive && (
 					<StatusIndicator type="success">you are live</StatusIndicator>
 				)}
@@ -792,6 +800,35 @@ function ModeratorControls() {
 				<RecordingsList />
 			</SpaceBetween>
 		</ExpandableSection>
+	);
+}
+
+/* ─── Meeting Link Surface (stable/pinned room URL) ─── */
+
+function MeetingLinkSurface() {
+	const { t } = useTranslation();
+	return (
+		<Box>
+			<Box variant="awsui-key-label">
+				{t("quantumDashboard.meetingLinkLabel") || "Join at"}
+			</Box>
+			<SpaceBetween size="xs" direction="horizontal" alignItems="center">
+				<Link href={MEETING_URL} external>
+					{MEETING_URL}
+				</Link>
+				<CopyToClipboard
+					variant="inline"
+					textToCopy={MEETING_URL}
+					copyButtonText={t("quantumDashboard.meetingLinkCopy") || "Copy"}
+					copySuccessText={
+						t("quantumDashboard.meetingLinkCopied") || "Meeting link copied"
+					}
+					copyErrorText={
+						t("quantumDashboard.meetingLinkCopyError") || "Failed to copy"
+					}
+				/>
+			</SpaceBetween>
+		</Box>
 	);
 }
 
@@ -855,6 +892,7 @@ function MemberView({ user }: { user: UserInfo }) {
 						lock={meetingStatus?.crossSiteLock ?? null}
 						currentSite="cdn"
 					/>
+					<MeetingLinkSurface />
 					<SessionStatus status={meetingStatus} onJoin={handleJoin} />
 					<CalendarActions />
 				</SpaceBetween>
@@ -874,8 +912,30 @@ function DashboardContent() {
 	const [checked, setChecked] = useState(false);
 
 	useEffect(() => {
-		setUser(getUserInfo());
-		setChecked(true);
+		let cancelled = false;
+		(async () => {
+			// Rehydrate a returning user from the durable refresh token (localStorage)
+			// before deciding what to render — no redirect when a live refresh token exists.
+			const restored = await restoreSession();
+			if (cancelled) return;
+			if (restored) {
+				setUser(getUserInfo());
+				setChecked(true);
+				return;
+			}
+			// No local refresh token. A session may still exist at Cognito — attempt a
+			// silent (prompt=none) reauth as the fallback. If none exists, the callback
+			// returns login_required and the guest/registered views handle it.
+			if (!getUserInfo()) {
+				await beginSilentLogin();
+				return; // redirect in flight; do not flip to a signed-out view mid-navigation
+			}
+			setUser(getUserInfo());
+			setChecked(true);
+		})();
+		return () => {
+			cancelled = true;
+		};
 	}, []);
 
 	if (!checked) return null;
