@@ -306,6 +306,7 @@
 			"scheduledTime": "Hora programada",
 			"speakerBioUrl": "URL de bio del orador",
 			"meetupRsvpUrl": "URL para apuntarse en Meetup",
+			"meetupRsvpUrlError": "Debe ser un URL válido de meetup.com (https://meetup.com/...).",
 			"save": "Guardar",
 			"cancel": "Cancelar"
 		},
@@ -1034,6 +1035,11 @@
 			"totpCodeLabel": "Código de 6 dígitos de tu autenticadora",
 			"totpVerifyButton": "Verificar y continuar",
 			"genericError": "Algo salió mal. Intenta de nuevo."
+		},
+		"social": {
+			"orDivider": "o continuar con",
+			"googleButton": "Iniciar sesión con Google",
+			"appleButton": "Iniciar sesión con Apple"
 		}
 	},
 	"awsug": {
