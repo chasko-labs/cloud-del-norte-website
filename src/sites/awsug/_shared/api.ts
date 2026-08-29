@@ -5,6 +5,14 @@ import { getIdToken, refreshTokens } from "./auth";
 
 const API_BASE = "https://rwmypxz9z6.execute-api.us-west-2.amazonaws.com";
 
+/**
+ * Canonical join-URL base — the /m/ share surface attendees use (and the URL
+ * embedded in Google Calendar invites). One source of truth for both the admin
+ * meetings table and calendar-invite construction. Do NOT use the raw Jitsi
+ * domain for attendee-facing links; that bypasses the share surface.
+ */
+export const SHARE_BASE = "https://clouddelnorte.org/m/";
+
 export interface AdminUser {
 	sub: string;
 	email: string;
