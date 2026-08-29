@@ -24,13 +24,10 @@ import {
 	listAdminMeetings,
 	listMeetings,
 	type ScheduledMeetingApi,
+	SHARE_BASE,
 	updateAdminMeeting,
 } from "../_shared/api";
 import { buildGoogleCalendarUrl } from "../_shared/calendar";
-
-const SHARE_BASE = "https://clouddelnorte.org/m/";
-// keep in sync with src/sites/awsug/meetings/app.tsx
-const JITSI_DOMAIN = "meet.clouddelnorte.org";
 
 interface CreateForm {
 	title: string;
@@ -219,20 +216,24 @@ export function MeetingsTable() {
 		{
 			id: "shareUrl",
 			header: "Share URL",
-			cell: (m: ScheduledMeetingApi) => (
-				<a
-					href={`${SHARE_BASE}${m.room_hash}`}
-					target="_blank"
-					rel="noreferrer"
-				>{`${SHARE_BASE}${m.room_hash}`}</a>
-			),
+			cell: (m: ScheduledMeetingApi) =>
+				m.room_hash ? (
+					<a
+						href={`${SHARE_BASE}${m.room_hash}`}
+						target="_blank"
+						rel="noreferrer"
+					>{`${SHARE_BASE}${m.room_hash}`}</a>
+				) : (
+					"—"
+				),
 			minWidth: 260,
 		},
 		{
 			id: "meetingUrl",
 			header: "Meeting URL",
 			cell: (m: ScheduledMeetingApi) => {
-				const url = `https://${JITSI_DOMAIN}/${m.room_hash}`;
+				if (!m.room_hash) return "—";
+				const url = `${SHARE_BASE}${m.room_hash}`;
 				return (
 					<SpaceBetween direction="horizontal" size="xs">
 						<Link href={url} external>

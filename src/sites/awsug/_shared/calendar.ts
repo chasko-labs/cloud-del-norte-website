@@ -1,6 +1,8 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
+import { SHARE_BASE } from "./api";
+
 interface CalendarEventParams {
 	title: string;
 	scheduledStart: string; // ISO 8601
@@ -28,7 +30,7 @@ function toGoogleCalendarDate(date: Date): string {
 export function buildGoogleCalendarUrl(params: CalendarEventParams): string {
 	const { title, scheduledStart, durationMinutes, description, roomHash } =
 		params;
-	const joinUrl = `https://clouddelnorte.org/m/${roomHash}`;
+	const joinUrl = `${SHARE_BASE}${roomHash}`;
 
 	const start = new Date(scheduledStart);
 	const end = new Date(start.getTime() + durationMinutes * 60 * 1000);
