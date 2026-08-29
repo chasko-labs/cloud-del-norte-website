@@ -1,6 +1,10 @@
 // OIDC Authorization Code + PKCE flow against Cognito Hosted UI.
-// Zero runtime dependencies. Tokens live in sessionStorage (tab-scoped).
+// Zero runtime dependencies.
+// The durable refresh token lives in localStorage (survives tab close / browser restart —
+// standard SPA "remember me"); the short-lived id/access tokens + expiry stay in sessionStorage
+// (tab-scoped, re-minted from the refresh token, safer for the bearer tokens).
 // Signatures are NOT verified client-side — token-exchange API and prosody enforce on the server.
+// This change only alters WHERE the refresh token is cached, not the server-side trust model.
 
 const HOSTED_UI = "https://cloud-del-norte.auth.us-west-2.amazoncognito.com";
 
@@ -135,8 +139,10 @@ export async function handleCallback(): Promise<{ returnTo: string }> {
 function storeTokens(tokens: TokenResponse): void {
 	sessionStorage.setItem(KEY_ID_TOKEN, tokens.id_token);
 	sessionStorage.setItem(KEY_ACCESS_TOKEN, tokens.access_token);
+	// Refresh token is the durable credential — persist in localStorage so it
+	// survives tab close / browser restart. Bearer tokens stay tab-scoped.
 	if (tokens.refresh_token)
-		sessionStorage.setItem(KEY_REFRESH_TOKEN, tokens.refresh_token);
+		localStorage.setItem(KEY_REFRESH_TOKEN, tokens.refresh_token);
 	sessionStorage.setItem(
 		KEY_EXPIRES_AT,
 		String(Date.now() + tokens.expires_in * 1000),
@@ -160,7 +166,7 @@ export function getAccessToken(): string | null {
 }
 
 export function getRefreshToken(): string | null {
-	return sessionStorage.getItem(KEY_REFRESH_TOKEN);
+	return localStorage.getItem(KEY_REFRESH_TOKEN);
 }
 
 export async function refreshTokens(): Promise<void> {
@@ -183,10 +189,27 @@ export async function refreshTokens(): Promise<void> {
 	storeTokens(tokens);
 }
 
+// Rehydrate an existing session on page load without a redirect.
+// - live (non-expired) access token already in sessionStorage -> already signed in.
+// - refresh token in localStorage -> re-mint id/access into sessionStorage.
+//   On failure (expired/revoked) clear the refresh token so we do not loop.
+// - no refresh token -> not signed in; caller falls back to a login flow.
+export async function restoreSession(): Promise<boolean> {
+	if (getAccessToken()) return true;
+	if (!getRefreshToken()) return false;
+	try {
+		await refreshTokens();
+		return true;
+	} catch {
+		localStorage.removeItem(KEY_REFRESH_TOKEN);
+		return false;
+	}
+}
+
 export function signOut(): void {
+	localStorage.removeItem(KEY_REFRESH_TOKEN);
 	sessionStorage.removeItem(KEY_ID_TOKEN);
 	sessionStorage.removeItem(KEY_ACCESS_TOKEN);
-	sessionStorage.removeItem(KEY_REFRESH_TOKEN);
 	sessionStorage.removeItem(KEY_EXPIRES_AT);
 	sessionStorage.removeItem(KEY_LOGIN_STATE);
 	window.location.assign(AUTH_LOGIN_URL);
