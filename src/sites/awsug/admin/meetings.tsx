@@ -4,6 +4,7 @@
 import Alert from "@cloudscape-design/components/alert";
 import Box from "@cloudscape-design/components/box";
 import Button from "@cloudscape-design/components/button";
+import CopyToClipboard from "@cloudscape-design/components/copy-to-clipboard";
 import DatePicker from "@cloudscape-design/components/date-picker";
 import FormField from "@cloudscape-design/components/form-field";
 import Header from "@cloudscape-design/components/header";
@@ -28,6 +29,8 @@ import {
 import { buildGoogleCalendarUrl } from "../_shared/calendar";
 
 const SHARE_BASE = "https://clouddelnorte.org/m/";
+// keep in sync with src/sites/awsug/meetings/app.tsx
+const JITSI_DOMAIN = "meet.clouddelnorte.org";
 
 interface CreateForm {
 	title: string;
@@ -223,6 +226,29 @@ export function MeetingsTable() {
 					rel="noreferrer"
 				>{`${SHARE_BASE}${m.room_hash}`}</a>
 			),
+			minWidth: 260,
+		},
+		{
+			id: "meetingUrl",
+			header: "Meeting URL",
+			cell: (m: ScheduledMeetingApi) => {
+				const url = `https://${JITSI_DOMAIN}/${m.room_hash}`;
+				return (
+					<SpaceBetween direction="horizontal" size="xs">
+						<Link href={url} external>
+							{url}
+						</Link>
+						<CopyToClipboard
+							variant="inline"
+							textToCopy={url}
+							textToDisplay=""
+							copyButtonAriaLabel="Copy meeting URL"
+							copySuccessText="Meeting URL copied"
+							copyErrorText="Failed to copy meeting URL"
+						/>
+					</SpaceBetween>
+				);
+			},
 			minWidth: 260,
 		},
 		{
