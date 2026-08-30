@@ -502,4 +502,18 @@ export const variationsData: meeting[] = [
 		scheduledDate: "2026-07-31",
 		scheduledTime: "19:00",
 	},
+	{
+		name: "Workshop: Quantum Essentials (Quantum Computing with Amazon Braket) / Taller: Fundamentos de Quantum (Computación Cuántica con Amazon Braket)",
+		presenters: "Christian Perez",
+		happened: "false",
+		ondemand: "no",
+		eventlink: "https://quantum.clouddelnorte.org",
+		// Bilingual EN/ES workshop. Direct jitsi room so the join link on the
+		// landing + meetings pages is quickable (meet.clouddelnorte.org/braket30).
+		roomName: "braket30",
+		scheduledDate: "2026-08-30",
+		// 2:00 PM Mountain / El Paso (America/Denver). 3-hour session (2-5 PM MDT).
+		scheduledTime: "14:00",
+		durationMinutes: 180,
+	},
 ];

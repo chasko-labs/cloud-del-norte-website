@@ -423,6 +423,13 @@
 			"header": "habla en cloud del norte",
 			"body": "convocatoria abierta - todos los niveles bienvenidos para pláticas (hasta 2 horas), demos y lightning rounds (5 minutos). Presentaciones en inglés, español y Lengua de Señas regional son bienvenidas",
 			"cta": "proponer una charla"
+		},
+		"joinWorkshopCta": {
+			"header": "Únete al taller en vivo / Join the live workshop",
+			"title": "Taller: Fundamentos de Quantum — Computación Cuántica con Amazon Braket",
+			"when": "Domingo 30 de agosto · 2:00 PM hora de la montaña (El Paso) · bilingüe EN/ES · presenta Christian Perez",
+			"cta": "Únete al taller en vivo / Join the live workshop",
+			"register": "Regístrate / Register"
 		}
 	},
 	"helpPanel": {
@@ -1217,7 +1224,7 @@
 		"guestRegisterButton": "Regístrate para este taller",
 		"guestSignInLink": "¿Ya eres miembro de Cloud Del Norte? Inicia sesión",
 		"upcomingInfoHeader": "Próximo Taller",
-		"upcomingInfoDate": "Dom 30 Ago · 3:00–6:00 PM CDT",
+		"upcomingInfoDate": "Dom 30 Ago · 2:00 PM Montaña (El Paso)",
 		"upcomingInfoTopic": "Taller Práctico de Amazon Braket — superposiciones cuánticas, funciones de onda, entrelazamiento",
 		"upcomingInfoStyle": "Aprende prácticando, en equipo, o a tu propio ritmo",
 		"loadingStatus": "Verificando estado de la sesión…",
@@ -1259,7 +1266,12 @@
 		"sessionsHeader": "Próximas Sesiones",
 		"statusLive": "En vivo",
 		"statusToday": "Hoy",
-		"statusUpcoming": "Próximamente"
+		"statusUpcoming": "Próximamente",
+		"meetingLinkLabel": "Únete en",
+		"meetingLinkCopy": "Copiar",
+		"meetingLinkCopied": "Enlace de reunión copiado",
+		"meetingLinkCopyError": "Error al copiar",
+		"liveRoomsHeader": "Talleres en vivo en curso"
 	},
 	"rsvp": {
 		"breadcrumb": "Apúntate",
