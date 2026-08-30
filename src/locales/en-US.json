@@ -1266,7 +1266,12 @@
 		"sessionsHeader": "Upcoming Sessions",
 		"statusLive": "Live now",
 		"statusToday": "Today",
-		"statusUpcoming": "Upcoming"
+		"statusUpcoming": "Upcoming",
+		"meetingLinkLabel": "Join at",
+		"meetingLinkCopy": "Copy",
+		"meetingLinkCopied": "Meeting link copied",
+		"meetingLinkCopyError": "Failed to copy",
+		"liveRoomsHeader": "Live workshops in progress"
 	},
 	"rsvp": {
 		"breadcrumb": "RSVP",
