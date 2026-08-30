@@ -423,6 +423,13 @@
 			"header": "habla en cloud del norte",
 			"body": "convocatoria abierta - todos los niveles bienvenidos para pláticas (hasta 2 horas), demos y lightning rounds (5 minutos). Presentaciones en inglés, español y Lengua de Señas regional son bienvenidas",
 			"cta": "proponer una charla"
+		},
+		"joinWorkshopCta": {
+			"header": "Únete al taller en vivo / Join the live workshop",
+			"title": "Taller: Fundamentos de Quantum — Computación Cuántica con Amazon Braket",
+			"when": "Domingo 30 de agosto · 2:00 PM hora de la montaña (El Paso) · bilingüe EN/ES · presenta Christian Perez",
+			"cta": "Únete al taller en vivo / Join the live workshop",
+			"register": "Regístrate / Register"
 		}
 	},
 	"helpPanel": {

@@ -2,10 +2,12 @@
 // SPDX-License-Identifier: MIT-0
 
 import Box from "@cloudscape-design/components/box";
+import SpaceBetween from "@cloudscape-design/components/space-between";
 import Spinner from "@cloudscape-design/components/spinner";
 import Tabs from "@cloudscape-design/components/tabs";
 import { useCallback, useEffect, useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
+import JoinWorkshopCta from "../../components/join-workshop-cta";
 import Navigation from "../../components/navigation";
 import { useTranslation } from "../../hooks/useTranslation";
 import ShellLayout from "../../layouts/shell";
@@ -191,7 +193,10 @@ export default function App() {
 		>
 			{/* Guests can browse meetings; the join action inside VariationsTable
 			    gates on auth — guests see the list, must sign in to RSVP. */}
-			<MeetingsTabs />
+			<SpaceBetween size="l">
+				<JoinWorkshopCta />
+				<MeetingsTabs />
+			</SpaceBetween>
 		</ShellLayout>
 	);
 }

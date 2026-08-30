@@ -7,6 +7,7 @@ import Header from "@cloudscape-design/components/header";
 import Link from "@cloudscape-design/components/link";
 import { useState } from "react";
 import Breadcrumbs from "../../components/breadcrumbs";
+import JoinWorkshopCta from "../../components/join-workshop-cta";
 import Navigation from "../../components/navigation";
 import SpeakerProposalCta from "../../components/speaker-proposal-cta";
 import { useTranslation } from "../../hooks/useTranslation";
@@ -62,10 +63,12 @@ function AppContent({
 				gridDefinition={[
 					{ colspan: 12 },
 					{ colspan: 12 },
+					{ colspan: 12 },
 					{ colspan: { default: 12, m: 8 } },
 					{ colspan: { default: 12, m: 4 } },
 				]}
 			>
+				<JoinWorkshopCta />
 				<SpeakerProposalCta />
 				<ProductionOverview metrics={productionMetrics} />
 				<Meetings data={variationData} items={breakdownItems} />
