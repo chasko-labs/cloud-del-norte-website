@@ -27,9 +27,11 @@ import {
 	type CrossSiteLock,
 	endMeeting,
 	fetchInfrastructureStatus,
+	fetchLiveRooms,
 	fetchMeetingStatus,
 	type InfraStatus,
 	launchMeeting,
+	type LiveRoom,
 	type MeetingStatus,
 } from "../../../lib/meetings";
 import JitsiEmbed from "../../../pages/meetings/components/jitsi-embed";
@@ -54,6 +56,29 @@ const SIGN_IN_URL =
 
 const POLL_INTERVAL_MS = 30_000;
 const CELEBRATION_DURATION_MS = 5_000;
+
+// Live-room occupancy census (issue #97): poll the no-auth backend so the
+// dashboard reflects rooms that are actually open — including guest bare rooms
+// (e.g. braket30) that never touch the admin meetings table.
+function useLiveRooms(): LiveRoom[] {
+	const [liveRooms, setLiveRooms] = useState<LiveRoom[]>([]);
+
+	useEffect(() => {
+		let cancelled = false;
+		const poll = async () => {
+			const rooms = await fetchLiveRooms();
+			if (!cancelled) setLiveRooms(rooms);
+		};
+		poll();
+		const id = setInterval(poll, POLL_INTERVAL_MS);
+		return () => {
+			cancelled = true;
+			clearInterval(id);
+		};
+	}, []);
+
+	return liveRooms;
+}
 
 interface UpcomingSession {
 	title: string;
@@ -803,22 +828,64 @@ function ModeratorControls() {
 	);
 }
 
+/* ─── Live Rooms Section (occupancy census, #97) ─── */
+
+function LiveRoomsSection({ liveRooms }: { liveRooms: LiveRoom[] }) {
+	const { t } = useTranslation();
+	if (liveRooms.length === 0) return null;
+
+	return (
+		<Container
+			header={
+				<Header variant="h2">
+					<SpaceBetween size="xs" direction="horizontal" alignItems="center">
+						<Badge color="red">{t("quantumDashboard.liveBadge")}</Badge>
+						<span>{t("quantumDashboard.liveRoomsHeader")}</span>
+					</SpaceBetween>
+				</Header>
+			}
+		>
+			<SpaceBetween size="s">
+				{liveRooms.map((r) => (
+					<SpaceBetween
+						key={r.room}
+						size="xs"
+						direction="horizontal"
+						alignItems="center"
+					>
+						<StatusIndicator type="success">
+							{t("quantumDashboard.statusLive")}
+						</StatusIndicator>
+						<Link href={r.joinUrl} external>
+							{r.title || r.room}
+						</Link>
+					</SpaceBetween>
+				))}
+			</SpaceBetween>
+		</Container>
+	);
+}
+
 /* ─── Meeting Link Surface (stable/pinned room URL) ─── */
 
-function MeetingLinkSurface() {
+function MeetingLinkSurface({ liveRooms }: { liveRooms?: LiveRoom[] }) {
 	const { t } = useTranslation();
+	// Prefer the first actually-live room (e.g. braket30) when one exists;
+	// otherwise fall back to the pinned default room URL.
+	const meetingUrl =
+		liveRooms && liveRooms.length > 0 ? liveRooms[0].joinUrl : MEETING_URL;
 	return (
 		<Box>
 			<Box variant="awsui-key-label">
 				{t("quantumDashboard.meetingLinkLabel") || "Join at"}
 			</Box>
 			<SpaceBetween size="xs" direction="horizontal" alignItems="center">
-				<Link href={MEETING_URL} external>
-					{MEETING_URL}
+				<Link href={meetingUrl} external>
+					{meetingUrl}
 				</Link>
 				<CopyToClipboard
 					variant="inline"
-					textToCopy={MEETING_URL}
+					textToCopy={meetingUrl}
 					copyButtonText={t("quantumDashboard.meetingLinkCopy") || "Copy"}
 					copySuccessText={
 						t("quantumDashboard.meetingLinkCopied") || "Meeting link copied"
@@ -840,6 +907,7 @@ function MemberView({ user }: { user: UserInfo }) {
 		null,
 	);
 	const [joined, setJoined] = useState(false);
+	const liveRooms = useLiveRooms();
 	const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
 	const pollStatus = useCallback(async () => {
@@ -892,11 +960,13 @@ function MemberView({ user }: { user: UserInfo }) {
 						lock={meetingStatus?.crossSiteLock ?? null}
 						currentSite="cdn"
 					/>
-					<MeetingLinkSurface />
+					<MeetingLinkSurface liveRooms={liveRooms} />
 					<SessionStatus status={meetingStatus} onJoin={handleJoin} />
 					<CalendarActions />
 				</SpaceBetween>
 			</Container>
+
+			<LiveRoomsSection liveRooms={liveRooms} />
 
 			<UpcomingSessions onJoin={handleJoin} />
 

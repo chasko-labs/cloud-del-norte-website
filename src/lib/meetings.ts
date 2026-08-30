@@ -30,6 +30,13 @@ export interface InfraStatus {
 	tasks_desired: number;
 }
 
+export interface LiveRoom {
+	room: string;
+	joinUrl: string;
+	title?: string;
+	startedAt?: string;
+}
+
 export class MeetingApiError extends Error {
 	status: number;
 	constructor(status: number, message: string) {
@@ -178,4 +185,25 @@ export async function fetchInfrastructureStatus(): Promise<InfraStatus> {
 		throw new MeetingApiError(res.status, text);
 	}
 	return (await res.json()) as InfraStatus;
+}
+
+// Public (no-auth) prosody occupancy census. Backend applies a 90s staleness
+// guard and returns a top-level array; any failure degrades to [] so the
+// dashboard falls back to its scheduled/no-sessions behavior.
+export async function fetchLiveRooms(): Promise<LiveRoom[]> {
+	let res: Response;
+	try {
+		res = await fetch(`${API_BASE}/meetings/live-rooms`, { method: "GET" });
+	} catch {
+		return [];
+	}
+	if (!res.ok) {
+		return [];
+	}
+	try {
+		const data = await res.json();
+		return Array.isArray(data) ? (data as LiveRoom[]) : [];
+	} catch {
+		return [];
+	}
 }

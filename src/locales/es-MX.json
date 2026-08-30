@@ -1259,7 +1259,12 @@
 		"sessionsHeader": "Próximas Sesiones",
 		"statusLive": "En vivo",
 		"statusToday": "Hoy",
-		"statusUpcoming": "Próximamente"
+		"statusUpcoming": "Próximamente",
+		"meetingLinkLabel": "Únete en",
+		"meetingLinkCopy": "Copiar",
+		"meetingLinkCopied": "Enlace de reunión copiado",
+		"meetingLinkCopyError": "Error al copiar",
+		"liveRoomsHeader": "Talleres en vivo en curso"
 	},
 	"rsvp": {
 		"breadcrumb": "Apúntate",
