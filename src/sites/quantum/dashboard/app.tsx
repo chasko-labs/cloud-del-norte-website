@@ -49,7 +49,7 @@ import {
 } from "../../../utils/theme";
 import QuantumLayout from "../_layout";
 
-const ROOM_NAME = "cloud-del-norte-awsug";
+const ROOM_NAME = "braket30";
 const MEETING_URL = `https://meet.clouddelnorte.org/${ROOM_NAME}`;
 const SIGN_IN_URL =
 	"https://auth.clouddelnorte.org/login/index.html?return_to=https://quantum.clouddelnorte.org/auth-callback/%23return_to=/dashboard/";
@@ -93,11 +93,11 @@ interface UpcomingSession {
 const UPCOMING_SESSIONS: UpcomingSession[] = [
 	{
 		title: "Quantum Computing Workshop — Amazon Braket Part 1",
-		date: "Sat Aug 30",
-		time: "3:00–6:00 PM CDT",
+		date: "Sun Aug 30",
+		time: "2:00 PM Mountain (El Paso)",
 		description: "Hands-on superpositions, wavefunctions, Deutsch's algorithm",
-		isoStart: "2026-08-30T21:00:00Z",
-		isoEnd: "2026-08-31T00:00:00Z",
+		isoStart: "2026-08-30T20:00:00Z",
+		isoEnd: "2026-08-30T23:00:00Z",
 		location: "quantum.clouddelnorte.org",
 	},
 ];
