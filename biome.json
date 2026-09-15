@@ -11,7 +11,8 @@
 			"!!**/dist",
 			"!!**/node_modules",
 			"!!public/data",
-			"!!scripts/__tests__/fixtures"
+			"!!scripts/__tests__/fixtures",
+			"!!docs/walkthrough"
 		]
 	},
 	"formatter": {
