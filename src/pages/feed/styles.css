@@ -36,7 +36,7 @@
 	aspect-ratio: 16 / 9;
 	max-width: 560px;
 	max-height: 315px;
-	min-height: 180px;
+	min-height: 0;
 }
 
 .feed-carousel__frame iframe {
@@ -158,13 +158,21 @@
 	}
 }
 
-/* progress bar — 6s countdown strip at bottom of carousel */
+/* progress bar — 6s countdown strip at bottom of carousel.
+   margin-top: auto pins the progress + dots nav block to the bottom edge of
+   the carousel column. The carousel wrapper receives flex: 1 from the feed-
+   grid fill chain (styles.css "wave 23.5" block) so it stretches to the
+   equalized 2-up card height; without this the fixed-height __item + nav sat
+   top-packed and left ragged dead space at the card floor. Anchoring the nav
+   to the bottom collects that slack into one deliberate gap above the nav so
+   every article card (arrowhead / andmore / awsml) fills its card uniformly.
+   No-op when there is no slack (mobile stacked / natural-height cards). */
 .feed-article-carousel__progress {
 	height: 2px;
 	background: var(--cdn-color-border);
 	border-radius: 1px;
 	overflow: hidden;
-	margin-top: var(--cdn-space-xs);
+	margin-top: auto;
 }
 
 .feed-article-carousel__progress-fill {
@@ -245,6 +253,13 @@
 	.feed-twitch__live-dot {
 		animation: feed-live-pulse 1.4s ease-in-out infinite;
 	}
+
+	/* Wave 71 scroll-perf — pause the live-dot pulse during a scroll burst
+	   (body.cdn-scrolling toggled by scroll-jank-mitigation.ts). Mirrors the
+	   wave 30a pattern already applied to the event cards + card shell. */
+	body.cdn-scrolling .feed-twitch__live-dot {
+		animation-play-state: paused;
+	}
 }
 
 .feed-twitch__live-label {
@@ -257,7 +272,7 @@
 	aspect-ratio: 16 / 9;
 	max-width: 560px;
 	max-height: 315px;
-	min-height: 180px;
+	min-height: 0;
 }
 
 .feed-twitch__frame iframe {
@@ -446,6 +461,7 @@
 	display: grid;
 	grid-template-columns: 1fr;
 	gap: var(--cdn-space-md);
+	align-items: stretch;
 }
 
 /* ---------- Geometry isolation — slot-token min-heights per card class ----------
@@ -473,9 +489,15 @@
 	min-height: var(--cdn-slot-standard-min-h, 220px);
 	display: flex;
 	flex-direction: column;
+	align-self: stretch;
+	box-sizing: border-box;
 	overflow: hidden;
 	content-visibility: auto;
-	contain-intrinsic-size: 0 400px; /* estimated card height, prevents scroll-bar jump */
+	/* Wave 71 scroll-perf — `auto <len>` remembers the last-rendered size so
+	   a cell that scrolls back into view restores its true height instead of
+	   snapping to a generic 400px estimate; the old `0 400px` estimate was
+	   the cause of scroll-bar jumpiness. 240px matches the standard tier. */
+	contain-intrinsic-size: auto 240px;
 }
 
 .awsui-dark-mode .cdn-card {
@@ -517,7 +539,9 @@
 }
 
 /* wave 23.5 — fill container: Cloudscape Container root + content must stretch
-   to fill the cdn-card flex parent so no dead whitespace remains on desktop. */
+   to fill the cdn-card flex parent so no dead whitespace remains on desktop.
+   FeedCardShell adds one wrapper around that root, so it must join the same
+   flex chain or the shell stops at its intrinsic content height. */
 .feed-grid__cell.cdn-card {
 	display: flex;
 	flex-direction: column;
@@ -525,11 +549,115 @@
 
 .feed-grid__cell.cdn-card > [class*="awsui_root"] {
 	flex: 1 1 auto;
+	min-height: 0;
 	display: flex;
 	flex-direction: column;
 }
 
-.feed-grid__cell.cdn-card > [class*="awsui_root"] > [class*="awsui_content_"] {
+.feed-grid__cell.cdn-card > .feed-card-shell {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.feed-grid__cell.cdn-card > .feed-card-shell > [class*="awsui_root"] {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.feed-grid__cell.cdn-card > [class*="awsui_root"] > [class*="awsui_content_"],
+.feed-grid__cell.cdn-card
+	> .feed-card-shell
+	> [class*="awsui_root"]
+	> [class*="awsui_content_"] {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.feed-grid__cell.cdn-card
+	> [class*="awsui_root"]
+	> [class*="awsui_content_"]
+	> :first-child,
+.feed-grid__cell.cdn-card
+	> .feed-card-shell
+	> [class*="awsui_root"]
+	> [class*="awsui_content_"]
+	> :first-child {
+	flex: 1 1 auto;
+	min-height: 0;
+}
+
+/* ── Wave 71 fill-chain hardening — palette-agnostic, wrapper-tolerant ──────
+   The wave 23.5 chain above only fills a shell that is a *direct* child of
+   the grid cell. Two feed cards break that assumption and left dead
+   whitespace at the card floor regardless of palette:
+     - andres-youtube-live wraps the shell in `.ayl-container` (a GPU-hint
+       div), so `> .feed-card-shell` never matched and the shell stopped at
+       intrinsic height.
+     - the prior spacing pass only scoped `.feed-card-shell--lavender`, so
+       every other palette (amber/teal/violet/sage/rose/navy/gold) still had
+       a shell that did not stretch when nested under a wrapper.
+   This block makes the shell self-stretching for ANY palette and passes the
+   flex stretch through an intermediate wrapper. FIX A1 made the shell
+   near-opaque, so any remaining slack now reads as a flat dead band rather
+   than wallpaper showing through — making a clean fill more important. */
+
+/* any intermediate wrapper that directly holds a shell inside a filled cell
+   becomes a pass-through flex column so the stretch reaches the shell.
+   Scoped with :has(.feed-card-shell) so this only touches wrappers that
+   actually contain a shell — the bespoke event cards (featured-event,
+   next-meetup, builder-center) that render their own chrome without a shell
+   are untouched and keep their hand-tuned layout. */
+.feed-grid__cell.cdn-card
+> :not([class*="awsui_root"]):not(.feed-card-shell):has(.feed-card-shell) {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+/* the shell stretches whether it is a direct child of the cell or nested one
+   wrapper deep (e.g. .ayl-container); descendant combinator + explicit flex */
+.feed-grid__cell.cdn-card .feed-card-shell {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+/* shell → Cloudscape root → content, matched at any wrapper depth so the
+   fill reaches the content column for every palette, not just lavender */
+.feed-grid__cell.cdn-card .feed-card-shell > [class*="awsui_root"],
+.feed-grid__cell.cdn-card
+	.feed-card-shell
+	> [class*="awsui_root"]
+	> [class*="awsui_content_"] {
+	flex: 1 1 auto;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+/* the content column's direct children all share the stretch so a card whose
+   flexible region is not the first child (bottom-anchored meta via
+   margin-top:auto, trailing nav rows) still fills cleanly. The carousel /
+   body wrapper keeps flex-grow; short fixed rows stay natural height. */
+.feed-grid__cell.cdn-card .feed-card-shell
+	> [class*="awsui_root"]
+	> [class*="awsui_content_"]
+	> * {
+	min-height: 0;
+}
+.feed-grid__cell.cdn-card
+	.feed-card-shell
+	> [class*="awsui_root"]
+	> [class*="awsui_content_"]
+	> :first-child {
 	flex: 1 1 auto;
 }
 
@@ -661,7 +789,7 @@
 	   Standard-tier cards keep their floor since they cycle content. */
 	min-height: 0;
 	content-visibility: auto;
-	contain-intrinsic-size: 0 400px; /* estimated card height, prevents scroll-bar jump */
+	contain-intrinsic-size: auto 340px; /* Wave 71 — remembering form, wide tier */
 }
 
 /* wave 25b — extra breathing room between stacked event cards (featured,
@@ -3711,7 +3839,7 @@
 
 	/* Wave 33a — keep the existing reserved min-height so the loading →
 	   loaded state transition does not shift page layout. */
-	min-height: 180px;
+	min-height: 0;
 
 	position: relative;
 	isolation: isolate;

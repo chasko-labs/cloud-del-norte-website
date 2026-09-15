@@ -120,6 +120,16 @@
 		animation: cdn-ascii-smirk-mouth-widen 4.6s ease-in-out infinite;
 	}
 
+	/* Wave 71 scroll-perf — pause the smirk's blink / brow-twitch / mouth
+	   animations during a scroll burst (body.cdn-scrolling toggled by
+	   scroll-jank-mitigation.ts). Already inside the no-preference gate so
+	   reduced-motion is unaffected. */
+	body.cdn-scrolling .cdn-ascii-smirk__eye--left,
+	body.cdn-scrolling .cdn-ascii-smirk__brow,
+	body.cdn-scrolling .cdn-ascii-smirk__mouth {
+		animation-play-state: paused;
+	}
+
 	/* ---------- Hover flourish ---------- */
 	.cdn-ascii-smirk:hover .cdn-ascii-smirk__eye--left,
 	.cdn-ascii-smirk:hover .cdn-ascii-smirk__eye--right {

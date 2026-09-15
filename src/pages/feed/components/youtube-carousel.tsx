@@ -12,29 +12,36 @@ const BabylonSpinDemo = lazy(
 	() => import("../../../components/babylon-spin-demo"),
 );
 
-const VIDEO_IDS = ["yQNrgpIp1Fs", "WUJUvTu2Qjo", "S2G6eDE4Jok"];
-
-// Wave 52 — static metadata for newest/oldest spin preview cards.
-// These mirror the hardcoded VIDEO_IDS above; no fetch script needed.
-const SPIN_ITEMS = [
-	{
-		videoId: VIDEO_IDS[0],
-		title: "Featured video 1",
-		thumbnailUrl: `https://i.ytimg.com/vi/${VIDEO_IDS[0]}/hqdefault.jpg`,
-		publishedAt: "2026-05-01",
-	},
-	{
-		videoId: VIDEO_IDS[VIDEO_IDS.length - 1],
-		title: "Featured video 3",
-		thumbnailUrl: `https://i.ytimg.com/vi/${VIDEO_IDS[VIDEO_IDS.length - 1]}/hqdefault.jpg`,
-		publishedAt: "2025-11-01",
-	},
-];
+// Base (English) video set. `yQNrgpIp1Fs` is Spanish-only — it is prepended
+// for the "mx" locale below. `WUJUvTu2Qjo` was removed (preview did not render).
+const BASE_VIDEO_IDS = ["S2G6eDE4Jok"];
+const MX_ONLY_VIDEO_ID = "yQNrgpIp1Fs";
 
 export default function YoutubeCarousel() {
-	const { t } = useTranslation();
+	const { t, locale } = useTranslation();
 	const [mounted, setMounted] = useState(false);
 	const [current, setCurrent] = useState(0);
+
+	// Spanish gets the mx-only video prepended; English sees only the base set.
+	const VIDEO_IDS =
+		locale === "mx" ? [MX_ONLY_VIDEO_ID, ...BASE_VIDEO_IDS] : BASE_VIDEO_IDS;
+
+	// Wave 52 — static metadata for newest/oldest spin preview cards.
+	// These mirror the resolved VIDEO_IDS above; no fetch script needed.
+	const SPIN_ITEMS = [
+		{
+			videoId: VIDEO_IDS[0],
+			title: "Featured video 1",
+			thumbnailUrl: `https://i.ytimg.com/vi/${VIDEO_IDS[0]}/hqdefault.jpg`,
+			publishedAt: "2026-05-01",
+		},
+		{
+			videoId: VIDEO_IDS[VIDEO_IDS.length - 1],
+			title: "Featured video 3",
+			thumbnailUrl: `https://i.ytimg.com/vi/${VIDEO_IDS[VIDEO_IDS.length - 1]}/hqdefault.jpg`,
+			publishedAt: "2025-11-01",
+		},
+	];
 
 	useEffect(() => {
 		setMounted(true);
@@ -44,7 +51,10 @@ export default function YoutubeCarousel() {
 		setCurrent((c) => (c - 1 + VIDEO_IDS.length) % VIDEO_IDS.length);
 	const next = () => setCurrent((c) => (c + 1) % VIDEO_IDS.length);
 
-	const videoId = VIDEO_IDS[current];
+	// Clamp: the list length changes with locale, so a stale `current` from a
+	// longer list must not index past the end (would embed ".../undefined").
+	const safeIndex = current % VIDEO_IDS.length;
+	const videoId = VIDEO_IDS[safeIndex];
 
 	return (
 		<Container
@@ -82,7 +92,7 @@ export default function YoutubeCarousel() {
 							<iframe
 								loading="lazy"
 								src={`https://www.youtube.com/embed/${videoId}`}
-								title={`${t("feedPage.youtubeFeaturedVideo")} ${current + 1} ${t("feedPage.articleAriaConnector")} ${VIDEO_IDS.length}`}
+								title={`${t("feedPage.youtubeFeaturedVideo")} ${safeIndex + 1} ${t("feedPage.articleAriaConnector")} ${VIDEO_IDS.length}`}
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
 							/>
 						</div>
@@ -97,7 +107,7 @@ export default function YoutubeCarousel() {
 							&#8592;
 						</button>
 						<span className="feed-carousel__counter">
-							{current + 1} / {VIDEO_IDS.length}
+							{safeIndex + 1} / {VIDEO_IDS.length}
 						</span>
 						<button
 							type="button"

@@ -346,7 +346,7 @@ main[class*="awsui_layout"] {
 	overscroll-behavior: contain;
 	touch-action: pan-y;
 	max-height: calc(100vh - 56px);
-	padding-bottom: 120px;
+	padding-bottom: 0;
 }
 
 /* Outer Cloudscape chrome — defanged from opaque to TRANSPARENT in both modes.
@@ -447,13 +447,14 @@ main[class*="awsui_layout"] > [class*="navigation-container"],
 main[class*="awsui_layout"] > [class*="tools-container"],
 main[class*="awsui_layout"] > [class*="content-container"] {
 	block-size: auto !important;
+	min-block-size: 0 !important;
 }
 
-/* Side panels: clear persistent player (~72px) + footer (~48px) so panels
-   don't bleed under or leave dead space above the footer. */
+/* Side panels now end at the AppLayout row because the footer is in normal flow */
 main[class*="awsui_layout"] > [class*="navigation-container"],
 main[class*="awsui_layout"] > [class*="tools-container"] {
-	padding-bottom: 120px;
+	padding-bottom: 0;
+	overflow: hidden;
 }
 
 /* Side nav */
@@ -518,42 +519,48 @@ main[class*="awsui_layout"] > [class*="tools-container"] {
 	transition: none;
 }
 
-/* v0.0.0131 — info/tools-toggle disappears past ~1 viewport of scroll.
-   Root cause: Cloudscape's drawers-container (which holds the tools-toggle
-   ⓘ button) is position:sticky with block-size: calc(100vh - header-height).
-   Once the user scrolls past that 100vh window the sticky container's
-   height runs out and the toggle scrolls off screen. The fix expands the
-   container to fill its grid row so sticky remains active for the entire
-   page length. min-block-size:100% overrides the 100vh cap without
-   fighting the inline custom-property calc. Scoped to desktop (≥689px)
-   since mobile uses position:fixed for the drawers container. */
-/* restored post-fc3edc19 — load-bearing for logged-in tools-toggle visibility on scroll */
+/* AppLayout drawers stay inside their grid row, which ends before the flow footer */
 @media (min-width: 689px) {
 	[class*="awsui_drawers-container"] {
-		/* align-self:stretch fills the grid row without forcing the grid track
-		   to grow beyond content height. Replaces min-block-size:100% which
-		   caused viewport-fill on short-content pages (AWSUG home gap). */
 		align-self: stretch;
 		min-block-size: 0 !important;
+		overflow: hidden;
 	}
-	/* Left navigation-container: stretch to fill the grid row so the drawer
-	   extends all the way to the footer — no torn/abrupt termination.
-	   Inner content still scrolls via the nav[awsui_navigation_] max-height
-	   rule further down. */
+
 	[class*="awsui_navigation-container"] {
 		align-self: stretch;
-		overflow-y: visible;
+		min-block-size: 0 !important;
+		overflow: hidden;
 	}
 }
 
-/* Tools-toggle button — z-index above the fixed footer (z-index:200) so
-   the ⓘ button remains clickable when the drawers-container sticky
-   positioning places it near the bottom viewport edge. The drawers-container
-   is position:sticky and creates its own stacking context — to beat the
-   fixed footer (z-index:200) at the root stacking level, the container
-   itself needs z-index > 200. */
+/* Keep drawer controls above page content without letting them outrank the flow footer.
+   Wave 71 FIX C — extended from drawers-container ONLY to also cap the
+   navigation-container + tools-container. Root cause of the residual
+   footer overlap: the footer's z-index:1000 only wins the paint if the
+   sidebar column ranks BELOW it. Cloudscape's visual-refresh AppLayout
+   renders the navigation-container / tools-container as position: sticky
+   columns; a sticky element establishes its own stacking context and
+   Cloudscape assigns them an elevated z-index, so capping only the
+   drawers-container left the sticky nav column painting over the footer at
+   scroll-end. Capping all three at z-index:1 makes the footer (1000) the
+   unambiguous top layer, so the sidebar terminates visually at the footer's
+   top edge. Layer-only change; no geometry edit. */
 [class*="awsui_drawers-container"] {
-	z-index: 210;
+	z-index: 1;
+}
+
+/* Desktop-only (>=689px, matches the in-flow-grid nav-termination block
+   above): cap the sticky navigation + tools columns below the footer. Scoped
+   to desktop so the MOBILE drawer — which Cloudscape renders as a
+   position: fixed modal overlay that must float ABOVE content — keeps its
+   own elevated Cloudscape z-index and is not pushed under the page content.
+   !important because Cloudscape assigns the sticky-column z-index inline. */
+@media (min-width: 689px) {
+	[class*="awsui_navigation-container"],
+	[class*="awsui_tools-container"] {
+		z-index: 1 !important;
+	}
 }
 
 /* v0.0.0110 — left nav drawer parity with right tools panel
@@ -575,7 +582,7 @@ nav[class*="awsui_navigation_"]:not([class*="awsui_navigation-toggle_"]),
 	overscroll-behavior: contain;
 	touch-action: pan-y;
 	max-height: calc(100vh - 56px);
-	padding-bottom: 120px;
+	padding-bottom: 0;
 }
 
 /* v0.0.0125 — mobile nav drawer + inner scroller must fit the viewport
@@ -1767,12 +1774,21 @@ nav[class*="awsui_navigation_"]:not(
 /* Top nav — opaque (the nav bar itself; header strip BELOW it is the
    atmospheric zone). Already has solid gradient bg from TASK 6 above. */
 
-/* Footer — opaque, must paint above the page cream background.
+/* Footer — opaque, must paint above the page cream background AND above the
+   AppLayout side panels.
    position:relative + z-index ensures the footer's dark mahogany gradient
-   renders visibly even when AppLayout's cream background extends below content. */
+   renders visibly even when AppLayout's cream background extends below content.
+   z-index raised from 1 → 1000 (below #top-nav at 1002, above the AppLayout
+   drawers/nav/tools containers which sit at z-index: 1): Cloudscape renders
+   the side navigation as a sticky column with max-height: calc(100vh - 56px),
+   so at scroll-end its bottom edge extended into the footer band and, tying
+   at z-index: 1, painted OVER the footer. Making the footer the higher
+   stacking layer forces it to be the visual terminus — the sidebar's bottom
+   edge now sits behind the footer instead of covering it. Layer-only change;
+   no geometry or flow edit. */
 .cdn-footer {
 	isolation: isolate;
-	z-index: 1;
+	z-index: 1000;
 }
 
 /* Version label — sits in footer bottom-right, normal flow (not fixed).

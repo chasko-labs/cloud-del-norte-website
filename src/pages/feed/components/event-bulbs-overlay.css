@@ -91,6 +91,18 @@
 	}
 }
 
+/* Wave 71 scroll-perf — pause the per-bulb flicker during a scroll burst
+   (body.cdn-scrolling toggled by scroll-jank-mitigation.ts). The flicker
+   animates `filter: drop-shadow` which is an expensive per-frame repaint;
+   freezing it while scrolling reclaims the most frame budget of the wave-71
+   pause set. Gated on no-preference so reduced-motion (already static) is
+   unaffected. */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .cdn-bulb {
+		animation-play-state: paused;
+	}
+}
+
 /* prefers-reduced-motion: bulbs are static, no flicker, no twinkle, no scale.
    Still visible (full opacity) so the artwork reads correctly. */
 @media (prefers-reduced-motion: reduce) {

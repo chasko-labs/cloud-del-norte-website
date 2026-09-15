@@ -17,14 +17,11 @@
 
    The .feed-card-shell wrapper sits *outside* the Cloudscape Container and
    carries:
-     - perspective(1200px) + transform-style: preserve-3d so any child that
-       wants a translateZ pop can have one without loading a runtime 3D engine
-       (matches featured-event / next-meetup / upcoming-virtual-event)
-     - will-change: transform + contain: layout paint style + a translate3d
-       compositor hint so the card lives on its own GPU layer (same idiom
-       wave 30a deployed on the featured-event card to mitigate scroll
-       tearing — apply it everywhere so the rest of the feed scrolls with the
-       same stability)
+     - contain: layout paint style for paint isolation (Wave 71 removed the
+       perspective / preserve-3d / translate3d / will-change GPU-promotion
+       block from the default branch — no descendant animated in Z so it
+       forced an idle GPU layer per card with no consumer; reduced-motion
+       still resets perspective/transform-style defensively)
      - a 1px stage-rim inset on the box-shadow plus a layered ambient bloom
        that picks up the palette accent at low opacity
 
@@ -84,23 +81,18 @@
 	   primitive's body independently. */
 	container-type: inline-size;
 	container-name: cdn-feed-card-shell;
-	/* perspective + preserve-3d let descendant elements pop forward in
-	   z without loading a runtime 3D engine. 1200px = subtle ambient
-	   depth, same value waves 30a/33a/33b use on the event cards. */
-	perspective: 1200px;
-	transform-style: preserve-3d;
-	/* Compositor isolation — layered defense against scroll tearing.
-	   contain: layout paint style isolates the card's paint operations,
-	   translate3d forces its own GPU layer, will-change proactively
-	   promotes the layer up-front. Same idiom from wave 30a on the
-	   featured-event card; applying it to every shelled card so the
-	   whole feed page scrolls with the same stability. */
+	/* Wave 71 scroll-perf — the perspective / preserve-3d / translate3d /
+	   will-change GPU-promotion block was removed from the default branch:
+	   no descendant animates in Z, so it forced an idle GPU layer per card
+	   with no animated consumer. contain (layout paint style) is kept for
+	   paint isolation; the reduced-motion block already sets perspective:
+	   none / transform-style: flat so that branch is unaffected. */
 	contain: layout paint style;
-	transform: translate3d(0, 0, 0);
-	/* Glassmorphism — card is a glass pane over the 3D scene */
-	backdrop-filter: blur(14px) saturate(1.1);
-	-webkit-backdrop-filter: blur(14px) saturate(1.1);
-	background: rgba(250, 247, 240, 0.28);
+	/* Wave 71 scroll-perf — backdrop-filter blur(14px) was removed. It
+	   re-sampled the wallpaper behind every card on every scroll frame,
+	   the dominant scroll cost. Cards are now near-opaque so the wallpaper
+	   reads only through the grid gaps, not per-card per-frame. */
+	background: rgba(250, 247, 240, 0.92);
 	box-shadow:
 		0 1px 2px var(--fcs-shadow),
 		0 4px 8px -2px var(--fcs-shadow),
@@ -109,7 +101,7 @@
 }
 
 .awsui-dark-mode .feed-card-shell {
-	background: rgba(14, 14, 28, 0.52);
+	background: rgba(14, 14, 28, 0.9);
 	border-color: rgba(180, 170, 200, 0.12);
 }
 

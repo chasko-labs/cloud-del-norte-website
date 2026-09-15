@@ -12,18 +12,18 @@
    Footer container — gradient background + gradient accent top-border
    -------------------------------------------------------------------------- */
 /* --------------------------------------------------------------------------
-   Footer dock — fixed bottom, glass treatment mirroring top-nav
-   z-index 200: below tools-toggle (~900) but above page content.
-
-   Footer spans full viewport width (left:0, right:0). Nav and tools panels
-   layer above via their own z-index — no panel-aware inset needed.
+   Footer flow — normal document terminus below AppLayout
    -------------------------------------------------------------------------- */
 .cdn-footer {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	right: 0;
-	z-index: 200;
+	position: relative;
+	/* z-index 1000: footer is the document terminus and must paint ABOVE the
+	   AppLayout side navigation / tools panels (z-index: 1) which Cloudscape
+	   renders as sticky full-height columns that otherwise cover the footer
+	   at scroll-end. Kept below #top-nav (1002). Matches the paired rule in
+	   src/layouts/shell/styles.css so the winner of the cascade (bundle order
+	   dependent — both files declare .cdn-footer at equal specificity) lands
+	   on the same layer either way. */
+	z-index: 1000;
 	padding: var(--cdn-space-s, 8px) var(--cdn-space-lg, 24px);
 	/* Glass treatment matching top-nav universal-toolbar */
 	background-color: rgba(237, 229, 212, 0.72);
@@ -38,15 +38,9 @@
 	transform: translateZ(0);
 }
 
-/* Wave 70c: spacer reserves vertical space so page content isn't hidden behind fixed footer */
+/* Footer is in normal flow, so the AppLayout side panels terminate before it */
 .cdn-footer-spacer {
-	height: 72px;
-}
-
-@media (max-width: 600px) {
-	.cdn-footer-spacer {
-		height: 100px;
-	}
+	display: none;
 }
 
 /* Footer spans full viewport width — nav and tools panels layer above via z-index */
