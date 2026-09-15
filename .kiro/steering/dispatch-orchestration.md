@@ -27,8 +27,8 @@ locale files (src/locales/en-US.json, src/locales/es-MX.json) are the primary me
 | solan-rust-coder | react components, lambdas, infra scripts | 4-of-4 reliable parallel dispatch (wave 4) |
 | liora-css-repair | css fixes, cloudscape overrides | targeted selector work with !important scoping |
 | liora-headless-verifier | playwright chromium audit | pre/post visual verification, screenshot capture |
-| orin-ci-cd | woodpecker pipelines, deploy scripts, git ops | commit + deploy + invalidation |
-| kade-vox-host-admin | host-level systemd, docker, server triage | woodpecker server restart, service stop/disable |
+| orin-ci-cd | deploy scripts, git ops, pre-push hooks | commit + deploy + invalidation |
+| kade-vox-host-admin | host-level systemd, docker, server triage | service stop/disable, host triage |
 | kerouac-source-scribe | documentation, handoff, steering docs | distillation, session capture |
 
 ## pre-dispatch context injection
@@ -57,7 +57,7 @@ bad: one commit containing both "modal fix" + "unrelated skeleton feature"
 | plan | read files, analyze, propose approach, identify file paths + line numbers, report back |
 | act | write code, run build, commit, deploy |
 
-ghosts dispatched in "plan" mode MUST NOT write files. ghosts dispatched in "act" mode MUST run biome ci + npm run build before reporting success. the orchestrator decides which mode based on confidence level and whether Bryan has approved the approach.
+ghosts dispatched in "plan" mode MUST NOT write files. ghosts dispatched in "act" mode MUST run `~/.kiro/bin/kiro-verify check` (lint + build + test) before reporting success. the orchestrator decides which mode based on confidence level and whether Bryan has approved the approach.
 
 ## the rule in one sentence
 

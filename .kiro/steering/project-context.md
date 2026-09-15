@@ -10,17 +10,17 @@ cloud-del-norte-website is a React + Vite SPA for the Cloud Del Norte community 
 - AWS Cloudscape Design System (UI components)
 - Amazon Cognito (auth — hosted UI on auth subdomain, token flow via redirect)
 - Vitest (unit/integration tests)
-- Woodpecker CI (build, deploy, device-farm testing)
+- boutique deploy: scripts/deploy-manual.sh + ~/.kiro/bin/kiro-verify (no CI — woodpecker decommissioned 2026-07-19, codebuild retired)
 - S3 + CloudFront (hosting)
 
 ## deploy targets
 
-- Production: S3 bucket via Woodpecker pipeline on main merge
-- Preview: per-branch deploys on PR (CloudFront invalidation)
+- Production: S3 + CloudFront via `kiro-verify deploy main` (manual, boutique — no pipeline)
+- Other subdomains: `kiro-verify deploy <auth|awsug|dev|quantum>` per target
 
 ## testing infrastructure
 
-- **Device Farm integration**: `.woodpecker/device-farm.yml` — runs cross-browser/device tests on AWS Device Farm
+- **Device Farm integration**: `tests/device-farm/` is run on demand (no CI trigger — woodpecker decommissioned)
 - **Test suite**: `tests/device-farm/` — pytest-based tests (auth flows, broken links, console errors, API access)
 - **Credentials**: SSM Parameter Store at `/device-farm/test-users/*`
 - **Infra repo**: `chasko-labs/aws-device-farm-infra` (Terraform for Device Farm project + device pools)
@@ -29,7 +29,7 @@ cloud-del-norte-website is a React + Vite SPA for the Cloud Del Norte community 
 
 - Auth subdomain pattern: Cognito hosted UI on `auth.{domain}`, token exchange via redirect back to app
 - Token flow: authorization code grant → token endpoint → access/id/refresh tokens stored in session
-- Vitest runs in CI on every PR; Device Farm runs on main merge
+- Vitest + biome run via local pre-push git hook (the only gate); Device Farm suite is run on demand, not via CI
 - Cloudscape components are the only permitted UI library — no MUI, no Tailwind
 - Static assets in `public/` are deployed as-is to S3 root
 

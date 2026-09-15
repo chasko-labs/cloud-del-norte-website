@@ -1,11 +1,13 @@
 # deployment — cloud-del-norte-website
 
-## deploy modes
+## deploy path
 
-| mode | trigger | status |
-| ---- | ------- | ------ |
-| auto (woodpecker) | push to main | partial-recovery — not validated end-to-end (#157). do not rely on it. |
-| manual fallback | operator runs scripts/deploy-manual.sh | operational norm since wave 4. works reliably. |
+there is no CI auto-deploy. woodpecker was decommissioned 2026-07-19; codebuild is retired; github actions is forbidden (zero budget). boutique manual deploy is the permanent, only path:
+
+| tool | command | notes |
+| ---- | ------- | ----- |
+| kiro-verify wrapper | `~/.kiro/bin/kiro-verify deploy <target>` | gate-safe; runs deploy-manual.sh, trims output, saves full log |
+| deploy-manual.sh direct | `bash scripts/deploy-manual.sh <target>` | underlying script; one subdomain per invocation |
 
 ## manual deploy syntax
 
@@ -42,27 +44,6 @@ curl -sI https://auth.clouddelnorte.org/index.html | grep -i last-modified
 
 last-modified timestamp must match the deploy time within a few minutes. if stale, check invalidation status in CloudFront console or re-run the script.
 
-## manual fallback decision tree
-
-use manual deploy when:
-- woodpecker is in death-loop or SQLite-locked state (#157)
-- auto-deploy webhook delivered HTTP 200 but no pipeline event surfaced
-- you need to deploy a hotfix faster than waiting for CI
-
-do NOT use manual deploy when:
-- woodpecker is confirmed healthy and auto-deploy is validated end-to-end
-- the change has not passed `biome ci` + `npm run build` locally
-
-## woodpecker auto-deploy (expected behavior when healthy)
-
-push to main triggers:
-- build step (npm ci + npm run build)
-- s3 sync to all 3 production buckets
-- cloudfront invalidation on all 3 distributions
-- pipeline status posted back to github commit
-
-current blocker: residual user-id-0 POST storm at ~36s cadence from unidentified source. server received webhook but no pipeline event surfaced. tracked in #157.
-
 ## post-deploy verification
 
 after any deploy, confirm with curl last-modified checks (see above). for CSS/JS changes, verify bundle hash presence:
@@ -71,6 +52,4 @@ after any deploy, confirm with curl last-modified checks (see above). for CSS/JS
 curl -s https://clouddelnorte.org/ | grep -o 'assets/[^"]*\.css'
 ```
 
-## the rule in one sentence
-
-manual deploy via scripts/deploy-manual.sh is the operational norm until woodpecker #157 is fully resolved and auto-deploy is validated end-to-end with a successful pipeline run.
+boutique manual deploy via `~/.kiro/bin/kiro-verify deploy <target>` (or `bash scripts/deploy-manual.sh <target>`) is the permanent and only deploy path — there is no CI, verify locally then deploy directly
