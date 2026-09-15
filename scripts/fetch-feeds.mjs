@@ -19,7 +19,7 @@ const OUT_PATH = join(OUT_DIR, "feeds.json");
 const PODCAST_OUT_PATH = join(OUT_DIR, "podcast-episodes.json");
 
 const FEEDS = [
-	{ key: "andmore", url: "https://www.andmore.dev/index.xml", limit: 5 },
+	{ key: "andmore", url: "https://www.andmore.dev/rss.xml", limit: 5 },
 	{
 		key: "awsml",
 		url: "https://aws.amazon.com/blogs/machine-learning/feed/",
@@ -29,6 +29,32 @@ const FEEDS = [
 		key: "readysetcloud",
 		url: "https://www.readysetcloud.io/index.xml",
 		limit: 10,
+	},
+];
+
+// hardcoded fallback for the andmore feed when the build-time feed is
+// unavailable or returns no published posts.
+const ANDMORE_FALLBACK = [
+	{
+		title: "Adding Semantic Search to an Existing DynamoDB Table with Vector Indexes",
+		link: "https://www.andmore.dev/blog/semantic-search-dynamodb-vector-indexes",
+		pubDate: "2026-08-20",
+		excerpt:
+			"Add semantic search to an existing DynamoDB table using the new vector index feature — no separate vector store required.",
+	},
+	{
+		title: "Why Did AWS Release Yet Another Vector Store?",
+		link: "https://www.andmore.dev/blog/why-did-aws-release-another-vector-store",
+		pubDate: "2026-08-14",
+		excerpt:
+			"A look at where the newest AWS vector store fits among the existing options and when it is the right choice.",
+	},
+	{
+		title: "Skip the Middleman: Connecting Your UI Directly to an AI Agent via WebSocket",
+		link: "https://www.andmore.dev/blog/websocket-direct-to-agent",
+		pubDate: "2026-07-13",
+		excerpt:
+			"Connect a UI straight to an AI agent over a WebSocket, removing the intermediate API layer for lower-latency streaming.",
 	},
 ];
 
@@ -299,13 +325,28 @@ const output = {};
 for (const { key, url, limit } of FEEDS) {
 	try {
 		const posts = await fetchFeed(url, limit);
-		output[key] = posts;
-		console.log(`[fetch-feeds] ${key}: ${posts.length} posts`);
+		if (key === "andmore" && posts.length === 0) {
+			output[key] = ANDMORE_FALLBACK.slice(0, limit);
+			console.log(
+				`[fetch-feeds] ${key}: feed returned no posts; using ANDMORE_FALLBACK`,
+			);
+		} else {
+			output[key] = posts;
+			console.log(`[fetch-feeds] ${key}: ${posts.length} posts`);
+		}
 	} catch (err) {
-		console.warn(
-			`[fetch-feeds] warn: ${key} fetch failed — ${err.message}. Writing empty array.`,
-		);
-		output[key] = [];
+		if (key === "andmore") {
+			console.warn(
+				`[fetch-feeds] warn: ${key} fetch failed — ${err.message}. Using ANDMORE_FALLBACK.`,
+			);
+			output[key] = ANDMORE_FALLBACK.slice(0, limit);
+			console.log(`[fetch-feeds] ${key}: using ANDMORE_FALLBACK`);
+		} else {
+			console.warn(
+				`[fetch-feeds] warn: ${key} fetch failed — ${err.message}. Writing empty array.`,
+			);
+			output[key] = [];
+		}
 	}
 }
 

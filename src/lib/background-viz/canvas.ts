@@ -163,31 +163,32 @@ function frame(ts: number): void {
 
 	// Podcast mode: dampen treble (voice sibilance dominates otherwise),
 	// let bass-driven shadows and slow ripples take over the visual.
-	const isPodcastPlaying = document.body.classList.contains(
-		"cdn-podcast-playing",
-	);
+	const body = document.body;
+	const isPodcastPlaying = body.classList.contains("cdn-podcast-playing");
 	if (isPodcastPlaying) {
 		treble *= 0.3;
 	}
 
-	const root = document.documentElement.style;
-	root.setProperty("--cdn-bass", bass.toFixed(3));
-	root.setProperty("--cdn-mid", mid.toFixed(3));
-	root.setProperty("--cdn-treble", (treble * 0.4).toFixed(3));
-	root.setProperty("--cdn-centroid", centroid.toFixed(3));
-	root.setProperty("--cdn-flux", flux.toFixed(3));
-	if (beatFired) {
-		root.setProperty("--cdn-beat-count", String(beatCount));
-		// Cycle LED bank class for fiona panel — 4 banks, fire every 4th beat
-		const bank = beatCount % 4;
-		const body = document.body;
-		body.classList.remove(
-			"cdn-beat-bank-0",
-			"cdn-beat-bank-1",
-			"cdn-beat-bank-2",
-			"cdn-beat-bank-3",
-		);
-		body.classList.add(`cdn-beat-bank-${bank}`);
+	const isScrolling = body.classList.contains("cdn-scrolling");
+	if (!isScrolling) {
+		const root = document.documentElement.style;
+		root.setProperty("--cdn-bass", bass.toFixed(3));
+		root.setProperty("--cdn-mid", mid.toFixed(3));
+		root.setProperty("--cdn-treble", (treble * 0.4).toFixed(3));
+		root.setProperty("--cdn-centroid", centroid.toFixed(3));
+		root.setProperty("--cdn-flux", flux.toFixed(3));
+		if (beatFired) {
+			root.setProperty("--cdn-beat-count", String(beatCount));
+			// Cycle LED bank class for fiona panel — 4 banks, fire every 4th beat
+			const bank = beatCount % 4;
+			body.classList.remove(
+				"cdn-beat-bank-0",
+				"cdn-beat-bank-1",
+				"cdn-beat-bank-2",
+				"cdn-beat-bank-3",
+			);
+			body.classList.add(`cdn-beat-bank-${bank}`);
+		}
 	}
 
 	const drawStart = performance.now();
