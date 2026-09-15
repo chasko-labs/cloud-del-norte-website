@@ -59,6 +59,7 @@ type SectionKey =
 	| "arrowhead"
 	| "vbrownbag"
 	| "theZacsShow"
+	| "lockheed"
 	| "featuredVideo"
 	| "howToPlayBuildercards"
 	| "youtubeShorts";
@@ -83,6 +84,7 @@ const SECTION_KEYS: SectionKey[] = [
 	"arrowhead",
 	"vbrownbag",
 	"theZacsShow",
+	"lockheed",
 	"featuredVideo",
 	"howToPlayBuildercards",
 	"youtubeShorts",
@@ -102,6 +104,7 @@ const ZACSSHOW_IDS = [
 	"12uEpU3FG-I",
 	"iRVGyQ9LA8Q",
 ];
+const LOCKHEED_IDS = ["hSS3zvtlLOE", "kcyDjm2MyWo"];
 
 function shuffled<T>(arr: T[]): T[] {
 	const copy = [...arr];
@@ -220,6 +223,13 @@ function AppContent({
 					videoIds={ZACSSHOW_IDS}
 					live={zacsLive}
 					liveVideoId={zacsVideoId}
+				/>
+			),
+			lockheed: (
+				<YouTubeChannelCarousel
+					name={t("feedPage.lockheedHeader")}
+					channelUrl="https://www.youtube.com/watch?v=hSS3zvtlLOE"
+					videoIds={LOCKHEED_IDS}
 				/>
 			),
 			featuredVideo: (

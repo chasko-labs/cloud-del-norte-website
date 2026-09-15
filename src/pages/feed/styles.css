@@ -4991,14 +4991,43 @@
 
 	.feed-card-shell--lavender .feed-carousel__viewport {
 		grid-column: 1;
+		min-width: 0;
+		display: flex;
+	}
+
+	/* Let the 16:9 ratio determine height at every desktop card width.
+	   The shared min/max caps otherwise distort narrow grid columns. */
+	.feed-card-shell--lavender .feed-carousel__frame {
+		max-width: none;
+		max-height: none;
+		min-height: 0;
 	}
 
 	.feed-card-shell--lavender .featured-video-card__fallback {
 		grid-column: 2;
-		justify-self: start;
+		justify-self: stretch;
+		align-self: stretch;
 		display: flex;
 		flex-direction: column;
 		gap: var(--cdn-space-xs, 4px);
+		min-width: 0;
+		box-sizing: border-box;
 		padding-top: 8px;
+	}
+}
+
+/* The shared mobile cap is wider than a 16:9 frame at common phone widths.
+   Remove the cap only for the featured video shell so stacked cards retain
+   the iframe ratio without reserving an oversized or undersized row. */
+@media (max-width: 600px) {
+	.feed-card-shell--lavender .feed-carousel__frame {
+		max-width: none;
+		max-height: none;
+		min-height: 0;
+	}
+
+	.feed-card-shell--lavender .featured-video-card__fallback {
+		width: 100%;
+		padding-top: var(--cdn-space-sm, 8px);
 	}
 }
