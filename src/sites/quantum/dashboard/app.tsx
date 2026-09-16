@@ -30,8 +30,8 @@ import {
 	fetchLiveRooms,
 	fetchMeetingStatus,
 	type InfraStatus,
-	launchMeeting,
 	type LiveRoom,
+	launchMeeting,
 	type MeetingStatus,
 } from "../../../lib/meetings";
 import JitsiEmbed from "../../../pages/meetings/components/jitsi-embed";
