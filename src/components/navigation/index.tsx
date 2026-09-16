@@ -87,8 +87,8 @@ export default function Navigation() {
 		currentPath.startsWith("/resources");
 	const isOnReferences =
 		currentPath.startsWith("/learning") ||
-		currentPath.startsWith("/maintenance-calendar");
-	const isOnPlatform = currentPath.startsWith("/architecture");
+		currentPath.startsWith("/maintenance-calendar") ||
+		currentPath.startsWith("/architecture");
 
 	// home (feed) is reachable via the "cloud del norte" header above and the top-nav title.
 	// about is reachable from the right-side info panel only — not duplicated in the left nav.
@@ -147,22 +147,14 @@ export default function Navigation() {
 		{ type: "divider" },
 		{
 			type: "section",
-			text: t("navigation.platform"),
-			defaultExpanded: isOnPlatform,
+			text: t("navigation.learning"),
+			defaultExpanded: isOnReferences,
 			items: [
 				{
 					type: "link",
 					text: t("navigation.jitsiArchitecture"),
 					href: "/architecture/jitsi/index.html",
 				},
-			],
-		},
-		{ type: "divider" },
-		{
-			type: "section",
-			text: t("navigation.learning"),
-			defaultExpanded: isOnReferences,
-			items: [
 				{
 					type: "link",
 					text: t("navigation.techDebtCountdowns"),

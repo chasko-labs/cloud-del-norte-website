@@ -5,7 +5,6 @@ import ColumnLayout from "@cloudscape-design/components/column-layout";
 import Container from "@cloudscape-design/components/container";
 import ContentLayout from "@cloudscape-design/components/content-layout";
 import Header from "@cloudscape-design/components/header";
-import Link from "@cloudscape-design/components/link";
 import SpaceBetween from "@cloudscape-design/components/space-between";
 import Table from "@cloudscape-design/components/table";
 import { useTranslation } from "../../../hooks/useTranslation";
@@ -188,76 +187,6 @@ export default function JitsiArchitectureContent() {
 						</Box>
 						<Box variant="p">
 							{t("jitsiArchitecture.testing.deviceFarmDesc")}
-						</Box>
-					</SpaceBetween>
-				</Container>
-
-				{/* Infrastructure */}
-				<Container
-					header={
-						<Header variant="h2">{t("jitsiArchitecture.infra.title")}</Header>
-					}
-				>
-					<SpaceBetween size="m">
-						<Table
-							columnDefinitions={[
-								{
-									id: "account",
-									header: t("jitsiArchitecture.infra.accountCol"),
-									cell: (item) => item.account,
-								},
-								{
-									id: "id",
-									header: t("jitsiArchitecture.infra.idCol"),
-									cell: (item) => item.id,
-								},
-								{
-									id: "role",
-									header: t("jitsiArchitecture.infra.roleCol"),
-									cell: (item) => item.role,
-								},
-							]}
-							items={[
-								{
-									account: t("jitsiArchitecture.infra.computeAccount"),
-									id: "170473530355",
-									role: t("jitsiArchitecture.infra.computeRole"),
-								},
-								{
-									account: t("jitsiArchitecture.infra.hostingAccount"),
-									id: "211125425201",
-									role: t("jitsiArchitecture.infra.hostingRole"),
-								},
-								{
-									account: t("jitsiArchitecture.infra.testingAccount"),
-									id: "946179428633",
-									role: t("jitsiArchitecture.infra.testingRole"),
-								},
-							]}
-							variant="embedded"
-						/>
-						<ColumnLayout columns={2}>
-							<SpaceBetween size="xs">
-								<Box variant="h4">
-									{t("jitsiArchitecture.infra.monitoringTitle")}
-								</Box>
-								<Box variant="p">
-									{t("jitsiArchitecture.infra.monitoringDesc")}
-								</Box>
-							</SpaceBetween>
-							<SpaceBetween size="xs">
-								<Box variant="h4">{t("jitsiArchitecture.infra.costTitle")}</Box>
-								<Box variant="p">{t("jitsiArchitecture.infra.costDesc")}</Box>
-							</SpaceBetween>
-						</ColumnLayout>
-						<Box variant="p">
-							{t("jitsiArchitecture.infra.opsLink")}{" "}
-							<Link
-								href="https://github.com/chasko-labs/jitsi-video-hosting"
-								external
-							>
-								chasko-labs/jitsi-video-hosting
-							</Link>
 						</Box>
 					</SpaceBetween>
 				</Container>

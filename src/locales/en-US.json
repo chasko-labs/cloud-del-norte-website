@@ -40,7 +40,6 @@
 		"projectResources": "project resources",
 		"plansPage": "website",
 		"costs": "costs",
-		"platform": "platform",
 		"jitsiArchitecture": "video call architecture"
 	},
 	"breadcrumbs": {
@@ -1359,23 +1358,6 @@
 			"assertionNote": "Assertion discipline (FP-021): we assert the iframe src contains the Jitsi domain, not just that navigation succeeded. Prior false-positives passed users who were redirected to the meetings list without entering a room.",
 			"deviceFarmTitle": "Device Farm Matrix",
 			"deviceFarmDesc": "AWS Device Farm provides cross-browser validation on Chrome, Firefox, and Edge. Nova Act runs as the fast pre-gate (< 4 min per PR); Device Farm runs on prod-bound PRs for real-device variability."
-		},
-		"infra": {
-			"title": "Infrastructure",
-			"accountCol": "Account",
-			"idCol": "Account ID",
-			"roleCol": "Role",
-			"computeAccount": "Compute",
-			"computeRole": "Lambdas, Cognito, DynamoDB, API Gateways, ECS",
-			"hostingAccount": "Hosting",
-			"hostingRole": "S3, CloudFront, SES, Route 53",
-			"testingAccount": "Testing",
-			"testingRole": "Nova Act (us-east-1), Device Farm",
-			"monitoringTitle": "Operational Alarms",
-			"monitoringDesc": "CloudWatch alarms monitor ECS task health, JVB participant count, Jibri recording failures, and Lambda error rates. Alarms route to SNS for email notification.",
-			"costTitle": "Cost Profile",
-			"costDesc": "~$0.92/mo idle (scale-to-zero, no running tasks). ~$32.82/mo active (one ECS task + NLB + Jibri EC2 when meetings are scheduled).",
-			"opsLink": "Full operational documentation:"
 		}
 	}
 }
