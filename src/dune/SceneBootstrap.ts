@@ -272,6 +272,34 @@ export function mountDuneSceneOnCanvas(
 	};
 	registerSceneView(canvas, camera, renderTick);
 
+	// Pause/resume — stop the render loop without tearing down GPU state.
+	// Babylon's stopRenderLoop is a flag flip + clearing the rAF callback,
+	// runRenderLoop re-arms it. ~0.1ms each direction. Resetting lastFrameMs
+	// on resume prevents the first delta after resume from reflecting the
+	// entire pause duration (which would jolt the AnimationController state).
+	const pause = (): void => {
+		if (paused) return;
+		paused = true;
+		pauseSceneView(canvas);
+	};
+	const resume = (): void => {
+		if (!paused) return;
+		paused = false;
+		lastFrameMs = performance.now();
+		resumeSceneView(canvas);
+	};
+
+	// Scroll-burst gating — pause the dune render loop during a scroll burst
+	// (it was among the highest-cost per-frame work), resume when it settles.
+	// Decoupled via the window events dispatched by scroll-jank-mitigation so
+	// no feed code is imported here. Removed in dispose() below.
+	const onScrollStart = () => pause();
+	const onScrollEnd = () => resume();
+	if (typeof window !== "undefined") {
+		window.addEventListener("cdn-scroll-start", onScrollStart);
+		window.addEventListener("cdn-scroll-end", onScrollEnd);
+	}
+
 	return {
 		engine,
 		scene,
@@ -279,6 +307,10 @@ export function mountDuneSceneOnCanvas(
 			engine.resize();
 		},
 		dispose() {
+			if (typeof window !== "undefined") {
+				window.removeEventListener("cdn-scroll-start", onScrollStart);
+				window.removeEventListener("cdn-scroll-end", onScrollEnd);
+			}
 			haze.dispose();
 			ground.dispose();
 			skybox.dispose();
@@ -298,23 +330,8 @@ export function mountDuneSceneOnCanvas(
 		refreshStationTint() {
 			atmosphere.refreshStationTint();
 		},
-		// Pause/resume — stop the render loop without tearing down GPU state.
-		// Babylon's stopRenderLoop is a flag flip + clearing the rAF callback,
-		// runRenderLoop re-arms it. ~0.1ms each direction. Resetting
-		// lastFrameMs on resume prevents the first delta after resume from
-		// reflecting the entire pause duration (which would jolt the
-		// AnimationController state).
-		pause() {
-			if (paused) return;
-			paused = true;
-			pauseSceneView(canvas);
-		},
-		resume() {
-			if (!paused) return;
-			paused = false;
-			lastFrameMs = performance.now();
-			resumeSceneView(canvas);
-		},
+		pause,
+		resume,
 	};
 }
 

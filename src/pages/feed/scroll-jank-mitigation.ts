@@ -60,6 +60,17 @@ export function initScrollJankMitigation(): () => void {
 		if (scrolling === next) return;
 		scrolling = next;
 		document.body.classList.toggle(SCROLLING_CLASS, next);
+		// Broadcast the scroll-burst edge so decoupled render loops can pause
+		// their expensive work (2D background-viz skips its full-viewport draw;
+		// the Babylon dune stops its render loop) without importing feed code.
+		// The guard above means this fires only on the transition edge, never
+		// per frame. Dispatched on BOTH window and document.body: window is the
+		// contract the render-loop consumers listen on; document.body preserves
+		// the pre-existing atmosphere-ribbon listeners (a window-targeted event
+		// does not reach document.body listeners, and vice versa).
+		const type = next ? "cdn-scroll-start" : "cdn-scroll-end";
+		window.dispatchEvent(new CustomEvent(type));
+		document.body.dispatchEvent(new CustomEvent(type));
 	};
 
 	const onScroll = () => {

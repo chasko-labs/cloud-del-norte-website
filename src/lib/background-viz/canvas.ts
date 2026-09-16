@@ -23,6 +23,11 @@ let running = false;
 let lowPower = false;
 let firstFrame = true;
 let beatCount = 0;
+// Set by the cdn-scroll-start/end events from scroll-jank-mitigation. While a
+// scroll burst is active we skip the expensive full-viewport draw (it was the
+// highest-cost item during scroll, not the CSS animations). The rAF loop stays
+// alive so rendering resumes cleanly the moment the burst settles.
+let scrolling = false;
 
 let staticLightCanvas: OffscreenCanvas | null = null;
 let staticDarkCanvas: OffscreenCanvas | null = null;
@@ -137,6 +142,15 @@ function frame(ts: number): void {
 	}
 	lastFrameTs = ts;
 
+	// Scroll-burst skip — the full-viewport draw below is the most expensive
+	// per-frame work on the page. During a scroll burst we early-return before
+	// any of it (audio sampling, CSS-var writes, render()), but keep the rAF
+	// loop armed so it resumes on the next frame once the burst ends.
+	if (scrolling) {
+		rafId = requestAnimationFrame(frame);
+		return;
+	}
+
 	const currentMode = isDark();
 	if (lastMode !== null && lastMode !== currentMode) {
 		rebuildStatic();
@@ -229,6 +243,18 @@ export function initCanvas(): {
 	canvas = created.canvas;
 	ctx = created.ctx;
 
+	// Scroll-burst listeners — flip the module `scrolling` flag on the edge
+	// events dispatched by scroll-jank-mitigation. Removed in stopLoop()
+	// alongside the existing rAF cleanup so there is no dangling listener.
+	const onScrollStart = () => {
+		scrolling = true;
+	};
+	const onScrollEnd = () => {
+		scrolling = false;
+	};
+	window.addEventListener("cdn-scroll-start", onScrollStart);
+	window.addEventListener("cdn-scroll-end", onScrollEnd);
+
 	sizeCanvas();
 	rebuildStatic();
 
@@ -285,6 +311,10 @@ export function initCanvas(): {
 			cancelAnimationFrame(rafId);
 			rafId = null;
 		}
+		window.removeEventListener("cdn-scroll-start", onScrollStart);
+		window.removeEventListener("cdn-scroll-end", onScrollEnd);
+		// Reset so a subsequent initCanvas/startLoop cycle starts un-gated.
+		scrolling = false;
 	}
 
 	return { canvas, ctx, startLoop, stopLoop, resize };
