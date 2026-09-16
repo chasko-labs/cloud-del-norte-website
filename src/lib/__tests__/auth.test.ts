@@ -5,6 +5,10 @@ const CLIENT_ID = "57eikmt418ea6vti2f6h0pl74r";
 
 describe("auth module", () => {
 	beforeEach(() => {
+		// Clear BOTH storage areas: refresh token lives in localStorage
+		// (sticky sign-in), id/access/expiry in sessionStorage. Clearing only
+		// sessionStorage lets a localStorage refresh token bleed across tests.
+		localStorage.clear();
 		sessionStorage.clear();
 		vi.resetModules();
 	});
@@ -62,7 +66,8 @@ describe("auth module", () => {
 
 	describe("getRefreshToken", () => {
 		it("returns stored refresh token even if access is expired", async () => {
-			sessionStorage.setItem("cdn.refreshToken", "rf-xyz");
+			// Refresh token is the durable credential -> localStorage.
+			localStorage.setItem("cdn.refreshToken", "rf-xyz");
 			sessionStorage.setItem("cdn.expiresAt", String(Date.now() - 1000));
 			const { getRefreshToken } = await import("../auth");
 			expect(getRefreshToken()).toBe("rf-xyz");
@@ -147,7 +152,8 @@ describe("auth module", () => {
 		it("clears tokens and redirects to AUTH_LOGIN_URL", async () => {
 			sessionStorage.setItem("cdn.idToken", "x");
 			sessionStorage.setItem("cdn.accessToken", "x");
-			sessionStorage.setItem("cdn.refreshToken", "x");
+			// Refresh token lives in localStorage (sticky sign-in).
+			localStorage.setItem("cdn.refreshToken", "x");
 			sessionStorage.setItem("cdn.expiresAt", String(Date.now() + 60_000));
 			const assign = vi.fn();
 			Object.defineProperty(window, "location", {
@@ -159,7 +165,7 @@ describe("auth module", () => {
 
 			expect(sessionStorage.getItem("cdn.idToken")).toBeNull();
 			expect(sessionStorage.getItem("cdn.accessToken")).toBeNull();
-			expect(sessionStorage.getItem("cdn.refreshToken")).toBeNull();
+			expect(localStorage.getItem("cdn.refreshToken")).toBeNull();
 			expect(sessionStorage.getItem("cdn.expiresAt")).toBeNull();
 			expect(assign).toHaveBeenCalledTimes(1);
 			expect(assign).toHaveBeenCalledWith(AUTH_LOGIN_URL);
