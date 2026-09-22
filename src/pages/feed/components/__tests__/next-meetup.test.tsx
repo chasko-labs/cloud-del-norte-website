@@ -173,10 +173,106 @@ describe("NextMeetup — wave 33a uplift", () => {
 		fireEvent.error(img);
 		// After onError, the img should be removed from DOM
 		expect(container.querySelector(".feed-next-meetup__image")).toBeNull();
-		// The wrapper slot still carries aria-label for AT
-		const slot = container.querySelector(".feed-next-meetup__image-slot");
-		expect(slot).not.toBeNull();
-		expect(slot?.getAttribute("aria-label")).toBeTruthy();
+		// The artwork link still carries the accessible name for AT
+		const artLink = container.querySelector(".feed-next-meetup__image-link");
+		expect(artLink).not.toBeNull();
+		expect(artLink?.getAttribute("aria-label")).toBeTruthy();
+		vi.unstubAllGlobals();
+	});
+
+	it("renders the Big Data Bowl light/dark artwork pair when the event URL matches 316669721", async () => {
+		const futureIso = new Date(
+			Date.now() + 7 * 24 * 60 * 60 * 1000,
+		).toISOString();
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({
+					summary: "Meta Muse Code | NFL Big Data Bowl 2027",
+					dtstart: futureIso,
+					url: "https://www.meetup.com/awsugclouddelnorte/events/316669721/",
+					location: "Online event",
+					description: "Test description.",
+				}),
+				text: async () => "",
+			}),
+		);
+		const { container, findByRole } = render(
+			<LocaleProvider locale="us">
+				<NextMeetup />
+			</LocaleProvider>,
+		);
+		await findByRole("heading", { level: 2 });
+		const start = Date.now();
+		let light: HTMLImageElement | null = null;
+		let dark: HTMLImageElement | null = null;
+		while (Date.now() - start < 1500) {
+			light = container.querySelector(
+				".feed-next-meetup__image--light",
+			) as HTMLImageElement | null;
+			dark = container.querySelector(
+				".feed-next-meetup__image--dark",
+			) as HTMLImageElement | null;
+			if (light && dark) break;
+			await new Promise((r) => setTimeout(r, 25));
+		}
+		expect(light?.getAttribute("src")).toBe(
+			"/events/muse-big-data-bowl-light.svg",
+		);
+		expect(dark?.getAttribute("src")).toBe(
+			"/events/muse-big-data-bowl-dark.svg",
+		);
+		expect(light?.getAttribute("alt")).toMatch(/Big Data Bowl/i);
+		expect(dark?.getAttribute("alt")).toMatch(/Big Data Bowl/i);
+		// The artwork link reaches the same meetup destination as the title.
+		const artLink = container.querySelector(".feed-next-meetup__image-link");
+		expect(artLink?.getAttribute("href")).toContain("316669721");
+		vi.unstubAllGlobals();
+	});
+
+	it("keeps the dark variant when only the light image errors (independent broken state per variant)", async () => {
+		const futureIso = new Date(
+			Date.now() + 7 * 24 * 60 * 60 * 1000,
+		).toISOString();
+		vi.stubGlobal(
+			"fetch",
+			vi.fn().mockResolvedValue({
+				ok: true,
+				json: async () => ({
+					summary: "Meta Muse Code | NFL Big Data Bowl 2027",
+					dtstart: futureIso,
+					url: "https://www.meetup.com/awsugclouddelnorte/events/316669721/",
+					location: "Online event",
+					description: "Test.",
+				}),
+				text: async () => "",
+			}),
+		);
+		const { container, findByRole } = render(
+			<LocaleProvider locale="us">
+				<NextMeetup />
+			</LocaleProvider>,
+		);
+		await findByRole("heading", { level: 2 });
+		const start = Date.now();
+		let light: HTMLImageElement | null = null;
+		while (Date.now() - start < 1500) {
+			light = container.querySelector(
+				".feed-next-meetup__image--light",
+			) as HTMLImageElement | null;
+			if (light) break;
+			await new Promise((r) => setTimeout(r, 25));
+		}
+		expect(light).not.toBeNull();
+		if (!light) return;
+		fireEvent.error(light);
+		expect(
+			container.querySelector(".feed-next-meetup__image--light"),
+		).toBeNull();
+		expect(
+			container.querySelector(".feed-next-meetup__image--dark"),
+		).not.toBeNull();
 		vi.unstubAllGlobals();
 	});
 
@@ -250,6 +346,21 @@ describe("NextMeetup — wave 33a CSS hooks (prefers-reduced-motion + cdn-scroll
 			/@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\.feed-next-meetup__marquee-tape \{[\s\S]*?animation: none;/,
 		);
 		expect(reducedBlock).not.toBeNull();
+	});
+
+	it("registers the Big Data Bowl light/dark artwork swap + weave rules (theme toggle, not OS preference)", () => {
+		// Off-theme variant hidden by default; the .awsui-dark-mode branch
+		// (the site theme toggle on <html>) performs the swap.
+		expect(stylesText).toMatch(/\.feed-next-meetup__image--dark/);
+		expect(stylesText).toMatch(
+			/\.awsui-dark-mode \.feed-next-meetup__image--dark/,
+		);
+		expect(stylesText).toMatch(
+			/\.awsui-dark-mode \.feed-next-meetup__image--light/,
+		);
+		// Weave: edge fade into the card + theme-tinted slot backplate.
+		expect(stylesText).toMatch(/\.feed-next-meetup__image-link/);
+		expect(stylesText).toMatch(/mask-image: linear-gradient\(to bottom/);
 	});
 
 	it("declares the cooler steel-blue / deep-teal palette tokens that differentiate next-meetup from featured-event's warm amber+violet", () => {

@@ -37,8 +37,20 @@
 
 import { render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AuthContext, type AuthState } from "../../../../contexts/auth-context";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import FeaturedEvent, { FeaturedEventErrorBoundary } from "../featured-event";
+
+const signedOut: AuthState = {
+	isAuthenticated: false,
+	idToken: null,
+	sub: null,
+	email: null,
+	name: null,
+	groups: [],
+	isModerator: false,
+	signOut: () => {},
+};
 
 /**
  * Mount FeaturedEvent inside a tall scrollable container so window.scrollTo
@@ -48,12 +60,14 @@ import FeaturedEvent, { FeaturedEventErrorBoundary } from "../featured-event";
 function renderInsideTallScrollContainer() {
 	return render(
 		<LocaleProvider locale="us">
-			<div
-				data-testid="scroll-host"
-				style={{ height: "3000px", overflow: "auto" }}
-			>
-				<FeaturedEvent />
-			</div>
+			<AuthContext.Provider value={signedOut}>
+				<div
+					data-testid="scroll-host"
+					style={{ height: "3000px", overflow: "auto" }}
+				>
+					<FeaturedEvent />
+				</div>
+			</AuthContext.Provider>
 		</LocaleProvider>,
 	);
 }
@@ -77,7 +91,7 @@ describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
 		// Header with a custom marquee. The scroll-stability contract is
 		// unchanged: after mount, a stable visible element from the card must
 		// remain in the document.
-		expect(screen.getByText(/Next workshop/i)).toBeInTheDocument();
+		expect(screen.getByText(/Next meetup/i)).toBeInTheDocument();
 	});
 
 	it("survives a programmatic window.scrollTo(0, 1000) without unmounting or throwing", () => {
@@ -91,7 +105,7 @@ describe("FeaturedEvent — wave 30a scroll-tearing regression", () => {
 		expect(container.querySelector(".feed-featured-event")).not.toBeNull();
 		// Wave 32a — see note above; assert on the marquee header text instead
 		// of the removed DON'T MISS badge.
-		expect(screen.getByText(/Next workshop/i)).toBeInTheDocument();
+		expect(screen.getByText(/Next meetup/i)).toBeInTheDocument();
 	});
 
 	it("renders the structural class names that wave 30a CSS targets for tearing mitigation", () => {

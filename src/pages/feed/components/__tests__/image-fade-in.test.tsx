@@ -25,15 +25,27 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { fireEvent, render } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { AuthContext, type AuthState } from "../../../../contexts/auth-context";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import FeaturedEvent from "../featured-event";
 import UpcomingVirtualEvent from "../upcoming-virtual-event";
 
+const signedOut: AuthState = {
+	isAuthenticated: false,
+	idToken: null,
+	sub: null,
+	email: null,
+	name: null,
+	groups: [],
+	isModerator: false,
+	signOut: () => {},
+};
+
 const STYLES_CSS_PATH = resolve(__dirname, "..", "..", "styles.css");
 const stylesCss = readFileSync(STYLES_CSS_PATH, "utf8");
 
-// FeaturedEvent no longer renders images (quantum event card),
-// so the fetch mock is only needed by UpcomingVirtualEvent.
+// FeaturedEvent renders the Bowl artwork pair without fetching;
+// the fetch mock below is only needed by UpcomingVirtualEvent.
 const fetchMock = vi.fn();
 
 beforeEach(() => {
@@ -96,21 +108,31 @@ describe("Wave 37b — image fade-in CSS rules", () => {
 });
 
 describe("Wave 37b — onLoad handler adds is-loaded class", () => {
-	it("FeaturedEvent: renders without images (quantum event card)", () => {
+	it("FeaturedEvent: each <img> picks up the is-loaded class after firing the load event (Big Data Bowl artwork pair)", () => {
 		const { container } = render(
 			<LocaleProvider locale="us">
-				<FeaturedEvent />
+				<AuthContext.Provider value={signedOut}>
+					<FeaturedEvent />
+				</AuthContext.Provider>
 			</LocaleProvider>,
 		);
-		// Quantum event card does not render images
 		const lightImg = container.querySelector(
 			".feed-featured-event__image--light",
 		);
 		const darkImg = container.querySelector(
 			".feed-featured-event__image--dark",
 		);
-		expect(lightImg).toBeNull();
-		expect(darkImg).toBeNull();
+		expect(lightImg).not.toBeNull();
+		expect(darkImg).not.toBeNull();
+
+		expect(lightImg?.classList.contains("is-loaded")).toBe(false);
+		expect(darkImg?.classList.contains("is-loaded")).toBe(false);
+
+		if (lightImg) fireEvent.load(lightImg);
+		if (darkImg) fireEvent.load(darkImg);
+
+		expect(lightImg?.classList.contains("is-loaded")).toBe(true);
+		expect(darkImg?.classList.contains("is-loaded")).toBe(true);
 	});
 
 	it("UpcomingVirtualEvent: each <img> picks up the is-loaded class after firing the load event", () => {

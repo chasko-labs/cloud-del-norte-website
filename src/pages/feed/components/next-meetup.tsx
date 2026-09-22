@@ -63,7 +63,17 @@ const MEETUP_ICAL = `https://www.meetup.com/${MEETUP_GROUP}/events/ical/`;
 const MEETUP_GROUP_URL = `https://www.meetup.com/${MEETUP_GROUP}/`;
 const STATIC_DATA_URL = "/data/next-meetup.json";
 const MAX_DESCRIPTION_CHARS = 200;
-const EVENT_IMAGE = "/events/cowork-wednesday.webp";
+const FALLBACK_IMAGE = "/events/cowork-wednesday.webp";
+// Meta Muse Code | NFL Big Data Bowl 2027 (Tue Sep 29 2026). When the loaded
+// event is this meetup, the card shows the bespoke light/dark artwork pair
+// instead of the generic cowork fallback. Any other event keeps the fallback.
+const BIG_DATA_BOWL_EVENT_ID = "316669721";
+const BIG_DATA_BOWL_IMAGE_LIGHT = "/events/muse-big-data-bowl-light.svg";
+const BIG_DATA_BOWL_IMAGE_DARK = "/events/muse-big-data-bowl-dark.svg";
+// Hard-coded English alt (wave 33a scope forbids new locale keys; the image
+// slot already carries the localized header as its aria-label).
+const BIG_DATA_BOWL_IMAGE_ALT =
+	"Meta Muse Code NFL Big Data Bowl artwork — horned lizard running a football past giant ants under the Sandia star, data halls behind";
 
 // Static past-meetup payload — surfaces in es-MX locale when no upcoming event
 // is available. Hard-coded per bryan: simpler than another data-source while
@@ -275,7 +285,8 @@ function NextMeetupInner() {
 	const { t, locale } = useTranslation();
 	const [state, setState] = useState<LoadState>("loading");
 	const [event, setEvent] = useState<MeetupEvent | null>(null);
-	const [imageBroken, setImageBroken] = useState(false);
+	const [lightImageBroken, setLightImageBroken] = useState(false);
+	const [darkImageBroken, setDarkImageBroken] = useState(false);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -439,24 +450,62 @@ function NextMeetupInner() {
 		// cluster a deliberate ladder. The loading + en-US fallback + es-MX
 		// past-meetup-spotlight branches keep their SpaceBetween primitives
 		// — those are simpler stacks where uniform 12px reads correctly.
+		// Per-event artwork: the Big Data Bowl meetup gets the bespoke
+		// light/dark SVG pair (theme swap is pure CSS off .awsui-dark-mode,
+		// mirroring upcoming-virtual-event); every other event keeps the
+		// single cowork fallback. The wrapping link carries the artwork
+		// description as its accessible name and is removed from tab order
+		// because the card title link already reaches the same destination —
+		// one tab stop, one announcement.
+		const isBigDataBowl = event.url?.includes(BIG_DATA_BOWL_EVENT_ID) ?? false;
+		const imageAlt = isBigDataBowl
+			? BIG_DATA_BOWL_IMAGE_ALT
+			: "Website (co)Work Wednesday meetup event";
 		content = (
 			<div className="feed-next-meetup__layout">
-				<span
-					className="feed-next-meetup__image-slot"
-					role="img"
-					aria-label={t("feedPage.nextMeetupHeader")}
-				>
-					{!imageBroken && (
-						<img
-							src={EVENT_IMAGE}
-							alt="Website (co)Work Wednesday meetup event"
-							className="feed-next-meetup__image"
-							width={1200}
-							height={675}
-							loading="lazy"
-							onError={() => setImageBroken(true)}
-						/>
-					)}
+				<span className="feed-next-meetup__image-slot">
+					<a
+						href={event.url ?? MEETUP_GROUP_URL}
+						target="_blank"
+						rel="noreferrer"
+						aria-label={imageAlt}
+						tabIndex={-1}
+						className="feed-next-meetup__image-link"
+					>
+						{!isBigDataBowl && !lightImageBroken && (
+							<img
+								src={FALLBACK_IMAGE}
+								alt={imageAlt}
+								className="feed-next-meetup__image feed-next-meetup__image--solo"
+								width={1200}
+								height={675}
+								loading="lazy"
+								onError={() => setLightImageBroken(true)}
+							/>
+						)}
+						{isBigDataBowl && !lightImageBroken && (
+							<img
+								src={BIG_DATA_BOWL_IMAGE_LIGHT}
+								alt={imageAlt}
+								className="feed-next-meetup__image feed-next-meetup__image--light"
+								width={1200}
+								height={630}
+								loading="lazy"
+								onError={() => setLightImageBroken(true)}
+							/>
+						)}
+						{isBigDataBowl && !darkImageBroken && (
+							<img
+								src={BIG_DATA_BOWL_IMAGE_DARK}
+								alt={imageAlt}
+								className="feed-next-meetup__image feed-next-meetup__image--dark"
+								width={1200}
+								height={630}
+								loading="lazy"
+								onError={() => setDarkImageBroken(true)}
+							/>
+						)}
+					</a>
 				</span>
 				{event.isPast && (
 					<Box

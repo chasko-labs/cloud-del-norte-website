@@ -10,13 +10,24 @@ import {
 	Component,
 	type ErrorInfo,
 	type ReactNode,
+	type SyntheticEvent,
 	useEffect,
 	useState,
 } from "react";
+import { useAuth } from "../../../hooks/useAuth";
 import { useTranslation } from "../../../hooks/useTranslation";
 
-const EVENT_URL = "https://quantum.clouddelnorte.org/register/";
-const EVENT_DATE = "2026-08-30T15:00:00-06:00";
+const MEETUP_EVENT_URL =
+	"https://www.meetup.com/awsugclouddelnorte/events/316669721/";
+const MEET_LINK = "https://meet.clouddelnorte.org/sep292026";
+const SIGN_IN_URL = "/signup/index.html";
+const EVENT_DATE = "2026-09-29T18:30:00-06:00";
+// Bespoke light/dark artwork pair for the Bowl. The theme swap is pure CSS
+// off .awsui-dark-mode (mirrors upcoming-virtual-event); the wave 37b
+// fade-in contract requires onLoad to add `is-loaded` — without it the
+// image keeps opacity: 0 and the card shows a blank box.
+const EVENT_IMAGE_LIGHT = "/events/muse-big-data-bowl-light.svg";
+const EVENT_IMAGE_DARK = "/events/muse-big-data-bowl-dark.svg";
 
 interface CountdownValues {
 	days: number;
@@ -41,9 +52,16 @@ function getCountdown(): CountdownValues {
 	return { days, hours, minutes, passed: false };
 }
 
+function markImageLoaded(event: SyntheticEvent<HTMLImageElement>): void {
+	event.currentTarget.classList.add("is-loaded");
+}
+
 function FeaturedEventInner() {
 	const { t, locale } = useTranslation();
+	const { isAuthenticated } = useAuth();
 	const [countdown, setCountdown] = useState<CountdownValues>(getCountdown);
+	const [lightImageBroken, setLightImageBroken] = useState(false);
+	const [darkImageBroken, setDarkImageBroken] = useState(false);
 
 	useEffect(() => {
 		const interval = setInterval(() => {
@@ -77,12 +95,40 @@ function FeaturedEventInner() {
 						fontSize="heading-m"
 						className="feed-featured-event__title"
 					>
-						<Link href={EVENT_URL}>{t("feedPage.featuredEventTitle")}</Link>
+						<Link href={MEETUP_EVENT_URL}>
+							{t("feedPage.featuredEventTitle")}
+						</Link>
 					</Box>
 					<div className="feed-featured-event__date">
 						<span className="feed-featured-event__date-plate">
 							{formattedDate}
 						</span>
+					</div>
+					<div className="feed-featured-event__image-area">
+						{!lightImageBroken && (
+							<img
+								src={EVENT_IMAGE_LIGHT}
+								alt={t("feedPage.featuredEventImageAlt")}
+								className="feed-featured-event__image feed-featured-event__image--light"
+								width={1200}
+								height={630}
+								loading="lazy"
+								onLoad={markImageLoaded}
+								onError={() => setLightImageBroken(true)}
+							/>
+						)}
+						{!darkImageBroken && (
+							<img
+								src={EVENT_IMAGE_DARK}
+								alt={t("feedPage.featuredEventImageAlt")}
+								className="feed-featured-event__image feed-featured-event__image--dark"
+								width={1200}
+								height={630}
+								loading="lazy"
+								onLoad={markImageLoaded}
+								onError={() => setDarkImageBroken(true)}
+							/>
+						)}
 					</div>
 					<Box
 						color="text-body-secondary"
@@ -114,8 +160,29 @@ function FeaturedEventInner() {
 						{t("feedPage.featuredEventDescription")}
 					</Box>
 					<div className="cdn-brand-btn-stack">
-						<Button variant="primary" href={EVENT_URL}>
-							{t("feedPage.featuredEventJoinCta")}
+						{isAuthenticated ? (
+							<Button
+								variant="primary"
+								href={MEET_LINK}
+								target="_blank"
+								rel="noopener noreferrer"
+								iconName="external"
+								iconAlign="right"
+							>
+								{t("feedPage.featuredEventJoinCta")}
+							</Button>
+						) : (
+							<Button variant="primary" href={SIGN_IN_URL}>
+								{t("feedPage.featuredEventSignInCta")}
+							</Button>
+						)}
+						<Button
+							variant="link"
+							href={MEETUP_EVENT_URL}
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							{t("feedPage.featuredEventRsvp")}
 						</Button>
 					</div>
 				</div>

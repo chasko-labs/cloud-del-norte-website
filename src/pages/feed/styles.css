@@ -4470,8 +4470,53 @@
 	display: block;
 	width: 100%;
 	height: auto;
+	aspect-ratio: 1200 / 630;
 	border-radius: var(--cdn-radius-md, 8px);
 	object-fit: cover;
+	/* Weave: fade the artwork's lower edge into the card so the art reads
+	   as part of the card, not a pasted box. The slot's theme-tinted
+	   backplate shows through the fade. */
+	-webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+	mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+}
+
+.feed-next-meetup__image-link {
+	display: block;
+}
+
+/* Per-event light/dark artwork swap (Meta Muse Code NFL Big Data Bowl).
+   Mirrors the upcoming-virtual-event pattern: the theme toggle flips
+   .awsui-dark-mode on <html>, so visibility keys off that class — never
+   prefers-color-scheme. The --solo cowork fallback shows in both themes. */
+.feed-next-meetup__image--dark {
+	display: none;
+}
+
+.awsui-dark-mode .feed-next-meetup__image--light {
+	display: none;
+}
+
+.awsui-dark-mode .feed-next-meetup__image--dark {
+	display: block;
+}
+
+/* Theme-tinted backplate behind the artwork: warm sand by day, deep indigo
+   by night. Mostly covered by the image; visible through the edge fade and
+   as the loading/broken-image ground. */
+:root:not(.awsui-dark-mode) .feed-next-meetup__image-slot {
+	background: linear-gradient(
+		135deg,
+		rgba(232, 220, 192, 0.95) 0%,
+		rgba(217, 212, 226, 0.95) 100%
+	);
+}
+
+.awsui-dark-mode .feed-next-meetup__image-slot {
+	background: linear-gradient(
+		135deg,
+		rgba(43, 30, 110, 0.6) 0%,
+		rgba(11, 16, 48, 0.95) 100%
+	);
 }
 
 /* wave 38b — title → date : 12px (hero hierarchy step). The wave 33a

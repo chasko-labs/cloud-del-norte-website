@@ -1,85 +1,99 @@
 // Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
 // SPDX-License-Identifier: MIT-0
 
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
+import { AuthContext, type AuthState } from "../../../../contexts/auth-context";
 import { LocaleProvider } from "../../../../contexts/locale-context";
 import FeaturedEvent from "../featured-event";
 
-function renderWithLocale(locale: "us" | "mx") {
+const signedOut: AuthState = {
+	isAuthenticated: false,
+	idToken: null,
+	sub: null,
+	email: null,
+	name: null,
+	groups: [],
+	isModerator: false,
+	signOut: () => {},
+};
+
+const signedIn: AuthState = { ...signedOut, isAuthenticated: true };
+
+function renderWithLocale(locale: "us" | "mx", auth: AuthState = signedOut) {
 	return render(
 		<LocaleProvider locale={locale}>
-			<FeaturedEvent />
+			<AuthContext.Provider value={auth}>
+				<FeaturedEvent />
+			</AuthContext.Provider>
 		</LocaleProvider>,
 	);
 }
 
-describe("FeaturedEvent — quantum event", () => {
-	it("renders the quantum event title linking to the Meetup RSVP URL", () => {
+describe("FeaturedEvent — Big Data Bowl", () => {
+	it("renders the Bowl title linking to the Meetup event URL", () => {
 		renderWithLocale("us");
-		const link = screen.getByText(
-			/Getting Started with Quantum Superpositions/,
-		);
+		const link = screen.getByText(/Meta Muse Code \| NFL Big Data Bowl 2027/);
 		expect(link.closest("a")).toHaveAttribute(
 			"href",
-			"https://quantum.clouddelnorte.org/register/",
+			"https://www.meetup.com/awsugclouddelnorte/events/316669721/",
 		);
 	});
 
-	it("renders the date in en-US format (August 30, 2026)", () => {
+	it("renders the date in en-US format (September 29, 2026)", () => {
 		renderWithLocale("us");
-		expect(screen.getByText(/August 30, 2026/)).toBeInTheDocument();
+		expect(screen.getByText(/September 29, 2026/)).toBeInTheDocument();
 	});
 
-	it("renders the date in es-MX format (agosto)", () => {
+	it("renders the date in es-MX format (septiembre)", () => {
 		renderWithLocale("mx");
-		expect(screen.getAllByText(/agosto/i).length).toBeGreaterThan(0);
+		expect(screen.getAllByText(/septiembre/i).length).toBeGreaterThan(0);
 	});
 
-	it("renders the RSVP button", () => {
-		renderWithLocale("us");
+	it("renders the sign-in CTA when signed out", () => {
+		renderWithLocale("us", signedOut);
 		const btn = screen.getByRole("link", {
-			name: /Register at quantum\.clouddelnorte\.org/i,
+			name: /Sign in to get the join link/i,
 		});
+		expect(btn).toHaveAttribute("href", "/signup/index.html");
+	});
+
+	it("renders the join CTA with the meet link when signed in", () => {
+		renderWithLocale("us", signedIn);
+		const btn = screen.getByRole("link", { name: /Join the meeting/i });
 		expect(btn).toHaveAttribute(
 			"href",
-			"https://quantum.clouddelnorte.org/register/",
+			"https://meet.clouddelnorte.org/sep292026",
 		);
 	});
 
-	it("renders the quantum event description in en-US", () => {
+	it("renders the Bowl description in en-US", () => {
 		renderWithLocale("us");
-		expect(screen.getByText(/3-hour hands-on workshop/i)).toBeInTheDocument();
+		expect(screen.getByText(/Pair-programming session/i)).toBeInTheDocument();
 	});
 
-	it("renders the quantum event description in es-MX", () => {
+	it("renders the Bowl description in es-MX", () => {
 		renderWithLocale("mx");
-		expect(screen.getByText(/Taller práctico de 3 horas/i)).toBeInTheDocument();
+		expect(screen.getByText(/Sesión de pair-programming/i)).toBeInTheDocument();
 	});
 
-	it("renders the es-MX title", () => {
+	it("renders the es-MX header (Próxima meetup)", () => {
 		renderWithLocale("mx");
-		expect(
-			screen.getByText(/Introducción a Superposiciones Cuánticas/),
-		).toBeInTheDocument();
-	});
-
-	it("renders the secondary link to AWS Braket Learning Plan", () => {
-		renderWithLocale("us");
-		// The component renders the event location as secondary info
-		expect(screen.getByText(/Online · bilingual/i)).toBeInTheDocument();
+		expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent(
+			/Próxima meetup/i,
+		);
 	});
 
 	it("renders the online event location", () => {
 		renderWithLocale("us");
-		expect(screen.getByText(/Online · bilingual/i)).toBeInTheDocument();
+		expect(screen.getByText(/Online meetup/i)).toBeInTheDocument();
 	});
 
 	it("renders the date-plate VFX wrapper", () => {
 		const { container } = renderWithLocale("us");
 		const plate = container.querySelector(".feed-featured-event__date-plate");
 		expect(plate).not.toBeNull();
-		expect(plate?.textContent).toMatch(/August 30, 2026/);
+		expect(plate?.textContent).toMatch(/September 29, 2026/);
 	});
 
 	it("renders the layout wrapper with expected children", () => {
@@ -97,6 +111,52 @@ describe("FeaturedEvent — quantum event", () => {
 	it("renders the header as h2", () => {
 		renderWithLocale("us");
 		const header = screen.getByRole("heading", { level: 2 });
-		expect(header).toHaveTextContent(/Next workshop/i);
+		expect(header).toHaveTextContent(/Next meetup/i);
+	});
+
+	it("renders the light/dark artwork pair with the locale alt text", () => {
+		const { container } = renderWithLocale("us");
+		const light = container.querySelector(
+			".feed-featured-event__image--light",
+		) as HTMLImageElement | null;
+		const dark = container.querySelector(
+			".feed-featured-event__image--dark",
+		) as HTMLImageElement | null;
+		expect(light?.getAttribute("src")).toBe(
+			"/events/muse-big-data-bowl-light.svg",
+		);
+		expect(dark?.getAttribute("src")).toBe(
+			"/events/muse-big-data-bowl-dark.svg",
+		);
+		expect(light?.getAttribute("alt")).toMatch(/Big Data Bowl/i);
+		expect(dark?.getAttribute("alt")).toMatch(/Big Data Bowl/i);
+	});
+
+	it("adds is-loaded on image load (wave 37b fade-in contract — without it the image keeps opacity 0)", () => {
+		const { container } = renderWithLocale("us");
+		const light = container.querySelector(
+			".feed-featured-event__image--light",
+		) as HTMLImageElement | null;
+		expect(light).not.toBeNull();
+		if (!light) return;
+		expect(light.classList.contains("is-loaded")).toBe(false);
+		fireEvent.load(light);
+		expect(light.classList.contains("is-loaded")).toBe(true);
+	});
+
+	it("keeps the dark variant when only the light image errors", () => {
+		const { container } = renderWithLocale("us");
+		const light = container.querySelector(
+			".feed-featured-event__image--light",
+		) as HTMLImageElement | null;
+		expect(light).not.toBeNull();
+		if (!light) return;
+		fireEvent.error(light);
+		expect(
+			container.querySelector(".feed-featured-event__image--light"),
+		).toBeNull();
+		expect(
+			container.querySelector(".feed-featured-event__image--dark"),
+		).not.toBeNull();
 	});
 });

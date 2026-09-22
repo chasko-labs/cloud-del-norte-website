@@ -138,6 +138,7 @@ describe("translation coverage", () => {
 			"awsug.adminRsvps.no", // "no" - same word in Spanish
 			"calendarActions.googleLabel", // "Google" - proper noun
 			"calendarActions.outlookLabel", // "Outlook" - proper noun
+			"feedPage.featuredEventTitle", // "Meta Muse Code | NFL Big Data Bowl 2027" - event proper noun, identical in both locales
 			"calendarActions.yahooLabel", // "Yahoo" - proper noun
 			"feedPage.featuredEventCountdownMinutes", // "min" - universal abbreviation
 		]);
