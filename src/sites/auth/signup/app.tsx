@@ -31,6 +31,7 @@ import {
 } from "../../../lib/feature-flags";
 import AuthLayout from "../_layout";
 import CodeInput from "../_layout/CodeInput";
+import SocialSignIn from "../_shared/social-sign-in";
 
 type VerifyMethod = "email" | "totp" | "sms";
 
@@ -734,6 +735,7 @@ function SignupWizard() {
 					{t("auth.signup.signInLink")}
 				</Link>
 			</Box>
+			<SocialSignIn />
 			<StepDots current={visibleStepIndex} total={visibleSteps.length} />
 			<div className="cdn-auth-stepper__title">
 				{steps[activeStepIndex].title}
