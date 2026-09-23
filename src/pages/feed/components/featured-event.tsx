@@ -26,8 +26,8 @@ const EVENT_DATE = "2026-09-29T18:30:00-06:00";
 // off .awsui-dark-mode (mirrors upcoming-virtual-event); the wave 37b
 // fade-in contract requires onLoad to add `is-loaded` — without it the
 // image keeps opacity: 0 and the card shows a blank box.
-const EVENT_IMAGE_LIGHT = "/events/muse-big-data-bowl-light.svg";
-const EVENT_IMAGE_DARK = "/events/muse-big-data-bowl-dark.svg";
+const EVENT_IMAGE_LIGHT = "/events/muse-big-data-bowl-light.webp";
+const EVENT_IMAGE_DARK = "/events/muse-big-data-bowl-dark.webp";
 
 interface CountdownValues {
 	days: number;
@@ -110,8 +110,8 @@ function FeaturedEventInner() {
 								src={EVENT_IMAGE_LIGHT}
 								alt={t("feedPage.featuredEventImageAlt")}
 								className="feed-featured-event__image feed-featured-event__image--light"
-								width={1200}
-								height={630}
+								width={676}
+								height={380}
 								loading="lazy"
 								onLoad={markImageLoaded}
 								onError={() => setLightImageBroken(true)}
@@ -122,8 +122,8 @@ function FeaturedEventInner() {
 								src={EVENT_IMAGE_DARK}
 								alt={t("feedPage.featuredEventImageAlt")}
 								className="feed-featured-event__image feed-featured-event__image--dark"
-								width={1200}
-								height={630}
+								width={676}
+								height={380}
 								loading="lazy"
 								onLoad={markImageLoaded}
 								onError={() => setDarkImageBroken(true)}

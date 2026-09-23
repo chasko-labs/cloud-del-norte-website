@@ -218,10 +218,10 @@ describe("NextMeetup — wave 33a uplift", () => {
 			await new Promise((r) => setTimeout(r, 25));
 		}
 		expect(light?.getAttribute("src")).toBe(
-			"/events/muse-big-data-bowl-light.svg",
+			"/events/muse-big-data-bowl-light.webp",
 		);
 		expect(dark?.getAttribute("src")).toBe(
-			"/events/muse-big-data-bowl-dark.svg",
+			"/events/muse-big-data-bowl-dark.webp",
 		);
 		expect(light?.getAttribute("alt")).toMatch(/Big Data Bowl/i);
 		expect(dark?.getAttribute("alt")).toMatch(/Big Data Bowl/i);

@@ -123,10 +123,10 @@ describe("FeaturedEvent — Big Data Bowl", () => {
 			".feed-featured-event__image--dark",
 		) as HTMLImageElement | null;
 		expect(light?.getAttribute("src")).toBe(
-			"/events/muse-big-data-bowl-light.svg",
+			"/events/muse-big-data-bowl-light.webp",
 		);
 		expect(dark?.getAttribute("src")).toBe(
-			"/events/muse-big-data-bowl-dark.svg",
+			"/events/muse-big-data-bowl-dark.webp",
 		);
 		expect(light?.getAttribute("alt")).toMatch(/Big Data Bowl/i);
 		expect(dark?.getAttribute("alt")).toMatch(/Big Data Bowl/i);

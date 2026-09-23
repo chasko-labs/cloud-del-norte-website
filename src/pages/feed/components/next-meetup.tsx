@@ -68,8 +68,8 @@ const FALLBACK_IMAGE = "/events/cowork-wednesday.webp";
 // event is this meetup, the card shows the bespoke light/dark artwork pair
 // instead of the generic cowork fallback. Any other event keeps the fallback.
 const BIG_DATA_BOWL_EVENT_ID = "316669721";
-const BIG_DATA_BOWL_IMAGE_LIGHT = "/events/muse-big-data-bowl-light.svg";
-const BIG_DATA_BOWL_IMAGE_DARK = "/events/muse-big-data-bowl-dark.svg";
+const BIG_DATA_BOWL_IMAGE_LIGHT = "/events/muse-big-data-bowl-light.webp";
+const BIG_DATA_BOWL_IMAGE_DARK = "/events/muse-big-data-bowl-dark.webp";
 // Hard-coded English alt (wave 33a scope forbids new locale keys; the image
 // slot already carries the localized header as its aria-label).
 const BIG_DATA_BOWL_IMAGE_ALT =
@@ -488,8 +488,8 @@ function NextMeetupInner() {
 								src={BIG_DATA_BOWL_IMAGE_LIGHT}
 								alt={imageAlt}
 								className="feed-next-meetup__image feed-next-meetup__image--light"
-								width={1200}
-								height={630}
+								width={676}
+								height={380}
 								loading="lazy"
 								onError={() => setLightImageBroken(true)}
 							/>
@@ -499,8 +499,8 @@ function NextMeetupInner() {
 								src={BIG_DATA_BOWL_IMAGE_DARK}
 								alt={imageAlt}
 								className="feed-next-meetup__image feed-next-meetup__image--dark"
-								width={1200}
-								height={630}
+								width={676}
+								height={380}
 								loading="lazy"
 								onError={() => setDarkImageBroken(true)}
 							/>
