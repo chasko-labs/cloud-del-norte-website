@@ -10,7 +10,8 @@ import {
 } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-const BUCKET = process.env.RECORDINGS_BUCKET || "jitsi-video-platform-recordings-4b917dff";
+const BUCKET =
+	process.env.RECORDINGS_BUCKET || "jitsi-video-platform-recordings-4b917dff";
 const REGION = process.env.AWS_REGION || "us-west-2";
 const PRESIGN_EXPIRY = 3600; // 1 hour
 
@@ -46,7 +47,10 @@ function extractGroups(event) {
 		const parts = token.split(".");
 		if (parts.length < 2) return [];
 		const payload = JSON.parse(
-			Buffer.from(parts[1].replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8"),
+			Buffer.from(
+				parts[1].replace(/-/g, "+").replace(/_/g, "/"),
+				"base64",
+			).toString("utf8"),
 		);
 		return payload["cognito:groups"] || [];
 	} catch {
@@ -58,7 +62,8 @@ export async function handler(event) {
 	const requestOrigin = event.headers?.origin || event.headers?.Origin || "";
 	const headers = corsHeaders(requestOrigin);
 
-	const method = event.requestContext?.http?.method || event.httpMethod || "UNKNOWN";
+	const method =
+		event.requestContext?.http?.method || event.httpMethod || "UNKNOWN";
 	if (method === "OPTIONS") return { statusCode: 204, headers, body: "" };
 
 	// Auth check — moderators only

@@ -1,17 +1,36 @@
 const { chromium } = require("playwright");
-const { execFileSync } = require("child_process");
+const { execFileSync } = require("node:child_process");
 const OUT =
 	"/home/bryanchasko/code/websites/cloud-del-norte-website/docs/walkthrough";
 
 function ssmParam(name, withDecryption) {
-	const args = ['ssm', 'get-parameter', '--name', name, '--profile', 'aerospaceug-admin', '--region', 'us-west-2', '--query', 'Parameter.Value', '--output', 'text'];
-	if (withDecryption) args.push('--with-decryption');
-	return execFileSync('aws', args, { encoding: 'utf8' }).trim();
+	const args = [
+		"ssm",
+		"get-parameter",
+		"--name",
+		name,
+		"--profile",
+		"aerospaceug-admin",
+		"--region",
+		"us-west-2",
+		"--query",
+		"Parameter.Value",
+		"--output",
+		"text",
+	];
+	if (withDecryption) args.push("--with-decryption");
+	return execFileSync("aws", args, { encoding: "utf8" }).trim();
 }
 
 (async () => {
-	const CDN_MEMBER_USERNAME = ssmParam('/device-farm/test-users/member-username', false);
-	const CDN_MEMBER_PASSWORD = ssmParam('/device-farm/test-users/member-password', true);
+	const CDN_MEMBER_USERNAME = ssmParam(
+		"/device-farm/test-users/member-username",
+		false,
+	);
+	const CDN_MEMBER_PASSWORD = ssmParam(
+		"/device-farm/test-users/member-password",
+		true,
+	);
 
 	const browser = await chromium.launch({ headless: true });
 	const ctx = await browser.newContext({
@@ -30,12 +49,8 @@ function ssmParam(name, withDecryption) {
 	console.log("   done");
 
 	console.log("6. Fill login...");
-	await page
-		.locator('input[type="email"]')
-		.fill(CDN_MEMBER_USERNAME);
-	await page
-		.locator('input[type="password"]')
-		.fill(CDN_MEMBER_PASSWORD);
+	await page.locator('input[type="email"]').fill(CDN_MEMBER_USERNAME);
+	await page.locator('input[type="password"]').fill(CDN_MEMBER_PASSWORD);
 	await page.waitForTimeout(500);
 	await page.screenshot({ path: `${OUT}/06-login-filled.png`, fullPage: true });
 	console.log("   done");

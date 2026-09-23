@@ -53,7 +53,7 @@ const { chromium } = require("playwright");
 		if (size < 15) readability.push(`small(${size}px)`);
 		if (lh < 1.4) readability.push(`tight-lh(${lh.toFixed(2)})`);
 		if (isMonospace && size < 16) readability.push("monospace-at-small-size");
-		if (parseInt(t.fontWeight) < 400) readability.push("thin");
+		if (parseInt(t.fontWeight, 10) < 400) readability.push("thin");
 		if (readability.length > 0) {
 			issues.push(
 				`CARD TEXT: "${t.text}" — ${readability.join(", ")} | font: ${t.fontFamily.substring(0, 30)}`,

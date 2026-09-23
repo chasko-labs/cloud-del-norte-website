@@ -328,39 +328,41 @@
 	padding: 6px 12px;
 }
 
-.cdn-auth-apply-cta [class*="awsui_link_"] {
+.cdn-auth-apply-cta:not(#\9) [class*="awsui_link_"] {
 	color: var(--cdn-purple, #5a1f8a) !important;
 	font-weight: 600 !important;
 	text-decoration: underline !important;
 	text-underline-offset: 3px !important;
 }
 
-.cdn-auth-apply-cta [class*="awsui_link_"]:hover {
+@media (prefers-reduced-motion: reduce) {
+	.cdn-auth-apply-cta:not(#\9) [class*="awsui_link_"] {
+		transition: none !important;
+	}
+}
+
+.cdn-auth-apply-cta:not(#\9) [class*="awsui_link_"]:hover {
 	color: var(--cdn-violet, #9060f0) !important;
 }
 
-.cdn-auth-apply-cta [class*="awsui_link_"]:focus-visible {
+.cdn-auth-apply-cta:not(#\9) [class*="awsui_link_"]:focus-visible {
 	outline: 2px solid var(--cdn-amber, #8b5a2b) !important;
 	outline-offset: 3px !important;
 	border-radius: 2px !important;
 }
 
-.awsui-dark-mode .cdn-auth-apply-cta [class*="awsui_link_"] {
+.awsui-dark-mode .cdn-auth-apply-cta:not(#\9) [class*="awsui_link_"] {
 	color: var(--cdn-lavender, #d7c7ee) !important;
 }
 
-.awsui-dark-mode .cdn-auth-apply-cta [class*="awsui_link_"]:hover {
+.awsui-dark-mode .cdn-auth-apply-cta:not(#\9) [class*="awsui_link_"]:hover {
 	color: var(--cdn-violet, #9060f0) !important;
 }
 
-.awsui-dark-mode .cdn-auth-apply-cta [class*="awsui_link_"]:focus-visible {
+.awsui-dark-mode
+	.cdn-auth-apply-cta:not(#\9)
+	[class*="awsui_link_"]:focus-visible {
 	outline-color: var(--cdn-violet, #9060f0) !important;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.cdn-auth-apply-cta [class*="awsui_link_"] {
-		transition: none !important;
-	}
 }
 
 /* ── sign-in banner — prominent returning-user prompt at top of signup ──── */

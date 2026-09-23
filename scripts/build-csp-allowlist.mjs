@@ -23,7 +23,7 @@ const allUrls = [...src.matchAll(urlRegex)].map((m) => m[0]);
 function hostPort(urlStr) {
 	try {
 		const u = new URL(urlStr);
-		return `${u.protocol}//${u.hostname}${u.port ? ":" + u.port : ""}`;
+		return `${u.protocol}//${u.hostname}${u.port ? `:${u.port}` : ""}`;
 	} catch {
 		return null;
 	}
@@ -145,7 +145,7 @@ const allowlist = {
 };
 
 mkdirSync(OUT_DIR, { recursive: true });
-writeFileSync(OUT_PATH, JSON.stringify(allowlist, null, 2) + "\n");
+writeFileSync(OUT_PATH, `${JSON.stringify(allowlist, null, 2)}\n`);
 console.log(`✓ wrote ${OUT_PATH}`);
 console.log(`  connect-src: ${allowlist["connect-src"].length} origins`);
 console.log(`  media-src: ${allowlist["media-src"].length} origins`);

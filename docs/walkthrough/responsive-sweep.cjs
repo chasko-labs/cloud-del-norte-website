@@ -24,7 +24,7 @@ const issues = [];
 function issue(viewport, page, check, detail) {
 	const msg = `[${viewport}] ${page} — ${check}: ${detail}`;
 	issues.push(msg);
-	console.log("  ⚠️ " + msg);
+	console.log(`  ⚠️ ${msg}`);
 }
 
 (async () => {
@@ -269,7 +269,6 @@ function issue(viewport, page, check, detail) {
 					if (cards.length === 0) return { found: false };
 					const card = cards[0];
 					const rect = card.getBoundingClientRect();
-					const style = getComputedStyle(card);
 					const text = card.textContent.trim().slice(0, 100);
 					return {
 						found: true,
@@ -369,7 +368,7 @@ function issue(viewport, page, check, detail) {
 	} else {
 		console.log("\nIssues found:");
 		for (const i of issues) {
-			console.log("  • " + i);
+			console.log(`  • ${i}`);
 		}
 	}
 	process.exit(issues.length > 0 ? 1 : 0);

@@ -29,7 +29,7 @@ const DEFAULT_ROOM = "cloud-del-norte-awsug";
 function getRoomFromUrl(): string {
 	if (typeof window === "undefined") return DEFAULT_ROOM;
 	const r = new URLSearchParams(window.location.search).get("room");
-	return r && r.trim() ? r.trim() : DEFAULT_ROOM;
+	return r?.trim() || DEFAULT_ROOM;
 }
 
 /**

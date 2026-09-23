@@ -1,10 +1,23 @@
 const { chromium } = require("playwright");
-const { execSync, execFileSync } = require("child_process");
+const { execSync, execFileSync } = require("node:child_process");
 
 function ssmParam(name, withDecryption) {
-	const args = ['ssm', 'get-parameter', '--name', name, '--profile', 'aerospaceug-admin', '--region', 'us-west-2', '--query', 'Parameter.Value', '--output', 'text'];
-	if (withDecryption) args.push('--with-decryption');
-	return execFileSync('aws', args, { encoding: 'utf8' }).trim();
+	const args = [
+		"ssm",
+		"get-parameter",
+		"--name",
+		name,
+		"--profile",
+		"aerospaceug-admin",
+		"--region",
+		"us-west-2",
+		"--query",
+		"Parameter.Value",
+		"--output",
+		"text",
+	];
+	if (withDecryption) args.push("--with-decryption");
+	return execFileSync("aws", args, { encoding: "utf8" }).trim();
 }
 
 (async () => {
@@ -12,19 +25,39 @@ function ssmParam(name, withDecryption) {
 		"=== REAL JOIN TEST — CLICK THROUGH LOBBY, VERIFY VIDEO TILES ===\n",
 	);
 
-	const CDN_TEST_USERNAME = ssmParam('/device-farm/test-users/admin-username', false);
-	const CDN_TEST_PASSWORD = ssmParam('/device-farm/test-users/admin-password', true);
+	const CDN_TEST_USERNAME = ssmParam(
+		"/device-farm/test-users/admin-username",
+		false,
+	);
+	const CDN_TEST_PASSWORD = ssmParam(
+		"/device-farm/test-users/admin-password",
+		true,
+	);
 
-	const modAuth = JSON.parse(execFileSync('aws', [
-		'cognito-idp', 'initiate-auth',
-		'--auth-flow', 'USER_PASSWORD_AUTH',
-		'--client-id', '57eikmt418ea6vti2f6h0pl74r',
-		'--auth-parameters', `USERNAME=${CDN_TEST_USERNAME},PASSWORD=${CDN_TEST_PASSWORD}`,
-		'--profile', 'jitsi-video-hosting',
-		'--region', 'us-west-2',
-		'--query', 'AuthenticationResult.{IdToken:IdToken,AccessToken:AccessToken,RefreshToken:RefreshToken}',
-		'--output', 'json'
-	], { encoding: 'utf8' }));
+	const modAuth = JSON.parse(
+		execFileSync(
+			"aws",
+			[
+				"cognito-idp",
+				"initiate-auth",
+				"--auth-flow",
+				"USER_PASSWORD_AUTH",
+				"--client-id",
+				"57eikmt418ea6vti2f6h0pl74r",
+				"--auth-parameters",
+				`USERNAME=${CDN_TEST_USERNAME},PASSWORD=${CDN_TEST_PASSWORD}`,
+				"--profile",
+				"jitsi-video-hosting",
+				"--region",
+				"us-west-2",
+				"--query",
+				"AuthenticationResult.{IdToken:IdToken,AccessToken:AccessToken,RefreshToken:RefreshToken}",
+				"--output",
+				"json",
+			],
+			{ encoding: "utf8" },
+		),
+	);
 
 	// Launch meeting
 	execSync(

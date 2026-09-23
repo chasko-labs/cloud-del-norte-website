@@ -180,27 +180,47 @@ async function sampleBackgroundPixels(page, boundingBox, fgRGB, hasRadius) {
 		// and at horizontal edges within the rounded area
 		samplePoints = [
 			// Vertical 25% band (above text) at various x
-			[0.35, 0.2], [0.5, 0.18], [0.65, 0.2],
+			[0.35, 0.2],
+			[0.5, 0.18],
+			[0.65, 0.2],
 			// Vertical 75% band (below text)
-			[0.35, 0.8], [0.5, 0.82], [0.65, 0.8],
+			[0.35, 0.8],
+			[0.5, 0.82],
+			[0.65, 0.8],
 			// Left/right interior (past rounded edge but before text)
-			[0.25, 0.4], [0.25, 0.6],
-			[0.75, 0.4], [0.75, 0.6],
+			[0.25, 0.4],
+			[0.25, 0.6],
+			[0.75, 0.4],
+			[0.75, 0.6],
 			// Additional interior points for better coverage
-			[0.4, 0.25], [0.6, 0.25], [0.4, 0.75], [0.6, 0.75],
+			[0.4, 0.25],
+			[0.6, 0.25],
+			[0.4, 0.75],
+			[0.6, 0.75],
 		];
 	} else if (height > 20) {
 		// Non-rounded, tall: sample from top/bottom 10-15% bands
 		samplePoints = [
-			[0.3, 0.05], [0.5, 0.07], [0.7, 0.05],
-			[0.3, 0.93], [0.5, 0.95], [0.7, 0.93],
-			[0.1, 0.3], [0.9, 0.3], [0.1, 0.7], [0.9, 0.7],
+			[0.3, 0.05],
+			[0.5, 0.07],
+			[0.7, 0.05],
+			[0.3, 0.93],
+			[0.5, 0.95],
+			[0.7, 0.93],
+			[0.1, 0.3],
+			[0.9, 0.3],
+			[0.1, 0.7],
+			[0.9, 0.7],
 		];
 	} else {
 		// Short non-rounded: left/right edges
 		samplePoints = [
-			[0.05, 0.5], [0.08, 0.3], [0.08, 0.7],
-			[0.92, 0.5], [0.95, 0.3], [0.95, 0.7],
+			[0.05, 0.5],
+			[0.08, 0.3],
+			[0.08, 0.7],
+			[0.92, 0.5],
+			[0.95, 0.3],
+			[0.95, 0.7],
 		];
 	}
 
@@ -209,8 +229,14 @@ async function sampleBackgroundPixels(page, boundingBox, fgRGB, hasRadius) {
 	const samples = [];
 
 	for (const [xFrac, yFrac] of samplePoints) {
-		const px = Math.min(width - 1, Math.max(0, Math.round(xFrac * (width - 1))));
-		const py = Math.min(height - 1, Math.max(0, Math.round(yFrac * (height - 1))));
+		const px = Math.min(
+			width - 1,
+			Math.max(0, Math.round(xFrac * (width - 1))),
+		);
+		const py = Math.min(
+			height - 1,
+			Math.max(0, Math.round(yFrac * (height - 1))),
+		);
 		const idx = (py * width + px) * channels;
 		const r = data[idx];
 		const g = data[idx + 1];
@@ -326,7 +352,7 @@ async function sampleBackgroundPixels(page, boundingBox, fgRGB, hasRadius) {
 
 						const color = cs.color;
 						const fontSize = parseFloat(cs.fontSize);
-						const fontWeight = parseInt(cs.fontWeight) || 400;
+						const fontWeight = parseInt(cs.fontWeight, 10) || 400;
 						const lineHeight = parseFloat(cs.lineHeight) || fontSize * 1.5;
 						const opacity = parseFloat(cs.opacity);
 						const whiteSpace = cs.whiteSpace;
@@ -354,8 +380,7 @@ async function sampleBackgroundPixels(page, boundingBox, fgRGB, hasRadius) {
 						// 1. white-space is NOT nowrap/pre
 						// 2. content height (minus padding) exceeds ~1.5 lines
 						const contentHeight = rect.height - paddingTop - paddingBottom;
-						const isNoWrap =
-							whiteSpace === "nowrap" || whiteSpace === "pre";
+						const isNoWrap = whiteSpace === "nowrap" || whiteSpace === "pre";
 						const lineCount = contentHeight / lineHeight;
 						const isMultiLine = !isNoWrap && lineCount > 1.4;
 
@@ -389,7 +414,10 @@ async function sampleBackgroundPixels(page, boundingBox, fgRGB, hasRadius) {
 					.filter(Boolean)
 					.slice(0, 60);
 			},
-			{ decorativeSel: decorativeSelector, frameworkSel: frameworkChromeSelector },
+			{
+				decorativeSel: decorativeSelector,
+				frameworkSel: frameworkChromeSelector,
+			},
 		);
 
 		console.log(`\n=== ${mode.toUpperCase()} MODE ===`);
@@ -428,7 +456,12 @@ async function sampleBackgroundPixels(page, boundingBox, fgRGB, hasRadius) {
 			}
 
 			// --- LINE-HEIGHT: multi-line wrapping text only ---
-			if (!el.isFrameworkChrome && !el.isNoWrap && el.isMultiLine && el.lineHeightRatio < 1.6) {
+			if (
+				!el.isFrameworkChrome &&
+				!el.isNoWrap &&
+				el.isMultiLine &&
+				el.lineHeightRatio < 1.6
+			) {
 				// Additional guard: interactive elements (A, BUTTON) often have
 				// height set for touch-target compliance (44px) not wrapping text.
 				// Only flag if the element is NOT interactive or if it genuinely has

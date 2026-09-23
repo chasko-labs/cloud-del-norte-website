@@ -107,8 +107,7 @@ if (app.includes(tocOld)) {
 }
 
 const sectionsAnchor = `\t\t\t</SpaceBetween>\n\t\t</ContentLayout>\n\t);\n}`;
-const sections =
-	`\t\t\t\t{/* image generation standards */}
+const sections = `\t\t\t\t{/* image generation standards */}
 				<div id="section-image-gen">
 					<Container
 						header={
@@ -228,7 +227,7 @@ const sections =
 						^ top
 					</a>
 				</div>
-` + sectionsAnchor;
+				${sectionsAnchor}`;
 if (!app.includes('id: "section-image-gen"')) {
 	if (!app.includes(sectionsAnchor))
 		throw new Error("app.tsx: sections anchor not found");

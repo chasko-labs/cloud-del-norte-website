@@ -293,11 +293,11 @@ const { chromium } = require("playwright");
 
 	if (results.fail.length > 0) {
 		console.log("\n  FAILURES:");
-		results.fail.forEach((f) => console.log(`    ✗ ${f}`));
+		for (const f of results.fail) console.log(`    ✗ ${f}`);
 	}
 	if (results.warn.length > 0) {
 		console.log("\n  WARNINGS:");
-		results.warn.forEach((w) => console.log(`    ⚠ ${w}`));
+		for (const w of results.warn) console.log(`    ⚠ ${w}`);
 	}
 
 	console.log("\nDone.");

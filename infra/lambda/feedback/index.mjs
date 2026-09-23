@@ -1,6 +1,10 @@
-import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import {
+	GetObjectCommand,
+	PutObjectCommand,
+	S3Client,
+} from "@aws-sdk/client-s3";
 import { GetParameterCommand, SSMClient } from "@aws-sdk/client-ssm";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 const ssm = new SSMClient({ region: "us-west-2" });
 const s3 = new S3Client({ region: "us-west-2" });
@@ -297,11 +301,14 @@ async function createIssue(
 	if (reporterSub) lines.push("", `**Reporter:** ${reporterSub}`);
 	// Never write contactEmail into the public issue.
 	// Signal that contact info exists so maintainers know to check logs.
-	if (hasContact) lines.push("", "**Contact:** *(provided -- see Lambda logs)*");
+	if (hasContact)
+		lines.push("", "**Contact:** *(provided -- see Lambda logs)*");
 
 	if (attachmentUrls?.length) {
 		lines.push("");
-		lines.push("> Screenshot links expire after 7 days. Originals remain in S3 (bucket: `cdn-feedback-attachments`) for 365 days and are viewable via the AWS console.");
+		lines.push(
+			"> Screenshot links expire after 7 days. Originals remain in S3 (bucket: `cdn-feedback-attachments`) for 365 days and are viewable via the AWS console.",
+		);
 		lines.push("");
 		attachmentUrls.forEach((url, i) => {
 			lines.push(`![screenshot ${i + 1}](${url})`);

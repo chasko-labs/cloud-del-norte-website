@@ -1,15 +1,34 @@
 const { chromium } = require("playwright");
-const { execFileSync } = require("child_process");
+const { execFileSync } = require("node:child_process");
 
 function ssmParam(name, withDecryption) {
-	const args = ['ssm', 'get-parameter', '--name', name, '--profile', 'aerospaceug-admin', '--region', 'us-west-2', '--query', 'Parameter.Value', '--output', 'text'];
-	if (withDecryption) args.push('--with-decryption');
-	return execFileSync('aws', args, { encoding: 'utf8' }).trim();
+	const args = [
+		"ssm",
+		"get-parameter",
+		"--name",
+		name,
+		"--profile",
+		"aerospaceug-admin",
+		"--region",
+		"us-west-2",
+		"--query",
+		"Parameter.Value",
+		"--output",
+		"text",
+	];
+	if (withDecryption) args.push("--with-decryption");
+	return execFileSync("aws", args, { encoding: "utf8" }).trim();
 }
 
 (async () => {
-	const CDN_MEMBER_USERNAME = ssmParam('/device-farm/test-users/member-username', false);
-	const CDN_MEMBER_PASSWORD = ssmParam('/device-farm/test-users/member-password', true);
+	const CDN_MEMBER_USERNAME = ssmParam(
+		"/device-farm/test-users/member-username",
+		false,
+	);
+	const CDN_MEMBER_PASSWORD = ssmParam(
+		"/device-farm/test-users/member-password",
+		true,
+	);
 
 	const browser = await chromium.launch({ headless: true });
 	const ctx = await browser.newContext({
@@ -31,12 +50,8 @@ function ssmParam(name, withDecryption) {
 		waitUntil: "networkidle",
 		timeout: 20000,
 	});
-	await page
-		.locator('input[type="email"]')
-		.fill(CDN_MEMBER_USERNAME);
-	await page
-		.locator('input[type="password"]')
-		.fill(CDN_MEMBER_PASSWORD);
+	await page.locator('input[type="email"]').fill(CDN_MEMBER_USERNAME);
+	await page.locator('input[type="password"]').fill(CDN_MEMBER_PASSWORD);
 	await page.locator("button", { hasText: "Sign in" }).first().click();
 	await page.waitForTimeout(8000);
 	console.log("   post-login url:", page.url());
@@ -125,7 +140,7 @@ function ssmParam(name, withDecryption) {
 		.getAttribute("href")
 		.catch(() => null);
 	console.log("\n4. Google Calendar link:", calLink ? "PRESENT" : "MISSING");
-	if (calLink) console.log("   url:", calLink.substring(0, 80) + "...");
+	if (calLink) console.log(`   url: ${calLink.substring(0, 80)}...`);
 
 	// Step 6: Click Confirm RSVP if visible
 	if (hasMemberView) {

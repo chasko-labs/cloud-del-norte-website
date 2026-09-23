@@ -11,18 +11,19 @@
 // website endpoint), directory-index resolution must happen at the
 // CloudFront layer.
 
+// biome-ignore lint/correctness/noUnusedVariables: CloudFront invokes handler() by name at the edge
 function handler(event) {
 	var request = event.request;
 	var uri = request.uri;
 
 	// If URI ends with / append index.html
 	if (uri.endsWith("/")) {
-		request.uri = uri + "index.html";
+		request.uri = `${uri}index.html`;
 	}
 	// If URI has no file extension and does not end with /, treat as
 	// directory — append /index.html (handles /admin-rsvps without slash)
 	else if (!uri.includes(".") && uri !== "/") {
-		request.uri = uri + "/index.html";
+		request.uri = `${uri}/index.html`;
 	}
 
 	return request;

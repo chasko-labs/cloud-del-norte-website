@@ -7,14 +7,10 @@
 		"EmailSendingAccount": "DEVELOPER",
 		"From": "Cloud del Norte <no-reply@clouddelnorte.org>"
 	},
-	"AutoVerifiedAttributes": [
-		"email"
-	],
+	"AutoVerifiedAttributes": ["email"],
 	"VerificationMessageTemplate": {
 		"DefaultEmailOption": "CONFIRM_WITH_CODE"
 	},
-	"UsernameAttributes": [
-		"email"
-	],
+	"UsernameAttributes": ["email"],
 	"MfaConfiguration": "OPTIONAL"
 }

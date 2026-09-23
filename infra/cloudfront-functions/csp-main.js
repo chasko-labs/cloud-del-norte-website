@@ -6,25 +6,22 @@
 // __ALLOWLIST_INJECT__
 var ALLOWLIST = {};
 
+// biome-ignore lint/correctness/noUnusedVariables: CloudFront invokes handler() by name at the edge
 function handler(event) {
 	var response = event.response;
 	var headers = response.headers;
 
-	var connectSrc = "'self' " + (ALLOWLIST["connect-src"] || []).join(" ");
-	var mediaSrc = "'self' " + (ALLOWLIST["media-src"] || []).join(" ");
-	var imgSrc = "'self' data: " + (ALLOWLIST["img-src"] || []).join(" ");
+	var connectSrc = `'self' ${(ALLOWLIST["connect-src"] || []).join(" ")}`;
+	var mediaSrc = `'self' ${(ALLOWLIST["media-src"] || []).join(" ")}`;
+	var imgSrc = `'self' data: ${(ALLOWLIST["img-src"] || []).join(" ")}`;
 	var frameSrc = (ALLOWLIST["frame-src"] || []).join(" ");
 	var scriptSrc =
 		"'self' 'unsafe-eval' blob: " +
 		(ALLOWLIST["script-src"] || []).join(" ") +
 		" https://*.token.awswaf.com";
-	var scriptSrcElem =
-		"'self' 'unsafe-inline' " +
-		(ALLOWLIST["script-src"] || []).join(" ") +
-		" https://*.token.awswaf.com https://embed.twitch.tv";
-	var styleSrc =
-		"'self' 'unsafe-inline' " + (ALLOWLIST["style-src"] || []).join(" ");
-	var fontSrc = "'self' data: " + (ALLOWLIST["font-src"] || []).join(" ");
+	var scriptSrcElem = `'self' 'unsafe-inline' ${(ALLOWLIST["script-src"] || []).join(" ")} https://*.token.awswaf.com https://embed.twitch.tv`;
+	var styleSrc = `'self' 'unsafe-inline' ${(ALLOWLIST["style-src"] || []).join(" ")}`;
+	var fontSrc = `'self' data: ${(ALLOWLIST["font-src"] || []).join(" ")}`;
 
 	var csp =
 		"default-src 'self'; " +

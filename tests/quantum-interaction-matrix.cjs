@@ -25,20 +25,57 @@ const AWS_PROFILE = "jitsi-video-hosting";
 const AWS_REGION = "us-west-2";
 
 function ssmParam(name, withDecryption) {
-	const args = ['ssm', 'get-parameter', '--name', name, '--profile', 'aerospaceug-admin', '--region', 'us-west-2', '--query', 'Parameter.Value', '--output', 'text'];
-	if (withDecryption) args.push('--with-decryption');
-	return execFileSync('aws', args, { encoding: 'utf8' }).trim();
+	const args = [
+		"ssm",
+		"get-parameter",
+		"--name",
+		name,
+		"--profile",
+		"aerospaceug-admin",
+		"--region",
+		"us-west-2",
+		"--query",
+		"Parameter.Value",
+		"--output",
+		"text",
+	];
+	if (withDecryption) args.push("--with-decryption");
+	return execFileSync("aws", args, { encoding: "utf8" }).trim();
 }
 
 // Test users — all fetched from SSM at runtime
-const CDN_ADMIN_USERNAME = ssmParam('/device-farm/test-users/admin-username', false);
-const CDN_ADMIN_PASSWORD = ssmParam('/device-farm/test-users/admin-password', true);
-const CDN_MEMBER_USERNAME = ssmParam('/device-farm/test-users/member-username', false);
-const CDN_MEMBER_PASSWORD = ssmParam('/device-farm/test-users/member-password', true);
-const CDN_PENDING_USERNAME = ssmParam('/device-farm/test-users/pending-username', false);
-const CDN_PENDING_PASSWORD = ssmParam('/device-farm/test-users/pending-password', true);
-const CDN_BANNED_USERNAME = ssmParam('/device-farm/test-users/banned-username', false);
-const CDN_BANNED_PASSWORD = ssmParam('/device-farm/test-users/banned-password', true);
+const CDN_ADMIN_USERNAME = ssmParam(
+	"/device-farm/test-users/admin-username",
+	false,
+);
+const CDN_ADMIN_PASSWORD = ssmParam(
+	"/device-farm/test-users/admin-password",
+	true,
+);
+const CDN_MEMBER_USERNAME = ssmParam(
+	"/device-farm/test-users/member-username",
+	false,
+);
+const CDN_MEMBER_PASSWORD = ssmParam(
+	"/device-farm/test-users/member-password",
+	true,
+);
+const CDN_PENDING_USERNAME = ssmParam(
+	"/device-farm/test-users/pending-username",
+	false,
+);
+const CDN_PENDING_PASSWORD = ssmParam(
+	"/device-farm/test-users/pending-password",
+	true,
+);
+const CDN_BANNED_USERNAME = ssmParam(
+	"/device-farm/test-users/banned-username",
+	false,
+);
+const CDN_BANNED_PASSWORD = ssmParam(
+	"/device-farm/test-users/banned-password",
+	true,
+);
 
 const USERS = {
 	MODERATOR: {
@@ -424,7 +461,7 @@ async function testAuthenticatedRole(browser, role, user) {
 	// Get Cognito tokens
 	console.log(`  ⏳ Authenticating via Cognito...`);
 	const tokens = getCognitoTokens(user.email, user.password);
-	const authSuccess = tokens && tokens.IdToken;
+	const authSuccess = tokens?.IdToken;
 
 	try {
 		// Navigate to base to establish origin, then inject tokens

@@ -42,7 +42,7 @@ const { chromium } = require("playwright");
 					);
 					console.log(`  ✗ ${link.text} → ${resp.status()}`);
 				}
-			} catch (e) {
+			} catch {
 				// timeout or network error — skip calendar URLs
 			}
 		}

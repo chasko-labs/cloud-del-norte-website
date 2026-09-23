@@ -37,9 +37,7 @@ import {
 	FeedAwsml,
 	FeedReadysetcloud,
 } from "./components/feed-section";
-import NextMeetup from "./components/next-meetup";
 import { TwitchAws, TwitchAwsOnAir } from "./components/twitch-section";
-import UpcomingVirtualEvent from "./components/upcoming-virtual-event";
 import YoutubeCarousel from "./components/youtube-carousel";
 import YouTubeChannelCarousel from "./components/youtube-channel-carousel";
 import YouTubeShortsCarousel from "./components/youtube-shorts-carousel";

@@ -1,7 +1,7 @@
 // cdn-scheduled-meetings CRUD Lambda
 // Handles: create, list, get, delete scheduled meetings
 // Auth: Cognito JWT, moderators group required
-import { randomUUID, randomBytes } from "node:crypto";
+import { randomBytes, randomUUID } from "node:crypto";
 
 const TABLE_NAME = process.env.TABLE_NAME || "cdn-scheduled-meetings";
 const REGION = process.env.AWS_REGION || "us-west-2";
@@ -11,9 +11,7 @@ let ddbClient;
 async function getDDB() {
 	if (ddbClient) return ddbClient;
 	const { DynamoDBClient } = await import("@aws-sdk/client-dynamodb");
-	const { DynamoDBDocumentClient } = await import(
-		"@aws-sdk/lib-dynamodb"
-	);
+	const { DynamoDBDocumentClient } = await import("@aws-sdk/lib-dynamodb");
 	const client = new DynamoDBClient({ region: REGION });
 	ddbClient = DynamoDBDocumentClient.from(client);
 	return ddbClient;
@@ -60,7 +58,14 @@ function extractSub(event) {
 
 async function createScheduled(event) {
 	const body = JSON.parse(event.body || "{}");
-	const { title, description, scheduled_start, duration_minutes, speaker_bio_url, meetup_rsvp_url } = body;
+	const {
+		title,
+		description,
+		scheduled_start,
+		duration_minutes,
+		speaker_bio_url,
+		meetup_rsvp_url,
+	} = body;
 
 	if (!title || !scheduled_start) {
 		return response(400, { error: "title and scheduled_start are required" });
@@ -107,9 +112,7 @@ async function listScheduled(event) {
 	const params = {
 		TableName: TABLE_NAME,
 		FilterExpression:
-			view === "past"
-				? "scheduled_start < :now"
-				: "scheduled_start >= :now",
+			view === "past" ? "scheduled_start < :now" : "scheduled_start >= :now",
 		ExpressionAttributeValues: { ":now": now },
 	};
 
@@ -175,21 +178,31 @@ async function updateScheduled(event) {
 	// Update allowed fields
 	if (body.title !== undefined) item.title = body.title;
 	if (body.description !== undefined) item.description = body.description;
-	if (body.scheduled_start !== undefined) item.scheduled_start = body.scheduled_start;
-	if (body.duration_minutes !== undefined) item.duration_minutes = body.duration_minutes;
+	if (body.scheduled_start !== undefined)
+		item.scheduled_start = body.scheduled_start;
+	if (body.duration_minutes !== undefined)
+		item.duration_minutes = body.duration_minutes;
 	if (body.status !== undefined) item.status = body.status;
-	if (body.speaker_bio_url !== undefined) item.speaker_bio_url = body.speaker_bio_url;
-	if (body.meetup_rsvp_url !== undefined) item.meetup_rsvp_url = body.meetup_rsvp_url;
+	if (body.speaker_bio_url !== undefined)
+		item.speaker_bio_url = body.speaker_bio_url;
+	if (body.meetup_rsvp_url !== undefined)
+		item.meetup_rsvp_url = body.meetup_rsvp_url;
 	item.updated_at = new Date().toISOString();
 
 	// Recalculate TTL if start changed
 	if (body.scheduled_start) {
-		const startEpoch = Math.floor(new Date(body.scheduled_start).getTime() / 1000);
-		item.ttl_epoch = startEpoch + (item.duration_minutes || 60) * 60 + 30 * 24 * 3600;
+		const startEpoch = Math.floor(
+			new Date(body.scheduled_start).getTime() / 1000,
+		);
+		item.ttl_epoch =
+			startEpoch + (item.duration_minutes || 60) * 60 + 30 * 24 * 3600;
 	}
 
 	// If scheduled_start changed, we need to delete old + put new (composite key)
-	if (body.scheduled_start && body.scheduled_start !== existing.Items[0].scheduled_start) {
+	if (
+		body.scheduled_start &&
+		body.scheduled_start !== existing.Items[0].scheduled_start
+	) {
 		const { DeleteCommand } = await import("@aws-sdk/lib-dynamodb");
 		await ddb.send(
 			new DeleteCommand({

@@ -24,7 +24,6 @@ import {
 	restoreSession,
 } from "../../../lib/auth";
 import {
-	type CrossSiteLock,
 	endMeeting,
 	fetchInfrastructureStatus,
 	fetchLiveRooms,

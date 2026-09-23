@@ -179,8 +179,8 @@ test.describe("cross-subdomain session — pre-deploy smoke (no credentials requ
 		const csp = response?.headers()["content-security-policy"] ?? "";
 		const scriptSrcMatch = csp.match(/script-src\s+([^;]+)/);
 		expect(scriptSrcMatch).not.toBeNull();
-		expect(scriptSrcMatch![1]).toContain("'unsafe-eval'");
-		expect(scriptSrcMatch![1]).toContain("blob:");
+		expect(scriptSrcMatch?.[1]).toContain("'unsafe-eval'");
+		expect(scriptSrcMatch?.[1]).toContain("blob:");
 	});
 
 	test("silent reauth: unauthenticated visit to awsug /auth/callback/ with login_required redirects to login", async ({
