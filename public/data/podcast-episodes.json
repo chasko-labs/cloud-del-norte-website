@@ -358,11 +358,88 @@
     ]
   },
   "syntax_fm": {
-    "title": "1029: The Workflow of the Future With Zed",
-    "subtitle": "Nathan Sobo joins Scott and Wes to explain why Zed was built in Rust, how GPUI works, and what happens to editors once a",
-    "display": "1029: The Workflow of the Future With Zed — Nathan Sobo joins Scott and Wes to explain why Zed was built in Rust, how GPUI works, and ",
-    "enclosureUrl": "https://traffic.megaphone.fm/FSI5646050512.mp3",
+    "title": "1040: Developing for the iPhone Duo",
+    "subtitle": "Scott, Wes, and CJ break down developing for the iPhone Duo with the Device Posture and Viewport Segments APIs, plus the",
+    "display": "1040: Developing for the iPhone Duo — Scott, Wes, and CJ break down developing for the iPhone Duo with the Device Posture and Vi",
+    "enclosureUrl": "https://traffic.megaphone.fm/FSI3562075802.mp3",
     "episodes": [
+      {
+        "guid": "e6132d46-b1d4-11f1-8a39-4b1147cd065c",
+        "title": "1040: Developing for the iPhone Duo",
+        "pubDate": "2026-09-21T11:00:00.000Z",
+        "duration": 5612,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI3562075802.mp3"
+      },
+      {
+        "guid": "ad358646-ad1e-11f1-aa79-4331a6ac6be5",
+        "title": "1039: Should You Quit Your Job?",
+        "pubDate": "2026-09-16T11:00:00.000Z",
+        "duration": 3637,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI7656097330.mp3"
+      },
+      {
+        "guid": "14e35aa4-ad45-11f1-91e7-2ff201cabe75",
+        "title": "1038: OpenAI Releases GPT 6 Astra",
+        "pubDate": "2026-09-14T11:00:00.000Z",
+        "duration": 5120,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI1154569409.mp3"
+      },
+      {
+        "guid": "1deb13a6-a865-11f1-a4b4-1b0f8f96fb03",
+        "title": "1037: WebMCP is here (and you should care)",
+        "pubDate": "2026-09-09T11:00:00.000Z",
+        "duration": 3390,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI4063165063.mp3"
+      },
+      {
+        "guid": "6309a33c-a6b0-11f1-9c51-fb391126a1b6",
+        "title": "1036: Cursor & OpenAI Break Up",
+        "pubDate": "2026-09-07T11:00:00.000Z",
+        "duration": 4339,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI8532175718.mp3"
+      },
+      {
+        "guid": "6057517e-a14d-11f1-9299-df5c3db65a51",
+        "title": "1035: Why everyone is moving to Stylex?",
+        "pubDate": "2026-09-02T11:00:00.000Z",
+        "duration": 1596,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI5284996555.mp3"
+      },
+      {
+        "guid": "64bc5bea-a08c-11f1-9c7f-c363f4749b2c",
+        "title": "1034: Omarchy Quattro Release",
+        "pubDate": "2026-08-31T11:00:00.000Z",
+        "duration": 4547,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI4566452979.mp3"
+      },
+      {
+        "guid": "4f9f2b88-9656-11f1-92f1-5f7485058a95",
+        "title": "1033: 8 New CSS, JS and HTML Features You Should Know",
+        "pubDate": "2026-08-26T11:00:00.000Z",
+        "duration": 1116,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI7652910664.mp3"
+      },
+      {
+        "guid": "aec441f6-9bb6-11f1-937a-ab8f3a6524a6",
+        "title": "1032: Stripe Buys OpenRouter for $7B",
+        "pubDate": "2026-08-24T11:00:00.000Z",
+        "duration": 4048,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI9558460816.mp3"
+      },
+      {
+        "guid": "16d3cb92-9656-11f1-8afc-677789178275",
+        "title": "1031: My Coding Skills Are Atrophying",
+        "pubDate": "2026-08-19T11:00:00.000Z",
+        "duration": 3423,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI5689754163.mp3"
+      },
+      {
+        "guid": "8fc9458c-958d-11f1-8e60-3fe1af363c91",
+        "title": "1030: AI Assistant Hacks Gym",
+        "pubDate": "2026-08-17T11:00:00.000Z",
+        "duration": 5043,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI3334102653.mp3"
+      },
       {
         "guid": "e74d0900-9237-11f1-8cb6-b33a0f7f4ca1",
         "title": "1029: The Workflow of the Future With Zed",
@@ -635,92 +712,63 @@
         "pubDate": "2026-03-30T11:00:00.000Z",
         "duration": 2318,
         "enclosureUrl": "https://traffic.megaphone.fm/FSI5967497459.mp3"
-      },
-      {
-        "guid": "defcc50c-27a1-11f1-b6e2-d70b62c2d562",
-        "title": "990: Vite Is Taking Over (Vite+)",
-        "pubDate": "2026-03-25T11:00:00.000Z",
-        "duration": 2013,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI7395196774.mp3"
-      },
-      {
-        "guid": "2395131a-2494-11f1-9062-af133e24dcc8",
-        "title": "989: State of JS 2025",
-        "pubDate": "2026-03-23T11:00:00.000Z",
-        "duration": 3844,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI6179711204.mp3"
-      },
-      {
-        "guid": "d4a44932-2237-11f1-8018-43f3ffda6590",
-        "title": "988: Cloudflare’s Next.js Slop Fork",
-        "pubDate": "2026-03-18T11:00:00.000Z",
-        "duration": 2832,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI7803523445.mp3"
-      },
-      {
-        "guid": "b4b7959e-1ef3-11f1-891f-6716df427b99",
-        "title": "987: Remote Coding Agents",
-        "pubDate": "2026-03-16T11:00:00.000Z",
-        "duration": 2835,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI5301968170.mp3"
-      },
-      {
-        "guid": "14b6b670-1ca9-11f1-a26b-63eed4822a3e",
-        "title": "986: Does Code Quality Matter Anymore?",
-        "pubDate": "2026-03-11T11:00:00.000Z",
-        "duration": 3519,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI1346437841.mp3"
-      },
-      {
-        "guid": "de80ec9c-18c0-11f1-92be-271ed5a86c30",
-        "title": "985: Stop putting secrets in .env",
-        "pubDate": "2026-03-09T11:00:00.000Z",
-        "duration": 2828,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI1226956606.mp3"
-      },
-      {
-        "guid": "3f65630a-1734-11f1-9390-ffc866a92752",
-        "title": "984: How to Make a DOM Library Render Anything w/ Paolo Ricciuti",
-        "pubDate": "2026-03-04T12:00:00.000Z",
-        "duration": 2948,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI4447177798.mp3"
-      },
-      {
-        "guid": "3d6856d8-139d-11f1-b07c-ff30357ee30a",
-        "title": "983: Why I Chose Electron Over Native (And I’d Do It Again)",
-        "pubDate": "2026-03-02T12:00:00.000Z",
-        "duration": 2260,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI5924071996.mp3?updated=1772226456"
-      },
-      {
-        "guid": "7a2564a2-119b-11f1-9101-03527e47308b",
-        "title": "982: Bots Are Ruining the Internet",
-        "pubDate": "2026-02-25T12:00:00.000Z",
-        "duration": 2954,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI1504239477.mp3"
-      },
-      {
-        "guid": "ab82e09e-0c3a-11f1-a62d-63e55e2f3bb6",
-        "title": "981: Browsers Are Finally Catching Up (Interop 2026)",
-        "pubDate": "2026-02-23T12:00:00.000Z",
-        "duration": 3085,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI1252611188.mp3"
-      },
-      {
-        "guid": "cd798b28-0c33-11f1-b673-93e1841e3e43",
-        "title": "980: AI Coding Explained",
-        "pubDate": "2026-02-18T12:00:00.000Z",
-        "duration": 3133,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI9721669335.mp3"
       }
     ]
   },
   "talk_python": {
-    "title": "#558: Hyper-Personal Software with Python",
-    "subtitle": "Every company has one. The little internal tool that Jane built back in 2021, and then Jane left. Nobody understands it,",
-    "display": "#558: Hyper-Personal Software with Python — Every company has one. The little internal tool that Jane built back in 2021, and then Jan",
-    "enclosureUrl": "https://talkpython.fm/episodes/download/558/hyper-personal-software-with-python.mp3",
+    "title": "#564: EVE Online Departs for Python 3",
+    "subtitle": "Every ship in EVE Online eventually undocks and leaves the station. This time, it's the whole game. EVE has run on Pytho",
+    "display": "#564: EVE Online Departs for Python 3 — Every ship in EVE Online eventually undocks and leaves the station. This time, it's the wh",
+    "enclosureUrl": "https://talkpython.fm/episodes/download/564/eve-online-departs-for-python-3.mp3",
     "episodes": [
+      {
+        "guid": "ce3be7eb-ceac-47d1-b733-2a579f67b78c",
+        "title": "#564: EVE Online Departs for Python 3",
+        "pubDate": "2026-09-22T18:24:30.000Z",
+        "duration": 4072,
+        "enclosureUrl": "https://talkpython.fm/episodes/download/564/eve-online-departs-for-python-3.mp3",
+        "transcriptUrl": "https://talkpython.fm/episodes/show/564/eve-online-departs-for-python-3.vtt"
+      },
+      {
+        "guid": "26546533-1714-44c3-93e9-c6be79604c8e",
+        "title": "#563: Getting Started with Rust as Python Devs",
+        "pubDate": "2026-09-16T16:07:43.000Z",
+        "duration": 4250,
+        "enclosureUrl": "https://talkpython.fm/episodes/download/563/getting-started-with-rust-as-python-devs.mp3",
+        "transcriptUrl": "https://talkpython.fm/episodes/show/563/getting-started-with-rust-as-python-devs.vtt"
+      },
+      {
+        "guid": "f5e9a8a4-babf-4247-916d-b8f157e2953a",
+        "title": "#562: DuckLake: The Lakehouse That's Just SQL and Parquet",
+        "pubDate": "2026-09-10T14:59:40.000Z",
+        "duration": 4269,
+        "enclosureUrl": "https://talkpython.fm/episodes/download/562/ducklake-the-lakehouse-thats-just-sql-and-parquet.mp3",
+        "transcriptUrl": "https://talkpython.fm/episodes/show/562/ducklake-the-lakehouse-thats-just-sql-and-parquet.vtt"
+      },
+      {
+        "guid": "08c23683-c51c-4af4-bac1-dedc3a0566a9",
+        "title": "#561: TonIO, a Multi-threaded Async Runtime for Python",
+        "pubDate": "2026-09-04T07:33:34.000Z",
+        "duration": 4547,
+        "enclosureUrl": "https://talkpython.fm/episodes/download/561/tonio-a-multi-threaded-async-runtime-for-python.mp3",
+        "transcriptUrl": "https://talkpython.fm/episodes/show/561/tonio-a-multi-threaded-async-runtime-for-python.vtt"
+      },
+      {
+        "guid": "cfdb8bc8-cb52-411f-ae9e-fae7c49d3bc0",
+        "title": "#560: Building a Research OS: From Django to 30,000 Samples",
+        "pubDate": "2026-08-26T20:04:24.000Z",
+        "duration": 3769,
+        "enclosureUrl": "https://talkpython.fm/episodes/download/560/building-a-research-os-from-django-to-30-000-samples.mp3",
+        "transcriptUrl": "https://talkpython.fm/episodes/show/560/building-a-research-os-from-django-to-30-000-samples.vtt"
+      },
+      {
+        "guid": "56b7e80e-442f-4988-8299-f04aa9dd5398",
+        "title": "#559: 12 Things You Should (and Shouldn't) Do in AWS",
+        "pubDate": "2026-08-19T18:57:47.000Z",
+        "duration": 4071,
+        "enclosureUrl": "https://talkpython.fm/episodes/download/559/12-things-you-should-and-shouldnt-do-in-aws.mp3",
+        "transcriptUrl": "https://talkpython.fm/episodes/show/559/12-things-you-should-and-shouldnt-do-in-aws.vtt"
+      },
       {
         "guid": "feee3df7-8579-4f93-b882-4ce893bbbc90",
         "title": "#558: Hyper-Personal Software with Python",
@@ -1072,54 +1120,6 @@
         "duration": 4254,
         "enclosureUrl": "https://talkpython.fm/episodes/download/515/durable-python-execution-with-temporal.mp3",
         "transcriptUrl": "https://talkpython.fm/episodes/show/515/durable-python-execution-with-temporal.vtt"
-      },
-      {
-        "guid": "66574ccd-0181-4aa5-955c-64e7fbded876",
-        "title": "#514: Python Language Summit 2025",
-        "pubDate": "2025-07-18T07:00:00.000Z",
-        "duration": 4380,
-        "enclosureUrl": "https://talkpython.fm/episodes/download/514/python-language-summit-2025.mp3",
-        "transcriptUrl": "https://talkpython.fm/episodes/show/514/python-language-summit-2025.vtt"
-      },
-      {
-        "guid": "59396cb4-8f2c-459c-a3dc-01ec9172c124",
-        "title": "#513: Stories from Python History",
-        "pubDate": "2025-07-14T07:00:00.000Z",
-        "duration": 4116,
-        "enclosureUrl": "https://talkpython.fm/episodes/download/513/stories-from-python-history.mp3",
-        "transcriptUrl": "https://talkpython.fm/episodes/show/513/stories-from-python-history.vtt"
-      },
-      {
-        "guid": "6de1a144-6b9d-4dab-978e-b64fee85843e",
-        "title": "#512: Building a JIT Compiler for CPython",
-        "pubDate": "2025-07-02T07:00:00.000Z",
-        "duration": 4098,
-        "enclosureUrl": "https://talkpython.fm/episodes/download/512/building-a-jit-compiler-for-cpython.mp3",
-        "transcriptUrl": "https://talkpython.fm/episodes/show/512/building-a-jit-compiler-for-cpython.vtt"
-      },
-      {
-        "guid": "86e19fb3-8c19-4237-9a6a-c5f0c101e91a",
-        "title": "#511: From Notebooks to Production Data Science Systems",
-        "pubDate": "2025-06-25T07:00:00.000Z",
-        "duration": 3255,
-        "enclosureUrl": "https://talkpython.fm/episodes/download/511/from-notebooks-to-production-data-science-systems.mp3",
-        "transcriptUrl": "https://talkpython.fm/episodes/show/511/from-notebooks-to-production-data-science-systems.vtt"
-      },
-      {
-        "guid": "1cec6234-f18b-4d83-8378-37f22ffc8664",
-        "title": "#510: 10 Polars Tools and Techniques To Level Up Your Data Science",
-        "pubDate": "2025-06-18T07:00:00.000Z",
-        "duration": 3724,
-        "enclosureUrl": "https://talkpython.fm/episodes/download/510/10-polars-tools-and-techniques-to-level-up-your-data-science.mp3",
-        "transcriptUrl": "https://talkpython.fm/episodes/show/510/10-polars-tools-and-techniques-to-level-up-your-data-science.vtt"
-      },
-      {
-        "guid": "fb7de688-89df-4177-925d-6f8e1b4272d7",
-        "title": "#509: GPU Programming in Pure Python",
-        "pubDate": "2025-06-11T07:00:00.000Z",
-        "duration": 3449,
-        "enclosureUrl": "https://talkpython.fm/episodes/download/509/gpu-programming-in-pure-python.mp3",
-        "transcriptUrl": "https://talkpython.fm/episodes/show/509/gpu-programming-in-pure-python.vtt"
       }
     ]
   },
@@ -1850,7 +1850,7 @@
         "guid": "f798fd1f64e849a6908dca0931f4d171",
         "title": "RustRover with Orhun Parmaksız",
         "pubDate": "2026-07-30T16:00:00.000Z",
-        "duration": 3167,
+        "duration": 3188,
         "enclosureUrl": "https://letscast.fm/media/public/f798fd1f-64e8-49a6-908d-ca0931f4d171.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/rustrover-with-orhun-parmaksiz-9e48c9f8-fa3f-45a6-8e32-442a5bd76600/transcript.vtt"
       },
@@ -1858,7 +1858,7 @@
         "guid": "c522f00798aa4e1cb0829e0a25647323",
         "title": "Rust Foundation with Bec Rumbul, Lori Lorusso, and David Wood",
         "pubDate": "2026-07-16T16:00:00.000Z",
-        "duration": 3253,
+        "duration": 3274,
         "enclosureUrl": "https://letscast.fm/media/public/c522f007-98aa-4e1c-b082-9e0a25647323.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/rust-foundation-with-bec-rumbul-lori-lorusso-and-david-wood/transcript.vtt"
       },
@@ -1866,7 +1866,7 @@
         "guid": "6a0f358fc53f460ea51fe60d7959bf17",
         "title": "Rising with Dylan Brown",
         "pubDate": "2026-07-02T16:00:00.000Z",
-        "duration": 2570,
+        "duration": 2591,
         "enclosureUrl": "https://letscast.fm/media/public/6a0f358f-c53f-460e-a51f-e60d7959bf17.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/rising-with-dylan-brown-872db41b-f845-41f0-8bac-147b5a6f5b87/transcript.vtt"
       },
@@ -1874,7 +1874,7 @@
         "guid": "4d37d7e935ec44f0a475d601ad3e7e9c",
         "title": "ClickHouse with Alexey Milovidov and Austin Bonander",
         "pubDate": "2026-06-18T16:00:00.000Z",
-        "duration": 3611,
+        "duration": 3632,
         "enclosureUrl": "https://letscast.fm/media/public/4d37d7e9-35ec-44f0-a475-d601ad3e7e9c.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/clickhouse-with-alexey-milovidov-and-austin-bonander/transcript.vtt"
       },
@@ -1882,7 +1882,7 @@
         "guid": "7db2e35d2a7d4d529a3813ce8c449cdf",
         "title": "Veo with Anders Hellerup Madsen and Gorm Casper",
         "pubDate": "2026-06-04T16:00:00.000Z",
-        "duration": 4318,
+        "duration": 4339,
         "enclosureUrl": "https://letscast.fm/media/public/7db2e35d-2a7d-4d52-9a38-13ce8c449cdf.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/veo-with-anders-hellerup-madsen-and-gorm-casper/transcript.vtt"
       },
@@ -1890,7 +1890,7 @@
         "guid": "2189630c1a33436f991d101ec064e9d7",
         "title": "Rust for Linux with Alice Ryhl and Greg Kroah-Hartman",
         "pubDate": "2026-05-21T16:00:00.000Z",
-        "duration": 2973,
+        "duration": 3050,
         "enclosureUrl": "https://letscast.fm/media/public/2189630c-1a33-436f-991d-101ec064e9d7.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/rust-for-linux-with-alice-ryhl-and-greg-kroah-hartman/transcript.vtt"
       },
@@ -1898,7 +1898,7 @@
         "guid": "82789f652771411d9a3e391d7eb82fb1",
         "title": "NLnet Labs with Arya Khanna and Martin Hoffmann",
         "pubDate": "2026-05-07T16:00:00.000Z",
-        "duration": 4860,
+        "duration": 4881,
         "enclosureUrl": "https://letscast.fm/media/public/82789f65-2771-411d-9a3e-391d7eb82fb1.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/nlnet-labs-with-arya-khanna-and-martin-hoffmann/transcript.vtt"
       },
@@ -1906,7 +1906,7 @@
         "guid": "938e68794aff480d8772d0e0967725c5",
         "title": "Helsing with Jon Gjengset",
         "pubDate": "2026-04-23T16:00:00.000Z",
-        "duration": 5598,
+        "duration": 5619,
         "enclosureUrl": "https://letscast.fm/media/public/938e6879-4aff-480d-8772-d0e0967725c5.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/helsing-with-jon-gjengset/transcript.vtt"
       },
@@ -1914,7 +1914,7 @@
         "guid": "819ca45d472745e482647f17becaf094",
         "title": "Cloudsmith with Cian Butler",
         "pubDate": "2026-04-09T15:00:00.000Z",
-        "duration": 4491,
+        "duration": 4512,
         "enclosureUrl": "https://letscast.fm/media/public/819ca45d-4727-45e4-8264-7f17becaf094.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/cloudsmith-with-cian-butler/transcript.vtt"
       },
@@ -1922,7 +1922,7 @@
         "guid": "4ef6bf1a0681407c995fc9df69c21284",
         "title": "Gama Space with Sebastian Scholz",
         "pubDate": "2026-01-22T16:00:00.000Z",
-        "duration": 3508,
+        "duration": 3529,
         "enclosureUrl": "https://letscast.fm/media/public/4ef6bf1a-0681-407c-995f-c9df69c21284.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/gama-space-with-sebastian-scholz/transcript.vtt"
       },
@@ -1930,7 +1930,7 @@
         "guid": "8753264771814c299bbb8ca06079870c",
         "title": "Radar with Jeff Kao",
         "pubDate": "2026-01-08T16:00:00.000Z",
-        "duration": 3768,
+        "duration": 3789,
         "enclosureUrl": "https://letscast.fm/media/public/87532647-7181-4c29-9bbb-8ca06079870c.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/radar-with-jeff-kao/transcript.vtt"
       },
@@ -1946,7 +1946,7 @@
         "guid": "8da36759fae34016a474741d496165a3",
         "title": "Rust4Linux with Danilo Krummrich",
         "pubDate": "2025-12-11T16:00:00.000Z",
-        "duration": 3642,
+        "duration": 3663,
         "enclosureUrl": "https://letscast.fm/media/public/8da36759-fae3-4016-a474-741d496165a3.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/rust4linux-with-danilo-krummrich/transcript.vtt"
       },
@@ -1954,7 +1954,7 @@
         "guid": "9bbdeabcd85643e2b6f9d60fe002e6ba",
         "title": "Canonical with Jon Seager",
         "pubDate": "2025-11-27T16:00:00.000Z",
-        "duration": 3478,
+        "duration": 3499,
         "enclosureUrl": "https://letscast.fm/media/public/9bbdeabc-d856-43e2-b6f9-d60fe002e6ba.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/canonical-with-jon-seager-ea273862-48ff-40d8-b3d6-bc85c680a3a6/transcript.vtt"
       },
@@ -1962,7 +1962,7 @@
         "guid": "c8b282e599d7418da66dbb76db3cb118",
         "title": "Roc with Richard Feldman",
         "pubDate": "2025-11-13T16:00:00.000Z",
-        "duration": 3771,
+        "duration": 3792,
         "enclosureUrl": "https://letscast.fm/media/public/c8b282e5-99d7-418d-a66d-bb76db3cb118.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/roc-with-richard-feldman/transcript.vtt"
       },
@@ -1970,7 +1970,7 @@
         "guid": "922954e9a5f64f25a2154110a6f51cee",
         "title": "Cloudflare with Edward Wang & Kevin Guthrie",
         "pubDate": "2025-10-30T16:00:00.000Z",
-        "duration": 4065,
+        "duration": 4086,
         "enclosureUrl": "https://letscast.fm/media/public/922954e9-a5f6-4f25-a215-4110a6f51cee.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/cloudflare-with-edward-wang-kevin-guthrie/transcript.vtt"
       },
@@ -1978,7 +1978,7 @@
         "guid": "3bee90db84c14f109f86577185824fb2",
         "title": "Scythe with Andrew Tinka",
         "pubDate": "2025-10-16T16:00:00.000Z",
-        "duration": 3537,
+        "duration": 3558,
         "enclosureUrl": "https://letscast.fm/media/public/3bee90db-84c1-4f10-9f86-577185824fb2.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/scythe-with-andrew-tinka/transcript.vtt"
       },
@@ -1986,7 +1986,7 @@
         "guid": "bbb43b45171742809eec933b25144bdd",
         "title": "Prime Video with Alexandru Ene",
         "pubDate": "2025-10-02T16:00:00.000Z",
-        "duration": 4757,
+        "duration": 4778,
         "enclosureUrl": "https://letscast.fm/media/public/bbb43b45-1717-4280-9eec-933b25144bdd.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/prime-video-with-alexandru-ene/transcript.vtt"
       },
@@ -2002,7 +2002,7 @@
         "guid": "c204c28acd8a403b8067c8317238df2c",
         "title": "KSAT with Vegard Sandengen",
         "pubDate": "2025-07-10T16:00:00.000Z",
-        "duration": 2817,
+        "duration": 2837,
         "enclosureUrl": "https://letscast.fm/media/public/c204c28a-cd8a-403b-8067-c8317238df2c.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/ksat-with-vegard-sandengen/transcript.vtt"
       },
@@ -2010,7 +2010,7 @@
         "guid": "0019241e907f4a08ae746427926fb124",
         "title": "1Password with Andrew Burkhart",
         "pubDate": "2025-06-26T16:00:00.000Z",
-        "duration": 3805,
+        "duration": 3826,
         "enclosureUrl": "https://letscast.fm/media/public/0019241e-907f-4a08-ae74-6427926fb124.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/1password-with-andrew-burkhart/transcript.vtt"
       },
@@ -2018,7 +2018,7 @@
         "guid": "43437df3a2374ca5b3d22ea6685e30dd",
         "title": "Tembo with Adam Hendel",
         "pubDate": "2025-06-12T16:00:00.000Z",
-        "duration": 2937,
+        "duration": 2957,
         "enclosureUrl": "https://letscast.fm/media/public/43437df3-a237-4ca5-b3d2-2ea6685e30dd.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/tembo-with-adam-hendel/transcript.vtt"
       },
@@ -2026,7 +2026,7 @@
         "guid": "16727052c07f48c1bc6d7e6c8a8f053f",
         "title": "Rust with Niko Matsakis",
         "pubDate": "2025-05-29T16:00:00.000Z",
-        "duration": 3383,
+        "duration": 3403,
         "enclosureUrl": "https://letscast.fm/media/public/16727052-c07f-48c1-bc6d-7e6c8a8f053f.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/rust-with-niko-matsakis/transcript.vtt"
       },
@@ -2034,7 +2034,7 @@
         "guid": "3670578a99e34968bd4d94de14072ee9",
         "title": "uv with Charlie Marsh",
         "pubDate": "2025-05-15T16:00:00.000Z",
-        "duration": 4541,
+        "duration": 4562,
         "enclosureUrl": "https://letscast.fm/media/public/3670578a-99e3-4968-bd4d-94de14072ee9.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/uv-with-charlie-marsh/transcript.vtt"
       },
@@ -2042,7 +2042,7 @@
         "guid": "5d0a6f6f4b2f4fb19cbcc40c40e255cb",
         "title": "Svix with Tom Hacohen",
         "pubDate": "2025-05-01T16:00:00.000Z",
-        "duration": 4196,
+        "duration": 4217,
         "enclosureUrl": "https://letscast.fm/media/public/5d0a6f6f-4b2f-4fb1-9cbc-c40c40e255cb.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/svix-with-tom-hacohen/transcript.vtt"
       },
@@ -2050,7 +2050,7 @@
         "guid": "7b050116368d48d9a586e147f5b4d954",
         "title": "Microsoft with Victor Ciura",
         "pubDate": "2025-04-17T16:00:00.000Z",
-        "duration": 4360,
+        "duration": 4381,
         "enclosureUrl": "https://letscast.fm/media/public/7b050116-368d-48d9-a586-e147f5b4d954.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/microsoft-with-victor-ciura/transcript.vtt"
       },
@@ -2058,7 +2058,7 @@
         "guid": "85d3626773b8437a80c6ba968096ec58",
         "title": "Season 3 Finale",
         "pubDate": "2025-02-06T16:00:00.000Z",
-        "duration": 1830,
+        "duration": 1851,
         "enclosureUrl": "https://letscast.fm/media/public/85d36267-73b8-437a-80c6-ba968096ec58.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/season-3-finale/transcript.vtt"
       },
@@ -2066,7 +2066,7 @@
         "guid": "a1435df0a725481483d39a1981e35dd8",
         "title": "Volvo with Julius Gustavsson",
         "pubDate": "2025-01-23T16:00:00.000Z",
-        "duration": 4157,
+        "duration": 4178,
         "enclosureUrl": "https://letscast.fm/media/public/a1435df0-a725-4814-83d3-9a1981e35dd8.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/volvo-with-julius-gustavsson/transcript.vtt"
       },
@@ -2074,7 +2074,7 @@
         "guid": "1b761186623949319f9fc9a896a67c72",
         "title": "Brave with Anton Lazarev",
         "pubDate": "2025-01-09T16:00:00.000Z",
-        "duration": 3426,
+        "duration": 3447,
         "enclosureUrl": "https://letscast.fm/media/public/1b761186-6239-4931-9f9f-c9a896a67c72.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/brave-with-anton-lazarev/transcript.vtt"
       },
@@ -2082,14 +2082,14 @@
         "guid": "32c22a22c3b84003a3dff75a283400ee",
         "title": "Holiday Special",
         "pubDate": "2024-12-26T16:00:00.000Z",
-        "duration": 1637,
+        "duration": 1658,
         "enclosureUrl": "https://letscast.fm/media/public/32c22a22-c3b8-4003-a3df-f75a283400ee.mp3"
       },
       {
         "guid": "1db4f640e4414c55b597aae19f8f7bd7",
         "title": "Zoo with Jessie Frazelle",
         "pubDate": "2024-12-12T16:00:00.000Z",
-        "duration": 3898,
+        "duration": 3918,
         "enclosureUrl": "https://letscast.fm/media/public/1db4f640-e441-4c55-b597-aae19f8f7bd7.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/zoo-with-jessie-frazelle/transcript.vtt"
       },
@@ -2097,7 +2097,7 @@
         "guid": "d83b47908c254f19b202846feea7a5c2",
         "title": "GitButler with Scott Chacon and Kiril Videlov",
         "pubDate": "2024-11-28T16:00:00.000Z",
-        "duration": 4922,
+        "duration": 4942,
         "enclosureUrl": "https://letscast.fm/media/public/d83b4790-8c25-4f19-b202-846feea7a5c2.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/gitbutler-with-scott-chacon-and-kiril-videlov/transcript.vtt"
       },
@@ -2105,7 +2105,7 @@
         "guid": "1e810207803c423491c4c6fc29ce1ab2",
         "title": "Oxide with Steve Klabnik",
         "pubDate": "2024-11-14T16:00:00.000Z",
-        "duration": 6836,
+        "duration": 6856,
         "enclosureUrl": "https://letscast.fm/media/public/1e810207-803c-4234-91c4-c6fc29ce1ab2.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/oxide-with-steve-klabnik/transcript.vtt"
       },
@@ -2113,7 +2113,7 @@
         "guid": "4035603fb5bd46daa9d295b70ef5adf7",
         "title": "InfinyOn with Deb Chowdhury",
         "pubDate": "2024-10-31T16:00:00.000Z",
-        "duration": 3398,
+        "duration": 3419,
         "enclosureUrl": "https://letscast.fm/media/public/4035603f-b5bd-46da-a9d2-95b70ef5adf7.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/infinyon-with-deb-chowdhury/transcript.vtt"
       },
@@ -2121,7 +2121,7 @@
         "guid": "5e7f21b68147414bb60fa50d33412b27",
         "title": "Zed with Conrad Irwin",
         "pubDate": "2024-10-17T16:00:00.000Z",
-        "duration": 3773,
+        "duration": 3794,
         "enclosureUrl": "https://letscast.fm/media/public/5e7f21b6-8147-414b-b60f-a50d33412b27.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/zed-with-conrad-irwin/transcript.vtt"
       },
@@ -2129,7 +2129,7 @@
         "guid": "f273963da79c4ac881c3309d4c5c6662",
         "title": "Season 2 Finale",
         "pubDate": "2024-08-08T16:00:00.000Z",
-        "duration": 1394,
+        "duration": 1414,
         "enclosureUrl": "https://letscast.fm/media/public/f273963d-a79c-4ac8-81c3-309d4c5c6662.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/season-2-finale/transcript.vtt"
       },
@@ -2137,7 +2137,7 @@
         "guid": "80759dfa14594c5b9907881d46140cee",
         "title": "System76 with Jeremy Soller",
         "pubDate": "2024-07-25T16:00:00.000Z",
-        "duration": 5616,
+        "duration": 5636,
         "enclosureUrl": "https://letscast.fm/media/public/80759dfa-1459-4c5b-9907-881d46140cee.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/system76-with-jeremy-soller/transcript.vtt"
       },
@@ -2145,7 +2145,7 @@
         "guid": "714b5ceb93044a62be0073ccb977deb9",
         "title": "Fusion Engineering with Jakub Valtar",
         "pubDate": "2024-07-11T16:00:00.000Z",
-        "duration": 3367,
+        "duration": 3387,
         "enclosureUrl": "https://letscast.fm/media/public/714b5ceb-9304-4a62-be00-73ccb977deb9.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/fusion-engineering-with-jakub-valtar/transcript.vtt"
       },
@@ -2153,7 +2153,7 @@
         "guid": "b45bd42387634173924ecdef6f540ead",
         "title": "OxidOS with Alexandru Radovici",
         "pubDate": "2024-06-27T16:00:00.000Z",
-        "duration": 4168,
+        "duration": 4188,
         "enclosureUrl": "https://letscast.fm/media/public/b45bd423-8763-4173-924e-cdef6f540ead.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/oxidos-with-alexandru-radovici/transcript.vtt"
       },
@@ -2161,7 +2161,7 @@
         "guid": "9e9fe57ce77548e6b385a3e910f74f9d",
         "title": "Matic with Eric Seppanen",
         "pubDate": "2024-06-13T16:00:00.000Z",
-        "duration": 5072,
+        "duration": 5093,
         "enclosureUrl": "https://letscast.fm/media/public/9e9fe57c-e775-48e6-b385-a3e910f74f9d.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/matic-with-eric-seppanen/transcript.vtt"
       },
@@ -2169,7 +2169,7 @@
         "guid": "4c5d51dd5f654a2a8a70e6ff264610c7",
         "title": "Thunderbird with Brendan Abolivier",
         "pubDate": "2024-05-30T16:00:00.000Z",
-        "duration": 3813,
+        "duration": 3834,
         "enclosureUrl": "https://letscast.fm/media/public/4c5d51dd-5f65-4a2a-8a70-e6ff264610c7.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/thunderbird-with-brendan-abolivier/transcript.vtt"
       },
@@ -2177,7 +2177,7 @@
         "guid": "13e9fcb27b5445878468e52bc04e9dd0",
         "title": "AMP with Carter Schultz",
         "pubDate": "2024-05-16T16:00:00.000Z",
-        "duration": 4166,
+        "duration": 4186,
         "enclosureUrl": "https://letscast.fm/media/public/13e9fcb2-7b54-4587-8468-e52bc04e9dd0.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/amp-with-carter-schultz/transcript.vtt"
       },
@@ -2185,7 +2185,7 @@
         "guid": "a3639e42e37e4e1b99f7c067fd3c1595",
         "title": "curl with Daniel Stenberg",
         "pubDate": "2024-05-02T15:00:00.000Z",
-        "duration": 4442,
+        "duration": 4462,
         "enclosureUrl": "https://letscast.fm/media/public/a3639e42-e37e-4e1b-99f7-c067fd3c1595.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/curl-with-daniel-stenberg/transcript.vtt"
       },
@@ -2193,7 +2193,7 @@
         "guid": "052979be52464d1683f8414b4b1330d8",
         "title": "Season 1 Finale",
         "pubDate": "2024-03-07T16:00:00.000Z",
-        "duration": 2237,
+        "duration": 2258,
         "enclosureUrl": "https://letscast.fm/media/public/052979be-5246-4d16-83f8-414b4b1330d8.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/season-1-finale/transcript.vtt"
       },
@@ -2201,7 +2201,7 @@
         "guid": "0d80efcde98747c4a375d08dd87a052b",
         "title": "Sentry with Arpad Borsos",
         "pubDate": "2024-02-22T16:00:00.000Z",
-        "duration": 4582,
+        "duration": 4602,
         "enclosureUrl": "https://letscast.fm/media/public/0d80efcd-e987-47c4-a375-d08dd87a052b.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/sentry-with-arpad-borsos/transcript.vtt"
       },
@@ -2209,7 +2209,7 @@
         "guid": "998b4f862e4541eb93ee4dcc447866b0",
         "title": "Tweede Golf with Folkert de Vries",
         "pubDate": "2024-02-08T16:00:00.000Z",
-        "duration": 4410,
+        "duration": 4430,
         "enclosureUrl": "https://letscast.fm/media/public/998b4f86-2e45-41eb-93ee-4dcc447866b0.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/tweede-golf-with-folkert-de-vries/transcript.vtt"
       },
@@ -2217,7 +2217,7 @@
         "guid": "f629560f0cb140ae9e09012a9866a98c",
         "title": "Arroyo with Micah Wylde",
         "pubDate": "2024-01-25T16:00:00.000Z",
-        "duration": 3406,
+        "duration": 3426,
         "enclosureUrl": "https://letscast.fm/media/public/f629560f-0cb1-40ae-9e09-012a9866a98c.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/arroyo-with-micah-wylde/transcript.vtt"
       },
@@ -2225,7 +2225,7 @@
         "guid": "13ebf87ac1214758abdfe7a23293754d",
         "title": "Apollo with Nicolas Moutschen",
         "pubDate": "2024-01-11T16:00:00.000Z",
-        "duration": 3674,
+        "duration": 3695,
         "enclosureUrl": "https://letscast.fm/media/public/13ebf87a-c121-4758-abdf-e7a23293754d.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/apollo-with-nicolas-moutschen/transcript.vtt"
       },
@@ -2233,7 +2233,7 @@
         "guid": "037f7f95af91459b8cf58e2bf67ac9dd",
         "title": "PubNub with Stephen Blum",
         "pubDate": "2023-12-28T16:00:00.000Z",
-        "duration": 3504,
+        "duration": 3524,
         "enclosureUrl": "https://letscast.fm/media/public/037f7f95-af91-459b-8cf5-8e2bf67ac9dd.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/pubnub-with-stephen-blum/transcript.vtt"
       },
@@ -2241,18 +2241,60 @@
         "guid": "81b87494186d4e348842847c6e247758",
         "title": "InfluxData with Paul Dix",
         "pubDate": "2023-12-14T16:00:00.000Z",
-        "duration": 4174,
+        "duration": 4195,
         "enclosureUrl": "https://letscast.fm/media/public/81b87494-186d-4e34-8842-847c6e247758.mp3",
         "transcriptUrl": "https://letscast.fm/podcasts/rust-in-production-82281512/episodes/influxdata-with-paul-dix/transcript.vtt"
       }
     ]
   },
   "onda_aws": {
-    "title": "EP351: Exploración de Datos Seguro e Inteligente con Amazon WorkSpaces",
-    "subtitle": "En este episodio exploramos cómo Amazon WorkSpaces, combinado con herramientas de IA como Kiro, Amazon Quick y Agent Acc",
-    "display": "EP351: Exploración de Datos Seguro e Inteligente con Amazon WorkSpaces — En este episodio exploramos cómo Amazon WorkSpaces, combinado con herramientas de IA como ",
-    "enclosureUrl": "https://rss.art19.com/episodes/6fbd1416-c961-4ff2-8649-473d21a0f1ae.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d",
+    "title": "EP357: Kiro, Claude Code & Codex on AWS",
+    "subtitle": "La forma en que los desarrolladores escriben código está cambiando radicalmente. En este episodio comparamos tres herram",
+    "display": "EP357: Kiro, Claude Code & Codex on AWS — La forma en que los desarrolladores escriben código está cambiando radicalmente. En este e",
+    "enclosureUrl": "https://rss.art19.com/episodes/0ce926aa-37f0-4e92-8a02-1105730e3d5d.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d",
     "episodes": [
+      {
+        "guid": "gid://art19-episode-locator/V0/to4lpRqxb_ULyL-5LYRDlgdP84JRrYCZrAFexMVVwMw",
+        "title": "EP357: Kiro, Claude Code & Codex on AWS",
+        "pubDate": "2026-09-22T12:00:00.000Z",
+        "duration": 1426,
+        "enclosureUrl": "https://rss.art19.com/episodes/0ce926aa-37f0-4e92-8a02-1105730e3d5d.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
+      },
+      {
+        "guid": "gid://art19-episode-locator/V0/NAxst-e_Jg1YPPQis-Q9YCJMiaVGzALKySydfFQ9Zew",
+        "title": "EP356: ¿Por qué Claude en AWS?",
+        "pubDate": "2026-09-17T12:00:00.000Z",
+        "duration": 1258,
+        "enclosureUrl": "https://rss.art19.com/episodes/a79273be-6ec8-4d97-83a7-bc954af895e2.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
+      },
+      {
+        "guid": "gid://art19-episode-locator/V0/TPdcqLxWER6GBbrElmvhuBOzf5baMHLXy9CqIKTiMbY",
+        "title": "EP355: Agente de Pricing Dinámico Multi-Agente",
+        "pubDate": "2026-09-16T00:00:00.000Z",
+        "duration": 889,
+        "enclosureUrl": "https://rss.art19.com/episodes/2c828fe2-808e-42dd-88c6-effb8651f47b.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
+      },
+      {
+        "guid": "gid://art19-episode-locator/V0/szSkU9AwGI3tiqF6YogWLjRk2vGEbMjtGg3IFnBijzE",
+        "title": "EP354: El nuevo FinOps Agent",
+        "pubDate": "2026-08-27T18:00:00.000Z",
+        "duration": 1095,
+        "enclosureUrl": "https://rss.art19.com/episodes/6cae517a-26b2-43d6-88cf-f3ecf73327c1.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
+      },
+      {
+        "guid": "gid://art19-episode-locator/V0/yNLzIpBLGsLHA0qYyaIAJD3bXcNhKEsPxK5Dq_uw0-Q",
+        "title": "EP353: Escalando Amazon Redshift con una arquitectura multi-warehouse.",
+        "pubDate": "2026-08-25T07:00:00.000Z",
+        "duration": 1080,
+        "enclosureUrl": "https://rss.art19.com/episodes/e59d7ba3-9705-404e-9bad-0bb90d512fdb.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
+      },
+      {
+        "guid": "gid://art19-episode-locator/V0/3LdNWwQ5CLf5LyQtuPnWWLrKA5m0KQIOupO-qjwK8ow",
+        "title": "EP352: Migraciones a gran escala con AWS ProServe",
+        "pubDate": "2026-08-20T15:00:00.000Z",
+        "duration": 1606,
+        "enclosureUrl": "https://rss.art19.com/episodes/065de1c6-a9c1-46dc-9aef-bddd05c68515.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
+      },
       {
         "guid": "gid://art19-episode-locator/V0/He9KGF4Bsq4yJMozjXdteoWM58-KV1KUnvVe9StN9DI",
         "title": "EP351: Exploración de Datos Seguro e Inteligente con Amazon WorkSpaces",
@@ -2560,48 +2602,6 @@
         "pubDate": "2025-12-30T16:00:00.000Z",
         "duration": 947,
         "enclosureUrl": "https://rss.art19.com/episodes/cdc146c2-8288-4695-ae4a-6184bd3caff3.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
-      },
-      {
-        "guid": "gid://art19-episode-locator/V0/3zyh1cWqEKKSZTNwXaNrT1SxSfeCenqFN0hat0c3IcU",
-        "title": "EP307: ¿Cómo definir tus objetivos de Resiliencia?",
-        "pubDate": "2025-12-23T20:30:00.000Z",
-        "duration": 694,
-        "enclosureUrl": "https://rss.art19.com/episodes/e522851f-ee08-4a0c-af82-4eeabbf6948a.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
-      },
-      {
-        "guid": "gid://art19-episode-locator/V0/RpjUALfVKLMwsjFeirf4ZEyqyeBWxeEjGUdO_JLzgXw",
-        "title": "EP306: Networking en AWS - Fundamentos de VPC",
-        "pubDate": "2025-12-04T16:30:00.000Z",
-        "duration": 1751,
-        "enclosureUrl": "https://rss.art19.com/episodes/37607dde-1508-42c8-9c11-aff77f576ec4.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
-      },
-      {
-        "guid": "gid://art19-episode-locator/V0/siTLK7T4K-8QXav4bXdlBSfYI9a-R_xxDovOwtNLw40",
-        "title": "EP305: Creando un Cloud Center of Excellence - Telecom Argentina",
-        "pubDate": "2025-12-02T03:00:00.000Z",
-        "duration": 1013,
-        "enclosureUrl": "https://rss.art19.com/episodes/405e9846-01ae-469f-b6b3-6a72e33d7548.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
-      },
-      {
-        "guid": "gid://art19-episode-locator/V0/2_2Dm2vh_2Ndwr7KP-oVsxtakTRV5u0W9tN0iI3iIwg",
-        "title": "EP304: Aumenta tus capacidades de analisis de datos con Generative AI",
-        "pubDate": "2025-12-01T08:00:00.000Z",
-        "duration": 729,
-        "enclosureUrl": "https://rss.art19.com/episodes/444207fe-49fa-4070-ae8c-ecd96fc5b15c.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
-      },
-      {
-        "guid": "gid://art19-episode-locator/V0/JrVruFrbDglaVrOgMxE23zum3s4Bqd3YB7WvNz8hFB8",
-        "title": "EP303: Inside AWS ProServe - Conoce a Nuestros Consultores",
-        "pubDate": "2025-11-28T14:30:00.000Z",
-        "duration": 766,
-        "enclosureUrl": "https://rss.art19.com/episodes/e326e5ee-809d-4658-a00f-5230cc592176.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
-      },
-      {
-        "guid": "gid://art19-episode-locator/V0/Xbw8oK9knJ1XuLDyKZrfgcUwx_rJ1NACKD03GbXjYPM",
-        "title": "EP302: Explorando casos de uso de AI/ML en el borde",
-        "pubDate": "2025-11-14T22:30:00.000Z",
-        "duration": 981,
-        "enclosureUrl": "https://rss.art19.com/episodes/9a5b496f-c121-4e8c-80ed-ca1f0566887d.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
       }
     ]
   },
@@ -2922,11 +2922,53 @@
     ]
   },
   "el_sonido_kexp": {
-    "title": "Juana Molina Live on KEXP – Cancioneros Summer Break",
+    "title": "Enjambre: rock mexicano, nostalgia y Daños Luz | El Sonido: Cancioneros",
     "subtitle": null,
-    "display": "Juana Molina Live on KEXP – Cancioneros Summer Break",
-    "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/56df8774-baa1-41e0-aecd-b49d0181130a/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950",
+    "display": "Enjambre: rock mexicano, nostalgia y Daños Luz | El Sonido: Cancioneros",
+    "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/f8e24db4-52d0-48da-a259-b4c6015eaf00/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950",
     "episodes": [
+      {
+        "guid": "f8e24db4-52d0-48da-a259-b4c6015eaf00",
+        "title": "Enjambre: rock mexicano, nostalgia y Daños Luz | El Sonido: Cancioneros",
+        "pubDate": "2026-09-21T07:00:00.000Z",
+        "duration": 1673,
+        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/f8e24db4-52d0-48da-a259-b4c6015eaf00/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
+      },
+      {
+        "guid": "31254e34-6199-4284-86d3-b4b901764449",
+        "title": "Marilina Bertoldi: rock argentino, drag y expresión de género | El Sonido: Cancioneros",
+        "pubDate": "2026-09-14T07:00:00.000Z",
+        "duration": 1087,
+        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/31254e34-6199-4284-86d3-b4b901764449/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
+      },
+      {
+        "guid": "0cc49ea3-9524-4697-b523-b4a901670e38",
+        "title": "Diles Que No Me Maten Live on KEXP – Cancioneros Summer Break",
+        "pubDate": "2026-09-07T07:00:00.000Z",
+        "duration": 1425,
+        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/0cc49ea3-9524-4697-b523-b4a901670e38/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
+      },
+      {
+        "guid": "8509236f-5f4b-4fb9-bccb-b4a6014d152d",
+        "title": "Fin del Mundo Live on KEXP – Cancioneros Summer Break",
+        "pubDate": "2026-08-31T07:00:00.000Z",
+        "duration": 1434,
+        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/8509236f-5f4b-4fb9-bccb-b4a6014d152d/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
+      },
+      {
+        "guid": "f9440fd7-4187-45d9-bc28-b4a401716ef2",
+        "title": "Javiera Mena Live on KEXP – Cancioneros Summer Break",
+        "pubDate": "2026-08-24T07:00:00.000Z",
+        "duration": 497,
+        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/f9440fd7-4187-45d9-bc28-b4a401716ef2/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
+      },
+      {
+        "guid": "3bd2e733-e295-4dd3-9098-b49601774ee1",
+        "title": "Los Dug Dug's Live on KEXP – Cancioneros Summer Break",
+        "pubDate": "2026-08-17T07:00:00.000Z",
+        "duration": 957,
+        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/3bd2e733-e295-4dd3-9098-b49601774ee1/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
+      },
       {
         "guid": "56df8774-baa1-41e0-aecd-b49d0181130a",
         "title": "Juana Molina Live on KEXP – Cancioneros Summer Break",
@@ -3234,48 +3276,6 @@
         "pubDate": "2025-03-27T18:15:28.000Z",
         "duration": 1523,
         "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/0391521a-4fb9-40fb-a4b6-b2ad012c1228/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
-      },
-      {
-        "guid": "c5a60244-dcf8-42c8-bd8d-b290014c0b78",
-        "title": "El Cancionero de Kurt: The Faith, Void, Young Marble Giants, Swans, y The Frogs",
-        "pubDate": "2025-02-27T07:00:00.000Z",
-        "duration": 2180,
-        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/c5a60244-dcf8-42c8-bd8d-b290014c0b78/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
-      },
-      {
-        "guid": "f5663809-519e-43f0-a77a-b26f0165bd7a",
-        "title": "El Cancionero de Kurt: Fang, Rites of Spring, Public Image Ltd., The Saints, Scratch Acid, y Flipper",
-        "pubDate": "2025-01-30T07:00:00.000Z",
-        "duration": 3640,
-        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/f5663809-519e-43f0-a77a-b26f0165bd7a/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
-      },
-      {
-        "guid": "c6b021da-8f75-4cb0-b1f2-b24f012dfe6e",
-        "title": "El Cancionero de Kurt: Sonic Youth",
-        "pubDate": "2024-12-26T07:00:00.000Z",
-        "duration": 2040,
-        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/c6b021da-8f75-4cb0-b1f2-b24f012dfe6e/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
-      },
-      {
-        "guid": "0c70bab4-406d-4201-8057-b2350125091e",
-        "title": "El Cancionero de Kurt: Black Flag, Tales of Terror, Fear, y Saccharine Trust",
-        "pubDate": "2024-11-28T07:00:00.000Z",
-        "duration": 2452,
-        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/0c70bab4-406d-4201-8057-b2350125091e/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
-      },
-      {
-        "guid": "0b8e1d9e-365c-43bb-8dd1-b21901734d7f",
-        "title": "El Cancionero de Kurt: The Breeders, Gang of Four, y Mazzy Star",
-        "pubDate": "2024-10-31T07:00:00.000Z",
-        "duration": 2392,
-        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/0b8e1d9e-365c-43bb-8dd1-b21901734d7f/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
-      },
-      {
-        "guid": "0fba8424-5885-47ae-916f-b1f60157a9e7",
-        "title": "El Cancionero de Kurt: Revisando Nevermind y In Utero",
-        "pubDate": "2024-09-26T07:00:00.000Z",
-        "duration": 1300,
-        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/0fba8424-5885-47ae-916f-b1f60157a9e7/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
       }
     ]
   },
