@@ -11,6 +11,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { XMLParser } from "fast-xml-parser";
+import { decodeEntities, excerptText } from "./feed-text.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, "..");
@@ -77,16 +78,6 @@ const parser = new XMLParser({
 	attributeNamePrefix: "@_",
 });
 
-/** Strip HTML tags and trim whitespace from a string. */
-function stripHtml(str) {
-	if (!str) return "";
-	return String(str)
-		.replace(/<[^>]*>/g, " ")
-		.replace(/\s+/g, " ")
-		.trim()
-		.slice(0, 200);
-}
-
 /** Normalize a date string to ISO yyyy-mm-dd, or return the raw string on failure. */
 function normalizeDate(raw) {
 	if (!raw) return "";
@@ -102,22 +93,6 @@ function getText(val) {
 	if (!val) return "";
 	if (typeof val === "object") return String(val["#text"] ?? "");
 	return String(val);
-}
-
-/** Decode common XML/HTML character entities in a string. */
-function decodeEntities(str) {
-	return String(str)
-		.replace(/&amp;/g, "&")
-		.replace(/&lt;/g, "<")
-		.replace(/&gt;/g, ">")
-		.replace(/&quot;/g, '"')
-		.replace(/&apos;/g, "'")
-		.replace(/&#x27;/g, "'")
-		.replace(/&#39;/g, "'")
-		.replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
-		.replace(/&#x([0-9a-f]+);/gi, (_, h) =>
-			String.fromCharCode(parseInt(h, 16)),
-		);
 }
 
 /** Fetch and parse one RSS feed. Returns an array of post objects (up to limit). */
@@ -141,7 +116,12 @@ async function fetchFeed(url, limit) {
 		pubDate: normalizeDate(
 			item.pubDate ?? item.published ?? item.updated ?? "",
 		),
-		excerpt: stripHtml(item.description ?? item.summary ?? item.content ?? ""),
+		// Strip-then-decode (see excerptText): feeds that entity-encode
+		// their descriptions (e.g. readysetcloud `I&rsquo;ve`) rendered
+		// raw `&rsquo;` literals in the cards.
+		excerpt: excerptText(
+			item.description ?? item.summary ?? item.content ?? "",
+		),
 	}));
 }
 
