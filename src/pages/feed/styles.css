@@ -22,6 +22,14 @@
 .feed-carousel {
 	position: relative;
 	width: 100%;
+	/* Fill stretched card bodies (shell/cell fill contract): the 16:9
+	   frame keeps its ratio; free space collects below the viewport so
+	   the controls can pin to the card bottom instead of floating
+	   mid-card in tall grid rows (vBrownBag, Zacs, Women in Tech). */
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+	gap: var(--cdn-space-sm);
 }
 
 .feed-carousel__viewport {
@@ -53,7 +61,9 @@
 	align-items: center;
 	justify-content: center;
 	gap: var(--cdn-space-md);
-	margin-top: var(--cdn-space-sm);
+	/* Pin to the card bottom in stretched rows; the carousel flex gap
+	   preserves row rhythm. */
+	margin-top: auto;
 }
 
 .feed-carousel__btn {
@@ -99,6 +109,9 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--cdn-space-sm);
+	/* Fill the stretched card body (shell fill contract) so the footer
+	   rows can pin to the card bottom instead of floating mid-card. */
+	flex: 1 1 auto;
 }
 
 .feed-article-carousel__item {
@@ -164,7 +177,11 @@
 	background: var(--cdn-color-border);
 	border-radius: 1px;
 	overflow: hidden;
-	margin-top: var(--cdn-space-xs);
+	/* Pin progress + dots to the card bottom in stretched rows: auto
+	   margin absorbs the free space the filled carousel leaves below the
+	   fixed-height item. Row rhythm still comes from the carousel flex
+	   gap, so no padding compensation is needed here. */
+	margin-top: auto;
 }
 
 .feed-article-carousel__progress-fill {
@@ -355,6 +372,11 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--cdn-space-sm, 8px);
+	/* Fill stretched rows: with only two short entries the card ended
+	   early in tall grid rows. Even distribution across the filled body
+	   removes the dead floor without changing the entry design. */
+	flex: 1 1 auto;
+	justify-content: space-evenly;
 }
 
 .feed-rsc__entry {
@@ -535,6 +557,19 @@
 
 .feed-grid__cell.cdn-card > [class*="awsui_root"] > [class*="awsui_content_"] {
 	flex: 1 1 auto;
+}
+
+/* Scroll-burst glass suppression — same rationale as the shell rule in
+   feed-card-shell.css: backdrop blur re-rasterizes every scrolled frame.
+   Scoped to body.cdn-scrolling (set only by this page's
+   scroll-jank-mitigation during a burst) so the glass restores 250ms
+   after scroll settles. */
+@media (prefers-reduced-motion: no-preference) {
+	body.cdn-scrolling .feed-grid__cell.cdn-card,
+	body.cdn-scrolling .awsui-dark-mode .cdn-card {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+	}
 }
 
 /* Wave cycle-2: text legibility backing at reduced card alpha */

@@ -216,6 +216,38 @@
 	border: none;
 }
 
+/* Grid fill — the .feed-grid__cell is a flex column with row stretch, but
+   the shell div is an intermediate wrapper so the stretch stopped at the
+   shell and short-content cards (arrowhead-news, readysetcloud) ended
+   early, leaving dead space at the row bottom. Pass the stretch through
+   the shell and the wrapped Container (mirrors the wave 23.5 .cdn-card
+   fill contract in src/pages/feed/styles.css) so every shelled card
+   fills its allocated row height. Inner content pins its footer rows
+   (carousel progress/dots) to the bottom via margin-top: auto. */
+.feed-grid__cell > .feed-card-shell {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.feed-card-shell > [class*="awsui_root_"] {
+	flex: 1 1 auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.feed-card-shell [class*="awsui_content"] {
+	/* Cloudscape override: !important on every property per house
+	   convention (AGENTS.md). Beats Cloudscape's own content flex
+	   (basis 0%) so the stretched height passes through wrapper,
+	   content, and inner alike — without this, short-content cards
+	   end early and leave dead space at the row bottom. */
+	flex: 1 1 auto !important;
+	display: flex !important;
+	flex-direction: column !important;
+	min-height: 0 !important;
+}
+
 /* ============================================================================
    Palette modifiers
    ============================================================================
@@ -454,6 +486,17 @@
 	body.cdn-scrolling .feed-card-shell__marquee::before,
 	body.cdn-scrolling .feed-card-shell__marquee::after {
 		animation-play-state: paused;
+	}
+
+	/* Scroll-burst glass suppression — backdrop blur (14px on the shell)
+	   re-rasterizes every scrolled frame and is the dominant main-thread
+	   cost once the canvas loops and marquee animations are paused. Drop
+	   the blur for the burst duration only; the flat translucent surface
+	   keeps the card readable and the glass restores 250ms after scroll
+	   settles (scroll-jank-mitigation debounce). */
+	body.cdn-scrolling .feed-card-shell {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
 	}
 }
 
