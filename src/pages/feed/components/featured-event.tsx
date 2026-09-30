@@ -18,16 +18,17 @@ import { useAuth } from "../../../hooks/useAuth";
 import { useTranslation } from "../../../hooks/useTranslation";
 
 const MEETUP_EVENT_URL =
-	"https://www.meetup.com/awsugclouddelnorte/events/316669721/";
-const MEET_LINK = "https://meet.clouddelnorte.org/sep292026";
+	"https://www.meetup.com/clouddelnorte/events/316780248/";
+const MEET_LINK = "https://meet.clouddelnorte.org/seguraws-nov19";
 const SIGN_IN_URL = "/signup/index.html";
-const EVENT_DATE = "2026-09-29T18:30:00-06:00";
-// Bespoke light/dark artwork pair for the Bowl. The theme swap is pure CSS
-// off .awsui-dark-mode (mirrors upcoming-virtual-event); the wave 37b
-// fade-in contract requires onLoad to add `is-loaded` — without it the
-// image keeps opacity: 0 and the card shows a blank box.
-const EVENT_IMAGE_LIGHT = "/events/muse-big-data-bowl-light.webp";
-const EVENT_IMAGE_DARK = "/events/muse-big-data-bowl-dark.webp";
+const EVENT_DATE = "2026-11-19T13:00:00-07:00";
+// Single SegurAWS banner served for both themes (dark artwork reads fine in
+// light mode). The theme swap is pure CSS off .awsui-dark-mode (mirrors
+// upcoming-virtual-event); the wave 37b fade-in contract requires onLoad to
+// add `is-loaded` — without it the image keeps opacity: 0 and the card shows
+// a blank box.
+const EVENT_IMAGE_LIGHT = "/events/seguraws-nov19.webp";
+const EVENT_IMAGE_DARK = "/events/seguraws-nov19.webp";
 
 interface CountdownValues {
 	days: number;

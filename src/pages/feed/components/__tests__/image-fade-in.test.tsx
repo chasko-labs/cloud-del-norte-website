@@ -108,7 +108,7 @@ describe("Wave 37b — image fade-in CSS rules", () => {
 });
 
 describe("Wave 37b — onLoad handler adds is-loaded class", () => {
-	it("FeaturedEvent: each <img> picks up the is-loaded class after firing the load event (Big Data Bowl artwork pair)", () => {
+	it("FeaturedEvent: each <img> picks up the is-loaded class after firing the load event (SegurAWS artwork pair)", () => {
 		const { container } = render(
 			<LocaleProvider locale="us">
 				<AuthContext.Provider value={signedOut}>

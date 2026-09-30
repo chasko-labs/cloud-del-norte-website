@@ -30,24 +30,24 @@ function renderWithLocale(locale: "us" | "mx", auth: AuthState = signedOut) {
 	);
 }
 
-describe("FeaturedEvent — Big Data Bowl", () => {
-	it("renders the Bowl title linking to the Meetup event URL", () => {
+describe("FeaturedEvent — SegurAWS Américas", () => {
+	it("renders the SegurAWS title linking to the Meetup event URL", () => {
 		renderWithLocale("us");
-		const link = screen.getByText(/Meta Muse Code \| NFL Big Data Bowl 2027/);
+		const link = screen.getByText(/SegurAWS Américas/);
 		expect(link.closest("a")).toHaveAttribute(
 			"href",
-			"https://www.meetup.com/awsugclouddelnorte/events/316669721/",
+			"https://www.meetup.com/clouddelnorte/events/316780248/",
 		);
 	});
 
-	it("renders the date in en-US format (September 29, 2026)", () => {
+	it("renders the date in en-US format (November 19, 2026)", () => {
 		renderWithLocale("us");
-		expect(screen.getByText(/September 29, 2026/)).toBeInTheDocument();
+		expect(screen.getByText(/November 19, 2026/)).toBeInTheDocument();
 	});
 
-	it("renders the date in es-MX format (septiembre)", () => {
+	it("renders the date in es-MX format (noviembre)", () => {
 		renderWithLocale("mx");
-		expect(screen.getAllByText(/septiembre/i).length).toBeGreaterThan(0);
+		expect(screen.getAllByText(/noviembre/i).length).toBeGreaterThan(0);
 	});
 
 	it("renders the sign-in CTA when signed out", () => {
@@ -63,18 +63,18 @@ describe("FeaturedEvent — Big Data Bowl", () => {
 		const btn = screen.getByRole("link", { name: /Join the meeting/i });
 		expect(btn).toHaveAttribute(
 			"href",
-			"https://meet.clouddelnorte.org/sep292026",
+			"https://meet.clouddelnorte.org/seguraws-nov19",
 		);
 	});
 
-	it("renders the Bowl description in en-US", () => {
+	it("renders the SegurAWS description in en-US", () => {
 		renderWithLocale("us");
-		expect(screen.getByText(/Pair-programming session/i)).toBeInTheDocument();
+		expect(screen.getByText(/Live hands-on lab/i)).toBeInTheDocument();
 	});
 
-	it("renders the Bowl description in es-MX", () => {
+	it("renders the SegurAWS description in es-MX", () => {
 		renderWithLocale("mx");
-		expect(screen.getByText(/Sesión de pair-programming/i)).toBeInTheDocument();
+		expect(screen.getByText(/Laboratorio práctico/i)).toBeInTheDocument();
 	});
 
 	it("renders the es-MX header (Próxima meetup)", () => {
@@ -93,7 +93,7 @@ describe("FeaturedEvent — Big Data Bowl", () => {
 		const { container } = renderWithLocale("us");
 		const plate = container.querySelector(".feed-featured-event__date-plate");
 		expect(plate).not.toBeNull();
-		expect(plate?.textContent).toMatch(/September 29, 2026/);
+		expect(plate?.textContent).toMatch(/November 19, 2026/);
 	});
 
 	it("renders the layout wrapper with expected children", () => {
@@ -122,14 +122,10 @@ describe("FeaturedEvent — Big Data Bowl", () => {
 		const dark = container.querySelector(
 			".feed-featured-event__image--dark",
 		) as HTMLImageElement | null;
-		expect(light?.getAttribute("src")).toBe(
-			"/events/muse-big-data-bowl-light.webp",
-		);
-		expect(dark?.getAttribute("src")).toBe(
-			"/events/muse-big-data-bowl-dark.webp",
-		);
-		expect(light?.getAttribute("alt")).toMatch(/Big Data Bowl/i);
-		expect(dark?.getAttribute("alt")).toMatch(/Big Data Bowl/i);
+		expect(light?.getAttribute("src")).toBe("/events/seguraws-nov19.webp");
+		expect(dark?.getAttribute("src")).toBe("/events/seguraws-nov19.webp");
+		expect(light?.getAttribute("alt")).toMatch(/SegurAWS/i);
+		expect(dark?.getAttribute("alt")).toMatch(/SegurAWS/i);
 	});
 
 	it("adds is-loaded on image load (wave 37b fade-in contract — without it the image keeps opacity 0)", () => {
