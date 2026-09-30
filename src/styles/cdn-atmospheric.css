@@ -78,6 +78,13 @@
 		backdrop-filter: none;
 		-webkit-backdrop-filter: none;
 	}
+
+	/* Viz-independent main translucency (dark) falls back to solid here —
+	   same guarantee as the atmospheric tiers above. */
+	.awsui-dark-mode [class*="awsui_layout-main"],
+	.awsui-dark-mode main[class*="awsui_layout"] {
+		background-color: rgb(10, 12, 20);
+	}
 }
 
 /* ── Cloudscape selector wiring — atmospheric-panel/header/content tiers ─────
@@ -156,6 +163,11 @@
 		background-color: var(--cdn-glass-bg-content);
 	}
 }
+
+/* NOTE: viz-independent dark translucency lives in the dark main rule in
+   src/styles/cdn-glass-streaks.css — that rule carries two :not(ID)
+   guards and outranks both the shell spotlight base and the viz-active
+   rules, so main is 0.5 with or without the canvas. */
 
 /* ── ContentLayout header strip — always transparent (wallpaper through) ─────
    These selectors were NOT covered by b8014898 and defaulted to solid cream/navy.
