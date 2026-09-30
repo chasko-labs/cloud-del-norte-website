@@ -19,7 +19,7 @@ const OUT_PATH = join(OUT_DIR, "feeds.json");
 const PODCAST_OUT_PATH = join(OUT_DIR, "podcast-episodes.json");
 
 const FEEDS = [
-	{ key: "andmore", url: "https://www.andmore.dev/index.xml", limit: 5 },
+	{ key: "andmore", url: "https://www.andmore.dev/rss.xml", limit: 5 },
 	{
 		key: "awsml",
 		url: "https://aws.amazon.com/blogs/machine-learning/feed/",
