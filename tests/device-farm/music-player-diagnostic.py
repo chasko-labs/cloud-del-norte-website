@@ -50,8 +50,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 # ── Constants ────────────────────────────────────────────────────────────────
 
 PROJECT_ARN = (
-    "arn:aws:devicefarm:us-west-2:946179428633:"
-    "testgrid-project:0f1bfe22-0371-40c8-bcac-f96709363893"
+    "arn:aws:devicefarm:us-west-2:211125425201:"
+    "testgrid-project:44ca93f3-0a29-4c84-b545-71aa174e6131"
 )
 REGION = "us-west-2"
 

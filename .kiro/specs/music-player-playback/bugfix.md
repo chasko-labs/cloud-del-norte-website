@@ -78,7 +78,7 @@ This bugfix is DONE when ALL of the following are true on production:
 
 ## Constraints
 
-- Bryan does not test manually. All verification runs through Device Farm Selenium against production. TestGrid project: `arn:aws:devicefarm:us-west-2:946179428633:testgrid-project:0f1bfe22-0371-40c8-bcac-f96709363893`.
+- Bryan does not test manually. All verification runs through Device Farm Selenium against production. TestGrid project: `arn:aws:devicefarm:us-west-2:211125425201:testgrid-project:44ca93f3-0a29-4c84-b545-71aa174e6131`.
 - Device Farm is Windows Chrome with 2 cores, reduced motion enabled. WebGL may not be available — BabylonGate tier="medium" blocks Fiona's 3D canvas there. Expected, not part of this bug.
 - Fix scope is `awsug.clouddelnorte.org` only. `clouddelnorte.org` already passes; `auth.clouddelnorte.org` is intentionally hidden.
 - No CSP widening. CSP is not in the suspect set for this fix family.

@@ -9,8 +9,8 @@ Iterations, not phases. Each iteration ships value or learning. Each ends with a
 - [ ] **0.1 Author Selenium diagnostic script**
  - File: `tests/device-farm/music-player-diagnostic.py`
  - Read first: `scripts/probe-cta-button-classes.mjs` (Playwright probe pattern), any existing `tests/device-farm/` examples.
- - Boto3 + Selenium, TestGrid project ARN `arn:aws:devicefarm:us-west-2:946179428633:testgrid-project:0f1bfe22-0371-40c8-bcac-f96709363893`.
- - Auth: `AWS_PROFILE=bryanchasko-kiro` (SSO active) or Roles Anywhere via `/workload.crt` if running in CI.
+ - Boto3 + Selenium, TestGrid project ARN `arn:aws:devicefarm:us-west-2:211125425201:testgrid-project:44ca93f3-0a29-4c84-b545-71aa174e6131`.
+ - Auth: `AWS_PROFILE=kiro-device-farm` (Roles Anywhere, aerospaceug-admin) or Roles Anywhere via `/workload.crt` if running in CI.
  - Per-station capture: console (all levels), network HAR, audio state via `driver.execute_script`, body class list, performance entries.
  - Output: `tests/device-farm/captures/<timestamp>/<station>.{json,har}`.
 
