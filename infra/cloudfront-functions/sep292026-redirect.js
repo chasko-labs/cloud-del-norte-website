@@ -9,17 +9,24 @@ function handler(event) {
 	var uri = req.uri;
 	// Vanity paths for meetups -> Google Meet rooms (302, no query forwarded).
 	var MEET_URL = "https://meet.google.com/qst-czph-egy";
+	var OCT31_URL = "https://meet.google.com/xrk-gbjv-gfh";
+	var target = null;
 	if (
 		uri === "/sep292026" ||
 		uri === "/sep292026/" ||
 		uri === "/seguraws-nov19" ||
 		uri === "/seguraws-nov19/"
 	) {
+		target = MEET_URL;
+	} else if (uri === "/oct312026" || uri === "/oct312026/") {
+		target = OCT31_URL;
+	}
+	if (target) {
 		return {
 			statusCode: 302,
 			statusDescription: "Found",
 			headers: {
-				location: { value: MEET_URL },
+				location: { value: target },
 				"cache-control": { value: "public, max-age=300" },
 			},
 		};
