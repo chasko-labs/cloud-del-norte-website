@@ -29,6 +29,7 @@ import {
 } from "../../../lib/cognito";
 import AuthLayout from "../_layout";
 import { stashReturnTo } from "../_shared/return-to";
+import SocialSignIn from "../_shared/social-sign-in";
 
 const MAIN_ORIGIN = "https://clouddelnorte.org";
 
@@ -533,6 +534,7 @@ function LoginForm() {
 					</SpaceBetween>
 				</Form>
 			</form>
+			<SocialSignIn />
 			{showCredentialHelp && (
 				<Box margin={{ top: "m" }}>
 					<Alert
