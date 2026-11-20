@@ -10,14 +10,12 @@ function handler(event) {
 	// Vanity paths for meetups -> Google Meet rooms (302, no query forwarded).
 	var MEET_URL = "https://meet.google.com/qst-czph-egy";
 	var OCT31_URL = "https://meet.google.com/xrk-gbjv-gfh";
+	var SEGURAWS_NOV19_URL = "https://streamyard.com/watch/FHJnr4f2j72g";
 	var target = null;
-	if (
-		uri === "/sep292026" ||
-		uri === "/sep292026/" ||
-		uri === "/seguraws-nov19" ||
-		uri === "/seguraws-nov19/"
-	) {
+	if (uri === "/sep292026" || uri === "/sep292026/") {
 		target = MEET_URL;
+	} else if (uri === "/seguraws-nov19" || uri === "/seguraws-nov19/") {
+		target = SEGURAWS_NOV19_URL;
 	} else if (uri === "/oct312026" || uri === "/oct312026/") {
 		target = OCT31_URL;
 	}
