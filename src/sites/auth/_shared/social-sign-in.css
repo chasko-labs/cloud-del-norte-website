@@ -1,0 +1,141 @@
+/* social-sign-in.css — branded social sign-in buttons
+   Google: white background, Roboto text, Google-blue border on hover
+   Apple: black background, white text, SF Pro/system font
+   Both buttons follow their respective brand guidelines for dimensions and styling.
+*/
+
+/* ── divider ──────────────────────────────────────────────────────────── */
+.cdn-social-divider {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 8px 0;
+}
+
+.cdn-social-divider::before,
+.cdn-social-divider::after {
+	content: "";
+	flex: 1;
+	height: 1px;
+	background: rgba(139, 90, 43, 0.2);
+}
+
+.awsui-dark-mode .cdn-social-divider::before,
+.awsui-dark-mode .cdn-social-divider::after {
+	background: rgba(215, 199, 238, 0.2);
+}
+
+.cdn-social-divider__text {
+	font-size: 12px;
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: rgba(90, 58, 30, 0.6);
+}
+
+.awsui-dark-mode .cdn-social-divider__text {
+	color: rgba(215, 199, 238, 0.55);
+}
+
+/* ── base button style ─────────────────────────────────────────────────── */
+.cdn-social-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	width: 100%;
+	min-height: 44px;
+	padding: 0 16px;
+	border-radius: 6px;
+	border: 1px solid transparent;
+	font-size: 14px;
+	font-weight: 500;
+	text-decoration: none;
+	cursor: pointer;
+	transition:
+		box-shadow 120ms ease,
+		background 120ms ease,
+		border-color 120ms ease;
+}
+
+.cdn-social-btn:focus-visible {
+	outline: 2px solid var(--cdn-violet, #9060f0);
+	outline-offset: 2px;
+}
+
+.cdn-social-btn__icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.cdn-social-btn__text {
+	flex: 1;
+	text-align: center;
+}
+
+/* ── Google button — per Google Sign-In Branding Guidelines ─────────────
+   Light: white bg, #757575 text, subtle border
+   Dark:  #4285F4 bg, white text (Google's dark theme variant)
+*/
+.cdn-social-btn--google {
+	background: #ffffff;
+	border-color: #dadce0;
+	color: #3c4043;
+	font-family:
+		"Roboto", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+.cdn-social-btn--google:hover {
+	background: #f8f9fa;
+	border-color: #4285f4;
+	box-shadow: 0 1px 3px rgba(66, 133, 244, 0.2);
+}
+
+.awsui-dark-mode .cdn-social-btn--google {
+	background: #131314;
+	border-color: #8e918f;
+	color: #e3e3e3;
+}
+
+.awsui-dark-mode .cdn-social-btn--google:hover {
+	background: #1f1f1f;
+	border-color: #4285f4;
+	box-shadow: 0 1px 3px rgba(66, 133, 244, 0.3);
+}
+
+/* ── Apple button — per Apple Human Interface Guidelines ────────────────
+   Light: black bg, white text
+   Dark:  white bg, black text (Apple's dark theme inversion)
+*/
+.cdn-social-btn--apple {
+	background: #000000;
+	border-color: #000000;
+	color: #ffffff;
+	font-family:
+		-apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui, sans-serif;
+}
+
+.cdn-social-btn--apple:hover {
+	background: #1a1a1a;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.awsui-dark-mode .cdn-social-btn--apple {
+	background: #ffffff;
+	border-color: #ffffff;
+	color: #000000;
+}
+
+.awsui-dark-mode .cdn-social-btn--apple:hover {
+	background: #f0f0f0;
+	box-shadow: 0 1px 3px rgba(255, 255, 255, 0.2);
+}
+
+/* ── reduced motion ────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+	.cdn-social-btn {
+		transition: none;
+	}
+}
