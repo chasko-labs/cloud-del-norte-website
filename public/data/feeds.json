@@ -1,97 +1,128 @@
 {
-  "andmore": [],
+  "andmore": [
+    {
+      "title": "Adding Semantic Search to an Existing DynamoDB Table with Vector Indexes",
+      "link": "https://andmore.dev/blog/semantic-search-dynamodb-vector-indexes/",
+      "pubDate": "2026-08-20",
+      "excerpt": "See how DynamoDB vector indexes and Bedrock Titan embeddings come together to enable semantic search on your existing tables."
+    },
+    {
+      "title": "Why Did AWS Release Yet Another Vector Store?",
+      "link": "https://andmore.dev/blog/why-did-aws-release-another-vector-store/",
+      "pubDate": "2026-08-14",
+      "excerpt": "Looking beyond the announcement to understand where Amazon DynamoDB Vector Search fits in AWS's growing AI storage portfolio."
+    },
+    {
+      "title": "Skip the Middleman: Connecting Your UI Directly to an AI Agent via WebSocket",
+      "link": "https://andmore.dev/blog/websocket-direct-to-agent/",
+      "pubDate": "2026-07-13",
+      "excerpt": "Learn how to connect your browser directly to an AI agent over WebSocket using Amazon Bedrock AgentCore, skipping the traditional Lambda proxy and enabling real-time token streaming."
+    },
+    {
+      "title": "Step Functions without ASL? Welcome Lambda Durable Functions",
+      "link": "https://andmore.dev/blog/lambda_durable_functions/",
+      "pubDate": "2025-12-17",
+      "excerpt": "I've regularly said that AWS Step Functions is my favorite service, this all might be changing with the introduction of Lambda Durable Functions. We'll be going on a deep dive into durable functions a"
+    },
+    {
+      "title": "Log buffering with Lambda Powertools",
+      "link": "https://andmore.dev/blog/log-buffering/",
+      "pubDate": "2025-03-28",
+      "excerpt": "Let's understand what log buffering is, how it's configured in your Lambda Functions and see real results in CloudWatch by trying different configuration options."
+    }
+  ],
   "awsml": [
     {
-      "title": "Custom reward functions for multi-turn reinforcement learning with Amazon Nova Forge",
-      "link": "https://aws.amazon.com/blogs/machine-learning/custom-reward-functions-for-multi-turn-reinforcement-learning-with-amazon-nova-forge/",
-      "pubDate": "2026-08-14",
-      "excerpt": "In multi-turn reinforcement learning, your custom reward function decides what the model actually learns. This post shows how to design a composite multi-turn reward for Amazon Nova Forge, execute mod"
+      "title": "Query claims in natural language with Amazon Bedrock Knowledge Bases",
+      "link": "https://aws.amazon.com/blogs/machine-learning/query-claims-in-natural-language-with-amazon-bedrock-knowledge-bases/",
+      "pubDate": "2026-09-30",
+      "excerpt": "This technical how-to builds a conversational claims assistant on Amazon Bedrock Knowledge Bases that answers natural-language questions with citations. It covers ingesting claim documents from Amazon"
     },
     {
-      "title": "Building agentic workflows with SageMaker AI and Bedrock AgentCore",
-      "link": "https://aws.amazon.com/blogs/machine-learning/building-agentic-workflows-with-sagemaker-ai-and-bedrock-agentcore/",
-      "pubDate": "2026-08-14",
-      "excerpt": "Learn how to combine OpenAI-compatible endpoints on Amazon SageMaker AI with Amazon Bedrock AgentCore runtime to build a multi-agent workflow where each specialized agent uses the model best suited to"
+      "title": "Build a multi-agent music production pipeline on Amazon Bedrock AgentCore Runtime Instances",
+      "link": "https://aws.amazon.com/blogs/machine-learning/build-a-multi-agent-music-production-pipeline-on-amazon-bedrock-agentcore-runtime-instances/",
+      "pubDate": "2026-09-30",
+      "excerpt": "Amazon Bedrock AgentCore Runtime Instances gives multi-agent workflows AWS managed EC2 infrastructure with GPUs, persistent volumes, and multi-day sessions. In this post, we deploy a three-agent music"
     },
     {
-      "title": "Monitor on-premises and multi-cloud AI agents with AgentCore Observability",
-      "link": "https://aws.amazon.com/blogs/machine-learning/monitor-on-premises-and-multi-cloud-ai-agents-with-agentcore-observability/",
-      "pubDate": "2026-08-13",
-      "excerpt": "Set up Amazon Bedrock AgentCore Observability for AI agents running outside AWS: on-premises, on GCP, on Azure, or on developer machines. This walkthrough uses the AWS Distro for OpenTelemetry (ADOT) "
+      "title": "Amazon Bedrock expands Claude model availability to in-country inferencing in India",
+      "link": "https://aws.amazon.com/blogs/machine-learning/amazon-bedrock-expands-claude-model-availability-to-india-cross-region-inference/",
+      "pubDate": "2026-09-30",
+      "excerpt": "Anthropic's Claude Opus 5, Claude Sonnet 5, and Claude Haiku 4.5 are now available in India through Amazon Bedrock geographic cross-Region inference. You can access these models while processing data "
     },
     {
-      "title": "Automate legacy web applications with Amazon Bedrock AgentCore Browser Tool",
-      "link": "https://aws.amazon.com/blogs/machine-learning/automate-legacy-web-applications-with-amazon-bedrock-agentcore-browser-tool/",
-      "pubDate": "2026-08-13",
-      "excerpt": "Learn how to automate legacy web applications that need human-like interaction using Amazon Bedrock AgentCore Browser Tool and Strands Agents. This walkthrough covers a reference architecture for an A"
+      "title": "Introducing Anthropic models on Amazon Bedrock for in-region inference in Seoul and Singapore",
+      "link": "https://aws.amazon.com/blogs/machine-learning/introducing-anthropic-models-on-amazon-bedrock-for-in-region-inference-in-seoul-and-singapore/",
+      "pubDate": "2026-09-30",
+      "excerpt": "Amazon Bedrock now supports Anthropic's Claude Opus 5 and Claude Sonnet 5 with in-region inference in Seoul, and Claude Sonnet 5 in Singapore. If you have local data processing requirements in South K"
     },
     {
-      "title": "Accelerating M&A due diligence with Amazon Bedrock AgentCore",
-      "link": "https://aws.amazon.com/blogs/machine-learning/accelerating-ma-due-diligence-with-amazon-bedrock-agentcore/",
-      "pubDate": "2026-08-13",
-      "excerpt": "Learn how to build a multi-agent M&amp;A due diligence system on Amazon Bedrock AgentCore. This post walks through a reference architecture that combines agent orchestration, knowledge retrieval, and "
+      "title": "Bring near-Astra intelligence to everyday work with GPT-6.1 Sol on Amazon Bedrock",
+      "link": "https://aws.amazon.com/blogs/machine-learning/bring-near-astra-intelligence-to-everyday-work-with-gpt-6-1-sol-on-amazon-bedrock/",
+      "pubDate": "2026-09-29",
+      "excerpt": "GPT-6.1 Sol is now generally available on Amazon Bedrock, bringing stronger reasoning to coding, computer use, and professional workloads that run frequently."
     }
   ],
   "readysetcloud": [
     {
-      "title": "New use cases for new engineering paradigms",
-      "link": "https://www.readysetcloud.io/newsletter/228/",
-      "pubDate": "2026-08-10",
-      "excerpt": "🦸 Community Superhero Our community superhero this week is Anna Pastushko , Solutions Architect at Intellias and AWS Community Builder. Anna has done some tremendous open source work, opening her ent"
+      "title": "Agent memory needs more than vector search",
+      "link": "https://www.readysetcloud.io/blog/allen.helton/agent-memory-needs-more-than-vector-search/",
+      "pubDate": "2026-09-29",
+      "excerpt": "Over the past couple of years I’ve tried several times to teach an AI agent how to impersonate my voice. While I haven’t been super successful, it’s been a wonderful learning opportu"
     },
     {
-      "title": "Works on my machine",
-      "link": "https://www.readysetcloud.io/newsletter/227/",
-      "pubDate": "2026-08-03",
-      "excerpt": "🦸 Community Superhero Our community superhero this week is Nicola Cremaschini , Staff Engineer at TheFork and AWS Community Builder. Nicola built and open sourced Q-Vibes , a context preservation fra"
+      "title": "Build your own (or not)",
+      "link": "https://www.readysetcloud.io/newsletter/235/",
+      "pubDate": "2026-09-28",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Mariane Bekker , director of DevRel at 1Password and creator of the Founders Bay community. Mariane is an inspirational leader, empowering w"
     },
     {
-      "title": "Send your events later",
-      "link": "https://www.readysetcloud.io/blog/allen.helton/send-your-events-later/",
-      "pubDate": "2026-07-29",
-      "excerpt": "I build a lot of automated workflows. Across the suite of apps that powers Ready, Set, Cloud, I have a dozen or so mature, long-running automations that do some work, wait for something, then do more "
+      "title": "You're still the bottleneck",
+      "link": "https://www.readysetcloud.io/blog/allen.helton/youre-still-the-bottleneck/",
+      "pubDate": "2026-09-22",
+      "excerpt": "I went to a conference a couple of weeks ago. During the keynote, the speaker asked the audience “ how many of you have 40 or more agents running at any given time? ” About a dozen hands w"
     },
     {
-      "title": "The true value of developers in the AI era",
-      "link": "https://www.readysetcloud.io/newsletter/226/",
-      "pubDate": "2026-07-27",
-      "excerpt": "🦸 Community Superhero Our community superhero this week is Maciej Radzikowski , lead developer at Merapar. I first featured Maciej&rsquo;s work in this newsletter in issue #3 ! Maciej created aws-sdk"
+      "title": "Rethink everything you know about AI",
+      "link": "https://www.readysetcloud.io/newsletter/234/",
+      "pubDate": "2026-09-21",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Piyush Sachdeva , engineer, developer educator, and SaaS builder. Piyush runs a YouTube channel called Tech Tutorials with Piyush with hundr"
     },
     {
-      "title": "Show your work",
-      "link": "https://www.readysetcloud.io/newsletter/225/",
-      "pubDate": "2026-07-20",
-      "excerpt": "🦸 Community Superhero Our community superhero this week is Ewere Diagboya , AWS Container Hero and the Staff DevOps Engineer. Ewere has spent years making the cloud approachable for people who are ju"
+      "title": "Doubling Uber Eat's search speed",
+      "link": "https://www.readysetcloud.io/newsletter/233/",
+      "pubDate": "2026-09-14",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Adolfo Ochagavía , software engineer and consultant. Adolfo is a great blogger, talking about everything from building a compressor from scr"
     },
     {
-      "title": "AI is just a tool",
-      "link": "https://www.readysetcloud.io/newsletter/224/",
-      "pubDate": "2026-07-13",
-      "excerpt": "🦸 Community Superhero Our community superhero this week is Luca Casonato . Luca is a rockstar developer, having his hands in Deno, Deno Deploy, JSR, and Fresh, among other things. He&rsquo;s a fantas"
+      "title": "Payment is authorization",
+      "link": "https://www.readysetcloud.io/blog/allen.helton/payment-is-authorization/",
+      "pubDate": "2026-09-09",
+      "excerpt": "I can’t tell you how many times I’ve needed to do something simple like remove the background from an image or convert a file from one type to another but wasn’t able to do it. While"
     },
     {
-      "title": "MicroVMs as GitHub runners? Yes, and it works.",
-      "link": "https://www.readysetcloud.io/newsletter/223/",
-      "pubDate": "2026-07-06",
-      "excerpt": "🦸 Community Superhero Our community superhero this week is Elizabeth Fuentes . Eli is an AWS Developer Advocate from Chile, she is actively engaged with the community across every medium, LinkedIn, S"
+      "title": "Emerging behavior with AI agents",
+      "link": "https://www.readysetcloud.io/newsletter/232/",
+      "pubDate": "2026-09-07",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Gerardo Arroyo , Senior Principal Architect at West Monroe and AWS Community Builder. Gerardo is an exceptional blogger, often writing about"
     },
     {
-      "title": "Voice-controlled humanoid robots 😱",
-      "link": "https://www.readysetcloud.io/newsletter/222/",
-      "pubDate": "2026-06-29",
-      "excerpt": "🦸 Community Superhero Our community superhero this week is Sarah Hoffmann , freelance software developer and the mastermind behind much of the geocoder behind openstreetmap . She&rsquo;s a prolific o"
+      "title": "The end of programming is upon us",
+      "link": "https://www.readysetcloud.io/newsletter/231/",
+      "pubDate": "2026-08-31",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is V. Thulisile Sibanda , developer evangelist at DevNetwork, OSS maintainer, community builder, and a genuinely inspiring human being. She&rsq"
     },
     {
-      "title": "PSA: That probably doesn't need to be SaaS",
-      "link": "https://www.readysetcloud.io/blog/allen.helton/that-probably-doesnt-need-to-be-saas/",
-      "pubDate": "2026-06-25",
-      "excerpt": "I&rsquo;ve published a weekly newsletter every Monday for the past 4 years that showcases content from the tech community. The sole purpose of all 221 issues has been to highlight creators who educate"
+      "title": "DynamoDB Streams is not an outbox",
+      "link": "https://www.readysetcloud.io/blog/allen.helton/dynamodb-streams-is-not-an-outbox/",
+      "pubDate": "2026-08-25",
+      "excerpt": "Hopefully you didn’t notice, but a couple of weeks ago I sent an issue of my newsletter that never actually got emailed. My dashboard looked fine and it was marked as published, but the email ne"
     },
     {
-      "title": "Finally, native S3 metadata that works!",
-      "link": "https://www.readysetcloud.io/newsletter/221/",
-      "pubDate": "2026-06-22",
-      "excerpt": "🦸 Community Superhero Our community superhero this week is David Hérault , full stack engineer at Cactos and the creator and maintainer of serverless-offline . If you&rsquo;ve ever run a Serverless F"
+      "title": "Agent memory is harder than it sounds",
+      "link": "https://www.readysetcloud.io/newsletter/230/",
+      "pubDate": "2026-08-24",
+      "excerpt": "🦸 Community Superhero Our community superhero this week is Linda Mohamed , AWS Community Hero, cloud consultant, and rock star engineer. If you’ve ever had the pleasure of meeting Linda or watc"
     }
   ]
 }

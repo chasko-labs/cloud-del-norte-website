@@ -358,11 +358,32 @@
     ]
   },
   "syntax_fm": {
-    "title": "1040: Developing for the iPhone Duo",
-    "subtitle": "Scott, Wes, and CJ break down developing for the iPhone Duo with the Device Posture and Viewport Segments APIs, plus the",
-    "display": "1040: Developing for the iPhone Duo — Scott, Wes, and CJ break down developing for the iPhone Duo with the Device Posture and Vi",
-    "enclosureUrl": "https://traffic.megaphone.fm/FSI3562075802.mp3",
+    "title": "1043: I’m Using GPUI For Everything",
+    "subtitle": "Scott and Wes ditch Electron and Tauri for GPUI, the GPU accelerated Rust UI framework from the Zed team. They get into ",
+    "display": "1043: I’m Using GPUI For Everything — Scott and Wes ditch Electron and Tauri for GPUI, the GPU accelerated Rust UI framework fro",
+    "enclosureUrl": "https://traffic.megaphone.fm/FSI9920896492.mp3",
     "episodes": [
+      {
+        "guid": "e0dcd83c-bc00-11f1-a904-97314d8c7d00",
+        "title": "1043: I’m Using GPUI For Everything",
+        "pubDate": "2026-09-30T11:00:00.000Z",
+        "duration": 1963,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI9920896492.mp3"
+      },
+      {
+        "guid": "5daa2860-b6b1-11f1-8ef7-bb315dd5dbd1",
+        "title": "1042: Is the Jev Hype Overblown?",
+        "pubDate": "2026-09-28T11:00:00.000Z",
+        "duration": 4923,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI8312173039.mp3"
+      },
+      {
+        "guid": "178b5d44-b5c7-11f1-8539-bf6dbd80c834",
+        "title": "1041: What are normies using AI for?",
+        "pubDate": "2026-09-23T11:00:00.000Z",
+        "duration": 2841,
+        "enclosureUrl": "https://traffic.megaphone.fm/FSI6628878575.mp3"
+      },
       {
         "guid": "e6132d46-b1d4-11f1-8a39-4b1147cd065c",
         "title": "1040: Developing for the iPhone Duo",
@@ -691,27 +712,6 @@
         "pubDate": "2026-04-08T11:00:00.000Z",
         "duration": 3616,
         "enclosureUrl": "https://traffic.megaphone.fm/FSI7650488361.mp3"
-      },
-      {
-        "guid": "db96d0c6-2eac-11f1-97ab-abd4b36f26dd",
-        "title": "993: It’s Been A Hell Of Week",
-        "pubDate": "2026-04-06T11:00:00.000Z",
-        "duration": 2292,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI8822565885.mp3"
-      },
-      {
-        "guid": "8444848e-2d27-11f1-9db2-df70388f4199",
-        "title": "992: Migrating Legacy Code Just Got Easier",
-        "pubDate": "2026-04-01T11:00:00.000Z",
-        "duration": 1747,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI2522254802.mp3"
-      },
-      {
-        "guid": "db4ea71e-293a-11f1-8ce2-4b2d1553e1c7",
-        "title": "991: Vite’s bet on Cloudflare (VOID Framework)",
-        "pubDate": "2026-03-30T11:00:00.000Z",
-        "duration": 2318,
-        "enclosureUrl": "https://traffic.megaphone.fm/FSI5967497459.mp3"
       }
     ]
   },
@@ -2248,11 +2248,25 @@
     ]
   },
   "onda_aws": {
-    "title": "EP357: Kiro, Claude Code & Codex on AWS",
-    "subtitle": "La forma en que los desarrolladores escriben código está cambiando radicalmente. En este episodio comparamos tres herram",
-    "display": "EP357: Kiro, Claude Code & Codex on AWS — La forma en que los desarrolladores escriben código está cambiando radicalmente. En este e",
-    "enclosureUrl": "https://rss.art19.com/episodes/0ce926aa-37f0-4e92-8a02-1105730e3d5d.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d",
+    "title": "EP359: El poder de lo \"aburrido\": cómo Buk logra sistemas autorreparables y una experiencia para desarrolladores a gran escala con AWS",
+    "subtitle": "Juan Edwards, Engineering Manager de DevEx en Buk (HR Tech, ~400 desarrolladores sobre un monolito), cuenta cómo migraro",
+    "display": "EP359: El poder de lo \"aburrido\": cómo Buk logra sistemas autorreparables y una experiencia para desarrolladores a gran escala con AWS — Juan Edwards, Engineering Manager de DevEx en Buk (HR Tech, ~400 desarrolladores sobre un ",
+    "enclosureUrl": "https://rss.art19.com/episodes/0e762288-570d-4afa-af21-d81bfd99ba6c.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d",
     "episodes": [
+      {
+        "guid": "gid://art19-episode-locator/V0/hkT18bj36Vp7g1SHRqnrKqinegEykPBgQy5mWQzolFI",
+        "title": "EP359: El poder de lo \"aburrido\": cómo Buk logra sistemas autorreparables y una experiencia para desarrolladores a gran escala con AWS",
+        "pubDate": "2026-09-29T13:00:00.000Z",
+        "duration": 1626,
+        "enclosureUrl": "https://rss.art19.com/episodes/0e762288-570d-4afa-af21-d81bfd99ba6c.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
+      },
+      {
+        "guid": "gid://art19-episode-locator/V0/MqBEZLXddVFxsOQWFqjl4B68LKClG-5is__qYi2vCqw",
+        "title": "EP358: Quick Desktop para Cloud Economics",
+        "pubDate": "2026-09-24T12:00:00.000Z",
+        "duration": 915,
+        "enclosureUrl": "https://rss.art19.com/episodes/f8c28ae5-52e8-4d0e-acd4-c1985ef7d288.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
+      },
       {
         "guid": "gid://art19-episode-locator/V0/to4lpRqxb_ULyL-5LYRDlgdP84JRrYCZrAFexMVVwMw",
         "title": "EP357: Kiro, Claude Code & Codex on AWS",
@@ -2588,20 +2602,6 @@
         "pubDate": "2026-01-09T21:06:00.000Z",
         "duration": 778,
         "enclosureUrl": "https://rss.art19.com/episodes/8913ad06-7bd9-43e6-ad62-c52e66a400b6.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
-      },
-      {
-        "guid": "gid://art19-episode-locator/V0/Oz9M4RIE71fm58uZWfMOteCl062RtBtkpqzs8lbkAWc",
-        "title": "EP309: Criptografia post-cuantica en AWS",
-        "pubDate": "2026-01-06T21:48:00.000Z",
-        "duration": 911,
-        "enclosureUrl": "https://rss.art19.com/episodes/ddf2911d-a18a-471a-9031-2fe164d08dba.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
-      },
-      {
-        "guid": "gid://art19-episode-locator/V0/FmkyHWUVhgjv6_SAM1tqMDNquEiIpIPRJmcsRSlhZYQ",
-        "title": "EP308: Modelos personalizados y Model Distillation con Amazon Bedrock",
-        "pubDate": "2025-12-30T16:00:00.000Z",
-        "duration": 947,
-        "enclosureUrl": "https://rss.art19.com/episodes/cdc146c2-8288-4695-ae4a-6184bd3caff3.mp3?rss_browser=BAhJIiNBV1NVR0Nsb3VkRGVsTm9ydGUtZmV0Y2gtZmVlZHMGOgZFVA%3D%3D--6d3a4bf929390b1954392fa394eb25f9452b565d"
       }
     ]
   },
@@ -2922,11 +2922,18 @@
     ]
   },
   "el_sonido_kexp": {
-    "title": "Enjambre: rock mexicano, nostalgia y Daños Luz | El Sonido: Cancioneros",
+    "title": "Malcriada: cultura goth, indie sleaze y vivir en internet | El Sonido: Cancioneros",
     "subtitle": null,
-    "display": "Enjambre: rock mexicano, nostalgia y Daños Luz | El Sonido: Cancioneros",
-    "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/f8e24db4-52d0-48da-a259-b4c6015eaf00/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950",
+    "display": "Malcriada: cultura goth, indie sleaze y vivir en internet | El Sonido: Cancioneros",
+    "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/b35f721d-5720-4796-a743-b4ce0187f9cd/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950",
     "episodes": [
+      {
+        "guid": "b35f721d-5720-4796-a743-b4ce0187f9cd",
+        "title": "Malcriada: cultura goth, indie sleaze y vivir en internet | El Sonido: Cancioneros",
+        "pubDate": "2026-09-28T07:00:00.000Z",
+        "duration": 1402,
+        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/b35f721d-5720-4796-a743-b4ce0187f9cd/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
+      },
       {
         "guid": "f8e24db4-52d0-48da-a259-b4c6015eaf00",
         "title": "Enjambre: rock mexicano, nostalgia y Daños Luz | El Sonido: Cancioneros",
@@ -3269,13 +3276,6 @@
         "pubDate": "2025-05-22T07:00:00.000Z",
         "duration": 132,
         "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/6b717176-b4d0-4a18-b712-b2e30151c042/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
-      },
-      {
-        "guid": "0391521a-4fb9-40fb-a4b6-b2ad012c1228",
-        "title": "Butthole Surfers, Half Japanese, y Daniel Johnston",
-        "pubDate": "2025-03-27T18:15:28.000Z",
-        "duration": 1523,
-        "enclosureUrl": "https://traffic.omny.fm/d/clips/bad5d079-8dcb-4630-8770-aa090049131d/8b13edbf-a871-4333-9331-afbf01766a62/0391521a-4fb9-40fb-a4b6-b2ad012c1228/audio.mp3?utm_source=Podcast&in_playlist=9ed4d2cd-fdc6-4cff-88a0-afbf01777950"
       }
     ]
   },
