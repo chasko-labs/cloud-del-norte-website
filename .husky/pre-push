@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+# cheapest-first gate: lint, then unit tests, then production build
+set -e
+npx biome ci --diagnostic-level=error src/ scripts/__tests__/deploy.test.mjs
+npm test
+npm run build

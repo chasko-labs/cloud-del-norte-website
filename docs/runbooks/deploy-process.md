@@ -17,7 +17,7 @@ Woodpecker config: `.woodpecker/deploy.yml`
 ## Manual Deploy (when Woodpecker is down)
 
 ```bash
-./scripts/deploy-manual.sh <main|auth|awsug|dev>
+./scripts/deploy.sh <main|auth|awsug|dev>
 ```
 
 This cleans the output dir, rebuilds from scratch, and deploys. Never use
@@ -65,6 +65,6 @@ After EVERY deploy:
 ## Common Failures
 
 - **Stale lib/ dir**: Old chunks served because `emptyOutDir` wasn't set. Fix: `rm -rf lib/ && npm run build`
-- **awsug missing liora assets**: `deploy-manual.sh` and Woodpecker both sync from main bucket now. If missing, run: `aws s3 sync s3://clouddelnorte.org/liora-embed/ s3://awsug.clouddelnorte.org/liora-embed/`
+- **awsug missing liora assets**: `scripts/deploy.sh` and Woodpecker both sync from main bucket now. If missing, run: `aws s3 sync s3://clouddelnorte.org/liora-embed/ s3://awsug.clouddelnorte.org/liora-embed/`
 - **CSP blocking fiona mount**: The embed uses dynamic `import()`. If CSP blocks it, check `script-src` allows `'self'`. Do NOT use `Function()` constructor (that's eval).
 - **mountLioraPanel undefined**: The embed exports `mountLioraPanel` (not `mountFionaPanel`). If the consumer calls the wrong name, the catch logs `[fiona-frame] mount failed`.

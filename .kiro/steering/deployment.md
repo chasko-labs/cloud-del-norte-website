@@ -5,12 +5,12 @@
 | mode | trigger | status |
 | ---- | ------- | ------ |
 | auto (woodpecker) | push to main | partial-recovery — not validated end-to-end (#157). do not rely on it. |
-| manual fallback | operator runs scripts/deploy-manual.sh | operational norm since wave 4. works reliably. |
+| manual fallback | operator runs scripts/deploy.sh | operational norm since wave 4. works reliably. |
 
 ## manual deploy syntax
 
 ```bash
-./scripts/deploy-manual.sh <main|auth|awsug|dev|quantum> [--skip-build] [--dry-run]
+./scripts/deploy.sh <main|auth|awsug|dev|quantum|all> [--dry-run|--apply] [--check-remote]
 ```
 
 - `--dry-run` prints what would happen without touching S3 or CloudFront
@@ -73,4 +73,4 @@ curl -s https://clouddelnorte.org/ | grep -o 'assets/[^"]*\.css'
 
 ## the rule in one sentence
 
-manual deploy via scripts/deploy-manual.sh is the operational norm until woodpecker #157 is fully resolved and auto-deploy is validated end-to-end with a successful pipeline run.
+manual deploy via scripts/deploy.sh is the operational norm until woodpecker #157 is fully resolved and auto-deploy is validated end-to-end with a successful pipeline run.

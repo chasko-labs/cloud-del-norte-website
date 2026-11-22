@@ -198,43 +198,32 @@ See [LOCALIZATION.md](LOCALIZATION.md) for dialect guides, key naming convention
 
 ## Deploy
 
-### CI/CD (Woodpecker)
+No hosted CI runs for this repo. CodePipeline, CodeBuild, Woodpecker, and GitHub Actions are not used. The checks run locally.
 
-`.woodpecker/deploy.yml` triggers on push or manual dispatch to `main` or `dev`.
+- `.husky/pre-push` runs on every `git push` through husky. It runs biome, then the vitest suite, then the production build, cheapest first. A failing step blocks the push.
+- `scripts/deploy.sh` publishes the five sites to S3 and invalidates their CloudFront distributions. It is the only deploy path.
 
-auth chain: workload x509 cert → IAM RolesAnywhere → `heraldstack-ci-deploy` role (no long-lived IAM keys)
-
-| branch | target                       | cloudfront distribution |
-| ------ | ---------------------------- | ----------------------- |
-| `main` | `s3://awsaerospace.org`      | `ECC3LP1BL2CZS`         |
-| `dev`  | `s3://dev.clouddelnorte.org` | woodpecker secret       |
-
-pipeline steps: `install` → `build` → `deploy` (main) or `deploy-dev` (dev) → `screenshot-prod` / `screenshot-dev`
-
-Browser/device testing infrastructure: [aws-device-farm-infra](https://github.com/chasko-labs/aws-device-farm-infra) (private)
-
-post-deploy screenshot captures run automatically and are available at predictable URLs — see [docs/ops/ci-screenshots.md](docs/ops/ci-screenshots.md) for the URL pattern and capture matrix.
-
-### Manual deploy
+### Deploy
 
 ```bash
-aws sso login --profile aerospaceug-admin --use-device-code
-npm run lint && npm test && npm run build
-aws s3 sync lib/ s3://awsaerospace.org --delete --profile aerospaceug-admin
-aws cloudfront create-invalidation \
-  --distribution-id ECC3LP1BL2CZS \
-  --paths "/*" \
-  --profile aerospaceug-admin
+scripts/deploy.sh all                    # dry-run, no aws calls, prints the plan
+scripts/deploy.sh main --check-remote    # dry-run plus read-only region and delete checks
+scripts/deploy.sh main --apply           # build, guard, upload, invalidate, verify
 ```
 
-| Resource          | Value                   |
-| ----------------- | ----------------------- |
-| AWS CLI profile   | `aerospaceug-admin`     |
-| S3 bucket (prod)  | `awsaerospace.org`      |
-| S3 bucket (dev)   | `dev.clouddelnorte.org` |
-| CloudFront (prod) | `ECC3LP1BL2CZS`         |
-| prod URL          | `clouddelnorte.org`     |
-| dev URL           | `dev.clouddelnorte.org` |
+targets: `main`, `auth`, `awsug`, `dev`, `quantum`, or `all`. A dry-run is the default, so `--apply` is required to upload.
+
+every `--delete` sync is previewed first. when the preview lists more than `MAX_DELETES` deletes (default 25), the script aborts before any upload. `ALLOW_DELETES=1` overrides the limit for one run. the integer check rejects any other `MAX_DELETES` value.
+
+| target  | s3 bucket                    | cloudfront distribution | region    |
+| ------- | ---------------------------- | ----------------------- | --------- |
+| main    | `clouddelnorte.org`          | `ECC3LP1BL2CZS`         | us-east-1 |
+| auth    | `auth.clouddelnorte.org`     | `ECQ44FO9MBTCY`         | us-east-1 |
+| awsug   | `awsug.clouddelnorte.org`    | `E2QLAWFVIT1AR8`        | us-east-1 |
+| dev     | `dev.clouddelnorte.org`      | `EEHVTUEQ97V0X`         | us-east-1 |
+| quantum | `quantum.clouddelnorte.org`  | `EXLFK7JNU2JNM`         | us-west-2 |
+
+every aws call uses `--profile aerospaceug-admin` and the region from the table. the test suite in `scripts/__tests__/deploy.test.mjs` covers the dry-run per bucket, the delete guard, and the integer check.
 
 ---
 

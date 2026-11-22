@@ -45,17 +45,17 @@ When Woodpecker is stuck, failing, or unreachable.
 ### Commands
 
 ```bash
-# Full deploy (builds + syncs + invalidates + waits + verifies)
-./scripts/deploy-manual.sh main
-./scripts/deploy-manual.sh auth
-./scripts/deploy-manual.sh awsug
-./scripts/deploy-manual.sh dev
+# Full deploy (builds + guards + syncs + invalidates + waits + verifies)
+./scripts/deploy.sh main --apply
+./scripts/deploy.sh auth --apply
+./scripts/deploy.sh awsug --apply
+./scripts/deploy.sh dev --apply
 
-# Skip build (already built locally)
-./scripts/deploy-manual.sh main --skip-build
+# Dry run (default, shows what would happen, no aws calls)
+./scripts/deploy.sh main
 
-# Dry run (shows what would happen)
-./scripts/deploy-manual.sh main --dry-run
+# Dry run with read-only delete preview (needs a local build)
+./scripts/deploy.sh main --check-remote
 ```
 
 ### What It Does
