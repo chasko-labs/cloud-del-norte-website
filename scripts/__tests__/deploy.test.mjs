@@ -17,6 +17,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DEPLOY = resolve(__dirname, "../deploy.sh");
+const REPO = resolve(__dirname, "../..");
 
 const STUB_AWS = `#!/usr/bin/env bash
 printf '%s\\n' "$*" >> "\${AWS_LOG:?}"
@@ -74,9 +75,11 @@ function makeSandbox() {
 	return { root, bin, fixture, awsLog: join(root, "aws.log") };
 }
 
-// defaults to the sandbox copy so builds and .deploy.log never touch the real worktree
-function runDeploy(args, { script, sandbox, cwd, env = {} }) {
-	return spawnSync("bash", [script ?? join(sandbox.fixture, "scripts/deploy.sh"), ...args], {
+// defaults to the sandbox copy so builds and .deploy.log never touch the repo
+function runDeploy(args, opts) {
+	const { sandbox, env = {}, script, cwd } = opts;
+	const scriptPath = script ?? join(sandbox.fixture, "scripts/deploy.sh");
+	return spawnSync("bash", [scriptPath, ...args], {
 		cwd: cwd ?? sandbox.fixture,
 		encoding: "utf8",
 		env: {
@@ -102,47 +105,50 @@ describe("scripts/deploy.sh dry-run per bucket", () => {
 		["quantum", "quantum.clouddelnorte.org", "us-west-2"],
 	];
 
-	it.each(rows)(
-		"%s targets s3://%s in %s with literal profile and region, no aws calls",
-		(target, bucket, region) => {
-			const sandbox = makeSandbox();
-			const result = runDeploy([target], {
-				script: DEPLOY,
-				sandbox,
-				cwd: resolve(__dirname, "../.."),
-			});
-			expect(result.status).toBe(0);
-			expect(result.stdout).toContain(`s3://${bucket}/`);
-			expect(result.stdout).toContain(`--profile aerospaceug-admin`);
-			expect(result.stdout).toContain(`--region ${region}`);
-			expect(result.stdout).toContain("nothing was uploaded");
-			expect(awsCalls(sandbox)).toEqual([]);
-		},
-	);
+	it.each(
+		rows,
+	)("%s targets s3://%s in %s with profile and region, no aws calls", (target, bucket, region) => {
+		const sandbox = makeSandbox();
+		const result = runDeploy([target], {
+			script: DEPLOY,
+			sandbox,
+			cwd: REPO,
+		});
+		expect(result.status).toBe(0);
+		expect(result.stdout).toContain(`s3://${bucket}/`);
+		expect(result.stdout).toContain("--profile aerospaceug-admin");
+		expect(result.stdout).toContain(`--region ${region}`);
+		expect(result.stdout).toContain("nothing was uploaded");
+		expect(awsCalls(sandbox)).toEqual([]);
+	});
 });
 
 describe("scripts/deploy.sh integer check", () => {
-	it.each(["abc", "-1", "1.5", "9999999999"])(
-		"rejects MAX_DELETES=%s with exit 2",
-		(value) => {
-			const sandbox = makeSandbox();
-			const result = runDeploy(["main"], {
-				script: DEPLOY,
-				sandbox,
-				cwd: resolve(__dirname, "../.."),
-				env: { MAX_DELETES: value },
-			});
-			expect(result.status).toBe(2);
-			expect(result.stderr).toContain("MAX_DELETES must be a non-negative integer");
-		},
-	);
+	it.each([
+		"abc",
+		"-1",
+		"1.5",
+		"9999999999",
+	])("rejects MAX_DELETES=%s with exit 2", (value) => {
+		const sandbox = makeSandbox();
+		const result = runDeploy(["main"], {
+			script: DEPLOY,
+			sandbox,
+			cwd: REPO,
+			env: { MAX_DELETES: value },
+		});
+		expect(result.status).toBe(2);
+		expect(result.stderr).toContain(
+			"MAX_DELETES must be a non-negative integer",
+		);
+	});
 
 	it("accepts MAX_DELETES=0", () => {
 		const sandbox = makeSandbox();
 		const result = runDeploy(["main"], {
 			script: DEPLOY,
 			sandbox,
-			cwd: resolve(__dirname, "../.."),
+			cwd: REPO,
 			env: { MAX_DELETES: "0" },
 		});
 		expect(result.status).toBe(0);
@@ -180,10 +186,13 @@ describe("scripts/deploy.sh delete guard", () => {
 			(line) => line.includes("s3 sync") && !line.includes("--dryrun"),
 		);
 		expect(uploads).toEqual([]);
-		expect(awsCalls(sandbox).some((line) => line.includes("create-invalidation"))).toBe(false);
+		const invalidations = awsCalls(sandbox).filter((line) =>
+			line.includes("create-invalidation"),
+		);
+		expect(invalidations).toEqual([]);
 	});
 
-	it("apply uploads with literal profile and region on every aws call", () => {
+	it("apply uploads with profile and region on every aws call", () => {
 		const sandbox = makeSandbox();
 		const result = runDeploy(["main", "--apply"], {
 			sandbox,
@@ -196,13 +205,12 @@ describe("scripts/deploy.sh delete guard", () => {
 			expect(line).toContain("--profile aerospaceug-admin");
 			expect(line).toContain("--region us-east-1");
 		}
-		expect(
-			calls.some(
-				(line) =>
-					line.includes("s3 sync") &&
-					!line.includes("--dryrun") &&
-					line.includes("s3://clouddelnorte.org/"),
-			),
-		).toBe(true);
+		const uploaded = calls.some(
+			(line) =>
+				line.includes("s3 sync") &&
+				!line.includes("--dryrun") &&
+				line.includes("s3://clouddelnorte.org/"),
+		);
+		expect(uploaded).toBe(true);
 	});
 });
