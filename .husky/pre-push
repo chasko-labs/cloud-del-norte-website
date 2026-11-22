@@ -1,6 +1,7 @@
 #!/usr/bin/env sh
-# cheapest-first gate: lint, then unit tests, then production build
+# cheapest-first gate: lint, then production build, then unit tests.
+# the build writes lib/, which the build-output tests read, so it runs before vitest.
 set -e
 npx biome ci --diagnostic-level=error src/ scripts/__tests__/deploy.test.mjs
-npm test
 npm run build
+npm test
