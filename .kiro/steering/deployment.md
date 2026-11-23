@@ -14,7 +14,6 @@
 ```
 
 - `--dry-run` prints what would happen without touching S3 or CloudFront
-- `--skip-build` reuses existing dist/ (use after a confirmed `npm run build`)
 - requires: aws cli v2, npm, SSO session active (profile aerospaceug-admin)
 - deploys one subdomain per invocation — run once per target
 

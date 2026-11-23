@@ -20,8 +20,7 @@ Woodpecker config: `.woodpecker/deploy.yml`
 ./scripts/deploy.sh <main|auth|awsug|dev> --apply
 ```
 
-This cleans the output dir, rebuilds from scratch, and deploys. Never use
-`--skip-build` unless you JUST ran `npm run build` in the same shell session.
+This cleans the output dir, rebuilds from scratch, and deploys.
 
 ## Critical: Clean Builds
 
