@@ -71,6 +71,10 @@ const BUILD_DIRS = {
 	quantum: "lib-quantum",
 };
 
+const INDEX_HTML = "<title>AWS UG Cloud del Norte</title>";
+const SITE_TARGETS = ["main", "auth", "awsug"];
+const BAD_DELETES = ["abc", "-1", "1.5", "9999999999"];
+
 const sandboxes = [];
 
 afterEach(() => {
@@ -105,10 +109,7 @@ function makeSandbox() {
 function seedBuild(fixture, target) {
 	const dir = join(fixture, BUILD_DIRS[target]);
 	mkdirSync(dir, { recursive: true });
-	writeFileSync(
-		join(dir, "index.html"),
-		"<title>AWS UG Cloud del Norte</title>",
-	);
+	writeFileSync(join(dir, "index.html"), INDEX_HTML);
 	if (target === "quantum") {
 		const brand = join(dir, "brand/quantum");
 		mkdirSync(brand, { recursive: true });
@@ -122,23 +123,20 @@ function seedBuild(fixture, target) {
 	return dir;
 }
 
-// always runs the sandbox copy of deploy.sh so builds and .deploy.log stay in the sandbox
+// runs the sandbox copy of deploy.sh so builds and .deploy.log stay out of the repo
 function runDeploy(args, opts) {
 	const { sandbox, env = {} } = opts;
-	return spawnSync(
-		"bash",
-		[join(sandbox.fixture, "scripts/deploy.sh"), ...args],
-		{
-			cwd: sandbox.fixture,
-			encoding: "utf8",
-			env: {
-				HOME: process.env.HOME,
-				PATH: `${sandbox.bin}:${process.env.PATH}`,
-				AWS_LOG: sandbox.awsLog,
-				...env,
-			},
+	const script = join(sandbox.fixture, "scripts/deploy.sh");
+	return spawnSync("bash", [script, ...args], {
+		cwd: sandbox.fixture,
+		encoding: "utf8",
+		env: {
+			HOME: process.env.HOME,
+			PATH: `${sandbox.bin}:${process.env.PATH}`,
+			AWS_LOG: sandbox.awsLog,
+			...env,
 		},
-	);
+	});
 }
 
 function awsCalls(sandbox) {
@@ -155,29 +153,25 @@ describe("scripts/deploy.sh dry-run per bucket", () => {
 		["quantum", "quantum.clouddelnorte.org", "us-west-2"],
 	];
 
-	it.each(rows)(
-		"%s targets s3://%s in %s with profile and region, no aws calls",
-		(target, bucket, region) => {
-			const sandbox = makeSandbox();
-			seedBuild(sandbox.fixture, target);
-			const result = runDeploy([target], { sandbox });
-			expect(result.status).toBe(0);
-			expect(result.stdout).toContain(`s3://${bucket}/`);
-			expect(result.stdout).toContain("--profile aerospaceug-admin");
-			expect(result.stdout).toContain(`--region ${region}`);
-			expect(result.stdout).toContain("nothing was uploaded");
-			expect(awsCalls(sandbox)).toEqual([]);
-		},
-	);
+	it.each(rows)("%s targets %s in %s", (target, bucket, region) => {
+		const sandbox = makeSandbox();
+		seedBuild(sandbox.fixture, target);
+		const result = runDeploy([target], { sandbox });
+		expect(result.status).toBe(0);
+		expect(result.stdout).toContain(`s3://${bucket}/`);
+		expect(result.stdout).toContain("--profile aerospaceug-admin");
+		expect(result.stdout).toContain(`--region ${region}`);
+		expect(result.stdout).toContain("nothing was uploaded");
+		expect(awsCalls(sandbox)).toEqual([]);
+	});
 
 	it("pass 1 dry-run excludes the protected prefixes", () => {
 		const sandbox = makeSandbox();
 		seedBuild(sandbox.fixture, "main");
 		const result = runDeploy(["main"], { sandbox });
 		expect(result.status).toBe(0);
-		const pass1 = result.stdout
-			.split("\n")
-			.find((line) => line.includes("--exclude assets/"));
+		const lines = result.stdout.split("\n");
+		const pass1 = lines.find((line) => line.includes("--exclude assets/"));
 		expect(pass1).toBeDefined();
 		for (const prefix of ["liora", "screenshots", "quantum", "_previews"]) {
 			expect(pass1).toContain(`--exclude ${prefix}/\\*`);
@@ -186,47 +180,38 @@ describe("scripts/deploy.sh dry-run per bucket", () => {
 });
 
 describe("scripts/deploy.sh build output checks", () => {
-	it.each(["main", "auth", "awsug"])(
-		"%s fails when assets/ is missing",
-		(target) => {
-			const sandbox = makeSandbox();
-			const dir = seedBuild(sandbox.fixture, target);
-			rmSync(join(dir, "assets"), { recursive: true, force: true });
-			const result = runDeploy([target], { sandbox });
-			expect(result.status).toBe(1);
-			expect(result.stderr).toContain("assets missing or empty");
-			expect(awsCalls(sandbox)).toEqual([]);
-		},
-	);
+	it.each(SITE_TARGETS)("%s fails when assets/ is missing", (target) => {
+		const sandbox = makeSandbox();
+		const dir = seedBuild(sandbox.fixture, target);
+		rmSync(join(dir, "assets"), { recursive: true, force: true });
+		const result = runDeploy([target], { sandbox });
+		expect(result.status).toBe(1);
+		expect(result.stderr).toContain("assets missing or empty");
+		expect(awsCalls(sandbox)).toEqual([]);
+	});
 
-	it.each(["main", "auth", "awsug"])(
-		"%s fails when assets/ is empty",
-		(target) => {
-			const sandbox = makeSandbox();
-			const dir = seedBuild(sandbox.fixture, target);
-			rmSync(join(dir, "assets/app.js"));
-			const result = runDeploy([target], { sandbox });
-			expect(result.status).toBe(1);
-			expect(result.stderr).toContain("assets missing or empty");
-		},
-	);
+	it.each(SITE_TARGETS)("%s fails when assets/ is empty", (target) => {
+		const sandbox = makeSandbox();
+		const dir = seedBuild(sandbox.fixture, target);
+		rmSync(join(dir, "assets/app.js"));
+		const result = runDeploy([target], { sandbox });
+		expect(result.status).toBe(1);
+		expect(result.stderr).toContain("assets missing or empty");
+	});
 });
 
 describe("scripts/deploy.sh integer check", () => {
-	it.each(["abc", "-1", "1.5", "9999999999"])(
-		"rejects MAX_DELETES=%s with exit 2",
-		(value) => {
-			const sandbox = makeSandbox();
-			const result = runDeploy(["main"], {
-				sandbox,
-				env: { MAX_DELETES: value },
-			});
-			expect(result.status).toBe(2);
-			expect(result.stderr).toContain(
-				"MAX_DELETES must be a non-negative integer",
-			);
-		},
-	);
+	it.each(BAD_DELETES)("rejects MAX_DELETES=%s with exit 2", (value) => {
+		const sandbox = makeSandbox();
+		const result = runDeploy(["main"], {
+			sandbox,
+			env: { MAX_DELETES: value },
+		});
+		expect(result.status).toBe(2);
+		expect(result.stderr).toContain(
+			"MAX_DELETES must be a non-negative integer",
+		);
+	});
 
 	it("accepts MAX_DELETES=0", () => {
 		const sandbox = makeSandbox();
@@ -267,10 +252,9 @@ describe("scripts/deploy.sh delete guard", () => {
 			sandbox,
 			env: { MAX_DELETES: "3", STUB_DELETES: "2" },
 		});
+		const message = "delete guard: 4 delete(s) in clouddelnorte.org, limit 3";
 		expect(result.status).toBe(1);
-		expect(result.stdout).toContain(
-			"delete guard: 4 delete(s) in clouddelnorte.org, limit 3",
-		);
+		expect(result.stdout).toContain(message);
 		expect(result.stderr).toContain("4 deletes exceeds MAX_DELETES=3");
 	});
 
@@ -292,10 +276,9 @@ describe("scripts/deploy.sh delete guard", () => {
 			sandbox,
 			env: { STUB_FAIL_DRYRUN: "1" },
 		});
+		const failure = "aws s3 sync --dryrun failed for clouddelnorte.org";
 		expect(result.status).toBe(1);
-		expect(result.stderr).toContain(
-			"aws s3 sync --dryrun failed for clouddelnorte.org",
-		);
+		expect(result.stderr).toContain(failure);
 	});
 
 	it("apply aborts before any upload when the guard trips", () => {
