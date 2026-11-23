@@ -81,7 +81,7 @@ proven canonical pattern from `scripts/deploy-feedback-apigw.sh` (commit ee051c3
 5. Lambda permission for principal apigateway.amazonaws.com on action lambda:InvokeFunction with source-arn `arn:aws:execute-api:<region>:<account>:<api-id>/*/POST/<route>`
 6. update `.env.production` VITE\_\<SERVICE\>\_API\_URL to `https://<api-id>.execute-api.<region>.amazonaws.com/<route>`
 7. CSP for main + awsug + auth subdomains already allows `https://*.execute-api.us-west-2.amazonaws.com` on connect-src — NO CSP CHANGE needed for this pivot. this was the only-frontend-touch insight.
-8. manual deploy via `./scripts/deploy.sh` until Woodpecker is operational
+8. manual deploy via `./scripts/deploy.sh <target> --apply` until Woodpecker is operational
 9. smoke-test with curl from each cdn origin to verify CORS:
 
 ```bash

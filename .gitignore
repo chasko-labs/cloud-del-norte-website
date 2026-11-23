@@ -4,6 +4,7 @@ node_modules/
 /lib-awsug/
 /lib-quantum/
 dist/
+.scratch/
 *.log
 .DS_Store
 .env
@@ -25,4 +26,4 @@ public/data/youtube-shorts.json
 
 # Playwright/test-run screenshot outputs (regeneratable)
 tests/quantum-interaction-results/
-tests/quantum-ux-results/.deploy.log
+tests/quantum-ux-results/

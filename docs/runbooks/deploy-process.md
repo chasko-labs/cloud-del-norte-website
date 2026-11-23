@@ -17,7 +17,7 @@ Woodpecker config: `.woodpecker/deploy.yml`
 ## Manual Deploy (when Woodpecker is down)
 
 ```bash
-./scripts/deploy.sh <main|auth|awsug|dev>
+./scripts/deploy.sh <main|auth|awsug|dev> --apply
 ```
 
 This cleans the output dir, rebuilds from scratch, and deploys. Never use

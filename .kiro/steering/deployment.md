@@ -5,7 +5,7 @@
 | mode | trigger | status |
 | ---- | ------- | ------ |
 | auto (woodpecker) | push to main | partial-recovery — not validated end-to-end (#157). do not rely on it. |
-| manual fallback | operator runs scripts/deploy.sh | operational norm since wave 4. works reliably. |
+| manual fallback | operator runs scripts/deploy.sh <target> --apply | operational norm since wave 4. works reliably. |
 
 ## manual deploy syntax
 

@@ -13,7 +13,7 @@ Living technical documentation for cloud del norte's radio + podcast subsystem. 
 | `auth.clouddelnorte.org` | `ECQ44FO9MBTCY` | `auth.clouddelnorte.org` | `6e5c7c27-39d3-4a6e-8a89-58a70396c5ed` | Cognito auth flow + redirect target |
 | `dev.clouddelnorte.org` | `EEHVTUEQ97V0X` | `dev.clouddelnorte.org` | (none attached) | dev/staging — no CSP enforcement |
 
-`scripts/deploy.sh <main\|auth\|awsug\|dev>` deploys frontend bundles. `scripts/sync-cloudfront-headers.sh <main\|auth\|awsug\|all>` syncs CSP from `infra/cloudfront-security-headers.<sub>.json`. **dev is intentionally outside the sync-headers script** — it has no CSP attached, so app code runs without CSP enforcement there.
+`scripts/deploy.sh <main\|auth\|awsug\|dev> --apply` deploys frontend bundles. `scripts/sync-cloudfront-headers.sh <main\|auth\|awsug\|all>` syncs CSP from `infra/cloudfront-security-headers.<sub>.json`. **dev is intentionally outside the sync-headers script** — it has no CSP attached, so app code runs without CSP enforcement there.
 
 ---
 

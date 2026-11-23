@@ -2,7 +2,7 @@
 # deploy cloud-del-norte sites to s3 and invalidate cloudfront. replaces the retired codepipeline buildspec.yml
 # usage: scripts/deploy.sh [main|auth|awsug|dev|quantum|all] [--dry-run | --apply] [--check-remote]
 # default is --dry-run, which makes no aws calls. --check-remote adds read-only aws calls (bucket region, delete preview)
-# every --delete sync is previewed with --dryrun before any upload. MAX_DELETES (default 25) caps deletes, ALLOW_DELETES=1 overrides
+# every --delete sync is previewed with --dryrun before any upload. MAX_DELETES (default 25) caps total deletes per bucket across all passes, ALLOW_DELETES=1 overrides
 set -euo pipefail
 
 PROFILE="aerospaceug-admin"
@@ -115,7 +115,7 @@ run() {
 	fi
 }
 
-# previews one --delete sync with --dryrun and counts delete lines against MAX_DELETES. exits 1 above the limit
+# previews one --delete sync with --dryrun and adds its delete count to GUARD_TOTAL. guard_target compares the bucket total
 guard_deletes() {
 	local preview deletes count
 	if ! preview="$(aws "$@" --dryrun --profile "$PROFILE" --region "$REGION")"; then
@@ -128,9 +128,16 @@ guard_deletes() {
 		count="$(grep -c . <<<"$deletes")"
 		echo "$deletes"
 	fi
-	echo "delete guard: ${count} delete(s) in ${BUCKET}, limit ${MAX_DELETES}"
-	if [ "$count" -gt "$MAX_DELETES" ] && [ "${ALLOW_DELETES:-0}" != "1" ]; then
-		echo "delete guard: ${count} deletes exceeds MAX_DELETES=${MAX_DELETES} in ${BUCKET}, aborting. set ALLOW_DELETES=1 to override" >&2
+	GUARD_TOTAL=$((GUARD_TOTAL + count))
+}
+
+# runs every guard pass for one bucket, then checks the summed count. exits 1 above the limit
+guard_target() {
+	GUARD_TOTAL=0
+	sync_target guard
+	echo "delete guard: ${GUARD_TOTAL} delete(s) in ${BUCKET}, limit ${MAX_DELETES}"
+	if [ "$GUARD_TOTAL" -gt "$MAX_DELETES" ] && [ "${ALLOW_DELETES:-0}" != "1" ]; then
+		echo "delete guard: ${GUARD_TOTAL} deletes exceeds MAX_DELETES=${MAX_DELETES} in ${BUCKET}, aborting. set ALLOW_DELETES=1 to override" >&2
 		exit 1
 	fi
 }
@@ -234,6 +241,14 @@ validate_output() {
 		echo "ERROR: ${LIB_PATH}/index.html (or landing/index.html) not found, build output incomplete" >&2
 		exit 1
 	fi
+	case "$TARGET" in
+	main | auth | awsug)
+		if [ ! -d "${LIB_PATH}/assets" ] || [ -z "$(find "${LIB_PATH}/assets" -mindepth 1 -print -quit)" ]; then
+			echo "ERROR: ${LIB_PATH}/assets missing or empty, build output incomplete. refusing to deploy ${TARGET} without hashed bundles" >&2
+			exit 1
+		fi
+		;;
+	esac
 	if [ "$TARGET" = "quantum" ]; then
 		local brand_dir="${LIB_PATH}/brand/quantum" asset missing=0
 		local assets=(
@@ -324,7 +339,7 @@ done
 if [ "$mode" = "apply" ] || [ "$check_remote" = 1 ]; then
 	for t in "${targets[@]}"; do
 		load_target "$t"
-		sync_target guard
+		guard_target
 	done
 fi
 
