@@ -15,4 +15,4 @@ fi
 npx biome ci --diagnostic-level=error src/ scripts/__tests__/deploy.test.mjs
 npm test
 npm run build
-REQUIRE_BUILD_OUTPUT=1 npx vitest run src/pages/maintenance-calendar/__tests__/build-output.test.ts
+REQUIRE_BUILD_OUTPUT=1 ./node_modules/.bin/vitest run src/pages/maintenance-calendar/__tests__/build-output.test.ts
