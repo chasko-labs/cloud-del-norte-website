@@ -60,14 +60,22 @@ When Woodpecker is stuck, failing, or unreachable.
 
 ### What It Does
 
-1. `npm run build` (unless `--skip-build`)
-2. Validates `<lib-dir>/index.html` exists
-3. `aws s3 sync` non-assets with `no-cache`
-4. `aws s3 sync` assets with immutable cache
-5. `aws cloudfront create-invalidation`
-6. Waits for invalidation to complete
-7. Logs deploy to `.deploy.log`
-8. Curls the site to verify last-modified changed
+Dry run is the default. Nothing uploads without `--apply`. Dry run makes no AWS calls unless `--check-remote` is set.
+
+1. Build (`--apply` only): removes each target build dir, runs `npm ci`, then `npm run build`. The quantum target runs `npx vite build --config vite.config.quantum.ts` instead.
+2. Validate output: `index.html` (or `landing/index.html`) must exist. main, auth, and awsug also need a non-empty `assets/` dir. quantum needs its ten brand assets under `brand/quantum/`, because its `--delete` sync would wipe them from the bucket. A dry run without a build skips this check.
+3. Region check (`--apply` or `--check-remote`): `get-bucket-location` must match the region set for the target in the script. A mismatch aborts the run.
+4. Delete guard (`--apply` or `--check-remote`): each sync pass runs `aws s3 sync --dryrun --delete`. Deletes are summed per bucket across all passes. A total above `MAX_DELETES` (default 25) aborts before any upload. `ALLOW_DELETES=1` overrides. Every target is guarded before the first upload, so one abort leaves every bucket untouched.
+5. Sync per target, in passes with excludes:
+   - pass 1 (no-cache): app shell, excluding `assets/`, `events/`, `brand/`, `icons/`, `data/`, `liora/`, `liora-embed/`, `fiona/`, `fiona-embed/`, `screenshots/`, `quantum/`, `_previews/`
+   - pass 2 (24h): `events/`, `brand/`, `icons/`
+   - pass 3 (5 min): `data/`
+   - pass 4 (immutable, 1y): `assets/`
+   - awsug also copies `fiona-embed/` and `fiona/` from the clouddelnorte.org bucket
+   - quantum runs one `--delete --exact-timestamps` sync of its build dir
+6. Invalidate: `create-invalidation` on `/*` for the target distribution, then waits for it to complete (`--apply` only).
+7. Log: appends a line to `.deploy.log` with timestamp, target, bucket, distribution, commit, and invalidation ID (`--apply` only).
+8. Verify: curls the target URL and checks the page `<title>` contains the expected text. Targets without a verify URL (dev) skip this step.
 
 ---
 
@@ -141,7 +149,7 @@ git push
 The chrome-extension-moodle-uploader repo had a death-loop that locked Woodpecker's SQLite backend (2026-05-12). This project's pipelines were starved. The fix was:
 
 1. The moodle-uploader repo's pipeline was cancelled/fixed in its own repo
-2. Manual deploys via `deploy-manual.sh` unblocked this project
+2. Manual deploys via `scripts/deploy.sh` unblocked this project
 
 If #157 recurs: the agent is NOT stuck — it's processing the looping repo's retries. This project's jobs will queue behind them. Use manual deploy as fallback.
 
