@@ -39,6 +39,7 @@ exit 0
 const STUB_NPM = `#!/usr/bin/env bash
 if [ "$1" = run ] && [ "$2" = build ]; then
   mkdir -p lib/assets lib-auth/assets lib-awsug/assets
+  touch lib/assets/app.js lib-auth/assets/app.js lib-awsug/assets/app.js
   echo '<title>AWS UG Cloud del Norte</title>' > lib/index.html
   touch lib-auth/index.html lib-awsug/index.html
 fi
@@ -247,15 +248,15 @@ describe("scripts/deploy.sh delete guard", () => {
 		const sandbox = makeSandbox();
 		seedBuild(sandbox.fixture, "main");
 		mkdirSync(join(sandbox.fixture, "lib/events"));
-		// each pass alone is 2, under the limit of 3. the bucket total is 4
+		// three passes (app shell, events, assets) at 2 deletes each. every pass is under 5, the total is 6
 		const result = runDeploy(["main", "--check-remote"], {
 			sandbox,
-			env: { MAX_DELETES: "3", STUB_DELETES: "2" },
+			env: { MAX_DELETES: "5", STUB_DELETES: "2" },
 		});
-		const message = "delete guard: 4 delete(s) in clouddelnorte.org, limit 3";
+		const message = "delete guard: 6 delete(s) in clouddelnorte.org, limit 5";
 		expect(result.status).toBe(1);
 		expect(result.stdout).toContain(message);
-		expect(result.stderr).toContain("4 deletes exceeds MAX_DELETES=3");
+		expect(result.stderr).toContain("6 deletes exceeds MAX_DELETES=5");
 	});
 
 	it("passes when the summed deletes equal MAX_DELETES", () => {
@@ -264,7 +265,7 @@ describe("scripts/deploy.sh delete guard", () => {
 		mkdirSync(join(sandbox.fixture, "lib/events"));
 		const result = runDeploy(["main", "--check-remote"], {
 			sandbox,
-			env: { MAX_DELETES: "4", STUB_DELETES: "2" },
+			env: { MAX_DELETES: "6", STUB_DELETES: "2" },
 		});
 		expect(result.status).toBe(0);
 	});
