@@ -1,7 +1,18 @@
 #!/usr/bin/env sh
-# cheapest-first gate: lint, then production build, then unit tests.
-# the build writes lib/, which the build-output tests read, so it runs before vitest.
+# cheapest-first gate: lint, unit tests, production build, then build-output tests.
+# build-output tests read lib/, which exists only after the build, so they run in
+# a second vitest pass after it with REQUIRE_BUILD_OUTPUT=1 (missing lib/ fails there).
 set -e
+
+# hosts with a default node below 20.19 fall back to the nvm node 24 bin
+if ! node -e 'const [a,b]=process.versions.node.split(".").map(Number);process.exit(a>20||(a===20&&b>=19)?0:1)' 2>/dev/null; then
+	if [ -x "$HOME/.nvm/versions/node/v24.14.0/bin/node" ]; then
+		PATH="$HOME/.nvm/versions/node/v24.14.0/bin:$PATH"
+		export PATH
+	fi
+fi
+
 npx biome ci --diagnostic-level=error src/ scripts/__tests__/deploy.test.mjs
-npm run build
 npm test
+npm run build
+REQUIRE_BUILD_OUTPUT=1 npx vitest run src/pages/maintenance-calendar/__tests__/build-output.test.ts
