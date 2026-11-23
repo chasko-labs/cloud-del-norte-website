@@ -8,7 +8,7 @@ import { defineConfig } from "vite";
  * The quantum site's publicDir is scoped to src/sites/quantum/public (for
  * quantum-specific static assets), but brand assets live at the repo-root
  * public/brand/quantum/ as the single source of truth. Without this plugin
- * the --delete flag on deploy-manual.sh's s3 sync would orphan the brand
+ * the --delete flag on scripts/deploy.sh s3 sync would orphan the brand
  * assets on the next deploy.
  */
 function copyBrandAssets() {

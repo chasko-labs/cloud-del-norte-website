@@ -14,10 +14,10 @@ npm run dev                               # vite dev server (localhost:5173)
 npm run build                             # production build (all 3 subdomain targets)
 npx vitest run                            # unit/integration tests
 npx @biomejs/biome ci .                   # lint + format check (must pass before commit)
-./scripts/deploy-manual.sh main           # deploy main subdomain
-./scripts/deploy-manual.sh auth           # deploy auth subdomain
-./scripts/deploy-manual.sh awsug          # deploy awsug subdomain
-./scripts/deploy-manual.sh main --dry-run # preview what would happen without deploying
+./scripts/deploy.sh main --apply     # deploy main subdomain
+./scripts/deploy.sh auth --apply     # deploy auth subdomain
+./scripts/deploy.sh awsug --apply    # deploy awsug subdomain
+./scripts/deploy.sh main            # preview what would happen without deploying (default)
 ```
 
 build outputs three targets: lib/ (main), lib-auth/ (auth), lib-awsug/ (awsug). each maps to its own S3 bucket and CloudFront distribution.

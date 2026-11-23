@@ -4,6 +4,7 @@ node_modules/
 /lib-awsug/
 /lib-quantum/
 dist/
+.scratch/
 *.log
 .DS_Store
 .env

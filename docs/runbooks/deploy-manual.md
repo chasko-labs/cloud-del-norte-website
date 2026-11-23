@@ -17,7 +17,7 @@ Required for S3 write + CloudFront invalidation. The SSO session must be active.
 ## The Command
 
 ```bash
-./scripts/deploy-manual.sh <target>
+./scripts/deploy.sh <target> --apply
 ```
 
 Targets: `main`, `auth`, `awsug`, `dev`
@@ -50,7 +50,7 @@ Should reflect current time (within CF invalidation propagation — usually <60s
 
 ```bash
 git checkout <previous-sha>
-./scripts/deploy-manual.sh <target>
+./scripts/deploy.sh <target> --apply
 git checkout main
 ```
 

@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+# cheapest-first gate: lint, unit tests, production build, then build-output tests.
+# build-output tests read lib/, which exists only after the build, so they run in
+# a second vitest pass after it with REQUIRE_BUILD_OUTPUT=1 (missing lib/ fails there).
+set -e
+
+# hosts with a default node below 20.19 must use the nvm node 24 bin
+if ! node -e 'const [a,b]=process.versions.node.split(".").map(Number);process.exit(a>20||(a===20&&b>=19)?0:1)' 2>/dev/null; then
+	NVM_NODE24="$HOME/.nvm/versions/node/v24.14.0/bin"
+	if [ ! -x "$NVM_NODE24/node" ]; then
+		echo "pre-push: default node is below 20.19 and ${NVM_NODE24}/node is missing. install node 24 with nvm or set a default node >= 20.19" >&2
+		exit 1
+	fi
+	PATH="$NVM_NODE24:$PATH"
+	export PATH
+fi
+
+npx biome ci --diagnostic-level=error src/ scripts/__tests__/deploy.test.mjs
+npm test
+npm run build
+REQUIRE_BUILD_OUTPUT=1 ./node_modules/.bin/vitest run src/pages/maintenance-calendar/__tests__/build-output.test.ts
