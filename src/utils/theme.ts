@@ -131,6 +131,7 @@ export const applyTheme = (theme: Theme): void => {
 			clearTimeout(pendingTransitionHandle);
 		}
 		pendingTransitionHandle = window.setTimeout(() => {
+			if (typeof document === "undefined") return;
 			pendingTransitionHandle = null;
 			document.body.classList.remove(THEME_TRANSITION_CLASS);
 		}, THEME_TRANSITION_DURATION_MS);

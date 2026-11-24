@@ -89,7 +89,7 @@ load_target() {
 	esac
 }
 
-# excludes from the retired deploy-manual.sh main pass. liora/, screenshots/, quantum/, _previews/ must never be deleted by a site sync
+# excludes from the retired manual deploy main pass. liora/, screenshots/, quantum/, _previews/ must never be deleted by a site sync
 SITE_EXCLUDES=(
 	--exclude 'assets/*'
 	--exclude 'events/*'
