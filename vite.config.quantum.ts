@@ -1,4 +1,4 @@
-import { cpSync } from "node:fs";
+import { copyFileSync, cpSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
@@ -9,15 +9,23 @@ import { defineConfig } from "vite";
  * quantum-specific static assets), but brand assets live at the repo-root
  * public/brand/quantum/ as the single source of truth. Without this plugin
  * the --delete flag on scripts/deploy.sh s3 sync would orphan the brand
- * assets on the next deploy.
+ * assets on the next deploy. The shared atmosphere og image is copied the
+ * same way so the register page og:image resolves on this host.
  */
 function copyBrandAssets() {
 	const src = resolve(__dirname, "public/brand/quantum");
+	const ogSrc = resolve(
+		__dirname,
+		"public/brand/atmosphere/cdn-atmosphere-og-1200x630.png",
+	);
 	return {
 		name: "copy-quantum-brand-assets",
 		closeBundle() {
 			const dest = resolve(__dirname, "lib-quantum/brand/quantum");
 			cpSync(src, dest, { recursive: true });
+			const ogDir = resolve(__dirname, "lib-quantum/brand/atmosphere");
+			mkdirSync(ogDir, { recursive: true });
+			copyFileSync(ogSrc, resolve(ogDir, "cdn-atmosphere-og-1200x630.png"));
 		},
 	};
 }
